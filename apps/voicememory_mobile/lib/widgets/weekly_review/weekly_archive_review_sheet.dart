@@ -10,10 +10,12 @@ import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/weekly_review/weekly_archive_review_copy.dart';
 import '../../features/weekly_review/weekly_archive_review_model.dart';
+import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 import '../patterns/belief_change_moment_card.dart';
+import '../patterns/pattern_confidence_badge.dart';
 import '../account/beta_feedback_sheet.dart';
 
 /// Full weekly archive review in a bottom sheet.
@@ -25,6 +27,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     this.onSeePro,
     this.entryCount = 0,
     this.beliefChangeMoment,
+    this.patternConfidence,
   });
 
   final WeeklyArchiveReviewResult review;
@@ -32,6 +35,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
   final VoidCallback? onSeePro;
   final int entryCount;
   final BeliefChangeMoment? beliefChangeMoment;
+  final PatternConfidence? patternConfidence;
 
   static Future<void> show(
     BuildContext context, {
@@ -40,6 +44,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     VoidCallback? onSeePro,
     int entryCount = 0,
     BeliefChangeMoment? beliefChangeMoment,
+    PatternConfidence? patternConfidence,
   }) {
     unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
@@ -56,6 +61,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           onSeePro: onSeePro,
           entryCount: entryCount,
           beliefChangeMoment: beliefChangeMoment,
+          patternConfidence: patternConfidence,
         ),
       ),
     );
@@ -104,6 +110,13 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   style: ArchiveMobileTypography.explanationBody(context).copyWith(
                     color: AppColors.textSecondary,
                   ),
+                ),
+              ],
+              if (patternConfidence != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                PatternConfidenceBadge(
+                  confidence: patternConfidence!,
+                  showBody: true,
                 ),
               ],
               if (beliefChangeMoment != null) ...[

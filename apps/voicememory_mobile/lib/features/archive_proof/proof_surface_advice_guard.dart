@@ -6,6 +6,7 @@ import '../first_proof_payoff/first_proof_payoff_copy.dart';
 import '../first_proof_truth/first_proof_truth_copy.dart';
 import '../belief_change/belief_change_moment_copy.dart';
 import '../what_changed/what_changed_v2_copy.dart';
+import '../pattern_confidence/pattern_confidence_copy.dart';
 import '../early_archive/first_week_loop_copy.dart';
 import '../early_archive/archive_change_timeline_copy.dart';
 import '../early_archive/helpful_action_appeared_copy.dart';
@@ -74,6 +75,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...FirstProofTruthCopy.allVisibleStrings(),
         ...BeliefChangeMomentCopy.allVisibleStrings(),
         ...WhatChangedV2Copy.allVisibleStrings(),
+        ...PatternConfidenceCopy.allVisibleStrings(),
         ArchiveSummaryCopy.title,
         ArchiveSummaryCopy.promise,
         ArchiveSummaryCopy.keepsRepeatingLabel,

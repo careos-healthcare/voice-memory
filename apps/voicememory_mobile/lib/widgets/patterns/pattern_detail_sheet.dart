@@ -7,6 +7,7 @@ import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 import '../../features/belief_change/belief_change_moment_engine.dart';
 import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
+import '../../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../../features/what_changed/what_changed_v2_copy.dart';
 import '../../features/what_changed/what_changed_v2_engine.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
@@ -25,6 +26,7 @@ import '../record/correct_transcript_sheet.dart';
 import '../record/entry_importance_button.dart';
 import '../share_card/share_card_action_card.dart';
 import 'belief_change_moment_card.dart';
+import 'pattern_confidence_badge.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatefulWidget {
@@ -168,6 +170,18 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
         : WhatChangedV2Engine.buildAnsweredPayoff(
             entries: widget.buildInput!.entries,
           );
+    final patternConfidence = widget.buildInput == null
+        ? null
+        : PatternConfidenceEngine.build(
+            entries: widget.buildInput!.entries,
+            returnChecks: widget.buildInput!.returnChecks,
+            changeProof: widget.buildInput!.changeProof,
+            helpfulActionCapturedMilestone:
+                widget.buildInput!.helpfulActionCapturedMilestone,
+            viewingConfirmedRepeatOrTimeline:
+                widget.buildInput!.viewingConfirmedRepeatOrTimeline,
+            hideNotEnoughYet: true,
+          );
 
     return SafeArea(
       child: Padding(
@@ -187,6 +201,13 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 key: const Key('pattern_detail_sheet_title'),
                 style: titleStyle,
               ),
+              if (patternConfidence != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                PatternConfidenceBadge(
+                  confidence: patternConfidence,
+                  showBody: true,
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.patternLabelHeading,

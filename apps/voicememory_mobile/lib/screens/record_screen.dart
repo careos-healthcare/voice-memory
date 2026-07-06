@@ -263,6 +263,7 @@ import '../features/early_archive/first_week_loop_gates.dart';
 import '../features/early_archive/return_check_payoff_engine.dart';
 import '../features/early_archive/return_check_payoff_gates.dart';
 import '../features/what_changed/what_changed_v2_engine.dart';
+import '../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../features/what_changed/what_changed_v2_store.dart';
 import '../widgets/record/what_changed_v2_card.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
@@ -4469,6 +4470,15 @@ class _RecordScreenState extends State<RecordScreen> {
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       payoff: firstProofPayoffCandidate,
     );
+    final firstProofPatternConfidence = showFirstProofPayoff &&
+            firstProofPayoffCandidate != null
+        ? PatternConfidenceEngine.build(
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: true,
+            hideNotEnoughYet: true,
+          )
+        : null;
     final firstProofTruthProofKey = showFirstProofPayoff
         ? FirstProofTruthGates.proofKeyForEntries(entriesAfterSave)
         : '';
@@ -6030,6 +6040,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             FirstProofPayoffCard(
                               payoff: firstProofPayoffCandidate,
                               entryCount: postSaveEntryCount,
+                              patternConfidence: firstProofPatternConfidence,
                               suppressCtas: firstProofActionLoopContent != null,
                               onWatchThisNext: _handleFirstProofWatchThisNext,
                               onViewPatternDetails:

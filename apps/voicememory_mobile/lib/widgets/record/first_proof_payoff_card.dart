@@ -5,9 +5,11 @@ import '../../features/chat_differentiation/chat_differentiation_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_model.dart';
+import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../patterns/pattern_confidence_badge.dart';
 import 'chat_differentiation_sheet.dart';
 
 /// Emotional first-proof payoff — user evidence first, calm CTAs elsewhere.
@@ -19,6 +21,7 @@ class FirstProofPayoffCard extends StatefulWidget {
     required this.onWatchThisNext,
     this.onViewPatternDetails,
     this.suppressCtas = false,
+    this.patternConfidence,
   });
 
   final FirstProofPayoff payoff;
@@ -26,6 +29,7 @@ class FirstProofPayoffCard extends StatefulWidget {
   final VoidCallback onWatchThisNext;
   final VoidCallback? onViewPatternDetails;
   final bool suppressCtas;
+  final PatternConfidence? patternConfidence;
 
   @override
   State<FirstProofPayoffCard> createState() => _FirstProofPayoffCardState();
@@ -82,6 +86,10 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
             key: const Key('first_proof_payoff_headline'),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
+          if (widget.patternConfidence != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            PatternConfidenceBadge(confidence: widget.patternConfidence!),
+          ],
           if (payoff.hasSnippets) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(

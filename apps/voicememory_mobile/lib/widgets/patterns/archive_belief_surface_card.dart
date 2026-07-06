@@ -6,6 +6,7 @@ import '../../features/archive_evidence/archive_belief_thread_copy.dart';
 import '../../features/archive_evidence/archive_belief_thread_model.dart';
 import '../../features/archive_proof/archive_belief_surface.dart';
 import '../../features/archive_proof/archive_belief_surface_copy.dart';
+import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/tomorrow_return/active_pattern_thread_coordinator.dart';
 import '../../features/tomorrow_return/active_pattern_thread_model.dart';
@@ -16,6 +17,7 @@ import '../../theme/voicememory_cards.dart';
 import '../proof/proof_surface_why_appeared_disclosure.dart';
 import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 import 'archive_belief_correction_actions.dart';
+import 'pattern_confidence_badge.dart';
 
 /// Archive belief proof surface — primary post-first-proof card on Archive/Patterns.
 class ArchiveBeliefSurfaceCard extends StatefulWidget {
@@ -25,12 +27,14 @@ class ArchiveBeliefSurfaceCard extends StatefulWidget {
     required this.onRecordNext,
     this.onViewPatternDetails,
     this.onDismissed,
+    this.patternConfidence,
   });
 
   final ArchiveBeliefSurface surface;
   final VoidCallback onRecordNext;
   final VoidCallback? onViewPatternDetails;
   final VoidCallback? onDismissed;
+  final PatternConfidence? patternConfidence;
 
   @override
   State<ArchiveBeliefSurfaceCard> createState() =>
@@ -120,6 +124,10 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
+          ],
+          if (widget.patternConfidence != null) ...[
+            PatternConfidenceBadge(confidence: widget.patternConfidence!),
+            const SizedBox(height: AppSpacing.sm),
           ],
           Text(
             surface.headline,

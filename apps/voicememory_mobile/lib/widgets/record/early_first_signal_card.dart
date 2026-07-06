@@ -8,12 +8,14 @@ import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_archive_insight_feedback_models.dart';
 import '../../features/early_archive/early_archive_insight_quality_engine.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
+import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import 'early_archive_insight_feedback_row.dart';
 import 'early_archive_insight_why_section.dart';
+import '../patterns/pattern_confidence_badge.dart';
 
 /// Early archive card for 1–3 saved moments — receipt, first signal, or confirmation.
 class EarlyFirstSignalCard extends StatelessWidget {
@@ -28,6 +30,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
     this.entryCount,
     this.entriesForWhy,
     this.showInsightFeedback = true,
+    this.patternConfidence,
   });
 
   final EarlyFirstSignalModel signal;
@@ -39,6 +42,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
   final int? entryCount;
   final List<JournalEntry>? entriesForWhy;
   final bool showInsightFeedback;
+  final PatternConfidence? patternConfidence;
 
   void _trackSeen() {
     final surface = analyticsSurface;
@@ -122,6 +126,10 @@ class EarlyFirstSignalCard extends StatelessWidget {
                 key: const Key('early_first_signal_title'),
                 style: ArchiveMobileTypography.responsiveSectionTitle(context),
               ),
+              if (patternConfidence != null) ...[
+                const SizedBox(height: AppSpacing.xs),
+                PatternConfidenceBadge(confidence: patternConfidence!),
+              ],
               for (final line in signal.lines) ...[
                 const SizedBox(height: AppSpacing.sm),
                 Text(
