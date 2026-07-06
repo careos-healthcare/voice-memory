@@ -7,7 +7,8 @@ abstract final class MonthlyPrivateReportCopy {
   static const cardBody =
       'ArchiveMe is collecting evidence of what returned, changed, softened, helped, or went quiet.';
 
-  static const proReason = 'Pro keeps the longer report history.';
+  static const proReason =
+      'Pro keeps the longer story — and the longer report history.';
 
   static const chatDifferentiation =
       'This is not a chat transcript. It is a private evidence report built from moments you saved.';
