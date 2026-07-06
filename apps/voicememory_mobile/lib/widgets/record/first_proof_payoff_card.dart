@@ -10,6 +10,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../patterns/pattern_confidence_badge.dart';
+import '../common/contextual_privacy_reassurance.dart';
 import 'chat_differentiation_sheet.dart';
 
 /// Emotional first-proof payoff — user evidence first, calm CTAs elsewhere.
@@ -172,6 +173,11 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ),
             ),
           ],
+          const SizedBox(height: AppSpacing.sm),
+          ContextualPrivacyReassurance(
+            source: 'first_proof_payoff',
+            entryCount: widget.entryCount,
+          ),
         ],
       ),
     );

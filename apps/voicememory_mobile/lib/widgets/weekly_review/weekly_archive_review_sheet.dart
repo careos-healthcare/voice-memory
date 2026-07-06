@@ -16,6 +16,7 @@ import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 import '../patterns/belief_change_moment_card.dart';
 import '../patterns/pattern_confidence_badge.dart';
+import '../common/contextual_privacy_reassurance.dart';
 import '../account/beta_feedback_sheet.dart';
 
 /// Full weekly archive review in a bottom sheet.
@@ -126,6 +127,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   entryCount: entryCount,
                   source: 'weekly_review',
                   compact: true,
+                  showPrivacyReassurance: false,
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.forming &&
@@ -252,6 +254,12 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
               BetaFeedbackLink(
                 source: 'weekly_review',
                 entryCount: entryCount,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              ContextualPrivacyReassurance(
+                source: 'weekly_review',
+                entryCount: entryCount,
+                compact: false,
               ),
               const SizedBox(height: AppSpacing.md),
               Align(

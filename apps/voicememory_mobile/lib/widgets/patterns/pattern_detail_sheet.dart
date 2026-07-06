@@ -27,6 +27,7 @@ import '../record/entry_importance_button.dart';
 import '../share_card/share_card_action_card.dart';
 import 'belief_change_moment_card.dart';
 import 'pattern_confidence_badge.dart';
+import '../common/contextual_privacy_reassurance.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatefulWidget {
@@ -208,6 +209,12 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   showBody: true,
                 ),
               ],
+              const SizedBox(height: AppSpacing.sm),
+              ContextualPrivacyReassurance(
+                source: 'pattern_detail',
+                entryCount: _entryCount,
+                compact: false,
+              ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.patternLabelHeading,
@@ -241,6 +248,7 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   entryCount: _entryCount,
                   source: 'pattern_detail',
                   compact: true,
+                  showPrivacyReassurance: false,
                 ),
               ],
               const SizedBox(height: AppSpacing.md),

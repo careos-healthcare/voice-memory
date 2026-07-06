@@ -311,14 +311,18 @@ void main() {
       );
       expect(moment?.canViewChangeTimeline, isTrue);
 
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: BeliefChangeMomentCard(
-              moment: moment!,
-              entryCount: 4,
-              source: 'patterns',
+            body: SingleChildScrollView(
+              child: BeliefChangeMomentCard(
+                moment: moment!,
+                entryCount: 4,
+                source: 'patterns',
+              ),
             ),
           ),
         ),

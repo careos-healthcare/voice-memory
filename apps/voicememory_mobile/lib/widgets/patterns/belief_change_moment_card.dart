@@ -7,6 +7,7 @@ import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../common/contextual_privacy_reassurance.dart';
 import 'archive_change_timeline_card.dart';
 
 /// Emotional payoff when a repeat pattern may be softening — evidence only.
@@ -17,12 +18,14 @@ class BeliefChangeMomentCard extends StatefulWidget {
     required this.entryCount,
     required this.source,
     this.compact = false,
+    this.showPrivacyReassurance = true,
   });
 
   final BeliefChangeMoment moment;
   final int entryCount;
   final String source;
   final bool compact;
+  final bool showPrivacyReassurance;
 
   @override
   State<BeliefChangeMomentCard> createState() => _BeliefChangeMomentCardState();
@@ -152,6 +155,13 @@ class _BeliefChangeMomentCardState extends State<BeliefChangeMomentCard> {
                 onPressed: _openChangeTimeline,
                 child: const Text(BeliefChangeMomentCopy.viewChangeTimelineCta),
               ),
+            ),
+          ],
+          if (widget.showPrivacyReassurance) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ContextualPrivacyReassurance(
+              source: widget.source,
+              entryCount: widget.entryCount,
             ),
           ],
         ],

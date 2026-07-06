@@ -9,6 +9,7 @@ import '../../features/private_report/private_report_copy.dart';
 import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../common/contextual_privacy_reassurance.dart';
 
 /// Full private archive report in a bottom sheet.
 class PrivateReportSheet extends StatelessWidget {
@@ -145,6 +146,12 @@ class PrivateReportSheet extends StatelessWidget {
                 listKey: const Key('private_report_sheet_not_included'),
                 labelStyle: labelStyle,
                 bodyStyle: secondaryStyle,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              ContextualPrivacyReassurance(
+                source: surface,
+                entryCount: entryCount,
+                compact: false,
               ),
               const SizedBox(height: AppSpacing.md),
               Align(
