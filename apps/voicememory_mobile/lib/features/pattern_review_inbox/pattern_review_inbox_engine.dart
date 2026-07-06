@@ -2,7 +2,7 @@ import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../early_archive/early_first_signal_engine.dart';
-import '../early_archive/early_first_signal_model.dart';
+import '../early_archive/early_first_signal_engine.dart';
 import '../first_proof_payoff/first_proof_payoff_engine.dart';
 import '../first_proof_truth/first_proof_truth_store.dart';
 import '../helped_tracking/helped_tracking_engine.dart';

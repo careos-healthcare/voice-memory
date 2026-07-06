@@ -31,6 +31,13 @@ import '../features/beta/tester_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/beta/core_value_feedback_store.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
+import '../features/first_proof_truth/first_proof_truth_store.dart';
+import '../features/helped_tracking/helped_tracking_store.dart';
+import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/quiet_signal/quiet_signal_analytics.dart';
+import '../features/voice_capture/microphone_permission_environment.dart';
+import '../features/what_changed/what_changed_v2_store.dart';
 import '../push/fcm_service.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
@@ -346,5 +353,12 @@ class AppServices {
     await ConfirmedRepeatThoughtMapStore.resetForTest();
     ArchiveMeDemoState.resetForTest();
     await RepeatReturnCheckStore.resetForTest();
+    await ComeBackTomorrowV2Store.resetForTest(s.prefs);
+    await FirstProofTruthStore.resetForTest(s.prefs);
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
+    PatternNameStore.resetForTest();
+    MicrophonePermissionEnvironment.resetForTest();
+    QuietSignalAnalytics.resetForTest();
   }
 }

@@ -76,9 +76,9 @@ abstract final class PatternReviewInboxAnalytics {
       event,
       source: source,
       entryCount: entryCount,
-      itemCount: itemCount,
-      itemType: itemType,
-      resultType: resultType,
+      recordCount: itemCount,
+      optionType: itemType,
+      answerType: resultType,
     );
     if (kDebugMode) {
       debugPrint(
