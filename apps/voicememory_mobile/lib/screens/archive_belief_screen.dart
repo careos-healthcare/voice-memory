@@ -301,6 +301,9 @@ import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
 import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_engine.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_model.dart';
 import '../features/monthly_private_report/monthly_private_report_dismiss_store.dart';
 import '../features/monthly_private_report/monthly_private_report_engine.dart';
 import '../features/monthly_private_report/monthly_private_report_model.dart';
@@ -308,6 +311,7 @@ import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../features/pro_evidence_value/pro_evidence_value_model.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
+import '../widgets/pro/archive_backup_bridge_card.dart';
 import '../widgets/pro/monthly_private_report_preview_card.dart';
 import '../widgets/pro/pro_evidence_value_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
@@ -667,6 +671,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProValuePreviewDismissStore.ensureLoaded();
     await ProEvidenceValueDismissStore.ensureLoaded();
     await MonthlyPrivateReportDismissStore.ensureLoaded();
+    await ArchiveBackupBridgeDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
     await CoreValueFeedbackStore.ensureLoaded();
@@ -2315,6 +2320,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
   Future<void> _dismissMonthlyPrivateReportPreview() async {
     await MonthlyPrivateReportDismissStore.dismiss();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _dismissArchiveBackupBridge() async {
+    await ArchiveBackupBridgeDismissStore.dismiss();
     if (mounted) setState(() {});
   }
 
@@ -4368,6 +4378,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       showProEvidenceValuePrivateReportOnPatterns,
                 ),
               );
+      final archiveBackupBridgeContext =
+          ArchiveBackupBridgeEngine.buildContext(
+        surface: ArchiveBackupBridgeSurface.archivePatterns,
+        entryCount: _entries.length,
+        isPro: _archiveIsPro,
+        dismissed: ArchiveBackupBridgeDismissStore.isDismissed(),
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final showArchiveBackupBridgeOnPatterns =
+          showPrivateArchiveReport &&
+              privateArchiveReportPreviewForProGate &&
+              ArchiveBackupBridgeEngine.shouldShowCard(
+                archiveBackupBridgeContext,
+              );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -4671,6 +4697,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onDismiss: () =>
                         unawaited(_dismissMonthlyPrivateReportPreview()),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showArchiveBackupBridgeOnPatterns) ...[
+                  ArchiveBackupBridgeCard(
+                    contextData: archiveBackupBridgeContext,
+                    onSeePro: () => _openProEvidenceValueSubscription(
+                      analyticsSource: 'patterns_archive_backup_bridge',
+                    ),
+                    onDismiss: () => unawaited(_dismissArchiveBackupBridge()),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],

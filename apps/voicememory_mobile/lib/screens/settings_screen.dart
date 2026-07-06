@@ -6,9 +6,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
+import '../billing/archive_entitlement_reader.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_engine.dart';
+import '../features/archive_backup_bridge/archive_backup_bridge_model.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
@@ -37,6 +41,7 @@ import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
 import '../widgets/settings/privacy_data_controls_section.dart';
 import '../widgets/beta/beta_feedback_intelligence_card.dart';
+import '../widgets/pro/archive_backup_bridge_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -53,11 +58,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _remindersEnabled = false;
   bool _remindersBusy = false;
   List<JournalEntry> _journalEntries = const [];
+  bool _isPro = false;
   @override
   void initState() {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
-    _loadJournalEntries();
+    unawaited(ArchiveBackupBridgeDismissStore.ensureLoaded());
+    unawaited(_loadJournalEntries());
+    unawaited(_loadIsPro());
     PackageInfo.fromPlatform().then((info) {
       if (mounted) setState(() => _packageInfo = info);
     });
@@ -115,6 +123,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _journalEntries = entries);
   }
 
+  Future<void> _loadIsPro() async {
+    final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
+    if (!mounted) return;
+    setState(() => _isPro = isPro);
+  }
+
+  Future<void> _dismissArchiveBackupBridge() async {
+    await ArchiveBackupBridgeDismissStore.dismiss();
+    if (mounted) setState(() {});
+  }
+
   Future<void> _restorePurchases() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
       billing: AppServices.instance.billing,
@@ -154,6 +173,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ProEvidenceValueEngine.firstProofPayoffSeenForEntries(
               _journalEntries,
             );
+    final archiveBackupBridgeContext =
+        ArchiveBackupBridgeEngine.buildContext(
+      surface: ArchiveBackupBridgeSurface.settings,
+      entryCount: _journalEntries.length,
+      isPro: _isPro,
+      dismissed: ArchiveBackupBridgeDismissStore.isDismissed(),
+      entries: _journalEntries,
+      isZeroEntryState: _journalEntries.isEmpty,
+    );
+    final showArchiveBackupBridgeOnSettings =
+        ArchiveBackupBridgeEngine.shouldShowCard(archiveBackupBridgeContext);
 
     return PushedScreenShell(
       title: ConsumerUiCopy.settings,
@@ -233,6 +263,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onSubmitted: () {
                   if (mounted) setState(() {});
                 },
+              ),
+            ],
+            if (showArchiveBackupBridgeOnSettings) ...[
+              const SizedBox(height: AppSpacing.sm),
+              ArchiveBackupBridgeCard(
+                contextData: archiveBackupBridgeContext,
+                compact: true,
+                onSeePro: _isPro ? null : () => context.push('/subscription'),
+                onDismiss: () => unawaited(_dismissArchiveBackupBridge()),
               ),
             ],
             ListTile(
