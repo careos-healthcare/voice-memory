@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_analytics.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_model.dart';
@@ -36,6 +39,7 @@ class _ProEvidenceValueCardState extends State<ProEvidenceValueCard> {
   void _trackSeenOnce() {
     if (_trackedSeen) return;
     _trackedSeen = true;
+    unawaited(BetaFeedbackIntelligenceStore.markProEvidenceBridgeSeen());
     ProEvidenceValueAnalytics.seen(
       source: widget.surface.analyticsValue,
       entryCount: widget.entryCount,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../design/archive_mobile_typography.dart';
@@ -6,7 +8,9 @@ import '../features/beta/tester_mission_copy.dart';
 import '../features/beta_activation/beta_activation_summary_copy.dart';
 import '../features/beta_test_script/beta_test_script_copy.dart';
 import '../features/beta_test_script/beta_test_script_engine.dart';
-import '../features/beta_test_script/beta_test_script_copy.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../features/support/testflight_feedback_analytics.dart';
 import '../features/support/testflight_feedback_copy.dart';
 import '../features/support/testflight_feedback_launcher.dart';
@@ -20,6 +24,8 @@ import '../widgets/account/beta_feedback_sheet.dart';
 import '../widgets/account/beta_readiness_check_sheet.dart';
 import '../widgets/account/beta_test_script_sheet.dart';
 import '../features/beta_readiness/beta_readiness_copy.dart';
+import '../widgets/beta/beta_feedback_intelligence_card.dart';
+import '../widgets/beta/beta_feedback_summary_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Beta-only tester mission guide — steps, feedback question, and email feedback.
@@ -36,12 +42,14 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
   @override
   void initState() {
     super.initState();
+    unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     _loadEntries();
   }
 
   Future<void> _loadEntries() async {
     if (!AppServices.isInitialized) return;
     final entries = await AppServices.instance.journal.loadAll();
+    await BetaFeedbackIntelligenceEngine.syncMilestones(entries: entries);
     if (!mounted) return;
     setState(() => _entries = entries);
   }
@@ -98,6 +106,19 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
       color: AppColors.textSecondary,
     );
     final progress = BetaTestScriptEngine.buildProgressSummary(entries: _entries);
+    final feedbackSummary =
+        BetaFeedbackIntelligenceEngine.buildSummary(entries: _entries);
+    final showBetaFeedbackIntelligenceCard =
+        BetaFeedbackIntelligenceEngine.shouldShowCard(
+      BetaFeedbackIntelligenceEngine.buildContext(
+        surface: BetaFeedbackIntelligenceSurface.testingArchiveMe,
+        entryCount: _entries.length,
+        entries: _entries,
+        isZeroEntryState: _entries.isEmpty,
+      ),
+    );
+    final firstProofReached = progress.firstProofReached ||
+        feedbackSummary.state.hasReachedFirstProof;
 
     return PushedScreenShell(
       title: TesterMissionCopy.title,
@@ -164,6 +185,22 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               value: progress.feedbackLabel,
               keyName: 'testing_archiveme_beta_test_progress_feedback',
             ),
+            const SizedBox(height: AppSpacing.md),
+            BetaFeedbackSummaryCard(
+              entries: _entries,
+              summary: feedbackSummary,
+            ),
+            if (showBetaFeedbackIntelligenceCard) ...[
+              const SizedBox(height: AppSpacing.md),
+              BetaFeedbackIntelligenceCard(
+                surface: BetaFeedbackIntelligenceSurface.testingArchiveMe,
+                entryCount: _entries.length,
+                reachedFirstProof: firstProofReached,
+                onSubmitted: () {
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             Align(
               alignment: Alignment.centerLeft,

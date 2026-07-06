@@ -517,7 +517,11 @@ import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../features/pro_evidence_value/pro_evidence_value_model.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../widgets/pro/pro_evidence_value_card.dart';
+import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
 import '../widgets/onboarding/tomorrow_return_cue_card.dart';
@@ -1675,6 +1679,7 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _loadRecordReturnProState() async {
     if (!AppServices.isInitialized) return;
     await ProEvidenceValueDismissStore.ensureLoaded();
+    await BetaFeedbackIntelligenceStore.ensureLoaded();
     final state = await RecordReturnProStore.instance().load();
     final isPro =
         await (widget.entitlementReader ??
@@ -4749,6 +4754,38 @@ class _RecordScreenState extends State<RecordScreen> {
             firstProofPayoffVisible: true,
           ),
         );
+    const betaFeedbackRecordSurfaces = [
+      BetaFeedbackIntelligenceSurface.afterProEvidenceSheet,
+      BetaFeedbackIntelligenceSurface.afterFirstProofPayoff,
+    ];
+    final betaFeedbackIntelligenceSurfaceOnRecordReady =
+        ui == RecordUiState.ready
+            ? BetaFeedbackIntelligenceEngine.resolveVisibleSurface(
+                candidates: betaFeedbackRecordSurfaces,
+                entryCount: _journalEntryCount,
+                entries: _journalEntries,
+                returnChecks: RepeatReturnCheckStore.cached,
+                isZeroEntryState: _journalEntryCount == 0,
+                isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+                firstProofPayoffVisible: firstProofPayoffSeenOnRecord,
+              )
+            : null;
+    final betaFeedbackIntelligenceSurfacePostSave =
+        ui == RecordUiState.done && entriesAfterSave.isNotEmpty
+            ? BetaFeedbackIntelligenceEngine.resolveVisibleSurface(
+                candidates: betaFeedbackRecordSurfaces,
+                entryCount: postSaveEntryCount,
+                entries: entriesAfterSave,
+                returnChecks: RepeatReturnCheckStore.cached,
+                isPostSaveDegradedState: VoiceCaptureQuality.isDegradedVoiceCapture(
+                  entriesAfterSave.last,
+                ),
+                firstProofTruthQuestionActive: showFirstProofTruth,
+                whatChangedQuestionActive: showWhatChangedV2,
+                firstProofPayoffVisible:
+                    showFirstProofPayoff && firstProofPayoffCandidate != null,
+              )
+            : null;
     final helpedTrackingPrompt = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? HelpedTrackingEngine.buildPrompt(
@@ -5689,6 +5726,18 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (betaFeedbackIntelligenceSurfaceOnRecordReady != null) ...[
+                      BetaFeedbackIntelligenceCard(
+                        surface: betaFeedbackIntelligenceSurfaceOnRecordReady,
+                        entryCount: _journalEntryCount,
+                        reachedFirstProof: firstProofPayoffSeenOnRecord,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSubmitted: () {
+                          if (mounted) setState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
@@ -6391,6 +6440,18 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                               onDismiss: () =>
                                   unawaited(_dismissProEvidenceValueBridge()),
+                            ),
+                          ],
+                          if (betaFeedbackIntelligenceSurfacePostSave != null) ...[
+                            const SizedBox(height: 12),
+                            BetaFeedbackIntelligenceCard(
+                              surface: betaFeedbackIntelligenceSurfacePostSave,
+                              entryCount: postSaveEntryCount,
+                              reachedFirstProof: showFirstProofPayoff &&
+                                  firstProofPayoffCandidate != null,
+                              onSubmitted: () {
+                                if (mounted) setState(() {});
+                              },
                             ),
                           ],
                           if (showFirstProofTruth) ...[

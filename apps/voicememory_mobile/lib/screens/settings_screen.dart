@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -8,7 +10,12 @@ import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
+import '../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../features/beta_test_script/beta_test_script_copy.dart';
+import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
+import '../models/journal_entry.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
@@ -29,6 +36,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
 import '../widgets/settings/privacy_data_controls_section.dart';
+import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -44,9 +52,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   RestorePurchasesFlow? _restoreFlow;
   bool _remindersEnabled = false;
   bool _remindersBusy = false;
+  List<JournalEntry> _journalEntries = const [];
   @override
   void initState() {
     super.initState();
+    unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
+    _loadJournalEntries();
     PackageInfo.fromPlatform().then((info) {
       if (mounted) setState(() => _packageInfo = info);
     });
@@ -97,6 +108,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     context.push('/testing-archiveme');
   }
 
+  Future<void> _loadJournalEntries() async {
+    if (!AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(() => _journalEntries = entries);
+  }
+
   Future<void> _restorePurchases() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
       billing: AppServices.instance.billing,
@@ -120,6 +138,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final versionLabel = _packageInfo == null
         ? '…'
         : '${_packageInfo!.version} (${_packageInfo!.buildNumber})';
+    final showSettingsBetaFeedbackCard = ArchiveBetaMissionGate.isEnabled &&
+        BetaFeedbackIntelligenceEngine.shouldShowCard(
+          BetaFeedbackIntelligenceEngine.buildContext(
+            surface: BetaFeedbackIntelligenceSurface.settingsBeta,
+            entryCount: _journalEntries.length,
+            entries: _journalEntries,
+            isZeroEntryState: _journalEntries.isEmpty,
+            firstProofPayoffVisible:
+                BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof,
+          ),
+        );
+    final settingsFirstProofReached =
+        BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof ||
+            ProEvidenceValueEngine.firstProofPayoffSeenForEntries(
+              _journalEntries,
+            );
 
     return PushedScreenShell(
       title: ConsumerUiCopy.settings,
@@ -189,6 +223,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: _openTestingArchiveMeGuide,
               ),
+            if (showSettingsBetaFeedbackCard) ...[
+              const SizedBox(height: AppSpacing.sm),
+              BetaFeedbackIntelligenceCard(
+                surface: BetaFeedbackIntelligenceSurface.settingsBeta,
+                entryCount: _journalEntries.length,
+                reachedFirstProof: settingsFirstProofReached,
+                compact: true,
+                onSubmitted: () {
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
             ListTile(
               key: const Key('settings_pro_value_preview_tile'),
               contentPadding: EdgeInsets.zero,

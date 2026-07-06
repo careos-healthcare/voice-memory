@@ -141,6 +141,11 @@ void main() {
       await pumpSettings(tester);
       await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('testing_archiveme_send_feedback')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
       await tester.pump();
 
@@ -164,6 +169,11 @@ void main() {
       await pumpSettings(tester);
       await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('testing_archiveme_send_feedback')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
       await tester.pump();
 
