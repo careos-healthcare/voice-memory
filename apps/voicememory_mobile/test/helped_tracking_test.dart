@@ -175,7 +175,7 @@ void main() {
         ),
         isNull,
       );
-      expect(WhatChangedV2Copy.question, 'What changed this time?');
+      expect(WhatChangedV2Copy.question, 'What changed since last time?');
       expect(
         HelpedTrackingCopy.question,
         isNot(contains('What changed this time')),

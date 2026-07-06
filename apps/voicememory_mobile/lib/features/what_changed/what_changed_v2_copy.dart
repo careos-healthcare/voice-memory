@@ -1,41 +1,57 @@
 import 'what_changed_v2_model.dart';
 
-/// User-facing copy for What Changed v2 — user-reported evidence only.
+/// User-facing copy for What Changed v3 — last time vs this time.
 abstract final class WhatChangedV2Copy {
   WhatChangedV2Copy._();
 
-  static const question = 'What changed this time?';
+  static const question = 'What changed since last time?';
 
-  static const savedStronger =
-      'Saved. ArchiveMe will watch whether this is getting louder.';
-  static const savedSofter =
-      'Saved. ArchiveMe will watch whether this is softening.';
-  static const savedSame =
-      'Saved. ArchiveMe will keep comparing this pattern.';
-  static const savedDifferent =
-      'Saved. ArchiveMe will watch what changed in your response.';
-  static const savedSomethingHelped =
-      'Saved. ArchiveMe will watch whether that helps again.';
+  static const body =
+      'ArchiveMe has seen this thread before. Mark what felt different this time.';
 
-  static String savedMessage(WhatChangedV2Option option) => switch (option) {
-        WhatChangedV2Option.stronger => savedStronger,
-        WhatChangedV2Option.softer => savedSofter,
-        WhatChangedV2Option.same => savedSame,
-        WhatChangedV2Option.differentResponse => savedDifferent,
-        WhatChangedV2Option.somethingHelped => savedSomethingHelped,
+  static const thenLabel = 'Then';
+
+  static const nowLabel = 'Now';
+
+  static const payoffSofter =
+      'Last time it looked stronger. This time it may have softened.';
+
+  static const payoffStronger =
+      'This may be getting louder. ArchiveMe will keep watching.';
+
+  static const payoffSame = 'This looks similar to last time.';
+
+  static const payoffDifferent = 'This time, your response changed.';
+
+  static const payoffHelped =
+      'Something helped this time. ArchiveMe will remember that.';
+
+  static String payoffMessage(WhatChangedV2Option option) => switch (option) {
+        WhatChangedV2Option.softer => payoffSofter,
+        WhatChangedV2Option.stronger => payoffStronger,
+        WhatChangedV2Option.same => payoffSame,
+        WhatChangedV2Option.differentResponse => payoffDifferent,
+        WhatChangedV2Option.somethingHelped => payoffHelped,
       };
+
+  /// Legacy alias kept for weekly review and external references.
+  static String savedMessage(WhatChangedV2Option option) =>
+      payoffMessage(option);
 
   static String weeklyReviewLine(WhatChangedV2Option option) =>
-      switch (option) {
-        WhatChangedV2Option.stronger =>
-          'You marked that the repeat felt stronger this time.',
-        WhatChangedV2Option.softer =>
-          'You marked that the repeat felt softer this time.',
-        WhatChangedV2Option.same =>
-          'You marked that the repeat felt the same this time.',
-        WhatChangedV2Option.differentResponse =>
-          'You marked that you responded differently this time.',
-        WhatChangedV2Option.somethingHelped =>
-          'You marked that something helped this time.',
-      };
+      payoffMessage(option);
+
+  static String formatSnippet(String quote) => '"$quote"';
+
+  static List<String> allVisibleStrings() => [
+        question,
+        body,
+        thenLabel,
+        nowLabel,
+        payoffSofter,
+        payoffStronger,
+        payoffSame,
+        payoffDifferent,
+        payoffHelped,
+      ];
 }

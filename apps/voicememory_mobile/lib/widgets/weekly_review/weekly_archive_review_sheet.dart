@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/weekly_review/weekly_archive_review_copy.dart';
@@ -12,6 +13,7 @@ import '../../features/weekly_review/weekly_archive_review_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
+import '../patterns/belief_change_moment_card.dart';
 import '../account/beta_feedback_sheet.dart';
 
 /// Full weekly archive review in a bottom sheet.
@@ -22,12 +24,14 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     this.isPro = true,
     this.onSeePro,
     this.entryCount = 0,
+    this.beliefChangeMoment,
   });
 
   final WeeklyArchiveReviewResult review;
   final bool isPro;
   final VoidCallback? onSeePro;
   final int entryCount;
+  final BeliefChangeMoment? beliefChangeMoment;
 
   static Future<void> show(
     BuildContext context, {
@@ -35,6 +39,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     bool isPro = true,
     VoidCallback? onSeePro,
     int entryCount = 0,
+    BeliefChangeMoment? beliefChangeMoment,
   }) {
     unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
@@ -50,6 +55,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           isPro: isPro,
           onSeePro: onSeePro,
           entryCount: entryCount,
+          beliefChangeMoment: beliefChangeMoment,
         ),
       ),
     );
@@ -98,6 +104,15 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   style: ArchiveMobileTypography.explanationBody(context).copyWith(
                     color: AppColors.textSecondary,
                   ),
+                ),
+              ],
+              if (beliefChangeMoment != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                BeliefChangeMomentCard(
+                  moment: beliefChangeMoment!,
+                  entryCount: entryCount,
+                  source: 'weekly_review',
+                  compact: true,
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.forming &&

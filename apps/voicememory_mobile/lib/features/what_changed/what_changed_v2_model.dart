@@ -61,6 +61,17 @@ class WhatChangedV2Record {
   }
 }
 
+/// Grounded then/now snippets for the comparison payoff.
+class WhatChangedV2Comparison {
+  const WhatChangedV2Comparison({
+    required this.thenSnippet,
+    required this.nowSnippet,
+  });
+
+  final String thenSnippet;
+  final String nowSnippet;
+}
+
 /// Post-save prompt for one entry.
 class WhatChangedV2Prompt {
   const WhatChangedV2Prompt({
@@ -68,10 +79,30 @@ class WhatChangedV2Prompt {
     required this.entryCount,
     required this.hasConfirmedRepeat,
     required this.options,
+    this.comparison,
   });
 
   final String entryId;
   final int entryCount;
   final bool hasConfirmedRepeat;
   final List<WhatChangedV2Option> options;
+  final WhatChangedV2Comparison? comparison;
+
+  bool get hasComparison =>
+      comparison != null &&
+      comparison!.thenSnippet.isNotEmpty &&
+      comparison!.nowSnippet.isNotEmpty;
+}
+
+/// Answered payoff with optional comparison for secondary surfaces.
+class WhatChangedV2AnsweredPayoff {
+  const WhatChangedV2AnsweredPayoff({
+    required this.option,
+    required this.payoffLine,
+    required this.comparison,
+  });
+
+  final WhatChangedV2Option option;
+  final String payoffLine;
+  final WhatChangedV2Comparison comparison;
 }

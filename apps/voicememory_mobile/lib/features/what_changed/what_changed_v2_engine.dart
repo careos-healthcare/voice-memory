@@ -14,11 +14,13 @@ import 'what_changed_v2_copy.dart';
 import 'what_changed_v2_model.dart';
 import 'what_changed_v2_store.dart';
 
-/// User-reported change markers — upgrades post-save return check flow.
+/// User-reported change markers — last time vs this time comparison.
 abstract final class WhatChangedV2Engine {
   WhatChangedV2Engine._();
 
   static const minEntryCount = 4;
+  static const _maxSnippetChars = 72;
+  static const _minSnippetChars = 12;
 
   static const promptOptions = [
     WhatChangedV2Option.stronger,
@@ -50,6 +52,61 @@ abstract final class WhatChangedV2Engine {
       entryCount: entries.length,
       hasConfirmedRepeat: true,
       options: promptOptions,
+      comparison: buildComparison(entries: entries),
+    );
+  }
+
+  /// Post-save surface — unanswered prompt or answered comparison payoff.
+  static WhatChangedV2Prompt? buildPostSaveDisplay({
+    required List<JournalEntry> entries,
+    List<RepeatReturnCheckRecord> returnChecks = const [],
+  }) {
+    final unanswered = buildPrompt(
+      entries: entries,
+      returnChecks: returnChecks,
+    );
+    if (unanswered != null) return unanswered;
+
+    final payoff = buildAnsweredPayoff(entries: entries);
+    if (payoff == null) return null;
+    if (payoff.option == WhatChangedV2Option.somethingHelped) return null;
+    if (!_hasGroundedRepeatContext(entries)) return null;
+
+    final latestEntryId = RepeatReturnCheckStore.latestSavedEntryId(entries);
+    return WhatChangedV2Prompt(
+      entryId: latestEntryId,
+      entryCount: entries.length,
+      hasConfirmedRepeat: true,
+      options: promptOptions,
+      comparison: payoff.comparison,
+    );
+  }
+
+  static WhatChangedV2Comparison? buildComparison({
+    required List<JournalEntry> entries,
+  }) {
+    if (!_hasGroundedRepeatContext(entries)) {
+      return null;
+    }
+    return _comparisonFromEligible(entries);
+  }
+
+  static WhatChangedV2AnsweredPayoff? buildAnsweredPayoff({
+    required List<JournalEntry> entries,
+  }) {
+    final ids = entries.map((entry) => entry.id).toSet();
+    final marker = WhatChangedV2Store.cached
+        .where((record) => ids.contains(record.entryId))
+        .firstOrNull;
+    if (marker == null) return null;
+
+    final comparison = buildComparison(entries: entries);
+    if (comparison == null) return null;
+
+    return WhatChangedV2AnsweredPayoff(
+      option: marker.option,
+      payoffLine: WhatChangedV2Copy.payoffMessage(marker.option),
+      comparison: comparison,
     );
   }
 
@@ -62,23 +119,49 @@ abstract final class WhatChangedV2Engine {
       isPostSaveDone &&
       !isDegradedPostSave &&
       !showFirstProofMoment &&
-      prompt != null;
+      prompt != null &&
+      prompt.hasComparison;
+
+  static bool shouldShowPostSaveDisplay({
+    required bool isPostSaveDone,
+    required bool isDegradedPostSave,
+    required bool showFirstProofMoment,
+    WhatChangedV2Prompt? display,
+  }) =>
+      isPostSaveDone &&
+      !isDegradedPostSave &&
+      !showFirstProofMoment &&
+      display != null &&
+      display.hasComparison;
 
   static WeeklyArchiveReviewSection? weeklyReviewSection({
     required List<JournalEntry> entries,
   }) {
-    final ids = entries.map((entry) => entry.id).toSet();
-    final marker = WhatChangedV2Store.cached
-        .where((record) => ids.contains(record.entryId))
-        .where((record) => record.option != WhatChangedV2Option.somethingHelped)
-        .firstOrNull;
-    if (marker == null) return null;
+    final payoff = buildAnsweredPayoff(entries: entries);
+    if (payoff == null) return null;
 
     return WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatChangedLabel,
-      body: WhatChangedV2Copy.weeklyReviewLine(marker.option),
+      body: payoff.payoffLine,
       isSupported: true,
     );
+  }
+
+  static bool _hasGroundedRepeatContext(List<JournalEntry> entries) {
+    if (entries.length < minEntryCount) return false;
+    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) {
+      return false;
+    }
+    if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {
+      return false;
+    }
+    if (ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries)) {
+      return false;
+    }
+    if (ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries)) {
+      return false;
+    }
+    return true;
   }
 
   static bool _allowsPrompt(List<JournalEntry> entries) {
@@ -110,6 +193,63 @@ abstract final class WhatChangedV2Engine {
     if (text.trim().isEmpty) return false;
     if (RecordCaptureModeEngine.isQuietDayText(text)) return false;
 
-    return true;
+    return _comparisonFromEligible(entries) != null;
+  }
+
+  static WhatChangedV2Comparison? _comparisonFromEligible(
+    List<JournalEntry> entries,
+  ) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 4) return null;
+
+    final prior = eligible[eligible.length - 2];
+    final latest = eligible.last;
+    final phrases = ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+      ConfirmedRepeatEvidencePhraseEngine.extract(
+        eligible.sublist(0, 3),
+      ).phrases,
+      eligible.sublist(0, 3),
+    );
+
+    final thenSnippet = _snippetForEntry(prior, phrases);
+    final nowSnippet = _snippetForEntry(latest, phrases);
+    if (thenSnippet == null || nowSnippet == null) return null;
+    if (thenSnippet.toLowerCase().trim() == nowSnippet.toLowerCase().trim()) {
+      return null;
+    }
+
+    return WhatChangedV2Comparison(
+      thenSnippet: thenSnippet,
+      nowSnippet: nowSnippet,
+    );
+  }
+
+  static String? _snippetForEntry(
+    JournalEntry entry,
+    List<String> groundedPhrases,
+  ) {
+    final text = ComparableEvidenceText.userText(entry);
+    if (text.length < _minSnippetChars) return null;
+
+    for (final phrase in groundedPhrases) {
+      final normalized = phrase.trim().toLowerCase();
+      if (normalized.isEmpty) continue;
+      final index = text.toLowerCase().indexOf(normalized);
+      if (index < 0) continue;
+
+      final start = index > 24 ? index - 24 : 0;
+      final end = (index + normalized.length + 32).clamp(0, text.length);
+      final slice = text.substring(start, end).trim();
+      if (slice.length >= _minSnippetChars) return _trimSnippet(slice);
+    }
+
+    if (text.length >= _minSnippetChars) return _trimSnippet(text);
+    return null;
+  }
+
+  static String _trimSnippet(String snippet) {
+    final cleaned = snippet.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (cleaned.length <= _maxSnippetChars) return cleaned;
+    return '${cleaned.substring(0, _maxSnippetChars - 1).trim()}…';
   }
 }

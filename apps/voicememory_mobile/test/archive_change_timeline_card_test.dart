@@ -64,7 +64,7 @@ List<JournalEntry> _fourRelatedRepeatEntries() => [
       _entry(
         id: 'e4',
         transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
+            'The meeting invite came in and I said yes again with no capacity left for it.',
         createdAt: DateTime(2026, 6, 13, 12),
       ),
     ];

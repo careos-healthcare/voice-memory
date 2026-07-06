@@ -19,6 +19,29 @@ class ArchiveChangeTimelineCard extends StatelessWidget {
   final ArchiveChangeTimeline timeline;
   final int entryCount;
 
+  static Future<void> showSheet(
+    BuildContext context, {
+    required ArchiveChangeTimeline timeline,
+    required int entryCount,
+  }) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: ArchiveChangeTimelineCard(
+            timeline: timeline,
+            entryCount: entryCount,
+          ),
+        ),
+      ),
+    );
+  }
+
   static const Color _railColor = Color(0xFFCBD5E0);
 
   @override

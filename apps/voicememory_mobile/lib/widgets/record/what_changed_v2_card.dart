@@ -11,7 +11,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Post-save What Changed v2 question — replaces legacy return-check answer UI.
+/// Post-save What Changed v3 — last time vs this time comparison.
 class WhatChangedV2Card extends StatefulWidget {
   const WhatChangedV2Card({
     super.key,
@@ -44,19 +44,24 @@ class WhatChangedV2Card extends StatefulWidget {
 class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
   WhatChangedV2Store? _store;
   bool _saving = false;
-  bool _answered = false;
-  String? _statusMessage;
+  WhatChangedV2Option? _selectedOption;
   var _trackedSeen = false;
 
   WhatChangedV2Store get _resolvedStore =>
       _store ??= widget.store ?? WhatChangedV2Store.instance();
 
-  bool get _hasStoredAnswer =>
-      WhatChangedV2Store.cached
-          .any((record) => record.entryId == widget.prompt.entryId);
+  WhatChangedV2Record? get _storedRecord {
+    for (final record in WhatChangedV2Store.cached) {
+      if (record.entryId == widget.prompt.entryId) return record;
+    }
+    return null;
+  }
+
+  WhatChangedV2Option? get _answeredOption =>
+      _selectedOption ?? _storedRecord?.option;
 
   void _trackSeenOnce() {
-    if (_trackedSeen || _answered || _hasStoredAnswer) return;
+    if (_trackedSeen || _answeredOption != null) return;
     _trackedSeen = true;
     WhatChangedV2Analytics.seen(
       source: widget.source,
@@ -66,7 +71,7 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
   }
 
   Future<void> _select(WhatChangedV2Option option) async {
-    if (_saving || _answered || _hasStoredAnswer) return;
+    if (_saving || _answeredOption != null) return;
     _saving = true;
     unawaited(
       _resolvedStore.saveSelection(
@@ -84,8 +89,7 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
     if (!mounted) return;
     setState(() {
       _saving = false;
-      _answered = true;
-      _statusMessage = WhatChangedV2Copy.savedMessage(option);
+      _selectedOption = option;
     });
     widget.onChanged?.call();
     if (option == WhatChangedV2Option.somethingHelped) {
@@ -93,31 +97,73 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
     }
   }
 
+  Widget _buildPayoffCard(BuildContext context, WhatChangedV2Option option) {
+    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
+      color: AppColors.textPrimary,
+      height: 1.45,
+    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
+      color: AppColors.textSecondary,
+    );
+    final comparison = widget.prompt.comparison;
+
+    return Container(
+      key: const Key('what_changed_v2_payoff_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            WhatChangedV2Copy.payoffMessage(option),
+            key: const Key('what_changed_v2_payoff_line'),
+            style: bodyStyle,
+          ),
+          if (comparison != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              WhatChangedV2Copy.thenLabel,
+              key: const Key('what_changed_v2_then_label'),
+              style: labelStyle,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              WhatChangedV2Copy.formatSnippet(comparison.thenSnippet),
+              key: const Key('what_changed_v2_then_snippet'),
+              style: bodyStyle,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              WhatChangedV2Copy.nowLabel,
+              key: const Key('what_changed_v2_now_label'),
+              style: labelStyle,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              WhatChangedV2Copy.formatSnippet(comparison.nowSnippet),
+              key: const Key('what_changed_v2_now_snippet'),
+              style: bodyStyle,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
+    final answered = _answeredOption;
+    if (answered != null) {
+      return _buildPayoffCard(context, answered);
+    }
+
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
+      color: AppColors.textSecondary,
+      height: 1.45,
     );
-
-    if (_statusMessage != null) {
-      return Container(
-        key: const Key('what_changed_v2_saved_message'),
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
-        child: Text(
-          _statusMessage!,
-          style: bodyStyle,
-        ),
-      );
-    }
-
-    if (_answered || _hasStoredAnswer) {
-      return const SizedBox.shrink(key: Key('what_changed_v2_hidden'));
-    }
 
     return Container(
       key: const Key('what_changed_v2_card'),
@@ -131,6 +177,12 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
             WhatChangedV2Copy.question,
             key: const Key('what_changed_v2_question'),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            WhatChangedV2Copy.body,
+            key: const Key('what_changed_v2_body'),
+            style: bodyStyle,
           ),
           const SizedBox(height: AppSpacing.sm),
           Wrap(

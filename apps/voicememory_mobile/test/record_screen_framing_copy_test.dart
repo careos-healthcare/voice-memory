@@ -94,7 +94,7 @@ List<JournalEntry> _confirmedRepeatJournalEntries(int count) {
     'I had no capacity but I said yes again to the extra meeting today.',
     'Same thing — said yes when I had no capacity for one more thing.',
     'I said yes again even though I had no capacity for one more ask.',
-    'I said yes again even though I had no capacity for one more ask today.',
+    'The meeting invite came in and I said yes again with no capacity left for it.',
     'Same pressure — said yes again before I checked whether I had capacity.',
   ];
   return List.generate(
@@ -1946,6 +1946,8 @@ void main() {
       }
 
       expect(find.byKey(const Key('what_changed_v2_card')), findsNothing);
+      expect(find.byKey(const Key('what_changed_v2_payoff_card')), findsOneWidget);
+      expect(find.text(WhatChangedV2Copy.payoffSofter), findsOneWidget);
       expect(find.byKey(const Key('helped_tracking_card')), findsNothing);
       expect(find.byKey(const Key('return_check_payoff_card_softer')), findsOneWidget);
       expect(find.text(ReturnCheckPayoffCopy.softerTitle), findsOneWidget);

@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/beta_activation/beta_activation_summary_tracker.dart';
+import '../../features/belief_change/belief_change_moment_engine.dart';
+import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
+import '../../features/what_changed/what_changed_v2_copy.dart';
+import '../../features/what_changed/what_changed_v2_engine.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
@@ -20,6 +24,7 @@ import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 import '../record/correct_transcript_sheet.dart';
 import '../record/entry_importance_button.dart';
 import '../share_card/share_card_action_card.dart';
+import 'belief_change_moment_card.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatefulWidget {
@@ -147,6 +152,22 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
       totalMomentCount: detail.savedMoments.length,
       isPro: widget.isPro,
     );
+    final beliefChangeMoment = widget.buildInput == null
+        ? null
+        : BeliefChangeMomentEngine.build(
+            entries: widget.buildInput!.entries,
+            changeProof: widget.buildInput!.changeProof,
+            returnChecks: widget.buildInput!.returnChecks,
+            helpfulActionCapturedMilestone:
+                widget.buildInput!.helpfulActionCapturedMilestone,
+            viewingConfirmedRepeatOrTimeline:
+                widget.buildInput!.viewingConfirmedRepeatOrTimeline,
+          );
+    final whatChangedPayoff = widget.buildInput == null
+        ? null
+        : WhatChangedV2Engine.buildAnsweredPayoff(
+            entries: widget.buildInput!.entries,
+          );
 
     return SafeArea(
       child: Padding(
@@ -192,6 +213,15 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   style: secondaryStyle,
                 ),
               ],
+              if (beliefChangeMoment != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                BeliefChangeMomentCard(
+                  moment: beliefChangeMoment,
+                  entryCount: _entryCount,
+                  source: 'pattern_detail',
+                  compact: true,
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.evidenceHeading,
@@ -228,12 +258,46 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 style: labelStyle,
               ),
               const SizedBox(height: AppSpacing.xs),
+            Text(
+              detail.whatChangedBody,
+              key: const Key('pattern_detail_what_changed_body'),
+              style: detail.whatChangedSupported ? bodyStyle : fallbackStyle,
+            ),
+            if (whatChangedPayoff != null) ...[
+              const SizedBox(height: AppSpacing.sm),
               Text(
-                detail.whatChangedBody,
-                key: const Key('pattern_detail_what_changed_body'),
-                style: detail.whatChangedSupported ? bodyStyle : fallbackStyle,
+                whatChangedPayoff.payoffLine,
+                key: const Key('pattern_detail_what_changed_payoff'),
+                style: secondaryStyle,
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                WhatChangedV2Copy.thenLabel,
+                key: const Key('pattern_detail_what_changed_then_label'),
+                style: labelStyle,
+              ),
+              Text(
+                WhatChangedV2Copy.formatSnippet(
+                  whatChangedPayoff.comparison.thenSnippet,
+                ),
+                key: const Key('pattern_detail_what_changed_then_snippet'),
+                style: bodyStyle,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                WhatChangedV2Copy.nowLabel,
+                key: const Key('pattern_detail_what_changed_now_label'),
+                style: labelStyle,
+              ),
+              Text(
+                WhatChangedV2Copy.formatSnippet(
+                  whatChangedPayoff.comparison.nowSnippet,
+                ),
+                key: const Key('pattern_detail_what_changed_now_snippet'),
+                style: bodyStyle,
+              ),
+            ],
+            const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.whatHelpedHeading,
                 key: const Key('pattern_detail_what_helped_heading'),

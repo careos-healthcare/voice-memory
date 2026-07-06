@@ -4533,12 +4533,26 @@ class _RecordScreenState extends State<RecordScreen> {
             returnChecks: RepeatReturnCheckStore.cached,
           )
         : null;
+    final whatChangedV2Display = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? WhatChangedV2Engine.buildPostSaveDisplay(
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+          )
+        : null;
     final showWhatChangedV2 = WhatChangedV2Engine.shouldShowOnPostSave(
       isPostSaveDone: ui == RecordUiState.done,
       isDegradedPostSave: entriesAfterSave.isNotEmpty &&
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       showFirstProofMoment: showFirstProofMoment,
       prompt: whatChangedV2Prompt,
+    );
+    final showWhatChangedV2Display = WhatChangedV2Engine.shouldShowPostSaveDisplay(
+      isPostSaveDone: ui == RecordUiState.done,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      showFirstProofMoment: showFirstProofMoment,
+      display: whatChangedV2Display,
     );
     final helpedTrackingPrompt = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
@@ -6886,10 +6900,10 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    if (showWhatChangedV2 && whatChangedV2Prompt != null) ...[
+                    if (showWhatChangedV2Display && whatChangedV2Display != null) ...[
                       WhatChangedV2Card(
-                        key: ValueKey(whatChangedV2Prompt.entryId),
-                        prompt: whatChangedV2Prompt,
+                        key: ValueKey(whatChangedV2Display.entryId),
+                        prompt: whatChangedV2Display,
                         source: 'record_post_save',
                         onSomethingHelped: () {
                           if (mounted) setState(() {});

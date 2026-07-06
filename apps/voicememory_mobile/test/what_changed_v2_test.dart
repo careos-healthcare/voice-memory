@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_engine.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
@@ -70,7 +71,7 @@ List<JournalEntry> _fourSaidYesEntries() => [
       _voiceEntry(
         id: 'e4',
         transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
+            'The meeting invite came in and I said yes again with no capacity left for it.',
         createdAt: DateTime(2026, 6, 13, 12),
       ),
     ];
@@ -143,6 +144,8 @@ void main() {
       expect(prompt.entryId, 'e4');
       expect(prompt.entryCount, 4);
       expect(prompt.hasConfirmedRepeat, isTrue);
+      expect(prompt.hasComparison, isTrue);
+      expect(prompt.comparison, isNotNull);
       expect(prompt.options, WhatChangedV2Engine.promptOptions);
       expect(
         WhatChangedV2Engine.shouldShowOnPostSave(
@@ -150,6 +153,29 @@ void main() {
           isDegradedPostSave: false,
           showFirstProofMoment: false,
           prompt: prompt,
+        ),
+        isTrue,
+      );
+    });
+
+    test('post-save display keeps answered payoff after softer answer', () async {
+      final entries = _fourSaidYesEntries();
+      await WhatChangedV2Store.instance().saveSelection(
+        entryId: 'e4',
+        option: WhatChangedV2Option.softer,
+        entryCountAtCapture: 4,
+      );
+
+      expect(WhatChangedV2Engine.buildPrompt(entries: entries), isNull);
+      final display = WhatChangedV2Engine.buildPostSaveDisplay(entries: entries);
+      expect(display, isNotNull);
+      expect(display!.hasComparison, isTrue);
+      expect(
+        WhatChangedV2Engine.shouldShowPostSaveDisplay(
+          isPostSaveDone: true,
+          isDegradedPostSave: false,
+          showFirstProofMoment: false,
+          display: display,
         ),
         isTrue,
       );
@@ -268,6 +294,36 @@ void main() {
   });
 
   group('WhatChangedV2Card integration', () {
+    test('question copy and options are defined', () {
+      expect(WhatChangedV2Copy.question, 'What changed since last time?');
+      expect(WhatChangedV2Copy.body, isNotEmpty);
+      for (final option in WhatChangedV2Option.values) {
+        expect(option.label, isNotEmpty);
+      }
+    });
+
+    test('softer answer payoff includes then/now comparison data', () {
+      final prompt = _requirePrompt(_fourSaidYesEntries());
+      expect(prompt.comparison, isNotNull);
+      expect(WhatChangedV2Copy.payoffMessage(WhatChangedV2Option.softer),
+          WhatChangedV2Copy.payoffSofter);
+      expect(WhatChangedV2Copy.formatSnippet(prompt.comparison!.thenSnippet),
+          isNotEmpty);
+      expect(WhatChangedV2Copy.formatSnippet(prompt.comparison!.nowSnippet),
+          isNotEmpty);
+    });
+
+    test('all payoff variants avoid advice language', () {
+      for (final option in WhatChangedV2Option.values) {
+        final copy = WhatChangedV2Copy.payoffMessage(option).toLowerCase();
+        expect(copy, isNot(contains('therapy')));
+        expect(copy, isNot(contains('diagnosis')));
+        expect(copy, isNot(contains('you should')));
+        expect(copy, isNot(contains('try to')));
+        expect(copy, isNot(contains('you always')));
+      }
+    });
+
     test('onSomethingHelped callback is wired on card', () {
       final prompt = _requirePrompt(_fourSaidYesEntries());
       var routed = false;
@@ -319,14 +375,14 @@ void main() {
       final section = WhatChangedV2Engine.weeklyReviewSection(entries: entries);
       expect(section?.isSupported, isTrue);
       expect(section!.label, WeeklyArchiveReviewCopy.whatChangedLabel);
-      expect(section.body, contains('felt softer'));
+      expect(section.body, WhatChangedV2Copy.payoffSofter);
 
       final review = weeklyReviewSurface.WeeklyArchiveReviewEngine.build(
         entries: entries,
         viewingConfirmedRepeatOrTimeline: true,
       );
       expect(review!.whatChanged?.isSupported, isTrue);
-      expect(review.whatChanged!.body, contains('felt softer'));
+      expect(review.whatChanged!.body, WhatChangedV2Copy.payoffSofter);
     });
   });
 
@@ -385,7 +441,20 @@ void main() {
         PostSaveReturnCheckAnswerCopy.title,
         contains('different from your first proof'),
       );
-      expect(WhatChangedV2Copy.question, 'What changed this time?');
+      expect(WhatChangedV2Copy.question, 'What changed since last time?');
+    });
+
+    test('comparison requires grounded prior and latest evidence', () {
+      final comparison = WhatChangedV2Engine.buildComparison(
+        entries: _fourSaidYesEntries(),
+      );
+      expect(comparison, isNotNull);
+      expect(comparison!.thenSnippet, isNotEmpty);
+      expect(comparison.nowSnippet, isNotEmpty);
+      expect(
+        comparison.thenSnippet.toLowerCase(),
+        isNot(equals(comparison.nowSnippet.toLowerCase())),
+      );
     });
 
     test('first proof flow still works', () {
@@ -423,15 +492,22 @@ void main() {
   });
 
   group('WhatChangedV2Copy safety', () {
-    test('saved messages avoid therapy and advice language', () {
+    test('payoff messages avoid therapy and advice language', () {
       for (final option in WhatChangedV2Option.values) {
-        final copy = WhatChangedV2Copy.savedMessage(option).toLowerCase();
+        final copy = WhatChangedV2Copy.payoffMessage(option).toLowerCase();
         expect(copy, isNot(contains('therapy')));
         expect(copy, isNot(contains('diagnosis')));
         expect(copy, isNot(contains('you should')));
         expect(copy, isNot(contains('try to')));
+        expect(copy, isNot(contains('you always')));
       }
       expect(ReturnCheckPayoffCopy.softerTitle, isNotEmpty);
+    });
+
+    test('visible strings pass advice guard', () {
+      for (final line in WhatChangedV2Copy.allVisibleStrings()) {
+        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+      }
     });
   });
 }

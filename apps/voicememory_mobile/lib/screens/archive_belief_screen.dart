@@ -57,6 +57,8 @@ import '../widgets/weekly_review/weekly_archive_review_card.dart'
 import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/belief_change/belief_change_moment_engine.dart';
+import '../features/belief_change/belief_change_moment_gates.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
@@ -289,6 +291,7 @@ import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../widgets/patterns/archive_belief_surface_card.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
 import '../widgets/share_card/share_card_action_card.dart';
+import '../widgets/patterns/belief_change_moment_card.dart';
 import '../widgets/patterns/archive_change_timeline_card.dart';
 import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
@@ -1289,12 +1292,26 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       hasChange: review.whatChanged?.isSupported ?? false,
       hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
+    final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
+    final earlyEvidenceTimeline = EarlyEvidenceTimelineEngine.build(
+      entries: _entries,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+    );
+    final viewingConfirmedRepeatOnPatterns = earlyEvidenceTimeline != null ||
+        (earlyFirstSignal?.showsConfirmedRepeat ?? false);
     unawaited(
       WeeklyArchiveReviewSheet.show(
         context,
         review: review,
         isPro: _archiveIsPro,
         entryCount: _entries.length,
+        beliefChangeMoment: BeliefChangeMomentEngine.build(
+          entries: _entries,
+          returnChecks: RepeatReturnCheckStore.cached,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        ),
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
       ),
     );
@@ -3940,6 +3957,23 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         timeline: archiveChangeTimelineCandidate,
       );
+      final beliefChangeMomentCandidate = BeliefChangeMomentEngine.build(
+        entries: _entries,
+        changeProof: repeatReturnChangeProof,
+        returnChecks: RepeatReturnCheckStore.cached,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final showBeliefChangeMoment = BeliefChangeMomentGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        isPostSave: false,
+        isDegradedPostSave: false,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        moment: beliefChangeMomentCandidate,
+      );
       final positiveReinforcement = PositiveReinforcementEngine.build(
         positivePattern: positivePattern,
         entries: _entries,
@@ -4308,6 +4342,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       source: 'patterns',
                     ),
                   ],
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showBeliefChangeMoment &&
+                    beliefChangeMomentCandidate != null) ...[
+                  BeliefChangeMomentCard(
+                    moment: beliefChangeMomentCandidate,
+                    entryCount: _entries.length,
+                    source: 'patterns',
+                  ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showNextBestActionOnPatterns &&
