@@ -1,6 +1,7 @@
 import { countCompletedReflections } from "@/lib/mobile/install-prompt-gate";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 
-export const MOBILE_FIRST_RUN_TAGLINE = "Speak aloud. What repeats can come back.";
+export const MOBILE_FIRST_RUN_TAGLINE = LANDING_3_DAY_CHALLENGE.hero;
 
 export const MOBILE_FIRST_RUN_PRIVACY =
   "Your words stay on this device. Sign in only if you want encrypted backup.";

@@ -26,6 +26,7 @@ import { ARCHIVE_WAYFINDING_TO_ARCHIVE } from "@/lib/product/archive-product-cop
 import { TheoryCuriosityPrompt } from "@/components/theories/TheoryCuriosityPrompt";
 import { HomepageChatGptComparison } from "@/components/product/HomepageChatGptComparison";
 import { ProductDemoStory } from "@/components/product/ProductDemoStory";
+import { ThreeDayProofChallengeLanding } from "@/components/landing/ThreeDayProofChallengeLanding";
 import { ReturningDiscoverRedirect } from "@/components/product/ReturningDiscoverRedirect";
 import { HomepagePrimaryCtaProvider } from "@/components/homepage/HomepagePrimaryCtaProvider";
 import { CalmComprehensionPrompt } from "@/components/onboarding/CalmComprehensionPrompt";
@@ -96,6 +97,7 @@ import {
   POSITIONING_EYEBROW,
   PRODUCT_HERO,
 } from "@/lib/product-copy";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 import { isReturningProductUser } from "@/lib/product/returning-home";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -505,6 +507,23 @@ export default function HomePage() {
                   <li>{HOMEPAGE_CLARITY.stepRemember}</li>
                   <li>{HOMEPAGE_CLARITY.stepReturn}</li>
                 </ul>
+                <div className="mx-auto mt-6 flex max-w-md flex-wrap items-center justify-center gap-4">
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-violet-300 underline-offset-2 hover:text-violet-200 hover:underline"
+                    data-testid="landing-primary-cta-scroll"
+                    onClick={scrollToRecorder}
+                  >
+                    {LANDING_3_DAY_CHALLENGE.primaryCta}
+                  </button>
+                  <Link
+                    href={LANDING_3_DAY_CHALLENGE.secondaryHref}
+                    className="text-sm text-zinc-400 underline-offset-2 hover:text-zinc-200 hover:underline"
+                    data-testid="landing-secondary-cta"
+                  >
+                    {LANDING_3_DAY_CHALLENGE.secondaryCta}
+                  </Link>
+                </div>
                 <HomeArchiveBeliefIntro
                   className="mx-auto mt-6 max-w-md"
                   entriesOverride={entriesForHome}
@@ -513,6 +532,7 @@ export default function HomePage() {
                   <ProductDemoStory />
                 </div>
                 <HomepageChatGptComparison />
+                <ThreeDayProofChallengeLanding />
               </MotionPage>
 
               <motion.div
@@ -553,6 +573,7 @@ export default function HomePage() {
                   reflexCapture={reflexCapture}
                   reflexFastBoot={directToMic || silenceFirstReflex}
                   quickReflection={isQuickReflectionEnabled()}
+                  primaryActionLabel={LANDING_3_DAY_CHALLENGE.primaryCta}
                 />
               </motion.div>
 

@@ -198,6 +198,8 @@ interface RecorderProps {
   zeroState?: boolean;
   captureContext?: string;
   quickReflection?: boolean;
+  /** Homepage/marketing override for idle primary button label. */
+  primaryActionLabel?: string;
 }
 
 type RecorderState =
@@ -219,6 +221,7 @@ export function Recorder({
   zeroState = false,
   captureContext = "recorder",
   quickReflection = false,
+  primaryActionLabel,
   onUiPhaseChange,
 }: RecorderProps) {
   const router = useRouter();
@@ -266,6 +269,8 @@ export function Recorder({
   const reflexCaptureRef = useRef<ReflexCaptureContext | null>(reflexCaptureProp ?? null);
   const quickMode =
     quickReflection || isQuickReflectionEnabled() || reflexFastBoot || zeroState;
+  const idlePrimaryLabel =
+    primaryActionLabel ?? (quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection");
   const promptSurface = zeroState || quickMode ? "record" : "home";
 
   useEffect(() => {
@@ -1062,11 +1067,11 @@ export function Recorder({
                   size="lg"
                   className="mobile-touch-target mobile-recorder-primary min-h-[3.25rem] min-w-[13rem] text-base"
                   data-primary-cta="recorder"
-                  aria-label={quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
+                  aria-label={idlePrimaryLabel}
                   onClick={() => void startRecording()}
                 >
                   <Mic className="h-5 w-5" aria-hidden />
-                  {quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
+                  {idlePrimaryLabel}
                 </Button>
                 {!activeReturn && !activeClarity && !activeReflex ? (
                   <LowEffortMode

@@ -59,10 +59,9 @@ for (const rel of requiredFiles) {
 }
 
 mustInclude("lib/product/product-clarity-copy.ts", [
-  "VOICEMEMORY_ARCHIVE_POSITIONING",
-  "ChatGPT can help you think. ArchiveMe remembers what you keep saying over weeks and months.",
-  "ChatGPT answers today. ArchiveMe shows what keeps repeating across your life.",
-  "Single chats answer today's question",
+  "LANDING_3_DAY_CHALLENGE",
+  "See what keeps coming back.",
+  "ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.",
   "Each reflection gives ArchiveMe more evidence",
   "criticism means you're failing",
   "reflections toward your first belief",
@@ -81,6 +80,7 @@ mustInclude("app/page.tsx", [
   "HomepageChatGptComparison",
   "ProductDemoStory",
   "PatternActivationProgress",
+  "ThreeDayProofChallengeLanding",
   "HomeArchiveBeliefIntro",
   "EvidenceArchivePreview",
   "ArchiveMaturityMeter",

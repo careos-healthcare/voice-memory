@@ -1,12 +1,11 @@
-import { VOICEMEMORY_ARCHIVE_POSITIONING } from "@/lib/product/archive-positioning";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 
 /** Product-clarity pass — homepage, discover, archive differentiation (restrained). */
 
 export const PRODUCT_HERO = {
-  eyebrow: "Private voice reflections",
-  promise: VOICEMEMORY_ARCHIVE_POSITIONING,
-  archiveLead:
-    "One recording is a moment. ArchiveMe shows what keeps repeating across your life.",
+  eyebrow: LANDING_3_DAY_CHALLENGE.eyebrow,
+  promise: LANDING_3_DAY_CHALLENGE.hero,
+  archiveLead: LANDING_3_DAY_CHALLENGE.subhero,
   support:
     "Speak on this device. When the same concern returns across weeks, you may see it named — not scored, not coached.",
   honesty: "Local-first. Not therapy, not a diagnosis, and not a score or streak.",
@@ -26,6 +25,7 @@ export const HOMEPAGE_ARCHIVE_DIFFERENTIATION = {
     "Each reflection gives ArchiveMe more evidence about what keeps repeating.",
   complement:
     "Many people capture moments elsewhere — ArchiveMe is for what your own words keep returning to.",
+  chatGptDifferentiation: LANDING_3_DAY_CHALLENGE.chatGptDifferentiation,
 } as const;
 
 /** @deprecated Use HOMEPAGE_ARCHIVE_DIFFERENTIATION */
@@ -52,3 +52,5 @@ export const RETURNING_HOME = {
   discoverFallbackBody:
     "Visit again after a few more reflections — theory shifts and evidence will compare against this visit.",
 } as const;
+
+export { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";

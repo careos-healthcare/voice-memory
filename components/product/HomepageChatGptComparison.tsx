@@ -7,6 +7,12 @@ export function HomepageChatGptComparison() {
       className="mx-auto mt-8 max-w-md space-y-4"
       data-testid="homepage-archive-differentiation"
     >
+      <p
+        className="text-sm leading-relaxed text-zinc-300"
+        data-testid="homepage-chatgpt-differentiation"
+      >
+        {HOMEPAGE_ARCHIVE_DIFFERENTIATION.chatGptDifferentiation}
+      </p>
       <ArchiveUniquenessPanel variant="compact" />
       <p className="text-sm leading-relaxed text-zinc-400">
         {HOMEPAGE_ARCHIVE_DIFFERENTIATION.archiveGrowth}

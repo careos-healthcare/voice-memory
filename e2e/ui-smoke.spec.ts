@@ -8,6 +8,9 @@ test.describe("UI smoke", () => {
     const html = await res.text();
     expect(html).toContain('id="recorder"');
     expect(html).toContain("ArchiveMe");
+    expect(html).toContain("See what keeps coming back.");
+    expect(html).toContain("Start the 3-day proof challenge");
+    expect(html).toContain("ChatGPT helps you think today");
     expect(html).not.toMatch(/href="\/internal/);
   });
 

@@ -155,7 +155,8 @@ const archiveValueCopySrc = fs.readFileSync(
   "utf8",
 );
 assert.ok(
-  claritySrc.includes("ChatGPT answers today") ||
+  claritySrc.includes("ChatGPT helps you think today") ||
+    claritySrc.includes("ChatGPT answers today") ||
     archiveValueCopySrc.includes("ChatGPT helps with today's question"),
 );
 assert.ok(archiveValueCopySrc.includes("Each reflection gives ArchiveMe"));

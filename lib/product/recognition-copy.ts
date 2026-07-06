@@ -1,16 +1,17 @@
 /** Short recognition-first copy — almost disappears, reads in under two seconds. */
 
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
+
 export const RECOGNITION_COPY = {
   appSubtitle: "Your words, kept privately.",
-  appTagline: "See the patterns you keep missing.",
-  appLead:
-    "One recording is a moment. ArchiveMe shows what keeps repeating across your life.",
+  appTagline: LANDING_3_DAY_CHALLENGE.hero,
+  appLead: LANDING_3_DAY_CHALLENGE.subhero,
   wedge: "You said this before.",
   notAiJournal: "Your words stay yours — private, on this device.",
-  homepageSpeak: "Record short reflections on this device",
-  homepageRemember: "Your archive compares weeks and months — not one chat reply",
-  homepageReturn: "Blind spots and Discover show what changed since your last visit",
-  homepageCta: "Say it in your voice. Repetition across time is what this tracks.",
+  homepageSpeak: LANDING_3_DAY_CHALLENGE.steps[0]!.title,
+  homepageRemember: LANDING_3_DAY_CHALLENGE.steps[1]!.title,
+  homepageReturn: LANDING_3_DAY_CHALLENGE.steps[2]!.title,
+  homepageCta: LANDING_3_DAY_CHALLENGE.recorderIntro,
   firstSave:
     "Saved. Say one more later — ArchiveMe can start noticing what comes back.",
   nothingReturned: "Nothing has returned yet. Keep speaking naturally.",
