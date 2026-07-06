@@ -153,7 +153,12 @@ import '../features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../widgets/record/come_back_tomorrow_card.dart';
 import '../features/quiet_signal/quiet_signal_engine.dart';
+import '../features/beta_test_script/beta_test_script_engine.dart';
+import '../features/beta_test_script/beta_test_script_store.dart';
+import '../widgets/account/beta_test_script_sheet.dart';
+import '../widgets/record/beta_test_script_card.dart';
 import '../widgets/record/quiet_signal_record_card.dart';
+import '../widgets/account/beta_feedback_sheet.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
@@ -731,6 +736,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       TesterMissionStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      BetaTestScriptStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4743,6 +4753,19 @@ class _RecordScreenState extends State<RecordScreen> {
       firstProofLoopActive: firstProofLoopActive,
       showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
     );
+    final betaTestScriptCardCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? BetaTestScriptEngine.buildCompactCard(entries: _journalEntries)
+        : null;
+    final showBetaTestScriptCard = BetaTestScriptGates.shouldShowCompactCardOnRecord(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      dismissed: BetaTestScriptStore.cached.dismissed,
+      showReturnDayFlow: showReturnDayFlow,
+      firstProofLoopActive: firstProofLoopActive,
+      showWhatChangedV2Display: showWhatChangedV2Display,
+    );
     final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
       entries: _journalEntries,
     );
@@ -5532,6 +5555,33 @@ class _RecordScreenState extends State<RecordScreen> {
                         showRecordCta: showFirstWeekLoopRecordCta,
                         onRecord: () =>
                             unawaited(_onRecordPressed(source: 'first_week_loop')),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showBetaTestScriptCard &&
+                        betaTestScriptCardCandidate != null) ...[
+                      BetaTestScriptCard(
+                        card: betaTestScriptCardCandidate,
+                        onViewSteps: () {
+                          BetaTestScriptSheet.show(
+                            context,
+                            entries: _journalEntries,
+                            source: 'record',
+                            onReset: () {
+                              if (mounted) setState(() {});
+                            },
+                          );
+                        },
+                        onSendFeedback: betaTestScriptCardCandidate
+                                .showSendFeedbackSecondary
+                            ? () {
+                                BetaFeedbackSheet.show(
+                                  context,
+                                  source: 'record_beta_test_script',
+                                  entryCount: _journalEntryCount,
+                                );
+                              }
+                            : null,
                       ),
                       const SizedBox(height: 12),
                     ],

@@ -4,30 +4,77 @@ import '../design/archive_mobile_typography.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta/tester_mission_copy.dart';
 import '../features/beta_activation/beta_activation_summary_copy.dart';
+import '../features/beta_test_script/beta_test_script_copy.dart';
+import '../features/beta_test_script/beta_test_script_engine.dart';
+import '../features/beta_test_script/beta_test_script_copy.dart';
 import '../features/support/testflight_feedback_analytics.dart';
 import '../features/support/testflight_feedback_copy.dart';
 import '../features/support/testflight_feedback_launcher.dart';
+import '../models/journal_entry.dart';
+import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../theme/voicememory_cards.dart';
 import '../widgets/account/beta_activation_summary_sheet.dart';
+import '../widgets/account/beta_feedback_sheet.dart';
 import '../widgets/account/beta_readiness_check_sheet.dart';
+import '../widgets/account/beta_test_script_sheet.dart';
 import '../features/beta_readiness/beta_readiness_copy.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Beta-only tester mission guide — steps, feedback question, and email feedback.
-class TestingArchiveMeScreen extends StatelessWidget {
+class TestingArchiveMeScreen extends StatefulWidget {
   const TestingArchiveMeScreen({super.key});
 
-  Future<void> _sendFeedback(BuildContext context) async {
+  @override
+  State<TestingArchiveMeScreen> createState() => _TestingArchiveMeScreenState();
+}
+
+class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
+  List<JournalEntry> _entries = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+
+  Future<void> _loadEntries() async {
+    if (!AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(() => _entries = entries);
+  }
+
+  Future<void> _sendFeedback() async {
     TestFlightFeedbackAnalytics.tapped(surface: 'testing_archiveme_screen');
     final opened = await TestFlightFeedbackLauncher.openFeedbackEmail();
-    if (!opened && context.mounted) {
+    if (!opened && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(TestFlightFeedbackCopy.emailFallbackMessage),
         ),
       );
     }
+  }
+
+  void _openBetaTestScript() {
+    BetaTestScriptSheet.show(
+      context,
+      entries: _entries,
+      source: 'testing_archiveme_screen',
+      onReset: () {
+        if (mounted) setState(() {});
+      },
+    );
+  }
+
+  void _openBetaFeedback() {
+    BetaFeedbackSheet.show(
+      context,
+      source: 'testing_archiveme_screen',
+      entryCount: _entries.length,
+    );
   }
 
   @override
@@ -50,6 +97,7 @@ class TestingArchiveMeScreen extends StatelessWidget {
       context,
       color: AppColors.textSecondary,
     );
+    final progress = BetaTestScriptEngine.buildProgressSummary(entries: _entries);
 
     return PushedScreenShell(
       title: TesterMissionCopy.title,
@@ -60,6 +108,80 @@ class TestingArchiveMeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              key: const Key('testing_archiveme_beta_test_tile'),
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: VoiceMemoryCards.standard(
+                background: const Color(0xFFF7F8FA),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    BetaTestScriptCopy.settingsTileTitle,
+                    key: const Key('testing_archiveme_beta_test_title'),
+                    style: ArchiveMobileTypography.listTitle(context),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    BetaTestScriptCopy.settingsTileBody,
+                    key: const Key('testing_archiveme_beta_test_body'),
+                    style: bodyStyle,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              BetaTestScriptCopy.progressHeading,
+              key: const Key('testing_archiveme_beta_test_progress_heading'),
+              style: ArchiveMobileTypography.listTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _ProgressLine(
+              label: BetaTestScriptCopy.day1Label,
+              value: progress.day1Label,
+              keyName: 'testing_archiveme_beta_test_progress_day1',
+            ),
+            _ProgressLine(
+              label: BetaTestScriptCopy.day2Label,
+              value: progress.day2Label,
+              keyName: 'testing_archiveme_beta_test_progress_day2',
+            ),
+            _ProgressLine(
+              label: BetaTestScriptCopy.day3Label,
+              value: progress.day3Label,
+              keyName: 'testing_archiveme_beta_test_progress_day3',
+            ),
+            _ProgressLine(
+              label: BetaTestScriptCopy.firstProofLabel,
+              value: progress.firstProofLabel,
+              keyName: 'testing_archiveme_beta_test_progress_first_proof',
+            ),
+            _ProgressLine(
+              label: BetaTestScriptCopy.feedbackLabel,
+              value: progress.feedbackLabel,
+              keyName: 'testing_archiveme_beta_test_progress_feedback',
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('testing_archiveme_view_test_steps'),
+                onPressed: _openBetaTestScript,
+                child: Text(BetaTestScriptCopy.viewTestStepsCta),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('testing_archiveme_send_beta_feedback'),
+                onPressed: _openBetaFeedback,
+                child: Text(BetaTestScriptCopy.sendBetaFeedbackCta),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               TesterMissionCopy.mission,
               key: const Key('testing_archiveme_mission'),
@@ -86,7 +208,7 @@ class TestingArchiveMeScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 key: const Key('testing_archiveme_send_feedback'),
-                onPressed: () => _sendFeedback(context),
+                onPressed: () => _sendFeedback(),
                 child: Text(TestFlightFeedbackCopy.settingsCta),
               ),
             ),
@@ -110,6 +232,41 @@ class TestingArchiveMeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProgressLine extends StatelessWidget {
+  const _ProgressLine({
+    required this.label,
+    required this.value,
+    required this.keyName,
+  });
+
+  final String label;
+  final String value;
+  final String keyName;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '$label:',
+              key: Key(keyName),
+              style: style,
+            ),
+          ),
+          Text(value, style: style),
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:voicememory_mobile/features/beta_test_script/beta_test_script_copy.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_analytics.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_copy.dart';
@@ -93,8 +94,8 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpSettings(tester);
 
-      expect(find.text(TestFlightFeedbackCopy.settingsTitle), findsOneWidget);
-      expect(find.text(TestFlightFeedbackCopy.settingsCta), findsOneWidget);
+      expect(find.text(BetaTestScriptCopy.settingsTileTitle), findsOneWidget);
+      expect(find.text(BetaTestScriptCopy.settingsTileBody), findsOneWidget);
       expect(
         find.byKey(const Key('settings_testflight_feedback_tile')),
         findsOneWidget,
@@ -105,7 +106,7 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = false;
       await pumpSettings(tester);
 
-      expect(find.text(TestFlightFeedbackCopy.settingsTitle), findsNothing);
+      expect(find.text(BetaTestScriptCopy.settingsTileTitle), findsNothing);
       expect(
         find.byKey(const Key('settings_testflight_feedback_tile')),
         findsNothing,

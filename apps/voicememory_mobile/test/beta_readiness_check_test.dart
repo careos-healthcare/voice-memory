@@ -144,6 +144,11 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpScreen(tester);
 
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('testing_archiveme_beta_readiness_check')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.tap(find.byKey(const Key('testing_archiveme_beta_readiness_check')));
       await tester.pumpAndSettle();
 

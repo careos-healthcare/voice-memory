@@ -636,6 +636,7 @@ abstract class ActivationFunnelAnalytics {
     'has_watch_target',
     'days_since_set',
     'days_since_seen',
+    'step',
     'answer_type',
     'lifecycle_state',
   };
@@ -1063,6 +1064,7 @@ abstract class ActivationFunnelAnalytics {
     String? promptType,
     int? daysSinceSet,
     int? daysSinceSeen,
+    String? step,
     String? answerType,
     String? lifecycleState,
     bool oncePerSession = false,
@@ -1205,6 +1207,7 @@ abstract class ActivationFunnelAnalytics {
         'prompt_type': promptType,
       if (daysSinceSet != null) 'days_since_set': daysSinceSet,
       if (daysSinceSeen != null) 'days_since_seen': daysSinceSeen,
+      if (step != null && _safeValue.hasMatch(step)) 'step': step,
       if (answerType != null && _safeValue.hasMatch(answerType))
         'answer_type': answerType,
       if (lifecycleState != null && _safeValue.hasMatch(lifecycleState))

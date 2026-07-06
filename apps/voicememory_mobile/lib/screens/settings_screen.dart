@@ -8,6 +8,7 @@ import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
+import '../features/beta_test_script/beta_test_script_copy.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
@@ -178,11 +179,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 key: const Key('settings_testflight_feedback_tile'),
                 contentPadding: EdgeInsets.zero,
                 title: Text(
-                  TestFlightFeedbackCopy.settingsTitle,
+                  BetaTestScriptCopy.settingsTileTitle,
                   style: ArchiveMobileTypography.listTitle(context),
                 ),
                 subtitle: Text(
-                  TestFlightFeedbackCopy.settingsCta,
+                  BetaTestScriptCopy.settingsTileBody,
                   style: ArchiveMobileTypography.listSubtitle(context),
                 ),
                 trailing: const Icon(Icons.chevron_right),

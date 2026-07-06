@@ -26,6 +26,7 @@ import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta/archive_beta_mission_store.dart';
+import '../features/beta_test_script/beta_test_script_store.dart';
 import '../features/beta/tester_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/beta/core_value_feedback_store.dart';
@@ -339,6 +340,7 @@ class AppServices {
     await CoreValueFeedbackStore.resetForTest();
     ArchiveBetaMissionGate.enabledOverride = false;
     await ArchiveBetaMissionStore.resetForTest();
+    await BetaTestScriptStore.resetForTest(AppServices.instance.prefs);
     await TesterMissionStore.resetForTest();
     await ConfirmedRepeatWhyMattersStore.resetForTest();
     await ConfirmedRepeatThoughtMapStore.resetForTest();
