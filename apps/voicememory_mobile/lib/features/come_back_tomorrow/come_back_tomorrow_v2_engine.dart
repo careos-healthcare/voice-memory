@@ -9,6 +9,7 @@ import '../retention/return_tomorrow_cue_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../return_day/return_day_flow_engine.dart';
 import '../voice_capture/voice_capture_quality.dart';
+import '../quiet_signal/quiet_signal_engine.dart';
 import 'come_back_tomorrow_v2_copy.dart';
 import 'come_back_tomorrow_v2_model.dart';
 import 'come_back_tomorrow_v2_store.dart';
@@ -141,32 +142,16 @@ abstract final class ComeBackTomorrowV2Engine {
     required List<JournalEntry> entries,
     DateTime? now,
   }) {
-    final target = ComeBackTomorrowV2Store.active;
-    if (target == null || target.quietSignalDismissed) return null;
-    if (!ComeBackTomorrowV2Gates.archiveAllows(entries)) return null;
-
-    final daysSinceSet = ComeBackTomorrowV2Store.daysSinceDateKey(
-      target.createdDateKey,
-      now: now,
-    );
-    final savesAfterSet = _savesAfterDateKey(
-      entries: entries,
-      dateKey: target.createdDateKey,
-    );
-    final unrelatedCount = savesAfterSet
-        .where((entry) => !_entryMatchesWatchTarget(entry, target))
-        .length;
-
-    final shouldShow = unrelatedCount >= 2 || daysSinceSet >= 3;
-    if (!shouldShow) return null;
+    final signal = QuietSignalEngine.build(entries: entries, now: now);
+    if (signal == null) return null;
 
     return ComeBackTomorrowQuietSignal(
-      title: ComeBackTomorrowV2Copy.quietSignalTitle,
-      body: ComeBackTomorrowV2Copy.quietSignalBody,
-      footer: ComeBackTomorrowV2Copy.quietSignalFooter,
-      cta: ComeBackTomorrowV2Copy.quietSignalCta,
-      daysSinceSet: daysSinceSet,
-      source: target.source,
+      title: signal.title,
+      body: signal.body,
+      footer: signal.footer,
+      cta: signal.ctaKeepWatching,
+      daysSinceSet: signal.daysSinceSet,
+      source: signal.source,
     );
   }
 

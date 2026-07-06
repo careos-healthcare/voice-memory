@@ -12,6 +12,8 @@ import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorro
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_engine.dart';
+import 'package:voicememory_mobile/features/quiet_signal/quiet_signal_copy.dart';
+import 'package:voicememory_mobile/features/quiet_signal/quiet_signal_engine.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
@@ -23,7 +25,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/record/come_back_tomorrow_card.dart';
-import 'package:voicememory_mobile/widgets/record/come_back_tomorrow_quiet_signal_card.dart';
+import 'package:voicememory_mobile/widgets/record/quiet_signal_record_card.dart';
 import 'package:voicememory_mobile/widgets/record/return_watch_question_card.dart';
 
 const _placeholder =
@@ -431,7 +433,7 @@ void main() {
       );
 
       expect(signal, isNotNull);
-      expect(signal!.title, ComeBackTomorrowV2Copy.quietSignalTitle);
+      expect(signal!.title, QuietSignalCopy.title);
     });
 
     test('does not claim improvement or diagnosis', () {
@@ -538,7 +540,7 @@ void main() {
     });
   });
 
-  group('ComeBackTomorrowQuietSignalCard', () {
+  group('QuietSignalRecordCard', () {
     testWidgets('keep watching dismisses signal', (tester) async {
       final prefs = _MemoryPrefs();
       ComeBackTomorrowV2Store.seedForTest(
@@ -549,19 +551,27 @@ void main() {
           source: 'second_related_save',
         ),
       );
-      const signal = ComeBackTomorrowQuietSignal(
-        title: ComeBackTomorrowV2Copy.quietSignalTitle,
-        body: ComeBackTomorrowV2Copy.quietSignalBody,
-        footer: ComeBackTomorrowV2Copy.quietSignalFooter,
-        cta: ComeBackTomorrowV2Copy.quietSignalCta,
-        daysSinceSet: 4,
-        source: 'second_related_save',
-      );
+      final signal = QuietSignalEngine.build(
+        entries: [
+          _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+          _entry(
+            '2',
+            'A quiet lunch with a friend — nothing about work.',
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+          _entry(
+            '3',
+            'Went for a walk and noticed the weather.',
+            createdAt: DateTime(2026, 6, 14, 12),
+          ),
+        ],
+        now: DateTime(2026, 6, 15, 12),
+      )!;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ComeBackTomorrowQuietSignalCard.test(
+            body: QuietSignalRecordCard.test(
               signal: signal,
               entryCount: 3,
               store: ComeBackTomorrowV2Store.forPrefs(prefs),
@@ -571,7 +581,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('come_back_tomorrow_quiet_signal_cta')));
+      await tester.tap(find.byKey(const Key('quiet_signal_record_cta')));
       await tester.pump();
 
       expect(ComeBackTomorrowV2Store.active?.quietSignalDismissed, isTrue);

@@ -62,6 +62,8 @@ class ComeBackTomorrowV2Store {
           ? raw['unrelatedSaveCount'] as int
           : 0,
       quietSignalDismissed: raw['quietSignalDismissed'] == true,
+      lastSeenDateKey: raw['lastSeenDateKey'] as String?,
+      quietDetectedDateKey: raw['quietDetectedDateKey'] as String?,
     );
   }
 
@@ -76,6 +78,10 @@ class ComeBackTomorrowV2Store {
           'lastResponseType': target.lastResponseType,
         'unrelatedSaveCount': target.unrelatedSaveCount,
         'quietSignalDismissed': target.quietSignalDismissed,
+        if (target.lastSeenDateKey != null)
+          'lastSeenDateKey': target.lastSeenDateKey,
+        if (target.quietDetectedDateKey != null)
+          'quietDetectedDateKey': target.quietDetectedDateKey,
         'updatedAt': DateTime.now().toUtc().toIso8601String(),
       };
 
@@ -131,6 +137,21 @@ class ComeBackTomorrowV2Store {
     final current = _active;
     if (current == null) return;
     await saveWatchTarget(current.copyWith(quietSignalDismissed: true));
+  }
+
+  Future<void> recordQuietDetection({
+    String? lastSeenDateKey,
+    DateTime? now,
+  }) async {
+    final current = _active;
+    if (current == null) return;
+    final day = _dateKey(now ?? DateTime.now());
+    await saveWatchTarget(
+      current.copyWith(
+        lastSeenDateKey: lastSeenDateKey ?? current.lastSeenDateKey,
+        quietDetectedDateKey: current.quietDetectedDateKey ?? day,
+      ),
+    );
   }
 
   static String watchKeyForPhrase(String phrase) =>

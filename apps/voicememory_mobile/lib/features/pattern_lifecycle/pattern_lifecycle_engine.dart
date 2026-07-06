@@ -3,7 +3,7 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../belief_change/belief_change_moment_engine.dart';
 import '../belief_change/belief_change_moment_model.dart';
-import '../come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
+import '../quiet_signal/quiet_signal_engine.dart';
 import '../come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../early_archive/helpful_action_appeared_engine.dart';
@@ -149,8 +149,7 @@ abstract final class PatternLifecycleEngine {
     required List<JournalEntry> entries,
     DateTime? now,
   }) =>
-      ComeBackTomorrowV2Engine.buildQuietSignal(entries: entries, now: now) !=
-      null;
+      QuietSignalEngine.build(entries: entries, now: now) != null;
 
   static bool _isSoftening({
     required List<JournalEntry> entries,

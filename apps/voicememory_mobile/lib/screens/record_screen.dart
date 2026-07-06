@@ -152,7 +152,8 @@ import '../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../widgets/record/come_back_tomorrow_card.dart';
-import '../widgets/record/come_back_tomorrow_quiet_signal_card.dart';
+import '../features/quiet_signal/quiet_signal_engine.dart';
+import '../widgets/record/quiet_signal_record_card.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
@@ -4691,17 +4692,16 @@ class _RecordScreenState extends State<RecordScreen> {
     final lowEvidenceGuidance = recordProofStack.showEarlyRepeatProgress
         ? LowEvidenceEngine.buildForRecordReady(entries: _journalEntries)
         : null;
-    final comeBackTomorrowQuietSignalCandidate = ui == RecordUiState.ready &&
+    final quietSignalCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
-        ? ComeBackTomorrowV2Engine.buildQuietSignal(entries: _journalEntries)
+        ? QuietSignalEngine.build(entries: _journalEntries)
         : null;
-    final showComeBackTomorrowQuietSignal =
-        ComeBackTomorrowV2Gates.shouldShowQuietSignal(
+    final showQuietSignalOnRecord = QuietSignalGates.shouldShowOnRecordReady(
       isReady: ui == RecordUiState.ready,
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
-      signal: comeBackTomorrowQuietSignalCandidate,
+      signal: quietSignalCandidate,
       showReturnDayFlow: showReturnDayFlow,
     );
     final showLowEvidenceGuidanceOnRecord = ui == RecordUiState.ready &&
@@ -4710,7 +4710,7 @@ class _RecordScreenState extends State<RecordScreen> {
         lowEvidenceGuidance != null &&
         !showReturnTomorrowCueReady &&
         !showReturnDayFlow &&
-        !showComeBackTomorrowQuietSignal;
+        !showQuietSignalOnRecord;
     final dailyArchiveMemoryCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
@@ -4741,7 +4741,7 @@ class _RecordScreenState extends State<RecordScreen> {
       showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
       showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
       firstProofLoopActive: firstProofLoopActive,
-      showComeBackTomorrowQuietSignal: showComeBackTomorrowQuietSignal,
+      showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
     );
     final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
       entries: _journalEntries,
@@ -5270,10 +5270,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showComeBackTomorrowQuietSignal &&
-                        comeBackTomorrowQuietSignalCandidate != null) ...[
-                      ComeBackTomorrowQuietSignalCard(
-                        signal: comeBackTomorrowQuietSignalCandidate,
+                    if (showQuietSignalOnRecord && quietSignalCandidate != null) ...[
+                      QuietSignalRecordCard(
+                        signal: quietSignalCandidate,
                         entryCount: _journalEntryCount,
                         onKeepWatching: () {
                           if (mounted) setState(() {});

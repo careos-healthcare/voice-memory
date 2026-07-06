@@ -10,6 +10,8 @@ import '../../features/pattern_correction/pattern_correction_copy.dart';
 import '../../features/pattern_correction/pattern_correction_gates.dart';
 import '../../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../../features/pattern_lifecycle/pattern_lifecycle_engine.dart';
+import '../../features/quiet_signal/quiet_signal_engine.dart';
+import '../../features/quiet_signal/quiet_signal_model.dart';
 import '../../features/what_changed/what_changed_v2_copy.dart';
 import '../../features/what_changed/what_changed_v2_engine.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
@@ -247,6 +249,9 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 widget.buildInput!.viewingConfirmedRepeatOrTimeline,
             confirmedRepeat: widget.buildInput!.confirmedRepeat,
           );
+    final quietSignal = widget.buildInput == null
+        ? null
+        : QuietSignalEngine.build(entries: widget.buildInput!.entries);
 
     return SafeArea(
       child: Padding(
@@ -280,6 +285,10 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   entryCount: _entryCount,
                   source: 'pattern_detail',
                 ),
+              ],
+              if (quietSignal != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                _QuietSignalDetailSection(signal: quietSignal),
               ],
               const SizedBox(height: AppSpacing.sm),
               ContextualPrivacyReassurance(
@@ -687,6 +696,39 @@ class _MomentRowState extends State<_MomentRow> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _QuietSignalDetailSection extends StatelessWidget {
+  const _QuietSignalDetailSection({required this.signal});
+
+  final QuietSignal signal;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
+      color: AppColors.textSecondary,
+    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
+      color: AppColors.textSecondary,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          signal.patternDetailHeading ?? '',
+          key: const Key('pattern_detail_quiet_signal_heading'),
+          style: labelStyle,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          signal.patternDetailBody ?? '',
+          key: const Key('pattern_detail_quiet_signal_body'),
+          style: bodyStyle,
+        ),
+      ],
     );
   }
 }

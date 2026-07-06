@@ -14,6 +14,7 @@ import '../repeat_return_check/repeat_return_check_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
 import '../timeline/timeline_entry_display.dart';
+import '../quiet_signal/quiet_signal_engine.dart';
 import '../weekly_review/weekly_archive_review_copy.dart';
 import '../weekly_review/weekly_archive_review_engine.dart';
 import '../what_changed/what_changed_v2_copy.dart';
@@ -223,6 +224,16 @@ abstract final class PrivateReportBuilder {
     List<RepeatReturnCheckRecord> returnChecks = const [],
     bool viewingConfirmedRepeatOrTimeline = false,
   }) {
+    final quietSignal = QuietSignalEngine.build(entries: entries);
+    if (quietSignal != null &&
+        quietSignal.privateReportLine != null &&
+        quietSignal.privateReportLine!.trim().isNotEmpty) {
+      return PrivateArchiveReportSection(
+        heading: PrivateReportCopy.whatToWatchNextHeading,
+        lines: [quietSignal.privateReportLine!.trim()],
+      );
+    }
+
     final dailyReason = DailyReturnReasonEngine.build(
       entries: entries,
       changeProof: changeProof,

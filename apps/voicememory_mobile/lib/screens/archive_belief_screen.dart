@@ -61,6 +61,7 @@ import '../features/belief_change/belief_change_moment_engine.dart';
 import '../features/belief_change/belief_change_moment_gates.dart';
 import '../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../features/pattern_lifecycle/pattern_lifecycle_engine.dart';
+import '../features/quiet_signal/quiet_signal_engine.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
@@ -294,6 +295,7 @@ import '../widgets/patterns/archive_belief_surface_card.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
 import '../widgets/share_card/share_card_action_card.dart';
 import '../widgets/patterns/belief_change_moment_card.dart';
+import '../widgets/patterns/quiet_signal_card.dart';
 import '../widgets/patterns/archive_change_timeline_card.dart';
 import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
@@ -1327,6 +1329,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
           confirmedRepeat: earlyFirstSignal,
         ),
+        quietSignal: QuietSignalEngine.build(entries: _entries),
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
       ),
     );
@@ -4004,6 +4007,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         moment: beliefChangeMomentCandidate,
       );
+      final quietSignalCandidate = QuietSignalEngine.build(entries: _entries);
+      final showQuietSignalOnPatterns = QuietSignalGates.shouldShowOnPatterns(
+        signal: quietSignalCandidate,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
       final positiveReinforcement = PositiveReinforcementEngine.build(
         positivePattern: positivePattern,
         entries: _entries,
@@ -4383,6 +4391,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     moment: beliefChangeMomentCandidate,
                     entryCount: _entries.length,
                     source: 'patterns',
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showQuietSignalOnPatterns && quietSignalCandidate != null) ...[
+                  QuietSignalCard(
+                    signal: quietSignalCandidate,
+                    entryCount: _entries.length,
+                    source: 'patterns',
+                    showViewPatternDetails: true,
+                    onViewPatternDetails: _openPatternDetail,
+                    onKeepWatching: () => setState(() {}),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],

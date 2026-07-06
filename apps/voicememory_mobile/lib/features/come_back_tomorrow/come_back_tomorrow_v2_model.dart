@@ -9,6 +9,8 @@ class ActiveWatchTarget {
     this.lastResponseType,
     this.unrelatedSaveCount = 0,
     this.quietSignalDismissed = false,
+    this.lastSeenDateKey,
+    this.quietDetectedDateKey,
   });
 
   final String watchKey;
@@ -19,6 +21,8 @@ class ActiveWatchTarget {
   final String? lastResponseType;
   final int unrelatedSaveCount;
   final bool quietSignalDismissed;
+  final String? lastSeenDateKey;
+  final String? quietDetectedDateKey;
 
   bool get hasGroundedPhrase => groundedPhrase.trim().isNotEmpty;
 
@@ -31,6 +35,8 @@ class ActiveWatchTarget {
     String? lastResponseType,
     int? unrelatedSaveCount,
     bool? quietSignalDismissed,
+    String? lastSeenDateKey,
+    String? quietDetectedDateKey,
   }) =>
       ActiveWatchTarget(
         watchKey: watchKey ?? this.watchKey,
@@ -42,6 +48,9 @@ class ActiveWatchTarget {
         unrelatedSaveCount: unrelatedSaveCount ?? this.unrelatedSaveCount,
         quietSignalDismissed:
             quietSignalDismissed ?? this.quietSignalDismissed,
+        lastSeenDateKey: lastSeenDateKey ?? this.lastSeenDateKey,
+        quietDetectedDateKey:
+            quietDetectedDateKey ?? this.quietDetectedDateKey,
       );
 }
 

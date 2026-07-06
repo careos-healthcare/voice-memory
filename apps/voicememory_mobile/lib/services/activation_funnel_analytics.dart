@@ -635,6 +635,7 @@ abstract class ActivationFunnelAnalytics {
     'has_helped',
     'has_watch_target',
     'days_since_set',
+    'days_since_seen',
     'answer_type',
     'lifecycle_state',
   };
@@ -650,6 +651,7 @@ abstract class ActivationFunnelAnalytics {
     'treat_as_new',
     'keep_exact_details',
     'watch_this_next',
+    'keep_watching',
     'view_pattern_details',
     'rename_pattern',
     'keep_recording',
@@ -1060,6 +1062,7 @@ abstract class ActivationFunnelAnalytics {
     String? shareType,
     String? promptType,
     int? daysSinceSet,
+    int? daysSinceSeen,
     String? answerType,
     String? lifecycleState,
     bool oncePerSession = false,
@@ -1201,6 +1204,7 @@ abstract class ActivationFunnelAnalytics {
       if (promptType != null && _safeValue.hasMatch(promptType))
         'prompt_type': promptType,
       if (daysSinceSet != null) 'days_since_set': daysSinceSet,
+      if (daysSinceSeen != null) 'days_since_seen': daysSinceSeen,
       if (answerType != null && _safeValue.hasMatch(answerType))
         'answer_type': answerType,
       if (lifecycleState != null && _safeValue.hasMatch(lifecycleState))

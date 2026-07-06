@@ -8,6 +8,7 @@ import '../belief_change/belief_change_moment_copy.dart';
 import '../what_changed/what_changed_v2_copy.dart';
 import '../pattern_confidence/pattern_confidence_copy.dart';
 import '../pattern_lifecycle/pattern_lifecycle_copy.dart';
+import '../quiet_signal/quiet_signal_copy.dart';
 import '../contextual_privacy/contextual_privacy_copy.dart';
 import '../early_archive/first_week_loop_copy.dart';
 import '../early_archive/archive_change_timeline_copy.dart';
@@ -79,6 +80,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...WhatChangedV2Copy.allVisibleStrings(),
         ...PatternConfidenceCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
+        ...QuietSignalCopy.allVisibleStrings(),
         ...ContextualPrivacyCopy.allVisibleStrings(),
         ArchiveSummaryCopy.title,
         ArchiveSummaryCopy.promise,

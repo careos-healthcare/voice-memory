@@ -16,6 +16,7 @@ import '../../features/repeat_return_check/repeat_return_check_store.dart';
 import '../../services/app_services.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../features/pattern_lifecycle/pattern_lifecycle_model.dart';
+import '../../features/quiet_signal/quiet_signal_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
@@ -36,6 +37,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     this.beliefChangeMoment,
     this.patternConfidence,
     this.patternLifecycle,
+    this.quietSignal,
   });
 
   final WeeklyArchiveReviewResult review;
@@ -45,6 +47,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
   final BeliefChangeMoment? beliefChangeMoment;
   final PatternConfidence? patternConfidence;
   final PatternLifecycle? patternLifecycle;
+  final QuietSignal? quietSignal;
 
   static Future<void> show(
     BuildContext context, {
@@ -55,6 +58,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     BeliefChangeMoment? beliefChangeMoment,
     PatternConfidence? patternConfidence,
     PatternLifecycle? patternLifecycle,
+    QuietSignal? quietSignal,
   }) {
     unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
@@ -73,6 +77,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           beliefChangeMoment: beliefChangeMoment,
           patternConfidence: patternConfidence,
           patternLifecycle: patternLifecycle,
+          quietSignal: quietSignal,
         ),
       ),
     );
@@ -147,6 +152,18 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   compact: true,
                   showPrivacyReassurance: false,
                   showProPackagingBridge: false,
+                ),
+              ],
+              if (quietSignal != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                _Section(
+                  label: quietSignal!.weeklyReviewHeading ?? '',
+                  labelKey: 'weekly_archive_review_quiet_signal_label',
+                  child: Text(
+                    quietSignal!.weeklyReviewBody ?? '',
+                    key: const Key('weekly_archive_review_quiet_signal_body'),
+                    style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                  ),
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.forming &&
