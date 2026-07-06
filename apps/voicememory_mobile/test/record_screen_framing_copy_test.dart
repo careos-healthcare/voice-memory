@@ -32,6 +32,7 @@ import 'package:voicememory_mobile/features/early_archive/post_save_return_hando
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
+import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
@@ -955,7 +956,7 @@ void main() {
       expect(find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')), findsNothing);
     });
 
-    testWidgets('entry 1 post-save with phrase shows return tomorrow cue', (
+    testWidgets('entry 1 post-save with phrase shows come back tomorrow v2 card', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -1002,20 +1003,25 @@ void main() {
       }
 
       expect(
-        find.text(ReturnTomorrowCueCopy.afterFirstMomentTitle),
+        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
         findsOneWidget,
       );
       expect(
-        find.text(ReturnTomorrowCueCopy.afterFirstMomentBody),
+        find.text(ComeBackTomorrowV2Copy.postSaveBody),
         findsOneWidget,
       );
+      expect(
+        find.text(ComeBackTomorrowV2Copy.postSaveFooter),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('come_back_tomorrow_card')), findsOneWidget);
       expect(
         find.text(PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback),
         findsNothing,
       );
     });
 
-    testWidgets('entry 2 related post-save shows return tomorrow cue', (
+    testWidgets('entry 2 related post-save shows come back tomorrow v2 card', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -1073,13 +1079,14 @@ void main() {
       }
 
       expect(
-        find.text(ReturnTomorrowCueCopy.afterSecondRelatedTitle),
+        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
         findsOneWidget,
       );
       expect(
-        find.text(ReturnTomorrowCueCopy.afterSecondRelatedBody),
+        find.text(ComeBackTomorrowV2Copy.postSaveBody),
         findsOneWidget,
       );
+      expect(find.byKey(const Key('come_back_tomorrow_card')), findsOneWidget);
       expect(
         find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
         findsNothing,

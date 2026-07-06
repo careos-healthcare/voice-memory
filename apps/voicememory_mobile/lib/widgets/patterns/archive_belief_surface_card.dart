@@ -7,6 +7,7 @@ import '../../features/archive_evidence/archive_belief_thread_model.dart';
 import '../../features/archive_proof/archive_belief_surface.dart';
 import '../../features/archive_proof/archive_belief_surface_copy.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
+import '../../features/pattern_lifecycle/pattern_lifecycle_model.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/tomorrow_return/active_pattern_thread_coordinator.dart';
 import '../../features/tomorrow_return/active_pattern_thread_model.dart';
@@ -18,6 +19,7 @@ import '../proof/proof_surface_why_appeared_disclosure.dart';
 import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 import 'archive_belief_correction_actions.dart';
 import 'pattern_confidence_badge.dart';
+import 'pattern_lifecycle_badge.dart';
 
 /// Archive belief proof surface — primary post-first-proof card on Archive/Patterns.
 class ArchiveBeliefSurfaceCard extends StatefulWidget {
@@ -28,6 +30,8 @@ class ArchiveBeliefSurfaceCard extends StatefulWidget {
     this.onViewPatternDetails,
     this.onDismissed,
     this.patternConfidence,
+    this.patternLifecycle,
+    this.entryCount = 0,
   });
 
   final ArchiveBeliefSurface surface;
@@ -35,6 +39,8 @@ class ArchiveBeliefSurfaceCard extends StatefulWidget {
   final VoidCallback? onViewPatternDetails;
   final VoidCallback? onDismissed;
   final PatternConfidence? patternConfidence;
+  final PatternLifecycle? patternLifecycle;
+  final int entryCount;
 
   @override
   State<ArchiveBeliefSurfaceCard> createState() =>
@@ -127,6 +133,14 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
           ],
           if (widget.patternConfidence != null) ...[
             PatternConfidenceBadge(confidence: widget.patternConfidence!),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          if (widget.patternLifecycle != null) ...[
+            PatternLifecycleBadge(
+              lifecycle: widget.patternLifecycle!,
+              entryCount: widget.entryCount,
+              source: 'patterns_tab',
+            ),
             const SizedBox(height: AppSpacing.sm),
           ],
           Text(

@@ -634,6 +634,9 @@ abstract class ActivationFunnelAnalytics {
     'has_change',
     'has_helped',
     'has_watch_target',
+    'days_since_set',
+    'answer_type',
+    'lifecycle_state',
   };
 
   /// The only values `action_type` can ever carry.
@@ -1056,6 +1059,9 @@ abstract class ActivationFunnelAnalytics {
     String? factCountBucket,
     String? shareType,
     String? promptType,
+    int? daysSinceSet,
+    String? answerType,
+    String? lifecycleState,
     bool oncePerSession = false,
   }) {
     if (oncePerSession) {
@@ -1194,6 +1200,11 @@ abstract class ActivationFunnelAnalytics {
         'share_type': shareType,
       if (promptType != null && _safeValue.hasMatch(promptType))
         'prompt_type': promptType,
+      if (daysSinceSet != null) 'days_since_set': daysSinceSet,
+      if (answerType != null && _safeValue.hasMatch(answerType))
+        'answer_type': answerType,
+      if (lifecycleState != null && _safeValue.hasMatch(lifecycleState))
+        'lifecycle_state': lifecycleState,
     };
 
     final sink = _sink;

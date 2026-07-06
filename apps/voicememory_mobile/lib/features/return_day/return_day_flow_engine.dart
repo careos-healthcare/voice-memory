@@ -1,13 +1,12 @@
 import '../../models/journal_entry.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
+import '../come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
 import '../early_archive/first_proof_moment_engine.dart';
 import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../retention/return_tomorrow_cue_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../trust/capture_recovery_gates.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
-import 'return_day_flow_copy.dart';
 import 'return_day_flow_model.dart';
 import 'return_day_flow_store.dart';
 
@@ -88,19 +87,21 @@ abstract final class ReturnDayFlowEngine {
       return null;
     }
 
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (!ReturnDayFlowGates.hasGroundedWatchTarget(eligible)) return null;
+    final question = ComeBackTomorrowV2Engine.buildReturnQuestion(
+      entries: entries,
+      now: now,
+    );
+    if (question == null) return null;
 
     final days = CaptureRecoveryGates.daysSinceLastEntry(entries: entries, now: now);
-    final phrase = ReturnTomorrowCueEngine.groundedWatchingPhrase(eligible);
 
     return ReturnDayFlow(
-      title: ReturnDayFlowCopy.title,
-      body: phrase != null
-          ? ReturnDayFlowCopy.bodyWithPhrase(phrase)
-          : ReturnDayFlowCopy.defaultBody,
+      title: question.title,
+      body: question.body,
       daysSinceLastEntry: days,
-      watchingPhrase: phrase,
+      watchingPhrase: question.groundedPhrase,
+      source: question.source,
+      daysSinceSet: question.daysSinceSet,
     );
   }
 

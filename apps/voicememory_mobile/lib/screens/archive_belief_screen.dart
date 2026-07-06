@@ -60,6 +60,7 @@ import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/belief_change/belief_change_moment_engine.dart';
 import '../features/belief_change/belief_change_moment_gates.dart';
 import '../features/pattern_confidence/pattern_confidence_engine.dart';
+import '../features/pattern_lifecycle/pattern_lifecycle_engine.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
@@ -1318,6 +1319,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           returnChecks: RepeatReturnCheckStore.cached,
           helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
           viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        ),
+        patternLifecycle: PatternLifecycleEngine.build(
+          entries: _entries,
+          returnChecks: RepeatReturnCheckStore.cached,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+          confirmedRepeat: earlyFirstSignal,
         ),
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
       ),
@@ -3906,6 +3914,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
+      final patternLifecycle = PatternLifecycleEngine.build(
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+        changeProof: repeatReturnChangeProof,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        confirmedRepeat: earlyFirstSignal,
+      );
       final patternChangedCandidate = PatternChangedEngine.build(
         changeProof: repeatReturnChangeProof,
         records: RepeatReturnCheckStore.cached,
@@ -4325,6 +4341,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ArchiveBeliefSurfaceCard(
                     surface: archiveBeliefSurfaceCandidate,
                     patternConfidence: patternConfidence,
+                    patternLifecycle: patternLifecycle,
+                    entryCount: _entries.length,
                     onRecordNext: () => context.go(
                       ArchiveProofRecordRoutes.uri(
                         guidedPromptNodeKey:

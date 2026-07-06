@@ -15,11 +15,13 @@ import '../../features/private_report/private_report_engine.dart';
 import '../../features/repeat_return_check/repeat_return_check_store.dart';
 import '../../services/app_services.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
+import '../../features/pattern_lifecycle/pattern_lifecycle_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 import '../patterns/belief_change_moment_card.dart';
 import '../patterns/pattern_confidence_badge.dart';
+import '../patterns/pattern_lifecycle_badge.dart';
 import '../common/contextual_privacy_reassurance.dart';
 import '../account/beta_feedback_sheet.dart';
 
@@ -33,6 +35,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     this.entryCount = 0,
     this.beliefChangeMoment,
     this.patternConfidence,
+    this.patternLifecycle,
   });
 
   final WeeklyArchiveReviewResult review;
@@ -41,6 +44,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
   final int entryCount;
   final BeliefChangeMoment? beliefChangeMoment;
   final PatternConfidence? patternConfidence;
+  final PatternLifecycle? patternLifecycle;
 
   static Future<void> show(
     BuildContext context, {
@@ -50,6 +54,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     int entryCount = 0,
     BeliefChangeMoment? beliefChangeMoment,
     PatternConfidence? patternConfidence,
+    PatternLifecycle? patternLifecycle,
   }) {
     unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
@@ -67,6 +72,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           entryCount: entryCount,
           beliefChangeMoment: beliefChangeMoment,
           patternConfidence: patternConfidence,
+          patternLifecycle: patternLifecycle,
         ),
       ),
     );
@@ -115,6 +121,14 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   style: ArchiveMobileTypography.explanationBody(context).copyWith(
                     color: AppColors.textSecondary,
                   ),
+                ),
+              ],
+              if (patternLifecycle != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                PatternLifecycleBadge(
+                  lifecycle: patternLifecycle!,
+                  entryCount: entryCount,
+                  source: 'weekly_review',
                 ),
               ],
               if (patternConfidence != null) ...[

@@ -8,7 +8,8 @@ import 'package:voicememory_mobile/features/early_archive/first_proof_moment_eng
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
 import 'package:voicememory_mobile/features/retention/first_week_progress_engine.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_engine.dart';
-import 'package:voicememory_mobile/features/return_day/return_day_flow_analytics.dart';
+import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_analytics.dart';
+import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_copy.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_model.dart';
@@ -102,7 +103,7 @@ List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
 void main() {
   tearDown(() async {
     ActivationFunnelAnalytics.resetForTest();
-    ReturnDayFlowAnalytics.resetForTest();
+    ComeBackTomorrowV2Analytics.resetForTest();
     await ReturnDayFlowStore.resetForTest(null);
   });
 
@@ -127,7 +128,8 @@ void main() {
 
       expect(flow, isNotNull);
       expect(flow!.title, ReturnDayFlowCopy.title);
-      expect(flow.body, contains('said yes'));
+      expect(flow.body, ReturnDayFlowCopy.defaultBody);
+      expect(flow.watchingPhrase?.toLowerCase(), contains('said yes'));
       expect(flow.hasGroundedPhrase, isTrue);
     });
 
@@ -141,7 +143,8 @@ void main() {
 
       expect(flow, isNotNull);
       expect(flow!.title, ReturnDayFlowCopy.title);
-      expect(flow.body, contains('ArchiveMe was watching'));
+      expect(flow.body, ReturnDayFlowCopy.defaultBody);
+      expect(flow.watchingPhrase, isNotNull);
     });
 
     test('hides same day', () {
@@ -317,12 +320,12 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_day_flow_yes')));
+      await tester.tap(find.byKey(const Key('return_watch_question_yes')));
       await tester.pump();
 
       expect(cameBack, isTrue);
       expect(find.text(ReturnDayFlowCopy.helperCameBack), findsOneWidget);
-      expect(find.byKey(const Key('return_day_flow_yes')), findsNothing);
+      expect(find.byKey(const Key('return_watch_question_yes')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
     });
 
@@ -347,11 +350,11 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_day_flow_not_today')));
-      await tester.pump();
+      await tester.tap(find.byKey(const Key('return_watch_question_not_today')));
+      await tester.pumpAndSettle();
 
       expect(find.text(ReturnDayFlowCopy.helperNotToday), findsOneWidget);
-      expect(find.byKey(const Key('return_day_flow_not_today')), findsNothing);
+      expect(find.byKey(const Key('return_watch_question_not_today')), findsNothing);
       expect(ReturnDayFlowStore.isDismissedToday, isTrue);
     });
 
@@ -377,7 +380,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_day_flow_different')));
+      await tester.tap(find.byKey(const Key('return_watch_question_different')));
       await tester.pump();
 
       expect(different, isTrue);
@@ -406,14 +409,15 @@ void main() {
 
     testWidgets('analytics excludes phrase text', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      ReturnDayFlowAnalytics.captureForTest =
+      ComeBackTomorrowV2Analytics.captureForTest =
           (event, properties) => captured.add((event: event, properties: properties));
 
       final flow = ReturnDayFlow(
         title: ReturnDayFlowCopy.title,
-        body: ReturnDayFlowCopy.bodyWithPhrase('said yes again'),
+        body: ReturnDayFlowCopy.defaultBody,
         daysSinceLastEntry: 1,
         watchingPhrase: 'said yes again',
+        source: 'first_grounded_save',
       );
 
       await tester.pumpWidget(
@@ -426,10 +430,10 @@ void main() {
       await tester.pump();
 
       final seen = captured
-          .where((e) => e.event == ReturnDayFlowAnalytics.seenEvent)
+          .where((e) => e.event == ComeBackTomorrowV2Analytics.questionSeenEvent)
           .toList();
       expect(seen, isNotEmpty);
-      expect(seen.first.properties['has_grounded_phrase'], 1);
+      expect(seen.first.properties['days_since_set'], isA<int>());
       final blob = seen.first.properties.entries
           .map((e) => '${e.key}:${e.value}')
           .join(' ');

@@ -9,6 +9,7 @@ import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pattern_correction/pattern_correction_copy.dart';
 import '../../features/pattern_correction/pattern_correction_gates.dart';
 import '../../features/pattern_confidence/pattern_confidence_engine.dart';
+import '../../features/pattern_lifecycle/pattern_lifecycle_engine.dart';
 import '../../features/what_changed/what_changed_v2_copy.dart';
 import '../../features/what_changed/what_changed_v2_engine.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
@@ -32,6 +33,7 @@ import '../record/entry_importance_button.dart';
 import '../share_card/share_card_action_card.dart';
 import 'belief_change_moment_card.dart';
 import 'pattern_confidence_badge.dart';
+import 'pattern_lifecycle_badge.dart';
 import '../common/contextual_privacy_reassurance.dart';
 import 'pattern_correction_sheet.dart';
 
@@ -233,6 +235,18 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 widget.buildInput!.viewingConfirmedRepeatOrTimeline,
             hideNotEnoughYet: true,
           );
+    final patternLifecycle = widget.buildInput == null
+        ? null
+        : PatternLifecycleEngine.build(
+            entries: widget.buildInput!.entries,
+            returnChecks: widget.buildInput!.returnChecks,
+            changeProof: widget.buildInput!.changeProof,
+            helpfulActionCapturedMilestone:
+                widget.buildInput!.helpfulActionCapturedMilestone,
+            viewingConfirmedRepeatOrTimeline:
+                widget.buildInput!.viewingConfirmedRepeatOrTimeline,
+            confirmedRepeat: widget.buildInput!.confirmedRepeat,
+          );
 
     return SafeArea(
       child: Padding(
@@ -257,6 +271,14 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 PatternConfidenceBadge(
                   confidence: patternConfidence,
                   showBody: true,
+                ),
+              ],
+              if (patternLifecycle != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                PatternLifecycleBadge(
+                  lifecycle: patternLifecycle,
+                  entryCount: _entryCount,
+                  source: 'pattern_detail',
                 ),
               ],
               const SizedBox(height: AppSpacing.sm),

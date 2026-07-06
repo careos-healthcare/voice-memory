@@ -148,6 +148,11 @@ import '../features/retention/first_week_progress_engine.dart';
 import '../features/return_day/return_day_flow_copy.dart';
 import '../features/return_day/return_day_flow_engine.dart';
 import '../features/return_day/return_day_flow_store.dart';
+import '../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
+import '../features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
+import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
+import '../widgets/record/come_back_tomorrow_card.dart';
+import '../widgets/record/come_back_tomorrow_quiet_signal_card.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
@@ -4686,12 +4691,26 @@ class _RecordScreenState extends State<RecordScreen> {
     final lowEvidenceGuidance = recordProofStack.showEarlyRepeatProgress
         ? LowEvidenceEngine.buildForRecordReady(entries: _journalEntries)
         : null;
+    final comeBackTomorrowQuietSignalCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? ComeBackTomorrowV2Engine.buildQuietSignal(entries: _journalEntries)
+        : null;
+    final showComeBackTomorrowQuietSignal =
+        ComeBackTomorrowV2Gates.shouldShowQuietSignal(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      signal: comeBackTomorrowQuietSignalCandidate,
+      showReturnDayFlow: showReturnDayFlow,
+    );
     final showLowEvidenceGuidanceOnRecord = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         recordProofStack.showEarlyRepeatProgress &&
         lowEvidenceGuidance != null &&
         !showReturnTomorrowCueReady &&
-        !showReturnDayFlow;
+        !showReturnDayFlow &&
+        !showComeBackTomorrowQuietSignal;
     final dailyArchiveMemoryCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
@@ -4722,6 +4741,7 @@ class _RecordScreenState extends State<RecordScreen> {
       showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
       showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
       firstProofLoopActive: firstProofLoopActive,
+      showComeBackTomorrowQuietSignal: showComeBackTomorrowQuietSignal,
     );
     final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
       entries: _journalEntries,
@@ -4770,7 +4790,26 @@ class _RecordScreenState extends State<RecordScreen> {
         : null;
     final postSaveDegradedForReturnCue = entriesAfterSave.isNotEmpty &&
         VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
+    final comeBackTomorrowV2PostSaveWatch = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? ComeBackTomorrowV2Engine.buildPostSaveWatch(
+            entries: entriesAfterSave,
+            firstProofUnlocked: showFirstProofMoment,
+          )
+        : null;
+    final showComeBackTomorrowV2PostSave =
+        ComeBackTomorrowV2Gates.shouldShowPostSave(
+      isPostSaveDone: ui == RecordUiState.done,
+      isDegradedPostSave: postSaveDegradedForReturnCue,
+      watch: comeBackTomorrowV2PostSaveWatch,
+      showFirstProofPayoff: showFirstProofPayoff,
+      showFirstProofTruth: showFirstProofTruth,
+      showFirstProofActionLoop: showFirstProofActionLoop,
+      showWhatChangedV2Display: showWhatChangedV2Display,
+      showHelpedTracking: showHelpedTracking,
+    );
     final showReturnTomorrowCuePostSave = !showFirstProofPayoff &&
+        !showComeBackTomorrowV2PostSave &&
         ReturnTomorrowCueGates.shouldShowPostSave(
       isPostSaveDone: ui == RecordUiState.done,
       isDegradedPostSave: postSaveDegradedForReturnCue,
@@ -4795,7 +4834,8 @@ class _RecordScreenState extends State<RecordScreen> {
       isDegradedPostSave: postSaveDegradedForReturnCue,
       handoff: postSaveReturnHandoffCandidate,
     ) &&
-        !showReturnTomorrowCuePostSave;
+        !showReturnTomorrowCuePostSave &&
+        !showComeBackTomorrowV2PostSave;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -5218,13 +5258,24 @@ class _RecordScreenState extends State<RecordScreen> {
                         entryCount: _journalEntryCount,
                         onCameBack: () => setState(
                           () => _selectedPromptLine =
-                              ReturnDayFlowCopy.cameBackRecordPrompt,
+                              ComeBackTomorrowV2Copy.cameBackRecordPrompt,
                         ),
                         onDifferent: () => setState(
                           () => _selectedPromptLine =
-                              ReturnDayFlowCopy.differentRecordPrompt,
+                              ComeBackTomorrowV2Copy.differentRecordPrompt,
                         ),
                         onAnswered: () {
+                          if (mounted) setState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showComeBackTomorrowQuietSignal &&
+                        comeBackTomorrowQuietSignalCandidate != null) ...[
+                      ComeBackTomorrowQuietSignalCard(
+                        signal: comeBackTomorrowQuietSignalCandidate,
+                        entryCount: _journalEntryCount,
+                        onKeepWatching: () {
                           if (mounted) setState(() {});
                         },
                       ),
@@ -6167,8 +6218,9 @@ class _RecordScreenState extends State<RecordScreen> {
                             entry: entriesAfterSave.first,
                             showFirstProofMoment: showFirstProofMoment,
                             hierarchyAllowsFeedback:
-                                postSaveArchiveHierarchy?.showMomentQualityFeedback ??
-                                true,
+                                (postSaveArchiveHierarchy?.showMomentQualityFeedback ??
+                                    true) &&
+                                !showComeBackTomorrowV2PostSave,
                           )) ...[
                             MomentQualityFeedbackCard(
                               entry: entriesAfterSave.first,
@@ -7099,6 +7151,14 @@ class _RecordScreenState extends State<RecordScreen> {
                         surface: 'record_post_save',
                       ),
                       const SizedBox(height: 12),
+                    ],
+                    if (showComeBackTomorrowV2PostSave &&
+                        comeBackTomorrowV2PostSaveWatch != null) ...[
+                      ComeBackTomorrowCard(
+                        watch: comeBackTomorrowV2PostSaveWatch,
+                        entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
                     ],
                     if (showReturnTomorrowCuePostSave &&
                         returnTomorrowCuePostSave != null) ...[

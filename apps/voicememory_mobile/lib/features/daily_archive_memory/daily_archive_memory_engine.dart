@@ -45,6 +45,7 @@ abstract final class DailyArchiveMemoryGates {
     required bool showLowEvidenceGuidance,
     required bool showWeeklyArchiveReview,
     required bool firstProofLoopActive,
+    bool showComeBackTomorrowQuietSignal = false,
   }) =>
       loaded &&
       isReady &&
@@ -56,7 +57,8 @@ abstract final class DailyArchiveMemoryGates {
       !showReturnTomorrowCueReady &&
       !showLowEvidenceGuidance &&
       !showWeeklyArchiveReview &&
-      !firstProofLoopActive;
+      !firstProofLoopActive &&
+      !showComeBackTomorrowQuietSignal;
 
   static bool _onlyQuietDayEntries(List<JournalEntry> entries) {
     final withText = entries
