@@ -244,6 +244,7 @@ import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
 import '../features/first_proof_action_loop/first_proof_action_loop_engine.dart';
 import '../features/first_proof_action_loop/first_proof_action_loop_gates.dart';
+import '../features/pattern_correction/pattern_correction_gates.dart';
 import '../features/first_proof_payoff/first_proof_payoff_engine.dart';
 import '../features/first_proof_payoff/first_proof_payoff_gates.dart';
 import '../features/first_proof_truth/first_proof_truth_gates.dart';
@@ -256,6 +257,7 @@ import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
+import '../widgets/patterns/pattern_correction_sheet.dart';
 import '../features/retention/return_tomorrow_cue_engine.dart';
 import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../features/early_archive/first_week_loop_engine.dart';
@@ -1913,6 +1915,29 @@ class _RecordScreenState extends State<RecordScreen> {
       entryId: entryId,
       patternKey: patternKey,
       source: 'first_proof_action_loop',
+    );
+  }
+
+  Future<void> _openFirstProofPatternCorrection() async {
+    final entries = _entriesAfterSave;
+    if (entries.isEmpty) return;
+
+    final payoff = FirstProofPayoffEngine.build(entries: entries);
+    if (payoff == null) return;
+    if (!PatternCorrectionGates.shouldShowForFirstProofNo(
+      entries: entries,
+      payoff: payoff,
+    )) {
+      return;
+    }
+
+    await PatternCorrectionSheet.show(
+      context,
+      contextData: PatternCorrectionGates.buildForFirstProofNo(
+        entries: entries,
+        payoff: payoff,
+        onKeepRecording: _keepRecording,
+      ),
     );
   }
 
@@ -6092,6 +6117,13 @@ class _RecordScreenState extends State<RecordScreen> {
                                         _excludeLatestFromFirstProofPattern(),
                                       )
                                   : null,
+                              onOpenPatternCorrection:
+                                  firstProofActionLoopContent
+                                          .canShowPatternCorrection
+                                      ? () => unawaited(
+                                            _openFirstProofPatternCorrection(),
+                                          )
+                                      : null,
                             ),
                           ],
                           if (confirmedRepeatTriggerPayoff != null) ...[

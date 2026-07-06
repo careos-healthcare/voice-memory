@@ -4,6 +4,7 @@ import '../first_proof_payoff/first_proof_payoff_model.dart';
 import '../first_proof_truth/first_proof_truth_model.dart';
 import '../pattern_naming/pattern_name_engine.dart';
 import '../transcript_correction/transcript_correction_gate.dart';
+import '../pattern_correction/pattern_correction_gates.dart';
 import 'first_proof_action_loop_copy.dart';
 import 'first_proof_action_loop_model.dart';
 
@@ -26,6 +27,12 @@ abstract final class FirstProofActionLoopEngine {
     final canRenamePattern =
         patternPrompt != null || (patternKey != null && payoff.groundedPhrase.isNotEmpty);
     final canShowPatternDetails = payoff.canShowPatternDetail;
+
+    final canShowPatternCorrection = answer == FirstProofTruthAnswer.no &&
+        PatternCorrectionGates.shouldShowForFirstProofNo(
+          entries: entries,
+          payoff: payoff,
+        );
 
     return switch (answer) {
       FirstProofTruthAnswer.yes => FirstProofActionLoopContent(
@@ -56,6 +63,7 @@ abstract final class FirstProofActionLoopEngine {
           ],
           canCorrectTranscript: canCorrectTranscript,
           canRemoveFromPattern: canRemoveFromPattern,
+          canShowPatternCorrection: canShowPatternCorrection,
         ),
     };
   }

@@ -6,15 +6,18 @@ import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 import '../../features/belief_change/belief_change_moment_engine.dart';
 import '../../features/belief_change/belief_change_moment_model.dart';
-import '../../features/pattern_detail/pattern_detail_copy.dart';
+import '../../features/pattern_correction/pattern_correction_copy.dart';
+import '../../features/pattern_correction/pattern_correction_gates.dart';
 import '../../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../../features/what_changed/what_changed_v2_copy.dart';
 import '../../features/what_changed/what_changed_v2_engine.dart';
+import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/share_card/share_card_model.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
+import '../../models/journal_entry.dart';
 import '../archive_controls/archive_moment_actions_sheet.dart';
 import '../archive_controls/archive_pattern_exclusion_actions.dart';
 import '../../services/app_services.dart';
@@ -28,6 +31,7 @@ import '../share_card/share_card_action_card.dart';
 import 'belief_change_moment_card.dart';
 import 'pattern_confidence_badge.dart';
 import '../common/contextual_privacy_reassurance.dart';
+import 'pattern_correction_sheet.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatefulWidget {
@@ -113,6 +117,31 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
       _detail = rebuilt;
       _belowThreshold = rebuilt == null;
     });
+  }
+
+  Future<void> _openPatternCorrection(
+    BuildContext context,
+    PatternDetailResult detail,
+  ) async {
+    final entries = widget.buildInput?.entries ?? const <JournalEntry>[];
+    if (!PatternCorrectionGates.shouldShowForPatternDetail(
+      detail: detail,
+      entries: entries,
+      viewingConfirmedRepeatOrTimeline:
+          widget.buildInput?.viewingConfirmedRepeatOrTimeline ?? true,
+    )) {
+      return;
+    }
+
+    await PatternCorrectionSheet.show(
+      context,
+      contextData: PatternCorrectionGates.buildForPatternDetail(
+        detail: detail,
+        entryCount: _entryCount,
+        entries: entries,
+        onMomentChanged: _reloadDetail,
+      ),
+    );
   }
 
   @override
@@ -227,6 +256,35 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 key: const Key('pattern_detail_pattern_label'),
                 style: bodyStyle,
               ),
+              if (PatternCorrectionGates.shouldShowForPatternDetail(
+                detail: detail,
+                entries: widget.buildInput?.entries ?? const [],
+                viewingConfirmedRepeatOrTimeline:
+                    widget.buildInput?.viewingConfirmedRepeatOrTimeline ?? true,
+              )) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    key: const Key('pattern_correction_control'),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    onPressed: () => _openPatternCorrection(context, detail),
+                    child: Text(
+                      PatternCorrectionCopy.controlLabel,
+                      style: ArchiveMobileTypography.responsiveHelper(context)
+                          .copyWith(
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               if (detail.showWhyThisMatters) ...[
                 const SizedBox(height: AppSpacing.md),
                 Text(

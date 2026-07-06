@@ -4,6 +4,7 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/first_proof_action_loop/first_proof_action_loop_analytics.dart';
 import '../../features/first_proof_action_loop/first_proof_action_loop_copy.dart';
 import '../../features/first_proof_action_loop/first_proof_action_loop_model.dart';
+import '../../features/pattern_correction/pattern_correction_copy.dart';
 import '../../features/first_proof_truth/first_proof_truth_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -21,6 +22,7 @@ class FirstProofActionLoopCard extends StatelessWidget {
     this.onKeepRecording,
     this.onCorrectTranscript,
     this.onRemoveFromPattern,
+    this.onOpenPatternCorrection,
   });
 
   final FirstProofActionLoopContent content;
@@ -31,6 +33,7 @@ class FirstProofActionLoopCard extends StatelessWidget {
   final VoidCallback? onKeepRecording;
   final VoidCallback? onCorrectTranscript;
   final VoidCallback? onRemoveFromPattern;
+  final VoidCallback? onOpenPatternCorrection;
 
   String get _answerKey => switch (content.answer) {
         FirstProofTruthAnswer.yes => 'yes',
@@ -114,6 +117,32 @@ class FirstProofActionLoopCard extends StatelessWidget {
                 },
               ),
             ],
+          ],
+          if (content.answer == FirstProofTruthAnswer.no &&
+              content.canShowPatternCorrection &&
+              onOpenPatternCorrection != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('pattern_correction_control'),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: onOpenPatternCorrection,
+                child: Text(
+                  PatternCorrectionCopy.controlLabel,
+                  style: ArchiveMobileTypography.responsiveHelper(context)
+                      .copyWith(
+                    color: AppColors.textSecondary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
           ],
         ],
       ),

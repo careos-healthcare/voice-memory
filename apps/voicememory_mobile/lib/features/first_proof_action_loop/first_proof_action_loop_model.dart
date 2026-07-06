@@ -20,6 +20,7 @@ class FirstProofActionLoopContent {
     this.canRenamePattern = false,
     this.canCorrectTranscript = false,
     this.canRemoveFromPattern = false,
+    this.canShowPatternCorrection = false,
   });
 
   final FirstProofTruthAnswer answer;
@@ -29,4 +30,5 @@ class FirstProofActionLoopContent {
   final bool canRenamePattern;
   final bool canCorrectTranscript;
   final bool canRemoveFromPattern;
+  final bool canShowPatternCorrection;
 }
