@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../correction_memory/correction_memory_engine.dart';
+import '../correction_memory/correction_memory_model.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../early_archive/early_first_signal_engine.dart';
@@ -42,10 +43,15 @@ abstract final class EvidenceWeightingEngine {
         null;
 
     final secondary = <EvidenceWeightState>[];
+    final correction = CorrectionMemoryEngine.snapshotFor(
+      entries: entries,
+      now: clock,
+    );
     final primary = _resolvePrimaryState(
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasRecentEntry: hasRecentEntry,
       hasOlderEntry: hasOlderEntry,
+      correction: correction,
     );
 
     if (hasRecentEntry && primary != EvidenceWeightState.fresh) {
@@ -79,10 +85,7 @@ abstract final class EvidenceWeightingEngine {
       primaryState: primary,
       secondaryStates: secondary,
       shouldShow: true,
-      correctionMemory: CorrectionMemoryEngine.snapshotFor(
-        entries: entries,
-        now: clock,
-      ),
+      correctionMemory: correction,
     );
   }
 
@@ -162,7 +165,25 @@ abstract final class EvidenceWeightingEngine {
     required bool hasConfirmedRepeat,
     required bool hasRecentEntry,
     required bool hasOlderEntry,
+    CorrectionMemorySnapshot? correction,
   }) {
+    if (correction != null) {
+      if (correction.returnedAfterFaded &&
+          hasConfirmedRepeat &&
+          hasRecentEntry) {
+        return EvidenceWeightState.repeated;
+      }
+      return switch (correction.state) {
+        CorrectionMemoryState.faded => EvidenceWeightState.fading,
+        CorrectionMemoryState.partlyCurrent => EvidenceWeightState.softened,
+        CorrectionMemoryState.stillCurrent =>
+          hasConfirmedRepeat && hasRecentEntry
+              ? EvidenceWeightState.repeated
+              : EvidenceWeightState.fresh,
+        CorrectionMemoryState.unsure => EvidenceWeightState.fading,
+      };
+    }
+
     if (hasConfirmedRepeat && hasRecentEntry) {
       return EvidenceWeightState.repeated;
     }

@@ -26,6 +26,7 @@ class BetaProofFeedbackRow extends StatefulWidget {
     required this.whatChangedQuestionActive,
     required this.patternReviewInboxHasActiveItems,
     this.onChanged,
+    this.onNotRelevantAnswered,
     this.store,
     this.skipPrefsLoad = false,
     this.initialAnswered = false,
@@ -43,6 +44,7 @@ class BetaProofFeedbackRow extends StatefulWidget {
     this.whatChangedQuestionActive = false,
     this.patternReviewInboxHasActiveItems = false,
     this.onChanged,
+    this.onNotRelevantAnswered,
     this.store,
     bool answered = false,
   })  : skipPrefsLoad = true,
@@ -58,6 +60,7 @@ class BetaProofFeedbackRow extends StatefulWidget {
   final bool whatChangedQuestionActive;
   final bool patternReviewInboxHasActiveItems;
   final VoidCallback? onChanged;
+  final Future<void> Function()? onNotRelevantAnswered;
   final BetaProofFeedbackStore? store;
   final bool skipPrefsLoad;
   final bool initialAnswered;
@@ -122,6 +125,9 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
       entryCount: widget.entryCount,
       hasConfirmedRepeat: widget.hasConfirmedRepeat,
     );
+    if (feedbackType == BetaProofFeedbackType.notRelevant) {
+      await widget.onNotRelevantAnswered?.call();
+    }
     if (!mounted) return;
     setState(() => _answered = true);
     widget.onChanged?.call();

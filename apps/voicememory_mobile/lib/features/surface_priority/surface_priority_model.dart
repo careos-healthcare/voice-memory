@@ -9,6 +9,8 @@ enum SurfacePrioritySurface {
 
 /// Stable keys for cards managed by the priority audit.
 enum SurfacePriorityCardKey {
+  firstMomentCapture,
+  secondMomentReturn,
   lowFrictionReturn,
   whatToNoticeNext,
   betaTodaySummary,
@@ -20,6 +22,7 @@ enum SurfacePriorityCardKey {
   timelinePositioning,
   currentRelevance,
   correctionMemory,
+  notRelevantRecovery,
   evidenceWeighting,
   proofSpecificity,
   presentDayRelevance,
@@ -49,6 +52,8 @@ class SurfacePriorityCandidates {
   bool candidate(SurfacePriorityCardKey key) => byKey[key] ?? false;
 
   factory SurfacePriorityCandidates.recordReady({
+    required bool firstMomentCapture,
+    required bool secondMomentReturn,
     required bool lowFrictionReturn,
     required bool whatToNoticeNext,
     required bool betaTodaySummary,
@@ -59,6 +64,7 @@ class SurfacePriorityCandidates {
     required bool timelinePositioning,
     required bool currentRelevance,
     required bool correctionMemory,
+    required bool notRelevantRecovery,
     required bool evidenceWeighting,
     required bool proofSpecificity,
     required bool presentDayRelevance,
@@ -69,6 +75,8 @@ class SurfacePriorityCandidates {
     required bool suppressLegacyEducation,
   }) =>
       SurfacePriorityCandidates({
+        SurfacePriorityCardKey.firstMomentCapture: firstMomentCapture,
+        SurfacePriorityCardKey.secondMomentReturn: secondMomentReturn,
         SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
         SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
         SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
@@ -82,6 +90,7 @@ class SurfacePriorityCandidates {
             currentRelevance && !suppressLegacyEducation,
         SurfacePriorityCardKey.correctionMemory:
             correctionMemory && !suppressLegacyEducation,
+        SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
         SurfacePriorityCardKey.evidenceWeighting:
             evidenceWeighting && !suppressLegacyEducation,
         SurfacePriorityCardKey.proofSpecificity:
@@ -136,6 +145,7 @@ class SurfacePriorityCandidates {
     required bool archiveTimelineSpine,
     required bool betaTesterReport,
     required bool correctionMemory,
+    required bool notRelevantRecovery,
     required bool patternConfidence,
     required bool evidenceWeighting,
     required bool currentRelevance,
@@ -155,6 +165,7 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
         SurfacePriorityCardKey.correctionMemory:
             correctionMemory && !suppressLegacyEducation,
+        SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
         SurfacePriorityCardKey.patternConfidence:
             patternConfidence && !suppressLegacyEducation,
         SurfacePriorityCardKey.evidenceWeighting:

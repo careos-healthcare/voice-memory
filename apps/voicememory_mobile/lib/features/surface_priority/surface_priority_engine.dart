@@ -9,6 +9,8 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.firstMomentCapture,
+    SurfacePriorityCardKey.secondMomentReturn,
     SurfacePriorityCardKey.lowFrictionReturn,
     SurfacePriorityCardKey.whatToNoticeNext,
     SurfacePriorityCardKey.betaTodaySummary,
@@ -27,11 +29,13 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordCorrectionOrder = [
+    SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.currentRelevance,
     SurfacePriorityCardKey.correctionMemory,
   ];
 
   static const _patternsDetailOrder = [
+    SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.correctionMemory,
     SurfacePriorityCardKey.patternConfidence,
     SurfacePriorityCardKey.evidenceWeighting,
@@ -422,6 +426,8 @@ abstract final class SurfacePriorityEngine {
       entryCount: 0,
       source: 'legacy',
       candidates: SurfacePriorityCandidates.recordReady(
+        firstMomentCapture: false,
+        secondMomentReturn: false,
         lowFrictionReturn: lowFrictionReturnVisible,
         whatToNoticeNext: whatToNoticeNextVisible,
         betaTodaySummary: betaTodaySummaryVisible,
@@ -432,6 +438,7 @@ abstract final class SurfacePriorityEngine {
         timelinePositioning: false,
         currentRelevance: false,
         correctionMemory: false,
+        notRelevantRecovery: false,
         evidenceWeighting: false,
         proofSpecificity: false,
         presentDayRelevance: false,

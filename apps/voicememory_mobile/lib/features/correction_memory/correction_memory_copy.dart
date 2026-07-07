@@ -23,10 +23,10 @@ abstract final class CorrectionMemoryCopy {
       'stronger evidence.';
 
   static const returnedAfterFadedBody =
-      'This returned after you marked it as less current.';
+      'This returned after you marked it as background.';
 
   static const returnedAfterFadedEvidenceLine =
-      'This returned after you marked it as less current.';
+      'This returned after you marked it as background.';
 
   static const footer =
       'You can correct the archive. Your past is context, not a verdict.';

@@ -30,6 +30,8 @@ void main() {
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: true,
           whatToNoticeNext: true,
           betaTodaySummary: true,
@@ -40,6 +42,7 @@ void main() {
           timelinePositioning: false,
           currentRelevance: false,
           correctionMemory: false,
+          notRelevantRecovery: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -54,6 +57,8 @@ void main() {
       final guidanceVisible = result.visibleCardKeys
           .where(
             (key) =>
+                key == SurfacePriorityCardKey.firstMomentCapture ||
+                key == SurfacePriorityCardKey.secondMomentReturn ||
                 key == SurfacePriorityCardKey.lowFrictionReturn ||
                 key == SurfacePriorityCardKey.whatToNoticeNext ||
                 key == SurfacePriorityCardKey.betaTodaySummary ||
@@ -65,11 +70,89 @@ void main() {
       expect(result.guidanceSlot, SurfacePriorityCardKey.lowFrictionReturn);
     });
 
+    test('gives first moment capture highest guidance priority for zero entry', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 0,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: true,
+          secondMomentReturn: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+
+      expect(result.guidanceSlot, SurfacePriorityCardKey.firstMomentCapture);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.lowFrictionReturn,
+        candidate: true,
+      ), isFalse);
+    });
+
+    test('gives second moment return highest guidance priority for one entry', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 1,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+
+      expect(result.guidanceSlot, SurfacePriorityCardKey.secondMomentReturn);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.lowFrictionReturn,
+        candidate: true,
+      ), isFalse);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.whatToNoticeNext,
+        candidate: true,
+      ), isFalse);
+    });
+
     test('never shows more than 1 proof card', () {
       final result = SurfacePriorityEngine.auditRecordReady(
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: false,
           whatToNoticeNext: false,
           betaTodaySummary: false,
@@ -80,6 +163,7 @@ void main() {
           timelinePositioning: true,
           currentRelevance: true,
           correctionMemory: true,
+          notRelevantRecovery: false,
           evidenceWeighting: true,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -124,6 +208,8 @@ void main() {
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: false,
           whatToNoticeNext: false,
           betaTodaySummary: false,
@@ -134,6 +220,7 @@ void main() {
           timelinePositioning: false,
           currentRelevance: false,
           correctionMemory: false,
+          notRelevantRecovery: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -164,6 +251,8 @@ void main() {
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: false,
           whatToNoticeNext: false,
           betaTodaySummary: false,
@@ -174,6 +263,7 @@ void main() {
           timelinePositioning: true,
           currentRelevance: true,
           correctionMemory: true,
+          notRelevantRecovery: false,
           evidenceWeighting: true,
           proofSpecificity: true,
           presentDayRelevance: true,
@@ -201,6 +291,8 @@ void main() {
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: true,
           whatToNoticeNext: false,
           betaTodaySummary: false,
@@ -211,6 +303,7 @@ void main() {
           timelinePositioning: false,
           currentRelevance: false,
           correctionMemory: false,
+          notRelevantRecovery: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -337,6 +430,7 @@ void main() {
           archiveTimelineSpine: true,
           betaTesterReport: false,
           correctionMemory: false,
+          notRelevantRecovery: false,
           patternConfidence: false,
           evidenceWeighting: false,
           currentRelevance: false,
@@ -374,6 +468,7 @@ void main() {
           archiveTimelineSpine: true,
           betaTesterReport: true,
           correctionMemory: true,
+          notRelevantRecovery: false,
           patternConfidence: true,
           evidenceWeighting: true,
           currentRelevance: true,
@@ -411,6 +506,7 @@ void main() {
           archiveTimelineSpine: true,
           betaTesterReport: true,
           correctionMemory: false,
+          notRelevantRecovery: false,
           patternConfidence: false,
           evidenceWeighting: false,
           currentRelevance: false,
@@ -445,6 +541,7 @@ void main() {
           archiveTimelineSpine: false,
           betaTesterReport: false,
           correctionMemory: true,
+          notRelevantRecovery: false,
           patternConfidence: true,
           evidenceWeighting: true,
           currentRelevance: true,
@@ -505,6 +602,8 @@ void main() {
         entryCount: 4,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
           lowFrictionReturn: true,
           whatToNoticeNext: false,
           betaTodaySummary: false,
@@ -515,6 +614,7 @@ void main() {
           timelinePositioning: false,
           currentRelevance: false,
           correctionMemory: false,
+          notRelevantRecovery: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,

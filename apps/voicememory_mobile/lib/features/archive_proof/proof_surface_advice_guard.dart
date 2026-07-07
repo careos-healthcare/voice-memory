@@ -13,7 +13,11 @@ import '../low_friction_return/low_friction_return_copy.dart';
 import '../beta_proof_feedback/beta_proof_feedback_copy.dart';
 import '../beta_today_summary/beta_today_summary_copy.dart';
 import '../beta_tester_report/beta_tester_report_copy.dart';
+import '../first_moment_capture/first_moment_capture_copy.dart';
+import '../second_moment_return/second_moment_return_copy.dart';
 import '../surface_priority/surface_priority_copy.dart';
+import '../proof_specificity_boost/proof_specificity_boost_copy.dart';
+import '../not_relevant_recovery/not_relevant_recovery_copy.dart';
 import '../what_to_notice_next/what_to_notice_next_copy.dart';
 import '../pattern_lifecycle/pattern_lifecycle_copy.dart';
 import '../quiet_signal/quiet_signal_copy.dart';
@@ -94,7 +98,11 @@ abstract final class ProofSurfaceAdviceGuard {
         ...BetaTodaySummaryCopy.allVisibleStrings(),
         ...WhatToNoticeNextCopy.allVisibleStrings(),
         ...BetaTesterReportCopy.allVisibleStrings(),
+        ...FirstMomentCaptureCopy.allVisibleStrings(),
+        ...SecondMomentReturnCopy.allVisibleStrings(),
         ...SurfacePriorityCopy.allVisibleStrings(),
+        ...ProofSpecificityBoostCopy.all,
+        ...NotRelevantRecoveryCopy.allVisibleStrings,
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
         ...ContextualPrivacyCopy.allVisibleStrings(),

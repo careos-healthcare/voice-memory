@@ -325,12 +325,17 @@ import '../features/correction_memory/correction_memory_engine.dart';
 import '../features/correction_memory/correction_memory_store.dart';
 import '../features/evidence_weighting/evidence_weighting_engine.dart';
 import '../features/proof_specificity/proof_specificity_engine.dart';
+import '../features/proof_specificity_boost/proof_specificity_boost_engine.dart';
+import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
+import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
 import '../widgets/patterns/correction_memory_card.dart';
 import '../widgets/patterns/evidence_weighting_card.dart';
 import '../widgets/patterns/proof_specificity_card.dart';
+import '../widgets/patterns/proof_specificity_boost_card.dart';
+import '../widgets/patterns/not_relevant_recovery_card.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/archive_timeline_spine_card.dart';
 import '../widgets/patterns/timeline_proof_moment_card.dart';
@@ -4279,6 +4284,25 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         whatChangedQuestionActive: false,
         patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
       );
+      final notRelevantRecoveryCandidate = NotRelevantRecoveryEngine.build(
+        entries: _entries,
+        source: 'patterns',
+      );
+      var showNotRelevantRecoveryOnPatterns =
+          notRelevantRecoveryCandidate.shouldShow &&
+              NotRelevantRecoveryEngine.shouldRender(
+                result: notRelevantRecoveryCandidate,
+                parentVisible: (showTimelineProofMomentOnPatterns &&
+                        timelineProofMomentCandidate != null) ||
+                    (showArchiveTimelineSpineOnPatterns &&
+                        archiveTimelineSpineCandidate != null),
+                isRecording: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                whatChangedQuestionActive: false,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActiveOnPatterns,
+              );
       final betaTesterReportCandidate = BetaTesterReportEngine.build(
         entries: _entries,
         beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -4654,6 +4678,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           betaTesterReport: showBetaTesterReportOnPatterns,
           correctionMemory: showCorrectionMemoryOnPatterns &&
               correctionMemoryCandidate != null,
+          notRelevantRecovery: showNotRelevantRecoveryOnPatterns,
           patternConfidence: showPatternConfidenceExplanationOnPatterns &&
               patternConfidenceExplanationCandidate != null,
           evidenceWeighting: showEvidenceWeightingOnPatterns &&
@@ -4692,6 +4717,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         SurfacePriorityCardKey.correctionMemory,
         candidate: showCorrectionMemoryOnPatterns &&
             correctionMemoryCandidate != null,
+      );
+      showNotRelevantRecoveryOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.notRelevantRecovery,
+        candidate: showNotRelevantRecoveryOnPatterns,
       );
       showPatternConfidenceExplanationOnPatterns = patternsAudit.isVisible(
         SurfacePriorityCardKey.patternConfidence,
@@ -4738,6 +4767,30 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           patternsAudit.isVisible(
         SurfacePriorityCardKey.archiveIntelligenceProBridge,
         candidate: patternsArchiveIntelligenceProBridgeVisible,
+      );
+      final proofSpecificityBoostPatternsCandidate =
+          ProofSpecificityBoostEngine.build(
+        entries: _entries,
+        beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+        source: 'patterns',
+        beliefEvidencePhrases:
+            archiveBeliefSurfaceCandidate.evidencePhrases,
+      );
+      final timelineProofPatternsParentVisible =
+          showTimelineProofMomentOnPatterns &&
+              timelineProofMomentCandidate != null;
+      final showProofSpecificityBoostOnPatterns =
+          ProofSpecificityBoostEngine.shouldRender(
+        result: proofSpecificityBoostPatternsCandidate,
+        surface: ProofSpecificityBoostSurface.patterns,
+        parentVisible: timelineProofPatternsParentVisible,
+        timelineProofVisible: timelineProofPatternsParentVisible,
+        firstProofPayoffVisible: false,
+        isRecording: false,
+        isDegradedTranscriptState: false,
+        isPostSaveDegradedState: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
       );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
@@ -4867,8 +4920,35 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     whatChangedQuestionActive: false,
                     patternReviewInboxHasActiveItems:
                         patternReviewInboxActiveOnPatterns,
+                    onNotRelevantAnswered: () =>
+                        NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                      entries: _entries,
+                      source: 'patterns',
+                    ),
                     onChanged: () => setState(() {}),
                   ),
+                  if (showNotRelevantRecoveryOnPatterns) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    NotRelevantRecoveryCard(
+                      result: notRelevantRecoveryCandidate,
+                      source: 'patterns',
+                      onChanged: () => setState(() {}),
+                    ),
+                  ],
+                  if (showProofSpecificityBoostOnPatterns) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    ProofSpecificityBoostCard(
+                      result: proofSpecificityBoostPatternsCandidate,
+                      surface: ProofSpecificityBoostSurface.patterns,
+                      source: 'patterns',
+                      hasConfirmedRepeat:
+                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                        _entries,
+                      ),
+                      proofKey: CurrentRelevanceStore.proofKeyFor(_entries),
+                      onChanged: () => setState(() {}),
+                    ),
+                  ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showArchiveTimelineSpineOnPatterns &&
@@ -4891,8 +4971,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     whatChangedQuestionActive: false,
                     patternReviewInboxHasActiveItems:
                         patternReviewInboxActiveOnPatterns,
+                    onNotRelevantAnswered: () =>
+                        NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                      entries: _entries,
+                      source: 'patterns',
+                    ),
                     onChanged: () => setState(() {}),
                   ),
+                  if (showNotRelevantRecoveryOnPatterns &&
+                      !showTimelineProofMomentOnPatterns) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    NotRelevantRecoveryCard(
+                      result: notRelevantRecoveryCandidate,
+                      source: 'patterns',
+                      onChanged: () => setState(() {}),
+                    ),
+                  ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showBetaTesterReportOnPatterns) ...[

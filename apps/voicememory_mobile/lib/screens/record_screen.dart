@@ -287,18 +287,26 @@ import '../features/correction_memory/correction_memory_engine.dart';
 import '../features/correction_memory/correction_memory_store.dart';
 import '../features/evidence_weighting/evidence_weighting_engine.dart';
 import '../features/proof_specificity/proof_specificity_engine.dart';
+import '../features/proof_specificity_boost/proof_specificity_boost_engine.dart';
+import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
+import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
 import '../widgets/patterns/correction_memory_card.dart';
 import '../widgets/patterns/evidence_weighting_card.dart';
 import '../widgets/patterns/proof_specificity_card.dart';
+import '../widgets/patterns/proof_specificity_boost_card.dart';
+import '../widgets/patterns/not_relevant_recovery_card.dart';
 import '../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/present_day_relevance_card.dart';
 import '../widgets/patterns/timeline_positioning_card.dart';
 import '../features/open_capture/open_capture_engine.dart';
 import '../features/low_friction_return/low_friction_return_engine.dart';
+import '../features/first_moment_capture/first_moment_capture_engine.dart';
+import '../features/second_moment_return/second_moment_return_engine.dart';
+import '../features/second_moment_return/second_moment_return_store.dart';
 import '../features/beta_today_summary/beta_today_summary_engine.dart';
 import '../features/what_to_notice_next/what_to_notice_next_engine.dart';
 import '../features/beta_tester_report/beta_tester_report_engine.dart';
@@ -310,6 +318,8 @@ import '../features/timeline_proof_moment/timeline_proof_moment_engine.dart';
 import '../widgets/record/capture_freedom_line.dart';
 import '../widgets/record/open_capture_prompt_chips.dart';
 import '../widgets/record/low_friction_return_card.dart';
+import '../widgets/record/first_moment_capture_card.dart';
+import '../widgets/record/second_moment_return_card.dart';
 import '../widgets/beta/beta_today_summary_card.dart';
 import '../widgets/record/what_to_notice_next_card.dart';
 import '../widgets/beta/beta_tester_report_card.dart';
@@ -862,6 +872,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       LowFrictionReturnStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      SecondMomentReturnStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -5028,6 +5043,37 @@ class _RecordScreenState extends State<RecordScreen> {
       entries: _journalEntries,
       dismissedForToday: LowFrictionReturnStore.isDismissedToday,
     );
+    final firstMomentCaptureCandidate = FirstMomentCaptureEngine.build(
+      entryCount: _journalEntryCount,
+      source: 'record',
+    );
+    var showFirstMomentCaptureCard = FirstMomentCaptureEngine.shouldShow(
+      result: firstMomentCaptureCandidate,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      firstProofPayoffVisible:
+          showFirstProofPayoff && firstProofPayoffCandidate != null,
+      isPermissionBlocked: ui == RecordUiState.permissionBlocked,
+      entryCount: _journalEntryCount,
+    );
+    final secondMomentReturnCandidate = SecondMomentReturnEngine.build(
+      entries: _journalEntries,
+      source: 'record',
+    );
+    var showSecondMomentReturnCard = SecondMomentReturnEngine.shouldShow(
+      result: secondMomentReturnCandidate,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      firstProofPayoffVisible:
+          showFirstProofPayoff && firstProofPayoffCandidate != null,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      entryCount: _journalEntryCount,
+    );
     final betaTodaySummaryCandidate = BetaTodaySummaryEngine.build(
       entries: _journalEntries,
       beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -5119,12 +5165,29 @@ class _RecordScreenState extends State<RecordScreen> {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
+    final notRelevantRecoveryCandidate = NotRelevantRecoveryEngine.build(
+      entries: _journalEntries,
+      source: 'record',
+    );
+    var showNotRelevantRecoveryOnRecordReady = ui == RecordUiState.ready &&
+        notRelevantRecoveryCandidate.shouldShow &&
+        NotRelevantRecoveryEngine.shouldRender(
+          result: notRelevantRecoveryCandidate,
+          parentVisible: true,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+          isPostSaveDegradedState: false,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        );
     SurfacePriorityResult? recordReadySurfacePriority;
     if (ui == RecordUiState.ready) {
       recordReadySurfacePriority = SurfacePriorityEngine.auditRecordReady(
         entryCount: _journalEntryCount,
         source: 'record',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: showFirstMomentCaptureCard,
+          secondMomentReturn: showSecondMomentReturnCard,
           lowFrictionReturn: showLowFrictionReturnCard,
           whatToNoticeNext: showWhatToNoticeNextCard,
           betaTodaySummary: showBetaTodaySummaryCard,
@@ -5139,6 +5202,8 @@ class _RecordScreenState extends State<RecordScreen> {
               currentRelevanceCandidate != null,
           correctionMemory: showCorrectionMemoryOnRecordReady &&
               correctionMemoryCandidate != null,
+          notRelevantRecovery: showNotRelevantRecoveryOnRecordReady &&
+              notRelevantRecoveryCandidate.shouldShow,
           evidenceWeighting: showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
           proofSpecificity: showProofSpecificityOnRecordReady &&
@@ -5156,6 +5221,14 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       SurfacePriorityAnalytics.seen(result: recordReadySurfacePriority);
       final audit = recordReadySurfacePriority;
+      showFirstMomentCaptureCard = audit.isVisible(
+        SurfacePriorityCardKey.firstMomentCapture,
+        candidate: showFirstMomentCaptureCard,
+      );
+      showSecondMomentReturnCard = audit.isVisible(
+        SurfacePriorityCardKey.secondMomentReturn,
+        candidate: showSecondMomentReturnCard,
+      );
       showLowFrictionReturnCard = audit.isVisible(
         SurfacePriorityCardKey.lowFrictionReturn,
         candidate: showLowFrictionReturnCard,
@@ -5200,6 +5273,11 @@ class _RecordScreenState extends State<RecordScreen> {
         candidate: showCorrectionMemoryOnRecordReady &&
             correctionMemoryCandidate != null,
       );
+      showNotRelevantRecoveryOnRecordReady = audit.isVisible(
+        SurfacePriorityCardKey.notRelevantRecovery,
+        candidate: showNotRelevantRecoveryOnRecordReady &&
+            notRelevantRecoveryCandidate.shouldShow,
+      );
       showEvidenceWeightingOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.evidenceWeighting,
         candidate: showEvidenceWeightingOnRecordReady &&
@@ -5232,6 +5310,42 @@ class _RecordScreenState extends State<RecordScreen> {
         SurfacePriorityCardKey.privateReportProBridge,
         candidate: showProEvidenceValuePrivateReportOnRecord,
       );
+    }
+    final proofSpecificityBoostCandidate = ProofSpecificityBoostEngine.build(
+      entries: _journalEntries,
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      source: 'record',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final timelineProofParentVisible = showTimelineProofMomentOnRecord &&
+        timelineProofMomentCandidate != null;
+    var showProofSpecificityBoostOnTimelineProof = ui == RecordUiState.ready &&
+        ProofSpecificityBoostEngine.shouldRender(
+          result: proofSpecificityBoostCandidate,
+          surface: ProofSpecificityBoostSurface.timelineProofMoment,
+          parentVisible: timelineProofParentVisible,
+          timelineProofVisible: timelineProofParentVisible,
+          firstProofPayoffVisible: false,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+          isPostSaveDegradedState: false,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        );
+    final showNotRelevantRecoveryUnderTimelineProof =
+        showTimelineProofMomentOnRecord &&
+            timelineProofMomentCandidate != null &&
+            NotRelevantRecoveryEngine.shouldRender(
+              result: notRelevantRecoveryCandidate,
+              parentVisible: true,
+              isRecording: ui == RecordUiState.recording,
+              isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+            );
+    if (showNotRelevantRecoveryUnderTimelineProof) {
+      showNotRelevantRecoveryOnRecordReady = false;
     }
     final patternReviewInboxActivePostSave =
         ProofSpecificityEngine.patternReviewInboxHasActiveItems(
@@ -5276,6 +5390,45 @@ class _RecordScreenState extends State<RecordScreen> {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
         );
+    final proofSpecificityBoostPostSaveCandidate =
+        ProofSpecificityBoostEngine.build(
+      entries: entriesAfterSave,
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      source: 'record_post_save',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final firstProofPayoffParentVisible =
+        showFirstProofPayoff && firstProofPayoffCandidate != null;
+    var showProofSpecificityBoostOnFirstProofPayoff = ui == RecordUiState.done &&
+        ProofSpecificityBoostEngine.shouldRender(
+          result: proofSpecificityBoostPostSaveCandidate,
+          surface: ProofSpecificityBoostSurface.firstProofPayoff,
+          parentVisible: firstProofPayoffParentVisible,
+          timelineProofVisible: false,
+          firstProofPayoffVisible: firstProofPayoffParentVisible,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        );
+    final timelineProofPostSaveParentVisible =
+        showTimelineProofMomentOnFirstProofPayoff &&
+            timelineProofMomentPostSaveCandidate != null;
+    var showProofSpecificityBoostOnTimelineProofPostSave =
+        ui == RecordUiState.done &&
+            ProofSpecificityBoostEngine.shouldRender(
+              result: proofSpecificityBoostPostSaveCandidate,
+              surface: ProofSpecificityBoostSurface.timelineProofMoment,
+              parentVisible: timelineProofPostSaveParentVisible,
+              timelineProofVisible: timelineProofPostSaveParentVisible,
+              firstProofPayoffVisible: false,
+              isRecording: ui == RecordUiState.recording,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: postSaveDegraded,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            );
     var showProEvidenceValuePostSave = ui == RecordUiState.done &&
         entriesAfterSave.isNotEmpty &&
         showFirstProofPayoff &&
@@ -6017,6 +6170,44 @@ class _RecordScreenState extends State<RecordScreen> {
                         result: recordReadySurfacePriority,
                       ),
                     ],
+                    if (showSecondMomentReturnCard) ...[
+                      SecondMomentReturnCard(
+                        result: secondMomentReturnCandidate,
+                        onNoticedSomething: () {
+                          setState(() {});
+                        },
+                        onPromptSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                        },
+                        onSaveOneSentence: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    if (showFirstMomentCaptureCard) ...[
+                      FirstMomentCaptureCard(
+                        result: firstMomentCaptureCandidate,
+                        onSaveOneSentence: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onRecordInstead: () => unawaited(
+                          _onRecordPressed(source: 'first_moment_capture'),
+                        ),
+                        onExampleSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     if (showOpenCapturePromptChips) ...[
                       OpenCapturePromptChips(
                         source: 'record',
@@ -6271,8 +6462,38 @@ class _RecordScreenState extends State<RecordScreen> {
                         whatChangedQuestionActive: showWhatChangedV2,
                         patternReviewInboxHasActiveItems:
                             patternReviewInboxActiveOnRecord,
+                        onNotRelevantAnswered: () =>
+                            NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                          entries: _journalEntries,
+                          source: 'record',
+                        ),
                         onChanged: () => setState(() {}),
                       ),
+                      if (showNotRelevantRecoveryUnderTimelineProof) ...[
+                        const SizedBox(height: 12),
+                        NotRelevantRecoveryCard(
+                          result: notRelevantRecoveryCandidate,
+                          source: 'record',
+                          onChanged: () => setState(() {}),
+                        ),
+                      ],
+                      if (showProofSpecificityBoostOnTimelineProof) ...[
+                        const SizedBox(height: 12),
+                        ProofSpecificityBoostCard(
+                          result: proofSpecificityBoostCandidate,
+                          surface:
+                              ProofSpecificityBoostSurface.timelineProofMoment,
+                          source: 'record',
+                          hasConfirmedRepeat:
+                              EarlyFirstSignalEngine
+                                  .hasConfirmedRepeatFoundation(
+                            _journalEntries,
+                          ),
+                          proofKey:
+                              CurrentRelevanceStore.proofKeyFor(_journalEntries),
+                          onChanged: () => setState(() {}),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                     ],
                     if (showArchiveTimelineSpineOnRecord &&
@@ -6295,6 +6516,11 @@ class _RecordScreenState extends State<RecordScreen> {
                         whatChangedQuestionActive: showWhatChangedV2,
                         patternReviewInboxHasActiveItems:
                             patternReviewInboxActiveOnRecord,
+                        onNotRelevantAnswered: () =>
+                            NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                          entries: _journalEntries,
+                          source: 'record',
+                        ),
                         onChanged: () => setState(() {}),
                       ),
                       const SizedBox(height: 12),
@@ -6321,6 +6547,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       CorrectionMemoryCard(
                         result: correctionMemoryCandidate,
                         source: 'record',
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showNotRelevantRecoveryOnRecordReady &&
+                        !showNotRelevantRecoveryUnderTimelineProof &&
+                        notRelevantRecoveryCandidate.shouldShow) ...[
+                      NotRelevantRecoveryCard(
+                        result: notRelevantRecoveryCandidate,
+                        source: 'record',
+                        onChanged: () => setState(() {}),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -7329,6 +7565,24 @@ class _RecordScreenState extends State<RecordScreen> {
                                     patternReviewInboxActivePostSave,
                                 onChanged: () => setState(() {}),
                               ),
+                            if (showProofSpecificityBoostOnFirstProofPayoff) ...[
+                              const SizedBox(height: 12),
+                              ProofSpecificityBoostCard(
+                                result: proofSpecificityBoostPostSaveCandidate,
+                                surface:
+                                    ProofSpecificityBoostSurface.firstProofPayoff,
+                                source: 'record_post_save',
+                                hasConfirmedRepeat:
+                                    EarlyFirstSignalEngine
+                                        .hasConfirmedRepeatFoundation(
+                                  entriesAfterSave,
+                                ),
+                                proofKey: CurrentRelevanceStore.proofKeyFor(
+                                  entriesAfterSave,
+                                ),
+                                onChanged: () => setState(() {}),
+                              ),
+                            ],
                           ],
                           if (showTimelineProofMomentOnFirstProofPayoff &&
                               timelineProofMomentPostSaveCandidate != null) ...[
@@ -7378,6 +7632,24 @@ class _RecordScreenState extends State<RecordScreen> {
                                     patternReviewInboxActivePostSave,
                                 onChanged: () => setState(() {}),
                               ),
+                            if (showProofSpecificityBoostOnTimelineProofPostSave) ...[
+                              const SizedBox(height: 12),
+                              ProofSpecificityBoostCard(
+                                result: proofSpecificityBoostPostSaveCandidate,
+                                surface:
+                                    ProofSpecificityBoostSurface.timelineProofMoment,
+                                source: 'record_post_save_first_proof',
+                                hasConfirmedRepeat:
+                                    EarlyFirstSignalEngine
+                                        .hasConfirmedRepeatFoundation(
+                                  entriesAfterSave,
+                                ),
+                                proofKey: CurrentRelevanceStore.proofKeyFor(
+                                  entriesAfterSave,
+                                ),
+                                onChanged: () => setState(() {}),
+                              ),
+                            ],
                           ],
                           if (showProofSpecificityOnFirstProofPayoff &&
                               proofSpecificityPostSaveCandidate.shouldShow) ...[
