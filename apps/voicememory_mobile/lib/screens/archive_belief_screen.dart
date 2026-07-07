@@ -176,6 +176,13 @@ import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/beta/core_value_feedback_gates.dart';
 import '../features/beta/core_value_feedback_model.dart';
 import '../features/beta/core_value_feedback_store.dart';
+import '../features/beta_proof_feedback/beta_proof_feedback_engine.dart';
+import '../features/beta_proof_feedback/beta_proof_feedback_model.dart';
+import '../features/beta_proof_feedback/beta_proof_feedback_store.dart';
+import '../features/beta_tester_report/beta_tester_report_engine.dart';
+import '../features/surface_priority/surface_priority_analytics.dart';
+import '../features/surface_priority/surface_priority_engine.dart';
+import '../features/surface_priority/surface_priority_model.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
@@ -327,6 +334,9 @@ import '../widgets/patterns/proof_specificity_card.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/archive_timeline_spine_card.dart';
 import '../widgets/patterns/timeline_proof_moment_card.dart';
+import '../widgets/beta/beta_proof_feedback_row.dart';
+import '../widgets/beta/beta_tester_report_card.dart';
+import '../widgets/common/surface_priority_debug_badge.dart';
 import '../widgets/patterns/present_day_relevance_card.dart';
 import '../widgets/patterns/timeline_positioning_card.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
@@ -694,6 +704,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
     await CoreValueFeedbackStore.ensureLoaded();
+    await BetaProofFeedbackStore.ensureLoaded();
     await ConfirmedRepeatWhyMattersStore.ensureLoaded();
     await ConfirmedRepeatThoughtMapStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
@@ -4145,7 +4156,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         returnChecks: RepeatReturnCheckStore.cached,
       );
-      final showCurrentRelevanceOnPatterns =
+      var showCurrentRelevanceOnPatterns =
           CurrentRelevanceEngine.shouldShowOnPatterns(
         state: currentRelevanceCandidate,
         beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -4166,7 +4177,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         source: 'patterns',
       );
-      final showCorrectionMemoryOnPatterns =
+      var showCorrectionMemoryOnPatterns =
           showCurrentRelevanceOnPatterns &&
               CorrectionMemoryEngine.shouldShowOnPatterns(
         result: correctionMemoryCandidate,
@@ -4179,7 +4190,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
             )
           : null;
-      final showEvidenceWeightingOnPatterns =
+      var showEvidenceWeightingOnPatterns =
           EvidenceWeightingEngine.shouldShowOnPatterns(
         result: evidenceWeightingCandidate,
         isZeroEntryState: _entries.isEmpty,
@@ -4203,7 +4214,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               beliefSurfaceVisible: false,
               source: 'patterns',
             );
-      final showProofSpecificityOnPatterns =
+      var showProofSpecificityOnPatterns =
           ProofSpecificityEngine.shouldShowOnPatterns(
         result: proofSpecificityCandidate,
         isZeroEntryState: _entries.isEmpty,
@@ -4219,7 +4230,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               source: 'patterns',
             )
           : null;
-      final showPresentDayRelevanceOnPatterns =
+      var showPresentDayRelevanceOnPatterns =
           PresentDayRelevanceEngine.shouldShowOnPatterns(
         result: presentDayRelevanceCandidate,
         isZeroEntryState: _entries.isEmpty,
@@ -4237,7 +4248,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               source: 'patterns',
             )
           : null;
-      final showArchiveTimelineSpineOnPatterns =
+      var showArchiveTimelineSpineOnPatterns =
           ArchiveTimelineSpineEngine.shouldShowOnPatterns(
         result: archiveTimelineSpineCandidate,
         isDegradedTranscriptState: false,
@@ -4259,13 +4270,24 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   source: 'patterns',
                 )
               : null;
-      final showTimelineProofMomentOnPatterns =
+      var showTimelineProofMomentOnPatterns =
           TimelineProofMomentEngine.shouldShowOnPatterns(
         result: timelineProofMomentCandidate,
         timelineSpineVisible: showArchiveTimelineSpineOnPatterns,
         isDegradedTranscriptState: false,
         isPostSaveDegradedState: false,
         whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+      );
+      final betaTesterReportCandidate = BetaTesterReportEngine.build(
+        entries: _entries,
+        beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+        source: 'patterns',
+        timelineSpine: archiveTimelineSpineCandidate,
+      );
+      var showBetaTesterReportOnPatterns =
+          BetaTesterReportEngine.shouldShowOnPatterns(
+        result: betaTesterReportCandidate,
         patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
       );
       final patternConfidenceExplanationCandidate =
@@ -4278,7 +4300,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
       );
-      final showPatternConfidenceExplanationOnPatterns =
+      var showPatternConfidenceExplanationOnPatterns =
           PatternConfidenceEngine.shouldShowExplanationOnPatterns(
         result: patternConfidenceExplanationCandidate,
         whatChangedQuestionActive: false,
@@ -4308,7 +4330,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         presentDayRelevanceVisible: showPresentDayRelevanceOnPatterns &&
             presentDayRelevanceCandidate != null,
       );
-      final showTimelinePositioningOnPatterns =
+      var showTimelinePositioningOnPatterns =
           !suppressLegacyEducationCardsForSpine &&
               TimelinePositioningEngine.shouldShowOnPatterns(
         result: timelinePositioningCandidate,
@@ -4565,7 +4587,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         report: privateArchiveReportCandidate,
       );
-      final showProEvidenceValuePrivateReportOnPatterns =
+      var showProEvidenceValuePrivateReportOnPatterns =
           showPrivateArchiveReport &&
               privateArchiveReportPreviewForProGate &&
               _showProEvidenceValueBridge(
@@ -4605,12 +4627,118 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
-      final showArchiveBackupBridgeOnPatterns =
+      var showArchiveBackupBridgeOnPatterns =
           showPrivateArchiveReport &&
               privateArchiveReportPreviewForProGate &&
               ArchiveBackupBridgeEngine.shouldShowCard(
                 archiveBackupBridgeContext,
               );
+      final patternsProEvidenceValueVisible = showPatternsPostProofProBridge &&
+          _showProEvidenceValueBridge(
+            surface: ProEvidenceValueSurface.archivePatterns,
+            currentRelevanceQuestionActive:
+                currentRelevanceQuestionActiveOnPatterns,
+          );
+      final patternsArchiveIntelligenceProBridgeVisible =
+          showPatternsPostProofProBridge && !patternsProEvidenceValueVisible;
+      final patternsSurfacePriority = SurfacePriorityEngine.auditPatterns(
+        entryCount: _entries.length,
+        source: 'patterns',
+        candidates: SurfacePriorityCandidates.patterns(
+          archiveBeliefSurface: showArchiveCurrentBelief &&
+              archiveBeliefSurfaceCandidate.shouldShow,
+          timelineProofMoment: showTimelineProofMomentOnPatterns &&
+              timelineProofMomentCandidate != null,
+          archiveTimelineSpine: showArchiveTimelineSpineOnPatterns &&
+              archiveTimelineSpineCandidate != null,
+          betaTesterReport: showBetaTesterReportOnPatterns,
+          correctionMemory: showCorrectionMemoryOnPatterns &&
+              correctionMemoryCandidate != null,
+          patternConfidence: showPatternConfidenceExplanationOnPatterns &&
+              patternConfidenceExplanationCandidate != null,
+          evidenceWeighting: showEvidenceWeightingOnPatterns &&
+              evidenceWeightingCandidate != null,
+          currentRelevance: showCurrentRelevanceOnPatterns &&
+              currentRelevanceCandidate != null,
+          proofSpecificity: showProofSpecificityOnPatterns &&
+              proofSpecificityCandidate.shouldShow,
+          presentDayRelevance: showPresentDayRelevanceOnPatterns &&
+              presentDayRelevanceCandidate != null,
+          timelinePositioning: showTimelinePositioningOnPatterns,
+          proEvidenceValue: patternsProEvidenceValueVisible,
+          archiveIntelligenceProBridge: patternsArchiveIntelligenceProBridgeVisible,
+          privateReportProBridge: showProEvidenceValuePrivateReportOnPatterns,
+          archiveBackupBridge: showArchiveBackupBridgeOnPatterns,
+          suppressLegacyEducation: suppressLegacyEducationCardsForSpine,
+        ),
+      );
+      SurfacePriorityAnalytics.seen(result: patternsSurfacePriority);
+      final patternsAudit = patternsSurfacePriority;
+      showTimelineProofMomentOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.timelineProofMoment,
+        candidate: showTimelineProofMomentOnPatterns &&
+            timelineProofMomentCandidate != null,
+      );
+      showArchiveTimelineSpineOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.archiveTimelineSpine,
+        candidate: showArchiveTimelineSpineOnPatterns &&
+            archiveTimelineSpineCandidate != null,
+      );
+      showBetaTesterReportOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.betaTesterReport,
+        candidate: showBetaTesterReportOnPatterns,
+      );
+      showCorrectionMemoryOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.correctionMemory,
+        candidate: showCorrectionMemoryOnPatterns &&
+            correctionMemoryCandidate != null,
+      );
+      showPatternConfidenceExplanationOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.patternConfidence,
+        candidate: showPatternConfidenceExplanationOnPatterns &&
+            patternConfidenceExplanationCandidate != null,
+      );
+      showEvidenceWeightingOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.evidenceWeighting,
+        candidate: showEvidenceWeightingOnPatterns &&
+            evidenceWeightingCandidate != null,
+      );
+      showCurrentRelevanceOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.currentRelevance,
+        candidate: showCurrentRelevanceOnPatterns &&
+            currentRelevanceCandidate != null,
+      );
+      showProofSpecificityOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.proofSpecificity,
+        candidate: showProofSpecificityOnPatterns &&
+            proofSpecificityCandidate.shouldShow,
+      );
+      showPresentDayRelevanceOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.presentDayRelevance,
+        candidate: showPresentDayRelevanceOnPatterns &&
+            presentDayRelevanceCandidate != null,
+      );
+      showTimelinePositioningOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.timelinePositioning,
+        candidate: showTimelinePositioningOnPatterns,
+      );
+      showProEvidenceValuePrivateReportOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.privateReportProBridge,
+        candidate: showProEvidenceValuePrivateReportOnPatterns,
+      );
+      showArchiveBackupBridgeOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.archiveBackupBridge,
+        candidate: showArchiveBackupBridgeOnPatterns,
+      );
+      final showPatternsProEvidenceValueCard = patternsAudit.isVisible(
+        SurfacePriorityCardKey.proEvidenceValue,
+        candidate: patternsProEvidenceValueVisible,
+      );
+      final showPatternsArchiveIntelligenceProBridge =
+          patternsAudit.isVisible(
+        SurfacePriorityCardKey.archiveIntelligenceProBridge,
+        candidate: patternsArchiveIntelligenceProBridgeVisible,
+      );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -4718,11 +4846,28 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
+                SurfacePriorityDebugBadge(result: patternsSurfacePriority),
                 if (showTimelineProofMomentOnPatterns &&
                     timelineProofMomentCandidate != null) ...[
                   TimelineProofMomentCard(
                     result: timelineProofMomentCandidate,
                     source: 'patterns',
+                  ),
+                  BetaProofFeedbackRow(
+                    surface: BetaProofFeedbackSurface.timelineProofMoment,
+                    source: 'patterns',
+                    entryCount: _entries.length,
+                    hasConfirmedRepeat:
+                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      _entries,
+                    ),
+                    parentVisible: true,
+                    isRecording: false,
+                    isPostSaveDegraded: false,
+                    whatChangedQuestionActive: false,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActiveOnPatterns,
+                    onChanged: () => setState(() {}),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
@@ -4731,6 +4876,28 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ArchiveTimelineSpineCard(
                     result: archiveTimelineSpineCandidate,
                     source: 'patterns',
+                  ),
+                  BetaProofFeedbackRow(
+                    surface: BetaProofFeedbackSurface.archiveTimelineSpine,
+                    source: 'patterns',
+                    entryCount: _entries.length,
+                    hasConfirmedRepeat:
+                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      _entries,
+                    ),
+                    parentVisible: true,
+                    isRecording: false,
+                    isPostSaveDegraded: false,
+                    whatChangedQuestionActive: false,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActiveOnPatterns,
+                    onChanged: () => setState(() {}),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showBetaTesterReportOnPatterns) ...[
+                  BetaTesterReportCard(
+                    result: betaTesterReportCandidate,
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
@@ -4983,6 +5150,37 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         ? null
                         : () => context.push('/subscription'),
                   ),
+                  if (BetaProofFeedbackEngine.shouldShowOnPrivateArchiveReportPreview(
+                    privateArchiveReportVisible: true,
+                    isPro: _archiveIsPro,
+                    entryCount: _entries.length,
+                    hasConfirmedRepeat:
+                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      _entries,
+                    ),
+                    isRecording: false,
+                    isPostSaveDegraded: false,
+                    whatChangedQuestionActive: false,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActiveOnPatterns,
+                  ))
+                    BetaProofFeedbackRow(
+                      surface:
+                          BetaProofFeedbackSurface.privateArchiveReportPreview,
+                      source: 'patterns',
+                      entryCount: _entries.length,
+                      hasConfirmedRepeat:
+                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                        _entries,
+                      ),
+                      parentVisible: true,
+                      isRecording: false,
+                      isPostSaveDegraded: false,
+                      whatChangedQuestionActive: false,
+                      patternReviewInboxHasActiveItems:
+                          patternReviewInboxActiveOnPatterns,
+                      onChanged: () => setState(() {}),
+                    ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showProEvidenceValuePrivateReportOnPatterns) ...[
@@ -5062,12 +5260,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showPatternsPostProofProBridge &&
-                    _showProEvidenceValueBridge(
-                      surface: ProEvidenceValueSurface.archivePatterns,
-                      currentRelevanceQuestionActive:
-                          currentRelevanceQuestionActiveOnPatterns,
-                    )) ...[
+                if (showPatternsProEvidenceValueCard) ...[
                   ProEvidenceValueCard(
                     surface: ProEvidenceValueSurface.archivePatterns,
                     entryCount: _entries.length,
@@ -5078,7 +5271,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onDismiss: () => unawaited(_dismissProEvidenceValueBridge()),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
-                ] else if (showPatternsPostProofProBridge) ...[
+                ] else if (showPatternsArchiveIntelligenceProBridge) ...[
                   ArchiveIntelligenceProBridgeCard(
                     compact: proofSurfaceLayout.proBridgeCompact,
                     onSeePro: () {

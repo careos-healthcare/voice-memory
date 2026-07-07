@@ -1,0 +1,511 @@
+import 'package:flutter/foundation.dart';
+
+import '../beta/archive_beta_mission_gate.dart';
+import 'surface_priority_copy.dart';
+import 'surface_priority_model.dart';
+
+/// Caps competing guidance, proof, correction, report, and Pro cards per surface.
+abstract final class SurfacePriorityEngine {
+  SurfacePriorityEngine._();
+
+  static const _guidanceOrder = [
+    SurfacePriorityCardKey.lowFrictionReturn,
+    SurfacePriorityCardKey.whatToNoticeNext,
+    SurfacePriorityCardKey.betaTodaySummary,
+    SurfacePriorityCardKey.openCapturePromptChips,
+    SurfacePriorityCardKey.captureFreedomLine,
+  ];
+
+  static const _recordProofOrder = [
+    SurfacePriorityCardKey.timelineProofMoment,
+    SurfacePriorityCardKey.archiveTimelineSpine,
+    SurfacePriorityCardKey.timelinePositioning,
+    SurfacePriorityCardKey.evidenceWeighting,
+    SurfacePriorityCardKey.proofSpecificity,
+    SurfacePriorityCardKey.presentDayRelevance,
+    SurfacePriorityCardKey.patternConfidence,
+  ];
+
+  static const _recordCorrectionOrder = [
+    SurfacePriorityCardKey.currentRelevance,
+    SurfacePriorityCardKey.correctionMemory,
+  ];
+
+  static const _patternsDetailOrder = [
+    SurfacePriorityCardKey.correctionMemory,
+    SurfacePriorityCardKey.patternConfidence,
+    SurfacePriorityCardKey.evidenceWeighting,
+  ];
+
+  static const _patternsTimelineOrder = [
+    SurfacePriorityCardKey.archiveBeliefSurface,
+    SurfacePriorityCardKey.timelineProofMoment,
+    SurfacePriorityCardKey.archiveTimelineSpine,
+  ];
+
+  static const _recordProOrder = [
+    SurfacePriorityCardKey.proEvidenceValue,
+    SurfacePriorityCardKey.privateReportProBridge,
+  ];
+
+  static const _patternsProOrder = [
+    SurfacePriorityCardKey.proEvidenceValue,
+    SurfacePriorityCardKey.archiveIntelligenceProBridge,
+    SurfacePriorityCardKey.privateReportProBridge,
+    SurfacePriorityCardKey.archiveBackupBridge,
+  ];
+
+  static const _postSaveProOrder = [
+    SurfacePriorityCardKey.proEvidenceValue,
+    SurfacePriorityCardKey.proLockMoment,
+    SurfacePriorityCardKey.privateReportProBridge,
+  ];
+
+  static SurfacePriorityResult auditRecordReady({
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+  }) {
+    final visible = <SurfacePriorityCardKey>[];
+    final hiddenReasons = <String>[];
+
+    final guidanceSlot = _pickFirst(candidates, _guidanceOrder);
+    if (guidanceSlot != null) {
+      visible.add(guidanceSlot);
+    }
+    _suppress(
+      candidates,
+      _guidanceOrder,
+      winner: guidanceSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonGuidanceCap,
+    );
+
+    final proofSlot = _pickFirst(candidates, _recordProofOrder);
+    if (proofSlot != null) {
+      visible.add(proofSlot);
+    }
+    _suppress(
+      candidates,
+      _recordProofOrder,
+      winner: proofSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonProofCap,
+    );
+
+    final correctionSlot = _pickFirst(candidates, _recordCorrectionOrder);
+    if (correctionSlot != null &&
+        proofSlot != SurfacePriorityCardKey.currentRelevance &&
+        proofSlot != SurfacePriorityCardKey.correctionMemory) {
+      visible.add(correctionSlot);
+    } else if (correctionSlot != null &&
+        proofSlot != correctionSlot &&
+        (proofSlot == SurfacePriorityCardKey.timelineProofMoment ||
+            proofSlot == SurfacePriorityCardKey.archiveTimelineSpine)) {
+      visible.add(correctionSlot);
+    }
+    _suppress(
+      candidates,
+      _recordCorrectionOrder,
+      winner: correctionSlot != null && visible.contains(correctionSlot)
+          ? correctionSlot
+          : null,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonCorrectionCap,
+    );
+
+    final reportCandidate = candidates.candidate(
+      SurfacePriorityCardKey.betaTesterReport,
+    );
+    SurfacePriorityCardKey? reportSlot;
+    if (reportCandidate) {
+      final proofCount = visible
+          .where(
+            (key) =>
+                key == SurfacePriorityCardKey.timelineProofMoment ||
+                key == SurfacePriorityCardKey.archiveTimelineSpine,
+          )
+          .length;
+      final hasGuidance = guidanceSlot != null;
+      if (proofCount <= 1 && !hasGuidance && proofSlot != null) {
+        reportSlot = SurfacePriorityCardKey.betaTesterReport;
+        visible.add(reportSlot);
+      } else if (proofCount > 1 || hasGuidance) {
+        hiddenReasons.add(
+          SurfacePriorityCopy.hiddenReasonReportWithMultipleProof,
+        );
+      }
+    }
+
+    final proSlot = _pickFirst(candidates, _recordProOrder);
+    if (proSlot != null) {
+      visible.add(proSlot);
+    }
+    _suppress(
+      candidates,
+      _recordProOrder,
+      winner: proSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonProCap,
+    );
+
+    return _result(
+      surface: SurfacePrioritySurface.recordReady,
+      entryCount: entryCount,
+      source: source,
+      candidates: candidates,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      guidanceSlot: guidanceSlot,
+      proofSlot: proofSlot,
+      correctionSlot:
+          correctionSlot != null && visible.contains(correctionSlot)
+              ? correctionSlot
+              : null,
+      reportSlot: reportSlot,
+      proSlot: proSlot,
+    );
+  }
+
+  static SurfacePriorityResult auditRecordPostSave({
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+  }) {
+    final visible = <SurfacePriorityCardKey>[];
+    final hiddenReasons = <String>[];
+
+    for (final key in _guidanceOrder) {
+      if (candidates.candidate(key)) {
+        hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveGuidance);
+      }
+    }
+
+    final whatChangedActive =
+        candidates.candidate(SurfacePriorityCardKey.whatChanged);
+    final firstProofActive =
+        candidates.candidate(SurfacePriorityCardKey.firstProofPayoff);
+    final returnPayoffActive =
+        candidates.candidate(SurfacePriorityCardKey.returnPayoff);
+
+    if (whatChangedActive) {
+      visible.add(SurfacePriorityCardKey.whatChanged);
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins);
+    } else if (firstProofActive) {
+      visible.add(SurfacePriorityCardKey.firstProofPayoff);
+      hiddenReasons.add(
+        SurfacePriorityCopy.hiddenReasonPostSaveFirstProofWins,
+      );
+      if (candidates.candidate(
+        SurfacePriorityCardKey.timelineProofMomentPostSave,
+      )) {
+        visible.add(SurfacePriorityCardKey.timelineProofMomentPostSave);
+      }
+      if (candidates.candidate(
+        SurfacePriorityCardKey.proofSpecificityPostSave,
+      )) {
+        visible.add(SurfacePriorityCardKey.proofSpecificityPostSave);
+      }
+      if (candidates.candidate(SurfacePriorityCardKey.betaProofFeedback)) {
+        visible.add(SurfacePriorityCardKey.betaProofFeedback);
+      }
+    } else if (returnPayoffActive) {
+      visible.add(SurfacePriorityCardKey.returnPayoff);
+      hiddenReasons.add(
+        SurfacePriorityCopy.hiddenReasonPostSaveReturnPayoffWins,
+      );
+    }
+
+    final proSlot = _pickFirst(candidates, _postSaveProOrder);
+    if (proSlot != null) {
+      visible.add(proSlot);
+    }
+    _suppress(
+      candidates,
+      _postSaveProOrder,
+      winner: proSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonProCap,
+    );
+
+    return _result(
+      surface: SurfacePrioritySurface.recordPostSave,
+      entryCount: entryCount,
+      source: source,
+      candidates: candidates,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      proofSlot: whatChangedActive
+          ? SurfacePriorityCardKey.whatChanged
+          : firstProofActive
+              ? SurfacePriorityCardKey.firstProofPayoff
+              : returnPayoffActive
+                  ? SurfacePriorityCardKey.returnPayoff
+                  : null,
+      proSlot: proSlot,
+    );
+  }
+
+  static SurfacePriorityResult auditPatterns({
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+  }) {
+    final visible = <SurfacePriorityCardKey>[];
+    final hiddenReasons = <String>[];
+
+    for (final key in _patternsTimelineOrder) {
+      if (candidates.candidate(key)) {
+        visible.add(key);
+      }
+    }
+
+    final timelineProofVisible = visible.contains(
+      SurfacePriorityCardKey.timelineProofMoment,
+    );
+
+    final detailCandidates = timelineProofVisible
+        ? _patternsDetailOrder
+            .where(
+              (key) =>
+                  key != SurfacePriorityCardKey.patternConfidence &&
+                  key != SurfacePriorityCardKey.evidenceWeighting,
+            )
+            .toList()
+        : _patternsDetailOrder;
+
+    final detailSlot = _pickFirst(candidates, detailCandidates);
+    if (detailSlot != null) {
+      visible.add(detailSlot);
+    }
+    _suppress(
+      candidates,
+      _patternsDetailOrder,
+      winner: detailSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: timelineProofVisible
+          ? SurfacePriorityCopy.hiddenReasonPatternsDuplicateTimeline
+          : SurfacePriorityCopy.hiddenReasonPatternsDetailCap,
+    );
+
+    _suppress(
+      candidates,
+      [
+        SurfacePriorityCardKey.currentRelevance,
+        SurfacePriorityCardKey.proofSpecificity,
+        SurfacePriorityCardKey.presentDayRelevance,
+        SurfacePriorityCardKey.timelinePositioning,
+      ],
+      winner: null,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonPatternsDetailCap,
+    );
+
+    if (candidates.candidate(SurfacePriorityCardKey.betaTesterReport)) {
+      visible.add(SurfacePriorityCardKey.betaTesterReport);
+    }
+
+    final timelineVisible = visible.any(
+      (key) =>
+          key == SurfacePriorityCardKey.archiveBeliefSurface ||
+          key == SurfacePriorityCardKey.timelineProofMoment ||
+          key == SurfacePriorityCardKey.archiveTimelineSpine ||
+          key == SurfacePriorityCardKey.betaTesterReport,
+    );
+
+    final proSlot = timelineVisible
+        ? _pickFirst(candidates, _patternsProOrder)
+        : null;
+    if (proSlot != null) {
+      visible.add(proSlot);
+    }
+    if (!timelineVisible) {
+      for (final key in _patternsProOrder) {
+        if (candidates.candidate(key)) {
+          hiddenReasons.add(
+            SurfacePriorityCopy.hiddenReasonPatternsProBeforeTimeline,
+          );
+        }
+      }
+    }
+    _suppress(
+      candidates,
+      _patternsProOrder,
+      winner: proSlot,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      reason: SurfacePriorityCopy.hiddenReasonProCap,
+    );
+
+    return _result(
+      surface: SurfacePrioritySurface.patterns,
+      entryCount: entryCount,
+      source: source,
+      candidates: candidates,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      proofSlot: visible.contains(SurfacePriorityCardKey.timelineProofMoment)
+          ? SurfacePriorityCardKey.timelineProofMoment
+          : visible.contains(SurfacePriorityCardKey.archiveTimelineSpine)
+              ? SurfacePriorityCardKey.archiveTimelineSpine
+              : null,
+      reportSlot: visible.contains(SurfacePriorityCardKey.betaTesterReport)
+          ? SurfacePriorityCardKey.betaTesterReport
+          : null,
+      proSlot: proSlot,
+    );
+  }
+
+  static SurfacePriorityResult auditPaywall({
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+  }) {
+    final visible = <SurfacePriorityCardKey>[];
+    final hiddenReasons = <String>[];
+
+    if (candidates.candidate(SurfacePriorityCardKey.paywallPrimaryReason)) {
+      visible.add(SurfacePriorityCardKey.paywallPrimaryReason);
+    }
+    if (candidates.candidate(SurfacePriorityCardKey.paywallSecondaryReason)) {
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPaywallDuplicateReason);
+    }
+
+    return _result(
+      surface: SurfacePrioritySurface.paywall,
+      entryCount: entryCount,
+      source: source,
+      candidates: candidates,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      proSlot: visible.contains(SurfacePriorityCardKey.paywallPrimaryReason)
+          ? SurfacePriorityCardKey.paywallPrimaryReason
+          : null,
+    );
+  }
+
+  static bool allowsBetaTesterReportOnRecord({
+    required SurfacePriorityResult audit,
+  }) =>
+      audit.isVisible(
+        SurfacePriorityCardKey.betaTesterReport,
+        candidate: true,
+      );
+
+  static bool allowsWhatToNoticeNextOnRecord({
+    required bool lowFrictionReturnVisible,
+    required bool betaTodaySummaryVisible,
+    required bool openCapturePromptChipsVisible,
+  }) {
+    final guidanceCount = (lowFrictionReturnVisible ? 1 : 0) +
+        (betaTodaySummaryVisible ? 1 : 0) +
+        (openCapturePromptChipsVisible ? 1 : 0);
+    return guidanceCount <= 1;
+  }
+
+  static bool allowsBetaTesterReportOnRecordLegacy({
+    required bool lowFrictionReturnVisible,
+    required bool betaTodaySummaryVisible,
+    required bool whatToNoticeNextVisible,
+    required bool openCapturePromptChipsVisible,
+    required bool timelineProofMomentVisible,
+    required bool archiveTimelineSpineVisible,
+  }) {
+    final audit = auditRecordReady(
+      entryCount: 0,
+      source: 'legacy',
+      candidates: SurfacePriorityCandidates.recordReady(
+        lowFrictionReturn: lowFrictionReturnVisible,
+        whatToNoticeNext: whatToNoticeNextVisible,
+        betaTodaySummary: betaTodaySummaryVisible,
+        openCapturePromptChips: openCapturePromptChipsVisible,
+        captureFreedomLine: false,
+        timelineProofMoment: timelineProofMomentVisible,
+        archiveTimelineSpine: archiveTimelineSpineVisible,
+        timelinePositioning: false,
+        currentRelevance: false,
+        correctionMemory: false,
+        evidenceWeighting: false,
+        proofSpecificity: false,
+        presentDayRelevance: false,
+        patternConfidence: false,
+        betaTesterReport: true,
+        proEvidenceValue: false,
+        privateReportProBridge: false,
+        suppressLegacyEducation: false,
+      ),
+    );
+    return audit.isVisible(
+      SurfacePriorityCardKey.betaTesterReport,
+      candidate: true,
+    );
+  }
+
+  static SurfacePriorityCardKey? _pickFirst(
+    SurfacePriorityCandidates candidates,
+    List<SurfacePriorityCardKey> order,
+  ) {
+    for (final key in order) {
+      if (candidates.candidate(key)) return key;
+    }
+    return null;
+  }
+
+  static void _suppress(
+    SurfacePriorityCandidates candidates,
+    List<SurfacePriorityCardKey> order, {
+    required SurfacePriorityCardKey? winner,
+    required List<SurfacePriorityCardKey> visible,
+    required List<String> hiddenReasons,
+    required String reason,
+  }) {
+    for (final key in order) {
+      if (key == winner || !candidates.candidate(key)) continue;
+      if (!hiddenReasons.contains(reason)) {
+        hiddenReasons.add(reason);
+      }
+    }
+  }
+
+  static SurfacePriorityResult _result({
+    required SurfacePrioritySurface surface,
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+    required List<SurfacePriorityCardKey> visible,
+    required List<String> hiddenReasons,
+    SurfacePriorityCardKey? captureSlot,
+    SurfacePriorityCardKey? guidanceSlot,
+    SurfacePriorityCardKey? proofSlot,
+    SurfacePriorityCardKey? correctionSlot,
+    SurfacePriorityCardKey? reportSlot,
+    SurfacePriorityCardKey? proSlot,
+  }) {
+    final candidateCount = candidates.byKey.values.where((v) => v).length;
+    final suppressedCardCount = candidateCount - visible.length;
+
+    return SurfacePriorityResult(
+      surface: surface,
+      entryCount: entryCount,
+      source: source,
+      captureSlot: captureSlot,
+      guidanceSlot: guidanceSlot,
+      proofSlot: proofSlot,
+      correctionSlot: correctionSlot,
+      reportSlot: reportSlot,
+      proSlot: proSlot,
+      hiddenReasons: hiddenReasons,
+      visibleCardKeys: visible,
+      shouldShowDebugSummary:
+          kDebugMode || ArchiveBetaMissionGate.isEnabled,
+      suppressedCardCount: suppressedCardCount < 0 ? 0 : suppressedCardCount,
+    );
+  }
+}
