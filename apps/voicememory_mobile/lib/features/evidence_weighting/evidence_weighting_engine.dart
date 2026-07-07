@@ -5,6 +5,7 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../quiet_signal/quiet_signal_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'evidence_weighting_model.dart';
@@ -75,7 +76,7 @@ abstract final class EvidenceWeightingEngine {
       );
     }
 
-    return EvidenceWeightingResult(
+    final result = EvidenceWeightingResult(
       entryCount: entries.length,
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasRecentEntry: hasRecentEntry,
@@ -86,6 +87,27 @@ abstract final class EvidenceWeightingEngine {
       secondaryStates: secondary,
       shouldShow: true,
       correctionMemory: correction,
+    );
+
+    return EvidenceWeightingResult(
+      entryCount: result.entryCount,
+      hasConfirmedRepeat: result.hasConfirmedRepeat,
+      hasRecentEntry: result.hasRecentEntry,
+      hasOlderEntry: result.hasOlderEntry,
+      hasSofteningSignal: result.hasSofteningSignal,
+      hasQuietSignal: result.hasQuietSignal,
+      primaryState: result.primaryState,
+      secondaryStates: result.secondaryStates,
+      shouldShow: result.shouldShow,
+      correctionMemory: result.correctionMemory,
+      patternMatchQuality: PatternMatchQualityEngine.build(
+        entries: entries,
+        beliefSurfaceVisible: beliefSurfaceVisible,
+        source: 'evidence_weighting',
+        now: clock,
+        evidenceWeighting: result,
+        correction: correction,
+      ),
     );
   }
 

@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../first_proof_payoff/first_proof_payoff_engine.dart';
 import '../open_capture/open_capture_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'return_after_proof_copy.dart';
 import 'return_after_proof_model.dart';
@@ -23,10 +25,19 @@ abstract final class ReturnAfterProofEngine {
     final hasFirstProof = firstProofSeen;
     final hasTimelineProof = timelineProofVisible;
 
+    final calibration = ProofConfidenceCalibrationEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: timelineProofVisible || firstProofSeen,
+      source: source,
+    );
+    final body = calibration.level == ProofConfidenceLevel.strong
+        ? ReturnAfterProofCopy.strongBody
+        : ReturnAfterProofCopy.body;
+
     return ReturnAfterProofResult(
       shouldShow: true,
       title: ReturnAfterProofCopy.title,
-      body: ReturnAfterProofCopy.body,
+      body: body,
       closingLine: ReturnAfterProofCopy.closingLine,
       prompts: [
         for (final type in ReturnAfterProofPromptTypeLists.capturePrompts)

@@ -9,6 +9,7 @@ import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_anal
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_copy.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_model.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_engine.dart';
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
@@ -149,7 +150,17 @@ void main() {
         ],
       );
       expect(result.title, BetaProofLiftCopy.title);
-      expect(result.body, contains('This is not a label'));
+      if (result.isWatchOnly) {
+        expect(result.body, ProofConfidenceCalibrationCopy.watchOnlySubtitle);
+        expect(
+          result.sections.first.body,
+          result.proofConfidenceCalibration.primaryCopy,
+        );
+      } else {
+        expect(result.body, contains('This is not a label'));
+        expect(result.sections.first.body, BetaProofLiftCopy.fallbackWhatRepeated);
+      }
+      expect(result.hasSafeAnchor, isFalse);
       expect(result.sections.length, 4);
       expect(
         result.sections.map((section) => section.heading).toList(),
@@ -160,8 +171,6 @@ void main() {
           BetaProofLiftCopy.sectionYourCorrection,
         ],
       );
-      expect(result.sections.first.body, BetaProofLiftCopy.fallbackWhatRepeated);
-      expect(result.hasSafeAnchor, isFalse);
     });
 
     test('renders delta rows when safe signals exist', () {
@@ -485,7 +494,10 @@ void main() {
       await tester.pump();
 
       expect(find.text('Why ArchiveMe is showing this'), findsOneWidget);
-      expect(find.textContaining('This is not a label'), findsOneWidget);
+      expect(
+        tester.widget<Text>(find.byKey(const Key('beta_proof_lift_body'))).data,
+        lift.body,
+      );
       expect(find.text('What repeated'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Why it matters now'), findsOneWidget);

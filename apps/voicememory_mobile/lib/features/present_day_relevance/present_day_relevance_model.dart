@@ -1,4 +1,5 @@
 import 'present_day_relevance_copy.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
 
 /// Present-day relevance weight — not a proof verdict.
 enum PresentDayRelevanceState {
@@ -31,6 +32,7 @@ class PresentDayRelevanceResult {
     required this.stateBody,
     required this.footer,
     required this.differentiationLine,
+    this.patternMatchQuality,
   });
 
   final bool shouldShow;
@@ -44,4 +46,5 @@ class PresentDayRelevanceResult {
   final String stateBody;
   final String footer;
   final String differentiationLine;
+  final PatternMatchQualityResult? patternMatchQuality;
 }

@@ -1,4 +1,5 @@
 import '../correction_memory/correction_memory_model.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
 
 /// Lightweight evidence freshness weight — not a proof verdict.
 enum EvidenceWeightState {
@@ -34,6 +35,7 @@ class EvidenceWeightingResult {
     required this.secondaryStates,
     required this.shouldShow,
     this.correctionMemory,
+    this.patternMatchQuality,
   });
 
   final int entryCount;
@@ -46,6 +48,7 @@ class EvidenceWeightingResult {
   final List<EvidenceWeightState> secondaryStates;
   final bool shouldShow;
   final CorrectionMemorySnapshot? correctionMemory;
+  final PatternMatchQualityResult? patternMatchQuality;
 
   List<EvidenceWeightState> get displayStates => [
         primaryState,

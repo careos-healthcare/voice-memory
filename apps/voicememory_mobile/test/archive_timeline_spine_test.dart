@@ -13,6 +13,8 @@ import 'package:voicememory_mobile/features/current_relevance/current_relevance_
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
@@ -130,6 +132,16 @@ ArchiveTimelineSpineResult _manualResult({
       footer: ArchiveTimelineSpineCopy.footer,
       differentiationLine: ArchiveTimelineSpineCopy.differentiationLine,
       proBridgeCopy: ArchiveTimelineSpineCopy.proBridgeCopy,
+      evidenceAnchors: const [],
+      hasSafeAnchor: false,
+      patternMatchQuality: PatternMatchQualityResult.hidden(
+        source: 'test',
+        entryCount: 3,
+      ),
+      proofConfidenceCalibration: ProofConfidenceCalibrationResult.hidden(
+        source: 'test',
+        entryCount: 3,
+      ),
     );
 
 ArchiveTimelineSpineResult _resultFor(

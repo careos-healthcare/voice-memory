@@ -288,7 +288,7 @@ void main() {
       );
 
       expect(result.title, ProofQualityResponseCopy.alreadyKnewTitle);
-      expect(result.body, ProofQualityResponseCopy.alreadyKnewBody);
+      expect(result.body, contains(ProofQualityResponseCopy.alreadyKnewBody));
     });
 
     testWidgets('renders change-focused rows without pattern label only',

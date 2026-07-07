@@ -1,5 +1,9 @@
 import 'archive_timeline_spine_copy.dart';
 
+import '../evidence_anchors/evidence_anchor_model.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
+
 enum ArchiveTimelineSpineRowId {
   firstSeen,
   returned,
@@ -44,11 +48,13 @@ class ArchiveTimelineSpineRow {
     required this.id,
     required this.label,
     required this.detail,
+    this.anchorType,
   });
 
   final ArchiveTimelineSpineRowId id;
   final String label;
   final String detail;
+  final EvidenceAnchorType? anchorType;
 }
 
 class ArchiveTimelineSpineResult {
@@ -67,6 +73,10 @@ class ArchiveTimelineSpineResult {
     required this.footer,
     required this.differentiationLine,
     required this.proBridgeCopy,
+    required this.evidenceAnchors,
+    required this.hasSafeAnchor,
+    required this.patternMatchQuality,
+    required this.proofConfidenceCalibration,
   });
 
   final bool shouldShow;
@@ -83,6 +93,10 @@ class ArchiveTimelineSpineResult {
   final String footer;
   final String differentiationLine;
   final String proBridgeCopy;
+  final List<String> evidenceAnchors;
+  final bool hasSafeAnchor;
+  final PatternMatchQualityResult patternMatchQuality;
+  final ProofConfidenceCalibrationResult proofConfidenceCalibration;
 
   int get rowCount => rows.length;
 }

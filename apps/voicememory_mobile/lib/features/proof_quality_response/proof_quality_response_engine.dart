@@ -9,7 +9,12 @@ import '../not_relevant_recovery/not_relevant_recovery_copy.dart';
 import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../not_relevant_recovery/not_relevant_recovery_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
-import '../proof_specificity_boost/proof_specificity_boost_engine.dart';
+import '../evidence_anchors/evidence_anchor_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_analytics.dart';
+import '../pattern_match_quality/pattern_match_quality_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'proof_quality_response_copy.dart';
 import 'proof_quality_response_model.dart';
@@ -60,11 +65,34 @@ abstract final class ProofQualityResponseEngine {
       proofKey: proofKey,
     );
 
-    final boost = ProofSpecificityBoostEngine.build(
+    final anchorExtraction = EvidenceAnchorEngine.build(
       entries: entries,
       beliefSurfaceVisible: true,
       source: source,
       beliefEvidencePhrases: beliefEvidencePhrases,
+      now: now,
+    );
+    final patternMatchQuality = PatternMatchQualityEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: true,
+      source: source,
+      beliefEvidencePhrases: beliefEvidencePhrases,
+      now: now,
+    );
+    PatternMatchQualityAnalytics.resolved(result: patternMatchQuality);
+    final correctionSnapshot = CorrectionMemoryEngine.snapshotFor(
+      entries: entries,
+      now: now,
+    );
+    final proofConfidenceCalibration = ProofConfidenceCalibrationEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: true,
+      source: source,
+      patternMatchQuality: patternMatchQuality,
+      anchorExtraction: anchorExtraction,
+      now: now,
+      correction: correctionSnapshot,
+      trackAnalytics: true,
     );
 
     return switch (feedbackState) {
@@ -76,17 +104,18 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: boost.hasSafeAnchor,
+          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+              patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.tooVagueTitle,
           body: stillTooVague
               ? ProofQualityResponseCopy.stillTooVagueFollowUp
-              : ProofQualityResponseCopy.tooVagueBody,
+              : '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.tooVagueBody}',
           footer: ProofQualityResponseCopy.footer,
           rows: ProofQualityResponseCopy.tooVagueRows,
-          evidenceAnchors: boost.evidenceAnchors,
-          usesFallbackEvidenceLine: boost.usesFallbackEvidenceLine,
-          deltaLine: null,
+          evidenceAnchors: anchorExtraction.safeSummaries,
+          usesFallbackEvidenceLine: anchorExtraction.usesFallback,
+          deltaLine: proofConfidenceCalibration.leadCopy,
           returnedAfterCorrectionLine:
               ProofQualityResponseCopy.returnedAfterCorrectionLine,
           stillTooVagueFollowUp: stillTooVague,
@@ -99,15 +128,18 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: boost.hasSafeAnchor,
+          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+              patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.alreadyKnewTitle,
-          body: ProofQualityResponseCopy.alreadyKnewBody,
+          body:
+              '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.alreadyKnewBody}',
           footer: ProofQualityResponseCopy.footer,
           rows: ProofQualityResponseCopy.alreadyKnewRows,
           evidenceAnchors: const [],
           usesFallbackEvidenceLine: false,
-          deltaLine: ProofQualityResponseCopy.alreadyKnewDeltaLine,
+          deltaLine: proofConfidenceCalibration.leadCopy ??
+              ProofQualityResponseCopy.alreadyKnewDeltaLine,
           returnedAfterCorrectionLine:
               ProofQualityResponseCopy.returnedAfterCorrectionLine,
           stillTooVagueFollowUp: false,
@@ -120,17 +152,24 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: boost.hasSafeAnchor,
+          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+              patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.notRelevantTitle,
-          body: ProofQualityResponseCopy.notRelevantBody,
+          body: switch (proofConfidenceCalibration.level) {
+            ProofConfidenceLevel.freshReturn ||
+            ProofConfidenceLevel.corrected =>
+              proofConfidenceCalibration.primaryCopy,
+            _ => ProofQualityResponseCopy.notRelevantBody,
+          },
           footer: ProofQualityResponseCopy.footer,
           rows: const [],
           evidenceAnchors: const [],
           usesFallbackEvidenceLine: false,
-          deltaLine: null,
-          returnedAfterCorrectionLine:
-              ProofQualityResponseCopy.returnedAfterCorrectionLine,
+          deltaLine: proofConfidenceCalibration.leadCopy,
+          returnedAfterCorrectionLine: hasFreshReturn
+              ? proofConfidenceCalibration.primaryCopy
+              : ProofQualityResponseCopy.returnedAfterCorrectionLine,
           stillTooVagueFollowUp: false,
         ),
       _ => ProofQualityResponseResult.hidden(

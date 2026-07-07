@@ -1,8 +1,7 @@
 import '../../models/journal_entry.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
-import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'proof_specificity_copy.dart';
@@ -45,11 +44,14 @@ abstract final class ProofSpecificityEngine {
       );
     }
 
-    final anchors = _resolveAnchors(
+    final extraction = EvidenceAnchorEngine.build(
       entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      source: source,
       beliefEvidencePhrases: beliefEvidencePhrases,
     );
-    final usesFallback = anchors.isEmpty;
+    final anchors = extraction.safeSummaries;
+    final usesFallback = extraction.usesFallback;
 
     return ProofSpecificityResult(
       shouldShow: true,
@@ -170,50 +172,6 @@ abstract final class ProofSpecificityEngine {
         entries: entries,
         returnChecks: returnChecks,
       );
-
-  static List<String> _resolveAnchors({
-    required List<JournalEntry> entries,
-    required List<String> beliefEvidencePhrases,
-  }) {
-    final anchors = <String>[];
-    for (final phrase in beliefEvidencePhrases) {
-      final safe = _sanitizeAnchor(phrase);
-      if (safe == null) continue;
-      if (anchors.contains(safe)) continue;
-      anchors.add(safe);
-      if (anchors.length >= maxAnchors) return anchors;
-    }
-
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (eligible.length < 3) return anchors;
-
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
-    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
-    if (!evidence.isStrong) return anchors;
-
-    for (final phrase in ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
-      evidence.phrases,
-      foundation,
-    )) {
-      final safe = _sanitizeAnchor(phrase);
-      if (safe == null) continue;
-      if (anchors.contains(safe)) continue;
-      anchors.add(safe);
-      if (anchors.length >= maxAnchors) break;
-    }
-    return anchors;
-  }
-
-  static String? _sanitizeAnchor(String raw) {
-    final cleaned = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
-    if (cleaned.isEmpty) return null;
-    if (cleaned.length > maxAnchorLength) {
-      return '${cleaned.substring(0, maxAnchorLength - 1).trim()}…';
-    }
-    return cleaned;
-  }
 
   static bool _passesEvidenceQuality(List<JournalEntry> entries) {
     if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {

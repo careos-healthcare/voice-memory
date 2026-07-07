@@ -1,13 +1,18 @@
 import '../archive_timeline_spine/archive_timeline_spine_model.dart';
+import '../evidence_anchors/evidence_anchor_model.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 
 class TimelineProofMomentRow {
   const TimelineProofMomentRow({
     required this.label,
     this.detail,
+    this.anchorType,
   });
 
   final String label;
   final String? detail;
+  final EvidenceAnchorType? anchorType;
 }
 
 class TimelineProofMomentResult {
@@ -27,6 +32,11 @@ class TimelineProofMomentResult {
     required this.differentiationLine,
     required this.proLine,
     required this.compact,
+    required this.evidenceAnchors,
+    required this.hasSafeAnchor,
+    required this.usesFallbackEvidenceLine,
+    required this.patternMatchQuality,
+    required this.proofConfidenceCalibration,
   });
 
   final bool shouldShow;
@@ -44,4 +54,9 @@ class TimelineProofMomentResult {
   final String differentiationLine;
   final String proLine;
   final bool compact;
+  final List<String> evidenceAnchors;
+  final bool hasSafeAnchor;
+  final bool usesFallbackEvidenceLine;
+  final PatternMatchQualityResult patternMatchQuality;
+  final ProofConfidenceCalibrationResult proofConfidenceCalibration;
 }

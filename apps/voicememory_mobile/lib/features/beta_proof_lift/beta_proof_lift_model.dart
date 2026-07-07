@@ -1,4 +1,6 @@
 import 'beta_proof_lift_copy.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 
 enum BetaProofLiftSurface {
   timelineProofMoment,
@@ -44,6 +46,8 @@ class BetaProofLiftResult {
     required this.hasDelta,
     required this.hasCurrentRelevance,
     required this.hasCorrection,
+    required this.patternMatchQuality,
+    required this.proofConfidenceCalibration,
   });
 
   factory BetaProofLiftResult.hidden({
@@ -64,6 +68,14 @@ class BetaProofLiftResult {
         hasDelta: false,
         hasCurrentRelevance: false,
         hasCorrection: false,
+        patternMatchQuality: PatternMatchQualityResult.hidden(
+          source: source,
+          entryCount: entryCount,
+        ),
+        proofConfidenceCalibration: ProofConfidenceCalibrationResult.hidden(
+          source: source,
+          entryCount: entryCount,
+        ),
       );
 
   final bool shouldShow;
@@ -78,6 +90,12 @@ class BetaProofLiftResult {
   final bool hasDelta;
   final bool hasCurrentRelevance;
   final bool hasCorrection;
+  final PatternMatchQualityResult patternMatchQuality;
+  final ProofConfidenceCalibrationResult proofConfidenceCalibration;
+
+  bool get isWatchOnly =>
+      proofConfidenceCalibration.isWatchOnly ||
+      patternMatchQuality.shouldShowAsWatchOnly;
 
   List<String> get allCopyStrings => [
         title,

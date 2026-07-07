@@ -8,6 +8,8 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../chat_differentiation/chat_differentiation_copy.dart';
 import '../chat_differentiation/chat_differentiation_engine.dart';
 import '../pattern_detail/pattern_detail_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'first_proof_payoff_copy.dart';
 import 'first_proof_payoff_model.dart';
 
@@ -58,21 +60,31 @@ abstract final class FirstProofPayoffEngine {
     );
 
     final hasSnippets = variant == FirstProofPayoffVariant.strongWithSnippets;
+    final calibration = ProofConfidenceCalibrationEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: viewingConfirmedRepeatOrTimeline,
+      source: 'first_proof_payoff',
+    );
 
     return FirstProofPayoff(
       variant: variant,
       headline: hasSnippets
           ? FirstProofPayoffCopy.headline
-          : FirstProofPayoffCopy.fallbackHeadline,
+          : (calibration.isWatchOnly || calibration.level == ProofConfidenceLevel.emerging
+              ? FirstProofPayoffCopy.fallbackHeadline
+              : FirstProofPayoffCopy.fallbackHeadline),
       subhead: '',
       groundedPhrase: primaryPhrase,
       evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
       snippets: snippets,
-      meaningLine:
-          hasSnippets ? FirstProofPayoffCopy.patternLine : '',
+      meaningLine: hasSnippets && !calibration.isWatchOnly
+          ? FirstProofPayoffCopy.patternLine
+          : '',
       returnHook: hasSnippets
-          ? FirstProofPayoffCopy.truthLine
-          : FirstProofPayoffCopy.fallbackBody,
+          ? (calibration.level == ProofConfidenceLevel.strong
+              ? calibration.primaryCopy
+              : FirstProofPayoffCopy.truthLine)
+          : calibration.primaryCopy,
       hasStrongEvidence: hasStrongEvidence,
       canShowPatternDetail: canShowPatternDetail,
       differentiationLine: hasSnippets

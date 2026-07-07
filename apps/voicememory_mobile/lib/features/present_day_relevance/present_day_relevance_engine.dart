@@ -6,6 +6,8 @@ import '../current_relevance/current_relevance_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
+import '../pattern_match_quality/pattern_match_quality_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'present_day_relevance_copy.dart';
@@ -22,6 +24,7 @@ abstract final class PresentDayRelevanceEngine {
     required bool beliefSurfaceVisible,
     required String source,
     DateTime? now,
+    EvidenceWeightingResult? evidenceWeighting,
   }) {
     if (entries.length < minEntryCount) return null;
 
@@ -34,22 +37,37 @@ abstract final class PresentDayRelevanceEngine {
       entries: entries,
       beliefSurfaceVisible: beliefSurfaceVisible,
     );
-    final evidenceWeighting = EvidenceWeightingEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      now: now,
-    );
+    final weighting = evidenceWeighting ??
+        EvidenceWeightingEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: beliefSurfaceVisible,
+          now: now,
+        );
     final correction = CorrectionMemoryEngine.snapshotFor(
       entries: entries,
       now: now,
     );
-    final relevanceState = CorrectionMemoryEngine.presentDayStateFor(
-      correction: correction,
-      fallback: _resolveState(
-        currentRelevance: currentRelevance,
-        evidenceWeighting: evidenceWeighting,
+    final relevanceState = _applyPatternQualityToState(
+      state: CorrectionMemoryEngine.presentDayStateFor(
+        correction: correction,
+        fallback: _resolveState(
+          currentRelevance: currentRelevance,
+          evidenceWeighting: weighting,
+        ),
       ),
+      evidenceWeighting: weighting,
+      entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      now: now,
     );
+    final patternMatchQuality = weighting?.patternMatchQuality ??
+        PatternMatchQualityEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: beliefSurfaceVisible,
+          source: source,
+          now: now,
+          correction: correction,
+        );
     final stateBody = CorrectionMemoryEngine.presentDayStateBodyFor(
       correction: correction,
       state: relevanceState,
@@ -68,7 +86,34 @@ abstract final class PresentDayRelevanceEngine {
       stateBody: stateBody,
       footer: PresentDayRelevanceCopy.footer,
       differentiationLine: PresentDayRelevanceCopy.differentiationLine,
+      patternMatchQuality: patternMatchQuality,
     );
+  }
+
+  static PresentDayRelevanceState _applyPatternQualityToState({
+    required PresentDayRelevanceState state,
+    required EvidenceWeightingResult? evidenceWeighting,
+    required List<JournalEntry> entries,
+    required bool beliefSurfaceVisible,
+    DateTime? now,
+  }) {
+    final patternQuality = evidenceWeighting?.patternMatchQuality ??
+        PatternMatchQualityEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: beliefSurfaceVisible,
+          source: 'present_day_relevance',
+          now: now,
+        );
+    if (!patternQuality.shouldResolve) return state;
+    if (patternQuality.weakReasons
+        .contains(PatternMatchWeakReason.userMarkedNotRelevant)) {
+      return PresentDayRelevanceState.fading;
+    }
+    if (patternQuality.shouldShowAsWatchOnly &&
+        state == PresentDayRelevanceState.current) {
+      return PresentDayRelevanceState.fading;
+    }
+    return state;
   }
 
   static bool shouldShow({

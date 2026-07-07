@@ -9,6 +9,8 @@ import 'package:voicememory_mobile/features/correction_memory/correction_memory_
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
+import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_analytics.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_engine.dart';
@@ -160,6 +162,10 @@ void main() {
         footer: spine.footer,
         differentiationLine: spine.differentiationLine,
         proBridgeCopy: spine.proBridgeCopy,
+        evidenceAnchors: spine.evidenceAnchors,
+        hasSafeAnchor: spine.hasSafeAnchor,
+        patternMatchQuality: spine.patternMatchQuality,
+        proofConfidenceCalibration: spine.proofConfidenceCalibration,
       );
       expect(
         TimelineProofMomentEngine.buildFromSpine(

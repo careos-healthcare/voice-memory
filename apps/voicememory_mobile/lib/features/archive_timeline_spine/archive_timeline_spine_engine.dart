@@ -6,8 +6,16 @@ import '../correction_memory/correction_memory_model.dart';
 import '../current_relevance/current_relevance_engine.dart';
 import '../current_relevance/current_relevance_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_copy.dart';
+import '../pattern_match_quality/pattern_match_quality_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_copy.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../present_day_relevance/present_day_relevance_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
@@ -55,6 +63,7 @@ abstract final class ArchiveTimelineSpineEngine {
       beliefSurfaceVisible: beliefSurfaceVisible,
       source: source,
       now: now,
+      evidenceWeighting: evidenceWeighting,
     );
 
     final stillCurrent = _isStillCurrent(
@@ -85,12 +94,51 @@ abstract final class ArchiveTimelineSpineEngine {
 
     if (rows.isEmpty) return null;
 
+    final anchorExtraction = EvidenceAnchorEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      source: source,
+      now: now,
+      evidenceWeighting: evidenceWeighting,
+      presentDay: presentDayRelevance,
+      correction: correction,
+    );
+    final anchorHints = EvidenceAnchorEngine.spineHintsFor(
+      anchors: anchorExtraction.anchors,
+    );
+    final enrichedRows = rows
+        .map((row) => _applyAnchorHint(row, anchorHints))
+        .toList();
+
+    final patternMatchQuality = evidenceWeighting?.patternMatchQuality ??
+        PatternMatchQualityEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: beliefSurfaceVisible,
+          source: source,
+          now: now,
+          evidenceWeighting: evidenceWeighting,
+          correction: correction,
+        );
+
     final currentWeight = _resolveCurrentWeight(
       correction: correction,
       presentDayState: presentDayRelevance?.relevanceState,
       evidenceWeighting: evidenceWeighting,
       hasConfirmedRepeat: hasConfirmedRepeat,
       needsFreshProof: needsFreshProof,
+      patternMatchQuality: patternMatchQuality,
+    );
+
+    final proofConfidenceCalibration = ProofConfidenceCalibrationEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      source: source,
+      patternMatchQuality: patternMatchQuality,
+      anchorExtraction: anchorExtraction,
+      evidenceWeighting: evidenceWeighting,
+      correction: correction,
+      now: now,
+      trackAnalytics: true,
     );
 
     return ArchiveTimelineSpineResult(
@@ -100,15 +148,21 @@ abstract final class ArchiveTimelineSpineEngine {
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasCorrection: hasCorrection,
       currentWeight: currentWeight,
-      rows: rows,
+      rows: enrichedRows,
       title: ArchiveTimelineSpineCopy.title,
-      subtitle: ArchiveTimelineSpineCopy.subtitle,
-      explanation: ArchiveTimelineSpineCopy.explanation,
+      subtitle: proofConfidenceCalibration.isWatchOnly
+          ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
+          : ArchiveTimelineSpineCopy.subtitle,
+      explanation: proofConfidenceCalibration.displayCopy,
       currentWeightLabel:
           ArchiveTimelineSpineCopy.currentWeightLabelFor(currentWeight),
       footer: ArchiveTimelineSpineCopy.footer,
       differentiationLine: ArchiveTimelineSpineCopy.differentiationLine,
       proBridgeCopy: ArchiveTimelineSpineCopy.proBridgeCopy,
+      evidenceAnchors: anchorExtraction.safeSummaries,
+      hasSafeAnchor: anchorExtraction.hasSafeAnchor,
+      patternMatchQuality: patternMatchQuality,
+      proofConfidenceCalibration: proofConfidenceCalibration,
     );
   }
 
@@ -189,6 +243,22 @@ abstract final class ArchiveTimelineSpineEngine {
         detail: ArchiveTimelineSpineCopy.detailFor(id),
       );
 
+  static ArchiveTimelineSpineRow _applyAnchorHint(
+    ArchiveTimelineSpineRow row,
+    List<ArchiveTimelineSpineRowAnchorHint> hints,
+  ) {
+    for (final hint in hints) {
+      if (hint.rowId != row.id) continue;
+      return ArchiveTimelineSpineRow(
+        id: row.id,
+        label: row.label,
+        detail: hint.detail,
+        anchorType: hint.anchorType,
+      );
+    }
+    return row;
+  }
+
   static bool _isStillCurrent({
     required CurrentRelevanceState? currentRelevance,
     required CorrectionMemorySnapshot? correction,
@@ -263,9 +333,13 @@ abstract final class ArchiveTimelineSpineEngine {
     required EvidenceWeightingResult? evidenceWeighting,
     required bool hasConfirmedRepeat,
     required bool needsFreshProof,
+    required PatternMatchQualityResult patternMatchQuality,
   }) {
     if (needsFreshProof) {
       return ArchiveTimelineSpineCurrentWeight.needsFreshProof;
+    }
+    if (patternMatchQuality.shouldShowAsWatchOnly) {
+      return ArchiveTimelineSpineCurrentWeight.light;
     }
     if (correction != null && !correction.returnedAfterFaded) {
       return ArchiveTimelineSpineCurrentWeight.corrected;

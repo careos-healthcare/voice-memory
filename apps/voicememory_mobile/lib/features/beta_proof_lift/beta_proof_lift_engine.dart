@@ -5,13 +5,22 @@ import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../correction_memory/correction_memory_engine.dart';
 import '../correction_memory/correction_memory_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../evidence_anchors/evidence_anchor_copy.dart';
+import '../evidence_anchors/evidence_anchor_engine.dart';
+import '../evidence_anchors/evidence_anchor_model.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
+import '../pattern_match_quality/pattern_match_quality_copy.dart';
+import '../pattern_match_quality/pattern_match_quality_engine.dart';
+import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_copy.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../present_day_relevance/present_day_relevance_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
 import '../proof_quality_response/proof_quality_response_engine.dart';
 import '../proof_quality_response/proof_quality_response_model.dart';
-import '../proof_specificity/proof_specificity_engine.dart';
 import '../timeline_proof_moment/timeline_proof_moment_model.dart';
 import 'beta_proof_lift_copy.dart';
 import 'beta_proof_lift_model.dart';
@@ -29,11 +38,12 @@ abstract final class BetaProofLiftEngine {
     TimelineProofMomentResult? timelineProof,
     DateTime? now,
   }) {
-    final specificity = ProofSpecificityEngine.build(
+    final anchorExtraction = EvidenceAnchorEngine.build(
       entries: entries,
       beliefSurfaceVisible: beliefSurfaceVisible,
       source: source,
       beliefEvidencePhrases: beliefEvidencePhrases,
+      now: now,
     );
     final evidenceWeighting = EvidenceWeightingEngine.build(
       entries: entries,
@@ -50,13 +60,33 @@ abstract final class BetaProofLiftEngine {
       entries: entries,
       now: now,
     );
+    final patternMatchQuality = evidenceWeighting?.patternMatchQuality ??
+        PatternMatchQualityEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: beliefSurfaceVisible,
+          source: source,
+          beliefEvidencePhrases: beliefEvidencePhrases,
+          now: now,
+          evidenceWeighting: evidenceWeighting,
+          correction: correction,
+        );
+    final proofConfidenceCalibration = ProofConfidenceCalibrationEngine.build(
+      entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      source: source,
+      patternMatchQuality: patternMatchQuality,
+      anchorExtraction: anchorExtraction,
+      evidenceWeighting: evidenceWeighting,
+      correction: correction,
+      now: now,
+      trackAnalytics: true,
+    );
 
-    final hasSafeAnchor = specificity.shouldShow &&
-        !specificity.usesFallbackEvidenceLine &&
-        specificity.evidenceAnchorCount > 0;
+    final hasSafeAnchor = anchorExtraction.hasSafeAnchor;
     final hasCorrection = correction != null;
     final hasCurrentRelevance = presentDay != null;
     final deltaRows = _resolveDeltaRows(
+      anchorExtraction: anchorExtraction,
       evidenceWeighting: evidenceWeighting,
       presentDay: presentDay,
       correction: correction,
@@ -69,7 +99,8 @@ abstract final class BetaProofLiftEngine {
       BetaProofLiftSection(
         heading: BetaProofLiftCopy.sectionWhatRepeated,
         body: _whatRepeatedBody(
-          hasSafeAnchor: hasSafeAnchor,
+          anchorExtraction: anchorExtraction,
+          proofConfidenceCalibration: proofConfidenceCalibration,
           hasConfirmedRepeat:
               EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
           timelineProof: timelineProof,
@@ -95,13 +126,17 @@ abstract final class BetaProofLiftEngine {
       source: source,
       surface: surface,
       title: BetaProofLiftCopy.title,
-      body: BetaProofLiftCopy.body,
+      body: proofConfidenceCalibration.isWatchOnly
+          ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
+          : proofConfidenceCalibration.displayCopy,
       sections: sections,
       deltaRows: deltaRows,
       hasSafeAnchor: hasSafeAnchor,
       hasDelta: deltaRows.isNotEmpty,
       hasCurrentRelevance: hasCurrentRelevance,
       hasCorrection: hasCorrection,
+      patternMatchQuality: patternMatchQuality,
+      proofConfidenceCalibration: proofConfidenceCalibration,
     );
   }
 
@@ -227,14 +262,24 @@ abstract final class BetaProofLiftEngine {
       BetaProofFeedbackStore.isAnsweredToday(betaSurfaceFor(surface));
 
   static String _whatRepeatedBody({
-    required bool hasSafeAnchor,
+    required EvidenceAnchorExtractionResult anchorExtraction,
+    required ProofConfidenceCalibrationResult proofConfidenceCalibration,
     required bool hasConfirmedRepeat,
     required TimelineProofMomentResult? timelineProof,
   }) {
-    if (hasSafeAnchor ||
-        hasConfirmedRepeat ||
-        (timelineProof?.rowCount ?? 0) >= 2) {
-      return BetaProofLiftCopy.fallbackWhatRepeated;
+    if (proofConfidenceCalibration.isWatchOnly ||
+        proofConfidenceCalibration.level == ProofConfidenceLevel.corrected) {
+      return proofConfidenceCalibration.primaryCopy;
+    }
+    if (anchorExtraction.hasSafeAnchor) {
+      return anchorExtraction.safeSummaries.first;
+    }
+    if (timelineProof?.hasSafeAnchor == true &&
+        timelineProof!.evidenceAnchors.isNotEmpty) {
+      return timelineProof.evidenceAnchors.first;
+    }
+    if (hasConfirmedRepeat || (timelineProof?.rowCount ?? 0) >= 2) {
+      return proofConfidenceCalibration.primaryCopy;
     }
     return BetaProofLiftCopy.fallbackWhatRepeated;
   }
@@ -273,6 +318,7 @@ abstract final class BetaProofLiftEngine {
   }
 
   static List<String> _resolveDeltaRows({
+    required EvidenceAnchorExtractionResult anchorExtraction,
     required EvidenceWeightingResult? evidenceWeighting,
     required PresentDayRelevanceResult? presentDay,
     required CorrectionMemorySnapshot? correction,
@@ -280,6 +326,12 @@ abstract final class BetaProofLiftEngine {
     required bool hasConfirmedRepeat,
   }) {
     final rows = <String>[];
+
+    for (final anchor in anchorExtraction.anchors) {
+      if (!anchor.isSafeForDisplay) continue;
+      if (anchor.type == EvidenceAnchorType.repeat) continue;
+      rows.add(anchor.safeSummary);
+    }
 
     if (correction?.returnedAfterFaded == true ||
         timelineProof?.hasCorrection == true) {
