@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
+import '../billing/archive_paywall_copy.dart';
 import '../billing/archive_paywall_plans.dart';
 import '../billing/paywall_attribution_event.dart';
 import '../features/referral/invite_funnel_metrics.dart';
@@ -89,6 +90,8 @@ class PaywallScreen extends StatefulWidget {
 
 enum _PaywallPlan { monthly, yearly }
 
+enum _PaywallBusyKind { none, purchase, restore }
+
 class _PaywallScreenState extends State<PaywallScreen> {
   static const Duration _loadTimeout = Duration(seconds: 12);
   static const String _entitlementLabel = ProPackagingCopy.title;
@@ -101,6 +104,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   PremiumEntitlements? _entitlements;
   bool _loading = true;
   bool _busy = false;
+  _PaywallBusyKind _busyKind = _PaywallBusyKind.none;
   RestorePurchasesFlow? _restoreFlow;
   bool _paywallSeenTracked = false;
   String? _error;
@@ -499,8 +503,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
       return;
     }
 
-    setState(() => _busy = true);
-    _trackPlanSelected(_selected);
+    setState(() {
+      _busy = true;
+      _busyKind = _PaywallBusyKind.purchase;
+    });
     RevenueFunnelAnalytics.paywallPurchaseCtaTapped(
       source: _attributionSource.id,
       isPro: _entitlements?.isPro == true,
@@ -539,7 +545,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (!mounted) return;
       if (ent.isPro) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$_entitlementLabel is now active.')),
+          const SnackBar(content: Text(ArchivePaywallCopy.purchaseSuccess)),
         );
         await _load();
       }
@@ -556,7 +562,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
       );
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _busyKind = _PaywallBusyKind.none;
+        });
+      }
     }
   }
 
@@ -582,7 +593,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final flow = _effectiveRestoreFlow;
     if (flow.isBusy || _busy) return;
 
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _busyKind = _PaywallBusyKind.restore;
+    });
     RevenueFunnelAnalytics.paywallRestoreTapped(
       source: _attributionSource.id,
       isPro: _entitlements?.isPro == true,
@@ -599,7 +613,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
       RestorePurchasesFeedback.showSnackBar(context, result);
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _busyKind = _PaywallBusyKind.none;
+        });
+      }
     }
   }
 
@@ -659,9 +678,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
         padding: ArchiveResponsiveLayout.pagePadding(context),
         children: [
           if (_loading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: Center(child: CircularProgressIndicator()),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Column(
+                children: [
+                  const Center(child: CircularProgressIndicator()),
+                  const SizedBox(height: 16),
+                  Text(
+                    ArchivePaywallCopy.checkingProAccess,
+                    style: ArchiveMobileTypography.responsiveBody(context),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             )
           else if (_entitlements?.isPro == true)
             _proActiveBody()
@@ -689,13 +718,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            '$_entitlementLabel is active',
+            ArchivePaywallCopy.proActiveTitle,
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            ConsumerUiCopy.paywallProActiveBody,
+            ArchivePaywallCopy.proActiveConfirmation,
             style: ArchiveMobileTypography.responsiveBody(context),
             textAlign: TextAlign.center,
           ),
@@ -1246,13 +1275,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: _busy
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: VoiceMemoryColors.onPrimary,
+            child: _busy && _busyKind == _PaywallBusyKind.purchase
+                ? Text(
+                    ArchivePaywallCopy.purchaseStarting,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
                     ),
                   )
                 : Text(
@@ -1282,7 +1310,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ),
           TextButton(
             onPressed: _busy ? null : _restore,
-            child: Text(ConsumerUiCopy.restorePurchases),
+            child: Text(
+              _busy && _busyKind == _PaywallBusyKind.restore
+                  ? ArchivePaywallCopy.restoreChecking
+                  : ConsumerUiCopy.restorePurchases,
+            ),
           ),
         ],
       ),

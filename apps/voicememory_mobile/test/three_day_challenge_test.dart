@@ -62,6 +62,7 @@ void main() {
       final challenge = ThreeDayChallengeEngine.build(entries: []);
       expect(challenge, isNotNull);
       expect(challenge!.day, ThreeDayChallengeDay.day1);
+      expect(challenge.title, ThreeDayChallengeCopy.day1Title);
       expect(challenge.body, ThreeDayChallengeCopy.day1Body);
       expect(challenge.entryCount, 0);
     });
@@ -74,6 +75,7 @@ void main() {
       );
       expect(challenge, isNotNull);
       expect(challenge!.day, ThreeDayChallengeDay.day2);
+      expect(challenge.title, ThreeDayChallengeCopy.day2Title);
       expect(challenge.body, ThreeDayChallengeCopy.day2Body);
     });
 
@@ -90,6 +92,7 @@ void main() {
       );
       expect(challenge, isNotNull);
       expect(challenge!.day, ThreeDayChallengeDay.day3);
+      expect(challenge.title, ThreeDayChallengeCopy.day3Title);
       expect(challenge.body, ThreeDayChallengeCopy.day3Body);
       expect(challenge.distinctDayCount, 2);
     });
@@ -204,7 +207,7 @@ void main() {
           firstProofPayoffVisible: false,
           challenge: const ThreeDayChallengeState(
             day: ThreeDayChallengeDay.day2,
-            title: ThreeDayChallengeCopy.title,
+            title: ThreeDayChallengeCopy.day2Title,
             body: ThreeDayChallengeCopy.day2Body,
             entryCount: 1,
             distinctDayCount: 1,
@@ -239,14 +242,16 @@ void main() {
       expect(blob, isNot(contains('guaranteed')));
       expect(blob, contains('private moment'));
       expect(blob, contains('what came back'));
+      expect(blob, contains('come back tomorrow'));
+      expect(blob, contains('something to compare'));
     });
   });
 
   group('ThreeDayChallengeCard', () {
-    testWidgets('renders title and day body without CTA', (tester) async {
+    testWidgets('renders day title and day body without CTA', (tester) async {
       const challenge = ThreeDayChallengeState(
         day: ThreeDayChallengeDay.day1,
-        title: ThreeDayChallengeCopy.title,
+        title: ThreeDayChallengeCopy.day1Title,
         body: ThreeDayChallengeCopy.day1Body,
         entryCount: 0,
         distinctDayCount: 0,
@@ -262,7 +267,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('three_day_challenge_card')), findsOneWidget);
-      expect(find.text(ThreeDayChallengeCopy.title), findsOneWidget);
+      expect(find.text(ThreeDayChallengeCopy.day1Title), findsOneWidget);
       expect(find.text(ThreeDayChallengeCopy.day1Body), findsOneWidget);
       expect(find.byType(FilledButton), findsNothing);
       expect(find.byType(TextButton), findsNothing);

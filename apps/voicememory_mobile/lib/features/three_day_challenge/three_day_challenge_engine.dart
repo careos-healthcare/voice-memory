@@ -66,7 +66,7 @@ abstract final class ThreeDayChallengeEngine {
     if (entryCount == 0) {
       return const ThreeDayChallengeState(
         day: ThreeDayChallengeDay.day1,
-        title: ThreeDayChallengeCopy.title,
+        title: ThreeDayChallengeCopy.day1Title,
         body: ThreeDayChallengeCopy.day1Body,
         entryCount: 0,
         distinctDayCount: 0,
@@ -77,7 +77,7 @@ abstract final class ThreeDayChallengeEngine {
     if (entryCount == 1 || distinctDays < 2) {
       return ThreeDayChallengeState(
         day: ThreeDayChallengeDay.day2,
-        title: ThreeDayChallengeCopy.title,
+        title: ThreeDayChallengeCopy.day2Title,
         body: ThreeDayChallengeCopy.day2Body,
         entryCount: entryCount,
         distinctDayCount: distinctDays,
@@ -87,7 +87,7 @@ abstract final class ThreeDayChallengeEngine {
 
     return ThreeDayChallengeState(
       day: ThreeDayChallengeDay.day3,
-      title: ThreeDayChallengeCopy.title,
+      title: ThreeDayChallengeCopy.day3Title,
       body: ThreeDayChallengeCopy.day3Body,
       entryCount: entryCount,
       distinctDayCount: distinctDays,

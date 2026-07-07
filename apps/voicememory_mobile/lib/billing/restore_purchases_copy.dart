@@ -4,10 +4,10 @@ import '../product/consumer_ui_copy.dart';
 abstract final class RestorePurchasesCopy {
   static const restorePurchases = ConsumerUiCopy.restorePurchases;
 
-  static const purchaseRestored = 'Purchase restored';
+  static const purchaseRestored = 'Purchase restored. Pro is active.';
 
   static const noActivePurchase =
-      'No active purchase was found for this Apple ID.';
+      'No previous Pro purchase was found on this Apple ID.';
 
   static const restoreError =
       'We could not check purchases right now. Please try again.';

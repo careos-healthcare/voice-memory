@@ -82,10 +82,10 @@ void main() {
   group('RestorePurchasesCopy', () {
     test('uses App Store-safe restore messaging', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-      expect(RestorePurchasesCopy.purchaseRestored, 'Purchase restored');
+      expect(RestorePurchasesCopy.purchaseRestored, 'Purchase restored. Pro is active.');
       expect(
         RestorePurchasesCopy.noActivePurchase,
-        'No active purchase was found for this Apple ID.',
+        'No previous Pro purchase was found on this Apple ID.',
       );
       expect(
         RestorePurchasesCopy.restoreError,

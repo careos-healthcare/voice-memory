@@ -41,6 +41,33 @@ abstract class ArchivePaywallCopy {
 
   static const String proActiveTitle = 'ArchiveMe Pro is active';
   static const String proActiveBody = ConsumerUiCopy.paywallProActiveBody;
+  static const String proActiveConfirmation =
+      'Pro is active. ArchiveMe can keep the longer story.';
+
+  static const String checkingProAccess = 'Checking your Pro access…';
+  static const String purchaseStarting = 'Starting secure purchase…';
+  static const String purchaseSuccess = proActiveConfirmation;
+  static const String restoreChecking = 'Checking for previous purchases…';
+  static const String restoreSuccess = 'Purchase restored. Pro is active.';
+  static const String restoreEmpty =
+      'No previous Pro purchase was found on this Apple ID.';
+
+  static const String paywallBackupLine = ConsumerUiCopy.paywallBackupLine;
+
+  static const List<String> purchaseConfidenceCopy = [
+    checkingProAccess,
+    purchaseStarting,
+    purchaseSuccess,
+    restoreChecking,
+    restoreSuccess,
+    restoreEmpty,
+    primaryCta,
+    headline,
+    subheadline,
+    differentiation,
+    trust,
+    paywallBackupLine,
+  ];
 
   static const String socialProofTitleA = 'People return to ArchiveMe to see';
   static const List<String> socialProofBulletsA = [
