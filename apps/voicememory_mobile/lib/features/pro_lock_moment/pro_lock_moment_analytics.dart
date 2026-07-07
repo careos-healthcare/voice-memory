@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../../services/activation_funnel_analytics.dart';
 
 /// Metadata-only analytics for the Pro lock moment.
@@ -78,6 +79,19 @@ abstract final class ProLockMomentAnalytics {
     };
 
     captureForTest?.call(event, props);
+    if (event == seenEvent) {
+      RevenueFunnelAnalytics.proLockSeen(
+        source: source,
+        entryCount: entryCount,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+      );
+    } else if (event == ctaTappedEvent) {
+      RevenueFunnelAnalytics.proLockCtaTapped(
+        source: source,
+        entryCount: entryCount,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+      );
+    }
     ActivationFunnelAnalytics.track(
       event,
       source: source,

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../../services/activation_funnel_analytics.dart';
 
 /// Metadata-only analytics for the monthly private report preview.
@@ -94,6 +95,19 @@ abstract final class MonthlyPrivateReportAnalytics {
     };
 
     captureForTest?.call(event, props);
+    if (event == seenEvent) {
+      RevenueFunnelAnalytics.monthlyReportPreviewSeen(
+        source: source,
+        entryCount: entryCount,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+      );
+    } else if (event == ctaTappedEvent) {
+      RevenueFunnelAnalytics.monthlyReportPreviewCtaTapped(
+        source: source,
+        entryCount: entryCount,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+      );
+    }
     ActivationFunnelAnalytics.track(
       event,
       source: source,

@@ -96,7 +96,7 @@ void main() {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');
       expect(
         ProPackagingCopy.subtitle,
-        'Keep a longer memory of what repeats and how it changes.',
+        'ArchiveMe is most useful when it can compare moments over time.',
       );
       expect(ProPackagingCopy.freeSectionTitle, 'Free');
       expect(
@@ -105,8 +105,8 @@ void main() {
       );
       expect(ProPackagingCopy.proSectionTitle, 'Pro');
       expect(ProPackagingCopy.proBullets, hasLength(5));
-      expect(ProPackagingCopy.proBullets, contains('Longer pattern history'));
-      expect(ProPackagingCopy.proBullets, contains('Belief change over time'));
+      expect(ProPackagingCopy.proBullets, contains('Longer archive history'));
+      expect(ProPackagingCopy.proBullets, contains('Private monthly reports'));
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
         'First proof is free. Pro is for keeping the longer story.',
@@ -185,8 +185,8 @@ void main() {
         find.text('Start your archive and unlock your first proof.'),
         findsOneWidget,
       );
-      expect(find.text('Longer pattern history'), findsOneWidget);
-      expect(find.text('Belief change over time'), findsOneWidget);
+      expect(find.text('Longer archive history'), findsOneWidget);
+      expect(find.text('Private monthly reports'), findsOneWidget);
     });
   });
 
@@ -195,8 +195,8 @@ void main() {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      expect(find.text(ProPackagingCopy.title), findsWidgets);
-      expect(find.text(ProPackagingCopy.offeringsUnavailableBody), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
       expect(find.byKey(const Key('archive_me_pro_value_section')), findsOneWidget);
       expect(find.text(ProPackagingCopy.continueCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
@@ -216,7 +216,7 @@ void main() {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      expect(find.text(ProPackagingCopy.offeringsUnavailableBody), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
       expect(find.text('Free'), findsOneWidget);
       expect(find.text('Pro'), findsOneWidget);
       expect(find.textContaining(r'$'), findsNothing);

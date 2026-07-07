@@ -79,6 +79,8 @@ class ArchivePaywallBody extends StatelessWidget {
           _keyValueSection()
         else if (ArchivePaywallVariantConfig.useSocialProofSection(v))
           _socialProofSection(),
+        const SizedBox(height: 14),
+        _differentiationAndTrustSection(),
         if (showPurchaseSection) ...[
           const SizedBox(height: 24),
           ArchiveIntelligenceProofSection(
@@ -348,6 +350,36 @@ class ArchivePaywallBody extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _differentiationAndTrustSection() {
+    return Column(
+      key: const Key('paywall_differentiation_trust'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          ArchivePaywallCopy.differentiation,
+          key: const Key('paywall_differentiation'),
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.45,
+            color: AppTheme.muted,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          ArchivePaywallCopy.trust,
+          key: const Key('paywall_trust'),
+          style: const TextStyle(
+            fontSize: 13,
+            height: 1.4,
+            color: AppTheme.muted,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 

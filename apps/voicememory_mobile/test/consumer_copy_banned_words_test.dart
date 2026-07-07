@@ -307,6 +307,7 @@ List<String> _scanBannedWords(
         if (entry.value == 'evidence' && _evidenceAllowed(value)) continue;
         if (entry.value == 'archive' && _archiveAllowed(value)) continue;
         if (entry.value == 'chat' && _chatAllowed(value)) continue;
+        if (entry.value == 'therapy' && _therapyAllowed(value)) continue;
         if (entry.value == 'journal' && _journalAllowed(value)) continue;
 
         violations.add('$path: banned "${entry.value}" in "$value"');
@@ -331,6 +332,9 @@ bool _archiveAllowed(String value) {
   if (lower.contains('archive review')) return true;
   if (lower.contains('ask my archive')) return true;
   if (lower.contains('your archive')) return true;
+  if (lower.contains('longer archive history')) return true;
+  if (lower.contains('preserving your archive')) return true;
+  if (lower.contains('evidence archive')) return true;
   if (lower.contains('clean up archive')) return true;
   if (lower == 'view archive') return true;
   if (lower == 'start my archive') return true;
@@ -340,7 +344,12 @@ bool _archiveAllowed(String value) {
 
 bool _chatAllowed(String value) {
   final lower = value.toLowerCase();
-  return lower.contains('not a chat');
+  return lower.contains('not a chat') || lower.contains('not more chat');
+}
+
+bool _therapyAllowed(String value) {
+  final lower = value.toLowerCase();
+  return lower.contains('not therapy');
 }
 
 bool _journalAllowed(String value) {

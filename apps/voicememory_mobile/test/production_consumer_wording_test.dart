@@ -88,9 +88,12 @@ void main() {
     test('paywall headline uses continuity framing', () {
       expect(
         ConsumerUiCopy.paywallHeadline,
-        'Keep your archive useful over time.',
+        'Keep the longer story.',
       );
-      expect(ConsumerUiCopy.paywallSubhead, contains('deeper history'));
+      expect(
+        ConsumerUiCopy.paywallSubhead,
+        contains('compare moments over time'),
+      );
       expect(
         ConsumerUiCopy.paywallSetupUnavailableBody,
         isNot(contains('TestFlight')),

@@ -17,10 +17,10 @@ void main() {
       'Purchases are not available right now.',
     );
     expect(PaywallUnavailableFallback.benefits.length, 5);
-    expect(
-      PaywallUnavailableFallback.benefits.first,
-      'See more of what keeps returning',
-    );
+      expect(
+        PaywallUnavailableFallback.benefits.first,
+        'Longer archive history',
+      );
   });
 
   test('annual appears before monthly when both present', () {
@@ -46,6 +46,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('ArchiveMe Pro'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.textContaining('VoiceMemory Pro'), findsNothing);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       expect(
@@ -53,10 +54,10 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('See more of what keeps returning'),
+        find.text('Longer archive history'),
         findsOneWidget,
       );
-      expect(find.text('Monthly review'), findsOneWidget);
+      expect(find.text('Private monthly reports'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.text('Done'), findsAtLeast(1));
     },

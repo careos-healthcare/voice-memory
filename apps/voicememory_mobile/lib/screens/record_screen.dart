@@ -145,6 +145,7 @@ import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../features/retention/return_tomorrow_cue_engine.dart';
 import '../features/retention/first_week_progress_engine.dart';
+import '../features/three_day_challenge/three_day_challenge_engine.dart';
 import '../features/return_day/return_day_flow_copy.dart';
 import '../features/return_day/return_day_flow_engine.dart';
 import '../features/return_day/return_day_flow_store.dart';
@@ -212,6 +213,7 @@ import '../features/transcript_correction/transcript_correction_copy.dart';
 import '../features/transcript_correction/transcript_correction_gate.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_week_progress_line.dart';
+import '../widgets/record/three_day_challenge_card.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/return_day_flow_card.dart';
 import '../widgets/record/first_proof_action_loop_card.dart';
@@ -4659,6 +4661,22 @@ class _RecordScreenState extends State<RecordScreen> {
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       payoff: firstProofPayoffCandidate,
     );
+    final threeDayChallengeCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? ThreeDayChallengeEngine.build(entries: _journalEntries)
+        : null;
+    final showThreeDayChallengeOnRecord = ThreeDayChallengeGates.shouldShow(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState:
+          ThreeDayChallengeEngine.shouldHideForDegradedTranscript(
+            _journalEntries,
+          ),
+      firstProofPayoffVisible:
+          showFirstProofPayoff && firstProofPayoffCandidate != null,
+      challenge: threeDayChallengeCandidate,
+    );
     final firstProofPatternConfidence = showFirstProofPayoff &&
             firstProofPayoffCandidate != null
         ? PatternConfidenceEngine.build(
@@ -5432,6 +5450,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       RecordCaptureModesCard(
                         onModeTap: (mode) =>
                             unawaited(_openCaptureMode(mode)),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showThreeDayChallengeOnRecord &&
+                        threeDayChallengeCandidate != null) ...[
+                      ThreeDayChallengeCard(
+                        challenge: threeDayChallengeCandidate,
                       ),
                       const SizedBox(height: 12),
                     ],

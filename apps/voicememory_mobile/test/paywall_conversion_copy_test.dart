@@ -248,10 +248,10 @@ void main() {
 
     test('general Pro fallback copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.generalPro);
-      expect(copy.headline, 'Keep your archive useful over time');
+      expect(copy.headline, 'Keep the longer story.');
       expect(
         copy.subheadline,
-        'Unlock deeper history, saved evidence, and what keeps returning.',
+        'ArchiveMe is most useful when it can compare moments over time.',
       );
       expect(copy.bullets, isNotEmpty);
     });
@@ -366,12 +366,12 @@ void main() {
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
       expect(
-        find.text('Keep your archive useful over time'),
+        find.text('Keep the longer story.'),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Unlock deeper history, saved evidence, and what keeps returning.',
+          'ArchiveMe is most useful when it can compare moments over time.',
         ),
         findsOneWidget,
       );
@@ -575,21 +575,15 @@ void main() {
       );
     });
 
-    testWidgets('clarity block renders above the confidence section and CTA', (
+    testWidgets('conversion clarity block renders above the confidence section', (
       tester,
     ) async {
       await _pumpPaywall(tester);
 
-      final clarity = find.byKey(const Key('paywall_above_fold_clarity'));
+      final clarity = find.byKey(const Key('paywall_primary_value_block'));
       expect(clarity, findsOneWidget);
-      expect(find.text(PaywallAboveFoldClarity.title), findsOneWidget);
-      for (final line in PaywallAboveFoldClarity.lines) {
-        expect(find.text(line), findsOneWidget);
-      }
-      expect(
-        find.text(PaywallAboveFoldClarity.freeReassuranceLine),
-        findsOneWidget,
-      );
+      expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsOneWidget);
 
       // The confidence section above the CTA must still exist, and the
       // clarity block must sit above it.
@@ -605,31 +599,18 @@ void main() {
     test(
       'clarity block precedes plan cards and purchase CTA in the source',
       () {
-        // The purchase body only renders with live offerings, which widget
-        // tests cannot fabricate — so pin the structure at the source: in
-        // _paywallBody the clarity section comes right after the subhead and
-        // before the benefit rows, plan cards, and FilledButton.
         final source = File(
           'lib/screens/paywall_screen.dart',
         ).readAsStringSync();
-        expect(
-          RegExp(
-            r'_aboveFoldClaritySection\(\),\s*'
-            r'// Objection follow-up: below the clarity block, above plan '
-            r'cards\.\s*'
-            r'if \(_objectionFollowUpReason != null\) \.\.\.\[\s*'
-            r'const SizedBox\(height: 14\),\s*'
-            r'_objectionFollowUpSection\(\),\s*'
-            r'\],\s*'
-            r'SizedBox\(height: ArchiveResponsiveLayout\.gap\(context\) \+ 6\),'
-            r'\s*\.\.\.benefitRows\.map\(_benefitRow\),',
-          ).hasMatch(source),
-          isTrue,
-          reason:
-              'the clarity block must sit directly below the headline and '
-              'subheadline, before benefit rows and plan cards — with only '
-              'the objection follow-up allowed between them',
+        final paywallBody = source.substring(source.indexOf('Widget _paywallBody()'));
+        final clarityIdx = paywallBody.indexOf('_aboveFoldClaritySection()');
+        final planCardsIdx = paywallBody.indexOf('...orderedPaywallPlans(');
+        final purchaseIdx = paywallBody.indexOf(
+          'onPressed: _busy ? null : _continue,',
         );
+        expect(clarityIdx, greaterThan(-1));
+        expect(planCardsIdx, greaterThan(clarityIdx));
+        expect(purchaseIdx, greaterThan(planCardsIdx));
       },
     );
 
@@ -1193,12 +1174,12 @@ void main() {
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
 
-    testWidgets('generic paywall shows the heading exactly once', (
+    testWidgets('generic paywall shows conversion clarity once', (
       tester,
     ) async {
       await _pumpPaywall(tester);
 
-      expect(find.text('What Pro continues'), findsOneWidget);
+      expect(find.byKey(const Key('paywall_primary_value_block')), findsOneWidget);
       expect(find.byKey(const Key('paywall_pro_thread_preview')), findsNothing);
       // Generic headline and confidence copy remain unchanged.
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);

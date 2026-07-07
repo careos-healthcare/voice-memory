@@ -106,10 +106,11 @@ void main() {
       (tester) async {
         await pumpPaywall(tester);
 
-        expect(
-          find.textContaining('Purchases are not available right now'),
-          findsOneWidget,
-        );
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(
+        find.textContaining('Purchases are not available right now'),
+        findsOneWidget,
+      );
 
         await tester.ensureVisible(find.text(ConsumerUiCopy.restorePurchases));
         await tester.tap(find.text(ConsumerUiCopy.restorePurchases));

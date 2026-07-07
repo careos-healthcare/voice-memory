@@ -5,7 +5,7 @@ abstract final class ProPackagingCopy {
   static const title = 'ArchiveMe Pro';
 
   static const subtitle =
-      'Keep a longer memory of what repeats and how it changes.';
+      'ArchiveMe is most useful when it can compare moments over time.';
 
   static const freeSectionTitle = 'Free';
   static const freeBullets = <String>[
@@ -14,11 +14,11 @@ abstract final class ProPackagingCopy {
 
   static const proSectionTitle = 'Pro';
   static const proBullets = <String>[
-    'Longer pattern history',
-    'Belief change over time',
-    'Weekly archive reviews',
-    'Private archive reports',
-    'Export your archive backup',
+    'Longer archive history',
+    'Private monthly reports',
+    'Pattern and change evidence over time',
+    'Export/private reports when available',
+    'Built around preserving your archive',
   ];
 
   static const bridgeAfterFirstProof =

@@ -578,30 +578,39 @@ abstract class ConsumerUiCopy {
   static const String appVersion = 'App version';
 
   // ——— Paywall ———
-  static const String paywallHeadline =
-      'Keep your archive useful over time.';
+  static const String paywallHeadline = 'Keep the longer story.';
   static const String paywallSubhead =
-      'Unlock deeper history and saved evidence as patterns keep returning.';
+      'ArchiveMe is most useful when it can compare moments over time.';
+  static const String paywallPrimaryValueBlock =
+      'With Pro, your archive can keep more of the evidence that shows what '
+      'returned, changed, softened, helped, or went quiet.';
   static const String paywallTitle = paywallHeadline;
   static const List<String> paywallFallbackBullets = [
-    'See more of what keeps returning',
-    'Keep deeper history and saved evidence',
-    'Review what changed over time',
-    'Archive timeline',
-    'Monthly review',
+    'Longer archive history',
+    'Private monthly reports',
+    'Pattern and change evidence over time',
+    'Export/private reports when available',
+    'Built around preserving your archive',
   ];
   static const List<String> paywallBullets = paywallFallbackBullets;
-  static const String paywallPrimaryCta = 'Continue with ArchiveMe Pro';
+  static const String paywallDifferentiation =
+      'Pro is not more chat. It keeps the evidence.';
+  static const String paywallTrust =
+      'Private by default. Based on moments you save. Not therapy or medical advice.';
+  static const String paywallBackupLine =
+      'Backup and multi-device protection are planned Pro areas. Do not rely '
+      'on this build as cloud backup.';
+  static const String paywallPrimaryCta = 'Keep my longer story';
   static const String paywallSecondaryCta = 'Not now';
   static const String paywallContinue = paywallPrimaryCta;
   static const String paywallBackToPatterns = 'Back to Patterns';
   static const String paywallProActiveBody =
-      'Full pattern memory, key moments, pattern map, archive timeline, and monthly review are available on this device.';
+      'Longer archive history, private monthly reports, and evidence over time '
+      'are available on this device.';
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
   static const String paywallBillingNotConfigured =
-      'ArchiveMe Pro keeps deeper history and saved evidence over time. '
-      'Purchases are not available right now.';
+      'Pro keeps the longer story. Purchases are not available right now.';
   static const String plansUnavailable = 'Plans are not available yet.';
 
   // ——— Pattern memory limits (Pro) ———

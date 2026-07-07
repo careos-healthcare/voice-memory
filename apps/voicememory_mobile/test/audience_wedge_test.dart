@@ -335,15 +335,15 @@ void main() {
   test('paywall copy aligned to continuity concept', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      contains('archive useful'),
+      contains('longer story'),
     );
     expect(
       ConsumerUiCopy.paywallBullets.first,
-      contains('keeps returning'),
+      contains('Longer archive history'),
     );
     expect(
-      ConsumerUiCopy.paywallHeadline,
-      isNot(contains('pattern memory growing')),
+      ConsumerUiCopy.paywallDifferentiation,
+      contains('not more chat'),
     );
   });
 }

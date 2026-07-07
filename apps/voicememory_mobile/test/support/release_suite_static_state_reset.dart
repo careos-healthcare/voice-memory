@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_anal
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
 import 'package:voicememory_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_analytics.dart';
+import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_analytics.dart';
 import 'package:voicememory_mobile/features/quiet_signal/quiet_signal_analytics.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_environment.dart';
@@ -42,6 +43,7 @@ abstract final class ReleaseSuiteStaticStateReset {
     ArchiveBackupBridgeDismissStore.invalidateSessionForTest();
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     BetaFeedbackIntelligenceStore.invalidateSessionForTest();
+    RevenueFunnelAnalytics.resetForTest();
   }
 
   /// Clears prefs-backed state after [AppServices.resetForTest].

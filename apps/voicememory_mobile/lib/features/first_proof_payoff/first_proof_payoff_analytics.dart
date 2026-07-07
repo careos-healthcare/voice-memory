@@ -1,3 +1,4 @@
+import '../../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../../services/activation_funnel_analytics.dart';
 
 /// Safe metadata analytics for first proof payoff — no journal text.
@@ -21,6 +22,10 @@ abstract final class FirstProofPayoffAnalytics {
       hasPatternDetailCta: hasPatternDetailCta,
       oncePerSession: true,
       stage: 'first_proof_payoff',
+    );
+    RevenueFunnelAnalytics.firstProofSeen(
+      entryCount: entryCount,
+      source: source,
     );
   }
 

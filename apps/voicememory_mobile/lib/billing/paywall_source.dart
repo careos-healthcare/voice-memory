@@ -90,11 +90,8 @@ class PaywallSourceCopy {
   );
 
   static const generalPro = PaywallSourceCopy(
-    headline: 'Keep the full archive',
-    subheadline:
-        'Your first repeat is free. Pro keeps the evidence history so '
-        'ArchiveMe can show whether patterns get stronger, softer, or change '
-        'over time.',
+    headline: ConsumerUiCopy.paywallHeadline,
+    subheadline: ConsumerUiCopy.paywallSubhead,
     bullets: ConsumerUiCopy.paywallFallbackBullets,
     cta: ConsumerUiCopy.paywallPrimaryCta,
   );

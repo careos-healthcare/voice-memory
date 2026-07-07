@@ -4,10 +4,10 @@ import 'package:voicememory_mobile/billing/value_moment_paywall.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
-  test('paywall headline sells archive continuity', () {
+  test('paywall headline sells longer story continuity', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      'Keep your archive useful over time.',
+      'Keep the longer story.',
     );
     expect(
       ArchivePaywallVariantConfig.headline(ArchivePaywallVariant.b),
@@ -19,27 +19,30 @@ void main() {
     );
   });
 
-  test('paywall subhead sells deeper history over time', () {
+  test('paywall subhead compares moments over time', () {
     expect(
       ConsumerUiCopy.paywallSubhead,
-      contains('deeper history and saved evidence'),
+      'ArchiveMe is most useful when it can compare moments over time.',
     );
   });
 
-  test('paywall benefits include continuity bullets', () {
+  test('paywall benefits include longer story bullets', () {
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('See more of what keeps returning'),
+      contains('Longer archive history'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Keep deeper history and saved evidence'),
+      contains('Private monthly reports'),
+    );
+    expect(
+      ConsumerUiCopy.paywallBullets.join(' ').toLowerCase(),
+      contains('returned, changed, softened, helped, or went quiet'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Review what changed over time'),
+      contains('Built around preserving your archive over time'),
     );
-    expect(ConsumerUiCopy.paywallBullets, contains('Archive timeline'));
     expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });
 

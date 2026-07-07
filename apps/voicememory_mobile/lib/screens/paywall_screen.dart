@@ -29,6 +29,7 @@ import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/first25/first25_user_metrics.dart';
+import '../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../models/entitlement.dart';
 import '../services/activation_funnel_analytics.dart';
 import '../services/app_services.dart';
@@ -108,6 +109,50 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// Last captured rejection reason — loaded once at init, so the same flow
   /// that captures a reason can never render its own follow-up.
   PaywallRejectionReason? _objectionFollowUpReason;
+
+  bool get _usesGeneralConversionClarity {
+    final source = widget.triggerArgs?.source;
+    return source == null || source == PaywallSource.generalPro;
+  }
+
+  Widget _paywallPrimaryValueBlock() {
+    return Builder(
+      builder: (context) => Text(
+        ConsumerUiCopy.paywallPrimaryValueBlock,
+        key: const Key('paywall_primary_value_block'),
+        style: ArchiveMobileTypography.responsiveBody(context),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _paywallBackupLine() {
+    return Builder(
+      builder: (context) => Text(
+        ConsumerUiCopy.paywallBackupLine,
+        key: const Key('paywall_backup_line'),
+        style: ArchiveMobileTypography.responsiveHelper(context),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _generalConversionClaritySection({required bool includeBullets}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _paywallPrimaryValueBlock(),
+        if (includeBullets) ...[
+          const SizedBox(height: 14),
+          ..._benefits.map(_benefitRow),
+        ],
+        const SizedBox(height: 14),
+        _paywallDifferentiationAndTrustSection(),
+        const SizedBox(height: 10),
+        _paywallBackupLine(),
+      ],
+    );
+  }
 
   bool get _billingReady =>
       widget.billingReadyOverride?.call() ??
@@ -191,13 +236,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
       );
 
   String get _unavailableBodyText {
-    if (!_billingReady) return ProPackagingCopy.offeringsUnavailableBody;
+    if (!_billingReady) return ConsumerUiCopy.paywallBillingNotConfigured;
     final err = _error;
-    if (err != null &&
-        err != SubscriptionCopy.paywallNoOfferings &&
-        err != SubscriptionCopy.temporarilyUnavailable) {
-      return err;
+    if (err == SubscriptionCopy.paywallNoOfferings ||
+        err == SubscriptionCopy.temporarilyUnavailable) {
+      return err!;
     }
+    if (err != null) return err;
     return ProPackagingCopy.offeringsUnavailableBody;
   }
 
@@ -405,6 +450,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   void _trackPaywallSeen(PremiumEntitlements entitlements) {
     if (_paywallSeenTracked || entitlements.isPro) return;
     _paywallSeenTracked = true;
+    RevenueFunnelAnalytics.paywallSeen(
+      source: _attributionSource.id,
+      isPro: entitlements.isPro,
+    );
     ActivationTracker.trackPaywallShown();
     final preview = widget.triggerArgs?.valuePreview;
     if (preview != null) {
@@ -452,6 +501,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
     setState(() => _busy = true);
     _trackPlanSelected(_selected);
+    RevenueFunnelAnalytics.paywallPurchaseCtaTapped(
+      source: _attributionSource.id,
+      isPro: _entitlements?.isPro == true,
+    );
     ActivationTracker.trackPaywallContinueTapped();
     // Purchase intent: remember the start (stable ids only) and suppress
     // the return cue for the rest of this session — cancelling the App
@@ -530,6 +583,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
     if (flow.isBusy || _busy) return;
 
     setState(() => _busy = true);
+    RevenueFunnelAnalytics.paywallRestoreTapped(
+      source: _attributionSource.id,
+      isPro: _entitlements?.isPro == true,
+    );
     ActivationTracker.trackRestoreTapped();
     try {
       final result = await flow.restore();
@@ -658,11 +715,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ArchiveMeProValueSection(packaging: packaging),
-        const SizedBox(height: 16),
         PaywallUnavailableFallback(
-          headline: sourceCopy?.headline ?? packaging.title,
-          subhead: sourceCopy?.subheadline ?? packaging.subtitle,
+          headline: sourceCopy?.headline ?? ConsumerUiCopy.paywallHeadline,
+          subhead: sourceCopy?.subheadline ?? ConsumerUiCopy.paywallSubhead,
           body: _unavailableBodyText,
           busy: _busy,
           showRetry: _billingReady,
@@ -670,10 +725,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
           onRestore: _restore,
           hideBenefits: true,
         ),
-        // Same above-fold clarity as the live paywall body.
         const SizedBox(height: 16),
-        _aboveFoldClaritySection(),
-        // Same objection follow-up placement as the live paywall body.
+        if (_usesGeneralConversionClarity)
+          _generalConversionClaritySection(includeBullets: true)
+        else ...[
+          _aboveFoldClaritySection(),
+          const SizedBox(height: 14),
+          _paywallDifferentiationAndTrustSection(),
+        ],
+        if (!_usesGeneralConversionClarity && sourceCopy == null) ...[
+          const SizedBox(height: 16),
+          ArchiveMeProValueSection(
+            packaging: packaging,
+            showTitle: false,
+          ),
+        ],
         if (_objectionFollowUpReason != null) ...[
           const SizedBox(height: 14),
           _objectionFollowUpSection(),
@@ -870,6 +936,30 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
+  Widget _paywallDifferentiationAndTrustSection() {
+    return Builder(
+      builder: (context) => Column(
+        key: const Key('paywall_differentiation_trust'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            ConsumerUiCopy.paywallDifferentiation,
+            key: const Key('paywall_differentiation'),
+            style: ArchiveMobileTypography.responsiveBody(context),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            ConsumerUiCopy.paywallTrust,
+            key: const Key('paywall_trust'),
+            style: ArchiveMobileTypography.responsiveHelper(context),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Final purchase reassurance immediately above the purchase CTA —
   /// reassuring, not defensive. Suggestion sources add the explicit
   /// no-pressure line the post-save receipt already used.
@@ -919,7 +1009,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
+            _paywallPrimaryValueBlock(),
+            const SizedBox(height: 14),
             ..._benefits.map(_benefitRow),
+            const SizedBox(height: 14),
+            _paywallDifferentiationAndTrustSection(),
+            const SizedBox(height: 10),
+            _paywallBackupLine(),
             const SizedBox(height: 20),
             _mockPlanCard(
               context: context,
@@ -1034,14 +1130,25 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
           ],
           if (showPackagingSection) ...[
-            ArchiveMeProValueSection(
-              packaging: packaging,
-              showTitle: true,
+            Text(
+              ConsumerUiCopy.paywallHeadline,
+              style: ArchiveMobileTypography.responsivePageTitle(context),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              ConsumerUiCopy.paywallSubhead,
+              style: ArchiveMobileTypography.responsiveBody(context),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 14),
+            _generalConversionClaritySection(includeBullets: true),
           ] else ...[
             const SizedBox(height: 14),
-            _aboveFoldClaritySection(),
+            if (_usesGeneralConversionClarity)
+              _generalConversionClaritySection(includeBullets: true)
+            else
+              _aboveFoldClaritySection(),
           ],
           // Objection follow-up: below the clarity block, above plan cards.
           if (_objectionFollowUpReason != null) ...[
@@ -1049,7 +1156,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
             _objectionFollowUpSection(),
           ],
           SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
-          if (benefitRows.isNotEmpty) ...benefitRows.map(_benefitRow),
+          if (!_usesGeneralConversionClarity &&
+              !showPackagingSection &&
+              benefitRows.isNotEmpty)
+            ...benefitRows.map(_benefitRow),
+          if (!_usesGeneralConversionClarity &&
+              !showPackagingSection &&
+              benefitRows.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            _paywallDifferentiationAndTrustSection(),
+          ],
           if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 14),
             _longTermArchiveLine(),
@@ -1152,6 +1268,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
             onPressed: _busy
                 ? null
                 : () {
+                    RevenueFunnelAnalytics.paywallDismissed(
+                      source: _attributionSource.id,
+                      isPro: _entitlements?.isPro == true,
+                    );
                     ActivationTracker.trackPaywallDismissed();
                     First25UserMetrics.trackPaywallDismissed(
                       surface: 'paywall_screen',
