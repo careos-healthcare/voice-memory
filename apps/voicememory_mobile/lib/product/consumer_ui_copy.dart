@@ -2,6 +2,7 @@ import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/landing_continuity/landing_app_continuity_copy.dart';
 import '../features/paywall_alignment/paywall_alignment_copy.dart';
+import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
@@ -584,13 +585,13 @@ abstract class ConsumerUiCopy {
       PaywallAlignmentCopy.benefitBullets;
   static const List<String> paywallBullets = paywallFallbackBullets;
   static const String paywallDifferentiation =
-      'Pro is not more chat. It keeps the evidence.';
+      PaywallValueSharpeningCopy.proofConnectedLine;
   static const String paywallTrust =
       'Private by default. Based on moments you save. Not therapy or medical advice.';
   static const String paywallBackupLine =
       'Backup and multi-device protection are planned Pro areas. Do not rely '
       'on this build as cloud backup.';
-  static const String paywallPrimaryCta = 'Keep my longer story';
+  static const String paywallPrimaryCta = PaywallValueSharpeningCopy.cta;
   static const String paywallSecondaryCta = 'Not now';
   static const String paywallContinue = paywallPrimaryCta;
   static const String paywallBackToPatterns = 'Back to Patterns';

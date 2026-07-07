@@ -1,4 +1,5 @@
 import '../product/consumer_ui_copy.dart';
+import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 
 /// Where the paywall was opened from, so the copy can speak to the value the
 /// user was just looking at instead of a generic pitch.
@@ -118,9 +119,9 @@ class PaywallSourceCopy {
         return askArchive;
       case PaywallSource.dailySuggestion:
       case PaywallSource.startHereToday:
-      // The value-moment bridge sells the same continuity promise.
-      case PaywallSource.valueMoment:
         return dailySuggestions;
+      case PaywallSource.valueMoment:
+        return PaywallValueSharpeningCopy.proofConnected;
       case PaywallSource.generalPro:
         return generalPro;
     }

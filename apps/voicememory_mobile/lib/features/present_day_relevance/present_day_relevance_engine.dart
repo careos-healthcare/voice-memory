@@ -8,6 +8,10 @@ import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_store.dart';
+import '../current_relevance/current_relevance_store.dart';
+import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'present_day_relevance_copy.dart';
@@ -25,6 +29,7 @@ abstract final class PresentDayRelevanceEngine {
     required String source,
     DateTime? now,
     EvidenceWeightingResult? evidenceWeighting,
+    BetaProofFeedbackType? calibrationFeedback,
   }) {
     if (entries.length < minEntryCount) return null;
 
@@ -47,7 +52,7 @@ abstract final class PresentDayRelevanceEngine {
       entries: entries,
       now: now,
     );
-    final relevanceState = _applyPatternQualityToState(
+    final relevanceState = _applyAnchorCalibrationToState(
       state: CorrectionMemoryEngine.presentDayStateFor(
         correction: correction,
         fallback: _resolveState(
@@ -55,10 +60,9 @@ abstract final class PresentDayRelevanceEngine {
           evidenceWeighting: weighting,
         ),
       ),
-      evidenceWeighting: weighting,
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      now: now,
+      calibrationFeedback: calibrationFeedback ??
+          _resolveCalibrationFeedback(entries: entries),
+      hasFreshReturn: correction?.returnedAfterFaded == true,
     );
     final patternMatchQuality = weighting?.patternMatchQuality ??
         PatternMatchQualityEngine.build(
@@ -66,12 +70,20 @@ abstract final class PresentDayRelevanceEngine {
           beliefSurfaceVisible: beliefSurfaceVisible,
           source: source,
           now: now,
+          evidenceWeighting: weighting,
           correction: correction,
         );
+    final adjustedState = _applyPatternQualityToState(
+      state: relevanceState,
+      evidenceWeighting: weighting,
+      entries: entries,
+      beliefSurfaceVisible: beliefSurfaceVisible,
+      now: now,
+    );
     final stateBody = CorrectionMemoryEngine.presentDayStateBodyFor(
       correction: correction,
-      state: relevanceState,
-      fallback: PresentDayRelevanceCopy.stateBodyFor(relevanceState),
+      state: adjustedState,
+      fallback: PresentDayRelevanceCopy.stateBodyFor(adjustedState),
     );
 
     return PresentDayRelevanceResult(
@@ -80,7 +92,7 @@ abstract final class PresentDayRelevanceEngine {
       source: source,
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasBeliefSurface: beliefSurfaceVisible,
-      relevanceState: relevanceState,
+      relevanceState: adjustedState,
       title: PresentDayRelevanceCopy.title,
       body: PresentDayRelevanceCopy.primaryBody,
       stateBody: stateBody,
@@ -97,12 +109,15 @@ abstract final class PresentDayRelevanceEngine {
     required bool beliefSurfaceVisible,
     DateTime? now,
   }) {
-    final patternQuality = evidenceWeighting?.patternMatchQuality ??
+    if (evidenceWeighting == null) return state;
+
+    final patternQuality = evidenceWeighting.patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
           source: 'present_day_relevance',
           now: now,
+          evidenceWeighting: evidenceWeighting,
         );
     if (!patternQuality.shouldResolve) return state;
     if (patternQuality.weakReasons
@@ -114,6 +129,35 @@ abstract final class PresentDayRelevanceEngine {
       return PresentDayRelevanceState.fading;
     }
     return state;
+  }
+
+  static PresentDayRelevanceState _applyAnchorCalibrationToState({
+    required PresentDayRelevanceState state,
+    required BetaProofFeedbackType? calibrationFeedback,
+    required bool hasFreshReturn,
+  }) {
+    if (calibrationFeedback == BetaProofFeedbackType.notRelevant &&
+        !hasFreshReturn) {
+      return PresentDayRelevanceState.fading;
+    }
+    return state;
+  }
+
+  static BetaProofFeedbackType? _resolveCalibrationFeedback({
+    required List<JournalEntry> entries,
+  }) {
+    final proofKey = CurrentRelevanceStore.proofKeyFor(entries);
+    if (proofKey.isNotEmpty &&
+        NotRelevantRecoveryEngine.hasNotRelevantTrigger(proofKey: proofKey)) {
+      return BetaProofFeedbackType.notRelevant;
+    }
+    for (final surface in BetaProofFeedbackSurface.values) {
+      final record = BetaProofFeedbackStore.recordFor(surface);
+      if (record.answered && record.feedbackType != null) {
+        return record.feedbackType;
+      }
+    }
+    return null;
   }
 
   static bool shouldShow({

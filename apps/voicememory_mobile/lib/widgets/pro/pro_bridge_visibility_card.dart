@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/pro_bridge_visibility/pro_bridge_timing_loosen_analytics.dart';
 import '../../features/pro_bridge_visibility/pro_bridge_visibility_analytics.dart';
 import '../../features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
+import '../../features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../../features/proof_quality_response/proof_quality_response_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -42,6 +44,16 @@ class _ProBridgeVisibilityCardState extends State<ProBridgeVisibilityCard> {
       hasTimelineProof: widget.result.hasTimelineProof,
       feedbackState: widget.result.feedbackState.analyticsValue,
     );
+    if (widget.result.triggerReason != null) {
+      ProBridgeTimingLoosenAnalytics.seen(
+        source: widget.result.source,
+        surface: widget.result.surface.analyticsValue,
+        entryCount: widget.result.entryCount,
+        triggerReason: widget.result.triggerReason!,
+        confidenceLevel: widget.result.confidenceLevel?.analyticsValue,
+        hasSafeAnchor: widget.result.hasSafeAnchor,
+      );
+    }
   }
 
   void _handleSeePro() {
@@ -53,6 +65,16 @@ class _ProBridgeVisibilityCardState extends State<ProBridgeVisibilityCard> {
       hasTimelineProof: widget.result.hasTimelineProof,
       feedbackState: widget.result.feedbackState.analyticsValue,
     );
+    if (widget.result.triggerReason != null) {
+      ProBridgeTimingLoosenAnalytics.ctaTapped(
+        source: widget.result.source,
+        surface: widget.result.surface.analyticsValue,
+        entryCount: widget.result.entryCount,
+        triggerReason: widget.result.triggerReason!,
+        confidenceLevel: widget.result.confidenceLevel?.analyticsValue,
+        hasSafeAnchor: widget.result.hasSafeAnchor,
+      );
+    }
     widget.onSeePro();
   }
 

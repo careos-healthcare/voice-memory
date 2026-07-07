@@ -12,6 +12,7 @@ abstract final class SurfacePriorityEngine {
     SurfacePriorityCardKey.threeMomentCompletion,
     SurfacePriorityCardKey.firstMomentCapture,
     SurfacePriorityCardKey.secondMomentReturn,
+    SurfacePriorityCardKey.returnAfterProofStrengthened,
     SurfacePriorityCardKey.returnAfterProof,
     SurfacePriorityCardKey.lowFrictionReturn,
     SurfacePriorityCardKey.whatToNoticeNext,
@@ -54,6 +55,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordProOrder = [
+    // Timing loosen v1: post-proof bridge wins the single Pro slot when eligible.
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.privateReportProBridge,
@@ -229,7 +231,11 @@ abstract final class SurfacePriorityEngine {
       if (candidates.candidate(SurfacePriorityCardKey.betaProofLift)) {
         visible.add(SurfacePriorityCardKey.betaProofLift);
       }
-      if (candidates.candidate(SurfacePriorityCardKey.returnAfterProof)) {
+      if (candidates.candidate(
+        SurfacePriorityCardKey.returnAfterProofStrengthened,
+      )) {
+        visible.add(SurfacePriorityCardKey.returnAfterProofStrengthened);
+      } else if (candidates.candidate(SurfacePriorityCardKey.returnAfterProof)) {
         visible.add(SurfacePriorityCardKey.returnAfterProof);
       }
     } else if (returnPayoffActive) {

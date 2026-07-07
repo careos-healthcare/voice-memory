@@ -31,6 +31,8 @@ import '../product/consumer_ui_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/first25/first25_user_metrics.dart';
 import '../features/revenue_metrics/revenue_funnel_analytics.dart';
+import '../features/paywall_value_sharpening/paywall_value_sharpening_analytics.dart';
+import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import '../models/entitlement.dart';
 import '../services/activation_funnel_analytics.dart';
 import '../services/app_services.dart';
@@ -469,6 +471,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
     RevenueFunnelAnalytics.paywallSeen(
       source: _attributionSource.id,
       isPro: entitlements.isPro,
+    );
+    PaywallValueSharpeningAnalytics.seen(
+      source: _attributionSource.id,
+      surface: 'paywall_screen',
+      proofConnected: PaywallValueSharpeningCopy.isProofConnectedSource(
+        _attributionSource,
+      ),
     );
     ActivationTracker.trackPaywallShown();
     final preview = widget.triggerArgs?.valuePreview;

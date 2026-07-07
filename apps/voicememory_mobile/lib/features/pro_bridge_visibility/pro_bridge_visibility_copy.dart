@@ -5,8 +5,7 @@ abstract final class ProBridgeVisibilityCopy {
   static const title = 'Keep the full timeline';
 
   static const body =
-      'Free shows the first proof. Pro keeps what appeared, what returned, '
-      'what you corrected, and what still matters now.';
+      'Free shows this proof. Pro keeps the longer timeline as it grows.';
 
   static const compactBody = 'Pro keeps the longer story.';
 

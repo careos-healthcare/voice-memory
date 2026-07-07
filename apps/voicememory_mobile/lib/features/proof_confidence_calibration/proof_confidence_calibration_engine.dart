@@ -7,6 +7,11 @@ import '../evidence_weighting/evidence_weighting_model.dart';
 import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
+import '../anchor_calibration/anchor_calibration_engine.dart';
+import '../anchor_calibration/anchor_calibration_copy.dart';
+import '../anchor_calibration/anchor_calibration_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_model.dart';
+import '../proof_caution_guard/proof_caution_guard_engine.dart';
 import '../current_relevance/current_relevance_store.dart';
 import 'proof_confidence_calibration_analytics.dart';
 import 'proof_confidence_calibration_copy.dart';
@@ -27,6 +32,7 @@ abstract final class ProofConfidenceCalibrationEngine {
     EvidenceAnchorExtractionResult? anchorExtraction,
     EvidenceWeightingResult? evidenceWeighting,
     CorrectionMemorySnapshot? correction,
+    BetaProofFeedbackType? calibrationFeedback,
     DateTime? now,
     bool trackAnalytics = false,
   }) {
@@ -55,6 +61,24 @@ abstract final class ProofConfidenceCalibrationEngine {
           correction: correctionSnapshot,
         );
     final hasSafeAnchor = anchorExtraction?.hasSafeAnchor ?? false;
+    final anchorCalibration = anchorExtraction == null
+        ? null
+        : AnchorCalibrationEngine.apply(
+            extraction: anchorExtraction,
+            feedbackType: calibrationFeedback,
+            hasChangeDelta: _hasChangeDelta(
+              entries: entries,
+              anchorExtraction: anchorExtraction,
+              evidenceWeighting: evidenceWeighting,
+              correction: correctionSnapshot,
+            ),
+            hasFreshReturn: correctionSnapshot?.returnedAfterFaded == true,
+            correction: correctionSnapshot,
+            source: source,
+            trackAnalytics: trackAnalytics,
+          );
+    final resolvedAnchors = anchorCalibration?.extraction ?? anchorExtraction;
+    final resolvedHasSafeAnchor = resolvedAnchors?.hasSafeAnchor ?? hasSafeAnchor;
     final hasCorrection = correctionSnapshot != null;
     final hasFreshReturn = correctionSnapshot?.returnedAfterFaded == true;
     final userMarkedNotRelevant = _userMarkedNotRelevant(
@@ -63,23 +87,30 @@ abstract final class ProofConfidenceCalibrationEngine {
     );
     final hasChangeDelta = _hasChangeDelta(
       entries: entries,
-      anchorExtraction: anchorExtraction,
+      anchorExtraction: resolvedAnchors,
       evidenceWeighting: evidenceWeighting,
       correction: correctionSnapshot,
     );
     final hasHelpedSoftened = _hasHelpedSoftened(
       matchQuality: matchQuality,
-      anchorExtraction: anchorExtraction,
+      anchorExtraction: resolvedAnchors,
       evidenceWeighting: evidenceWeighting,
     );
 
-    final level = _resolveLevel(
+    var level = _resolveLevel(
       matchQuality: matchQuality,
-      hasSafeAnchor: hasSafeAnchor,
+      hasSafeAnchor: resolvedHasSafeAnchor,
       hasFreshReturn: hasFreshReturn,
       userMarkedNotRelevant: userMarkedNotRelevant,
     );
-    final primaryCopy = ProofConfidenceCalibrationCopy.primaryFor(level);
+    level = _applyAnchorCalibrationLevel(
+      level: level,
+      calibration: anchorCalibration,
+      hasFreshReturn: hasFreshReturn,
+    );
+    final primaryCopy = anchorCalibration?.useChangeTrackingCopy == true
+        ? AnchorCalibrationCopy.changeTrackingBody
+        : ProofConfidenceCalibrationCopy.primaryFor(level);
     final leadCopy = _resolveLeadCopy(
       hasChangeDelta: hasChangeDelta,
       hasHelpedSoftened: hasHelpedSoftened,
@@ -98,17 +129,55 @@ abstract final class ProofConfidenceCalibrationEngine {
       primaryCopy: primaryCopy,
       leadCopy: leadCopy,
       displayCopy: displayCopy,
-      hasSafeAnchor: hasSafeAnchor,
+      hasSafeAnchor: resolvedHasSafeAnchor,
       hasMatchQuality: matchQuality.shouldResolve,
       hasCorrection: hasCorrection,
       hasFreshReturn: hasFreshReturn,
     );
 
+    final guarded = ProofCautionGuardEngine.guard(
+      calibration: result,
+      matchQuality: matchQuality,
+      hasSafeAnchor: resolvedHasSafeAnchor,
+      hasConfirmedRepeat:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      isDegraded: ProofCautionGuardEngine.entriesAreDegraded(entries),
+      userMarkedNotRelevant: userMarkedNotRelevant,
+      correction: correctionSnapshot,
+      anchorExtraction: anchorExtraction,
+      evidenceWeighting: evidenceWeighting,
+      trackAnalytics: trackAnalytics,
+    );
+
     if (trackAnalytics) {
-      ProofConfidenceCalibrationAnalytics.calibrated(result: result);
+      ProofConfidenceCalibrationAnalytics.calibrated(result: guarded);
     }
 
-    return result;
+    return guarded;
+  }
+
+  static ProofConfidenceLevel _applyAnchorCalibrationLevel({
+    required ProofConfidenceLevel level,
+    required AnchorCalibrationResult? calibration,
+    required bool hasFreshReturn,
+  }) {
+    if (calibration == null) return level;
+    if (hasFreshReturn) return level;
+    if (calibration.forceWatchOnly &&
+        level != ProofConfidenceLevel.freshReturn &&
+        level != ProofConfidenceLevel.corrected) {
+      return ProofConfidenceLevel.watchOnly;
+    }
+    if (calibration.suppressStrongSurfacing &&
+        level == ProofConfidenceLevel.strong) {
+      return ProofConfidenceLevel.useful;
+    }
+    if (calibration.useChangeTrackingCopy &&
+        (level == ProofConfidenceLevel.strong ||
+            level == ProofConfidenceLevel.useful)) {
+      return ProofConfidenceLevel.emerging;
+    }
+    return level;
   }
 
   static ProofConfidenceLevel _resolveLevel({

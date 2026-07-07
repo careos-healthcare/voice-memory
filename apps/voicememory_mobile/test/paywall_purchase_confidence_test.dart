@@ -47,7 +47,7 @@ void main() {
         ArchivePaywallCopy.restoreEmpty,
         'No previous Pro purchase was found on this Apple ID.',
       );
-      expect(ArchivePaywallCopy.primaryCta, 'Keep my longer story');
+      expect(ArchivePaywallCopy.primaryCta, 'Keep my full timeline');
     });
 
     test('restore copy constants stay aligned with paywall confidence copy', () {

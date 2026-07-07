@@ -17,6 +17,7 @@ import '../evidence_weighting/evidence_weighting_model.dart';
 import '../present_day_relevance/present_day_relevance_copy.dart';
 import '../present_day_relevance/present_day_relevance_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
+import '../anchor_calibration/anchor_calibration_engine.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'evidence_anchor_analytics.dart';
 import 'evidence_anchor_copy.dart';
@@ -31,19 +32,7 @@ abstract final class EvidenceAnchorEngine {
   static const maxAnchorLength = 72;
   static const recentWindowDays = 7;
 
-  static const _typePriority = <EvidenceAnchorType, int>{
-    EvidenceAnchorType.change: 100,
-    EvidenceAnchorType.corrected: 95,
-    EvidenceAnchorType.freshReturn: 90,
-    EvidenceAnchorType.current: 85,
-    EvidenceAnchorType.softening: 80,
-    EvidenceAnchorType.strengthening: 75,
-    EvidenceAnchorType.helped: 70,
-    EvidenceAnchorType.avoided: 65,
-    EvidenceAnchorType.fading: 60,
-    EvidenceAnchorType.repeat: 50,
-    EvidenceAnchorType.unknown: 0,
-  };
+  static const _typePriority = AnchorCalibrationEngine.typePriority;
 
   static EvidenceAnchorExtractionResult build({
     required List<JournalEntry> entries,

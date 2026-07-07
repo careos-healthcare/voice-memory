@@ -1,25 +1,19 @@
+import '../paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+
 /// Canonical ArchiveMe Pro paywall alignment copy — display only, no billing logic.
 abstract final class PaywallAlignmentCopy {
   PaywallAlignmentCopy._();
 
-  static const headline = 'Keep the full timeline';
+  static const headline = PaywallValueSharpeningCopy.genericHeadline;
 
-  static const body =
-      'Pro keeps what appeared, what returned, what you corrected, and what still matters now.';
+  static const body = PaywallValueSharpeningCopy.body;
 
   static const secondaryReassurance =
-      'Free shows the first proof. Pro keeps the full timeline as it grows.';
+      PaywallValueSharpeningCopy.secondaryReassurance;
 
-  static const corePaidReason = 'Keep the full timeline.';
+  static const corePaidReason = PaywallValueSharpeningCopy.corePaidReason;
 
-  static const benefitBullets = <String>[
-    'Full pattern timeline',
-    'Correction history',
-    'Changing current weight',
-    'Longer evidence trail',
-    'Monthly private report',
-    'Backup and continuity',
-  ];
+  static const benefitBullets = PaywallValueSharpeningCopy.benefitBullets;
 
   /// Compact bridge line — avoids repeating the full paywall body on lock cards.
   static const lockMomentPaidReason =
@@ -38,6 +32,7 @@ abstract final class PaywallAlignmentCopy {
         headline,
         body,
         secondaryReassurance,
+        PaywallValueSharpeningCopy.proofConnectedLine,
         ...benefitBullets,
       ];
 }

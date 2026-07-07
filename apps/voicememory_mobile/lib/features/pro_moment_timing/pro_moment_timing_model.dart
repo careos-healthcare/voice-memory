@@ -1,3 +1,4 @@
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../proof_quality_response/proof_quality_response_model.dart';
 
 enum ProMomentTimingSurface {
@@ -23,6 +24,12 @@ enum ProMomentTimingTrigger {
   monthlyPrivateReportPreview,
   usefulFeedback,
   correctionImprovedTimeline,
+  betaProofLiftUnderValidProof,
+  returnAfterProofStrengthened,
+  freshReturnAfterCorrection,
+  usefulProofConfidence,
+  strongProofConfidence,
+  solidStrongPatternWithSafeAnchors,
 }
 
 extension ProMomentTimingTriggerStorage on ProMomentTimingTrigger {
@@ -35,6 +42,16 @@ extension ProMomentTimingTriggerStorage on ProMomentTimingTrigger {
         ProMomentTimingTrigger.usefulFeedback => 'useful_feedback',
         ProMomentTimingTrigger.correctionImprovedTimeline =>
           'correction_improved_timeline',
+        ProMomentTimingTrigger.betaProofLiftUnderValidProof =>
+          'beta_proof_lift_under_valid_proof',
+        ProMomentTimingTrigger.returnAfterProofStrengthened =>
+          'return_after_proof_strengthened',
+        ProMomentTimingTrigger.freshReturnAfterCorrection =>
+          'fresh_return_after_correction',
+        ProMomentTimingTrigger.usefulProofConfidence => 'useful_proof_confidence',
+        ProMomentTimingTrigger.strongProofConfidence => 'strong_proof_confidence',
+        ProMomentTimingTrigger.solidStrongPatternWithSafeAnchors =>
+          'solid_strong_pattern_with_safe_anchors',
       };
 }
 
@@ -85,10 +102,16 @@ class ProMomentTimingContext {
     this.hasBetaTesterReportVisible = false,
     this.hasMonthlyPrivateReportPreviewVisible = false,
     this.hasCorrectionMemoryVisible = false,
+    this.hasBetaProofLiftVisible = false,
+    this.hasReturnAfterProofStrengthenedVisible = false,
     this.feedbackState = ProofQualityFeedbackState.none,
     this.whatChangedQuestionActive = false,
     this.patternReviewInboxHasActiveItems = false,
     this.proSlotAvailable = true,
+    this.confidenceLevel,
+    this.hasSafeAnchor = false,
+    this.hasFreshReturnAfterCorrection = false,
+    this.hasSolidStrongPatternWithSafeAnchors = false,
   });
 
   final ProMomentTimingSurface surface;
@@ -105,10 +128,16 @@ class ProMomentTimingContext {
   final bool hasBetaTesterReportVisible;
   final bool hasMonthlyPrivateReportPreviewVisible;
   final bool hasCorrectionMemoryVisible;
+  final bool hasBetaProofLiftVisible;
+  final bool hasReturnAfterProofStrengthenedVisible;
   final ProofQualityFeedbackState feedbackState;
   final bool whatChangedQuestionActive;
   final bool patternReviewInboxHasActiveItems;
   final bool proSlotAvailable;
+  final ProofConfidenceLevel? confidenceLevel;
+  final bool hasSafeAnchor;
+  final bool hasFreshReturnAfterCorrection;
+  final bool hasSolidStrongPatternWithSafeAnchors;
 
   bool get hasTimelineProofSignal => hasTimelineProofVisible;
 
@@ -118,8 +147,14 @@ class ProMomentTimingContext {
     bool? hasBetaTesterReportVisible,
     bool? hasMonthlyPrivateReportPreviewVisible,
     bool? hasCorrectionMemoryVisible,
+    bool? hasBetaProofLiftVisible,
+    bool? hasReturnAfterProofStrengthenedVisible,
     ProofQualityFeedbackState? feedbackState,
     bool? proSlotAvailable,
+    ProofConfidenceLevel? confidenceLevel,
+    bool? hasSafeAnchor,
+    bool? hasFreshReturnAfterCorrection,
+    bool? hasSolidStrongPatternWithSafeAnchors,
   }) {
     return ProMomentTimingContext(
       surface: surface,
@@ -142,10 +177,22 @@ class ProMomentTimingContext {
               this.hasMonthlyPrivateReportPreviewVisible,
       hasCorrectionMemoryVisible:
           hasCorrectionMemoryVisible ?? this.hasCorrectionMemoryVisible,
+      hasBetaProofLiftVisible:
+          hasBetaProofLiftVisible ?? this.hasBetaProofLiftVisible,
+      hasReturnAfterProofStrengthenedVisible:
+          hasReturnAfterProofStrengthenedVisible ??
+              this.hasReturnAfterProofStrengthenedVisible,
       feedbackState: feedbackState ?? this.feedbackState,
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
       proSlotAvailable: proSlotAvailable ?? this.proSlotAvailable,
+      confidenceLevel: confidenceLevel ?? this.confidenceLevel,
+      hasSafeAnchor: hasSafeAnchor ?? this.hasSafeAnchor,
+      hasFreshReturnAfterCorrection:
+          hasFreshReturnAfterCorrection ?? this.hasFreshReturnAfterCorrection,
+      hasSolidStrongPatternWithSafeAnchors:
+          hasSolidStrongPatternWithSafeAnchors ??
+              this.hasSolidStrongPatternWithSafeAnchors,
     );
   }
 }

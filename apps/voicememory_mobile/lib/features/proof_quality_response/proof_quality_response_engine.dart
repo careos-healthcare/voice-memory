@@ -9,6 +9,7 @@ import '../not_relevant_recovery/not_relevant_recovery_copy.dart';
 import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../not_relevant_recovery/not_relevant_recovery_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
+import '../anchor_calibration/anchor_calibration_engine.dart';
 import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_analytics.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
@@ -65,6 +66,8 @@ abstract final class ProofQualityResponseEngine {
       proofKey: proofKey,
     );
 
+    final feedbackType = _feedbackTypeFor(feedbackState);
+
     final anchorExtraction = EvidenceAnchorEngine.build(
       entries: entries,
       beliefSurfaceVisible: true,
@@ -92,8 +95,17 @@ abstract final class ProofQualityResponseEngine {
       anchorExtraction: anchorExtraction,
       now: now,
       correction: correctionSnapshot,
+      calibrationFeedback: feedbackType,
       trackAnalytics: true,
     );
+    final calibratedAnchors = AnchorCalibrationEngine.apply(
+      extraction: anchorExtraction,
+      feedbackType: feedbackType,
+      hasChangeDelta: proofConfidenceCalibration.leadCopy != null,
+      hasFreshReturn: hasFreshReturn,
+      correction: correctionSnapshot,
+      source: source,
+    ).extraction;
 
     return switch (feedbackState) {
       ProofQualityFeedbackState.tooVague => ProofQualityResponseResult(
@@ -104,7 +116,7 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
               patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.tooVagueTitle,
@@ -113,8 +125,8 @@ abstract final class ProofQualityResponseEngine {
               : '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.tooVagueBody}',
           footer: ProofQualityResponseCopy.footer,
           rows: ProofQualityResponseCopy.tooVagueRows,
-          evidenceAnchors: anchorExtraction.safeSummaries,
-          usesFallbackEvidenceLine: anchorExtraction.usesFallback,
+          evidenceAnchors: calibratedAnchors.safeSummaries,
+          usesFallbackEvidenceLine: calibratedAnchors.usesFallback,
           deltaLine: proofConfidenceCalibration.leadCopy,
           returnedAfterCorrectionLine:
               ProofQualityResponseCopy.returnedAfterCorrectionLine,
@@ -128,7 +140,7 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
               patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.alreadyKnewTitle,
@@ -152,7 +164,7 @@ abstract final class ProofQualityResponseEngine {
           entryCount: entries.length,
           source: source,
           hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: anchorExtraction.hasSafeAnchor &&
+          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
               patternMatchQuality.shouldShowAsProof,
           hasFreshReturn: hasFreshReturn,
           title: ProofQualityResponseCopy.notRelevantTitle,
@@ -222,6 +234,19 @@ abstract final class ProofQualityResponseEngine {
       state == ProofQualityFeedbackState.tooVague ||
       state == ProofQualityFeedbackState.alreadyKnewThis ||
       state == ProofQualityFeedbackState.notRelevant;
+
+  static BetaProofFeedbackType? _feedbackTypeFor(
+    ProofQualityFeedbackState state,
+  ) =>
+      switch (state) {
+        ProofQualityFeedbackState.tooVague => BetaProofFeedbackType.tooVague,
+        ProofQualityFeedbackState.alreadyKnewThis =>
+          BetaProofFeedbackType.alreadyKnew,
+        ProofQualityFeedbackState.notRelevant =>
+          BetaProofFeedbackType.notRelevant,
+        ProofQualityFeedbackState.useful => BetaProofFeedbackType.useful,
+        ProofQualityFeedbackState.none => null,
+      };
 
   static bool coversLegacyBoost({
     required ProofQualityResponseResult result,

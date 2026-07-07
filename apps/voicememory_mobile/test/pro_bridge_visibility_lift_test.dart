@@ -11,6 +11,7 @@ import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_vis
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_copy.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_model.dart';
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
@@ -46,7 +47,13 @@ ProBridgeVisibilityInput _allowedInput({
   bool hasFirstProofPayoffVisible = false,
   bool hasBetaTesterReportVisible = false,
   bool hasCorrectionMemoryVisible = false,
+  bool hasBetaProofLiftVisible = false,
+  bool hasReturnAfterProofStrengthenedVisible = false,
   ProofQualityFeedbackState feedbackState = ProofQualityFeedbackState.none,
+  ProofConfidenceLevel? confidenceLevel,
+  bool hasSafeAnchor = false,
+  bool hasFreshReturnAfterCorrection = false,
+  bool hasSolidStrongPatternWithSafeAnchors = false,
   bool isRecording = false,
   bool isZeroEntryState = false,
   bool isFirstRecordingState = false,
@@ -66,7 +73,15 @@ ProBridgeVisibilityInput _allowedInput({
       hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
       hasBetaTesterReportVisible: hasBetaTesterReportVisible,
       hasCorrectionMemoryVisible: hasCorrectionMemoryVisible,
+      hasBetaProofLiftVisible: hasBetaProofLiftVisible,
+      hasReturnAfterProofStrengthenedVisible:
+          hasReturnAfterProofStrengthenedVisible,
       feedbackState: feedbackState,
+      confidenceLevel: confidenceLevel,
+      hasSafeAnchor: hasSafeAnchor,
+      hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
+      hasSolidStrongPatternWithSafeAnchors:
+          hasSolidStrongPatternWithSafeAnchors,
       isRecording: isRecording,
       isZeroEntryState: isZeroEntryState,
       isFirstRecordingState: isFirstRecordingState,
@@ -95,7 +110,7 @@ void main() {
       expect(ProBridgeVisibilityCopy.title, 'Keep the full timeline');
       expect(
         ProBridgeVisibilityCopy.body,
-        contains('Pro keeps what appeared'),
+        'Free shows this proof. Pro keeps the longer timeline as it grows.',
       );
       expect(ProBridgeVisibilityCopy.compactBody, 'Pro keeps the longer story.');
       expect(ProBridgeVisibilityCopy.cta, 'See Pro');

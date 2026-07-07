@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/return_after_proof/return_after_proof_analytics.dart';
 import 'package:voicememory_mobile/features/return_after_proof/return_after_proof_copy.dart';
 import 'package:voicememory_mobile/features/return_after_proof/return_after_proof_engine.dart';
@@ -108,7 +109,10 @@ void main() {
     await ReturnAfterProofStore.resetForTest(_MemoryPrefs());
   });
 
-  tearDown(ReturnAfterProofAnalytics.resetForTest);
+  tearDown(() {
+    ReturnAfterProofAnalytics.resetForTest();
+    ArchiveBetaMissionGate.resetForTest();
+  });
 
   group('ReturnAfterProofCopy', () {
     test('all visible strings stay safe and non-clinical', () {
@@ -338,6 +342,51 @@ void main() {
       expect(result.guidanceSlot, SurfacePriorityCardKey.returnAfterProof);
       expect(result.isVisible(SurfacePriorityCardKey.lowFrictionReturn, candidate: true), isFalse);
       expect(result.isVisible(SurfacePriorityCardKey.whatToNoticeNext, candidate: true), isFalse);
+    });
+
+    test('returnAfterProofStrengthened beats generic returnAfterProof', () {
+      ArchiveBetaMissionGate.enabledOverride = true;
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 5,
+        source: 'record',
+        candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
+          returnAfterProofStrengthened: true,
+          returnAfterProof: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: false,
+          openCapturePromptChips: false,
+          captureFreedomLine: false,
+          timelineProofMoment: true,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          proofQualityResponse: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+      expect(
+        result.guidanceSlot,
+        SurfacePriorityCardKey.returnAfterProofStrengthened,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.returnAfterProof,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 

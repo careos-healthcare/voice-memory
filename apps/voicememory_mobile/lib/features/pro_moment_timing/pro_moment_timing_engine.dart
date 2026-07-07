@@ -5,6 +5,7 @@ import '../current_relevance/current_relevance_store.dart';
 import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../proof_quality_response/proof_quality_response_engine.dart';
 import '../proof_quality_response/proof_quality_response_model.dart';
+import '../pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart';
 import 'pro_moment_timing_analytics.dart';
 import 'pro_moment_timing_model.dart';
 
@@ -83,7 +84,7 @@ abstract final class ProMomentTimingEngine {
       );
     }
 
-    final trigger = _resolveAllowedTrigger(context);
+    final trigger = ProBridgeTimingLoosenEngine.resolveTriggerForContext(context);
     if (trigger == null) {
       return const ProMomentTimingResult.blocked(
         blockedReason: ProMomentTimingBlockedReason.noAllowedMoment,
@@ -181,30 +182,6 @@ abstract final class ProMomentTimingEngine {
           BetaProofFeedbackSurface.firstProofPayoff,
         ) ==
             ProofQualityFeedbackState.notRelevant;
-  }
-
-  static ProMomentTimingTrigger? _resolveAllowedTrigger(
-    ProMomentTimingContext context,
-  ) {
-    if (context.hasTimelineProofVisible) {
-      return ProMomentTimingTrigger.timelineProofMoment;
-    }
-    if (context.hasFirstProofPayoffVisible) {
-      return ProMomentTimingTrigger.firstProofPayoff;
-    }
-    if (context.hasBetaTesterReportVisible) {
-      return ProMomentTimingTrigger.betaTesterReport;
-    }
-    if (context.hasMonthlyPrivateReportPreviewVisible) {
-      return ProMomentTimingTrigger.monthlyPrivateReportPreview;
-    }
-    if (context.feedbackState == ProofQualityFeedbackState.useful) {
-      return ProMomentTimingTrigger.usefulFeedback;
-    }
-    if (context.hasCorrectionMemoryVisible) {
-      return ProMomentTimingTrigger.correctionImprovedTimeline;
-    }
-    return null;
   }
 
   static void _emitAnalytics({

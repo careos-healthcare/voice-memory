@@ -36,11 +36,11 @@ void main() {
       expect(PaywallAlignmentCopy.headline, 'Keep the full timeline');
       expect(
         PaywallAlignmentCopy.body,
-        'Pro keeps what appeared, what returned, what you corrected, and what still matters now.',
+        contains('Free shows the first proof'),
       );
       expect(
         PaywallAlignmentCopy.secondaryReassurance,
-        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+        'You stay in control. You can delete entries and correct the timeline.',
       );
     });
 
@@ -50,7 +50,7 @@ void main() {
       expect(PaywallAlignmentCopy.benefitBullets, contains('Correction history'));
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('Changing current weight'),
+        contains('Current vs fading signals'),
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
@@ -128,7 +128,7 @@ void main() {
     });
 
     test('purchase CTA constant remains wired for billing-ready paywall', () {
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my full timeline');
       expect(ArchivePaywallCopy.primaryCta, ConsumerUiCopy.paywallPrimaryCta);
     });
   });
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('archive paywall confidence strings unchanged', () {
-      expect(ArchivePaywallCopy.primaryCta, 'Keep my longer story');
+      expect(ArchivePaywallCopy.primaryCta, 'Keep my full timeline');
       expect(
         ArchivePaywallCopy.purchaseSuccess,
         'Pro is active. ArchiveMe keeps the full timeline as it grows.',

@@ -12,6 +12,8 @@ import '../pattern_match_quality/pattern_match_quality_copy.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
@@ -137,6 +139,9 @@ abstract final class ArchiveTimelineSpineEngine {
       anchorExtraction: anchorExtraction,
       evidenceWeighting: evidenceWeighting,
       correction: correction,
+      calibrationFeedback: BetaProofFeedbackStore.recordFor(
+        BetaProofFeedbackSurface.archiveTimelineSpine,
+      ).feedbackType,
       now: now,
       trackAnalytics: true,
     );

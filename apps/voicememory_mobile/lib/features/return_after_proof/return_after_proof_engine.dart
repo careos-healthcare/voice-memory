@@ -6,7 +6,7 @@ import '../proof_confidence_calibration/proof_confidence_calibration_model.dart'
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'return_after_proof_copy.dart';
 import 'return_after_proof_model.dart';
-import 'return_after_proof_store.dart';
+import 'return_after_proof_strengthening_engine.dart';
 
 /// Visibility and content for return-after-proof guidance.
 abstract final class ReturnAfterProofEngine {
@@ -33,6 +33,13 @@ abstract final class ReturnAfterProofEngine {
     final body = calibration.level == ProofConfidenceLevel.strong
         ? ReturnAfterProofCopy.strongBody
         : ReturnAfterProofCopy.body;
+    final strengthened = ReturnAfterProofStrengtheningEngine.build(
+      entries: entries,
+      source: source,
+      firstProofSeen: firstProofSeen,
+      timelineProofVisible: timelineProofVisible,
+      calibration: calibration,
+    );
 
     return ReturnAfterProofResult(
       shouldShow: true,
@@ -51,8 +58,107 @@ abstract final class ReturnAfterProofEngine {
       source: source,
       hasTimelineProof: hasTimelineProof,
       hasFirstProof: hasFirstProof,
+      strengthened: strengthened,
     );
   }
+
+  static bool shouldShowGenericOnRecordReady({
+    required ReturnAfterProofResult result,
+    required bool isReady,
+    required bool isRecording,
+    required bool isDegradedTranscriptState,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool firstProofSeen,
+    required bool timelineProofVisible,
+    required bool betaTesterReportVisible,
+    required bool dismissedForToday,
+  }) {
+    if (ReturnAfterProofStrengtheningEngine.shouldShowOnRecordReady(
+      result: result.strengthened,
+      isReady: isReady,
+      isRecording: isRecording,
+      isDegradedTranscriptState: isDegradedTranscriptState,
+      whatChangedQuestionActive: whatChangedQuestionActive,
+      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+      firstProofSeen: firstProofSeen,
+      timelineProofVisible: timelineProofVisible,
+      dismissedForToday: dismissedForToday,
+    )) {
+      return false;
+    }
+    return shouldShowOnRecordReady(
+      result: result,
+      isReady: isReady,
+      isRecording: isRecording,
+      isDegradedTranscriptState: isDegradedTranscriptState,
+      whatChangedQuestionActive: whatChangedQuestionActive,
+      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+      firstProofSeen: firstProofSeen,
+      timelineProofVisible: timelineProofVisible,
+      betaTesterReportVisible: betaTesterReportVisible,
+      dismissedForToday: dismissedForToday,
+    );
+  }
+
+  static bool shouldShowStrengthenedOnRecordReady({
+    required ReturnAfterProofResult result,
+    required bool isReady,
+    required bool isRecording,
+    required bool isDegradedTranscriptState,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool firstProofSeen,
+    required bool timelineProofVisible,
+    required bool dismissedForToday,
+  }) =>
+      ReturnAfterProofStrengtheningEngine.shouldShowOnRecordReady(
+        result: result.strengthened,
+        isReady: isReady,
+        isRecording: isRecording,
+        isDegradedTranscriptState: isDegradedTranscriptState,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+        firstProofSeen: firstProofSeen,
+        timelineProofVisible: timelineProofVisible,
+        dismissedForToday: dismissedForToday,
+      );
+
+  static bool shouldShowAnyOnRecordReady({
+    required ReturnAfterProofResult result,
+    required bool isReady,
+    required bool isRecording,
+    required bool isDegradedTranscriptState,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool firstProofSeen,
+    required bool timelineProofVisible,
+    required bool betaTesterReportVisible,
+    required bool dismissedForToday,
+  }) =>
+      shouldShowStrengthenedOnRecordReady(
+        result: result,
+        isReady: isReady,
+        isRecording: isRecording,
+        isDegradedTranscriptState: isDegradedTranscriptState,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+        firstProofSeen: firstProofSeen,
+        timelineProofVisible: timelineProofVisible,
+        dismissedForToday: dismissedForToday,
+      ) ||
+      shouldShowGenericOnRecordReady(
+        result: result,
+        isReady: isReady,
+        isRecording: isRecording,
+        isDegradedTranscriptState: isDegradedTranscriptState,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+        firstProofSeen: firstProofSeen,
+        timelineProofVisible: timelineProofVisible,
+        betaTesterReportVisible: betaTesterReportVisible,
+        dismissedForToday: dismissedForToday,
+      );
 
   static bool firstProofSeenFor(List<JournalEntry> entries) =>
       FirstProofPayoffEngine.build(entries: entries) != null;
@@ -120,7 +226,38 @@ abstract final class ReturnAfterProofEngine {
       ) &&
       !isDegradedTranscriptState;
 
-  static bool shouldShowOnFirstProofPayoffPostSave({
+  static bool shouldShowGenericOnFirstProofPayoffPostSave({
+    required ReturnAfterProofResult result,
+    required bool showFirstProofPayoff,
+    required bool isRecording,
+    required bool isPostSaveDegraded,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool dismissedForToday,
+  }) {
+    if (ReturnAfterProofStrengtheningEngine.shouldShowOnFirstProofPayoffPostSave(
+      result: result.strengthened,
+      showFirstProofPayoff: showFirstProofPayoff,
+      isRecording: isRecording,
+      isPostSaveDegraded: isPostSaveDegraded,
+      whatChangedQuestionActive: whatChangedQuestionActive,
+      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+      dismissedForToday: dismissedForToday,
+    )) {
+      return false;
+    }
+    return _shouldShowFirstProofPayoffPostSave(
+      result: result,
+      showFirstProofPayoff: showFirstProofPayoff,
+      isRecording: isRecording,
+      isPostSaveDegraded: isPostSaveDegraded,
+      whatChangedQuestionActive: whatChangedQuestionActive,
+      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+      dismissedForToday: dismissedForToday,
+    );
+  }
+
+  static bool _shouldShowFirstProofPayoffPostSave({
     required ReturnAfterProofResult result,
     required bool showFirstProofPayoff,
     required bool isRecording,
@@ -141,6 +278,53 @@ abstract final class ReturnAfterProofEngine {
         firstProofSeen: true,
         timelineProofVisible: false,
         betaTesterReportVisible: false,
+        dismissedForToday: dismissedForToday,
+      );
+
+  static bool shouldShowStrengthenedOnFirstProofPayoffPostSave({
+    required ReturnAfterProofResult result,
+    required bool showFirstProofPayoff,
+    required bool isRecording,
+    required bool isPostSaveDegraded,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool dismissedForToday,
+  }) =>
+      ReturnAfterProofStrengtheningEngine.shouldShowOnFirstProofPayoffPostSave(
+        result: result.strengthened,
+        showFirstProofPayoff: showFirstProofPayoff,
+        isRecording: isRecording,
+        isPostSaveDegraded: isPostSaveDegraded,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+        dismissedForToday: dismissedForToday,
+      );
+
+  static bool shouldShowOnFirstProofPayoffPostSave({
+    required ReturnAfterProofResult result,
+    required bool showFirstProofPayoff,
+    required bool isRecording,
+    required bool isPostSaveDegraded,
+    required bool whatChangedQuestionActive,
+    required bool patternReviewInboxHasActiveItems,
+    required bool dismissedForToday,
+  }) =>
+      shouldShowGenericOnFirstProofPayoffPostSave(
+        result: result,
+        showFirstProofPayoff: showFirstProofPayoff,
+        isRecording: isRecording,
+        isPostSaveDegraded: isPostSaveDegraded,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+        dismissedForToday: dismissedForToday,
+      ) ||
+      shouldShowStrengthenedOnFirstProofPayoffPostSave(
+        result: result,
+        showFirstProofPayoff: showFirstProofPayoff,
+        isRecording: isRecording,
+        isPostSaveDegraded: isPostSaveDegraded,
+        whatChangedQuestionActive: whatChangedQuestionActive,
+        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
         dismissedForToday: dismissedForToday,
       );
 

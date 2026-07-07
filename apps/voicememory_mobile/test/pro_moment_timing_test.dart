@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_
 import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_copy.dart';
 import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_engine.dart';
 import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_model.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
@@ -29,6 +30,12 @@ ProMomentTimingContext _baseContext({
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
   bool proSlotAvailable = true,
+  bool hasBetaProofLiftVisible = false,
+  bool hasReturnAfterProofStrengthenedVisible = false,
+  ProofConfidenceLevel? confidenceLevel,
+  bool hasSafeAnchor = false,
+  bool hasFreshReturnAfterCorrection = false,
+  bool hasSolidStrongPatternWithSafeAnchors = false,
 }) {
   return ProMomentTimingContext(
     surface: ProMomentTimingSurface.recordPostSave,
@@ -50,6 +57,14 @@ ProMomentTimingContext _baseContext({
     whatChangedQuestionActive: whatChangedQuestionActive,
     patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
     proSlotAvailable: proSlotAvailable,
+    hasBetaProofLiftVisible: hasBetaProofLiftVisible,
+    hasReturnAfterProofStrengthenedVisible:
+        hasReturnAfterProofStrengthenedVisible,
+    confidenceLevel: confidenceLevel,
+    hasSafeAnchor: hasSafeAnchor,
+    hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
+    hasSolidStrongPatternWithSafeAnchors:
+        hasSolidStrongPatternWithSafeAnchors,
   );
 }
 
@@ -207,6 +222,17 @@ void main() {
       );
       expect(result.allowed, isTrue);
       expect(result.trigger, ProMomentTimingTrigger.usefulFeedback);
+    });
+
+    test('allows after useful proof confidence loosen trigger', () {
+      final result = ProMomentTimingEngine.evaluate(
+        _baseContext(
+          confidenceLevel: ProofConfidenceLevel.useful,
+          hasSafeAnchor: true,
+        ),
+      );
+      expect(result.allowed, isTrue);
+      expect(result.trigger, ProMomentTimingTrigger.usefulProofConfidence);
     });
   });
 

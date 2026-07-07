@@ -17,6 +17,7 @@ class ReturnAfterProofCard extends StatefulWidget {
     super.key,
     required this.result,
     required this.onPromptSelected,
+    this.useStrengthenedLayout = false,
     this.store,
   });
 
@@ -24,11 +25,13 @@ class ReturnAfterProofCard extends StatefulWidget {
     super.key,
     required this.result,
     required this.onPromptSelected,
+    this.useStrengthenedLayout = false,
     this.store,
   });
 
   final ReturnAfterProofResult result;
   final ValueChanged<String> onPromptSelected;
+  final bool useStrengthenedLayout;
   final ReturnAfterProofStore? store;
 
   @override
@@ -39,13 +42,26 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
   var _trackedSeen = false;
   ReturnAfterProofPromptType? _selectedPromptType;
   var _dismissedToday = false;
+  var _strengthenedPromptSelected = false;
 
   ReturnAfterProofStore? get _store =>
       widget.store ?? ReturnAfterProofStore.instance();
 
+  ReturnAfterProofStrengthenedResult? get _strengthened =>
+      widget.result.strengthened;
+
+  bool get _showStrengthenedLayout =>
+      widget.useStrengthenedLayout &&
+      _strengthened != null &&
+      _strengthened!.shouldShow;
+
   void _trackSeenOnce() {
     if (_trackedSeen) return;
     _trackedSeen = true;
+    if (_showStrengthenedLayout) {
+      ReturnAfterProofAnalytics.strengthenedSeen(result: _strengthened!);
+      return;
+    }
     ReturnAfterProofAnalytics.seen(result: widget.result);
   }
 
@@ -69,6 +85,23 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
     widget.onPromptSelected(prompt.selectedLine);
   }
 
+  Future<void> _handleStrengthenedPrimaryTap() async {
+    final strengthened = _strengthened;
+    if (strengthened == null) return;
+    ReturnAfterProofAnalytics.strengthenedCtaTapped(result: strengthened);
+    setState(() => _strengthenedPromptSelected = true);
+    widget.onPromptSelected(strengthened.promptLine);
+  }
+
+  Future<void> _handleStrengthenedSecondaryTap() async {
+    final strengthened = _strengthened;
+    if (strengthened == null) return;
+    ReturnAfterProofAnalytics.strengthenedDismissed(result: strengthened);
+    await _store?.dismissForDay();
+    if (!mounted) return;
+    setState(() => _dismissedToday = true);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!widget.result.shouldShow) return const SizedBox.shrink();
@@ -78,6 +111,61 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
       color: AppColors.textSecondary,
       height: 1.45,
     );
+
+    if (_showStrengthenedLayout) {
+      final strengthened = _strengthened!;
+      return Container(
+        key: const Key('return_after_proof_strengthened_card'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        decoration:
+            VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              strengthened.title,
+              key: const Key('return_after_proof_strengthened_title'),
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              strengthened.body,
+              key: const Key('return_after_proof_strengthened_body'),
+              style: bodyStyle.copyWith(color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            if (_dismissedToday) ...[
+              Text(
+                ReturnAfterProofCopy.afterNotTodayDismiss,
+                key: const Key('return_after_proof_strengthened_after_not_today'),
+                style: bodyStyle.copyWith(color: AppColors.textPrimary),
+              ),
+            ] else ...[
+              FilledButton(
+                key: const Key('return_after_proof_strengthened_primary_cta'),
+                onPressed: () => unawaited(_handleStrengthenedPrimaryTap()),
+                child: Text(strengthened.primaryCta),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                key: const Key('return_after_proof_strengthened_secondary_cta'),
+                onPressed: () => unawaited(_handleStrengthenedSecondaryTap()),
+                child: Text(strengthened.secondaryCta),
+              ),
+              if (_strengthenedPromptSelected) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  strengthened.promptLine,
+                  key: const Key('return_after_proof_strengthened_selected_line'),
+                  style: bodyStyle.copyWith(color: AppColors.textPrimary),
+                ),
+              ],
+            ],
+          ],
+        ),
+      );
+    }
 
     return Container(
       key: const Key('return_after_proof_card'),

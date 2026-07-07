@@ -51,7 +51,7 @@ void main() {
       expect(bullets, PaywallAlignmentCopy.benefitBullets);
       expect(bullets, contains('Full pattern timeline'));
       expect(bullets, contains('Correction history'));
-      expect(bullets, contains('Changing current weight'));
+      expect(bullets, contains('Current vs fading signals'));
       expect(bullets, contains('Longer evidence trail'));
       expect(bullets, contains('Monthly private report'));
       expect(bullets, contains('Backup and continuity'));
@@ -61,7 +61,7 @@ void main() {
     test('differentiation says not more chat and trust avoids medical claims', () {
       expect(
         ConsumerUiCopy.paywallDifferentiation,
-        'Pro is not more chat. It keeps the evidence.',
+        'The value is not more chat. It is the longer evidence trail.',
       );
       expect(
         ConsumerUiCopy.paywallTrust,

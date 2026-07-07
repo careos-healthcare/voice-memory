@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../correction_memory/correction_memory_engine.dart';
 import '../correction_memory/correction_memory_model.dart';
 import '../current_relevance/current_relevance_store.dart';
@@ -16,6 +17,9 @@ import 'pattern_match_quality_copy.dart';
 import 'pattern_match_quality_model.dart';
 
 /// Scores pattern overlap quality from existing safe signals only.
+///
+/// Match scores and bands are unchanged here; [AnchorCalibrationEngine] adjusts
+/// anchor ranking and proof display inside [ProofConfidenceCalibrationEngine].
 abstract final class PatternMatchQualityEngine {
   PatternMatchQualityEngine._();
 
@@ -440,6 +444,15 @@ abstract final class PatternMatchQualityEngine {
     final hasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
     if (!hasConfirmedRepeat) return false;
+    if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {
+      return false;
+    }
+    if (ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries)) {
+      return false;
+    }
+    if (ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries)) {
+      return false;
+    }
     return true;
   }
 }

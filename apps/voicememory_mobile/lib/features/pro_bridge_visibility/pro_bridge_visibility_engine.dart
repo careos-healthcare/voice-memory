@@ -1,6 +1,6 @@
 import '../pro_evidence_value/pro_evidence_value_dismiss_store.dart';
-import '../pro_moment_timing/pro_moment_timing_engine.dart';
 import '../pro_moment_timing/pro_moment_timing_model.dart';
+import 'pro_bridge_timing_loosen_engine.dart';
 import 'pro_bridge_visibility_copy.dart';
 import 'pro_bridge_visibility_model.dart';
 
@@ -13,10 +13,10 @@ abstract final class ProBridgeVisibilityEngine {
   static ProBridgeVisibilityResult build({
     required ProBridgeVisibilityInput input,
   }) {
-    final timing = toTimingContext(input);
-    final evaluation = ProMomentTimingEngine.evaluate(timing);
-    final triggerReason =
-        evaluation.trigger?.analyticsValue ?? evaluation.reason;
+    final loosen = ProBridgeTimingLoosenEngine.evaluate(
+      input: ProBridgeTimingLoosenEngine.fromVisibilityInput(input),
+    );
+    final triggerReason = loosen.trigger?.analyticsValue ?? loosen.blockedReason?.analyticsValue;
 
     return ProBridgeVisibilityResult(
       shouldShow: shouldShow(input: input),
@@ -32,6 +32,8 @@ abstract final class ProBridgeVisibilityEngine {
       triggerReason: triggerReason,
       hasTimelineProof: input.hasTimelineProofVisible,
       feedbackState: input.feedbackState,
+      confidenceLevel: loosen.confidenceLevel,
+      hasSafeAnchor: loosen.hasSafeAnchor,
     );
   }
 
@@ -43,8 +45,9 @@ abstract final class ProBridgeVisibilityEngine {
     if (ProEvidenceValueDismissStore.isDismissed()) return false;
     if (input.entryCount < minEntryCount) return false;
 
-    final timing = toTimingContext(input);
-    return ProMomentTimingEngine.evaluate(timing).allowed;
+    return ProBridgeTimingLoosenEngine.evaluate(
+      input: ProBridgeTimingLoosenEngine.fromVisibilityInput(input),
+    ).allowed;
   }
 
   static ProMomentTimingContext toTimingContext(ProBridgeVisibilityInput input) {
@@ -62,10 +65,20 @@ abstract final class ProBridgeVisibilityEngine {
       hasFirstProofPayoffVisible: input.hasFirstProofPayoffVisible,
       hasBetaTesterReportVisible: input.hasBetaTesterReportVisible,
       hasCorrectionMemoryVisible: input.hasCorrectionMemoryVisible,
+      hasMonthlyPrivateReportPreviewVisible:
+          input.hasMonthlyPrivateReportPreviewVisible,
+      hasBetaProofLiftVisible: input.hasBetaProofLiftVisible,
+      hasReturnAfterProofStrengthenedVisible:
+          input.hasReturnAfterProofStrengthenedVisible,
       feedbackState: input.feedbackState,
       whatChangedQuestionActive: input.whatChangedQuestionActive,
       patternReviewInboxHasActiveItems: input.patternReviewInboxHasActiveItems,
       proSlotAvailable: input.proSlotAvailable,
+      confidenceLevel: input.confidenceLevel,
+      hasSafeAnchor: input.hasSafeAnchor,
+      hasFreshReturnAfterCorrection: input.hasFreshReturnAfterCorrection,
+      hasSolidStrongPatternWithSafeAnchors:
+          input.hasSolidStrongPatternWithSafeAnchors,
     );
   }
 

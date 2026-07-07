@@ -70,6 +70,9 @@ abstract final class BetaProofLiftEngine {
           evidenceWeighting: evidenceWeighting,
           correction: correction,
         );
+    final calibrationFeedback = BetaProofFeedbackStore.recordFor(
+      betaSurfaceFor(surface),
+    ).feedbackType;
     final proofConfidenceCalibration = ProofConfidenceCalibrationEngine.build(
       entries: entries,
       beliefSurfaceVisible: beliefSurfaceVisible,
@@ -78,11 +81,12 @@ abstract final class BetaProofLiftEngine {
       anchorExtraction: anchorExtraction,
       evidenceWeighting: evidenceWeighting,
       correction: correction,
+      calibrationFeedback: calibrationFeedback,
       now: now,
       trackAnalytics: true,
     );
 
-    final hasSafeAnchor = anchorExtraction.hasSafeAnchor;
+    final hasSafeAnchor = proofConfidenceCalibration.hasSafeAnchor;
     final hasCorrection = correction != null;
     final hasCurrentRelevance = presentDay != null;
     final deltaRows = _resolveDeltaRows(
