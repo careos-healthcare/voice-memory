@@ -335,11 +335,49 @@ void main() {
       expect(source, contains("source: 'first_moment_capture'"));
     });
 
-    test('SurfacePriorityAudit gives highest guidance priority for zero entry', () {
+    test('SurfacePriorityAudit gives three moment completion highest guidance priority for zero entry', () {
       final result = SurfacePriorityEngine.auditRecordReady(
         entryCount: 0,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: true,
+          firstMomentCapture: true,
+          secondMomentReturn: false,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          proofQualityResponse: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.firstMomentCapture,
+        candidate: true,
+      ), isFalse);
+    });
+
+    test('first moment capture still wins when three moment completion inactive', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 0,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: false,
           firstMomentCapture: true,
           secondMomentReturn: false,
           lowFrictionReturn: true,

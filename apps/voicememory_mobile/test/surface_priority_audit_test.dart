@@ -58,6 +58,7 @@ void main() {
       final guidanceVisible = result.visibleCardKeys
           .where(
             (key) =>
+                key == SurfacePriorityCardKey.threeMomentCompletion ||
                 key == SurfacePriorityCardKey.firstMomentCapture ||
                 key == SurfacePriorityCardKey.secondMomentReturn ||
                 key == SurfacePriorityCardKey.lowFrictionReturn ||
@@ -71,11 +72,50 @@ void main() {
       expect(result.guidanceSlot, SurfacePriorityCardKey.lowFrictionReturn);
     });
 
-    test('gives first moment capture highest guidance priority for zero entry', () {
+    test('gives three moment completion highest guidance priority for zero entry', () {
       final result = SurfacePriorityEngine.auditRecordReady(
         entryCount: 0,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: true,
+          firstMomentCapture: true,
+          secondMomentReturn: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          proofQualityResponse: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+
+      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.firstMomentCapture,
+        candidate: true,
+      ), isFalse);
+    });
+
+    test('gives first moment capture highest guidance priority when three moment inactive', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 0,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: false,
           firstMomentCapture: true,
           secondMomentReturn: true,
           lowFrictionReturn: true,
@@ -108,11 +148,50 @@ void main() {
       ), isFalse);
     });
 
-    test('gives second moment return highest guidance priority for one entry', () {
+    test('gives three moment completion highest guidance priority for one entry', () {
       final result = SurfacePriorityEngine.auditRecordReady(
         entryCount: 1,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: true,
+          firstMomentCapture: false,
+          secondMomentReturn: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          proofQualityResponse: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+
+      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.secondMomentReturn,
+        candidate: true,
+      ), isFalse);
+    });
+
+    test('gives second moment return highest guidance priority when three moment inactive', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 1,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: false,
           firstMomentCapture: false,
           secondMomentReturn: true,
           lowFrictionReturn: true,
@@ -154,6 +233,7 @@ void main() {
         entryCount: 5,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: false,
           firstMomentCapture: false,
           secondMomentReturn: false,
           lowFrictionReturn: false,
@@ -523,6 +603,7 @@ void main() {
           proofSpecificity: false,
           presentDayRelevance: false,
           timelinePositioning: false,
+          proBridgeVisibility: true,
           proEvidenceValue: true,
           archiveIntelligenceProBridge: true,
           privateReportProBridge: true,
@@ -531,9 +612,9 @@ void main() {
         ),
       );
 
-      expect(result.proSlot, SurfacePriorityCardKey.proEvidenceValue);
+      expect(result.proSlot, SurfacePriorityCardKey.proBridgeVisibility);
       final proIndex = result.visibleCardKeys.indexOf(
-        SurfacePriorityCardKey.proEvidenceValue,
+        SurfacePriorityCardKey.proBridgeVisibility,
       );
       final reportIndex = result.visibleCardKeys.indexOf(
         SurfacePriorityCardKey.betaTesterReport,

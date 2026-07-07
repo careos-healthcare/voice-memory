@@ -9,8 +9,10 @@ enum SurfacePrioritySurface {
 
 /// Stable keys for cards managed by the priority audit.
 enum SurfacePriorityCardKey {
+  threeMomentCompletion,
   firstMomentCapture,
   secondMomentReturn,
+  returnAfterProof,
   lowFrictionReturn,
   whatToNoticeNext,
   betaTodaySummary,
@@ -24,6 +26,7 @@ enum SurfacePriorityCardKey {
   correctionMemory,
   notRelevantRecovery,
   proofQualityResponse,
+  betaProofLift,
   evidenceWeighting,
   proofSpecificity,
   presentDayRelevance,
@@ -35,6 +38,7 @@ enum SurfacePriorityCardKey {
   returnPayoff,
   timelineProofMomentPostSave,
   proofSpecificityPostSave,
+  proBridgeVisibility,
   proEvidenceValue,
   archiveIntelligenceProBridge,
   proLockMoment,
@@ -53,8 +57,10 @@ class SurfacePriorityCandidates {
   bool candidate(SurfacePriorityCardKey key) => byKey[key] ?? false;
 
   factory SurfacePriorityCandidates.recordReady({
+    bool threeMomentCompletion = false,
     required bool firstMomentCapture,
     required bool secondMomentReturn,
+    bool returnAfterProof = false,
     required bool lowFrictionReturn,
     required bool whatToNoticeNext,
     required bool betaTodaySummary,
@@ -67,18 +73,22 @@ class SurfacePriorityCandidates {
     required bool correctionMemory,
     required bool notRelevantRecovery,
     required bool proofQualityResponse,
+    bool betaProofLift = false,
     required bool evidenceWeighting,
     required bool proofSpecificity,
     required bool presentDayRelevance,
     required bool patternConfidence,
     required bool betaTesterReport,
+    bool proBridgeVisibility = false,
     required bool proEvidenceValue,
     required bool privateReportProBridge,
     required bool suppressLegacyEducation,
   }) =>
       SurfacePriorityCandidates({
+        SurfacePriorityCardKey.threeMomentCompletion: threeMomentCompletion,
         SurfacePriorityCardKey.firstMomentCapture: firstMomentCapture,
         SurfacePriorityCardKey.secondMomentReturn: secondMomentReturn,
+        SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
         SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
         SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
         SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
@@ -94,6 +104,7 @@ class SurfacePriorityCandidates {
             correctionMemory && !suppressLegacyEducation,
         SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
         SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
+        SurfacePriorityCardKey.betaProofLift: betaProofLift,
         SurfacePriorityCardKey.evidenceWeighting:
             evidenceWeighting && !suppressLegacyEducation,
         SurfacePriorityCardKey.proofSpecificity:
@@ -103,6 +114,7 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.patternConfidence:
             patternConfidence && !suppressLegacyEducation,
         SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
+        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
       });
@@ -119,6 +131,9 @@ class SurfacePriorityCandidates {
     required bool timelineProofMomentPostSave,
     required bool proofSpecificityPostSave,
     required bool betaProofFeedback,
+    bool betaProofLift = false,
+    bool returnAfterProof = false,
+    bool proBridgeVisibility = false,
     required bool proEvidenceValue,
     required bool proLockMoment,
     required bool privateReportProBridge,
@@ -137,6 +152,9 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.proofSpecificityPostSave:
             proofSpecificityPostSave,
         SurfacePriorityCardKey.betaProofFeedback: betaProofFeedback,
+        SurfacePriorityCardKey.betaProofLift: betaProofLift,
+        SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
+        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.proLockMoment: proLockMoment,
         SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
@@ -150,12 +168,14 @@ class SurfacePriorityCandidates {
     required bool correctionMemory,
     required bool notRelevantRecovery,
     required bool proofQualityResponse,
+    bool betaProofLift = false,
     required bool patternConfidence,
     required bool evidenceWeighting,
     required bool currentRelevance,
     required bool proofSpecificity,
     required bool presentDayRelevance,
     required bool timelinePositioning,
+    bool proBridgeVisibility = false,
     required bool proEvidenceValue,
     required bool archiveIntelligenceProBridge,
     required bool privateReportProBridge,
@@ -171,6 +191,7 @@ class SurfacePriorityCandidates {
             correctionMemory && !suppressLegacyEducation,
         SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
         SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
+        SurfacePriorityCardKey.betaProofLift: betaProofLift,
         SurfacePriorityCardKey.patternConfidence:
             patternConfidence && !suppressLegacyEducation,
         SurfacePriorityCardKey.evidenceWeighting:
@@ -183,6 +204,7 @@ class SurfacePriorityCandidates {
             presentDayRelevance && !suppressLegacyEducation,
         SurfacePriorityCardKey.timelinePositioning:
             timelinePositioning && !suppressLegacyEducation,
+        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.archiveIntelligenceProBridge:
             archiveIntelligenceProBridge,

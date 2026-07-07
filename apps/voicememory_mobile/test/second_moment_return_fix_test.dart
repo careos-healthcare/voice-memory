@@ -426,11 +426,49 @@ void main() {
       expect(cardIndex, lessThan(lowFrictionIndex));
     });
 
-    test('SurfacePriorityAudit prefers it for exactly one entry', () {
+    test('SurfacePriorityAudit prefers three moment completion for exactly one entry', () {
       final result = SurfacePriorityEngine.auditRecordReady(
         entryCount: 1,
         source: 'test',
         candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: true,
+          firstMomentCapture: false,
+          secondMomentReturn: true,
+          lowFrictionReturn: true,
+          whatToNoticeNext: true,
+          betaTodaySummary: true,
+          openCapturePromptChips: true,
+          captureFreedomLine: true,
+          timelineProofMoment: false,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: false,
+          proofQualityResponse: false,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
+      expect(result.isVisible(
+        SurfacePriorityCardKey.secondMomentReturn,
+        candidate: true,
+      ), isFalse);
+    });
+
+    test('second moment return still wins when three moment completion inactive', () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 1,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          threeMomentCompletion: false,
           firstMomentCapture: false,
           secondMomentReturn: true,
           lowFrictionReturn: true,

@@ -283,6 +283,7 @@ void main() {
       final proVisible = result.visibleCardKeys
           .where(
             (key) =>
+                key == SurfacePriorityCardKey.proBridgeVisibility ||
                 key == SurfacePriorityCardKey.proEvidenceValue ||
                 key == SurfacePriorityCardKey.proLockMoment ||
                 key == SurfacePriorityCardKey.privateReportProBridge,

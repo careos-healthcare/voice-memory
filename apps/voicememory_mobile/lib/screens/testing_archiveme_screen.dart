@@ -27,6 +27,7 @@ import '../features/beta_readiness/beta_readiness_copy.dart';
 import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/beta/beta_feedback_summary_card.dart';
 import '../widgets/beta/testflight_metrics_dashboard_card.dart';
+import '../widgets/beta/beta_conversion_diagnosis_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Beta-only tester mission guide — steps, feedback question, and email feedback.
@@ -195,6 +196,11 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             const TestFlightMetricsDashboardCard(
               source: 'testing_archiveme',
               surface: 'testing_archiveme_screen',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const BetaConversionDiagnosisCard(
+              source: 'testing_archiveme',
               compact: true,
             ),
             if (showBetaFeedbackIntelligenceCard) ...[

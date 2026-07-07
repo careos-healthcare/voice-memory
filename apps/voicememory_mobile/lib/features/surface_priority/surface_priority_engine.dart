@@ -9,8 +9,10 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.threeMomentCompletion,
     SurfacePriorityCardKey.firstMomentCapture,
     SurfacePriorityCardKey.secondMomentReturn,
+    SurfacePriorityCardKey.returnAfterProof,
     SurfacePriorityCardKey.lowFrictionReturn,
     SurfacePriorityCardKey.whatToNoticeNext,
     SurfacePriorityCardKey.betaTodaySummary,
@@ -30,6 +32,7 @@ abstract final class SurfacePriorityEngine {
 
   static const _recordCorrectionOrder = [
     SurfacePriorityCardKey.proofQualityResponse,
+    SurfacePriorityCardKey.betaProofLift,
     SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.currentRelevance,
     SurfacePriorityCardKey.correctionMemory,
@@ -37,6 +40,7 @@ abstract final class SurfacePriorityEngine {
 
   static const _patternsDetailOrder = [
     SurfacePriorityCardKey.proofQualityResponse,
+    SurfacePriorityCardKey.betaProofLift,
     SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.correctionMemory,
     SurfacePriorityCardKey.patternConfidence,
@@ -50,11 +54,13 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordProOrder = [
+    SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.privateReportProBridge,
   ];
 
   static const _patternsProOrder = [
+    SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.archiveIntelligenceProBridge,
     SurfacePriorityCardKey.privateReportProBridge,
@@ -62,6 +68,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _postSaveProOrder = [
+    SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.proLockMoment,
     SurfacePriorityCardKey.privateReportProBridge,
@@ -218,6 +225,12 @@ abstract final class SurfacePriorityEngine {
       }
       if (candidates.candidate(SurfacePriorityCardKey.betaProofFeedback)) {
         visible.add(SurfacePriorityCardKey.betaProofFeedback);
+      }
+      if (candidates.candidate(SurfacePriorityCardKey.betaProofLift)) {
+        visible.add(SurfacePriorityCardKey.betaProofLift);
+      }
+      if (candidates.candidate(SurfacePriorityCardKey.returnAfterProof)) {
+        visible.add(SurfacePriorityCardKey.returnAfterProof);
       }
     } else if (returnPayoffActive) {
       visible.add(SurfacePriorityCardKey.returnPayoff);
@@ -429,6 +442,7 @@ abstract final class SurfacePriorityEngine {
       entryCount: 0,
       source: 'legacy',
       candidates: SurfacePriorityCandidates.recordReady(
+        threeMomentCompletion: false,
         firstMomentCapture: false,
         secondMomentReturn: false,
         lowFrictionReturn: lowFrictionReturnVisible,
