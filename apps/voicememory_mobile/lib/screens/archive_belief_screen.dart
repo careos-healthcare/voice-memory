@@ -60,6 +60,8 @@ import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/belief_change/belief_change_moment_engine.dart';
 import '../features/belief_change/belief_change_moment_gates.dart';
 import '../features/pattern_confidence/pattern_confidence_engine.dart';
+import '../features/archive_timeline_spine/archive_timeline_spine_engine.dart';
+import '../features/timeline_proof_moment/timeline_proof_moment_engine.dart';
 import '../features/pattern_lifecycle/pattern_lifecycle_engine.dart';
 import '../features/quiet_signal/quiet_signal_engine.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
@@ -323,6 +325,8 @@ import '../widgets/patterns/correction_memory_card.dart';
 import '../widgets/patterns/evidence_weighting_card.dart';
 import '../widgets/patterns/proof_specificity_card.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
+import '../widgets/patterns/archive_timeline_spine_card.dart';
+import '../widgets/patterns/timeline_proof_moment_card.dart';
 import '../widgets/patterns/present_day_relevance_card.dart';
 import '../widgets/patterns/timeline_positioning_card.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
@@ -4226,6 +4230,44 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         whatChangedQuestionActive: false,
         patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
       );
+      final archiveTimelineSpineCandidate = _entries.length >= 3
+          ? ArchiveTimelineSpineEngine.build(
+              entries: _entries,
+              beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+              source: 'patterns',
+            )
+          : null;
+      final showArchiveTimelineSpineOnPatterns =
+          ArchiveTimelineSpineEngine.shouldShowOnPatterns(
+        result: archiveTimelineSpineCandidate,
+        isDegradedTranscriptState: false,
+        isPostSaveDegradedState: false,
+        firstProofPayoffVisible: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+      );
+      final suppressLegacyEducationCardsForSpine =
+          ArchiveTimelineSpineEngine.suppressLegacyEducationCards(
+        result: archiveTimelineSpineCandidate,
+        visible: showArchiveTimelineSpineOnPatterns,
+      );
+      final timelineProofMomentCandidate =
+          archiveTimelineSpineCandidate != null
+              ? TimelineProofMomentEngine.buildFromSpine(
+                  spine: archiveTimelineSpineCandidate,
+                  entries: _entries,
+                  source: 'patterns',
+                )
+              : null;
+      final showTimelineProofMomentOnPatterns =
+          TimelineProofMomentEngine.shouldShowOnPatterns(
+        result: timelineProofMomentCandidate,
+        timelineSpineVisible: showArchiveTimelineSpineOnPatterns,
+        isDegradedTranscriptState: false,
+        isPostSaveDegradedState: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+      );
       final patternConfidenceExplanationCandidate =
           PatternConfidenceEngine.buildExplanation(
         entries: _entries,
@@ -4267,7 +4309,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             presentDayRelevanceCandidate != null,
       );
       final showTimelinePositioningOnPatterns =
-          TimelinePositioningEngine.shouldShowOnPatterns(
+          !suppressLegacyEducationCardsForSpine &&
+              TimelinePositioningEngine.shouldShowOnPatterns(
         result: timelinePositioningCandidate,
         otherEducationCardCount: otherEducationCardsOnPatterns,
         isDegradedTranscriptState: false,
@@ -4675,14 +4718,32 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showTimelinePositioningOnPatterns) ...[
+                if (showTimelineProofMomentOnPatterns &&
+                    timelineProofMomentCandidate != null) ...[
+                  TimelineProofMomentCard(
+                    result: timelineProofMomentCandidate,
+                    source: 'patterns',
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showArchiveTimelineSpineOnPatterns &&
+                    archiveTimelineSpineCandidate != null) ...[
+                  ArchiveTimelineSpineCard(
+                    result: archiveTimelineSpineCandidate,
+                    source: 'patterns',
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showTimelinePositioningOnPatterns) ...[
                   TimelinePositioningCard(
                     result: timelinePositioningCandidate,
                     source: 'patterns',
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showCurrentRelevanceOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showCurrentRelevanceOnPatterns &&
                     currentRelevanceCandidate != null) ...[
                   CurrentRelevanceCard(
                     state: currentRelevanceCandidate,
@@ -4691,7 +4752,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showCorrectionMemoryOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showCorrectionMemoryOnPatterns &&
                     correctionMemoryCandidate != null) ...[
                   CorrectionMemoryCard(
                     result: correctionMemoryCandidate,
@@ -4699,7 +4761,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showEvidenceWeightingOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showEvidenceWeightingOnPatterns &&
                     evidenceWeightingCandidate != null) ...[
                   EvidenceWeightingCard(
                     result: evidenceWeightingCandidate,
@@ -4707,14 +4770,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showProofSpecificityOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showProofSpecificityOnPatterns &&
                     proofSpecificityCandidate.shouldShow) ...[
                   ProofSpecificityCard(
                     result: proofSpecificityCandidate,
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showPresentDayRelevanceOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showPresentDayRelevanceOnPatterns &&
                     presentDayRelevanceCandidate != null) ...[
                   PresentDayRelevanceCard(
                     result: presentDayRelevanceCandidate,
@@ -4722,7 +4787,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                if (showPatternConfidenceExplanationOnPatterns &&
+                if (!suppressLegacyEducationCardsForSpine &&
+                    showPatternConfidenceExplanationOnPatterns &&
                     patternConfidenceExplanationCandidate != null) ...[
                   PatternConfidenceCard(
                     result: patternConfidenceExplanationCandidate,

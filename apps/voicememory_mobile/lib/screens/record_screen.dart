@@ -298,8 +298,14 @@ import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/present_day_relevance_card.dart';
 import '../widgets/patterns/timeline_positioning_card.dart';
 import '../features/open_capture/open_capture_engine.dart';
+import '../features/low_friction_return/low_friction_return_engine.dart';
+import '../features/archive_timeline_spine/archive_timeline_spine_engine.dart';
+import '../features/timeline_proof_moment/timeline_proof_moment_engine.dart';
 import '../widgets/record/capture_freedom_line.dart';
 import '../widgets/record/open_capture_prompt_chips.dart';
+import '../widgets/record/low_friction_return_card.dart';
+import '../widgets/patterns/archive_timeline_spine_card.dart';
+import '../widgets/patterns/timeline_proof_moment_card.dart';
 import '../widgets/record/what_changed_v2_card.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
@@ -832,6 +838,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       ReturnDayFlowStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      LowFrictionReturnStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4984,10 +4995,80 @@ class _RecordScreenState extends State<RecordScreen> {
       isPermissionBlocked: ui == RecordUiState.permissionBlocked,
       entryCount: _journalEntryCount,
     );
+    final showLowFrictionReturnCard = LowFrictionReturnEngine.shouldShow(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      firstProofPayoffVisible:
+          showFirstProofPayoff && firstProofPayoffCandidate != null,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      isPermissionBlocked: ui == RecordUiState.permissionBlocked,
+      entryCount: _journalEntryCount,
+      entries: _journalEntries,
+      dismissedForToday: LowFrictionReturnStore.isDismissedToday,
+    );
+    final archiveTimelineSpineCandidate = _journalEntryCount >= 3
+        ? ArchiveTimelineSpineEngine.build(
+            entries: _journalEntries,
+            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+            source: 'record',
+          )
+        : null;
+    final showArchiveTimelineSpineOnRecord =
+        ui == RecordUiState.ready &&
+            ArchiveTimelineSpineEngine.shouldShowOnRecordReady(
+              result: archiveTimelineSpineCandidate,
+              isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+              isPostSaveDegradedState: false,
+              firstProofPayoffVisible:
+                  showFirstProofPayoff && firstProofPayoffCandidate != null,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+            );
+    final suppressLegacyEducationCardsForSpineOnRecord =
+        ArchiveTimelineSpineEngine.suppressLegacyEducationCards(
+      result: archiveTimelineSpineCandidate,
+      visible: showArchiveTimelineSpineOnRecord,
+    );
+    final timelineProofMomentCandidate =
+        archiveTimelineSpineCandidate != null
+            ? TimelineProofMomentEngine.buildFromSpine(
+                spine: archiveTimelineSpineCandidate,
+                entries: _journalEntries,
+                source: 'record',
+              )
+            : null;
+    final showTimelineProofMomentOnRecord =
+        TimelineProofMomentEngine.shouldShowOnRecordReady(
+      result: timelineProofMomentCandidate,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+    );
     final patternReviewInboxActivePostSave =
         ProofSpecificityEngine.patternReviewInboxHasActiveItems(
       entries: entriesAfterSave,
       returnChecks: RepeatReturnCheckStore.cached,
+    );
+    final timelineProofMomentPostSaveCandidate =
+        entriesAfterSave.length >= 3
+            ? TimelineProofMomentEngine.build(
+                entries: entriesAfterSave,
+                beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+                source: 'record_post_save',
+                compact: true,
+              )
+            : null;
+    final showTimelineProofMomentOnFirstProofPayoff =
+        TimelineProofMomentEngine.shouldShowOnFirstProofPayoffPostSave(
+      result: timelineProofMomentPostSaveCandidate,
+      showFirstProofPayoff: showFirstProofPayoff,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
     );
     final proofSpecificityPostSaveCandidate = entriesAfterSave.length >= 3
         ? ProofSpecificityEngine.build(
@@ -5703,6 +5784,23 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
+                    if (showLowFrictionReturnCard) ...[
+                      LowFrictionReturnCard(
+                        source: 'record',
+                        entryCount: _journalEntryCount,
+                        onSaveOneSentence: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onPromptSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     if (showCaptureFreedomLine) ...[
                       CaptureFreedomLine(
                         source: 'record',
@@ -5711,7 +5809,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showTimelinePositioningOnRecordReady) ...[
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showTimelinePositioningOnRecordReady) ...[
                       TimelinePositioningCard(
                         result: timelinePositioningCandidate,
                         source: 'record',
@@ -5892,7 +5991,24 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                       const SizedBox(height: 12),
                     ],
-                    if (showCurrentRelevanceOnRecordReady &&
+                    if (showTimelineProofMomentOnRecord &&
+                        timelineProofMomentCandidate != null) ...[
+                      TimelineProofMomentCard(
+                        result: timelineProofMomentCandidate,
+                        source: 'record',
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showArchiveTimelineSpineOnRecord &&
+                        archiveTimelineSpineCandidate != null) ...[
+                      ArchiveTimelineSpineCard(
+                        result: archiveTimelineSpineCandidate,
+                        source: 'record',
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showCurrentRelevanceOnRecordReady &&
                         currentRelevanceCandidate != null) ...[
                       CurrentRelevanceCard(
                         state: currentRelevanceCandidate,
@@ -5901,7 +6017,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showCorrectionMemoryOnRecordReady &&
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showCorrectionMemoryOnRecordReady &&
                         correctionMemoryCandidate != null) ...[
                       CorrectionMemoryCard(
                         result: correctionMemoryCandidate,
@@ -5909,7 +6026,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showEvidenceWeightingOnRecordReady &&
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showEvidenceWeightingOnRecordReady &&
                         evidenceWeightingCandidate != null) ...[
                       EvidenceWeightingCard(
                         result: evidenceWeightingCandidate,
@@ -5917,14 +6035,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showProofSpecificityOnRecordReady &&
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showProofSpecificityOnRecordReady &&
                         proofSpecificityCandidate.shouldShow) ...[
                       ProofSpecificityCard(
                         result: proofSpecificityCandidate,
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPresentDayRelevanceOnRecordReady &&
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showPresentDayRelevanceOnRecordReady &&
                         presentDayRelevanceCandidate != null) ...[
                       PresentDayRelevanceCard(
                         result: presentDayRelevanceCandidate,
@@ -5932,7 +6052,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPatternConfidenceExplanationOnRecordReady &&
+                    if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                        showPatternConfidenceExplanationOnRecordReady &&
                         patternConfidenceExplanationCandidate != null) ...[
                       PatternConfidenceCard(
                         result: patternConfidenceExplanationCandidate,
@@ -6838,6 +6959,14 @@ class _RecordScreenState extends State<RecordScreen> {
                                   firstProofPayoffCandidate.canShowPatternDetail
                                       ? _openFirstProofPatternDetail
                                       : null,
+                            ),
+                          ],
+                          if (showTimelineProofMomentOnFirstProofPayoff &&
+                              timelineProofMomentPostSaveCandidate != null) ...[
+                            const SizedBox(height: 12),
+                            TimelineProofMomentCard(
+                              result: timelineProofMomentPostSaveCandidate,
+                              source: 'record_post_save_first_proof',
                             ),
                           ],
                           if (showProofSpecificityOnFirstProofPayoff &&

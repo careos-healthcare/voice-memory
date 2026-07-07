@@ -7,6 +7,9 @@ import '../first_proof_truth/first_proof_truth_copy.dart';
 import '../belief_change/belief_change_moment_copy.dart';
 import '../what_changed/what_changed_v2_copy.dart';
 import '../pattern_confidence/pattern_confidence_copy.dart';
+import '../archive_timeline_spine/archive_timeline_spine_copy.dart';
+import '../timeline_proof_moment/timeline_proof_moment_copy.dart';
+import '../low_friction_return/low_friction_return_copy.dart';
 import '../pattern_lifecycle/pattern_lifecycle_copy.dart';
 import '../quiet_signal/quiet_signal_copy.dart';
 import '../contextual_privacy/contextual_privacy_copy.dart';
@@ -79,6 +82,9 @@ abstract final class ProofSurfaceAdviceGuard {
         ...BeliefChangeMomentCopy.allVisibleStrings(),
         ...WhatChangedV2Copy.allVisibleStrings(),
         ...PatternConfidenceCopy.allVisibleStrings(),
+        ...ArchiveTimelineSpineCopy.allVisibleStrings(),
+        ...TimelineProofMomentCopy.allVisibleStrings(),
+        ...LowFrictionReturnCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
         ...ContextualPrivacyCopy.allVisibleStrings(),
