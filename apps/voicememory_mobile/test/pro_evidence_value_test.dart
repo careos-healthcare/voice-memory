@@ -79,6 +79,7 @@ ProEvidenceValueContext _context({
   bool isPostSaveDegradedState = false,
   bool firstProofTruthQuestionActive = false,
   bool whatChangedQuestionActive = false,
+  bool currentRelevanceQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
 }) =>
     ProEvidenceValueContext(
@@ -98,6 +99,7 @@ ProEvidenceValueContext _context({
       isPostSaveDegradedState: isPostSaveDegradedState,
       firstProofTruthQuestionActive: firstProofTruthQuestionActive,
       whatChangedQuestionActive: whatChangedQuestionActive,
+      currentRelevanceQuestionActive: currentRelevanceQuestionActive,
       patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
       exportReportsLive: true,
     );
@@ -209,6 +211,7 @@ void main() {
             isPostSaveDegradedState: false,
             firstProofTruthQuestionActive: false,
             whatChangedQuestionActive: false,
+            currentRelevanceQuestionActive: false,
             patternReviewInboxHasActiveItems: false,
             exportReportsLive: true,
           ),

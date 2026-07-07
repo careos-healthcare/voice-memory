@@ -63,6 +63,7 @@ class ProEvidenceValueContext {
     required this.isPostSaveDegradedState,
     required this.firstProofTruthQuestionActive,
     required this.whatChangedQuestionActive,
+    required this.currentRelevanceQuestionActive,
     required this.patternReviewInboxHasActiveItems,
     required this.exportReportsLive,
   });
@@ -81,6 +82,7 @@ class ProEvidenceValueContext {
   final bool isPostSaveDegradedState;
   final bool firstProofTruthQuestionActive;
   final bool whatChangedQuestionActive;
+  final bool currentRelevanceQuestionActive;
   final bool patternReviewInboxHasActiveItems;
   final bool exportReportsLive;
 }

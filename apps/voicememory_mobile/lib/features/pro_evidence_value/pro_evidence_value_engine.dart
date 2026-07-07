@@ -49,6 +49,7 @@ abstract final class ProEvidenceValueEngine {
     bool isPostSaveDegradedState = false,
     bool firstProofTruthQuestionActive = false,
     bool whatChangedQuestionActive = false,
+    bool currentRelevanceQuestionActive = false,
     bool firstProofPayoffVisible = false,
     bool privateReportPreviewVisible = false,
     bool weeklyReviewPreviewVisible = false,
@@ -70,6 +71,7 @@ abstract final class ProEvidenceValueEngine {
       isPostSaveDegradedState: isPostSaveDegradedState,
       firstProofTruthQuestionActive: firstProofTruthQuestionActive,
       whatChangedQuestionActive: whatChangedQuestionActive,
+      currentRelevanceQuestionActive: currentRelevanceQuestionActive,
       patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems(
         entries: entries,
         returnChecks: returnChecks,
@@ -132,6 +134,7 @@ abstract final class ProEvidenceValueEngine {
     if (context.isPostSaveDegradedState) return true;
     if (context.firstProofTruthQuestionActive) return true;
     if (context.whatChangedQuestionActive) return true;
+    if (context.currentRelevanceQuestionActive) return true;
     if (context.patternReviewInboxHasActiveItems) return true;
     return false;
   }

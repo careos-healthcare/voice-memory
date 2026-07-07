@@ -1206,6 +1206,7 @@ void main() {
               isPostSaveDegradedState: false,
               firstProofTruthQuestionActive: false,
               whatChangedQuestionActive: false,
+              currentRelevanceQuestionActive: false,
               patternReviewInboxHasActiveItems: false,
               exportReportsLive: true,
             ),
