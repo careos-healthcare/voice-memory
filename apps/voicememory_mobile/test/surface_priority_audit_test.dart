@@ -43,6 +43,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -88,6 +89,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -124,6 +126,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -164,6 +167,7 @@ void main() {
           currentRelevance: true,
           correctionMemory: true,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: true,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -221,6 +225,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -264,6 +269,7 @@ void main() {
           currentRelevance: true,
           correctionMemory: true,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: true,
           proofSpecificity: true,
           presentDayRelevance: true,
@@ -304,6 +310,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,
@@ -431,6 +438,7 @@ void main() {
           betaTesterReport: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           patternConfidence: false,
           evidenceWeighting: false,
           currentRelevance: false,
@@ -469,6 +477,7 @@ void main() {
           betaTesterReport: true,
           correctionMemory: true,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           patternConfidence: true,
           evidenceWeighting: true,
           currentRelevance: true,
@@ -507,6 +516,7 @@ void main() {
           betaTesterReport: true,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           patternConfidence: false,
           evidenceWeighting: false,
           currentRelevance: false,
@@ -542,6 +552,7 @@ void main() {
           betaTesterReport: false,
           correctionMemory: true,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           patternConfidence: true,
           evidenceWeighting: true,
           currentRelevance: true,
@@ -568,6 +579,54 @@ void main() {
       expect(result.visibleCardKeys, contains(
         SurfacePriorityCardKey.correctionMemory,
       ));
+    });
+
+    test('proof quality response wins correction slot over not relevant recovery',
+        () {
+      final result = SurfacePriorityEngine.auditRecordReady(
+        entryCount: 4,
+        source: 'test',
+        candidates: SurfacePriorityCandidates.recordReady(
+          firstMomentCapture: false,
+          secondMomentReturn: false,
+          lowFrictionReturn: false,
+          whatToNoticeNext: false,
+          betaTodaySummary: false,
+          openCapturePromptChips: false,
+          captureFreedomLine: false,
+          timelineProofMoment: true,
+          archiveTimelineSpine: false,
+          timelinePositioning: false,
+          currentRelevance: false,
+          correctionMemory: false,
+          notRelevantRecovery: true,
+          proofQualityResponse: true,
+          evidenceWeighting: false,
+          proofSpecificity: false,
+          presentDayRelevance: false,
+          patternConfidence: false,
+          betaTesterReport: false,
+          proEvidenceValue: false,
+          privateReportProBridge: false,
+          suppressLegacyEducation: false,
+        ),
+      );
+
+      expect(result.correctionSlot, SurfacePriorityCardKey.proofQualityResponse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.proofQualityResponse,
+          candidate: true,
+        ),
+        isTrue,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.notRelevantRecovery,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 
@@ -615,6 +674,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,

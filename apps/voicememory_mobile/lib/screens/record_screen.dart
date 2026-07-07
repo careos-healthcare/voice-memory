@@ -290,6 +290,8 @@ import '../features/proof_specificity/proof_specificity_engine.dart';
 import '../features/proof_specificity_boost/proof_specificity_boost_engine.dart';
 import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
 import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
+import '../features/proof_quality_response/proof_quality_response_engine.dart';
+import '../features/proof_quality_response/proof_quality_response_model.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
@@ -298,6 +300,7 @@ import '../widgets/patterns/evidence_weighting_card.dart';
 import '../widgets/patterns/proof_specificity_card.dart';
 import '../widgets/patterns/proof_specificity_boost_card.dart';
 import '../widgets/patterns/not_relevant_recovery_card.dart';
+import '../widgets/patterns/proof_quality_response_card.dart';
 import '../features/pattern_confidence/pattern_confidence_engine.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/present_day_relevance_card.dart';
@@ -5169,6 +5172,33 @@ class _RecordScreenState extends State<RecordScreen> {
       entries: _journalEntries,
       source: 'record',
     );
+    final proofQualityResponseTimelineCandidate =
+        ProofQualityResponseEngine.build(
+      entries: _journalEntries,
+      surface: ProofQualityResponseSurface.timelineProofMoment,
+      source: 'record',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final proofQualityResponseSpineCandidate = ProofQualityResponseEngine.build(
+      entries: _journalEntries,
+      surface: ProofQualityResponseSurface.archiveTimelineSpine,
+      source: 'record',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    var showProofQualityResponseOnRecordReady = ui == RecordUiState.ready &&
+        proofQualityResponseTimelineCandidate.shouldShow &&
+        ProofQualityResponseEngine.shouldRender(
+          result: proofQualityResponseTimelineCandidate,
+          parentVisible: true,
+          timelineProofVisible: showTimelineProofMomentOnRecord &&
+              timelineProofMomentCandidate != null,
+          firstProofPayoffVisible: false,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+          isPostSaveDegradedState: false,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        );
     var showNotRelevantRecoveryOnRecordReady = ui == RecordUiState.ready &&
         notRelevantRecoveryCandidate.shouldShow &&
         NotRelevantRecoveryEngine.shouldRender(
@@ -5204,6 +5234,8 @@ class _RecordScreenState extends State<RecordScreen> {
               correctionMemoryCandidate != null,
           notRelevantRecovery: showNotRelevantRecoveryOnRecordReady &&
               notRelevantRecoveryCandidate.shouldShow,
+          proofQualityResponse: showProofQualityResponseOnRecordReady &&
+              proofQualityResponseTimelineCandidate.shouldShow,
           evidenceWeighting: showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
           proofSpecificity: showProofSpecificityOnRecordReady &&
@@ -5278,6 +5310,11 @@ class _RecordScreenState extends State<RecordScreen> {
         candidate: showNotRelevantRecoveryOnRecordReady &&
             notRelevantRecoveryCandidate.shouldShow,
       );
+      showProofQualityResponseOnRecordReady = audit.isVisible(
+        SurfacePriorityCardKey.proofQualityResponse,
+        candidate: showProofQualityResponseOnRecordReady &&
+            proofQualityResponseTimelineCandidate.shouldShow,
+      );
       showEvidenceWeightingOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.evidenceWeighting,
         candidate: showEvidenceWeightingOnRecordReady &&
@@ -5332,7 +5369,36 @@ class _RecordScreenState extends State<RecordScreen> {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    final showNotRelevantRecoveryUnderTimelineProof =
+    var showProofQualityResponseUnderTimelineProof =
+        showTimelineProofMomentOnRecord &&
+            timelineProofMomentCandidate != null &&
+            ProofQualityResponseEngine.shouldRender(
+              result: proofQualityResponseTimelineCandidate,
+              parentVisible: true,
+              timelineProofVisible: true,
+              firstProofPayoffVisible: false,
+              isRecording: ui == RecordUiState.recording,
+              isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+            );
+    var showProofQualityResponseUnderArchiveSpine =
+        showArchiveTimelineSpineOnRecord &&
+            archiveTimelineSpineCandidate != null &&
+            !showProofQualityResponseUnderTimelineProof &&
+            ProofQualityResponseEngine.shouldRender(
+              result: proofQualityResponseSpineCandidate,
+              parentVisible: true,
+              timelineProofVisible: false,
+              firstProofPayoffVisible: false,
+              isRecording: ui == RecordUiState.recording,
+              isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+            );
+    var showNotRelevantRecoveryUnderTimelineProof =
         showTimelineProofMomentOnRecord &&
             timelineProofMomentCandidate != null &&
             NotRelevantRecoveryEngine.shouldRender(
@@ -5346,6 +5412,48 @@ class _RecordScreenState extends State<RecordScreen> {
             );
     if (showNotRelevantRecoveryUnderTimelineProof) {
       showNotRelevantRecoveryOnRecordReady = false;
+    }
+    if (showProofQualityResponseUnderTimelineProof ||
+        showProofQualityResponseUnderArchiveSpine) {
+      showProofQualityResponseOnRecordReady = false;
+      if (ProofQualityResponseEngine.coversLegacyBoost(
+        result: proofQualityResponseTimelineCandidate,
+        parentVisible: true,
+        timelineProofVisible: showProofQualityResponseUnderTimelineProof,
+        firstProofPayoffVisible: false,
+        isRecording: ui == RecordUiState.recording,
+        isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+        isPostSaveDegradedState: false,
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      )) {
+        showProofSpecificityBoostOnTimelineProof = false;
+      }
+      if (ProofQualityResponseEngine.coversLegacyNotRelevant(
+        result: proofQualityResponseTimelineCandidate,
+        parentVisible: true,
+        timelineProofVisible: showProofQualityResponseUnderTimelineProof,
+        firstProofPayoffVisible: false,
+        isRecording: ui == RecordUiState.recording,
+        isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+        isPostSaveDegradedState: false,
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      ) ||
+          ProofQualityResponseEngine.coversLegacyNotRelevant(
+            result: proofQualityResponseSpineCandidate,
+            parentVisible: true,
+            timelineProofVisible: false,
+            firstProofPayoffVisible: false,
+            isRecording: ui == RecordUiState.recording,
+            isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+            isPostSaveDegradedState: false,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+          )) {
+        showNotRelevantRecoveryUnderTimelineProof = false;
+        showNotRelevantRecoveryOnRecordReady = false;
+      }
     }
     final patternReviewInboxActivePostSave =
         ProofSpecificityEngine.patternReviewInboxHasActiveItems(
@@ -5397,6 +5505,20 @@ class _RecordScreenState extends State<RecordScreen> {
       source: 'record_post_save',
       beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
     );
+    final proofQualityResponseFirstProofCandidate =
+        ProofQualityResponseEngine.build(
+      entries: entriesAfterSave,
+      surface: ProofQualityResponseSurface.firstProofPayoff,
+      source: 'record_post_save',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final proofQualityResponseTimelinePostSaveCandidate =
+        ProofQualityResponseEngine.build(
+      entries: entriesAfterSave,
+      surface: ProofQualityResponseSurface.timelineProofMoment,
+      source: 'record_post_save',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
     final firstProofPayoffParentVisible =
         showFirstProofPayoff && firstProofPayoffCandidate != null;
     var showProofSpecificityBoostOnFirstProofPayoff = ui == RecordUiState.done &&
@@ -5412,6 +5534,32 @@ class _RecordScreenState extends State<RecordScreen> {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
         );
+    var showProofQualityResponseOnFirstProofPayoff = ui == RecordUiState.done &&
+        ProofQualityResponseEngine.shouldRender(
+          result: proofQualityResponseFirstProofCandidate,
+          parentVisible: firstProofPayoffParentVisible,
+          timelineProofVisible: false,
+          firstProofPayoffVisible: firstProofPayoffParentVisible,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        );
+    if (showProofQualityResponseOnFirstProofPayoff &&
+        ProofQualityResponseEngine.coversLegacyBoost(
+          result: proofQualityResponseFirstProofCandidate,
+          parentVisible: firstProofPayoffParentVisible,
+          timelineProofVisible: false,
+          firstProofPayoffVisible: firstProofPayoffParentVisible,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        )) {
+      showProofSpecificityBoostOnFirstProofPayoff = false;
+    }
     final timelineProofPostSaveParentVisible =
         showTimelineProofMomentOnFirstProofPayoff &&
             timelineProofMomentPostSaveCandidate != null;
@@ -5429,6 +5577,33 @@ class _RecordScreenState extends State<RecordScreen> {
               whatChangedQuestionActive: showWhatChangedV2,
               patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
             );
+    var showProofQualityResponseOnTimelineProofPostSave =
+        ui == RecordUiState.done &&
+            ProofQualityResponseEngine.shouldRender(
+              result: proofQualityResponseTimelinePostSaveCandidate,
+              parentVisible: timelineProofPostSaveParentVisible,
+              timelineProofVisible: timelineProofPostSaveParentVisible,
+              firstProofPayoffVisible: false,
+              isRecording: ui == RecordUiState.recording,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: postSaveDegraded,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            );
+    if (showProofQualityResponseOnTimelineProofPostSave &&
+        ProofQualityResponseEngine.coversLegacyBoost(
+          result: proofQualityResponseTimelinePostSaveCandidate,
+          parentVisible: timelineProofPostSaveParentVisible,
+          timelineProofVisible: timelineProofPostSaveParentVisible,
+          firstProofPayoffVisible: false,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        )) {
+      showProofSpecificityBoostOnTimelineProofPostSave = false;
+    }
     var showProEvidenceValuePostSave = ui == RecordUiState.done &&
         entriesAfterSave.isNotEmpty &&
         showFirstProofPayoff &&
@@ -6469,30 +6644,39 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                         onChanged: () => setState(() {}),
                       ),
-                      if (showNotRelevantRecoveryUnderTimelineProof) ...[
+                      if (showProofQualityResponseUnderTimelineProof) ...[
                         const SizedBox(height: 12),
-                        NotRelevantRecoveryCard(
-                          result: notRelevantRecoveryCandidate,
+                        ProofQualityResponseCard(
+                          result: proofQualityResponseTimelineCandidate,
                           source: 'record',
                           onChanged: () => setState(() {}),
                         ),
-                      ],
-                      if (showProofSpecificityBoostOnTimelineProof) ...[
-                        const SizedBox(height: 12),
-                        ProofSpecificityBoostCard(
-                          result: proofSpecificityBoostCandidate,
-                          surface:
-                              ProofSpecificityBoostSurface.timelineProofMoment,
-                          source: 'record',
-                          hasConfirmedRepeat:
-                              EarlyFirstSignalEngine
-                                  .hasConfirmedRepeatFoundation(
-                            _journalEntries,
+                      ] else ...[
+                        if (showNotRelevantRecoveryUnderTimelineProof) ...[
+                          const SizedBox(height: 12),
+                          NotRelevantRecoveryCard(
+                            result: notRelevantRecoveryCandidate,
+                            source: 'record',
+                            onChanged: () => setState(() {}),
                           ),
-                          proofKey:
-                              CurrentRelevanceStore.proofKeyFor(_journalEntries),
-                          onChanged: () => setState(() {}),
-                        ),
+                        ],
+                        if (showProofSpecificityBoostOnTimelineProof) ...[
+                          const SizedBox(height: 12),
+                          ProofSpecificityBoostCard(
+                            result: proofSpecificityBoostCandidate,
+                            surface:
+                                ProofSpecificityBoostSurface.timelineProofMoment,
+                            source: 'record',
+                            hasConfirmedRepeat:
+                                EarlyFirstSignalEngine
+                                    .hasConfirmedRepeatFoundation(
+                              _journalEntries,
+                            ),
+                            proofKey:
+                                CurrentRelevanceStore.proofKeyFor(_journalEntries),
+                            onChanged: () => setState(() {}),
+                          ),
+                        ],
                       ],
                       const SizedBox(height: 12),
                     ],
@@ -6523,6 +6707,14 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                         onChanged: () => setState(() {}),
                       ),
+                      if (showProofQualityResponseUnderArchiveSpine) ...[
+                        const SizedBox(height: 12),
+                        ProofQualityResponseCard(
+                          result: proofQualityResponseSpineCandidate,
+                          source: 'record',
+                          onChanged: () => setState(() {}),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                     ],
                     if (showBetaTesterReportOnRecord) ...[
@@ -6550,7 +6742,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showNotRelevantRecoveryOnRecordReady &&
+                    if (showProofQualityResponseOnRecordReady &&
+                        !showProofQualityResponseUnderTimelineProof &&
+                        !showProofQualityResponseUnderArchiveSpine &&
+                        proofQualityResponseTimelineCandidate.shouldShow) ...[
+                      ProofQualityResponseCard(
+                        result: proofQualityResponseTimelineCandidate,
+                        source: 'record',
+                        onChanged: () => setState(() {}),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showNotRelevantRecoveryOnRecordReady &&
                         !showNotRelevantRecoveryUnderTimelineProof &&
                         notRelevantRecoveryCandidate.shouldShow) ...[
                       NotRelevantRecoveryCard(
@@ -7565,7 +7767,14 @@ class _RecordScreenState extends State<RecordScreen> {
                                     patternReviewInboxActivePostSave,
                                 onChanged: () => setState(() {}),
                               ),
-                            if (showProofSpecificityBoostOnFirstProofPayoff) ...[
+                            if (showProofQualityResponseOnFirstProofPayoff) ...[
+                              const SizedBox(height: 12),
+                              ProofQualityResponseCard(
+                                result: proofQualityResponseFirstProofCandidate,
+                                source: 'record_post_save',
+                                onChanged: () => setState(() {}),
+                              ),
+                            ] else if (showProofSpecificityBoostOnFirstProofPayoff) ...[
                               const SizedBox(height: 12),
                               ProofSpecificityBoostCard(
                                 result: proofSpecificityBoostPostSaveCandidate,
@@ -7632,7 +7841,15 @@ class _RecordScreenState extends State<RecordScreen> {
                                     patternReviewInboxActivePostSave,
                                 onChanged: () => setState(() {}),
                               ),
-                            if (showProofSpecificityBoostOnTimelineProofPostSave) ...[
+                            if (showProofQualityResponseOnTimelineProofPostSave) ...[
+                              const SizedBox(height: 12),
+                              ProofQualityResponseCard(
+                                result:
+                                    proofQualityResponseTimelinePostSaveCandidate,
+                                source: 'record_post_save_first_proof',
+                                onChanged: () => setState(() {}),
+                              ),
+                            ] else if (showProofSpecificityBoostOnTimelineProofPostSave) ...[
                               const SizedBox(height: 12),
                               ProofSpecificityBoostCard(
                                 result: proofSpecificityBoostPostSaveCandidate,

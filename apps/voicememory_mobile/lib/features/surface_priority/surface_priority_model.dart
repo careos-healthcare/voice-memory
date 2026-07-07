@@ -23,6 +23,7 @@ enum SurfacePriorityCardKey {
   currentRelevance,
   correctionMemory,
   notRelevantRecovery,
+  proofQualityResponse,
   evidenceWeighting,
   proofSpecificity,
   presentDayRelevance,
@@ -65,6 +66,7 @@ class SurfacePriorityCandidates {
     required bool currentRelevance,
     required bool correctionMemory,
     required bool notRelevantRecovery,
+    required bool proofQualityResponse,
     required bool evidenceWeighting,
     required bool proofSpecificity,
     required bool presentDayRelevance,
@@ -91,6 +93,7 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.correctionMemory:
             correctionMemory && !suppressLegacyEducation,
         SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
+        SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
         SurfacePriorityCardKey.evidenceWeighting:
             evidenceWeighting && !suppressLegacyEducation,
         SurfacePriorityCardKey.proofSpecificity:
@@ -146,6 +149,7 @@ class SurfacePriorityCandidates {
     required bool betaTesterReport,
     required bool correctionMemory,
     required bool notRelevantRecovery,
+    required bool proofQualityResponse,
     required bool patternConfidence,
     required bool evidenceWeighting,
     required bool currentRelevance,
@@ -166,6 +170,7 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.correctionMemory:
             correctionMemory && !suppressLegacyEducation,
         SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
+        SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
         SurfacePriorityCardKey.patternConfidence:
             patternConfidence && !suppressLegacyEducation,
         SurfacePriorityCardKey.evidenceWeighting:

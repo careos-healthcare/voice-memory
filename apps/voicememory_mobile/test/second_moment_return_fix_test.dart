@@ -444,6 +444,7 @@ void main() {
           currentRelevance: false,
           correctionMemory: false,
           notRelevantRecovery: false,
+          proofQualityResponse: false,
           evidenceWeighting: false,
           proofSpecificity: false,
           presentDayRelevance: false,

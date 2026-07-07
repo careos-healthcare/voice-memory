@@ -328,6 +328,8 @@ import '../features/proof_specificity/proof_specificity_engine.dart';
 import '../features/proof_specificity_boost/proof_specificity_boost_engine.dart';
 import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
 import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
+import '../features/proof_quality_response/proof_quality_response_engine.dart';
+import '../features/proof_quality_response/proof_quality_response_model.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
@@ -336,6 +338,7 @@ import '../widgets/patterns/evidence_weighting_card.dart';
 import '../widgets/patterns/proof_specificity_card.dart';
 import '../widgets/patterns/proof_specificity_boost_card.dart';
 import '../widgets/patterns/not_relevant_recovery_card.dart';
+import '../widgets/patterns/proof_quality_response_card.dart';
 import '../widgets/patterns/pattern_confidence_card.dart';
 import '../widgets/patterns/archive_timeline_spine_card.dart';
 import '../widgets/patterns/timeline_proof_moment_card.dart';
@@ -4288,6 +4291,38 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         source: 'patterns',
       );
+      final proofQualityResponsePatternsCandidate =
+          ProofQualityResponseEngine.build(
+        entries: _entries,
+        surface: ProofQualityResponseSurface.patterns,
+        source: 'patterns',
+        beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+      );
+      final proofQualityResponseSpineCandidate =
+          ProofQualityResponseEngine.build(
+        entries: _entries,
+        surface: ProofQualityResponseSurface.archiveTimelineSpine,
+        source: 'patterns',
+        beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+      );
+      var showProofQualityResponseOnPatterns =
+          proofQualityResponsePatternsCandidate.shouldShow &&
+              ProofQualityResponseEngine.shouldRender(
+                result: proofQualityResponsePatternsCandidate,
+                parentVisible: (showTimelineProofMomentOnPatterns &&
+                        timelineProofMomentCandidate != null) ||
+                    (showArchiveTimelineSpineOnPatterns &&
+                        archiveTimelineSpineCandidate != null),
+                timelineProofVisible: showTimelineProofMomentOnPatterns &&
+                    timelineProofMomentCandidate != null,
+                firstProofPayoffVisible: false,
+                isRecording: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                whatChangedQuestionActive: false,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActiveOnPatterns,
+              );
       var showNotRelevantRecoveryOnPatterns =
           notRelevantRecoveryCandidate.shouldShow &&
               NotRelevantRecoveryEngine.shouldRender(
@@ -4679,6 +4714,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           correctionMemory: showCorrectionMemoryOnPatterns &&
               correctionMemoryCandidate != null,
           notRelevantRecovery: showNotRelevantRecoveryOnPatterns,
+          proofQualityResponse: showProofQualityResponseOnPatterns &&
+              (proofQualityResponsePatternsCandidate.shouldShow ||
+                  proofQualityResponseSpineCandidate.shouldShow),
           patternConfidence: showPatternConfidenceExplanationOnPatterns &&
               patternConfidenceExplanationCandidate != null,
           evidenceWeighting: showEvidenceWeightingOnPatterns &&
@@ -4721,6 +4759,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       showNotRelevantRecoveryOnPatterns = patternsAudit.isVisible(
         SurfacePriorityCardKey.notRelevantRecovery,
         candidate: showNotRelevantRecoveryOnPatterns,
+      );
+      showProofQualityResponseOnPatterns = patternsAudit.isVisible(
+        SurfacePriorityCardKey.proofQualityResponse,
+        candidate: showProofQualityResponseOnPatterns,
       );
       showPatternConfidenceExplanationOnPatterns = patternsAudit.isVisible(
         SurfacePriorityCardKey.patternConfidence,
@@ -4779,7 +4821,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       final timelineProofPatternsParentVisible =
           showTimelineProofMomentOnPatterns &&
               timelineProofMomentCandidate != null;
-      final showProofSpecificityBoostOnPatterns =
+      var showProofSpecificityBoostOnPatterns =
           ProofSpecificityBoostEngine.shouldRender(
         result: proofSpecificityBoostPatternsCandidate,
         surface: ProofSpecificityBoostSurface.patterns,
@@ -4792,6 +4834,81 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         whatChangedQuestionActive: false,
         patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
       );
+      var showProofQualityResponseUnderTimelineProof =
+          showTimelineProofMomentOnPatterns &&
+              timelineProofMomentCandidate != null &&
+              showProofQualityResponseOnPatterns &&
+              ProofQualityResponseEngine.shouldRender(
+                result: proofQualityResponsePatternsCandidate,
+                parentVisible: true,
+                timelineProofVisible: true,
+                firstProofPayoffVisible: false,
+                isRecording: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                whatChangedQuestionActive: false,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActiveOnPatterns,
+              );
+      var showProofQualityResponseUnderArchiveSpine =
+          showArchiveTimelineSpineOnPatterns &&
+              archiveTimelineSpineCandidate != null &&
+              showProofQualityResponseOnPatterns &&
+              !showProofQualityResponseUnderTimelineProof &&
+              ProofQualityResponseEngine.shouldRender(
+                result: proofQualityResponseSpineCandidate,
+                parentVisible: true,
+                timelineProofVisible: false,
+                firstProofPayoffVisible: false,
+                isRecording: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                whatChangedQuestionActive: false,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActiveOnPatterns,
+              );
+      if (showProofQualityResponseUnderTimelineProof ||
+          showProofQualityResponseUnderArchiveSpine) {
+        if (ProofQualityResponseEngine.coversLegacyBoost(
+          result: proofQualityResponsePatternsCandidate,
+          parentVisible: true,
+          timelineProofVisible: showProofQualityResponseUnderTimelineProof,
+          firstProofPayoffVisible: false,
+          isRecording: false,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: false,
+          whatChangedQuestionActive: false,
+          patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+        )) {
+          showProofSpecificityBoostOnPatterns = false;
+        }
+        if (ProofQualityResponseEngine.coversLegacyNotRelevant(
+              result: proofQualityResponsePatternsCandidate,
+              parentVisible: true,
+              timelineProofVisible: showProofQualityResponseUnderTimelineProof,
+              firstProofPayoffVisible: false,
+              isRecording: false,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems:
+                  patternReviewInboxActiveOnPatterns,
+            ) ||
+            ProofQualityResponseEngine.coversLegacyNotRelevant(
+              result: proofQualityResponseSpineCandidate,
+              parentVisible: true,
+              timelineProofVisible: false,
+              firstProofPayoffVisible: false,
+              isRecording: false,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems:
+                  patternReviewInboxActiveOnPatterns,
+            )) {
+          showNotRelevantRecoveryOnPatterns = false;
+        }
+      }
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -4927,27 +5044,36 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onChanged: () => setState(() {}),
                   ),
-                  if (showNotRelevantRecoveryOnPatterns) ...[
+                  if (showProofQualityResponseUnderTimelineProof) ...[
                     SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
-                    NotRelevantRecoveryCard(
-                      result: notRelevantRecoveryCandidate,
+                    ProofQualityResponseCard(
+                      result: proofQualityResponsePatternsCandidate,
                       source: 'patterns',
                       onChanged: () => setState(() {}),
                     ),
-                  ],
-                  if (showProofSpecificityBoostOnPatterns) ...[
-                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
-                    ProofSpecificityBoostCard(
-                      result: proofSpecificityBoostPatternsCandidate,
-                      surface: ProofSpecificityBoostSurface.patterns,
-                      source: 'patterns',
-                      hasConfirmedRepeat:
-                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                        _entries,
+                  ] else ...[
+                    if (showNotRelevantRecoveryOnPatterns) ...[
+                      SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                      NotRelevantRecoveryCard(
+                        result: notRelevantRecoveryCandidate,
+                        source: 'patterns',
+                        onChanged: () => setState(() {}),
                       ),
-                      proofKey: CurrentRelevanceStore.proofKeyFor(_entries),
-                      onChanged: () => setState(() {}),
-                    ),
+                    ],
+                    if (showProofSpecificityBoostOnPatterns) ...[
+                      SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                      ProofSpecificityBoostCard(
+                        result: proofSpecificityBoostPatternsCandidate,
+                        surface: ProofSpecificityBoostSurface.patterns,
+                        source: 'patterns',
+                        hasConfirmedRepeat:
+                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                          _entries,
+                        ),
+                        proofKey: CurrentRelevanceStore.proofKeyFor(_entries),
+                        onChanged: () => setState(() {}),
+                      ),
+                    ],
                   ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
@@ -4978,7 +5104,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onChanged: () => setState(() {}),
                   ),
-                  if (showNotRelevantRecoveryOnPatterns &&
+                  if (showProofQualityResponseUnderArchiveSpine) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    ProofQualityResponseCard(
+                      result: proofQualityResponseSpineCandidate,
+                      source: 'patterns',
+                      onChanged: () => setState(() {}),
+                    ),
+                  ] else if (showNotRelevantRecoveryOnPatterns &&
                       !showTimelineProofMomentOnPatterns) ...[
                     SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                     NotRelevantRecoveryCard(

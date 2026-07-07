@@ -29,12 +29,14 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordCorrectionOrder = [
+    SurfacePriorityCardKey.proofQualityResponse,
     SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.currentRelevance,
     SurfacePriorityCardKey.correctionMemory,
   ];
 
   static const _patternsDetailOrder = [
+    SurfacePriorityCardKey.proofQualityResponse,
     SurfacePriorityCardKey.notRelevantRecovery,
     SurfacePriorityCardKey.correctionMemory,
     SurfacePriorityCardKey.patternConfidence,
@@ -360,6 +362,7 @@ abstract final class SurfacePriorityEngine {
           : visible.contains(SurfacePriorityCardKey.archiveTimelineSpine)
               ? SurfacePriorityCardKey.archiveTimelineSpine
               : null,
+      correctionSlot: detailSlot,
       reportSlot: visible.contains(SurfacePriorityCardKey.betaTesterReport)
           ? SurfacePriorityCardKey.betaTesterReport
           : null,
@@ -439,6 +442,7 @@ abstract final class SurfacePriorityEngine {
         currentRelevance: false,
         correctionMemory: false,
         notRelevantRecovery: false,
+        proofQualityResponse: false,
         evidenceWeighting: false,
         proofSpecificity: false,
         presentDayRelevance: false,

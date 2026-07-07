@@ -18,6 +18,7 @@ import '../second_moment_return/second_moment_return_copy.dart';
 import '../surface_priority/surface_priority_copy.dart';
 import '../proof_specificity_boost/proof_specificity_boost_copy.dart';
 import '../not_relevant_recovery/not_relevant_recovery_copy.dart';
+import '../proof_quality_response/proof_quality_response_copy.dart';
 import '../what_to_notice_next/what_to_notice_next_copy.dart';
 import '../pattern_lifecycle/pattern_lifecycle_copy.dart';
 import '../quiet_signal/quiet_signal_copy.dart';
@@ -103,6 +104,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...SurfacePriorityCopy.allVisibleStrings(),
         ...ProofSpecificityBoostCopy.all,
         ...NotRelevantRecoveryCopy.allVisibleStrings,
+        ...ProofQualityResponseCopy.allVisibleStrings,
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
         ...ContextualPrivacyCopy.allVisibleStrings(),
