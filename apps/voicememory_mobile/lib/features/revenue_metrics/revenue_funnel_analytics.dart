@@ -12,7 +12,10 @@ abstract final class RevenueFunnelAnalytics {
 
   @visibleForTesting
   static List<({RevenueFunnelEvent event, Map<String, Object> metadata})>
-      get eventsForTest => List.unmodifiable(_events);
+      get eventsForTest => recordedEvents;
+
+  static List<({RevenueFunnelEvent event, Map<String, Object> metadata})>
+      get recordedEvents => List.unmodifiable(_events);
 
   static RevenueFunnelSnapshot debugSummary() =>
       RevenueFunnelSnapshot.fromEvents(_events);
@@ -123,6 +126,33 @@ abstract final class RevenueFunnelAnalytics {
       surface: surface ?? source,
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasReportPreview: hasReportPreview,
+    );
+  }
+
+  static void proEvidenceValueSeen({
+    required int entryCount,
+    required String source,
+    String? surface,
+  }) {
+    _track(
+      RevenueFunnelEvent.proEvidenceValueSeen,
+      entryCount: entryCount,
+      source: source,
+      surface: surface ?? _surfaceFromSource(source),
+    );
+  }
+
+  static void proEvidenceValueCtaTapped({
+    required int entryCount,
+    required String source,
+    String? surface,
+    String? actionType,
+  }) {
+    _track(
+      RevenueFunnelEvent.proEvidenceValueCtaTapped,
+      entryCount: entryCount,
+      source: source,
+      surface: surface ?? _surfaceFromSource(source),
     );
   }
 
