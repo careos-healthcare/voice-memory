@@ -6,8 +6,9 @@ Commercial wedge sharpening before RevenueCat setup. See [CAPACITY_YES_100K_WEDG
 
 | Field | Copy |
 | --- | --- |
-| **Umbrella** | A private mind map of what keeps repeating in your life. |
-| **Product promise** | Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch. |
+| **Umbrella** | See what keeps returning |
+| **Subheadline** | No daily journal required. |
+| **Product promise** | Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. |
 | **First guided path** | Start with one pattern — saying yes when you have no capacity. |
 | **Capacity wedge** | Catch the yes before it costs you. |
 | **Capture timing** | Before / after / later — users do not need to open ArchiveMe before every decision. |
@@ -39,7 +40,7 @@ Notes app, voice memos, scattered journals — moments saved but not compared ac
 
 ## Why ArchiveMe is different
 
-Compares saved moments over time: what repeated, what changed, what to watch next — cautious evidence, not generic advice or task management.
+Compares saved moments over time: what returned, what changed, what to watch next — cautious evidence, not generic advice or task management.
 
 ## First 10 seconds
 

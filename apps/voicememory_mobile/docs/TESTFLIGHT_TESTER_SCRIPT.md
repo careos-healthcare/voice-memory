@@ -6,7 +6,7 @@ Short script for internal testers. Aim for **10 minutes** on a physical iPhone w
 
 ## What ArchiveMe is (one sentence)
 
-**ArchiveMe is a private archive that watches what keeps repeating in your own words and, over time, shows what changed and what may have helped.**
+**ArchiveMe is a private timeline built from small moments you save in your own words — over time it shows what returned, what changed, and what may have helped.**
 
 ---
 

@@ -10,7 +10,7 @@ Support materials for TestFlight testers and internal QA **while waiting for Tra
 | --- | --- | --- |
 | [BETA_RELEASE_STATUS.md](./BETA_RELEASE_STATUS.md) | Team | Current state, priorities, what not to change |
 | [TESTFLIGHT_NOTES.md](./TESTFLIGHT_NOTES.md) | Testers + App Store Connect | What to test, feedback channel, privacy & safety |
-| [THREE_DAY_TEST_SCRIPT.md](./THREE_DAY_TEST_SCRIPT.md) | Testers | Day 1–3 script (one moment per day) |
+| [THREE_DAY_TEST_SCRIPT.md](./THREE_DAY_TEST_SCRIPT.md) | Testers | Step 1–3 early archive script (no daily journal required) |
 | [MANUAL_QA_CHECKLIST.md](./MANUAL_QA_CHECKLIST.md) | Internal QA | Pre-invite and post-build checklist |
 | [KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md) | Testers + support | Expectation setting |
 | [FEEDBACK_TRIAGE.md](./FEEDBACK_TRIAGE.md) | Team | Sort feedback: must fix / confusing / later / do not build |
@@ -19,7 +19,7 @@ Support materials for TestFlight testers and internal QA **while waiting for Tra
 
 ## Suggested TestFlight “What to Test” blurb
 
-> ArchiveMe helps you notice what keeps repeating across saved moments. For this beta, please record one real moment per day for 3 days, then check whether the app shows a repeat, a change, or something that did not come back.
+> Save small moments when something stands out. ArchiveMe shows what keeps returning. For this beta, save a few real moments, come back when something stands out, and check whether the app shows what returned, changed, or went quiet.
 
 Full context: [TESTFLIGHT_NOTES.md](./TESTFLIGHT_NOTES.md)
 

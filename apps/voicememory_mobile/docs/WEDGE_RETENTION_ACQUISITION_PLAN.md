@@ -6,7 +6,7 @@ Branch context on `main`: sticky-loop consolidation, TestFlight QA pack, access 
 
 ## Positioning
 
-**One sentence:** ArchiveMe is a private evidence archive for noticing what keeps repeating, what changed, and what to watch next.
+**One sentence:** ArchiveMe is a private evidence archive for noticing what returned, what changed, and what to watch next.
 
 **Sharper beta wedge:** For people who keep saying yes when they have no capacity, ArchiveMe helps you save real moments and see the pattern over time.
 

@@ -8,9 +8,11 @@ test.describe("UI smoke", () => {
     const html = await res.text();
     expect(html).toContain('id="recorder"');
     expect(html).toContain("ArchiveMe");
-    expect(html).toContain("See what keeps coming back.");
-    expect(html).toContain("Start the 3-day proof challenge");
-    expect(html).toContain("ChatGPT helps you think today");
+    expect(html).toContain("See what keeps returning");
+    expect(html).toContain("No daily journal required.");
+    expect(html).toContain("Save your first moment");
+    expect(html).toContain("ChatGPT can answer a conversation");
+    expect(html).toContain("Pro keeps the full timeline as it grows.");
     expect(html).not.toMatch(/href="\/internal/);
   });
 
@@ -32,6 +34,9 @@ test.describe("UI smoke", () => {
     expect(html).toMatch(/data-billing-state="(configured|disabled)"/);
     expect(html).toContain("Free");
     expect(html).toContain("Pro");
+    expect(html).toContain("No daily journal required.");
+    expect(html).toContain("Free shows the first proof");
+    expect(html).toContain("Pro keeps the full timeline as it grows.");
     expect(html).toMatch(/Checkout (available|unavailable)/i);
   });
 

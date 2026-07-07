@@ -503,9 +503,9 @@ export default function HomePage() {
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-500">{APP_SUPPORT}</p>
                 <ul className="mx-auto mt-5 max-w-md space-y-2 text-left text-sm leading-relaxed text-zinc-400">
-                  <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
-                  <li>{HOMEPAGE_CLARITY.stepRemember}</li>
-                  <li>{HOMEPAGE_CLARITY.stepReturn}</li>
+                  {LANDING_3_DAY_CHALLENGE.steps.map((step) => (
+                    <li key={step.title}>{step.title}</li>
+                  ))}
                 </ul>
                 <div className="mx-auto mt-6 flex max-w-md flex-wrap items-center justify-center gap-4">
                   <button

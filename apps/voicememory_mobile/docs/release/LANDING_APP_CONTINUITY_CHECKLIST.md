@@ -6,16 +6,21 @@ Internal release checklist so the public website promise matches the in-app expe
 
 | Surface | Promise | Canonical copy |
 | --- | --- | --- |
-| Website | 3-day proof challenge | `3-day proof challenge` |
-| App (Record) | Day 1 / Day 2 / Day 3 guidance | `Day 1: Save one private moment.` · `Day 2: Come back tomorrow.` · `Day 3: Look for what came back.` |
-| Paywall | Keep the longer story | Headline: `Keep the longer story.` · CTA: `Keep my longer story` |
-| Pro active | Evidence over time | `Pro is active. ArchiveMe can keep the longer story.` |
+| Website + App | Subheadline | `No daily journal required.` |
+| Website + App | Hero | `See what keeps returning` |
+| Website + App | Hero body | `Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now.` |
+| Website + App | How it works | `Save one small moment` · `Come back when something stands out` · `See what returned` · `Correct what is not relevant` · `Keep the full timeline with Pro` |
+| Website + App | ChatGPT differentiation | `ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.` |
+| App (Record, early) | Step 1 / 2 / 3 guidance | Uses the first three how-it-works steps above |
+| Paywall | Keep the full timeline | Headline: `Keep the full timeline` · CTA: `Keep my longer story` |
+| Paywall | Paid positioning | `Free shows the first proof. Pro keeps the full timeline as it grows.` |
+| Pro active | Full timeline continuity | `Pro is active. ArchiveMe keeps the full timeline as it grows.` |
 
 ## What Pro is (and is not)
 
-- [ ] Pro keeps **more evidence over time** — longer archive history, private monthly reports, pattern and change evidence.
+- [ ] Pro keeps **the full timeline as it grows** — pattern timeline, correction history, private monthly reports, evidence over time.
 - [ ] Pro is **not more chat** — differentiation line: `Pro is not more chat. It keeps the evidence.`
-- [ ] No **therapy**, **diagnosis**, or **treatment** claims anywhere on landing, paywall, or challenge copy.
+- [ ] No **therapy**, **diagnosis**, or **treatment** claims anywhere on landing, paywall, or early guidance copy.
 - [ ] Trust line stays honest: `Private by default. Based on moments you save. Not therapy or medical advice.`
 
 ## What we do not promise
@@ -29,28 +34,28 @@ Internal release checklist so the public website promise matches the in-app expe
 
 - [ ] Initial load: `Checking your Pro access…`
 - [ ] Purchase in progress: `Starting secure purchase…`
-- [ ] Purchase success: `Pro is active. ArchiveMe can keep the longer story.`
+- [ ] Purchase success: `Pro is active. ArchiveMe keeps the full timeline as it grows.`
 - [ ] Restore in progress: `Checking for previous purchases…`
 - [ ] Restore success: `Purchase restored. Pro is active.`
 - [ ] Restore empty: `No previous Pro purchase was found on this Apple ID.`
 
-## 3-day challenge (app only)
+## Early record guidance (app only)
 
-- [ ] Day 1 body: real moments before ArchiveMe can notice what returns.
-- [ ] Day 2 body: coming back gives ArchiveMe something to compare.
-- [ ] Day 3 body: same pressure/thought/reaction can start showing the pattern.
-- [ ] Completion stays hidden on Record when challenge is complete.
-- [ ] No push notifications added for the challenge.
+- [ ] Step 1 body: save one small moment when something stands out.
+- [ ] Step 2 body: no daily streak required — return when another moment matters.
+- [ ] Step 3 body: after a few saves, see what appeared, returned, or went quiet.
+- [ ] Completion stays hidden on Record when guidance is complete.
+- [ ] No push notifications added for early guidance.
 - [ ] Proof thresholds and evidence gates unchanged.
 
 ## Verification commands
 
 ```bash
 cd apps/voicememory_mobile
-flutter test test/paywall_purchase_confidence_test.dart
-flutter test test/paywall_conversion_clarity_test.dart
-flutter test test/three_day_challenge_test.dart
 flutter test test/landing_app_continuity_copy_test.dart
+flutter test test/three_day_challenge_test.dart
+flutter test test/paywall_copy_alignment_test.dart
+flutter test test/paywall_purchase_confidence_test.dart
 ```
 
 ## Protected areas (do not change in copy-only passes)

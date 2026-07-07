@@ -32,9 +32,10 @@ const landingCopy = fs.existsSync(landingCopyPath)
 
 const required = [
   "HOMEPAGE_CLARITY",
-  "See what keeps coming back.",
-  "ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.",
-  "Start the 3-day proof challenge",
+  "See what keeps returning",
+  "No daily journal required.",
+  "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.",
+  "Save your first moment",
   "ThreeDayProofChallengeLanding",
   "HomepageChatGptComparison",
   "ProductDemoStory",

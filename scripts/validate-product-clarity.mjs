@@ -60,9 +60,9 @@ for (const rel of requiredFiles) {
 
 mustInclude("lib/product/product-clarity-copy.ts", [
   "LANDING_3_DAY_CHALLENGE",
-  "See what keeps coming back.",
-  "ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.",
-  "Each reflection gives ArchiveMe more evidence",
+  "LANDING_3_DAY_CHALLENGE.hero",
+  "LANDING_3_DAY_CHALLENGE.chatGptDifferentiation",
+  "Each moment gives ArchiveMe more evidence",
   "criticism means you're failing",
   "reflections toward your first belief",
   "working view from repeated evidence",
@@ -111,11 +111,11 @@ mustInclude("app/discover/page.tsx", [
   "ArchiveProductWayfinding",
 ]);
 mustInclude("lib/billing/value-moment-paywall-copy.ts", [
-  "ChatGPT can help with today's question",
-  "First 5 reflections",
+  "ChatGPT can answer a conversation",
+  "First proof from your saves",
   "First working belief",
-  "Keep the evolving archive alive",
-  "Full evidence timeline",
+  "Pro keeps the full timeline as it grows",
+  "Full pattern timeline",
   "VALUE_MOMENT_PRO_PRICE_LABEL",
 ]);
 mustInclude("lib/theories/personal-theory-copy.ts", [

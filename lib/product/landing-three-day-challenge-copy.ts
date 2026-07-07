@@ -1,40 +1,49 @@
-/** Public landing — 3-day proof challenge positioning (web homepage). */
+/** Public landing — ArchiveMe timeline positioning (web homepage). */
 
 export const LANDING_3_DAY_CHALLENGE = {
-  eyebrow: "3-day proof challenge",
-  hero: "See what keeps coming back.",
+  subheadline: "No daily journal required.",
+  hero: "See what keeps returning",
   subhero:
-    "Record one private moment a day for 3 days. ArchiveMe compares your saved moments and shows what returned, changed, softened, or went quiet.",
+    "Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now.",
   chatGptDifferentiation:
-    "ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.",
-  primaryCta: "Start the 3-day proof challenge",
+    "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.",
+  primaryCta: "Save your first moment",
   secondaryCta: "How it works",
   secondaryHref: "/how-it-works",
-  recorderIntro:
-    "Day 1 starts here. One private moment — then come back tomorrow.",
+  recorderIntro: "Save one small moment when something stands out.",
   steps: [
     {
-      title: "Record one moment",
-      body: "Save one private reflection today — in your own words, on this device.",
+      title: "Save one small moment",
+      body: "When something stands out, save it in your own words on this device.",
     },
     {
-      title: "Come back tomorrow",
-      body: "A single moment is not the story. ArchiveMe compares what you save across days.",
+      title: "Come back when something stands out",
+      body: "No daily streak required. Return when another moment matters.",
     },
     {
       title: "See what returned",
-      body: "After a few saves, you may see what kept returning, changed, softened, or went quiet.",
+      body: "After a few saves, see what appeared, returned, or went quiet.",
+    },
+    {
+      title: "Correct what is not relevant",
+      body: "Mark what does not fit. Your timeline stays yours.",
+    },
+    {
+      title: "Keep the full timeline with Pro",
+      body: "Free shows the first proof. Pro keeps the full timeline as it grows.",
     },
   ] as const,
   proSection: {
-    headline: "Keep the longer story with Pro",
-    paidReason: "Pro keeps the longer story",
+    headline: "Keep the full timeline with Pro",
+    paidReason: "Pro keeps the full timeline as it grows.",
+    freePositioning: "Free shows the first proof. Pro keeps the full timeline as it grows.",
     bullets: [
-      "Longer archive history",
-      "Private monthly reports",
-      "Evidence over time",
-      "Pattern correction history",
-      "Backup and preservation (planned Pro area — not live today)",
+      "Full pattern timeline",
+      "Correction history",
+      "Changing current weight",
+      "Longer evidence trail",
+      "Monthly private report",
+      "Backup and continuity",
     ] as const,
   },
   trust: {
@@ -46,7 +55,16 @@ export const LANDING_3_DAY_CHALLENGE = {
       "You control what you keep",
     ] as const,
   },
+  pricing: {
+    pageEyebrow: "No daily journal required.",
+    pageTitle: "Plans for your archive",
+    pageLead:
+      "Free shows the first proof. Pro keeps the full timeline as it grows.",
+  },
 } as const;
+
+/** @deprecated Use subheadline — kept for PRODUCT_HERO.eyebrow wiring */
+export const LANDING_EYEBROW = LANDING_3_DAY_CHALLENGE.subheadline;
 
 /** Banned on public landing — live claims or clinical framing. */
 export const LANDING_3_DAY_BANNED_PHRASES = [
@@ -62,9 +80,9 @@ export const LANDING_3_DAY_BANNED_PHRASES = [
 ] as const;
 
 export function landingVisibleStrings(): string[] {
-  const { steps, proSection, trust } = LANDING_3_DAY_CHALLENGE;
+  const { steps, proSection, trust, pricing } = LANDING_3_DAY_CHALLENGE;
   return [
-    LANDING_3_DAY_CHALLENGE.eyebrow,
+    LANDING_3_DAY_CHALLENGE.subheadline,
     LANDING_3_DAY_CHALLENGE.hero,
     LANDING_3_DAY_CHALLENGE.subhero,
     LANDING_3_DAY_CHALLENGE.chatGptDifferentiation,
@@ -74,8 +92,12 @@ export function landingVisibleStrings(): string[] {
     ...steps.flatMap((step) => [step.title, step.body]),
     proSection.headline,
     proSection.paidReason,
+    proSection.freePositioning,
     ...proSection.bullets,
     trust.headline,
     ...trust.bullets,
+    pricing.pageEyebrow,
+    pricing.pageTitle,
+    pricing.pageLead,
   ];
 }

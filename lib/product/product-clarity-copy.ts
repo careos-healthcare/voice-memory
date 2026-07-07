@@ -3,7 +3,7 @@ import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challen
 /** Product-clarity pass — homepage, discover, archive differentiation (restrained). */
 
 export const PRODUCT_HERO = {
-  eyebrow: LANDING_3_DAY_CHALLENGE.eyebrow,
+  eyebrow: LANDING_3_DAY_CHALLENGE.subheadline,
   promise: LANDING_3_DAY_CHALLENGE.hero,
   archiveLead: LANDING_3_DAY_CHALLENGE.subhero,
   support:
@@ -18,11 +18,11 @@ export const EVOLVING_VIEW_INTRO =
 export const HOMEPAGE_ARCHIVE_DIFFERENTIATION = {
   title: "What ArchiveMe tracks",
   lineA: "ArchiveMe remembers what you keep saying over weeks and months.",
-  lineB: "ArchiveMe shows what keeps repeating across your life.",
+  lineB: "ArchiveMe shows the timeline behind the pattern.",
   archiveGrowth:
-    "A single recording answers today. ArchiveMe tracks what keeps coming back.",
+    "A single moment answers today. ArchiveMe tracks what keeps returning.",
   eachReflection:
-    "Each reflection gives ArchiveMe more evidence about what keeps repeating.",
+    "Each moment gives ArchiveMe more evidence about what keeps returning.",
   complement:
     "Many people capture moments elsewhere — ArchiveMe is for what your own words keep returning to.",
   chatGptDifferentiation: LANDING_3_DAY_CHALLENGE.chatGptDifferentiation,

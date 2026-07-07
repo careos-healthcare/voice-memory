@@ -1,36 +1,37 @@
-/** Pro positioning — memory return and continuity, not export/productivity. */
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 
-export const PRO_HEADLINE = "More of your words, remembered longer";
+/** Pro positioning — timeline continuity, not export/productivity. */
 
-export const PRO_DESCRIPTION =
-  "Pro keeps more of your archive alive: what returned, weekly remembered moments, and a printable private record. Export when you need a copy.";
+export const PRO_HEADLINE = LANDING_3_DAY_CHALLENGE.proSection.headline;
+
+export const PRO_DESCRIPTION = LANDING_3_DAY_CHALLENGE.proSection.paidReason;
 
 export const PRO_FEATURE_BULLETS = [
-  "Full-archive resurfacing — phrases and threads across your whole history",
-  "Weekly remembered moments from your own words",
-  "Long-term return threads and open loops across years of speech",
-  "Printable private archive for quiet reading away from the app",
-  "Encrypted backup when you sign in (optional sync)",
-  "Export JSON or text when you want a portable copy",
+  "Full pattern timeline across your archive",
+  "Correction history when something no longer fits",
+  "Changing current weight as evidence shifts",
+  "Longer evidence trail over weeks and months",
+  "Monthly private report when eligible",
+  "Backup and continuity when you sign in",
 ] as const;
 
 export const PRO_GATE_UNLIMITED_ARCHIVE = {
-  title: "Full archive continuity is part of Pro",
+  title: "Full timeline continuity is part of Pro",
   detail:
-    "Free keeps recent reflections active. Pro lets your whole history resurface in memory, search, and return threads.",
+    "Free shows the first proof. Pro keeps the full timeline as it grows — resurfacing, search, and return threads across your history.",
   feature: "unlimited_archive",
 } as const;
 
 export const PRO_GATE_DEEPER_RESURFACING = {
-  title: "Full-history resurfacing is part of Pro",
+  title: "Full-history timeline is part of Pro",
   detail:
-    "Pro draws return threads and callbacks from your entire archive — not only the last week of speech.",
+    "Pro draws return threads and callbacks from your entire archive — not only recent saves.",
   feature: "deeper_resurfacing",
 } as const;
 
 export const PRO_GATE_EXPORT = {
-  title: "Printable archive and exports are part of Pro",
+  title: "Longer timeline and exports are part of Pro",
   detail:
-    "Pro includes weekly remembered moments and a printable private archive. JSON export is there when you need a copy.",
+    "Pro keeps the full timeline as it grows, with export when you need a portable copy.",
   feature: "export_reports",
 } as const;

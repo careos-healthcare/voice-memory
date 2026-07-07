@@ -255,6 +255,7 @@
     "validate:genericity": "node scripts/validate-genericity-restraint.mjs",
     "validate:homepage-clarity": "node scripts/validate-homepage-clarity.mjs",
     "validate:landing-three-day-challenge": "node scripts/validate-landing-three-day-challenge.mjs",
+    "validate:landing-page-alignment": "node --import tsx scripts/validate-landing-page-alignment.mjs",
     "validate:product-clarity": "node --import tsx scripts/validate-product-clarity.mjs",
     "validate:activation-bottleneck": "node --import tsx scripts/validate-activation-bottleneck.mjs",
     "validate:insight-outcomes": "node --import tsx scripts/validate-insight-outcomes.mjs",

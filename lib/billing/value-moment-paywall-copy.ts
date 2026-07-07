@@ -1,3 +1,4 @@
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 import { PRO_TIER } from "@/lib/entitlement/tiers";
 import {
   PAYWALL_BODY,
@@ -10,36 +11,36 @@ export const VALUE_MOMENT_PAYWALL_COPY = {
   positioningLine: PAYWALL_POSITIONING,
   headline: PAYWALL_HEADLINE,
   body: PAYWALL_BODY,
-  continuityLine:
-    "A quick answer handles today. ArchiveMe tracks what keeps coming back across weeks and months.",
-  cta: "Keep tracking my patterns",
+  continuityLine: LANDING_3_DAY_CHALLENGE.chatGptDifferentiation,
+  cta: "Keep the full timeline",
   secondary: "Not now",
-  trustLine:
-    "No streaks. No pressure to journal daily. Just continuity when something meaningful changes.",
+  trustLine: LANDING_3_DAY_CHALLENGE.subheadline,
   proBullets: [
-    "Ongoing belief history",
-    "Full evidence timeline",
-    "Belief changes over time",
-    "Archive continuity and export",
+    "Full pattern timeline",
+    "Correction history",
+    "Changing current weight",
+    "Longer evidence trail",
   ],
 } as const;
 
 /** Pricing page alignment — value before paywall. */
 export const VALUE_MOMENT_PRICING_COPY = {
+  pageLead: LANDING_3_DAY_CHALLENGE.pricing.pageLead,
+  proReason: LANDING_3_DAY_CHALLENGE.proSection.paidReason,
   freeFeatures: [
-    "First 5 reflections",
+    "First proof from your saves",
     "First working belief",
     "First archive view",
     "First discover view",
     "Voice recording and transcript on this device",
   ],
   proFeatures: [
-    "Ongoing belief history",
-    "Full evidence timeline",
-    "Belief changes over time",
-    "Archive continuity",
-    "Export and private archive protection",
-    "Deeper resurfacing when available",
+    "Full pattern timeline",
+    "Correction history",
+    "Changing current weight",
+    "Longer evidence trail",
+    "Monthly private report when eligible",
+    "Backup and continuity when you sign in",
   ],
   /** Kept in sync with Pro tier — £9.99/month */
   priceLabel: PRO_TIER.priceLabel,

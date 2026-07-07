@@ -25,7 +25,7 @@ Founders, freelancers, managers, senior operators, consultants, and carers/paren
 
 ## Why this wedge can pay
 
-Overcommitted professionals already spend on tools, coaching-adjacent products, and time recovery. If ArchiveMe clearly surfaces **what keeps repeating** before the next yes, £10–£30/month is plausible for a private long-term evidence trail — especially vs. losing a weekend or a client relationship to another overcommit.
+Overcommitted professionals already spend on tools, coaching-adjacent products, and time recovery. If ArchiveMe clearly surfaces **what keeps returning** before the next yes, £10–£30/month is plausible for a private long-term evidence trail — especially vs. losing a weekend or a client relationship to another overcommit.
 
 ## Why this is sharper than journaling
 

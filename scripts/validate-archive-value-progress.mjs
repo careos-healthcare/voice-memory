@@ -155,11 +155,15 @@ const archiveValueCopySrc = fs.readFileSync(
   "utf8",
 );
 assert.ok(
-  claritySrc.includes("ChatGPT helps you think today") ||
+  claritySrc.includes("ChatGPT can answer a conversation") ||
+    claritySrc.includes("ChatGPT helps you think today") ||
     claritySrc.includes("ChatGPT answers today") ||
     archiveValueCopySrc.includes("ChatGPT helps with today's question"),
 );
-assert.ok(archiveValueCopySrc.includes("Each reflection gives ArchiveMe"));
+assert.ok(
+  claritySrc.includes("Each moment gives ArchiveMe") ||
+    archiveValueCopySrc.includes("Each reflection gives ArchiveMe"),
+);
 
 for (const rel of [
   "app/page.tsx",

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ArchiveMe — Private voice reflections",
   description:
-    "Record one private moment a day for 3 days. ArchiveMe compares your saved moments and shows what returned, changed, softened, or went quiet. Local-first — not therapy.",
+    "Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.",
   applicationName: "ArchiveMe",
   appleWebApp: {
     capable: true,

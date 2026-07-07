@@ -6,39 +6,50 @@ ArchiveMe
 
 ## Short description (≤80 characters)
 
-A private mind map of what keeps repeating in your life.
+See what keeps returning. No daily journal required.
 
 ## Full description
 
-ArchiveMe is a private mind map of what keeps repeating in your life.
+See what keeps returning.
 
-Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
+Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.
 
 **Start with one pattern**
 Saying yes when you have no capacity — catch the yes before it costs you. Save before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
-**Record one moment**
-Say what happened today. One sentence is enough.
+**Save one small moment**
+When something stands out, save it in your own words on this device.
 
-**Choose tomorrow's check**
-After each moment, ArchiveMe gives you one useful thing to check next.
+**Come back when something stands out**
+No daily streak required. Return when another moment matters.
 
-**Come back to compare**
-See whether the pattern showed up, felt lighter, felt heavier, or changed.
+**See what returned**
+After a few saves, see what appeared, returned, or went quiet.
 
-**Build your pattern map**
-Over time, ArchiveMe shows key moments, a pattern map, and what it remembers.
+**Correct what is not relevant**
+Mark what does not fit. Your timeline stays yours.
 
-ArchiveMe is for pattern memory over time — not therapy, diagnosis, or wellness coaching.
+Free shows the first proof. Pro keeps the full timeline as it grows.
+
+ArchiveMe is built for useful reflection over time — not endless note-taking.
 
 ## Privacy note
 
 Your reflections are personal. The journal file on this device is encrypted. Archive metadata and prefs remain in plaintext JSON. Some features send audio or text for transcription or analysis when you use them. Do not claim everything stays on device.
 
-## Category suggestion
+## Release identity (listing prep)
 
-Health & Fitness → or Lifestyle (depending on positioning review)
+- **App name:** ArchiveMe (public consumer name)
+- **Android application ID:** `com.voicememory.app`
+- **Support URL:** https://careosapp.co.uk/archiveme-support
+- **Purchases:** unavailable until RevenueCat / store banking setup — do not use subscribe-or-buy CTAs in listing copy while billing is paused.
 
-## Content rating
+Reviewers can use **Sample Archive** and **Support & feedback** without a backend account.
 
-Complete the Play questionnaire honestly. ArchiveMe is a reflection tool, not a medical device.
+## Screenshot themes (suggested)
+
+1. Onboarding — "See what keeps returning"
+2. Record — save one small moment
+3. Return — come back when something stands out
+4. Patterns — see what returned
+5. Paywall — "Pro keeps the full timeline as it grows"

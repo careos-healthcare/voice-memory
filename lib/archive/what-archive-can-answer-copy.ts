@@ -10,4 +10,4 @@ export const WHAT_ARCHIVE_CAN_ANSWER_BULLETS = [
 
 /** Homepage and pricing only — direct comparison. */
 export const ARCHIVE_VS_SINGLE_CHAT_LINE =
-  "Single chats answer today's question. ArchiveMe tracks what keeps coming back.";
+  "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.";

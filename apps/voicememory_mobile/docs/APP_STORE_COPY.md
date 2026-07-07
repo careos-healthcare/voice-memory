@@ -6,27 +6,29 @@ ArchiveMe
 
 ## Subtitle
 
-A private mind map of what keeps repeating in your life.
+See what keeps returning
 
 ## Short description
 
-Save real moments. See patterns, changes, and next things to watch.
+No daily journal required. Save small moments. See what returned.
 
 ## Long description
 
-ArchiveMe is a private mind map of what keeps repeating in your life.
+See what keeps returning.
 
-Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
+Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.
 
 Start with one pattern — saying yes when you have no capacity. Catch the yes before it costs you — before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
-Record one moment about what happened today. ArchiveMe connects it across days and weeks so repeating patterns become easier to notice.
+Save one small moment when something stands out — in your own words on this device.
 
-After each moment, choose tomorrow's check — one useful thing to watch for before the pattern shows up again.
+Come back when another moment matters. No daily streak required.
 
-Come back tomorrow to compare: did it show up again, feel lighter, feel heavier, or change?
+After a few saves, see what appeared, returned, or went quiet.
 
-Over time, ArchiveMe builds your archive with key moments, a pattern map, and what it remembers across weeks and months.
+Mark what does not fit. Your timeline stays yours.
+
+Free shows the first proof. Pro keeps the full timeline as it grows.
 
 ArchiveMe is built for useful reflection over time — not endless note-taking.
 
@@ -46,8 +48,8 @@ Reviewers can use **Sample Archive** and **Support & feedback** without a backen
 
 ## Screenshot themes (suggested)
 
-1. Onboarding — "Remember what keeps repeating"
-2. Record — archive memory demo / first moment
-3. Tomorrow check — choose what to check next
-4. Patterns — what ArchiveMe remembers
-5. Paywall — "Keep your pattern memory growing"
+1. Onboarding — "See what keeps returning"
+2. Record — save one small moment
+3. Return — come back when something stands out
+4. Patterns — see what returned
+5. Paywall — "Pro keeps the full timeline as it grows"

@@ -7,7 +7,7 @@ Short-form and founder content for the overcommitment wedge. **Use real beta gat
 1. I said yes again — and I knew I had no capacity.
 2. Third time this month. Same pattern. Different meeting.
 3. I don’t need another journal. I need proof I keep doing this.
-4. Save the moment. See what keeps repeating.
+4. Save the moment. See what returned.
 5. Stop guessing why you overcommit — start with one honest save.
 6. The cost always lands later. The yes is always fast.
 7. What if you could see your own yes-pattern before the next one?
@@ -46,7 +46,7 @@ Each script: **yes → cost → save → pattern → privacy**. No private detai
 ### 5 — Parent + work
 **Hook:** Said yes to a work thing at the wrong time.  
 **Body:** Saved a typed moment — 30 seconds.  
-**Close:** Not a diary. A private archive for what keeps repeating.  
+**Close:** Not a diary. A private archive for what keeps returning.  
 **CTA:** Link for operators like this.
 
 ### 6 — Pattern reveal
@@ -58,7 +58,7 @@ Each script: **yes → cost → save → pattern → privacy**. No private detai
 ### 7 — Stop guessing
 **Hook:** Stop guessing why you keep overcommitting.  
 **Body:** Save the moment when you say yes. Save when the cost lands.  
-**Close:** After three, see what keeps repeating.  
+**Close:** After three, see what returned.  
 **CTA:** Beta in bio.
 
 ### 8 — Not productivity
@@ -143,7 +143,7 @@ Each script: **yes → cost → save → pattern → privacy**. No private detai
 
 1. Said yes too fast again. Saving the moment so I can see if it’s a pattern — not a one-off. #ArchiveMe #overcommit
 2. Three saves > one vent. Private archive, no public details. Link in bio.
-3. Stop guessing why you overcommit. Save the moment. See what keeps repeating.
+3. Stop guessing why you overcommit. Save the moment. See what returned.
 4. Not a journal. A private evidence archive for operators who say yes first.
 5. Monday yes, Friday cost. Archiving both sides of the loop.
 6. Then vs Now hit different when it’s your own words lined up.
@@ -177,7 +177,7 @@ The first save felt obvious. The third save was uncomfortable — same pattern, 
 I won’t put my raw notes on LinkedIn. Share-safe proof uses counts only. The archive stays on device unless you export.
 
 ### 4 — Not another productivity app
-Task apps don’t show that you said yes the same way three Tuesdays in a row. ArchiveMe compares — cautiously — what keeps repeating.
+Task apps don’t show that you said yes the same way three Tuesdays in a row. ArchiveMe compares — cautiously — what returned.
 
 ### 5 — Beta ask
 Looking for 20 overcommitted professionals for a two-week TestFlight: save 3 moments, return once, tell me if anything useful showed up. DM or comment “beta.”

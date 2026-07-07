@@ -18,7 +18,6 @@ import { WhatThisArchiveCanAnswer } from "@/components/archive/WhatThisArchiveCa
 import { ArchiveProofStories } from "@/components/social-proof/ArchiveProofStories";
 import { ConversionReasonPrompt } from "@/components/billing/ConversionReasonPrompt";
 import { PaywallInterestPrompt } from "@/components/billing/PaywallInterestPrompt";
-import { ARCHIVE_VS_SINGLE_CHAT_LINE } from "@/lib/archive/what-archive-can-answer-copy";
 import { armConversionReasonPrompt } from "@/lib/billing/paywall-attribution";
 import { BillingStatus, ErrorState, PrivacyNotice, TrustNotice } from "@/components/system";
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,7 @@ import {
   type UpgradeClickSource,
 } from "@/lib/subscription";
 import { PRO_DESCRIPTION, PRO_HEADLINE } from "@/lib/product/pro-framing";
-import { VOICEMEMORY_ARCHIVE_POSITIONING } from "@/lib/product/archive-positioning";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 import { HONESTY_LINE, NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
 import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
@@ -162,12 +161,19 @@ export function PricingPageClient({
         ) : null}
         <ConversionReasonPrompt className="mt-4" source={from} refreshKey={conversionPromptKey} />
         <AnimatedReveal className="mt-4 text-center sm:text-left">
-          <p className="text-sm leading-relaxed text-zinc-300">{VOICEMEMORY_ARCHIVE_POSITIONING}</p>
+          <p className="text-sm leading-relaxed text-zinc-300">
+            {VALUE_MOMENT_PRICING_COPY.pageLead}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            {LANDING_3_DAY_CHALLENGE.chatGptDifferentiation}
+          </p>
           <ArchiveVisualModel compact className="mt-4" />
           <ArchiveDifferenceCard className="mt-4" />
           <ArchiveUniquenessPanel className="mt-4" />
           <WhyPeopleReturn className="mt-4" />
-          <p className="mt-4 text-sm leading-relaxed text-violet-200/90">{ARCHIVE_VS_SINGLE_CHAT_LINE}</p>
+          <p className="mt-4 text-sm leading-relaxed text-violet-200/90">
+            {VALUE_MOMENT_PRICING_COPY.proReason}
+          </p>
           <ArchiveProgressBar surface="pricing" className="mt-4 text-left" linkHref="/discover" />
           <WhatThisArchiveCanAnswer className="mt-4 text-left" />
           <ArchiveAssetCard surface="pricing" className="mt-4 text-left" />

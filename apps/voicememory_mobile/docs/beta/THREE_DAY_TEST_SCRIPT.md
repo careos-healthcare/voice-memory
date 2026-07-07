@@ -1,8 +1,8 @@
-# ArchiveMe — 3-day TestFlight test script
+# ArchiveMe — early archive TestFlight script
 
-A minimal script for beta testers while we wait for wider TestFlight distribution. One real moment per day is enough.
+A minimal script for beta testers while we wait for wider TestFlight distribution. **No daily journal required** — save when something stands out.
 
-**Time:** ~5 minutes per day  
+**Time:** ~5 minutes per save  
 **Device:** Physical iPhone recommended  
 **Install:** Fresh TestFlight install if possible
 
@@ -18,14 +18,14 @@ Full tester notes: [TESTFLIGHT_NOTES.md](./TESTFLIGHT_NOTES.md)
 
 ---
 
-## Day 1 — First moment
+## Step 1 — Save one small moment
 
-**Goal:** Save one honest moment and understand what happens next.
+**Goal:** Save one honest moment when something stands out.
 
 ### Do
 
 1. Open ArchiveMe and finish or skip onboarding.
-2. On **Record**, save **one real moment** from today — voice or **Type instead**.
+2. On **Record**, save **one small moment** when something stands out — voice or **Type instead**.
 3. Read the post-save screen: what did the app say happened?
 4. Open **Patterns** — note whether you see an empty/first-saved state or early guidance (not a full “proof” yet).
 5. Optional: open **Settings** and locate **Testing ArchiveMe? → Send feedback** for later.
@@ -34,7 +34,7 @@ Full tester notes: [TESTFLIGHT_NOTES.md](./TESTFLIGHT_NOTES.md)
 
 - [ ] First save completed without crash or stuck spinner  
 - [ ] Copy felt calm — no guilt, streak pressure, or fake stats  
-- [ ] You understand what to do tomorrow (return / watch / one more moment)
+- [ ] You understand you can return when another moment matters (not a daily homework streak)
 
 ### Report if
 
@@ -44,72 +44,58 @@ Full tester notes: [TESTFLIGHT_NOTES.md](./TESTFLIGHT_NOTES.md)
 
 ---
 
-## Day 2 — Return / watch
+## Step 2 — Come back when something stands out
 
-**Goal:** Record whether the same thread came back, changed, or stayed quiet.
-
-### Do
-
-1. Save **one more real moment** — same thread if it came up, or note if it did not.
-2. Watch for a **return / watch prompt** (tomorrow check, come-back card, or quiet return cue).
-3. If prompted, answer whether the thread **came back**, **felt different**, or **did not show up**.
-4. Glance at **Patterns** again — any early repeat signal or watch target?
-
-### Check
-
-- [ ] Second save worked (voice or typed)  
-- [ ] Return/watch prompt appeared OR you understand why it did not (only one entry, different thread, etc.)  
-- [ ] No duplicate primary CTAs on Record (one clear main action)  
-- [ ] Copy still avoids diagnosis / therapy / “you should” advice  
-
-### Report if
-
-- Return prompt felt wrong for your situation  
-- Two saves on the same thread still showed nothing — note exact wording you used  
-- Layout overflow or unreadable text  
-
----
-
-## Day 3 — Proof and review
-
-**Goal:** See whether ArchiveMe surfaces repeat, change, or review items after a third real moment.
+**Goal:** Save whether the same thread came back, changed, or stayed quiet when another moment matters.
 
 ### Do
 
-1. Save **one more real moment** (third entry on the same thread if possible).
-2. Check for **first proof** — “does this feel true?” or similar evidence-led card.
-3. Open **pattern detail** if offered — read summary and evidence snippets.
-4. Look for **review inbox** or review items (truth check, what changed, quiet signal, correction, rename).
-5. If **beta mission** or **beta feedback** appears, try one action and send feedback via Settings.
-6. Optional: preview **private report** if surfaced.
-7. **Force-quit and reopen** the app — confirm all three moments are still there.
+1. Return when something stands out — not on a forced daily schedule.
+2. Save another real moment on **Record**.
+3. Note any return prompt, early guidance, or “come back” copy.
+4. Open **Patterns** again — did anything compare across your saves?
 
 ### Check
 
-- [ ] Third related entry triggered proof OR you can explain why it did not (different threads, generic test text, etc.)  
-- [ ] Truth follow-up (yes / sort of / no) works if shown  
-- [ ] Pattern detail opens and stays evidence-led  
-- [ ] Review inbox lists sensible items (or empty state is clear)  
-- [ ] Beta feedback path opens email  
-- [ ] App restart kept local data  
+- [ ] Second save felt natural, not like streak homework  
+- [ ] Return/guidance copy matched what you saved  
+- [ ] You still understand what the app is trying to show
 
 ### Report if
 
-- Proof felt inaccurate — quote the **card title**, not necessarily full journal text  
-- Pattern correction / rename / quiet signal was confusing  
-- Data missing after restart  
-- Any line felt like medical advice or diagnosis  
+- The app pushed a daily streak or guilt framing  
+- You could not save a second moment  
+- Patterns felt empty with no explanation  
 
 ---
 
-## After day 3 — send feedback
+## Step 3 — See what returned
 
-Use **Settings → Testing ArchiveMe? → Send feedback**.
+**Goal:** After a few saves, check whether ArchiveMe shows what returned, changed, or went quiet.
 
-Minimum useful report:
+### Do
 
-1. Did days 1–3 make sense?  
-2. Did a repeat, change, or quiet signal appear — fit, partly fit, or not fit?  
-3. One bug or confusion (device model + iOS version).  
+1. Save one more small moment if something stands out.
+2. Look for first proof, return cards, or pattern guidance.
+3. If asked **“Does this feel true?”**, answer honestly.
+4. Send beta feedback via **Settings → Testing ArchiveMe? → Send feedback**.
 
-See [FEEDBACK_TRIAGE.md](./FEEDBACK_TRIAGE.md) for how the team will sort responses.
+### Check
+
+- [ ] You saw something returned, changed, or went quiet — or the app explained why not yet  
+- [ ] First proof / return language felt cautious, not clinical  
+- [ ] You know whether you would come back again  
+
+### Report if
+
+- Proof felt fake, overly certain, or like therapy  
+- You hit a paywall before understanding value  
+- Restore purchases or Pro copy felt misleading  
+
+---
+
+## ChatGPT differentiation (optional read)
+
+ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.
+
+Pro keeps the full timeline as it grows. Free shows the first proof.

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { TrustPageShell, TrustSection } from "@/components/trust/TrustPageShell";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 import {
   HOW_IT_WORKS_DESCRIPTION,
   HOW_IT_WORKS_EYEBROW,
@@ -12,7 +13,7 @@ import {
 
 export const metadata: Metadata = {
   title: "How it works — ArchiveMe",
-  description: "How ArchiveMe works for early testers: local reflections, optional resurfacing, optional backup.",
+  description: LANDING_3_DAY_CHALLENGE.subhero,
 };
 
 export default function HowItWorksPage() {

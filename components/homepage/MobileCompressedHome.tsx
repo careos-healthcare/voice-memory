@@ -7,7 +7,7 @@ import {
   MOBILE_FIRST_RUN_PRIVACY,
   MOBILE_FIRST_RUN_TAGLINE,
 } from "@/lib/mobile/mobile-first-run";
-import { HOMEPAGE_CLARITY } from "@/lib/product-copy";
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 
 export function MobileCompressedHome({
   recorder,
@@ -36,9 +36,9 @@ export function MobileCompressedHome({
       </Button>
       {howOpen ? (
         <ul className="mt-4 max-w-sm space-y-2 text-left text-sm leading-relaxed text-zinc-500">
-          <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
-          <li>{HOMEPAGE_CLARITY.stepRemember}</li>
-          <li>{HOMEPAGE_CLARITY.stepReturn}</li>
+          {LANDING_3_DAY_CHALLENGE.steps.map((step) => (
+            <li key={step.title}>{step.title}</li>
+          ))}
         </ul>
       ) : null}
     </div>

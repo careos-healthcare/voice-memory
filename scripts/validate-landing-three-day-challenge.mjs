@@ -11,11 +11,14 @@ const paths = {
   component: path.join(ROOT, "components/landing/ThreeDayProofChallengeLanding.tsx"),
   clarity: path.join(ROOT, "lib/product/product-clarity-copy.ts"),
   recognition: path.join(ROOT, "lib/product/recognition-copy.ts"),
+  howItWorks: path.join(ROOT, "lib/tester-onboarding-copy.ts"),
+  pricingShell: path.join(ROOT, "components/pricing/PricingStaticShell.tsx"),
+  pricingCopy: path.join(ROOT, "lib/billing/value-moment-paywall-copy.ts"),
 };
 
 for (const [name, rel] of Object.entries(paths)) {
   if (!fs.existsSync(rel)) {
-    console.error(`Landing 3-day challenge validation failed — missing ${name}: ${rel}`);
+    console.error(`Landing page alignment validation failed — missing ${name}: ${rel}`);
     process.exit(1);
   }
 }
@@ -31,17 +34,20 @@ const consumerBlobs = [
   .join("\n");
 
 const required = [
-  "See what keeps coming back.",
-  "Record one private moment a day for 3 days",
-  "Start the 3-day proof challenge",
-  "How it works",
-  "ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.",
-  "Pro keeps the longer story",
-  "Longer archive history",
-  "Private monthly reports",
-  "Evidence over time",
-  "Pattern correction history",
-  "planned Pro area",
+  "See what keeps returning",
+  "No daily journal required.",
+  "Save small moments when something stands out",
+  "Save one small moment",
+  "Come back when something stands out",
+  "See what returned",
+  "Correct what is not relevant",
+  "Keep the full timeline with Pro",
+  "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.",
+  "Pro keeps the full timeline as it grows.",
+  "Free shows the first proof. Pro keeps the full timeline as it grows.",
+  "Full pattern timeline",
+  "Correction history",
+  "Monthly private report",
   "Not therapy or medical advice",
   "ThreeDayProofChallengeLanding",
   "landing-three-day-challenge",
@@ -49,7 +55,7 @@ const required = [
 
 for (const token of required) {
   if (!blobs.includes(token)) {
-    console.error(`Landing 3-day challenge validation failed — missing ${token}`);
+    console.error(`Landing page alignment validation failed — missing ${token}`);
     process.exit(1);
   }
 }
@@ -63,19 +69,39 @@ const bannedLiveClaims = [
   "universal mental health benefit",
   "more ai",
   "smarter chat",
+  "ai therapist",
+  "mental health treatment",
 ];
 
 for (const phrase of bannedLiveClaims) {
   if (consumerBlobs.toLowerCase().includes(phrase)) {
-    console.error(`Landing 3-day challenge validation failed — banned live claim: ${phrase}`);
+    console.error(`Landing page alignment validation failed — banned live claim: ${phrase}`);
     process.exit(1);
   }
 }
 
-const proBlob = blobs.toLowerCase();
-if (!proBlob.includes("longer archive") && !proBlob.includes("private monthly")) {
-  console.error("Landing 3-day challenge validation failed — Pro section missing archive/report value");
+const bannedTherapyPromotion = /\b(therapy|diagnosis|medical treatment)\b/i;
+const trustExceptions = /not therapy|not a diagnos|not medical advice/i;
+if (bannedTherapyPromotion.test(consumerBlobs) && !trustExceptions.test(consumerBlobs)) {
+  console.error(
+    "Landing page alignment validation failed — therapy/medical promotion without disclaimer",
+  );
   process.exit(1);
 }
 
-console.log("Landing 3-day challenge validation passed.");
+const testimonialPatterns = [
+  /"\s*-\s*[A-Z][a-z]+/,
+  /testimonial/i,
+  /★★★★★/,
+  /verified user/i,
+];
+for (const pattern of testimonialPatterns) {
+  if (pattern.test(consumerBlobs)) {
+    console.error(
+      `Landing page alignment validation failed — possible fake testimonial: ${pattern}`,
+    );
+    process.exit(1);
+  }
+}
+
+console.log("Landing page alignment validation passed.");

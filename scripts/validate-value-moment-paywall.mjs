@@ -150,10 +150,10 @@ resetValueMomentPaywallForTests();
 setPreviewTier("free");
 
 // Copy
-assert.ok(VALUE_MOMENT_PAYWALL_COPY.chatGptComparison.includes("ChatGPT"));
+assert.ok(VALUE_MOMENT_PAYWALL_COPY.continuityLine.includes("ChatGPT"));
 assert.ok(VALUE_MOMENT_PAYWALL_COPY.headline.includes("Keep the archive evolving"));
-assert.ok(VALUE_MOMENT_PRICING_COPY.freeFeatures.some((f) => f.includes("First 5 reflections")));
-assert.ok(VALUE_MOMENT_PRICING_COPY.proFeatures.some((f) => f.includes("Belief changes")));
+assert.ok(VALUE_MOMENT_PRICING_COPY.freeFeatures.some((f) => f.includes("First proof")));
+assert.ok(VALUE_MOMENT_PRICING_COPY.proFeatures.some((f) => f.includes("Full pattern timeline")));
 assert.equal(VALUE_MOMENT_PRICING_COPY.priceLabel, "£9.99/month");
 assert.equal(VALUE_MOMENT_REFLECTION_TARGET, 5);
 
@@ -208,7 +208,7 @@ const copySrc = fs.readFileSync(
   path.join(ROOT, "lib/billing/value-moment-paywall-copy.ts"),
   "utf8",
 );
-if (!copySrc.includes("Keep tracking my patterns")) {
+if (!copySrc.includes("Keep the full timeline")) {
   fail("paywall copy must include primary CTA");
 }
 if (!copySrc.includes("Not now")) fail("paywall copy must include dismiss");

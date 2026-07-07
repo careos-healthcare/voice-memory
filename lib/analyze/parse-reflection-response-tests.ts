@@ -15,15 +15,20 @@ function testParseValidReflection() {
   });
   const reflection = parseReflectionResponse(raw, "Thank you.");
   assert(reflection.exactLanguagePattern === "Thank you.", "exactLanguagePattern");
+  const observation = reflection.concreteObservation;
   assert(
-    reflection.concreteObservation.includes("Thank you."),
+    observation != null && observation.includes("Thank you."),
     "concreteObservation",
   );
 }
 
 function testMinimalFallbackForInvalidModelJson() {
   const reflection = parseReflectionResponse("{not-json", "Thank you.");
-  assert(reflection.concreteObservation.includes("Thank you."), "fallback observation");
+  const observation = reflection.concreteObservation;
+  assert(
+    observation != null && observation.includes("Thank you."),
+    "fallback observation",
+  );
 }
 
 function testMinimalReflectionBuilder() {

@@ -18,7 +18,7 @@ Listing experiments for the overcommitment wedge. **No wellness claims or invent
 | B | 27 | See repeated yes patterns |
 | C | 26 | Save moments. See patterns. |
 | D | 24 | Evidence for overcommit |
-| E | 23 | What keeps repeating |
+| E | 23 | See what returned |
 
 **Recommended:** B or C for search + clarity.
 
@@ -26,7 +26,7 @@ Listing experiments for the overcommitment wedge. **No wellness claims or invent
 
 1. **Save the moment** — When you say yes or when the cost lands
 2. **Private archive** — Your words on your device
-3. **After 3 moments** — See what keeps repeating
+3. **After 3 moments** — See what returned
 4. **Then vs Now** — Compare earlier and recent saves
 5. **Share-safe proof** — Counts only, never raw entries
 6. **Watch next** — Cautious read before the next yes
@@ -38,7 +38,7 @@ Listing experiments for the overcommitment wedge. **No wellness claims or invent
 | 0–3 | Record screen (text blurred) | “You said yes again.” |
 | 3–7 | Save moment | “Save it — private, on your device.” |
 | 7–12 | Second save | “Save a few more real moments.” |
-| 12–17 | Archive Home insight card | “See what keeps repeating — cautiously, from your words.” |
+| 12–17 | Archive Home insight card | “See what returned — cautiously, from your words.” |
 | 17–22 | Then vs Now (blurred) | “Compare over time. Not advice. Evidence.” |
 | 22–25 | Logo + TestFlight/beta | “ArchiveMe — private archive for overcommitment patterns.” |
 
@@ -84,7 +84,7 @@ overcommit,archive,pattern,moments,private,voice,work,operator,compare,review
 
 ArchiveMe is a private evidence archive for people who keep saying yes when they have no capacity.
 
-Save a moment when you agree — or when the cost shows up later. After a few saves, compare what keeps repeating, what changed, and what to watch next. Cautious reads come from your own words — not generic advice.
+Save a moment when you agree — or when the cost shows up later. After a few saves, compare what returned, what changed, and what to watch next. Cautious reads come from your own words — not generic advice.
 
 Features:
 • Voice or typed moments
@@ -98,7 +98,7 @@ Not a task manager or wellness score app. Built for founders, managers, consulta
 
 ## Promo text (≤170 chars)
 
-Save moments when you say yes too fast. ArchiveMe helps you see what keeps repeating — private evidence on your device. Beta available.
+Save moments when you say yes too fast. ArchiveMe helps you see what keeps returning — private evidence on your device. Beta available.
 
 ## Final recommended listing copy
 
@@ -107,9 +107,9 @@ Save moments when you say yes too fast. ArchiveMe helps you see what keeps repea
 | **Name** | ArchiveMe |
 | **Subtitle** | See repeated yes patterns |
 | **Promo** | Save the moment. See the pattern. Private archive for overcommitted professionals — your words, your device. |
-| **Description lead** | For overcommitted professionals who keep saying yes when they have no capacity, ArchiveMe helps you build a private evidence archive and see what keeps repeating over time. |
+| **Description lead** | For overcommitted professionals who keep saying yes when they have no capacity, ArchiveMe helps you build a private evidence archive and see what returned over time. |
 | **Screenshot 1** | Save the moment |
-| **Screenshot 3** | After 3 moments — see what keeps repeating |
+| **Screenshot 3** | After 3 moments — see what returned |
 | **Privacy line** | Entries on device. Share cards never include raw text. |
 
 ## Related

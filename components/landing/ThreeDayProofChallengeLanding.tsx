@@ -12,7 +12,7 @@ export function ThreeDayProofChallengeLanding() {
     >
       <section aria-labelledby="landing-challenge-steps">
         <h2 id="landing-challenge-steps" className="sr-only">
-          3-day proof challenge steps
+          How it works
         </h2>
         <ol className="space-y-6">
           {steps.map((step, index) => (
@@ -50,6 +50,7 @@ export function ThreeDayProofChallengeLanding() {
         >
           {proSection.paidReason}
         </p>
+        <p className="text-sm leading-relaxed text-zinc-400">{proSection.freePositioning}</p>
         <ul className="space-y-2 text-sm leading-relaxed text-zinc-400">
           {proSection.bullets.map((bullet) => (
             <li key={bullet} className="flex gap-2">

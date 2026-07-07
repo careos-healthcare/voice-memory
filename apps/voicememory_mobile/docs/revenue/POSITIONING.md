@@ -1,6 +1,6 @@
 # ArchiveMe — Positioning
 
-ArchiveMe is a **private evidence archive** for what keeps repeating in your life — built from moments you save in your own words, compared across days and weeks.
+ArchiveMe is a **private evidence archive** for what keeps returning in your life — built from moments you save in your own words, compared across days and weeks.
 
 It is **not** a chatbot, journal app, or wellness coach.
 
@@ -16,7 +16,7 @@ It is **not** a chatbot, journal app, or wellness coach.
 | **Memory** | Session or thread | Local archive with proof gates |
 | **Tone** | Helpful assistant | Cautious witness (“may”, not “you should”) |
 
-**ChatGPT answers today. ArchiveMe shows what keeps repeating across your life.**
+**ChatGPT answers today. ArchiveMe shows the timeline behind the pattern.**
 
 ---
 
@@ -67,7 +67,7 @@ Prefer: **your words**, **what returned**, **what changed**, **what got quieter*
 Use for App Store, landing hero tests, and investor one-liners.
 
 1. **“Stop losing the patterns you keep noticing.”**  
-2. **“Your personal evidence archive for what keeps repeating.”**  
+2. **“Your personal evidence archive for what keeps returning.”**  
 3. **“See what changed, what returned, and what finally got quieter.”**  
 4. **“Not another journal. A memory for your patterns.”**
 

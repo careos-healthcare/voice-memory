@@ -63,7 +63,7 @@ const PRIMARY_ROUTES: Array<{
     path: "/pricing",
     name: "pricing",
     primaryCta: (page) => page.locator("[data-pricing-plan='pro'], [data-pricing-ssr]").first(),
-    critical: /Plans for your voice archive/i,
+    critical: /Plans for your archive/i,
   },
   {
     path: "/account",

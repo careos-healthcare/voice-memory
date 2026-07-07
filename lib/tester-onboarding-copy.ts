@@ -1,5 +1,6 @@
 /** Calm onboarding copy for real-user validation — no coach, no productivity framing. */
 
+import { LANDING_3_DAY_CHALLENGE } from "@/lib/product/landing-three-day-challenge-copy";
 import { ONBOARDING_WELCOME } from "@/lib/onboarding/onboarding-copy";
 
 export const WELCOME_EYEBROW = "ArchiveMe";
@@ -25,27 +26,18 @@ export const WELCOME_SECTIONS = [
   },
 ] as const;
 
-export const HOW_IT_WORKS_EYEBROW = "ArchiveMe";
+export const HOW_IT_WORKS_EYEBROW = LANDING_3_DAY_CHALLENGE.subheadline;
 export const HOW_IT_WORKS_TITLE = "How it works";
-export const HOW_IT_WORKS_DESCRIPTION =
-  "Short voice reflections, kept locally. Over time, older entries may resurface when they still connect to what you are living now.";
+export const HOW_IT_WORKS_DESCRIPTION = LANDING_3_DAY_CHALLENGE.subhero;
 
 export const HOW_IT_WORKS_SECTIONS = [
+  ...LANDING_3_DAY_CHALLENGE.steps.map((step) => ({
+    title: step.title,
+    body: step.body,
+  })),
   {
-    title: "Record when something is worth keeping",
-    body: "Speak for a minute or two. Your audio and transcript stay on this device. Your words are organized from what you said — not judged.",
-  },
-  {
-    title: "Past notes may return",
-    body: "As your archive grows, a line from an older reflection may appear again — usually tied to something you said recently. You can open the old entry, bookmark it, or leave it.",
-  },
-  {
-    title: "Revisit when you want",
-    body: "Opening an old entry is optional. Some people record a follow-up; some only read. Both are fine.",
-  },
-  {
-    title: "Encrypted backup is optional",
-    body: "Sign in if you want an encrypted copy backed up. Without it, everything remains local to this browser.",
+    title: "Not a chatbot or habit tracker",
+    body: LANDING_3_DAY_CHALLENGE.chatGptDifferentiation,
   },
   {
     title: "What this is not",

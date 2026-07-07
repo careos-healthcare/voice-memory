@@ -6,7 +6,7 @@ import {
   ANALYZE_UNAVAILABLE_MESSAGE,
   analyzeRouteClientError,
   classifyAnalyzeRouteError,
-} from "../analyze/analyze-route-failure.ts";
+} from "../analyze/analyze-route-failure";
 
 const ROOT = process.cwd();
 const ROUTE_PATH = path.join(ROOT, "app/api/analyze/route.ts");
@@ -17,8 +17,6 @@ function readRouteSource(): string {
 
 export async function runAnalyzeRouteTests(): Promise<{ failures: string[] }> {
   const failures: string[] = [];
-  const priorNodeEnv = process.env.NODE_ENV;
-  const priorOpenAiKey = process.env.OPENAI_API_KEY;
 
   async function check(name: string, fn: () => void | Promise<void>): Promise<void> {
     try {
@@ -100,9 +98,6 @@ export async function runAnalyzeRouteTests(): Promise<{ failures: string[] }> {
     assert.equal(client.status, 502);
     assert.doesNotMatch(client.message, /transcript/i);
   });
-
-  process.env.NODE_ENV = priorNodeEnv;
-  process.env.OPENAI_API_KEY = priorOpenAiKey;
 
   return { failures };
 }

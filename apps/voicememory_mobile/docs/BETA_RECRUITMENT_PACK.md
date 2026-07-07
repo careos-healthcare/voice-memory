@@ -4,7 +4,7 @@ Calm, specific, honest scripts for recruiting TestFlight beta testers. No hype, 
 
 **Core task for every tester:** Save 3 real moments. Return once. Review what repeated. Tell us if it fits.
 
-**Positioning line:** ArchiveMe is a private evidence archive for noticing what keeps repeating, what changed, and what to watch next.
+**Positioning line:** ArchiveMe is a private evidence archive for noticing what returned, what changed, and what to watch next.
 
 ---
 
@@ -72,7 +72,7 @@ Calm, specific, honest scripts for recruiting TestFlight beta testers. No hype, 
 
 2. “Trying to prove you're doing enough? ArchiveMe compares your saved moments cautiously. Need TestFlight testers who'll save 3 real examples.”
 
-3. “Not productivity — pattern evidence. ArchiveMe: what keeps repeating when you're pushing to feel okay. DM for beta.”
+3. “Not productivity — pattern evidence. ArchiveMe: what keeps returning when you're pushing to feel okay. DM for beta.”
 
 ---
 
@@ -80,7 +80,7 @@ Calm, specific, honest scripts for recruiting TestFlight beta testers. No hype, 
 
 **Headline:** Test ArchiveMe on TestFlight
 
-**Body:** ArchiveMe is a private evidence archive. Save 3 real moments this week. Return once. Open Archive and see whether anything useful shows up about what keeps repeating, what changed, and what to watch next.
+**Body:** ArchiveMe is a private evidence archive. Save 3 real moments this week. Return once. Open Archive and see whether anything useful shows up about what returned, what changed, and what to watch next.
 
 **Task:** Install → save 3 moments → open Archive → tell us if it fit
 
