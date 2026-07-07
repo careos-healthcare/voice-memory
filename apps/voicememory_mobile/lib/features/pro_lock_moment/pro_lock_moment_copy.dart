@@ -1,3 +1,5 @@
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Display-only copy for the Pro lock moment — no billing logic.
 abstract final class ProLockMomentCopy {
   ProLockMomentCopy._();
@@ -7,8 +9,7 @@ abstract final class ProLockMomentCopy {
   static const body =
       'ArchiveMe found something by comparing moments you saved at different times.';
 
-  static const paidReason =
-      'Pro keeps the longer story — more history, private reports, and evidence over time.';
+  static const paidReason = PaywallAlignmentCopy.lockMomentPaidReason;
 
   static const chatDifferentiation =
       'This is not a chat answer. It is a pattern found across your saved moments.';

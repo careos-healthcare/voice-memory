@@ -11,6 +11,8 @@ import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_ch
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gates.dart';
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_engine.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
@@ -92,11 +94,11 @@ void main() {
   });
 
   group('ProPackagingCopy', () {
-    test('defines longer memory Pro positioning', () {
+    test('defines full timeline Pro positioning', () {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');
       expect(
         ProPackagingCopy.subtitle,
-        'ArchiveMe is most useful when it can compare moments over time.',
+        PaywallAlignmentCopy.body,
       );
       expect(ProPackagingCopy.freeSectionTitle, 'Free');
       expect(
@@ -104,12 +106,12 @@ void main() {
         'Start your archive and unlock your first proof.',
       );
       expect(ProPackagingCopy.proSectionTitle, 'Pro');
-      expect(ProPackagingCopy.proBullets, hasLength(5));
-      expect(ProPackagingCopy.proBullets, contains('Longer archive history'));
-      expect(ProPackagingCopy.proBullets, contains('Private monthly reports'));
+      expect(ProPackagingCopy.proBullets, hasLength(6));
+      expect(ProPackagingCopy.proBullets, contains('Full pattern timeline'));
+      expect(ProPackagingCopy.proBullets, contains('Monthly private report'));
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
-        'First proof is free. Pro is for keeping the longer story.',
+        'Free shows the first proof. Pro keeps the full timeline as it grows.',
       );
       expect(
         ProPackagingCopy.bridgeAfterBeliefChange,
@@ -123,11 +125,11 @@ void main() {
   });
 
   group('ProEvidenceValueCopy', () {
-    test('aligns longer-story Pro bridge with packaging', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the longer story');
+    test('aligns full-timeline Pro bridge with packaging', () {
+      expect(ProEvidenceValueCopy.title, 'Keep the full timeline');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        contains('ChatGPT answers one conversation'),
+        contains('ChatGPT can answer a conversation'),
       );
       expect(
         ProEvidenceValueCopy.sheetFooter,
@@ -135,7 +137,7 @@ void main() {
       );
       expect(
         ProEvidenceValueCopy.proBulletsForDisplay(exportReportsLive: true),
-        contains('Exportable reports'),
+        contains('Full pattern timeline'),
       );
     });
   });
@@ -185,8 +187,8 @@ void main() {
         find.text('Start your archive and unlock your first proof.'),
         findsOneWidget,
       );
-      expect(find.text('Longer archive history'), findsOneWidget);
-      expect(find.text('Private monthly reports'), findsOneWidget);
+      expect(find.text('Full pattern timeline'), findsOneWidget);
+      expect(find.text('Monthly private report'), findsOneWidget);
     });
   });
 
@@ -197,7 +199,8 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
-      expect(find.byKey(const Key('archive_me_pro_value_section')), findsOneWidget);
+      expect(find.byKey(const Key('paywall_primary_value_block')), findsOneWidget);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
       expect(find.text(ProPackagingCopy.continueCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -217,8 +220,9 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
-      expect(find.text('Free'), findsOneWidget);
-      expect(find.text('Pro'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.text('Full pattern timeline'), findsOneWidget);
+      expect(find.text('Monthly private report'), findsOneWidget);
       expect(find.textContaining(r'$'), findsNothing);
       expect(find.textContaining('0.00'), findsNothing);
     });
@@ -314,7 +318,10 @@ void main() {
   });
 
   group('value moment bridge copy', () {
-    testWidgets('first proof payoff shows longer story bridge', (tester) async {
+    testWidgets('first proof payoff shows full timeline bridge', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
       expect(payoff, isNotNull);
 
@@ -322,20 +329,20 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: FirstProofPayoffCard(
-              payoff: payoff!,
-              entryCount: 3,
-              onWatchThisNext: () {},
+            body: SingleChildScrollView(
+              child: FirstProofPayoffCard(
+                payoff: payoff!,
+                entryCount: 3,
+                onWatchThisNext: () {},
+              ),
             ),
           ),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(
-        find.text(ProPackagingCopy.bridgeAfterFirstProof),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('pro_packaging_bridge_first_proof')), findsOneWidget);
+      expect(find.text(ProPackagingCopy.bridgeAfterFirstProof), findsOneWidget);
     });
 
     testWidgets('belief change moment shows keep archive bridge', (tester) async {

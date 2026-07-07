@@ -82,7 +82,13 @@ void main() {
     });
 
     test('pattern and moment language', () {
-      expect(allDocs.toLowerCase(), contains('what keeps repeating'));
+      expect(
+        allDocs.toLowerCase(),
+        anyOf(
+          contains('keeps returning'),
+          contains('what returned'),
+        ),
+      );
       expect(allDocs.toLowerCase(), contains('save the moment'));
       expect(allDocs.toLowerCase(), contains('see the pattern'));
     });
@@ -140,7 +146,7 @@ void main() {
         contains('Stop guessing why you keep taking on too much.'),
       );
       expect(landing, contains('Save the moment. See the pattern.'));
-      expect(landing, contains('ArchiveMe shows what keeps repeating.'));
+      expect(landing, contains('ArchiveMe shows what keeps returning.'));
     });
   });
 

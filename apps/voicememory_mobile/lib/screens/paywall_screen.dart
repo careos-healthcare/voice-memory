@@ -39,6 +39,7 @@ import '../theme/voicememory_typography.dart';
 import '../widgets/billing/paywall_objection_follow_up_card.dart';
 import '../widgets/billing/paywall_rejection_prompt.dart';
 import '../widgets/billing/plan_selection_confidence_block.dart';
+import '../widgets/paywall/purchase_confidence_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
@@ -119,6 +120,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return source == null || source == PaywallSource.generalPro;
   }
 
+  bool get _showsPurchaseConfidenceCard => true;
+
+  Widget _purchaseConfidenceSection() {
+    return PurchaseConfidenceCard(
+      source: _attributionSource.id,
+      surface: 'paywall_screen',
+    );
+  }
+
   Widget _paywallPrimaryValueBlock() {
     return Builder(
       builder: (context) => Text(
@@ -151,7 +161,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ..._benefits.map(_benefitRow),
         ],
         const SizedBox(height: 14),
-        _paywallDifferentiationAndTrustSection(),
+        _paywallDifferentiationAndTrustSection(
+          includeTrustLine: !_showsPurchaseConfidenceCard,
+        ),
         const SizedBox(height: 10),
         _paywallBackupLine(),
       ],
@@ -760,7 +772,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
         else ...[
           _aboveFoldClaritySection(),
           const SizedBox(height: 14),
-          _paywallDifferentiationAndTrustSection(),
+          _paywallDifferentiationAndTrustSection(
+          includeTrustLine: !_showsPurchaseConfidenceCard,
+        ),
         ],
         if (!_usesGeneralConversionClarity && sourceCopy == null) ...[
           const SizedBox(height: 16),
@@ -782,6 +796,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           _proofPreviewSection(),
         ],
         const SizedBox(height: 16),
+        if (_showsPurchaseConfidenceCard) ...[
+          _purchaseConfidenceSection(),
+          const SizedBox(height: 14),
+        ],
         _confidenceSection(),
         // Same price confidence as the live paywall body.
         const SizedBox(height: 10),
@@ -965,7 +983,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Widget _paywallDifferentiationAndTrustSection() {
+  Widget _paywallDifferentiationAndTrustSection({
+    bool includeTrustLine = true,
+  }) {
     return Builder(
       builder: (context) => Column(
         key: const Key('paywall_differentiation_trust'),
@@ -977,13 +997,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
             style: ArchiveMobileTypography.responsiveBody(context),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          Text(
-            ConsumerUiCopy.paywallTrust,
-            key: const Key('paywall_trust'),
-            style: ArchiveMobileTypography.responsiveHelper(context),
-            textAlign: TextAlign.center,
-          ),
+          if (includeTrustLine) ...[
+            const SizedBox(height: 8),
+            Text(
+              ConsumerUiCopy.paywallTrust,
+              key: const Key('paywall_trust'),
+              style: ArchiveMobileTypography.responsiveHelper(context),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
@@ -1042,7 +1064,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
             const SizedBox(height: 14),
             ..._benefits.map(_benefitRow),
             const SizedBox(height: 14),
-            _paywallDifferentiationAndTrustSection(),
+            _paywallDifferentiationAndTrustSection(
+              includeTrustLine: !_showsPurchaseConfidenceCard,
+            ),
             const SizedBox(height: 10),
             _paywallBackupLine(),
             const SizedBox(height: 20),
@@ -1193,7 +1217,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
               !showPackagingSection &&
               benefitRows.isNotEmpty) ...[
             const SizedBox(height: 14),
-            _paywallDifferentiationAndTrustSection(),
+            _paywallDifferentiationAndTrustSection(
+              includeTrustLine: !_showsPurchaseConfidenceCard,
+            ),
           ],
           if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 14),
@@ -1258,6 +1284,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           if (PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 18),
             _proofPreviewSection(),
+          ],
+          if (_showsPurchaseConfidenceCard) ...[
+            const SizedBox(height: 18),
+            _purchaseConfidenceSection(),
           ],
           const SizedBox(height: 18),
           _confidenceSection(),

@@ -78,7 +78,7 @@ void main() {
     test('contains required tester wording', () {
       expect(
         message,
-        contains('private mind map of what keeps repeating in your life'),
+        contains('See what keeps returning'),
       );
       expect(
         message,

@@ -240,10 +240,10 @@ void main() {
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('medical treatment')));
       expect(blob, isNot(contains('guaranteed')));
-      expect(blob, contains('private moment'));
-      expect(blob, contains('what came back'));
-      expect(blob, contains('come back tomorrow'));
-      expect(blob, contains('something to compare'));
+      expect(blob, contains('save one small moment'));
+      expect(blob, contains('see what returned'));
+      expect(blob, contains('come back when something stands out'));
+      expect(blob, contains('no daily journal required'));
     });
   });
 

@@ -103,11 +103,11 @@ void main() {
 
   group('Copy guardrails', () {
     test('intro copy is exact', () {
-      expect(First60Copy.introTitle, 'Notice what keeps repeating');
+      expect(First60Copy.introTitle, 'See what keeps returning');
       expect(
         First60Copy.introBody,
-        'ArchiveMe helps you notice what keeps repeating in your own words. '
-        'Start with one honest moment.',
+        'Save small moments when something stands out. ArchiveMe turns them into '
+        'a private timeline in your own words. Start with one honest moment.',
       );
       expect(First60Copy.introCta, 'Record one moment');
       expect(
@@ -636,11 +636,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('zero entries shows archive promise hero instead of intro card', (
+    testWidgets('zero entries shows timeline positioning instead of intro card', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      expect(find.byKey(const Key('timeline_positioning_card')), findsOneWidget);
       expect(find.byKey(const Key('first_60_intro_card')), findsNothing);
       expect(find.text('What is on your mind?'), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
@@ -676,14 +676,14 @@ void main() {
       'advanced memory controls are not forced into the first 60 seconds',
       (tester) async {
         await pumpRecordScreen(tester);
-        final hero = find.byKey(const Key('record_top_archive_promise_hero'));
-        expect(hero, findsOneWidget);
+        final timelineCard = find.byKey(const Key('timeline_positioning_card'));
+        expect(timelineCard, findsOneWidget);
         expect(
-          find.descendant(of: hero, matching: find.textContaining('Memory')),
+          find.descendant(of: timelineCard, matching: find.textContaining('Memory')),
           findsNothing,
         );
         expect(
-          find.descendant(of: hero, matching: find.textContaining('evidence')),
+          find.descendant(of: timelineCard, matching: find.textContaining('evidence')),
           findsNothing,
         );
         expect(tester.takeException(), isNull);

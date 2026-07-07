@@ -3,7 +3,7 @@ abstract final class CapacityThreeMomentCopy {
   CapacityThreeMomentCopy._();
 
   static const activationPromise =
-      'Save 3 yes moments. See what keeps repeating.';
+      'Save 3 yes moments. See what returned.';
 
   static const cardTitle = 'Save 3 yes moments';
   static const cardSubtitle =
@@ -34,7 +34,7 @@ abstract final class CapacityThreeMomentCopy {
       'Three real moments are enough to start seeing what repeats.';
 
   static const betaTaskLine =
-      'Beta task: save 3 real yes moments, then review your yes loop.';
+      'Beta task: save 3 real moments when something stands out, then see what returned.';
 
   static List<String> allVisibleStrings() => [
         activationPromise,

@@ -330,6 +330,8 @@ import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
 import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../features/proof_quality_response/proof_quality_response_engine.dart';
 import '../features/proof_quality_response/proof_quality_response_model.dart';
+import '../features/pro_moment_timing/pro_moment_timing_engine.dart';
+import '../features/pro_moment_timing/pro_moment_timing_model.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
@@ -4801,14 +4803,58 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         SurfacePriorityCardKey.archiveBackupBridge,
         candidate: showArchiveBackupBridgeOnPatterns,
       );
-      final showPatternsProEvidenceValueCard = patternsAudit.isVisible(
+      var showPatternsProEvidenceValueCard = patternsAudit.isVisible(
         SurfacePriorityCardKey.proEvidenceValue,
         candidate: patternsProEvidenceValueVisible,
       );
-      final showPatternsArchiveIntelligenceProBridge =
+      var showPatternsArchiveIntelligenceProBridge =
           patternsAudit.isVisible(
         SurfacePriorityCardKey.archiveIntelligenceProBridge,
         candidate: patternsArchiveIntelligenceProBridgeVisible,
+      );
+      final patternsProTiming = ProMomentTimingContext(
+        surface: ProMomentTimingSurface.archivePatterns,
+        source: 'archive_patterns',
+        entryCount: _entries.length,
+        hasFirstProof:
+            ProEvidenceValueEngine.firstProofPayoffSeenForEntries(_entries) ||
+                EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries),
+        hasTimelineProofVisible: showTimelineProofMomentOnPatterns &&
+            timelineProofMomentCandidate != null,
+        hasBetaTesterReportVisible: showBetaTesterReportOnPatterns,
+        hasCorrectionMemoryVisible: showCorrectionMemoryOnPatterns &&
+            correctionMemoryCandidate != null,
+        feedbackState: ProMomentTimingEngine.resolveFeedbackState(
+          entries: _entries,
+          surface: ProofQualityResponseSurface.patterns,
+        ),
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+        proSlotAvailable: true,
+      );
+      showPatternsProEvidenceValueCard = ProMomentTimingEngine.applyGate(
+        candidate: showPatternsProEvidenceValueCard,
+        timing: patternsProTiming,
+      );
+      showPatternsArchiveIntelligenceProBridge =
+          ProMomentTimingEngine.applyGate(
+        candidate: showPatternsArchiveIntelligenceProBridge,
+        timing: patternsProTiming.copyWith(
+          proSlotAvailable: showPatternsArchiveIntelligenceProBridge,
+        ),
+      );
+      showProEvidenceValuePrivateReportOnPatterns =
+          ProMomentTimingEngine.applyGate(
+        candidate: showProEvidenceValuePrivateReportOnPatterns,
+        timing: patternsProTiming.copyWith(
+          hasMonthlyPrivateReportPreviewVisible: true,
+          proSlotAvailable: showProEvidenceValuePrivateReportOnPatterns,
+        ),
+      );
+      showArchiveBackupBridgeOnPatterns = ProMomentTimingEngine.applyGate(
+        candidate: showArchiveBackupBridgeOnPatterns,
+        timing: patternsProTiming.copyWith(
+          proSlotAvailable: showArchiveBackupBridgeOnPatterns,
+        ),
       );
       final proofSpecificityBoostPatternsCandidate =
           ProofSpecificityBoostEngine.build(

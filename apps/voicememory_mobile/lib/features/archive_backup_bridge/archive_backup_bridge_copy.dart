@@ -1,19 +1,19 @@
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Display-only copy for the archive preservation bridge — no billing logic.
 abstract final class ArchiveBackupBridgeCopy {
   ArchiveBackupBridgeCopy._();
 
   static const cardTitle = 'Do not lose this archive';
 
-  static const cardBody =
-      'You are starting to build evidence over time. ArchiveMe is most valuable when the longer story is kept.';
+  static const cardBody = PaywallAlignmentCopy.backupBridgeBody;
 
   static const plannedProAreas =
       'Backup and multi-device protection are planned Pro areas.';
 
   static const deviceBackupToday = 'Today, keep your device backed up.';
 
-  static const proPreservation =
-      'Pro is built around preserving the longer archive.';
+  static const proPreservation = PaywallAlignmentCopy.backupProPreservation;
 
   static const cta = 'How to preserve it';
 

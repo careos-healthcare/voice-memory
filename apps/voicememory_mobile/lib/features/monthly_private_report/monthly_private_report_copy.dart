@@ -1,3 +1,5 @@
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Display-only copy for the monthly private report preview — no billing logic.
 abstract final class MonthlyPrivateReportCopy {
   MonthlyPrivateReportCopy._();
@@ -7,8 +9,7 @@ abstract final class MonthlyPrivateReportCopy {
   static const cardBody =
       'ArchiveMe is collecting evidence of what returned, changed, softened, helped, or went quiet.';
 
-  static const proReason =
-      'Pro keeps the longer story — and the longer report history.';
+  static const proReason = PaywallAlignmentCopy.monthlyReportProReason;
 
   static const chatDifferentiation =
       'This is not a chat transcript. It is a private evidence report built from moments you saved.';

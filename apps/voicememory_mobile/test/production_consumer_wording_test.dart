@@ -88,11 +88,11 @@ void main() {
     test('paywall headline uses continuity framing', () {
       expect(
         ConsumerUiCopy.paywallHeadline,
-        'Keep the longer story.',
+        'Keep the full timeline',
       );
       expect(
         ConsumerUiCopy.paywallSubhead,
-        contains('compare moments over time'),
+        contains('what appeared, what returned'),
       );
       expect(
         ConsumerUiCopy.paywallSetupUnavailableBody,

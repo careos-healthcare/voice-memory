@@ -96,7 +96,7 @@ void main() {
       expect(RecordReturnProCopy.recordOnceCta, 'Record one moment');
       expect(
         RecordReturnProCopy.recordOnceSupporting,
-        'ArchiveMe helps you notice what keeps repeating in your own words.',
+        'Save small moments when something stands out — in your own words.',
       );
     });
 
@@ -309,7 +309,7 @@ void main() {
       expect(find.text('Record one moment'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe helps you notice what keeps repeating in your own words.',
+          'Save small moments when something stands out — in your own words.',
         ),
         findsOneWidget,
       );

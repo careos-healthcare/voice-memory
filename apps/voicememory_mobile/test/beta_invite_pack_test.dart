@@ -94,7 +94,7 @@ void main() {
       );
       expect(
         BetaInviteCopy.corePositioning,
-        contains('what keeps repeating'),
+        contains('keeps returning'),
       );
     });
 
@@ -106,11 +106,11 @@ void main() {
       }
     });
 
-    test('short invite mentions saving 3 moments', () {
+    test('short invite mentions saving a few moments', () {
       for (final variant in BetaInviteVariantId.values) {
         expect(
           BetaInviteCopy.shortInvite(variant).toLowerCase(),
-          anyOf(contains('3 moments'), contains('save 3')),
+          anyOf(contains('few'), contains('small moment')),
         );
       }
     });

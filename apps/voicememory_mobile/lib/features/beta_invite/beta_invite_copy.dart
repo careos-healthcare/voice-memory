@@ -1,18 +1,19 @@
 import 'beta_invite_models.dart';
 import '../capacity_loop/capacity_three_moment_copy.dart';
 import '../capacity_loop/capacity_activation_fit_copy.dart';
+import '../landing_continuity/landing_app_continuity_copy.dart';
 
 /// Copy for beta tester invite packs — crisp, local-only recruitment scripts.
 abstract final class BetaInviteCopy {
   BetaInviteCopy._();
 
   static const corePositioning =
-      'ArchiveMe shows what keeps repeating across your saved moments.';
+      'Save small moments when something stands out. ArchiveMe shows what keeps returning.';
 
   static const screenTitle = 'Invite a beta tester';
   static const subtitle =
       'Send someone a clear task so you can see whether ArchiveMe makes sense '
-      'by their third saved moment.';
+      'after a few saved moments.';
 
   static const variantSectionTitle = 'Invite variant';
   static const previewSectionTitle = 'Invite preview';
@@ -30,12 +31,12 @@ abstract final class BetaInviteCopy {
 
   static const supportTitle = 'Invite beta tester';
   static const supportSubtitle =
-      'Copy invite scripts and a simple 3-moment tester task.';
+      'Copy invite scripts and a simple early-archive tester task.';
   static const openBetaInviteButton = 'Open beta invite pack';
 
   static const helpTitle = 'Beta invite pack';
   static const helpBody =
-      'Use invite scripts to recruit testers for the 3-moment archive loop. '
+      'Use invite scripts to recruit testers for the early archive loop. '
       'Nothing is uploaded from this screen.';
 
   static const betaOutcomesTotalLabel = 'Beta invites copied';
@@ -54,17 +55,17 @@ abstract final class BetaInviteCopy {
       CapacityActivationFitCopy.betaTaskLine;
 
   static const testerTask =
-      'Save 3 moments. After the third, open Archive and answer whether '
-      'ArchiveMe showed something useful.';
+      'Save a few small moments when something stands out. After the third, open '
+      'Archive and answer whether ArchiveMe showed what returned.';
 
   static const betaSuccessChecklist =
-      'Beta success means: save 3 real moments, return once, review what '
-      'repeated, tell us if it fits, and say whether you would pay to keep '
-      'this archive.';
+      'Beta success means: save a few real moments, return when something stands out, '
+      'review what returned, tell us if it fits, and say whether you would pay to keep '
+      'the full timeline.';
 
   static const reportBackPrompt =
-      'Did you understand the app? Did it show anything useful by entry 3? '
-      'Would you pay to keep a long-term archive of this pattern?';
+      'Did you understand the app? Did it show anything useful by the third moment? '
+      'Would you pay to keep the full timeline as it grows?';
 
   static String variantTitle(BetaInviteVariantId id) => switch (id) {
         BetaInviteVariantId.general => variantGeneralTitle,
@@ -92,46 +93,42 @@ abstract final class BetaInviteCopy {
 
   static const _shortGeneral =
       'I\'m testing ArchiveMe — a private app that helps you see what keeps '
-      'repeating across your saved moments. The test is simple: save 3 moments '
-      'this week and tell me if the archive shows anything useful.';
+      'returning across your saved moments. The test is simple: save a few small '
+      'moments when something stands out and tell me if the archive shows what returned.';
 
   static const _shortWorkPatterns =
       'I\'m testing ArchiveMe for people who keep saying yes when they have '
-      'no capacity. Save 3 real moments this week — especially yes moments — '
-      'and tell me if the archive shows what keeps repeating by the third.';
+      'no capacity. Save a few real moments when something stands out and tell me '
+      'if the archive shows what returned by the third.';
 
   static const _shortJournalingUpgrade =
-      'I\'m testing ArchiveMe for people who already journal but want evidence '
-      'over time. Save 3 moments this week and tell me if the archive compares '
-      'them usefully.';
+      'I\'m testing ArchiveMe for people who already capture moments but want a '
+      'timeline of what returned. Save a few small moments when something stands out '
+      'and tell me if the archive compares them usefully.';
 
   static const _shortFounderCreator =
-      'I\'m testing ArchiveMe for people who make repeated decisions and want '
-      'to see patterns across saved moments. Save 3 moments this week and tell '
-      'me if the archive shows anything useful.';
+      'I\'m testing ArchiveMe for people who make repeated decisions and want to '
+      'see what keeps returning across saved moments. Save a few small moments and '
+      'tell me if the archive shows anything useful.';
 
   static const _shortPrivateArchive =
       'I\'m testing ArchiveMe as a private archive for reflection without '
-      'sharing entries. Save 3 moments this week and tell me if the archive '
-      'shows anything useful by the third.';
+      'sharing entries. Save a few small moments when something stands out and tell '
+      'me if the archive shows what returned by the third.';
 
-  static const _longGeneral =
-      'ArchiveMe is for people who want to notice what keeps repeating across '
-      'their own saved moments — not as a conclusion, but as cautious evidence '
-      'you can review over time.';
+  static const _longGeneral = LandingAppContinuityCopy.heroBody;
 
   static const _longWorkPatterns =
-      'ArchiveMe is a private evidence archive for overcommitment patterns — '
-      'save when you say yes too fast, then compare what keeps repeating in '
-      'your own words.';
+      'ArchiveMe is a private timeline for overcommitment patterns — save when '
+      'something stands out, then compare what returned in your own words.';
 
   static const _longJournalingUpgrade =
-      'If you already journal, ArchiveMe is meant to turn saved moments into a '
-      'comparable archive instead of a pile of one-off notes.';
+      'If you already capture moments elsewhere, ArchiveMe is meant to turn saved '
+      'moments into a timeline of what returned — not a daily journal project.';
 
   static const _longFounderCreator =
-      'ArchiveMe is for people who make repeated decisions and want a longer '
-      'view of what their own saved moments keep pointing to.';
+      'ArchiveMe is for people who make repeated decisions and want a longer view '
+      'of what their own saved moments keep returning to.';
 
   static const _longPrivateArchive =
       'ArchiveMe keeps your archive local and private. Share-safe proof never '

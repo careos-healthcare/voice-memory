@@ -19,14 +19,14 @@ import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
 
 const _requiredPhrases = [
   'Catch the yes before it costs you',
-  'Map the moments that keep repeating',
+  'See what keeps returning',
   'Save a yes moment',
   'See what pulled you in',
   'Review what changed',
   'Save 3 yes moments',
   'Review your yes loop',
   'Does this feel accurate',
-  'private mind map',
+  'see what returned',
   'before checking your capacity',
   'later cost',
   'default yes pause',
@@ -153,7 +153,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityHowItWorksSteps,
-        contains('Save a real moment'),
+        contains('Save one small moment'),
       );
     });
 

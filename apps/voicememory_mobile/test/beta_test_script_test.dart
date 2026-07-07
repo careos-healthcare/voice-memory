@@ -98,13 +98,19 @@ void main() {
 
   group('BetaTestScriptCopy', () {
     test('exact v1 copy', () {
-      expect(BetaTestScriptCopy.settingsTileTitle, '3-day beta test');
-      expect(BetaTestScriptCopy.screenTitle, '3-day ArchiveMe test');
-      expect(BetaTestScriptCopy.day1Title, 'Day 1 — Save one real moment');
-      expect(BetaTestScriptCopy.day2Title, 'Day 2 — Record what came back');
-      expect(BetaTestScriptCopy.day3Title, 'Day 3 — Check first proof');
-      expect(BetaTestScriptCopy.compactBodyDay1, 'Day 1: Save one real moment.');
-      expect(BetaTestScriptCopy.resetTitle, 'Reset beta test progress?');
+      expect(BetaTestScriptCopy.settingsTileTitle, 'Early archive test');
+      expect(BetaTestScriptCopy.screenTitle, 'ArchiveMe early test');
+      expect(BetaTestScriptCopy.day1Title, 'Step 1 — Save one small moment');
+      expect(
+        BetaTestScriptCopy.day2Title,
+        'Step 2 — Come back when something stands out',
+      );
+      expect(BetaTestScriptCopy.day3Title, 'Step 3 — See what returned');
+      expect(
+        BetaTestScriptCopy.compactBodyDay1,
+        'Save one small moment when something stands out.',
+      );
+      expect(BetaTestScriptCopy.resetTitle, 'Reset early test progress?');
     });
   });
 
@@ -291,7 +297,16 @@ void main() {
           home: const TestingArchiveMeScreen(),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> openBetaTestScriptSheet(WidgetTester tester) async {
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('testing_archiveme_view_test_steps')),
+        120,
+      );
+      await tester.tap(find.byKey(const Key('testing_archiveme_view_test_steps')));
+      await tester.pumpAndSettle();
     }
 
     testWidgets('tile appears when beta flag enabled', (tester) async {
@@ -308,11 +323,10 @@ void main() {
       expect(find.byKey(const Key('testing_archiveme_beta_test_tile')), findsNothing);
     });
 
-    testWidgets('sheet opens with 3-day plan', (tester) async {
+    testWidgets('sheet opens with early archive plan', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpScreen(tester);
-      await tester.tap(find.byKey(const Key('testing_archiveme_view_test_steps')));
-      await tester.pumpAndSettle();
+      await openBetaTestScriptSheet(tester);
 
       expect(find.byKey(const Key('beta_test_script_sheet')), findsOneWidget);
       expect(find.text(BetaTestScriptCopy.screenTitle), findsOneWidget);
@@ -324,8 +338,7 @@ void main() {
     testWidgets('success questions and failure signal render', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpScreen(tester);
-      await tester.tap(find.byKey(const Key('testing_archiveme_view_test_steps')));
-      await tester.pumpAndSettle();
+      await openBetaTestScriptSheet(tester);
 
       expect(find.text(BetaTestScriptCopy.successHeading), findsOneWidget);
       for (final question in BetaTestScriptCopy.successQuestions) {
@@ -337,11 +350,10 @@ void main() {
     testWidgets('reset confirmation copy renders', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpScreen(tester);
-      await tester.tap(find.byKey(const Key('testing_archiveme_view_test_steps')));
-      await tester.pumpAndSettle();
+      await openBetaTestScriptSheet(tester);
       await tester.scrollUntilVisible(
         find.byKey(const Key('beta_test_script_reset_progress')),
-        100,
+        120,
         scrollable: find.byType(Scrollable).last,
       );
       await tester.tap(find.byKey(const Key('beta_test_script_reset_progress')));

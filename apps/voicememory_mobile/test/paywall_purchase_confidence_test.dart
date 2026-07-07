@@ -33,7 +33,7 @@ void main() {
       );
       expect(
         ArchivePaywallCopy.purchaseSuccess,
-        'Pro is active. ArchiveMe can keep the longer story.',
+        'Pro is active. ArchiveMe keeps the full timeline as it grows.',
       );
       expect(
         ArchivePaywallCopy.restoreChecking,

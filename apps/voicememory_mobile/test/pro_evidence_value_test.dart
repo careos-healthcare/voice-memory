@@ -5,6 +5,7 @@ import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payof
 import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_model.dart';
 import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_analytics.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
@@ -129,16 +130,16 @@ void main() {
 
   group('ProEvidenceValueCopy', () {
     test('defines required bridge copy', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the longer story');
+      expect(ProEvidenceValueCopy.title, 'Keep the full timeline');
       expect(
         ProEvidenceValueCopy.body,
-        contains('Free shows the first proof'),
+        'Free shows the first proof. Pro keeps the full timeline as it grows.',
       );
       expect(ProEvidenceValueCopy.cta, 'See what Pro keeps');
       expect(ProEvidenceValueCopy.secondary, 'Not now');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        'ChatGPT answers one conversation. ArchiveMe compares what you saved over time.',
+        'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
       );
       expect(
         ProEvidenceValueCopy.evidenceLine,
@@ -373,7 +374,7 @@ void main() {
       expect(find.text(ProEvidenceValueCopy.freeSectionTitle), findsOneWidget);
       expect(find.text(ProEvidenceValueCopy.proSectionTitle), findsOneWidget);
       expect(find.text('First repeat proof'), findsOneWidget);
-      expect(find.text('Longer archive memory'), findsOneWidget);
+      expect(find.text('Full pattern timeline'), findsOneWidget);
     });
 
     testWidgets('dismiss fires analytics', (tester) async {
@@ -428,9 +429,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Basic correction'), findsOneWidget);
-      expect(find.text('Change timeline'), findsOneWidget);
-      expect(find.text('Private reports'), findsOneWidget);
-      expect(find.text('Exportable reports'), findsOneWidget);
+      expect(find.text('Changing current weight'), findsOneWidget);
+      expect(find.text('Monthly private report'), findsOneWidget);
+      expect(find.text(PaywallAlignmentCopy.benefitBullets.first), findsOneWidget);
     });
   });
 

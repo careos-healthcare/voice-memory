@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
@@ -248,11 +249,8 @@ void main() {
 
     test('general Pro fallback copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.generalPro);
-      expect(copy.headline, 'Keep the longer story.');
-      expect(
-        copy.subheadline,
-        'ArchiveMe is most useful when it can compare moments over time.',
-      );
+      expect(copy.headline, PaywallAlignmentCopy.headline);
+      expect(copy.subheadline, PaywallAlignmentCopy.body);
       expect(copy.bullets, isNotEmpty);
     });
 
@@ -366,13 +364,11 @@ void main() {
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
       expect(
-        find.text('Keep the longer story.'),
+        find.text(ConsumerUiCopy.paywallHeadline),
         findsOneWidget,
       );
       expect(
-        find.text(
-          'ArchiveMe is most useful when it can compare moments over time.',
-        ),
+        find.text(ConsumerUiCopy.paywallSubhead),
         findsOneWidget,
       );
     });

@@ -6,7 +6,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Lightweight 3-day proof challenge tracker — guidance only, no extra CTAs.
+/// Lightweight early-record guidance tracker — guidance only, no extra CTAs.
 class ThreeDayChallengeCard extends StatelessWidget {
   const ThreeDayChallengeCard({
     super.key,

@@ -1,3 +1,4 @@
+import '../../features/landing_continuity/landing_app_continuity_copy.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../security/privacy_copy_policy.dart';
 
@@ -5,10 +6,10 @@ import '../../security/privacy_copy_policy.dart';
 abstract class FirstUserExperienceCopy {
   FirstUserExperienceCopy._();
 
-  static const String introTitle = 'Notice what keeps repeating';
+  static const String introTitle = LandingAppContinuityCopy.hero;
   static const String introBody =
-      'ArchiveMe helps you notice what keeps repeating in your own words. '
-      'Start with one honest moment.';
+      'Save small moments when something stands out. ArchiveMe turns them into '
+      'a private timeline in your own words. Start with one honest moment.';
   static const String primaryCta = ConsumerUiCopy.recordOneMomentCta;
 
   static const String trustLine = PrivacyCopyPolicy.personalNotMedicalDisclaimer;

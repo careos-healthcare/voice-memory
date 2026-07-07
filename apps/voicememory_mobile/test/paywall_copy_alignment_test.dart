@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
+import 'package:voicememory_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 
@@ -27,8 +29,8 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 
 void main() {
   group('Paywall copy alignment v1', () {
-    test('headline uses Keep the longer story', () {
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer story.');
+    test('headline uses Keep the full timeline', () {
+      expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
       expect(ArchivePaywallCopy.headline, ConsumerUiCopy.paywallHeadline);
       expect(
         PaywallSourceCopy.generalPro.headline,
@@ -36,27 +38,23 @@ void main() {
       );
     });
 
-    test('subhead compares moments over time', () {
-      expect(
-        ConsumerUiCopy.paywallSubhead,
-        'ArchiveMe is most useful when it can compare moments over time.',
-      );
+    test('subhead sells the full timeline value', () {
+      expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
       expect(
         PaywallSourceCopy.generalPro.subheadline,
         ConsumerUiCopy.paywallSubhead,
       );
     });
 
-    test('bullets cover longer history, reports, and evidence', () {
+    test('bullets cover timeline, corrections, reports, and continuity', () {
       final bullets = ConsumerUiCopy.paywallBullets;
-      expect(bullets, contains('Longer archive history'));
-      expect(bullets, contains('Private monthly reports'));
-      expect(bullets, contains('Pattern and change evidence over time'));
-      expect(bullets, contains('Export/private reports when available'));
-      expect(
-        bullets,
-        contains('Built around preserving your archive'),
-      );
+      expect(bullets, PaywallAlignmentCopy.benefitBullets);
+      expect(bullets, contains('Full pattern timeline'));
+      expect(bullets, contains('Correction history'));
+      expect(bullets, contains('Changing current weight'));
+      expect(bullets, contains('Longer evidence trail'));
+      expect(bullets, contains('Monthly private report'));
+      expect(bullets, contains('Backup and continuity'));
       expect(PaywallSourceCopy.generalPro.bullets, bullets);
     });
 
@@ -104,7 +102,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallTrust), findsOneWidget);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallBackupLine), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
@@ -117,7 +115,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.text('Done'), findsAtLeast(1));
       expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallTrust), findsOneWidget);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
     });
   });
 }

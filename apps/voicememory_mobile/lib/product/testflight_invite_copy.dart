@@ -102,7 +102,8 @@ Reply with what felt clear and what felt confusing after two days.''';
       case TestFlightInviteVariant.proveEnough:
         return 'Record one moment where you kept doing more because stopping felt uncomfortable. Come back tomorrow and record the next proving moment.';
       case TestFlightInviteVariant.generic:
-        return 'Use the app for two days. Record one short moment each day and note whether ArchiveMe helped you see what keeps repeating.';
+        return 'Save small moments when something stands out. Come back when another '
+            'moment matters and note whether ArchiveMe helped you see what returned.';
     }
   }
 

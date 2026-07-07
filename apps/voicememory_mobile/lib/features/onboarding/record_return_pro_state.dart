@@ -149,7 +149,7 @@ abstract class RecordReturnProCopy {
   // A. Record once.
   static const String recordOnceCta = 'Record one moment';
   static const String recordOnceSupporting =
-      'ArchiveMe helps you notice what keeps repeating in your own words.';
+      'Save small moments when something stands out — in your own words.';
 
   // B. Saved as evidence.
   static const String evidenceTitle = FirstThreeSessionCopy.session1Title;

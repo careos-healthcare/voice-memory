@@ -1,18 +1,20 @@
+import '../landing_continuity/landing_app_continuity_copy.dart';
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Display-only copy for the Pro evidence value bridge — no billing logic.
 abstract final class ProEvidenceValueCopy {
   ProEvidenceValueCopy._();
 
-  static const title = 'Keep the longer story';
+  static const title = PaywallAlignmentCopy.headline;
 
-  static const body =
-      'Free shows the first proof. Pro keeps more of the pattern history, change timeline, private reports, and older evidence.';
+  static const body = PaywallAlignmentCopy.secondaryReassurance;
 
   static const cta = 'See what Pro keeps';
 
   static const secondary = 'Not now';
 
   static const chatGptDifferentiationLine =
-      'ChatGPT answers one conversation. ArchiveMe compares what you saved over time.';
+      LandingAppContinuityCopy.chatGptDifferentiation;
 
   static const evidenceLine =
       'Pro is for keeping the evidence, not getting generic advice.';
@@ -31,15 +33,7 @@ abstract final class ProEvidenceValueCopy {
   ];
 
   static const proSectionTitle = 'Pro';
-  static const proBulletsLive = <String>[
-    'Longer archive memory',
-    'More pattern history',
-    'Change timeline',
-    'Private reports',
-    'Older evidence',
-    'More review history',
-    'Exportable reports',
-  ];
+  static const proBulletsLive = PaywallAlignmentCopy.benefitBullets;
 
   static const proExportReportsPlanned = 'Exportable reports (planned)';
 
@@ -50,7 +44,7 @@ abstract final class ProEvidenceValueCopy {
       'ArchiveMe is not a chat. It compares real moments you saved at different times.';
 
   static const positioningChatGptToday =
-      'ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.';
+      LandingAppContinuityCopy.chatGptDifferentiation;
 
   static List<String> allVisibleStrings({required bool exportReportsLive}) => [
         title,
@@ -72,9 +66,6 @@ abstract final class ProEvidenceValueCopy {
 
   static List<String> proBulletsForDisplay({required bool exportReportsLive}) {
     if (exportReportsLive) return proBulletsLive;
-    return [
-      ...proBulletsLive.where((b) => b != 'Exportable reports'),
-      proExportReportsPlanned,
-    ];
+    return proBulletsLive;
   }
 }

@@ -1,25 +1,26 @@
-/// In-app 3-day proof challenge copy — mirrors the public landing promise.
+import '../landing_continuity/landing_app_continuity_copy.dart';
+
+/// Early-record guidance copy — mirrors the public landing promise.
 abstract final class ThreeDayChallengeCopy {
   ThreeDayChallengeCopy._();
 
-  static const title = '3-day proof challenge';
+  static const title = LandingAppContinuityCopy.hero;
 
-  static const day1Title = 'Day 1: Save one private moment.';
-  static const day1Body =
-      'ArchiveMe needs real moments before it can notice what returns.';
+  static const day1Title = LandingAppContinuityCopy.step1Title;
+  static const day1Body = LandingAppContinuityCopy.step1Body;
 
-  static const day2Title = 'Day 2: Come back tomorrow.';
-  static const day2Body =
-      'One moment starts the archive. Coming back gives ArchiveMe something to compare.';
+  static const day2Title = LandingAppContinuityCopy.step2Title;
+  static const day2Body = LandingAppContinuityCopy.step2Body;
 
-  static const day3Title = 'Day 3: Look for what came back.';
-  static const day3Body =
-      'If the same pressure, thought, or reaction appears again, ArchiveMe can start showing the pattern.';
+  static const day3Title = LandingAppContinuityCopy.step3Title;
+  static const day3Body = LandingAppContinuityCopy.step3Body;
 
-  static const completionBody = 'You gave ArchiveMe enough to compare.';
+  static const completionBody =
+      'You gave ArchiveMe enough to compare what returned.';
 
   static const List<String> all = [
     title,
+    LandingAppContinuityCopy.subheadline,
     day1Title,
     day1Body,
     day2Title,

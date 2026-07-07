@@ -8,16 +8,16 @@ void main() {
     expect(OnboardingPages.pages, hasLength(4));
   });
 
-  test('page 1 — mind map welcome promise', () {
+  test('page 1 — landing welcome promise', () {
     final page = OnboardingPages.pages[0];
     expect(page.title, ConsumerUiCopy.onboardingPositioningHeadline);
     expect(page.body, ConsumerUiCopy.onboardingPositioningBody);
     expect(
       page.title,
-      'Build a private mind map of what keeps repeating',
+      'See what keeps returning',
     );
-    expect(page.body, contains('Save real moments'));
-    expect(page.body, contains('ArchiveMe connects them into patterns'));
+    expect(page.body, contains('Save small moments'));
+    expect(page.body, contains('private timeline'));
     expect(page.title.toLowerCase(), isNot(contains('pressure loops')));
   });
 

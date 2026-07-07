@@ -4,13 +4,14 @@ import 'package:voicememory_mobile/billing/paywall_trigger_model.dart';
 import 'package:voicememory_mobile/billing/pro_value_preview_engine.dart';
 import 'package:voicememory_mobile/billing/pro_value_preview_model.dart';
 import 'package:voicememory_mobile/billing/value_moment_paywall.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
-  test('paywall headline sells longer story continuity', () {
+  test('paywall headline sells full timeline continuity', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      'Keep the longer story.',
+      PaywallAlignmentCopy.headline,
     );
     expect(
       ArchivePaywallVariantConfig.headline(ArchivePaywallVariant.b),
@@ -22,36 +23,32 @@ void main() {
     );
   });
 
-  test('paywall subhead compares moments over time', () {
+  test('paywall subhead sells timeline value', () {
     expect(
       ConsumerUiCopy.paywallSubhead,
-      'ArchiveMe is most useful when it can compare moments over time.',
+      PaywallAlignmentCopy.body,
     );
   });
 
-  test('paywall benefits include longer story bullets', () {
+  test('paywall benefits include aligned timeline bullets', () {
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Longer archive history'),
-    );
-    expect(
-      ConsumerUiCopy.paywallBullets,
-      contains('Private monthly reports'),
-    );
-    expect(
-      ConsumerUiCopy.paywallBullets.join(' ').toLowerCase(),
-      contains('returned, changed, softened, helped, or went quiet'),
+      PaywallAlignmentCopy.benefitBullets,
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Export/private reports when available'),
+      contains('Full pattern timeline'),
     );
-    expect(ConsumerUiCopy.paywallBullets.length, 5);
+    expect(
+      ConsumerUiCopy.paywallBullets,
+      contains('Monthly private report'),
+    );
+    expect(ConsumerUiCopy.paywallBullets.length, 6);
     expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });
 
   test('paywall CTAs match launch copy', () {
-    expect(ConsumerUiCopy.paywallPrimaryCta, 'Continue with ArchiveMe Pro');
+    expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
     expect(ConsumerUiCopy.paywallSecondaryCta, 'Not now');
     expect(ValueMomentPaywallLogic.ctaLabel, ConsumerUiCopy.paywallPrimaryCta);
     expect(

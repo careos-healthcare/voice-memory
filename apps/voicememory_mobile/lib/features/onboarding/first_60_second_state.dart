@@ -7,6 +7,8 @@
 /// memory-architecture talk, and nothing that blocks recording.
 library;
 
+import '../landing_continuity/landing_app_continuity_copy.dart';
+
 /// Stable stage ids for analytics — fixed constants, never user text.
 enum First60Stage {
   intro('intro'),
@@ -134,10 +136,10 @@ abstract class First60Copy {
   First60Copy._();
 
   // A. First open / pre-record clarity.
-  static const String introTitle = 'Notice what keeps repeating';
+  static const String introTitle = LandingAppContinuityCopy.hero;
   static const String introBody =
-      'ArchiveMe helps you notice what keeps repeating in your own words. '
-      'Start with one honest moment.';
+      'Save small moments when something stands out. ArchiveMe turns them into '
+      'a private timeline in your own words. Start with one honest moment.';
   static const String introCta = 'Record one moment';
   static const String introReassurance =
       'Your recordings stay on this device unless you choose sync or transcription.';

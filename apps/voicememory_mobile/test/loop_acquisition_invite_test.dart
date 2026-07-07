@@ -68,9 +68,10 @@ void main() {
       expect(v.cta, contains('proving-enough'));
     });
 
-    test('generic variant uses ambition-pressure headline', () {
+    test('generic variant uses landing alignment headline', () {
       final v = LoopAcquisitionCopy.generic;
-      expect(v.headline, contains('doing more never feels like enough'));
+      expect(v.headline, 'See what keeps returning');
+      expect(v.subheadline.toLowerCase(), contains('keeps returning'));
       expect(v.cta, 'Start with one moment');
       expect(v.bullets, isEmpty);
     });
@@ -223,7 +224,7 @@ void main() {
       );
       expect(
         TestFlightInviteCopy.clipboardPack(TestFlightInviteVariant.generic),
-        contains('keeps repeating'),
+        contains('keeps returning'),
       );
     });
   });

@@ -1,5 +1,7 @@
 import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
+import '../features/landing_continuity/landing_app_continuity_copy.dart';
+import '../features/paywall_alignment/paywall_alignment_copy.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
@@ -29,22 +31,17 @@ abstract class ConsumerUiCopy {
   static const String patternsEarlyStateBody =
       'Patterns appear after ArchiveMe has something to compare.';
   static const String onboardingPositioningHeadline =
-      'Build a private evidence archive of what keeps repeating';
+      LandingAppContinuityCopy.hero;
   static const String onboardingPositioningBody =
-      'Save real moments in your words. ArchiveMe connects repeated evidence into patterns, changes, and things to watch.';
+      LandingAppContinuityCopy.heroBody;
 
   // ——— Launch onboarding (promise + 3 steps) ———
-  static const String onboardingStep1Title = 'Record one small moment';
-  static const String onboardingStep1Body =
-      'Say what happened in your own words. A few sentences is enough.';
-  static const String onboardingStep2Title = 'ArchiveMe compares your moments';
-  static const String onboardingStep2Body =
-      'After a second moment, ArchiveMe can start comparing your own words — '
-      'cautiously, not as a conclusion.';
-  static const String onboardingStep3Title =
-      'Return tomorrow to see what changed';
-  static const String onboardingStep3Body =
-      'Come back and compare what stayed, shifted, or faded.';
+  static const String onboardingStep1Title = LandingAppContinuityCopy.step1Title;
+  static const String onboardingStep1Body = LandingAppContinuityCopy.step1Body;
+  static const String onboardingStep2Title = LandingAppContinuityCopy.step2Title;
+  static const String onboardingStep2Body = LandingAppContinuityCopy.step2Body;
+  static const String onboardingStep3Title = LandingAppContinuityCopy.step3Title;
+  static const String onboardingStep3Body = LandingAppContinuityCopy.step3Body;
   static const String onboardingPage2Title = onboardingStep1Title;
   static const String onboardingPage2Body = onboardingStep1Body;
   static const String onboardingPage3Title = onboardingStep2Title;
@@ -147,9 +144,9 @@ abstract class ConsumerUiCopy {
   static const String archiveMemoryPreviewTitle =
       'What your archive will show';
   static const String archiveMemoryPreviewBody =
-      'Over time, ArchiveMe can show what keeps repeating, what changed, and what helped.';
+      'Over time, ArchiveMe can show what returned, what changed, and what helped.';
   static const List<String> archiveMemoryPreviewBullets = [
-    'What keeps repeating',
+    'What returned',
     'What changed',
     'What may have helped',
   ];
@@ -157,7 +154,7 @@ abstract class ConsumerUiCopy {
 
   /// Legacy aliases — prefer the archive* constants above in new copy.
   static const String positioningRemembersRepeating =
-      'ArchiveMe remembers what keeps repeating.';
+      'ArchiveMe remembers what keeps returning.';
   static const String positioningRecordAndCheck = archiveLoopPromise;
   static const String positioningNotAChat = archiveNotChatLine;
   static const String positioningBasedOnMoments = archiveBasedOnMomentsLine;
@@ -578,20 +575,13 @@ abstract class ConsumerUiCopy {
   static const String appVersion = 'App version';
 
   // ——— Paywall ———
-  static const String paywallHeadline = 'Keep the longer story.';
-  static const String paywallSubhead =
-      'ArchiveMe is most useful when it can compare moments over time.';
+  static const String paywallHeadline = PaywallAlignmentCopy.headline;
+  static const String paywallSubhead = PaywallAlignmentCopy.body;
   static const String paywallPrimaryValueBlock =
-      'With Pro, your archive can keep more of the evidence that shows what '
-      'returned, changed, softened, helped, or went quiet.';
+      PaywallAlignmentCopy.secondaryReassurance;
   static const String paywallTitle = paywallHeadline;
-  static const List<String> paywallFallbackBullets = [
-    'Longer archive history',
-    'Private monthly reports',
-    'Pattern and change evidence over time',
-    'Export/private reports when available',
-    'Built around preserving your archive',
-  ];
+  static const List<String> paywallFallbackBullets =
+      PaywallAlignmentCopy.benefitBullets;
   static const List<String> paywallBullets = paywallFallbackBullets;
   static const String paywallDifferentiation =
       'Pro is not more chat. It keeps the evidence.';
@@ -610,7 +600,7 @@ abstract class ConsumerUiCopy {
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
   static const String paywallBillingNotConfigured =
-      'Pro keeps the longer story. Purchases are not available right now.';
+      'Pro keeps the full timeline as it grows. Purchases are not available right now.';
   static const String plansUnavailable = 'Plans are not available yet.';
 
   // ——— Pattern memory limits (Pro) ———

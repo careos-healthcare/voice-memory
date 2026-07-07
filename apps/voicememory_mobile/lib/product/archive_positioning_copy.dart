@@ -1,15 +1,13 @@
+import '../features/landing_continuity/landing_app_continuity_copy.dart';
+
 /// Public ArchiveMe positioning — umbrella brand with capacity-yes as first path.
 abstract final class ArchivePositioningCopy {
   ArchivePositioningCopy._();
 
-  // ——— Public umbrella ———
-  static const umbrellaHeadline =
-      'A private mind map of what keeps repeating in your life.';
-  static const umbrellaShort =
-      'A private mind map of what keeps repeating.';
-  static const umbrellaBody =
-      'Save real moments. ArchiveMe connects them into patterns, changes, '
-      'and next things to watch.';
+  // ——— Public umbrella (landing alignment v1) ———
+  static const umbrellaHeadline = LandingAppContinuityCopy.hero;
+  static const umbrellaShort = LandingAppContinuityCopy.subheadline;
+  static const umbrellaBody = LandingAppContinuityCopy.heroBody;
 
   // ——— First guided path (capacity yes) ———
   static const firstPathLabel = 'Start with one pattern';
@@ -20,19 +18,19 @@ abstract final class ArchivePositioningCopy {
       'Use this first path before you agree, right after you agree, or when '
       'the cost shows up later.';
   static const capacityPathContext =
-      'This is the first path in your private pattern map.';
+      'This is the first path in your private timeline.';
   static const capacityTimingFlex =
       'You can save it before you agree, right after, or when the cost shows '
       'up later.';
   static const wedgeHeadline = 'Catch the yes before it costs you.';
   static const capacityCta = 'Start with yes moments';
-  static const mapLine = 'Every saved moment adds to the same pattern map.';
+  static const mapLine = 'Every saved moment adds to the same private timeline.';
 
   // ——— First-use onboarding (capacity start) ———
-  static const firstUseTitle = 'Map the moments that keep repeating.';
+  static const firstUseTitle = LandingAppContinuityCopy.hero;
   static const firstUseBody =
-      'Save one real moment. ArchiveMe helps you see what it connects to '
-      'over time.';
+      'Save one real moment when something stands out. ArchiveMe helps you '
+      'see what returned over time.';
   static const firstUseFirstPath =
       'Start with saying yes when you have no capacity.';
   static const firstUseTimingMicro =
@@ -40,14 +38,14 @@ abstract final class ArchivePositioningCopy {
   static const firstUseCta = 'Save first moment';
   static const howItWorksCta = 'See how it works';
   static const List<String> howItWorksSteps = [
-    'Save a real moment',
+    LandingAppContinuityCopy.step1Title,
     'Choose what pulled you in',
-    'Come back when it happens again',
-    'Review what repeated',
+    LandingAppContinuityCopy.step2Title,
+    LandingAppContinuityCopy.step3Title,
   ];
 
   // ——— Generic CTAs ———
-  static const genericCta = 'Start your map';
+  static const genericCta = 'Start your archive';
   static const recordAnyMoment = 'Record any moment';
   static const quickYesMoment = 'Quick yes moment';
   static const quickCaptureTimingFlex =
@@ -62,7 +60,7 @@ abstract final class ArchivePositioningCopy {
   static const laterBody = 'That yes cost me something.';
   static const yesCaptureModesIntro =
       'Save before you agree, right after, or when the cost shows up later — '
-      'all feed the same pattern map.';
+      'all feed the same private timeline.';
 
   static const List<String> yesCaptureTimingLabels = [
     beforeLabel,

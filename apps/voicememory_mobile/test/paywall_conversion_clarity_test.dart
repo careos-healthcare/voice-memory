@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_event.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 
@@ -65,14 +66,11 @@ void main() {
 
   group('Paywall conversion clarity copy constants', () {
     test('defines the conversion hierarchy copy', () {
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer story.');
-      expect(
-        ConsumerUiCopy.paywallSubhead,
-        'ArchiveMe is most useful when it can compare moments over time.',
-      );
+      expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
+      expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
-        contains('returned, changed, softened, helped, or went quiet'),
+        PaywallAlignmentCopy.secondaryReassurance,
       );
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
       expect(
@@ -98,19 +96,14 @@ void main() {
   });
 
   group('Paywall conversion clarity rendering', () {
-    testWidgets('renders headline and compare-over-time subhead', (tester) async {
+    testWidgets('renders headline and timeline subhead', (tester) async {
       await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
 
-      expect(find.text('Keep the longer story.'), findsOneWidget);
-      expect(
-        find.text(
-          'ArchiveMe is most useful when it can compare moments over time.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
     });
 
     testWidgets('renders primary value block and Pro bullets', (tester) async {
@@ -120,12 +113,9 @@ void main() {
       );
 
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
-      expect(find.text('Longer archive history'), findsOneWidget);
-      expect(find.text('Private monthly reports'), findsOneWidget);
-      expect(
-        find.text('Pattern and change evidence over time'),
-        findsOneWidget,
-      );
+      expect(find.text('Full pattern timeline'), findsOneWidget);
+      expect(find.text('Correction history'), findsOneWidget);
+      expect(find.text('Monthly private report'), findsOneWidget);
     });
 
     testWidgets('renders differentiation, trust, and backup honesty', (

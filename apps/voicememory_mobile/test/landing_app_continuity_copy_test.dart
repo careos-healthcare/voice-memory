@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
+import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
+import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_copy.dart';
 import 'package:voicememory_mobile/features/three_day_challenge/three_day_challenge_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
@@ -22,30 +26,79 @@ const _bannedTerms = [
 ];
 
 List<String> _continuityCopyBlob() => [
+      ...LandingAppContinuityCopy.allVisibleStrings(),
       ThreeDayChallengeCopy.title,
       ThreeDayChallengeCopy.day1Title,
       ThreeDayChallengeCopy.day2Title,
       ThreeDayChallengeCopy.day3Title,
       ConsumerUiCopy.paywallHeadline,
       ConsumerUiCopy.paywallPrimaryCta,
+      ConsumerUiCopy.paywallPrimaryValueBlock,
       ArchivePaywallCopy.proActiveConfirmation,
       ConsumerUiCopy.paywallDifferentiation,
       ConsumerUiCopy.paywallTrust,
       ConsumerUiCopy.paywallBackupLine,
+      RevenueValueCopy.chatGptDifferentiationLine,
+      ProEvidenceValueCopy.chatGptDifferentiationLine,
     ];
 
 void main() {
   group('Landing and app continuity copy alignment', () {
     test('website and app promises stay aligned', () {
-      expect(ThreeDayChallengeCopy.title, '3-day proof challenge');
-      expect(ThreeDayChallengeCopy.day1Title, contains('Day 1'));
-      expect(ThreeDayChallengeCopy.day2Title, contains('Day 2'));
-      expect(ThreeDayChallengeCopy.day3Title, contains('Day 3'));
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer story.');
+      expect(
+        LandingAppContinuityCopy.hero,
+        'See what keeps returning',
+      );
+      expect(
+        LandingAppContinuityCopy.subheadline,
+        'No daily journal required.',
+      );
+      expect(
+        LandingAppContinuityCopy.chatGptDifferentiation,
+        'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
+      );
+      expect(
+        LandingAppContinuityCopy.proPaidReason,
+        'Pro keeps the full timeline as it grows.',
+      );
+      expect(
+        LandingAppContinuityCopy.freePositioning,
+        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+      );
+      expect(
+        LandingAppContinuityCopy.howItWorksStepTitles,
+        [
+          'Save one small moment',
+          'Come back when something stands out',
+          'See what returned',
+          'Correct what is not relevant',
+          'Keep the full timeline with Pro',
+        ],
+      );
+
+      expect(ThreeDayChallengeCopy.title, LandingAppContinuityCopy.hero);
+      expect(ThreeDayChallengeCopy.day1Title, LandingAppContinuityCopy.step1Title);
+      expect(ThreeDayChallengeCopy.day2Title, LandingAppContinuityCopy.step2Title);
+      expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
+
+      expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
+      expect(ConsumerUiCopy.paywallHeadline, 'Keep the full timeline');
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
       expect(
+        ConsumerUiCopy.paywallPrimaryValueBlock,
+        LandingAppContinuityCopy.freePositioning,
+      );
+      expect(
         ArchivePaywallCopy.proActiveConfirmation,
-        contains('keep the longer story'),
+        contains('keeps the full timeline as it grows'),
+      );
+      expect(
+        RevenueValueCopy.chatGptDifferentiationLine,
+        LandingAppContinuityCopy.chatGptDifferentiation,
+      );
+      expect(
+        ProEvidenceValueCopy.chatGptDifferentiationLine,
+        LandingAppContinuityCopy.chatGptDifferentiation,
       );
     });
 
@@ -63,15 +116,27 @@ void main() {
     test('continuity checklist doc exists with required promises', () {
       final doc = File('docs/release/LANDING_APP_CONTINUITY_CHECKLIST.md')
           .readAsStringSync();
-      expect(doc.toLowerCase(), contains('3-day proof challenge'));
-      expect(doc, contains('Day 1'));
-      expect(doc, contains('Day 2'));
-      expect(doc, contains('Day 3'));
-      expect(doc, contains('Keep the longer story'));
-      expect(doc.toLowerCase(), contains('evidence'));
+      expect(doc, contains('See what keeps returning'));
+      expect(doc, contains('No daily journal required.'));
+      expect(doc, contains('Save one small moment'));
+      expect(doc, contains('Come back when something stands out'));
+      expect(doc, contains('See what returned'));
+      expect(doc, contains('Correct what is not relevant'));
+      expect(doc, contains('Keep the full timeline with Pro'));
+      expect(
+        doc,
+        contains(
+          'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
+        ),
+      );
+      expect(doc, contains('Keep the full timeline'));
+      expect(
+        doc,
+        contains('Free shows the first proof. Pro keeps the full timeline as it grows.'),
+      );
       expect(doc.toLowerCase(), contains('not therapy'));
       expect(doc.toLowerCase(), contains('cloud backup'));
-      expect(doc.toLowerCase(), isNot(contains('more AI')));
+      expect(doc, contains('No **more AI** positioning'));
     });
   });
 }

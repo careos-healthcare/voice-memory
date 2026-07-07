@@ -118,7 +118,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('see what it connects'),
+        contains('see what returned'),
       );
       expect(AcquisitionStartCopy.capacityStartCta, 'Save first moment');
     });
@@ -142,9 +142,9 @@ void main() {
     });
 
     test('beta success copy includes pay question', () {
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('save 3 real moments'));
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('return once'));
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('what repeated'));
+      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('real moments'));
+      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('return'));
+      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('returned'));
       expect(
         BetaInviteCopy.betaSuccessChecklist.toLowerCase(),
         contains('would pay to keep'),

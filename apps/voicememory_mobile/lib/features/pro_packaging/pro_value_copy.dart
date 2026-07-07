@@ -1,11 +1,12 @@
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Display-only Pro packaging copy — free vs Pro value split.
 abstract final class ProPackagingCopy {
   ProPackagingCopy._();
 
   static const title = 'ArchiveMe Pro';
 
-  static const subtitle =
-      'ArchiveMe is most useful when it can compare moments over time.';
+  static const subtitle = PaywallAlignmentCopy.body;
 
   static const freeSectionTitle = 'Free';
   static const freeBullets = <String>[
@@ -13,16 +14,9 @@ abstract final class ProPackagingCopy {
   ];
 
   static const proSectionTitle = 'Pro';
-  static const proBullets = <String>[
-    'Longer archive history',
-    'Private monthly reports',
-    'Pattern and change evidence over time',
-    'Export/private reports when available',
-    'Built around preserving your archive',
-  ];
+  static const proBullets = PaywallAlignmentCopy.benefitBullets;
 
-  static const bridgeAfterFirstProof =
-      'First proof is free. Pro is for keeping the longer story.';
+  static const bridgeAfterFirstProof = PaywallAlignmentCopy.secondaryReassurance;
 
   static const bridgeAfterBeliefChange =
       'Seeing change over time is the reason to keep your archive.';

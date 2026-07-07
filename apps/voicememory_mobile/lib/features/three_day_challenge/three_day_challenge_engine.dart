@@ -6,7 +6,7 @@ import '../voice_capture/voice_capture_quality.dart';
 import 'three_day_challenge_copy.dart';
 import 'three_day_challenge_model.dart';
 
-/// Visibility gates for the in-app 3-day proof challenge.
+/// Visibility gates for early record guidance aligned with the landing promise.
 abstract final class ThreeDayChallengeGates {
   ThreeDayChallengeGates._();
 

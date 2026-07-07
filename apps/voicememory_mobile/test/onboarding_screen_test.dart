@@ -11,19 +11,19 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 3}) async {
 }
 
 void main() {
-  testWidgets('welcome screen uses mind-map positioning copy', (
+  testWidgets('welcome screen uses landing positioning copy', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester, frames: 5);
 
     expect(
-      find.text('Build a private mind map of what keeps repeating'),
+      find.text('See what keeps returning'),
       findsOneWidget,
     );
-    expect(find.textContaining('Save real moments'), findsOneWidget);
+    expect(find.textContaining('Save small moments'), findsOneWidget);
     expect(
-      find.textContaining('ArchiveMe connects them into patterns'),
+      find.textContaining('private timeline'),
       findsOneWidget,
     );
     expect(find.text('Notice the pressure loops that keep repeating'), findsNothing);

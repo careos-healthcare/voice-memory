@@ -54,20 +54,24 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('ArchivePositioningCopy constants', () {
-    test('umbrella headline contains private mind map in your life', () {
+    test('umbrella headline matches landing alignment v1', () {
       expect(
         ArchivePositioningCopy.umbrellaHeadline,
-        contains('private mind map of what keeps repeating in your life'),
+        'See what keeps returning',
+      );
+      expect(
+        ArchivePositioningCopy.umbrellaShort,
+        'No daily journal required.',
       );
     });
 
-    test('product body contains patterns, changes, next things to watch', () {
+    test('product body describes private timeline', () {
       expect(
         ArchivePositioningCopy.umbrellaBody.toLowerCase(),
         allOf(
-          contains('patterns'),
-          contains('changes'),
-          contains('next things to watch'),
+          contains('private timeline'),
+          contains('returned'),
+          contains('corrected'),
         ),
       );
     });
@@ -122,7 +126,7 @@ void main() {
         AcquisitionStartCopy.genericBody,
       ].join('\n').toLowerCase();
       expect(generic, isNot(contains('catch the yes')));
-      expect(generic, contains('mind map'));
+      expect(generic, contains('keeps returning'));
     });
 
     test('capacity start uses simpler fallback headline', () {
@@ -132,7 +136,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('Map the moments that keep repeating'),
+        contains('See what keeps returning'),
       );
       expect(
         ArchivePositioningCopy.wedgeHeadline,

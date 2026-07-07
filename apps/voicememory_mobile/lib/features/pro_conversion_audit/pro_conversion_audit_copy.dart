@@ -1,8 +1,10 @@
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Core paid-reason and copy guards for Pro conversion audit v1.
 abstract final class ProConversionAuditCopy {
   ProConversionAuditCopy._();
 
-  static const corePaidReason = 'Pro keeps the longer story.';
+  static const corePaidReason = PaywallAlignmentCopy.corePaidReason;
 
   static const subscriptionRoute = '/subscription';
   static const proPreviewRoute = '/pro-preview';
@@ -31,7 +33,8 @@ abstract final class ProConversionAuditCopy {
 
   static bool mentionsPaidMemoryReason(Iterable<String> strings) {
     final blob = strings.join(' ').toLowerCase();
-    return blob.contains('longer story') ||
+    return blob.contains('full timeline') ||
+        blob.contains('longer story') ||
         blob.contains('longer report') ||
         blob.contains('longer archive') ||
         blob.contains('evidence over time') ||

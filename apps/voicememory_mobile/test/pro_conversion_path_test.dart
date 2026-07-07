@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_copy.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_engine.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_model.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/pro_conversion_audit/pro_conversion_audit_copy.dart';
 import 'package:voicememory_mobile/features/pro_conversion_audit/pro_conversion_audit_engine.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
@@ -111,7 +112,7 @@ void main() {
     test('core paid reason is defined', () {
       expect(
         ProConversionAuditCopy.corePaidReason,
-        'Pro keeps the longer story.',
+        PaywallAlignmentCopy.corePaidReason,
       );
     });
 
@@ -163,7 +164,7 @@ void main() {
       expect(ProConversionAuditEngine.passesRevenueCopyAudit(), isTrue);
     });
 
-    test('paid reason mentions longer story history or evidence', () {
+    test('paid reason mentions full timeline history or evidence', () {
       expect(
         ProConversionAuditCopy.mentionsPaidMemoryReason(
           ProConversionAuditEngine.revenueFeatureCopy(),
@@ -172,15 +173,15 @@ void main() {
       );
       expect(
         ProLockMomentCopy.paidReason.toLowerCase(),
-        contains('longer story'),
+        contains('full timeline'),
       );
       expect(
         ProEvidenceValueCopy.title.toLowerCase(),
-        contains('longer story'),
+        contains('full timeline'),
       );
       expect(
         MonthlyPrivateReportCopy.proReason.toLowerCase(),
-        contains('longer story'),
+        contains('full timeline'),
       );
     });
 

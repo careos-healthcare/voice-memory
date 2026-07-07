@@ -292,6 +292,8 @@ import '../features/proof_specificity_boost/proof_specificity_boost_model.dart';
 import '../features/not_relevant_recovery/not_relevant_recovery_engine.dart';
 import '../features/proof_quality_response/proof_quality_response_engine.dart';
 import '../features/proof_quality_response/proof_quality_response_model.dart';
+import '../features/pro_moment_timing/pro_moment_timing_engine.dart';
+import '../features/pro_moment_timing/pro_moment_timing_model.dart';
 import '../features/present_day_relevance/present_day_relevance_engine.dart';
 import '../features/timeline_positioning/timeline_positioning_engine.dart';
 import '../widgets/patterns/current_relevance_card.dart';
@@ -318,6 +320,8 @@ import '../features/surface_priority/surface_priority_engine.dart';
 import '../features/surface_priority/surface_priority_model.dart';
 import '../features/archive_timeline_spine/archive_timeline_spine_engine.dart';
 import '../features/timeline_proof_moment/timeline_proof_moment_engine.dart';
+import '../features/shareable_proof/shareable_proof_engine.dart';
+import '../features/shareable_proof/shareable_proof_model.dart';
 import '../widgets/record/capture_freedom_line.dart';
 import '../widgets/record/open_capture_prompt_chips.dart';
 import '../widgets/record/low_friction_return_card.dart';
@@ -326,6 +330,7 @@ import '../widgets/record/second_moment_return_card.dart';
 import '../widgets/beta/beta_today_summary_card.dart';
 import '../widgets/record/what_to_notice_next_card.dart';
 import '../widgets/beta/beta_tester_report_card.dart';
+import '../widgets/share/shareable_proof_card.dart';
 import '../widgets/common/surface_priority_debug_badge.dart';
 import '../widgets/patterns/archive_timeline_spine_card.dart';
 import '../widgets/patterns/timeline_proof_moment_card.dart';
@@ -5347,7 +5352,61 @@ class _RecordScreenState extends State<RecordScreen> {
         SurfacePriorityCardKey.privateReportProBridge,
         candidate: showProEvidenceValuePrivateReportOnRecord,
       );
+      final recordReadyProTiming = ProMomentTimingContext(
+        surface: ProMomentTimingSurface.recordReady,
+        source: 'record_ready',
+        entryCount: _journalEntryCount,
+        isRecording: ui == RecordUiState.recording,
+        isZeroEntryState: _journalEntryCount == 0,
+        isFirstRecordingState:
+            _journalEntryCount <= 1 && !firstProofPayoffSeenOnRecord,
+        isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+        hasFirstProof: firstProofPayoffSeenOnRecord ||
+            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries),
+        hasTimelineProofVisible: showTimelineProofMomentOnRecord &&
+            timelineProofMomentCandidate != null,
+        hasBetaTesterReportVisible: showBetaTesterReportOnRecord,
+        hasCorrectionMemoryVisible: showCorrectionMemoryOnRecordReady &&
+            correctionMemoryCandidate != null,
+        feedbackState: ProMomentTimingEngine.resolveFeedbackState(
+          entries: _journalEntries,
+          surface: ProofQualityResponseSurface.timelineProofMoment,
+        ),
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        proSlotAvailable: true,
+      );
+      showProEvidenceValueOnRecordReady = ProMomentTimingEngine.applyGate(
+        candidate: showProEvidenceValueOnRecordReady,
+        timing: recordReadyProTiming,
+      );
+      showProEvidenceValuePrivateReportOnRecord = ProMomentTimingEngine.applyGate(
+        candidate: showProEvidenceValuePrivateReportOnRecord,
+        timing: recordReadyProTiming.copyWith(
+          hasMonthlyPrivateReportPreviewVisible: true,
+          proSlotAvailable: showProEvidenceValuePrivateReportOnRecord,
+        ),
+      );
     }
+    if (showTimelineProofMomentOnRecord &&
+        timelineProofMomentCandidate != null) {
+      ShareableProofSeenLatch.markTimelineProofMomentSeen();
+    }
+    if (showBetaTesterReportOnRecord) {
+      ShareableProofSeenLatch.markBetaTesterReportSeen();
+    }
+    final shareableNonPrivateProofResult = ShareableProofEngine.build(
+      input: ShareableProofVisibilityInput(
+        entryCount: _journalEntryCount,
+        timelineProofMomentSeen: ShareableProofSeenLatch.timelineProofMomentSeen,
+        betaTesterReportSeen: ShareableProofSeenLatch.betaTesterReportSeen,
+        isRecording: ui == RecordUiState.recording,
+        isDegradedTranscript: isDegradedTranscriptOnRecord,
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      ),
+    );
+    final showShareableNonPrivateProofOnRecord =
+        shareableNonPrivateProofResult.shouldShow;
     final proofSpecificityBoostCandidate = ProofSpecificityBoostEngine.build(
       entries: _journalEntries,
       beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -5654,7 +5713,7 @@ class _RecordScreenState extends State<RecordScreen> {
             isPostSave: true,
           )
         : null;
-    final showMonthlyPrivateReportPreviewPostSave = ui == RecordUiState.done &&
+    var showMonthlyPrivateReportPreviewPostSave = ui == RecordUiState.done &&
         entriesAfterSave.isNotEmpty &&
         showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
@@ -5922,6 +5981,43 @@ class _RecordScreenState extends State<RecordScreen> {
       showProLockMomentPostSave = audit.isVisible(
         SurfacePriorityCardKey.proLockMoment,
         candidate: showProLockMomentPostSave,
+      );
+      final postSaveProTiming = ProMomentTimingContext(
+        surface: ProMomentTimingSurface.recordPostSave,
+        source: 'record_post_save',
+        entryCount: postSaveEntryCount,
+        isPostSaveDegradedState: postSaveDegraded,
+        hasFirstProof:
+            showFirstProofPayoff && firstProofPayoffCandidate != null,
+        hasTimelineProofVisible: showTimelineProofMomentOnFirstProofPayoff &&
+            timelineProofMomentPostSaveCandidate != null,
+        hasFirstProofPayoffVisible: showFirstProofPayoff,
+        hasMonthlyPrivateReportPreviewVisible:
+            showMonthlyPrivateReportPreviewPostSave,
+        feedbackState: ProMomentTimingEngine.resolveFeedbackState(
+          entries: entriesAfterSave,
+          surface: ProofQualityResponseSurface.firstProofPayoff,
+        ),
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        proSlotAvailable: true,
+      );
+      showProEvidenceValuePostSave = ProMomentTimingEngine.applyGate(
+        candidate: showProEvidenceValuePostSave,
+        timing: postSaveProTiming,
+      );
+      showProLockMomentPostSave = ProMomentTimingEngine.applyGate(
+        candidate: showProLockMomentPostSave,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable: showProLockMomentPostSave,
+        ),
+      );
+      showMonthlyPrivateReportPreviewPostSave = ProMomentTimingEngine.applyGate(
+        candidate: showMonthlyPrivateReportPreviewPostSave,
+        timing: postSaveProTiming.copyWith(
+          hasMonthlyPrivateReportPreviewVisible: true,
+          proSlotAvailable: showMonthlyPrivateReportPreviewPostSave,
+        ),
       );
     }
     final showReturnTomorrowCuePostSave = !showFirstProofPayoff &&
@@ -6720,6 +6816,14 @@ class _RecordScreenState extends State<RecordScreen> {
                     if (showBetaTesterReportOnRecord) ...[
                       BetaTesterReportCard(
                         result: betaTesterReportCandidate,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showShareableNonPrivateProofOnRecord) ...[
+                      ShareableProofCard(
+                        result: shareableNonPrivateProofResult,
+                        source: 'record',
+                        surface: 'record_ready',
                       ),
                       const SizedBox(height: 12),
                     ],

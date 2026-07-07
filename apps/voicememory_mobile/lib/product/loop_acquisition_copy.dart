@@ -31,7 +31,7 @@ abstract class LoopAcquisitionCopy {
     id: 'prove_enough',
     headline: 'Catch the moment you do more to feel enough.',
     subheadline:
-        'ArchiveMe helps you record short moments and test whether your proving-enough loop keeps repeating.',
+        'ArchiveMe helps you record short moments and test whether your proving-enough loop keeps returning.',
     bullets: [
       'Spot when stopping feels unsafe',
       'See whether effort comes from choice or pressure',
@@ -59,9 +59,10 @@ abstract class LoopAcquisitionCopy {
 
   static const generic = LoopAcquisitionVariant(
     id: 'generic',
-    headline: 'Catch the loop where doing more never feels like enough.',
+    headline: 'See what keeps returning',
     subheadline:
-        'Record short moments. ArchiveMe helps you test whether pressure and enoughness keep repeating.',
+        'Save small moments when something stands out. ArchiveMe shows what '
+        'keeps returning over time.',
     bullets: [],
     cta: 'Start with one moment',
     cohortRoutePath: '/start/prove-enough',

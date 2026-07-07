@@ -42,6 +42,7 @@ import '../widgets/memory/memory_scope_settings_section.dart';
 import '../widgets/settings/privacy_data_controls_section.dart';
 import '../features/revenue_metrics/revenue_readiness_engine.dart';
 import '../widgets/debug/revenue_readiness_card.dart';
+import '../widgets/beta/testflight_metrics_dashboard_card.dart';
 import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/pro/archive_backup_bridge_card.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -271,6 +272,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: AppSpacing.sm),
               RevenueReadinessCard(
                 dashboard: RevenueReadinessEngine.build(),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              const TestFlightMetricsDashboardCard(
+                source: 'settings',
+                surface: 'settings',
               ),
             ],
             if (showArchiveBackupBridgeOnSettings) ...[

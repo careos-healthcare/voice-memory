@@ -128,10 +128,10 @@ ArchiveHomePriorityInput _calmHomeInput({
 
 void main() {
   group('Onboarding fallback', () {
-    test('fallback title maps the moments that keep repeating', () {
+    test('fallback title uses landing alignment hero', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('Map the moments that keep repeating'),
+        contains('See what keeps returning'),
       );
     });
 
@@ -140,7 +140,7 @@ void main() {
         AcquisitionStartCopy.capacityBody.toLowerCase(),
         allOf(
           contains('save one real moment'),
-          contains('connects to over time'),
+          contains('returned'),
         ),
       );
     });

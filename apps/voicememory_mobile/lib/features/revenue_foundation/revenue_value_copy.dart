@@ -1,3 +1,6 @@
+import '../landing_continuity/landing_app_continuity_copy.dart';
+import '../paywall_alignment/paywall_alignment_copy.dart';
+
 /// Canonical revenue value copy — display only, no billing logic.
 abstract final class RevenueValueCopy {
   RevenueValueCopy._();
@@ -9,16 +12,15 @@ abstract final class RevenueValueCopy {
   static const memoryJob =
       'It compares moments saved over time and shows what returned, changed, softened, disappeared, or helped.';
 
-  static const paidReasonHeadline = 'Keep the longer story';
+  static const paidReasonHeadline = PaywallAlignmentCopy.headline;
 
-  static const paidReasonBody =
-      'Free shows the first proof. Pro keeps more of the pattern history, change timeline, private reports, and older evidence.';
+  static const paidReasonBody = PaywallAlignmentCopy.body;
 
   static const paidReasonEvidenceLine =
       'Pro is for keeping the evidence, not getting generic advice.';
 
   static const chatGptDifferentiationLine =
-      'ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.';
+      LandingAppContinuityCopy.chatGptDifferentiation;
 
   static const comparesMomentsLine =
       'ArchiveMe compares saved moments over time — it is not a chat.';

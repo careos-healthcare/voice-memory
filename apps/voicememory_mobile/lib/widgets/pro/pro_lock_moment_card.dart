@@ -6,6 +6,7 @@ import '../../features/pro_lock_moment/pro_lock_moment_engine.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../paywall/purchase_confidence_card.dart';
 import 'pro_lock_moment_sheet.dart';
 
 /// Restrained Pro lock moment after first proof — opens detail sheet.
@@ -107,6 +108,8 @@ class _ProLockMomentCardState extends State<ProLockMomentCard> {
             key: const Key('pro_lock_moment_paid_reason'),
             style: bodyStyle,
           ),
+          const SizedBox(height: AppSpacing.xs),
+          const PurchaseConfidenceCompactLine(),
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [

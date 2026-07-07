@@ -70,7 +70,13 @@ void main() {
     test('positioning and ArchiveMe identity', () {
       expect(allDocs, contains('ArchiveMe'));
       expect(allDocs.toLowerCase(), contains('private evidence archive'));
-      expect(allDocs.toLowerCase(), contains('what keeps repeating'));
+      expect(
+        allDocs.toLowerCase(),
+        anyOf(
+          contains('keeps returning'),
+          contains('what returned'),
+        ),
+      );
       expect(allDocs.toLowerCase(), contains('what changed'));
       expect(allDocs.toLowerCase(), contains('what to watch next'));
     });
@@ -170,10 +176,10 @@ void main() {
   group('Beta invite in-app checklist', () {
     test('beta success checklist in copy', () {
       expect(betaInviteCopy, contains('Beta success means'));
-      expect(betaInviteCopy.toLowerCase(), contains('3 real moments'));
-      expect(betaInviteCopy.toLowerCase(), contains('return once'));
+      expect(betaInviteCopy.toLowerCase(), contains('real moments'));
+      expect(betaInviteCopy.toLowerCase(), contains('return'));
       expect(betaInviteCopy.toLowerCase(), contains('review what'));
-      expect(betaInviteCopy.toLowerCase(), contains('repeated'));
+      expect(betaInviteCopy.toLowerCase(), contains('returned'));
     });
   });
 }

@@ -127,12 +127,12 @@ void main() {
   group('ProLockMomentCopy', () {
     test('defines required copy', () {
       expect(ProLockMomentCopy.title, 'This is the first proof.');
-      expect(ProLockMomentCopy.paidReason, contains('longer story'));
+      expect(ProLockMomentCopy.paidReason, contains('full timeline'));
       expect(ProLockMomentCopy.chatDifferentiation, contains('not a chat answer'));
     });
 
-    test('copy says Pro keeps longer story', () {
-      expect(ProLockMomentCopy.paidReason.toLowerCase(), contains('longer story'));
+    test('copy says Pro keeps the full timeline', () {
+      expect(ProLockMomentCopy.paidReason.toLowerCase(), contains('full timeline'));
       expect(ProLockMomentCopy.paidReason.toLowerCase(), contains('history'));
       expect(ProLockMomentCopy.paidReason.toLowerCase(), isNot(contains('more ai')));
     });
