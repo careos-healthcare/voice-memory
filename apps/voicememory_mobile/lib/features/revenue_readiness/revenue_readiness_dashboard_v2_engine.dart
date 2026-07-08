@@ -6,6 +6,8 @@ import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../revenue_metrics/revenue_funnel_analytics.dart';
 import '../revenue_metrics/revenue_funnel_event.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'revenue_readiness_dashboard_v2_copy.dart';
 import 'revenue_readiness_dashboard_v2_model.dart';
 
@@ -120,6 +122,7 @@ abstract final class RevenueReadinessDashboardV2Engine {
     return RevenueReadinessDashboardV2Dashboard(
       title: RevenueReadinessDashboardV2Copy.title,
       subtitle: RevenueReadinessDashboardV2Copy.subtitle,
+      liftFocus: RevenueLiftExperimentV2Engine.resolveLiftFocus(input),
       sections: [
         _captureSection(input, diagnosisActions),
         _proofSection(input, diagnosisActions),

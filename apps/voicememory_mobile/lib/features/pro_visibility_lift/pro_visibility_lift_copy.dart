@@ -1,11 +1,12 @@
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+
 abstract final class ProVisibilityLiftCopy {
   ProVisibilityLiftCopy._();
 
-  static const title = 'This is the paid moment';
-  static const body =
-      'Your first proof is free. Pro keeps the longer timeline behind it.';
-  static const primaryCta = 'See what Pro keeps';
-  static const secondaryCta = 'Not now';
+  static const title = RevenueLiftExperimentV2Copy.proVisibilityTitle;
+  static const body = RevenueLiftExperimentV2Copy.proVisibilityBody;
+  static const primaryCta = RevenueLiftExperimentV2Copy.proVisibilityPrimaryCta;
+  static const secondaryCta = RevenueLiftExperimentV2Copy.proVisibilitySecondaryCta;
 }
 
 enum ProVisibilityLiftActionType {

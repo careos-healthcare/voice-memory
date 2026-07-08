@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
+import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
@@ -349,6 +352,34 @@ void main() {
         expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
       }
     });
+
+    test('chooses paywall_cta lift focus when CTA tap is 4%', () {
+      final dashboard = _dashboardFrom(
+        const RevenueReadinessDashboardV2Input(
+          paywallSeen: 25,
+          paywallCtaTapped: 1,
+        ),
+      );
+      expect(
+        dashboard.liftFocus.focus,
+        RevenueLiftExperimentV2Focus.paywallCta,
+      );
+      expect(
+        dashboard.liftFocus.label,
+        RevenueLiftExperimentV2Copy.liftFocusPaywallCta,
+      );
+    });
+
+    test('resolveLiftFocus matches dashboard lift focus', () {
+      final input = const RevenueReadinessDashboardV2Input(
+        recordScreenSeen: 10,
+        firstMomentSaved: 5,
+      );
+      expect(
+        RevenueLiftExperimentV2Engine.resolveLiftFocus(input).focus,
+        RevenueLiftExperimentV2Focus.firstSave,
+      );
+    });
   });
 
   group('RevenueReadinessDashboardV2Card', () {
@@ -387,6 +418,14 @@ void main() {
       );
       expect(
         find.text(RevenueReadinessDashboardV2Copy.sectionDiagnosis),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('revenue_readiness_dashboard_v2_lift_focus')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(RevenueLiftExperimentV2Copy.liftFocusSectionTitle),
         findsOneWidget,
       );
     });

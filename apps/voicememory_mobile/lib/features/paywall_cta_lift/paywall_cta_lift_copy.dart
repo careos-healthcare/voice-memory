@@ -1,8 +1,11 @@
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+
 abstract final class PaywallCtaLiftCopy {
   PaywallCtaLiftCopy._();
 
-  static const title = 'Keep this evidence trail';
-  static const body =
-      'The proof you just saw is the start. Pro keeps the full timeline as more moments return, change, or fade.';
-  static const supportLine = 'Not more chat. The longer record.';
+  static const title = RevenueLiftExperimentV2Copy.paywallCtaTitle;
+  static const body = RevenueLiftExperimentV2Copy.paywallCtaBody;
+  static const supportLine = RevenueLiftExperimentV2Copy.paywallCtaSupportLine;
+  static const purchaseCtaLine =
+      RevenueLiftExperimentV2Copy.paywallPurchaseCtaLine;
 }

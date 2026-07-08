@@ -24,6 +24,7 @@ class SecondMomentReturnResult {
     required this.notTodayAction,
     required this.afterNoticedSomething,
     required this.afterNotToday,
+    required this.returnReasonLine,
     required this.prompts,
     required this.entryCount,
     required this.source,
@@ -40,6 +41,7 @@ class SecondMomentReturnResult {
   final String notTodayAction;
   final String afterNoticedSomething;
   final String afterNotToday;
+  final String returnReasonLine;
   final List<SecondMomentReturnPrompt> prompts;
   final int entryCount;
   final String source;

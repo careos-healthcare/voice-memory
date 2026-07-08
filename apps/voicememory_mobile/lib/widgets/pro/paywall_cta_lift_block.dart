@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/paywall_cta_lift/paywall_cta_lift_analytics.dart';
 import '../../features/paywall_cta_lift/paywall_cta_lift_model.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_analytics.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -30,6 +33,14 @@ class _PaywallCtaLiftBlockState extends State<PaywallCtaLiftBlock> {
     if (_trackedSeen || !widget.result.shouldShow) return;
     _trackedSeen = true;
     PaywallCtaLiftAnalytics.seen(result: widget.result);
+    RevenueLiftExperimentV2Analytics.seen(
+      context: RevenueLiftExperimentV2SeenContext(
+        source: widget.result.source,
+        surface: 'paywall_cta_lift_block',
+        entryCount: 0,
+        area: RevenueLiftExperimentV2Area.paywallCta,
+      ),
+    );
   }
 
   @override

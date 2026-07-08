@@ -4,6 +4,7 @@ class PaywallCtaLiftResult {
     required this.title,
     required this.body,
     required this.supportLine,
+    required this.purchaseCtaLine,
     required this.source,
     required this.proofConnected,
   });
@@ -13,6 +14,7 @@ class PaywallCtaLiftResult {
     title: '',
     body: '',
     supportLine: '',
+    purchaseCtaLine: '',
     source: '',
     proofConnected: false,
   );
@@ -21,6 +23,7 @@ class PaywallCtaLiftResult {
   final String title;
   final String body;
   final String supportLine;
+  final String purchaseCtaLine;
   final String source;
   final bool proofConnected;
 }

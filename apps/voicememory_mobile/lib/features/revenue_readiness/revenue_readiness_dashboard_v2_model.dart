@@ -1,4 +1,5 @@
 import 'revenue_readiness_dashboard_v2_copy.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 
 enum RevenueReadinessDashboardV2Status {
   healthy,
@@ -170,12 +171,14 @@ class RevenueReadinessDashboardV2Dashboard {
   const RevenueReadinessDashboardV2Dashboard({
     required this.title,
     required this.subtitle,
+    required this.liftFocus,
     required this.sections,
     required this.diagnoses,
   });
 
   final String title;
   final String subtitle;
+  final RevenueLiftExperimentV2LiftFocus liftFocus;
   final List<RevenueReadinessDashboardV2Section> sections;
   final List<RevenueReadinessDashboardV2Diagnosis> diagnoses;
 
@@ -185,6 +188,7 @@ class RevenueReadinessDashboardV2Dashboard {
   List<String> get allDisplayedText => [
         title,
         subtitle,
+        liftFocus.label,
         for (final section in sections) ...[
           section.title,
           for (final row in section.rows) ...[

@@ -36,6 +36,8 @@ import '../features/paywall_objection_handling/paywall_objection_model.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_analytics.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
+import '../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_analytics.dart';
+import '../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../widgets/pro/paywall_cta_lift_block.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
@@ -542,6 +544,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
     EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
       source: 'paywall_screen',
     );
+    if (_attributionSource == PaywallSource.valueMoment) {
+      RevenueLiftExperimentV2Analytics.paywallSeen(
+        context: RevenueLiftExperimentV2PaywallSeenContext(
+          source: _attributionSource.id,
+          surface: 'paywall_screen',
+          entryCount: 0,
+        ),
+      );
+    }
   }
 
   void _trackPlansShown() {
@@ -1381,6 +1392,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ],
           const SizedBox(height: 18),
           _confidenceSection(),
+          if (paywallCtaLiftResult.shouldShow) ...[
+            const SizedBox(height: 10),
+            Text(
+              paywallCtaLiftResult.purchaseCtaLine,
+              key: const Key('paywall_cta_lift_purchase_line'),
+              textAlign: TextAlign.center,
+              style: ArchiveMobileTypography.responsiveHelper(context),
+            ),
+          ],
           // Final price-confidence line directly before the purchase CTA.
           const SizedBox(height: 10),
           _appStoreConfirmLine(),

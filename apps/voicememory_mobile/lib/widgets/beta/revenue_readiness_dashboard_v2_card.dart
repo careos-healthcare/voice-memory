@@ -4,6 +4,8 @@ import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
@@ -91,6 +93,8 @@ class _RevenueReadinessDashboardV2CardState
             ),
           ),
           const SizedBox(height: 12),
+          _LiftFocusBlock(liftFocus: dashboard.liftFocus),
+          const SizedBox(height: 12),
           for (final section in dashboard.sections) ...[
             _SectionBlock(section: section),
             const SizedBox(height: 10),
@@ -105,6 +109,45 @@ class _RevenueReadinessDashboardV2CardState
               fontSize: 12,
               height: 1.35,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LiftFocusBlock extends StatelessWidget {
+  const _LiftFocusBlock({required this.liftFocus});
+
+  final RevenueLiftExperimentV2LiftFocus liftFocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('revenue_readiness_dashboard_v2_lift_focus'),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            RevenueLiftExperimentV2Copy.liftFocusSectionTitle,
+            key: const Key('revenue_readiness_dashboard_v2_lift_focus_title'),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            liftFocus.label,
+            key: Key(
+              'revenue_readiness_dashboard_v2_lift_focus_${liftFocus.focus.analyticsValue}',
+            ),
+            style: const TextStyle(fontSize: 13, height: 1.35),
           ),
         ],
       ),

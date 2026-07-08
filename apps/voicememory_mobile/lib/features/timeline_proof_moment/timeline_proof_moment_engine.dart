@@ -14,6 +14,7 @@ import '../proof_confidence_calibration/proof_confidence_calibration_analytics.d
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
 import 'timeline_proof_moment_copy.dart';
 import 'timeline_proof_moment_model.dart';
 
@@ -131,6 +132,10 @@ abstract final class TimelineProofMomentEngine {
       trackAnalytics: true,
     );
 
+    final sharpenedPayoff = RevenueLiftExperimentV2Engine.proofPayoffCopyFor(
+      level: proofConfidenceCalibration.level,
+    );
+
     return TimelineProofMomentResult(
       shouldShow: true,
       entryCount: spine.entryCount,
@@ -139,8 +144,9 @@ abstract final class TimelineProofMomentEngine {
       hasCorrection: spine.hasCorrection,
       currentWeight: spine.currentWeight,
       rowCount: rows.length,
-      title: _titleFor(proofConfidenceCalibration, compact: compact),
-      body: proofConfidenceCalibration.displayCopy,
+      title: sharpenedPayoff?.title ??
+          _titleFor(proofConfidenceCalibration, compact: compact),
+      body: sharpenedPayoff?.body ?? proofConfidenceCalibration.displayCopy,
       rows: rows,
       currentWeightLine:
           TimelineProofMomentCopy.currentWeightLineFor(spine.currentWeight),

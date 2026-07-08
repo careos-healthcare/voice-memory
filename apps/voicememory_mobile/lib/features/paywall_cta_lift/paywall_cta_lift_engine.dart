@@ -24,6 +24,7 @@ abstract final class PaywallCtaLiftEngine {
       title: PaywallCtaLiftCopy.title,
       body: PaywallCtaLiftCopy.body,
       supportLine: PaywallCtaLiftCopy.supportLine,
+      purchaseCtaLine: PaywallCtaLiftCopy.purchaseCtaLine,
       source: analyticsSource,
       proofConnected: true,
     );

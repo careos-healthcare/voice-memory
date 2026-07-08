@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_analytics.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../../features/second_moment_return/second_moment_return_analytics.dart';
 import '../../features/second_moment_return/second_moment_return_model.dart';
 import '../../features/second_moment_return/second_moment_return_store.dart';
@@ -53,6 +56,16 @@ class _SecondMomentReturnCardState extends State<SecondMomentReturnCard> {
     if (_trackedSeen) return;
     _trackedSeen = true;
     SecondMomentReturnAnalytics.seen(result: widget.result);
+    if (widget.result.returnReasonLine.isNotEmpty) {
+      RevenueLiftExperimentV2Analytics.seen(
+        context: RevenueLiftExperimentV2SeenContext(
+          source: widget.result.source,
+          surface: 'second_moment_return_card',
+          entryCount: widget.result.entryCount,
+          area: RevenueLiftExperimentV2Area.returnReason,
+        ),
+      );
+    }
   }
 
   void _handleNoticedSomething() {
@@ -119,6 +132,14 @@ class _SecondMomentReturnCardState extends State<SecondMomentReturnCard> {
             key: const Key('second_moment_return_body'),
             style: bodyStyle.copyWith(color: AppColors.textPrimary),
           ),
+          if (widget.result.returnReasonLine.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              widget.result.returnReasonLine,
+              key: const Key('second_moment_return_reason_line'),
+              style: bodyStyle.copyWith(color: AppColors.textPrimary),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           Text(
             widget.result.noticeLine,

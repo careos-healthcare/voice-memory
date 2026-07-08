@@ -1,12 +1,13 @@
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+
 /// Zero-entry first save lift copy — no journaling language.
 abstract final class FirstSaveLiftCopy {
   FirstSaveLiftCopy._();
 
-  static const title = 'Save one small moment';
-  static const body =
-      'One sentence is enough. ArchiveMe needs a first real moment before it can show what returns.';
-  static const primaryCta = 'Type one sentence';
-  static const secondaryCta = 'Record instead';
+  static const title = RevenueLiftExperimentV2Copy.firstSaveTitle;
+  static const body = RevenueLiftExperimentV2Copy.firstSaveBody;
+  static const primaryCta = RevenueLiftExperimentV2Copy.firstSavePrimaryCta;
+  static const secondaryCta = RevenueLiftExperimentV2Copy.firstSaveSecondaryCta;
 
   static const exampleKeptCheckingAgain = 'I kept checking again';
   static const exampleAvoidedMessage = 'I avoided the message';

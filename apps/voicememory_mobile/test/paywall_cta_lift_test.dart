@@ -18,12 +18,19 @@ void main() {
 
   group('PaywallCtaLiftCopy', () {
     test('uses sharpened proof-connected copy', () {
-      expect(PaywallCtaLiftCopy.title, 'Keep this evidence trail');
+      expect(PaywallCtaLiftCopy.title, 'Keep the evidence trail');
       expect(
         PaywallCtaLiftCopy.body,
-        'The proof you just saw is the start. Pro keeps the full timeline as more moments return, change, or fade.',
+        'The proof you just saw is only the start. Pro keeps the full timeline as more moments return, change, or fade.',
       );
-      expect(PaywallCtaLiftCopy.supportLine, 'Not more chat. The longer record.');
+      expect(
+        PaywallCtaLiftCopy.supportLine,
+        'Not more chat. The longer record behind the pattern.',
+      );
+      expect(
+        PaywallCtaLiftCopy.purchaseCtaLine,
+        'Keep the timeline before it disappears into separate moments.',
+      );
     });
   });
 
@@ -116,6 +123,8 @@ void main() {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('PaywallCtaLiftBlock'));
       expect(source, contains('PaywallCtaLiftEngine.build'));
+      expect(source, contains('paywall_cta_lift_purchase_line'));
+      expect(source, contains('purchaseCtaLine'));
     });
 
     test('testing screen includes compact preview', () {

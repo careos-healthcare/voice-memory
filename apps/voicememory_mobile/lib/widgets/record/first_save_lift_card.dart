@@ -4,6 +4,9 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/first_save_lift/first_save_lift_analytics.dart';
 import '../../features/first_save_lift/first_save_lift_copy.dart';
 import '../../features/first_save_lift/first_save_lift_model.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_analytics.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -41,6 +44,14 @@ class _FirstSaveLiftCardState extends State<FirstSaveLiftCard> {
     if (_trackedSeen || !widget.result.shouldShow) return;
     _trackedSeen = true;
     FirstSaveLiftAnalytics.seen(result: widget.result);
+    RevenueLiftExperimentV2Analytics.seen(
+      context: RevenueLiftExperimentV2SeenContext(
+        source: widget.result.source,
+        surface: 'first_save_lift_card',
+        entryCount: widget.result.entryCount,
+        area: RevenueLiftExperimentV2Area.firstSave,
+      ),
+    );
   }
 
   @override
@@ -103,6 +114,14 @@ class _FirstSaveLiftCardState extends State<FirstSaveLiftCard> {
               FirstSaveLiftAnalytics.ctaTapped(
                 result: widget.result,
                 actionType: FirstSaveLiftActionType.typeOneSentence,
+              );
+              RevenueLiftExperimentV2Analytics.ctaTapped(
+                context: RevenueLiftExperimentV2CtaContext(
+                  source: widget.result.source,
+                  surface: 'first_save_lift_card',
+                  entryCount: widget.result.entryCount,
+                  area: RevenueLiftExperimentV2Area.firstSave,
+                ),
               );
               widget.onTypeOneSentence();
             },

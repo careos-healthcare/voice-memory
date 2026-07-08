@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
 import '../../features/pro_visibility_lift/pro_visibility_lift_analytics.dart';
 import '../../features/pro_visibility_lift/pro_visibility_lift_model.dart';
 import '../../features/pro_visibility_lift/pro_visibility_lift_store.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_analytics.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../../features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -41,6 +45,14 @@ class _ProVisibilityLiftCardState extends State<ProVisibilityLiftCard> {
     if (_trackedSeen || !widget.result.shouldShow || _dismissedToday) return;
     _trackedSeen = true;
     ProVisibilityLiftAnalytics.seen(result: widget.result);
+    RevenueLiftExperimentV2Analytics.seen(
+      context: RevenueLiftExperimentV2SeenContext(
+        source: widget.result.source,
+        surface: widget.result.surface.analyticsValue,
+        entryCount: widget.result.entryCount,
+        area: RevenueLiftExperimentV2Area.proVisibility,
+      ),
+    );
   }
 
   Future<void> _handleDismiss() async {
@@ -87,6 +99,14 @@ class _ProVisibilityLiftCardState extends State<ProVisibilityLiftCard> {
             key: const Key('pro_visibility_lift_primary_cta'),
             onPressed: () {
               ProVisibilityLiftAnalytics.ctaTapped(result: widget.result);
+              RevenueLiftExperimentV2Analytics.ctaTapped(
+                context: RevenueLiftExperimentV2CtaContext(
+                  source: widget.result.source,
+                  surface: widget.result.surface.analyticsValue,
+                  entryCount: widget.result.entryCount,
+                  area: RevenueLiftExperimentV2Area.proVisibility,
+                ),
+              );
               widget.onSeePro();
             },
             child: Text(widget.result.primaryCta),

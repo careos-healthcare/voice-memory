@@ -60,10 +60,10 @@ void main() {
 
   group('ProVisibilityLiftCopy', () {
     test('uses compact pro bridge copy', () {
-      expect(ProVisibilityLiftCopy.title, 'This is the paid moment');
+      expect(ProVisibilityLiftCopy.title, 'Keep the timeline behind this proof');
       expect(
         ProVisibilityLiftCopy.body,
-        'Your first proof is free. Pro keeps the longer timeline behind it.',
+        'Free shows this first proof. Pro keeps the longer evidence trail as it returns, changes, or fades.',
       );
       expect(ProVisibilityLiftCopy.primaryCta, 'See what Pro keeps');
       expect(ProVisibilityLiftCopy.secondaryCta, 'Not now');

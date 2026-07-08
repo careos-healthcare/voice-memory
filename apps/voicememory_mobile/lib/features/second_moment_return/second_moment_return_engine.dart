@@ -2,6 +2,8 @@ import '../../models/journal_entry.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../return_day/return_day_flow_engine.dart';
 import '../return_day/return_day_flow_store.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
 import 'second_moment_return_copy.dart';
 import 'second_moment_return_model.dart';
 import 'second_moment_return_store.dart';
@@ -38,6 +40,11 @@ abstract final class SecondMomentReturnEngine {
       notTodayAction: SecondMomentReturnCopy.notTodayAction,
       afterNoticedSomething: SecondMomentReturnCopy.afterNoticedSomething,
       afterNotToday: SecondMomentReturnCopy.afterNotToday,
+      returnReasonLine: RevenueLiftExperimentV2Engine.showReturnReasonLine(
+            entryCount: entryCount,
+          )
+          ? RevenueLiftExperimentV2Copy.returnReasonLine
+          : '',
       prompts: [
         for (final type in SecondMomentReturnCopy.promptOrder)
           SecondMomentReturnPrompt(

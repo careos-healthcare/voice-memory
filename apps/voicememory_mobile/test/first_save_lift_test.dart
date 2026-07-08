@@ -78,10 +78,10 @@ void main() {
 
   group('FirstSaveLiftCopy', () {
     test('uses zero-entry lift copy', () {
-      expect(FirstSaveLiftCopy.title, 'Save one small moment');
+      expect(FirstSaveLiftCopy.title, 'Save the moment that keeps pulling at you');
       expect(
         FirstSaveLiftCopy.body,
-        'One sentence is enough. ArchiveMe needs a first real moment before it can show what returns.',
+        'One sentence is enough. ArchiveMe needs one real moment before it can show what comes back.',
       );
       expect(FirstSaveLiftCopy.primaryCta, 'Type one sentence');
       expect(FirstSaveLiftCopy.secondaryCta, 'Record instead');

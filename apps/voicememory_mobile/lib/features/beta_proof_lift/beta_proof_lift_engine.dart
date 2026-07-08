@@ -22,6 +22,7 @@ import '../present_day_relevance/present_day_relevance_model.dart';
 import '../proof_quality_response/proof_quality_response_engine.dart';
 import '../proof_quality_response/proof_quality_response_model.dart';
 import '../timeline_proof_moment/timeline_proof_moment_model.dart';
+import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
 import 'beta_proof_lift_copy.dart';
 import 'beta_proof_lift_model.dart';
 
@@ -124,15 +125,20 @@ abstract final class BetaProofLiftEngine {
       ),
     ];
 
+    final sharpenedPayoff = RevenueLiftExperimentV2Engine.proofPayoffCopyFor(
+      level: proofConfidenceCalibration.level,
+    );
+
     return BetaProofLiftResult(
       shouldShow: true,
       entryCount: entries.length,
       source: source,
       surface: surface,
-      title: BetaProofLiftCopy.title,
-      body: proofConfidenceCalibration.isWatchOnly
-          ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
-          : proofConfidenceCalibration.displayCopy,
+      title: sharpenedPayoff?.title ?? BetaProofLiftCopy.title,
+      body: sharpenedPayoff?.body ??
+          (proofConfidenceCalibration.isWatchOnly
+              ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
+              : proofConfidenceCalibration.displayCopy),
       sections: sections,
       deltaRows: deltaRows,
       hasSafeAnchor: hasSafeAnchor,

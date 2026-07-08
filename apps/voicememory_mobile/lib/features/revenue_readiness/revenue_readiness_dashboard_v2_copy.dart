@@ -77,10 +77,10 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const diagnosisProVisibilityLiftNeeded = 'Pro visibility lift needed';
   static const diagnosisPaywallCtaLiftNeeded = 'Paywall CTA lift needed';
 
-  static const actionFirstSaveLift = 'Show first save lift card';
-  static const actionReturnAfterProofLift = 'Show return after proof lift v2';
-  static const actionProVisibilityLift = 'Show pro visibility lift card';
-  static const actionPaywallCtaLift = 'Show paywall CTA lift block';
+  static const actionPaywallCtaLift = 'Sharpen paywall CTA copy and purchase line';
+  static const actionFirstSaveLift = 'Sharpen first save lift copy';
+  static const actionReturnAfterProofLift = 'Sharpen return-after-proof reason copy';
+  static const actionProVisibilityLift = 'Sharpen Pro visibility bridge copy';
 
   static Iterable<String> allVisibleStrings() sync* {
     yield title;
