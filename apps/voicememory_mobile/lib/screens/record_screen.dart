@@ -324,6 +324,8 @@ import '../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
 import '../features/beta_repair_lab/beta_repair_lab_model.dart';
 import '../features/beta_repair_lab/beta_repair_lab_store.dart';
+import '../features/pro_placement_trigger_audit/pro_placement_trigger_audit_engine.dart';
+import '../features/pro_placement_trigger_audit/pro_placement_trigger_audit_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -6391,6 +6393,47 @@ class _RecordScreenState extends State<RecordScreen> {
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
                 showReturnAfterProofLiftV2BelowProofOnRecord);
+    if (ArchiveBetaMissionGate.isEnabled) {
+      ProPlacementTriggerAuditEngine.updateLatestInput(
+        ProPlacementTriggerAuditInput(
+          betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+          activeRepairMode: BetaRepairLabStore.activeMode,
+          entryCount: _journalEntryCount,
+          confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+              ProofConfidenceLevel.watchOnly,
+          hasSafeAnchor: recordLoosenSignalsPreAudit.hasSafeAnchor,
+          hasMatchQuality: !ProofFloorRescueEngine.resolveHasLowMatchQuality(
+            entries: _journalEntries,
+            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+            source: 'record_ready',
+            beliefEvidencePhrases:
+                archiveBeliefSurfaceCandidate.evidencePhrases,
+          ),
+          hasConfirmedRepeat:
+              EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+            _journalEntries,
+          ),
+          hasTimelineProofVisible: showTimelineProofMomentOnRecord &&
+              timelineProofMomentCandidate != null,
+          feedbackType: timelineFeedbackType,
+          hasUsefulOrStrongProof:
+              ProPlacementTriggerAuditEngine.hasUsefulOrStrongProof(
+            feedbackType: timelineFeedbackType,
+            confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+                ProofConfidenceLevel.watchOnly,
+          ),
+          proPlacementEligible: showBetaRepairLabProPlacementOnRecord,
+          proPlacementShown: showBetaRepairLabProPlacementBelowProofOnRecord,
+          proPlacementBlocked:
+              BetaRepairLabEngine.isRepairActive(
+                BetaRepairLabMode.proPlacementAfterUsefulProof,
+              ) &&
+                  !showBetaRepairLabProPlacementBelowProofOnRecord,
+          hasProEngagement: hasProEngagementOnRecord,
+          source: 'record_ready',
+        ),
+      );
+    }
     final showProUnderstandingLiftInProSectionOnRecord =
         showProUnderstandingLiftOnRecordReady &&
             !showProUnderstandingLiftBelowProofOnRecord;

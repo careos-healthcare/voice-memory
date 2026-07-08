@@ -32,6 +32,7 @@ import '../widgets/beta/beta_decision_rule_card.dart';
 import '../widgets/beta/beta_validation_decision_matrix_card.dart';
 import '../widgets/beta/beta_fix_playbook_card.dart';
 import '../widgets/beta/beta_repair_lab_card.dart';
+import '../widgets/beta/pro_placement_trigger_audit_card.dart';
 import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
 import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../widgets/beta/revenue_readiness_dashboard_v2_card.dart';
@@ -279,6 +280,11 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             const _BetaRepairLabTestingPanel(),
+            const SizedBox(height: AppSpacing.md),
+            const ProPlacementTriggerAuditCard(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
             const SizedBox(height: AppSpacing.md),
             const RevenueReadinessDashboardV2Card(
               source: 'testing_archiveme',
