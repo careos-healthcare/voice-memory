@@ -1,4 +1,5 @@
 import 'revenue_readiness_dashboard_v2_copy.dart';
+import '../beta_decision_rules/beta_decision_rule_model.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 
 enum RevenueReadinessDashboardV2Status {
@@ -142,6 +143,9 @@ class RevenueReadinessDashboardV2Input {
     this.firstSessionOpportunities = 0,
     this.understandsProYesMaybe = 0,
     this.understandsProSurveyResponses = 0,
+    this.testerCount = 0,
+    this.firstSessionSaveCount = 0,
+    this.sawProCount = 0,
   });
 
   final int recordScreenSeen;
@@ -169,6 +173,9 @@ class RevenueReadinessDashboardV2Input {
   final int firstSessionOpportunities;
   final int understandsProYesMaybe;
   final int understandsProSurveyResponses;
+  final int testerCount;
+  final int firstSessionSaveCount;
+  final int sawProCount;
 
   int get totalFeedbackCount =>
       usefulCount + tooVagueCount + alreadyKnewCount + notRelevantCount;
@@ -184,6 +191,7 @@ class RevenueReadinessDashboardV2Dashboard {
     required this.liftFocus,
     required this.sections,
     required this.diagnoses,
+    required this.decisionRule,
   });
 
   final String title;
@@ -191,6 +199,7 @@ class RevenueReadinessDashboardV2Dashboard {
   final RevenueLiftExperimentV2LiftFocus liftFocus;
   final List<RevenueReadinessDashboardV2Section> sections;
   final List<RevenueReadinessDashboardV2Diagnosis> diagnoses;
+  final BetaDecisionRuleResult decisionRule;
 
   List<RevenueReadinessDashboardV2MetricRow> get allRows =>
       sections.expand((section) => section.rows).toList();
@@ -214,6 +223,10 @@ class RevenueReadinessDashboardV2Dashboard {
           if (diagnosis.metricValueLabel != null) diagnosis.metricValueLabel!,
           diagnosis.nextActionLabel,
         ],
+        decisionRule.title,
+        decisionRule.body,
+        decisionRule.reason,
+        decisionRule.cta,
         RevenueReadinessDashboardV2Copy.localCountsNote,
       ];
 

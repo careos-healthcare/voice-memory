@@ -6,6 +6,7 @@ import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../revenue_metrics/revenue_funnel_analytics.dart';
 import '../revenue_metrics/revenue_funnel_event.dart';
+import '../beta_decision_rules/beta_decision_rule_engine.dart';
 import '../first_session_lift/first_session_lift_engine.dart';
 import '../pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
@@ -118,6 +119,16 @@ abstract final class RevenueReadinessDashboardV2Engine {
       firstSessionOpportunities: loop.appOpened > 0 ? loop.appOpened : loop.recordScreenSeen,
       understandsProYesMaybe: 0,
       understandsProSurveyResponses: 0,
+      testerCount: loaded.extension.betaFeedbackSubmitted > 0
+          ? loaded.extension.betaFeedbackSubmitted
+          : loop.appOpened,
+      firstSessionSaveCount: loop.firstMomentSaved > 0 && loop.appOpened <= 1
+          ? 1
+          : 0,
+      sawProCount: _max(
+        loop.paywallSeen,
+        _max(loop.proBoundarySeen, sessionPaywallSeen),
+      ),
     );
   }
 
@@ -140,6 +151,7 @@ abstract final class RevenueReadinessDashboardV2Engine {
         _revenueSection(input, diagnosisActions),
       ],
       diagnoses: diagnoses,
+      decisionRule: BetaDecisionRuleEngine.fromRevenueInput(input),
     );
   }
 

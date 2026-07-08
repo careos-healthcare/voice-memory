@@ -15,6 +15,7 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const sectionReturn = 'Return funnel';
   static const sectionRevenue = 'Revenue funnel';
   static const sectionDiagnosis = 'Conversion breaks';
+  static const sectionDecisionRule = 'Selected decision rule';
 
   static const firstSave = 'First save';
   static const secondSave = 'Second save';
@@ -96,6 +97,7 @@ abstract final class RevenueReadinessDashboardV2Copy {
     yield sectionReturn;
     yield sectionRevenue;
     yield sectionDiagnosis;
+    yield sectionDecisionRule;
     yield firstSave;
     yield secondSave;
     yield thirdSave;

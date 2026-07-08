@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/beta_decision_rules/beta_decision_rule_model.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
@@ -95,6 +96,8 @@ class _RevenueReadinessDashboardV2CardState
           const SizedBox(height: 12),
           _LiftFocusBlock(liftFocus: dashboard.liftFocus),
           const SizedBox(height: 12),
+          _DecisionRuleBlock(decisionRule: dashboard.decisionRule),
+          const SizedBox(height: 12),
           for (final section in dashboard.sections) ...[
             _SectionBlock(section: section),
             const SizedBox(height: 10),
@@ -109,6 +112,52 @@ class _RevenueReadinessDashboardV2CardState
               fontSize: 12,
               height: 1.35,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DecisionRuleBlock extends StatelessWidget {
+  const _DecisionRuleBlock({required this.decisionRule});
+
+  final BetaDecisionRuleResult decisionRule;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('revenue_readiness_dashboard_v2_decision_rule'),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            RevenueReadinessDashboardV2Copy.sectionDecisionRule,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            decisionRule.title,
+            key: const Key('revenue_readiness_dashboard_v2_decision_rule_title'),
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            decisionRule.reason,
+            key: const Key('revenue_readiness_dashboard_v2_decision_rule_reason'),
+            style: const TextStyle(fontSize: 12, height: 1.35),
           ),
         ],
       ),
