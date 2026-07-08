@@ -1,5 +1,6 @@
 import 'revenue_readiness_dashboard_v2_copy.dart';
 import '../beta_decision_rules/beta_decision_rule_model.dart';
+import '../first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 
 enum RevenueReadinessDashboardV2Status {
@@ -189,6 +190,7 @@ class RevenueReadinessDashboardV2Dashboard {
     required this.title,
     required this.subtitle,
     required this.liftFocus,
+    required this.repairFocus,
     required this.sections,
     required this.diagnoses,
     required this.decisionRule,
@@ -197,6 +199,7 @@ class RevenueReadinessDashboardV2Dashboard {
   final String title;
   final String subtitle;
   final RevenueLiftExperimentV2LiftFocus liftFocus;
+  final FirstSessionProofRepairFocus repairFocus;
   final List<RevenueReadinessDashboardV2Section> sections;
   final List<RevenueReadinessDashboardV2Diagnosis> diagnoses;
   final BetaDecisionRuleResult decisionRule;
@@ -208,6 +211,7 @@ class RevenueReadinessDashboardV2Dashboard {
         title,
         subtitle,
         liftFocus.label,
+        repairFocus.label,
         for (final section in sections) ...[
           section.title,
           for (final row in section.rows) ...[

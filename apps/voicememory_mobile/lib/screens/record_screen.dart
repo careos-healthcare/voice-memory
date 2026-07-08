@@ -317,6 +317,8 @@ import '../features/return_after_proof/return_after_proof_store.dart';
 import '../features/first_moment_capture/first_moment_capture_engine.dart';
 import '../features/first_save_lift/first_save_lift_engine.dart';
 import '../features/first_session_lift/first_session_lift_engine.dart';
+import '../features/first_session_proof_repair/first_session_proof_repair_engine.dart';
+import '../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -359,6 +361,7 @@ import '../widgets/record/return_after_proof_card.dart';
 import '../widgets/record/first_moment_capture_card.dart';
 import '../widgets/record/first_save_lift_card.dart';
 import '../widgets/record/first_session_lift_card.dart';
+import '../widgets/record/first_session_proof_repair_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
@@ -5188,6 +5191,22 @@ class _RecordScreenState extends State<RecordScreen> {
       entryCount: _journalEntryCount,
       source: 'record',
     );
+    final firstSessionCaptureRepairCandidate =
+        FirstSessionProofRepairEngine.buildCapture(
+      entryCount: _journalEntryCount,
+      source: 'record',
+    );
+    var showFirstSessionCaptureRepairCard =
+        FirstSessionProofRepairEngine.shouldShowCapture(
+      result: firstSessionCaptureRepairCandidate,
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      isPermissionBlocked: ui == RecordUiState.permissionBlocked,
+      entryCount: _journalEntryCount,
+    );
     final firstSessionLiftCandidate = FirstSessionLiftEngine.build(
       entryCount: _journalEntryCount,
       source: 'record',
@@ -5676,12 +5695,53 @@ class _RecordScreenState extends State<RecordScreen> {
         betaFeedbackCaptureRecordReadyPreAudit.shouldShow
             ? betaFeedbackCaptureRecordReadyPreAudit
             : null;
+    final betaProofFeedbackCounts =
+        FirstSessionProofRepairEngine.feedbackCountsFromStore();
+    final betaProofFeedbackRowVisibleOnTimeline =
+        FirstSessionProofRepairEngine.betaProofFeedbackRowVisible(
+      parentVisible: showTimelineProofMomentOnRecord &&
+          timelineProofMomentCandidate != null,
+      entryCount: _journalEntryCount,
+      hasConfirmedRepeat:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries),
+      isRecording: ui == RecordUiState.recording,
+      isPostSaveDegraded: false,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+    );
+    final proofQualityRepairInput = ProofQualityRepairVisibilityInput(
+      entryCount: _journalEntryCount,
+      source: 'record_ready',
+      hasTimelineProofVisible: showTimelineProofMomentOnRecord &&
+          timelineProofMomentCandidate != null,
+      hasConfirmedRepeat:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries),
+      confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+          ProofConfidenceLevel.watchOnly,
+      usefulFeedbackCount: betaProofFeedbackCounts.useful,
+      negativeFeedbackCount: betaProofFeedbackCounts.negative,
+      betaProofFeedbackRowVisible: betaProofFeedbackRowVisibleOnTimeline,
+      isRecording: ui == RecordUiState.recording,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+    );
+    var showProofQualityRepairOnRecord =
+        FirstSessionProofRepairEngine.shouldShowProof(
+      input: proofQualityRepairInput,
+    );
+    final proofQualityRepairResult = showProofQualityRepairOnRecord
+        ? FirstSessionProofRepairEngine.buildProof(
+            input: proofQualityRepairInput,
+          )
+        : ProofQualityRepairResult.hidden;
     SurfacePriorityResult? recordReadySurfacePriority;
     if (ui == RecordUiState.ready) {
       recordReadySurfacePriority = SurfacePriorityEngine.auditRecordReady(
         entryCount: _journalEntryCount,
         source: 'record',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstSessionProofRepair: showFirstSessionCaptureRepairCard,
           firstSessionLift: showFirstSessionLiftCard,
           firstSaveLift: showFirstSaveLiftCard,
           betaActivationPath: showBetaActivationPathCard &&
@@ -5715,6 +5775,7 @@ class _RecordScreenState extends State<RecordScreen> {
               notRelevantRecoveryCandidate.shouldShow,
           proofQualityResponse: showProofQualityResponseOnRecordReady &&
               proofQualityResponseTimelineCandidate.shouldShow,
+          proofQualityRepair: showProofQualityRepairOnRecord,
           betaProofLift: showBetaProofLiftOnRecordReady,
           evidenceWeighting: showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
@@ -5738,6 +5799,10 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       SurfacePriorityAnalytics.seen(result: recordReadySurfacePriority);
       final audit = recordReadySurfacePriority;
+      showFirstSessionCaptureRepairCard = audit.isVisible(
+        SurfacePriorityCardKey.firstSessionProofRepair,
+        candidate: showFirstSessionCaptureRepairCard,
+      );
       showFirstSessionLiftCard = audit.isVisible(
         SurfacePriorityCardKey.firstSessionLift,
         candidate: showFirstSessionLiftCard,
@@ -5981,7 +6046,15 @@ class _RecordScreenState extends State<RecordScreen> {
       } else {
         showBetaActivationPathCard = false;
       }
-      if (showFirstSessionLiftCard) {
+      showProofQualityRepairOnRecord = audit.isVisible(
+        SurfacePriorityCardKey.proofQualityRepair,
+        candidate: showProofQualityRepairOnRecord,
+      );
+      if (showFirstSessionCaptureRepairCard) {
+        showFirstSessionLiftCard = false;
+        showFirstSaveLiftCard = false;
+        showBetaActivationPathCard = false;
+      } else if (showFirstSessionLiftCard) {
         showFirstSaveLiftCard = false;
         showBetaActivationPathCard = false;
       } else if (showFirstSaveLiftCard) {
@@ -7748,6 +7821,35 @@ class _RecordScreenState extends State<RecordScreen> {
                         result: recordReadySurfacePriority,
                       ),
                     ],
+                    if (showFirstSessionCaptureRepairCard) ...[
+                      FirstSessionCaptureRepairCard(
+                        result: firstSessionCaptureRepairCandidate,
+                        onTypeOneSentence: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: firstSessionCaptureRepairCandidate
+                                .typedCapturePrompt,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onUseVoice: () => unawaited(
+                          _onRecordPressed(
+                            source: 'first_session_capture_repair',
+                          ),
+                        ),
+                        onChipSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                          unawaited(
+                            navigateToTypeInsteadCapture(
+                              context,
+                              prompt: prompt,
+                              onSaved: _finishSuccessfulCapture,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     if (showFirstSessionLiftCard) ...[
                       FirstSessionLiftCard(
                         result: firstSessionLiftCandidate,
@@ -8142,27 +8244,44 @@ class _RecordScreenState extends State<RecordScreen> {
                           surface: 'record_ready',
                         ),
                       ],
-                      BetaProofFeedbackRow(
-                        surface: BetaProofFeedbackSurface.timelineProofMoment,
-                        source: 'record',
-                        entryCount: _journalEntryCount,
-                        hasConfirmedRepeat:
-                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                          _journalEntries,
+                      if (showProofQualityRepairOnRecord &&
+                          proofQualityRepairResult.shouldShow) ...[
+                        const SizedBox(height: 12),
+                        ProofQualityRepairCard(
+                          result: proofQualityRepairResult,
+                          onNotRelevantAnswered: () =>
+                              NotRelevantRecoveryEngine
+                                  .syncBackgroundCorrectionIfNeeded(
+                            entries: _journalEntries,
+                            source: 'record',
+                          ),
+                          onChanged: () => setState(() {}),
                         ),
-                        parentVisible: true,
-                        isRecording: ui == RecordUiState.recording,
-                        isPostSaveDegraded: false,
-                        whatChangedQuestionActive: showWhatChangedV2,
-                        patternReviewInboxHasActiveItems:
-                            patternReviewInboxActiveOnRecord,
-                        onNotRelevantAnswered: () =>
-                            NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                          entries: _journalEntries,
+                      ] else ...[
+                        BetaProofFeedbackRow(
+                          surface: BetaProofFeedbackSurface.timelineProofMoment,
                           source: 'record',
+                          entryCount: _journalEntryCount,
+                          hasConfirmedRepeat:
+                              EarlyFirstSignalEngine
+                                  .hasConfirmedRepeatFoundation(
+                            _journalEntries,
+                          ),
+                          parentVisible: true,
+                          isRecording: ui == RecordUiState.recording,
+                          isPostSaveDegraded: false,
+                          whatChangedQuestionActive: showWhatChangedV2,
+                          patternReviewInboxHasActiveItems:
+                              patternReviewInboxActiveOnRecord,
+                          onNotRelevantAnswered: () =>
+                              NotRelevantRecoveryEngine
+                                  .syncBackgroundCorrectionIfNeeded(
+                            entries: _journalEntries,
+                            source: 'record',
+                          ),
+                          onChanged: () => setState(() {}),
                         ),
-                        onChanged: () => setState(() {}),
-                      ),
+                      ],
                       if (showProofQualityResponseUnderTimelineProof) ...[
                         const SizedBox(height: 12),
                         ProofQualityResponseCard(

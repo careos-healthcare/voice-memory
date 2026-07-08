@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../features/first_session_proof_repair/first_session_proof_repair_copy.dart';
+import '../../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../../features/beta_decision_rules/beta_decision_rule_model.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
@@ -94,6 +96,8 @@ class _RevenueReadinessDashboardV2CardState
             ),
           ),
           const SizedBox(height: 12),
+          _RepairFocusBlock(repairFocus: dashboard.repairFocus),
+          const SizedBox(height: 12),
           _LiftFocusBlock(liftFocus: dashboard.liftFocus),
           const SizedBox(height: 12),
           _DecisionRuleBlock(decisionRule: dashboard.decisionRule),
@@ -110,6 +114,46 @@ class _RevenueReadinessDashboardV2CardState
             style: const TextStyle(
               color: AppTheme.muted,
               fontSize: 12,
+              height: 1.35,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RepairFocusBlock extends StatelessWidget {
+  const _RepairFocusBlock({required this.repairFocus});
+
+  final FirstSessionProofRepairFocus repairFocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('revenue_readiness_dashboard_v2_repair_focus'),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            FirstSessionProofRepairCopy.dashboardFocusSectionTitle,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            repairFocus.label,
+            key: const Key('revenue_readiness_dashboard_v2_repair_focus_label'),
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
               height: 1.35,
             ),
           ),

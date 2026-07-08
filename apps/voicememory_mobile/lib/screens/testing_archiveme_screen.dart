@@ -46,6 +46,9 @@ import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../widgets/beta/beta_feedback_capture_card.dart';
+import '../features/first_session_proof_repair/first_session_proof_repair_copy.dart';
+import '../features/first_session_proof_repair/first_session_proof_repair_engine.dart';
+import '../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../features/first_session_lift/first_session_lift_engine.dart';
 import '../features/first_save_lift/first_save_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
@@ -54,10 +57,12 @@ import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
 import '../features/return_after_proof_lift_v2/return_after_proof_lift_v2_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
+import '../features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
 import '../features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../features/proof_quality_response/proof_quality_response_model.dart';
 import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
 import '../billing/paywall_source.dart';
+import '../widgets/record/first_session_proof_repair_card.dart';
 import '../widgets/record/first_session_lift_card.dart';
 import '../widgets/record/first_save_lift_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
@@ -304,6 +309,39 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               showDiagnosis: true,
             ),
             const SizedBox(height: AppSpacing.md),
+            _FirstSessionProofRepairTestingPanel(
+              entryCount: _entries.length,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FirstSessionCaptureRepairCard.test(
+              result: FirstSessionProofRepairEngine.buildCapture(
+                entryCount: 0,
+                source: 'testing_archiveme',
+              ),
+              onTypeOneSentence: () {},
+              onUseVoice: () {},
+              onChipSelected: (_) {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProofQualityRepairCard.test(
+              result: FirstSessionProofRepairEngine.buildProof(
+                input: ProofQualityRepairVisibilityInput(
+                  entryCount: _entries.isEmpty ? 3 : _entries.length,
+                  source: 'testing_archiveme',
+                  hasTimelineProofVisible: true,
+                  hasConfirmedRepeat: _entries.length >= 3,
+                  confidenceLevel: ProofConfidenceLevel.watchOnly,
+                  usefulFeedbackCount: 0,
+                  negativeFeedbackCount: 0,
+                  betaProofFeedbackRowVisible: false,
+                  isRecording: false,
+                  isDegradedTranscriptState: false,
+                  whatChangedQuestionActive: false,
+                  patternReviewInboxHasActiveItems: false,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             _FirstSessionProUnderstandingLiftTestingPanel(
               entryCount: _entries.length,
             ),
@@ -494,6 +532,90 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FirstSessionProofRepairTestingPanel extends StatelessWidget {
+  const _FirstSessionProofRepairTestingPanel({required this.entryCount});
+
+  final int entryCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final captureVisible = FirstSessionProofRepairEngine.shouldShowCapture(
+      result: FirstSessionProofRepairEngine.buildCapture(
+        entryCount: entryCount,
+        source: 'testing_archiveme',
+      ),
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      isReady: true,
+      isRecording: false,
+      isPostSave: false,
+      isDegradedTranscriptState: false,
+      isPermissionBlocked: false,
+      entryCount: entryCount,
+    );
+    final proofVisible = FirstSessionProofRepairEngine.shouldShowProof(
+      input: ProofQualityRepairVisibilityInput(
+        entryCount: entryCount >= 3 ? entryCount : 3,
+        source: 'testing_archiveme',
+        hasTimelineProofVisible: entryCount >= 3,
+        hasConfirmedRepeat: entryCount >= 3,
+        confidenceLevel: ProofConfidenceLevel.watchOnly,
+        usefulFeedbackCount: 0,
+        negativeFeedbackCount: 0,
+        betaProofFeedbackRowVisible: false,
+        isRecording: false,
+        isDegradedTranscriptState: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: false,
+      ),
+    );
+    final repairFocus = FirstSessionProofRepairEngine.resolveRepairFocus(
+      const RevenueReadinessDashboardV2Input(
+        testerCount: 10,
+        firstSessionSaveCount: 1,
+        usefulCount: 1,
+      ),
+    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+
+    return Container(
+      key: const Key('first_session_proof_repair_testing_panel'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'First session + proof quality repair',
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'First-session capture repair: '
+            '${FirstSessionProofRepairEngine.captureStatusLabel(visible: captureVisible)}',
+            key: const Key('first_session_capture_repair_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Proof quality repair: '
+            '${FirstSessionProofRepairEngine.proofStatusLabel(visible: proofVisible)}',
+            key: const Key('proof_quality_repair_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Current next fix: ${repairFocus.label}',
+            key: const Key('first_session_proof_repair_next_fix'),
+            style: bodyStyle,
+          ),
+        ],
       ),
     );
   }

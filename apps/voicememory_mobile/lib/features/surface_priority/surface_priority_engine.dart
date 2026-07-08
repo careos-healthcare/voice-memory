@@ -10,6 +10,7 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.firstSessionProofRepair,
     SurfacePriorityCardKey.firstSessionLift,
     SurfacePriorityCardKey.firstSaveLift,
     SurfacePriorityCardKey.betaActivationPath,
@@ -37,6 +38,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordCorrectionOrder = [
+    SurfacePriorityCardKey.proofQualityRepair,
     SurfacePriorityCardKey.proofQualityResponse,
     SurfacePriorityCardKey.betaProofLift,
     SurfacePriorityCardKey.notRelevantRecovery,
