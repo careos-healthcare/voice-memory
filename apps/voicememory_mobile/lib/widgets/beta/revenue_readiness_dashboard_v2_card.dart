@@ -4,6 +4,8 @@ import '../../features/first_session_proof_repair/first_session_proof_repair_cop
 import '../../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../../features/beta_decision_rules/beta_decision_rule_model.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
+import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_copy.dart';
+import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_model.dart';
 import '../../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
@@ -105,6 +107,10 @@ class _RevenueReadinessDashboardV2CardState
           _LiftFocusBlock(liftFocus: dashboard.liftFocus),
           const SizedBox(height: 12),
           _DecisionRuleBlock(decisionRule: dashboard.decisionRule),
+          const SizedBox(height: 12),
+          _ValidationDecisionBlock(
+            validationDecision: dashboard.validationDecision,
+          ),
           const SizedBox(height: 12),
           for (final section in dashboard.sections) ...[
             _SectionBlock(section: section),
@@ -223,6 +229,68 @@ class _DecisionRuleBlock extends StatelessWidget {
             decisionRule.reason,
             key: const Key('revenue_readiness_dashboard_v2_decision_rule_reason'),
             style: const TextStyle(fontSize: 12, height: 1.35),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ValidationDecisionBlock extends StatelessWidget {
+  const _ValidationDecisionBlock({required this.validationDecision});
+
+  final BetaValidationDecisionMatrixResult validationDecision;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('revenue_readiness_dashboard_v2_validation_decision'),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            RevenueReadinessDashboardV2Copy.sectionValidationDecision,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            validationDecision.title,
+            key: const Key(
+              'revenue_readiness_dashboard_v2_validation_decision_title',
+            ),
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            validationDecision.reason,
+            key: const Key(
+              'revenue_readiness_dashboard_v2_validation_decision_reason',
+            ),
+            style: const TextStyle(fontSize: 12, height: 1.35),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            BetaValidationDecisionMatrixCopy.onlyFixThisOneNext,
+            key: const Key(
+              'revenue_readiness_dashboard_v2_validation_decision_only_fix',
+            ),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              height: 1.35,
+            ),
           ),
         ],
       ),

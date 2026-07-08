@@ -1,5 +1,6 @@
 import 'revenue_readiness_dashboard_v2_copy.dart';
 import '../beta_decision_rules/beta_decision_rule_model.dart';
+import '../beta_validation_decision_matrix/beta_validation_decision_matrix_model.dart';
 import '../first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
@@ -148,6 +149,7 @@ class RevenueReadinessDashboardV2Input {
     this.testerCount = 0,
     this.firstSessionSaveCount = 0,
     this.sawProCount = 0,
+    this.wouldPayYesMaybeCount,
   });
 
   final int recordScreenSeen;
@@ -178,6 +180,7 @@ class RevenueReadinessDashboardV2Input {
   final int testerCount;
   final int firstSessionSaveCount;
   final int sawProCount;
+  final int? wouldPayYesMaybeCount;
 
   int get totalFeedbackCount =>
       usefulCount + tooVagueCount + alreadyKnewCount + notRelevantCount;
@@ -196,6 +199,7 @@ class RevenueReadinessDashboardV2Dashboard {
     required this.sections,
     required this.diagnoses,
     required this.decisionRule,
+    required this.validationDecision,
   });
 
   final String title;
@@ -206,6 +210,7 @@ class RevenueReadinessDashboardV2Dashboard {
   final List<RevenueReadinessDashboardV2Section> sections;
   final List<RevenueReadinessDashboardV2Diagnosis> diagnoses;
   final BetaDecisionRuleResult decisionRule;
+  final BetaValidationDecisionMatrixResult validationDecision;
 
   List<RevenueReadinessDashboardV2MetricRow> get allRows =>
       sections.expand((section) => section.rows).toList();
@@ -235,6 +240,10 @@ class RevenueReadinessDashboardV2Dashboard {
         decisionRule.body,
         decisionRule.reason,
         decisionRule.cta,
+        validationDecision.title,
+        validationDecision.body,
+        validationDecision.reason,
+        validationDecision.cta,
         RevenueReadinessDashboardV2Copy.localCountsNote,
       ];
 

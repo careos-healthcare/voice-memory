@@ -16,6 +16,7 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const sectionRevenue = 'Revenue funnel';
   static const sectionDiagnosis = 'Conversion breaks';
   static const sectionDecisionRule = 'Selected decision rule';
+  static const sectionValidationDecision = 'Validation decision matrix';
 
   static const firstSave = 'First save';
   static const secondSave = 'Second save';

@@ -7,6 +7,7 @@ import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../revenue_metrics/revenue_funnel_analytics.dart';
 import '../revenue_metrics/revenue_funnel_event.dart';
 import '../beta_decision_rules/beta_decision_rule_engine.dart';
+import '../beta_validation_decision_matrix/beta_validation_decision_matrix_engine.dart';
 import '../first_session_proof_repair/first_session_proof_repair_engine.dart';
 import '../first_session_lift/first_session_lift_engine.dart';
 import '../pro_understanding_lift/pro_understanding_lift_engine.dart';
@@ -156,6 +157,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
       ],
       diagnoses: diagnoses,
       decisionRule: BetaDecisionRuleEngine.fromRevenueInput(input),
+      validationDecision:
+          BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
     );
   }
 
