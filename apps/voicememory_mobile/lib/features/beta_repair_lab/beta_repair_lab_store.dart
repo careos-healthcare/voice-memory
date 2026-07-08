@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
+import '../beta/archive_beta_mission_gate.dart';
 import 'beta_repair_lab_copy.dart';
 import 'beta_repair_lab_model.dart';
 
@@ -10,17 +11,67 @@ abstract final class BetaRepairLabStore {
   BetaRepairLabStore._();
 
   static const prefsKey = 'betaRepairLabMode_v1';
+  static const buildRepairModeDefineKey = 'ARCHIVEME_BETA_REPAIR_MODE';
+
+  static const _repairModeFromEnvironment = String.fromEnvironment(
+    buildRepairModeDefineKey,
+    defaultValue: '',
+  );
+
+  @visibleForTesting
+  static String? repairModeOverrideForTest;
 
   static BetaRepairLabMode _mode = BetaRepairLabMode.none;
   static bool _loaded = false;
 
+  /// Locally stored picker selection from the testing screen.
   static BetaRepairLabMode get mode => _mode;
+
+  static BetaRepairLabMode get localMode => _mode;
+
+  /// Effective repair mode: build override when beta mission is on, else local.
+  static BetaRepairLabMode get activeMode {
+    final override = buildOverrideMode;
+    if (override != BetaRepairLabMode.none) return override;
+    return _mode;
+  }
+
+  static bool get isBuildOverrideActive =>
+      buildOverrideMode != BetaRepairLabMode.none;
+
+  static BetaRepairLabMode get buildOverrideMode {
+    if (!ArchiveBetaMissionGate.isEnabled) return BetaRepairLabMode.none;
+    return parseBuildRepairMode(_rawBuildRepairMode);
+  }
+
+  static String get _rawBuildRepairMode =>
+      repairModeOverrideForTest ?? _repairModeFromEnvironment;
+
+  static String? get buildOverrideActiveLabel {
+    final mode = buildOverrideMode;
+    if (mode == BetaRepairLabMode.none) return null;
+    return '${BetaRepairLabCopy.buildOverrideActivePrefix} '
+        '${BetaRepairLabCopy.modeLabel(mode)}';
+  }
+
+  static BetaRepairLabMode parseBuildRepairMode(String raw) {
+    final normalized = raw.trim();
+    if (normalized.isEmpty || normalized == BetaRepairLabMode.none.name) {
+      return BetaRepairLabMode.none;
+    }
+    for (final mode in BetaRepairLabMode.values) {
+      if (mode.name == normalized || mode.analyticsValue == normalized) {
+        return mode;
+      }
+    }
+    return BetaRepairLabMode.none;
+  }
 
   static Future<void> ensureLoaded() async {
     if (!AppServices.isInitialized) return;
     if (_loaded) return;
     final raw = await AppServices.instance.prefs.readMap(prefsKey);
-    _mode = _parseMode(raw?['selectedMode']);
+    _mode = _parseStoredMode(raw?['selectedMode']);
     _loaded = true;
   }
 
@@ -44,7 +95,7 @@ abstract final class BetaRepairLabStore {
     return selectMode(BetaRepairLabMode.none, source: source);
   }
 
-  static BetaRepairLabMode _parseMode(Object? raw) {
+  static BetaRepairLabMode _parseStoredMode(Object? raw) {
     if (raw is! String || raw.isEmpty) return BetaRepairLabMode.none;
     for (final mode in BetaRepairLabMode.values) {
       if (mode.analyticsValue == raw) return mode;
@@ -71,6 +122,7 @@ abstract final class BetaRepairLabStore {
   static Future<void> resetForTest(MobilePrefsStore? prefs) async {
     _mode = BetaRepairLabMode.none;
     _loaded = false;
+    repairModeOverrideForTest = null;
     if (prefs == null) return;
     await prefs.writeMap(prefsKey, {});
   }

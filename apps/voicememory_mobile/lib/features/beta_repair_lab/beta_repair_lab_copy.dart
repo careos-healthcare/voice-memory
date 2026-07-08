@@ -11,6 +11,9 @@ abstract final class BetaRepairLabCopy {
       'Use one repair per tester round. Do not test multiple repairs at once.';
   static const guidanceOnlyNote =
       'Repairs only apply when beta mode is on and a mode is selected.';
+  static const buildOverrideActivePrefix = 'Build override active:';
+  static const buildOverrideWarning =
+      'This build is testing one repair mode. Do not compare it with mixed-mode testers.';
   static const activeModeLabel = 'Active repair';
   static const noneLabel = 'None';
 
@@ -117,6 +120,8 @@ abstract final class BetaRepairLabCopy {
     yield cardBody;
     yield warning;
     yield guidanceOnlyNote;
+    yield buildOverrideActivePrefix;
+    yield buildOverrideWarning;
     yield activeModeLabel;
     yield noneLabel;
     yield openingTitle;

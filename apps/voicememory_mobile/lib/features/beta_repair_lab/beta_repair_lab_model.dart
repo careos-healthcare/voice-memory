@@ -131,11 +131,17 @@ class BetaRepairLabVisibilityInput {
 class BetaRepairLabState {
   const BetaRepairLabState({
     required this.mode,
+    required this.localMode,
     required this.activeModeLabel,
     required this.warning,
+    required this.buildOverrideActive,
+    this.buildOverrideLabel,
   });
 
   final BetaRepairLabMode mode;
+  final BetaRepairLabMode localMode;
   final String activeModeLabel;
   final String warning;
+  final bool buildOverrideActive;
+  final String? buildOverrideLabel;
 }

@@ -5507,7 +5507,7 @@ class _RecordScreenState extends State<RecordScreen> {
       BetaProofFeedbackSurface.timelineProofMoment,
     ).feedbackType;
     final betaRepairLabInput = BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabStore.mode,
+      mode: BetaRepairLabStore.activeMode,
       entryCount: _journalEntryCount,
       source: 'record_ready',
       isPro: _recordReturnProIsPro,

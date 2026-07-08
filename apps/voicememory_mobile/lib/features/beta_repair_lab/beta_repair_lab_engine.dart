@@ -15,13 +15,22 @@ abstract final class BetaRepairLabEngine {
       betaMissionEnabled && ArchiveBetaMissionGate.isEnabled;
 
   static bool isRepairActive(BetaRepairLabMode mode) =>
-      BetaRepairLabStore.mode == mode;
+      BetaRepairLabStore.activeMode == mode;
 
-  static BetaRepairLabState currentState() => BetaRepairLabState(
-        mode: BetaRepairLabStore.mode,
-        activeModeLabel: BetaRepairLabCopy.modeLabel(BetaRepairLabStore.mode),
-        warning: BetaRepairLabCopy.warning,
-      );
+  static BetaRepairLabState currentState() {
+    final active = BetaRepairLabStore.activeMode;
+    final buildActive = BetaRepairLabStore.isBuildOverrideActive;
+    return BetaRepairLabState(
+      mode: active,
+      localMode: BetaRepairLabStore.localMode,
+      activeModeLabel: BetaRepairLabCopy.modeLabel(active),
+      buildOverrideActive: buildActive,
+      buildOverrideLabel: BetaRepairLabStore.buildOverrideActiveLabel,
+      warning: buildActive
+          ? BetaRepairLabCopy.buildOverrideWarning
+          : BetaRepairLabCopy.warning,
+    );
+  }
 
   static Iterable<BetaRepairLabModeInfo> allModeInfos() sync* {
     for (final mode in BetaRepairLabMode.values) {
@@ -251,7 +260,10 @@ abstract final class BetaRepairLabEngine {
       result.primaryCta == BetaRepairLabCopy.proExplanationPrimaryCta;
 
   static String activeModeStatusLabel() =>
-      'Active repair: ${BetaRepairLabCopy.modeLabel(BetaRepairLabStore.mode)}';
+      'Active repair: ${BetaRepairLabCopy.modeLabel(BetaRepairLabStore.activeMode)}';
+
+  static String? buildOverrideStatusLabel() =>
+      BetaRepairLabStore.buildOverrideActiveLabel;
 
   static BetaRepairLabProofVariant _resolveProofVariant(
     BetaRepairLabVisibilityInput input,
@@ -268,3 +280,4 @@ abstract final class BetaRepairLabEngine {
         input.confidenceLevel == ProofConfidenceLevel.strong ||
         input.confidenceLevel == ProofConfidenceLevel.freshReturn;
   }
+}

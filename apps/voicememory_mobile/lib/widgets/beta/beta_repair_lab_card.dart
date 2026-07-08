@@ -117,6 +117,15 @@ class _BetaRepairLabCardState extends State<BetaRepairLabCard> {
               style: bodyStyle,
             ),
             const SizedBox(height: 8),
+            if (state.buildOverrideActive &&
+                state.buildOverrideLabel != null) ...[
+              Text(
+                state.buildOverrideLabel!,
+                key: const Key('beta_repair_lab_build_override_active'),
+                style: bodyStyle.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+            ],
             Text(
               '${BetaRepairLabCopy.activeModeLabel}: ${state.activeModeLabel}',
               key: const Key('beta_repair_lab_active_mode'),
@@ -135,7 +144,9 @@ class _BetaRepairLabCardState extends State<BetaRepairLabCard> {
             for (final info in BetaRepairLabEngine.allModeInfos()) ...[
               _ModeTile(
                 info: info,
-                selected: state.mode == info.mode,
+                selected: state.buildOverrideActive
+                    ? state.mode == info.mode
+                    : state.localMode == info.mode,
                 onSelect: () => unawaited(_selectMode(info.mode)),
               ),
               const SizedBox(height: 8),

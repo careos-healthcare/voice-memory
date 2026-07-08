@@ -74,6 +74,82 @@ void main() {
 
   tearDown(() {
     ArchiveBetaMissionGate.resetForTest();
+    BetaRepairLabStore.repairModeOverrideForTest = null;
+  });
+
+  group('BetaRepairLabBuildOverride', () {
+    test('default active mode is none without build override', () {
+      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
+    });
+
+    test(
+      'build override activates proPlacementAfterUsefulProof when beta mission is true',
+      () {
+        BetaRepairLabStore.repairModeOverrideForTest =
+            'proPlacementAfterUsefulProof';
+        expect(
+          BetaRepairLabStore.buildOverrideMode,
+          BetaRepairLabMode.proPlacementAfterUsefulProof,
+        );
+        expect(
+          BetaRepairLabStore.activeMode,
+          BetaRepairLabMode.proPlacementAfterUsefulProof,
+        );
+        expect(
+          BetaRepairLabEngine.isRepairActive(
+            BetaRepairLabMode.proPlacementAfterUsefulProof,
+          ),
+          isTrue,
+        );
+      },
+    );
+
+    test('build override ignored when beta mission is false', () {
+      ArchiveBetaMissionGate.enabledOverride = false;
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'proPlacementAfterUsefulProof';
+      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
+    });
+
+    test('invalid build override falls back to none', () {
+      BetaRepairLabStore.repairModeOverrideForTest = 'not_a_real_repair_mode';
+      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
+    });
+
+    test('build override takes precedence over local stored selection', () async {
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'proPlacementAfterUsefulProof';
+      await BetaRepairLabStore.setModeForTest(
+        BetaRepairLabMode.openingScreenSimplification,
+      );
+      expect(
+        BetaRepairLabStore.localMode,
+        BetaRepairLabMode.openingScreenSimplification,
+      );
+      expect(
+        BetaRepairLabStore.activeMode,
+        BetaRepairLabMode.proPlacementAfterUsefulProof,
+      );
+    });
+
+    test('testing screen build override label', () {
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'proPlacementAfterUsefulProof';
+      expect(
+        BetaRepairLabEngine.buildOverrideStatusLabel(),
+        'Build override active: Pro placement after useful proof',
+      );
+      final state = BetaRepairLabEngine.currentState();
+      expect(state.buildOverrideActive, isTrue);
+      expect(
+        state.buildOverrideLabel,
+        'Build override active: Pro placement after useful proof',
+      );
+      expect(state.warning, BetaRepairLabCopy.buildOverrideWarning);
+    });
   });
 
   group('BetaRepairLabStore', () {
@@ -405,6 +481,32 @@ void main() {
       expect(find.byKey(const Key('beta_repair_lab_warning')), findsOneWidget);
       expect(find.textContaining('Proof specificity and caution'), findsWidgets);
       expect(find.text(BetaRepairLabCopy.warning), findsOneWidget);
+    });
+
+    testWidgets('shows build override active on repair lab card', (tester) async {
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'proPlacementAfterUsefulProof';
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: BetaRepairLabCard(source: 'testing_archiveme'),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('beta_repair_lab_build_override_active')),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Build override active: Pro placement after useful proof'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(BetaRepairLabCopy.buildOverrideWarning),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hidden when beta mission disabled', (tester) async {

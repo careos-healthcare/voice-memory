@@ -696,6 +696,15 @@ class _BetaRepairLabTestingPanel extends StatelessWidget {
             style: ArchiveMobileTypography.listTitle(context),
           ),
           const SizedBox(height: AppSpacing.xs),
+          if (state.buildOverrideActive &&
+              state.buildOverrideLabel != null) ...[
+            Text(
+              state.buildOverrideLabel!,
+              key: const Key('beta_repair_lab_testing_build_override'),
+              style: bodyStyle.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+          ],
           Text(
             BetaRepairLabEngine.activeModeStatusLabel(),
             key: const Key('beta_repair_lab_testing_active_mode'),
