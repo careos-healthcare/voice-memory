@@ -321,6 +321,9 @@ import '../features/first_session_proof_repair/first_session_proof_repair_engine
 import '../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../features/proof_floor_rescue/proof_floor_rescue_engine.dart';
 import '../features/proof_floor_rescue/proof_floor_rescue_model.dart';
+import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
+import '../features/beta_repair_lab/beta_repair_lab_model.dart';
+import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -365,6 +368,7 @@ import '../widgets/record/first_save_lift_card.dart';
 import '../widgets/record/first_session_lift_card.dart';
 import '../widgets/record/first_session_proof_repair_card.dart';
 import '../widgets/proof/proof_floor_rescue_card.dart';
+import '../widgets/beta/beta_repair_lab_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
@@ -984,6 +988,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       ProUnderstandingLiftStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      BetaRepairLabStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -5194,11 +5203,18 @@ class _RecordScreenState extends State<RecordScreen> {
       entryCount: _journalEntryCount,
       source: 'record',
     );
-    final firstSessionCaptureRepairCandidate =
+    var firstSessionCaptureRepairCandidate =
         FirstSessionProofRepairEngine.buildCapture(
       entryCount: _journalEntryCount,
       source: 'record',
     );
+    final openingRepairOverride = BetaRepairLabEngine.openingCaptureOverride(
+      base: firstSessionCaptureRepairCandidate,
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+    );
+    if (openingRepairOverride != null) {
+      firstSessionCaptureRepairCandidate = openingRepairOverride;
+    }
     var showFirstSessionCaptureRepairCard =
         FirstSessionProofRepairEngine.shouldShowCapture(
       result: firstSessionCaptureRepairCandidate,
@@ -5234,6 +5250,13 @@ class _RecordScreenState extends State<RecordScreen> {
       isPermissionBlocked: ui == RecordUiState.permissionBlocked,
       entryCount: _journalEntryCount,
     );
+    if (BetaRepairLabEngine.suppressFirstSessionLiftWhenOpeningRepairActive(
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      showOpeningRepair: showFirstSessionCaptureRepairCard,
+    )) {
+      showFirstSessionLiftCard = false;
+      showFirstSaveLiftCard = false;
+    }
     var showFirstMomentCaptureCard = FirstMomentCaptureEngine.shouldShow(
       result: firstMomentCaptureCandidate,
       isReady: ui == RecordUiState.ready,
@@ -5480,6 +5503,37 @@ class _RecordScreenState extends State<RecordScreen> {
       entries: _journalEntries,
       surface: ProofQualityResponseSurface.timelineProofMoment,
     );
+    final timelineFeedbackType = BetaProofFeedbackStore.recordFor(
+      BetaProofFeedbackSurface.timelineProofMoment,
+    ).feedbackType;
+    final betaRepairLabInput = BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabStore.mode,
+      entryCount: _journalEntryCount,
+      source: 'record_ready',
+      isPro: _recordReturnProIsPro,
+      isRecording: ui == RecordUiState.recording,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+      hasTimelineProofVisible: showTimelineProofMomentOnRecord &&
+          timelineProofMomentCandidate != null,
+      hasConfirmedRepeat:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries),
+      confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+          ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback:
+          timelineFeedbackType == BetaProofFeedbackType.useful,
+      feedbackType: timelineFeedbackType,
+      isNegativeFeedback: timelineFeedbackType ==
+              BetaProofFeedbackType.tooVague ||
+          timelineFeedbackType == BetaProofFeedbackType.notRelevant,
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+    );
+    var showBetaRepairLabProPlacementOnRecord =
+        BetaRepairLabEngine.shouldShowProPlacement(input: betaRepairLabInput);
+    final betaRepairLabProPlacementResult = showBetaRepairLabProPlacementOnRecord
+        ? BetaRepairLabEngine.buildProPlacement(input: betaRepairLabInput)
+        : BetaRepairLabProPlacementResult.hidden;
     final hasProEngagementOnRecord = _betaActivationLoopCounts.paywallSeen > 0 ||
         _betaActivationLoopCounts.purchaseTapped > 0 ||
         _betaActivationLoopCounts.proBoundarySeen > 0;
@@ -5525,12 +5579,20 @@ class _RecordScreenState extends State<RecordScreen> {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
-    final proUnderstandingLiftRecordReadyResult =
+    var proUnderstandingLiftRecordReadyResult =
         showProUnderstandingLiftOnRecordReady
             ? ProUnderstandingLiftEngine.build(
                 input: proUnderstandingLiftRecordReadyInput,
               )
             : null;
+    if (proUnderstandingLiftRecordReadyResult != null) {
+      proUnderstandingLiftRecordReadyResult =
+          BetaRepairLabEngine.applyProExplanationCopy(
+                base: proUnderstandingLiftRecordReadyResult,
+                betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+              ) ??
+              proUnderstandingLiftRecordReadyResult;
+    }
     final proVisibilityLiftRecordReadyResult = showProVisibilityLiftOnRecordReady
         ? ProVisibilityLiftEngine.build(
             surface: ProVisibilityLiftSurface.recordReady,
@@ -5781,6 +5843,32 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     if (showProofFloorRescueOnRecord) {
       showProofQualityRepairOnRecord = false;
+    }
+    var showBetaRepairLabProofOnRecord =
+        BetaRepairLabEngine.shouldShowProof(input: betaRepairLabInput);
+    final betaRepairLabProofResult = showBetaRepairLabProofOnRecord
+        ? BetaRepairLabEngine.buildProof(input: betaRepairLabInput)
+        : BetaRepairLabProofResult.hidden;
+    if (BetaRepairLabEngine.suppressProofFloorRescueWhenProofRepairActive(
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      showProofRepair: showBetaRepairLabProofOnRecord,
+    )) {
+      showProofFloorRescueOnRecord = false;
+      showProofQualityRepairOnRecord = false;
+    }
+    if (BetaRepairLabEngine.blocksProWhenProofRepairActive(
+          input: betaRepairLabInput,
+          showProofRepair: showBetaRepairLabProofOnRecord,
+        ) ||
+        BetaRepairLabEngine.blocksOtherProCardsWhenPlacementRepairActive(
+          betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+          showProPlacement: showBetaRepairLabProPlacementOnRecord,
+        )) {
+      showProUnderstandingLiftOnRecordReady = false;
+      showProVisibilityLiftOnRecordReady = false;
+      showProBridgeVisibilityOnRecordReady = false;
+      showProEvidenceValueOnRecordReady = false;
+      showProEvidenceValuePrivateReportOnRecord = false;
     }
     SurfacePriorityResult? recordReadySurfacePriority;
     if (ui == RecordUiState.ready) {
@@ -6296,6 +6384,13 @@ class _RecordScreenState extends State<RecordScreen> {
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
                 showReturnAfterProofLiftV2BelowProofOnRecord);
+    final showBetaRepairLabProPlacementBelowProofOnRecord =
+        showBetaRepairLabProPlacementOnRecord &&
+            betaRepairLabProPlacementResult.shouldShow &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord ||
+                showReturnAfterProofLiftV2BelowProofOnRecord);
     final showProUnderstandingLiftInProSectionOnRecord =
         showProUnderstandingLiftOnRecordReady &&
             !showProUnderstandingLiftBelowProofOnRecord;
@@ -6671,11 +6766,18 @@ class _RecordScreenState extends State<RecordScreen> {
         ProUnderstandingLiftEngine.shouldShowCard(
           input: proUnderstandingLiftPostSaveInput,
         );
-    final proUnderstandingLiftPostSaveResult = showProUnderstandingLiftOnPostSave
-        ? ProUnderstandingLiftEngine.build(
-            input: proUnderstandingLiftPostSaveInput,
-          )
-        : null;
+    ProUnderstandingLiftResult? proUnderstandingLiftPostSaveResult;
+    if (showProUnderstandingLiftOnPostSave) {
+      final base = ProUnderstandingLiftEngine.build(
+        input: proUnderstandingLiftPostSaveInput,
+      );
+      proUnderstandingLiftPostSaveResult =
+          BetaRepairLabEngine.applyProExplanationCopy(
+                base: base,
+                betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+              ) ??
+              base;
+    }
     var showProVisibilityLiftOnPostSave = ui == RecordUiState.done &&
         entriesAfterSave.isNotEmpty &&
         showFirstProofPayoff &&
@@ -8339,7 +8441,20 @@ class _RecordScreenState extends State<RecordScreen> {
                           surface: 'record_ready',
                         ),
                       ],
-                      if (showProofFloorRescueOnRecord &&
+                      if (showBetaRepairLabProofOnRecord &&
+                          betaRepairLabProofResult.shouldShow) ...[
+                        const SizedBox(height: 12),
+                        BetaRepairLabProofCard(
+                          result: betaRepairLabProofResult,
+                          onNotRelevantAnswered: () =>
+                              NotRelevantRecoveryEngine
+                                  .syncBackgroundCorrectionIfNeeded(
+                            entries: _journalEntries,
+                            source: 'record',
+                          ),
+                          onChanged: () => setState(() {}),
+                        ),
+                      ] else if (showProofFloorRescueOnRecord &&
                           proofFloorRescueResult.shouldShow) ...[
                         const SizedBox(height: 12),
                         ProofFloorRescueCard(
@@ -8547,7 +8662,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showProUnderstandingLiftBelowProofOnRecord &&
+                    if (showBetaRepairLabProPlacementBelowProofOnRecord) ...[
+                      BetaRepairLabProPlacementCard(
+                        result: betaRepairLabProPlacementResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_beta_repair_lab_pro_placement',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showProUnderstandingLiftBelowProofOnRecord &&
                         proUnderstandingLiftRecordReadyResult != null) ...[
                       ProUnderstandingLiftCard(
                         result: proUnderstandingLiftRecordReadyResult,

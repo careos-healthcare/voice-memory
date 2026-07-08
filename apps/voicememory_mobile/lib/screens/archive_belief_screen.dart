@@ -330,10 +330,13 @@ import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
 import '../features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart';
+import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_store.dart';
+import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
+import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../features/proof_floor_rescue/proof_floor_rescue_engine.dart';
 import '../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
@@ -747,6 +750,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProEvidenceValueDismissStore.ensureLoaded();
     await ProVisibilityLiftStore.ensureLoaded();
     await ProUnderstandingLiftStore.ensureLoaded();
+    await BetaRepairLabStore.ensureLoaded();
     await MonthlyPrivateReportDismissStore.ensureLoaded();
     await ArchiveBackupBridgeDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
@@ -5224,37 +5228,40 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               ),
             )
           : null;
-      final patternsProUnderstandingLiftResult =
-          showPatternsProUnderstandingLiftCard
-              ? ProUnderstandingLiftEngine.build(
-                  input: ProUnderstandingLiftVisibilityInput(
-                    surface: ProUnderstandingLiftSurface.archivePatterns,
-                    source: 'archive_patterns',
-                    entryCount: _entries.length,
-                    isPro: _archiveIsPro,
-                    hasUsefulProof: patternsFeedbackStateForLift ==
-                        ProofQualityFeedbackState.useful,
-                    confidenceLevel:
-                        patternsLoosenSignalsPreAudit.confidenceLevel ??
-                            ProofConfidenceLevel.watchOnly,
-                    feedbackState: patternsFeedbackStateForLift,
-                    hasProEngagement:
-                        _betaActivationLoopCounts.paywallSeen > 0 ||
-                            _betaActivationLoopCounts.purchaseTapped > 0 ||
-                            _betaActivationLoopCounts.proBoundarySeen > 0,
-                    hasFreshReturnAfterCorrection: patternsLoosenSignalsPreAudit
-                        .hasFreshReturnAfterCorrection,
-                    hasChangeAnchor:
-                        patternsEvidenceAnchorPreAudit.hasChangeAnchor,
-                    isRecording: false,
-                    isDegradedTranscriptState: false,
-                    isPostSaveDegradedState: false,
-                    whatChangedQuestionActive: false,
-                    patternReviewInboxHasActiveItems:
-                        patternReviewInboxActiveOnPatterns,
-                  ),
-                )
-              : null;
+      ProUnderstandingLiftResult? patternsProUnderstandingLiftResult;
+      if (showPatternsProUnderstandingLiftCard) {
+        final base = ProUnderstandingLiftEngine.build(
+          input: ProUnderstandingLiftVisibilityInput(
+            surface: ProUnderstandingLiftSurface.archivePatterns,
+            source: 'archive_patterns',
+            entryCount: _entries.length,
+            isPro: _archiveIsPro,
+            hasUsefulProof: patternsFeedbackStateForLift ==
+                ProofQualityFeedbackState.useful,
+            confidenceLevel: patternsLoosenSignalsPreAudit.confidenceLevel ??
+                ProofConfidenceLevel.watchOnly,
+            feedbackState: patternsFeedbackStateForLift,
+            hasProEngagement: _betaActivationLoopCounts.paywallSeen > 0 ||
+                _betaActivationLoopCounts.purchaseTapped > 0 ||
+                _betaActivationLoopCounts.proBoundarySeen > 0,
+            hasFreshReturnAfterCorrection:
+                patternsLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+            hasChangeAnchor: patternsEvidenceAnchorPreAudit.hasChangeAnchor,
+            isRecording: false,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: false,
+            whatChangedQuestionActive: false,
+            patternReviewInboxHasActiveItems:
+                patternReviewInboxActiveOnPatterns,
+          ),
+        );
+        patternsProUnderstandingLiftResult =
+            BetaRepairLabEngine.applyProExplanationCopy(
+                  base: base,
+                  betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+                ) ??
+                base;
+      }
       final patternsProVisibilityLiftResult = showPatternsProVisibilityLiftCard
           ? ProVisibilityLiftEngine.build(
               surface: ProVisibilityLiftSurface.archivePatterns,

@@ -31,6 +31,9 @@ import '../widgets/beta/beta_conversion_diagnosis_card.dart';
 import '../widgets/beta/beta_decision_rule_card.dart';
 import '../widgets/beta/beta_validation_decision_matrix_card.dart';
 import '../widgets/beta/beta_fix_playbook_card.dart';
+import '../widgets/beta/beta_repair_lab_card.dart';
+import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
+import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../widgets/beta/revenue_readiness_dashboard_v2_card.dart';
 import '../widgets/beta/purchase_smoke_test_card.dart';
 import '../widgets/beta/pro_moment_timing_audit_v2_card.dart';
@@ -94,6 +97,7 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
   void initState() {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
+    unawaited(BetaRepairLabStore.ensureLoaded());
     unawaited(
       BetaFeedbackCaptureStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
@@ -268,6 +272,13 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               source: 'testing_archiveme',
               compact: true,
             ),
+            const SizedBox(height: AppSpacing.md),
+            const BetaRepairLabCard(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const _BetaRepairLabTestingPanel(),
             const SizedBox(height: AppSpacing.md),
             const RevenueReadinessDashboardV2Card(
               source: 'testing_archiveme',
@@ -653,6 +664,46 @@ class _FirstSessionProofRepairTestingPanel extends StatelessWidget {
           Text(
             'Current next fix: ${repairFocus.label}',
             key: const Key('first_session_proof_repair_next_fix'),
+            style: bodyStyle,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BetaRepairLabTestingPanel extends StatelessWidget {
+  const _BetaRepairLabTestingPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = BetaRepairLabEngine.currentState();
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+
+    return Container(
+      key: const Key('beta_repair_lab_testing_panel'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Beta repair lab status',
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            BetaRepairLabEngine.activeModeStatusLabel(),
+            key: const Key('beta_repair_lab_testing_active_mode'),
+            style: bodyStyle,
+          ),
+          Text(
+            state.warning,
+            key: const Key('beta_repair_lab_testing_warning'),
             style: bodyStyle,
           ),
         ],
