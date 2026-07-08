@@ -76,9 +76,13 @@ abstract final class RevenueReadinessDashboardV2Copy {
       'Return after proof lift needed';
   static const diagnosisProVisibilityLiftNeeded = 'Pro visibility lift needed';
   static const diagnosisPaywallCtaLiftNeeded = 'Paywall CTA lift needed';
+  static const diagnosisFirstSessionCaptureWeak = 'First-session capture weak';
+  static const diagnosisProUnderstandingWeak = 'Pro understanding weak';
 
   static const actionPaywallCtaLift = 'Sharpen paywall CTA copy and purchase line';
   static const actionFirstSaveLift = 'Sharpen first save lift copy';
+  static const actionFirstSessionLift = 'Show first session lift card';
+  static const actionProUnderstandingLift = 'Show Pro understanding lift card';
   static const actionReturnAfterProofLift = 'Sharpen return-after-proof reason copy';
   static const actionProVisibilityLift = 'Sharpen Pro visibility bridge copy';
 
@@ -141,9 +145,13 @@ abstract final class RevenueReadinessDashboardV2Copy {
     yield diagnosisReturnAfterProofLiftNeeded;
     yield diagnosisProVisibilityLiftNeeded;
     yield diagnosisPaywallCtaLiftNeeded;
+    yield diagnosisFirstSessionCaptureWeak;
+    yield diagnosisProUnderstandingWeak;
     yield actionFirstSaveLift;
+    yield actionFirstSessionLift;
     yield actionReturnAfterProofLift;
     yield actionProVisibilityLift;
+    yield actionProUnderstandingLift;
     yield actionPaywallCtaLift;
   }
 }

@@ -330,6 +330,10 @@ import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
 import '../features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_store.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_store.dart';
@@ -378,6 +382,7 @@ import '../widgets/pro/pro_preview_card.dart';
 import '../widgets/beta/beta_invite_card.dart';
 import '../widgets/beta/beta_feedback_capture_card.dart';
 import '../widgets/pro/pro_bridge_visibility_card.dart';
+import '../widgets/pro/pro_understanding_lift_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
@@ -738,6 +743,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProValuePreviewDismissStore.ensureLoaded();
     await ProEvidenceValueDismissStore.ensureLoaded();
     await ProVisibilityLiftStore.ensureLoaded();
+    await ProUnderstandingLiftStore.ensureLoaded();
     await MonthlyPrivateReportDismissStore.ensureLoaded();
     await ArchiveBackupBridgeDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
@@ -4813,8 +4819,35 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         surface: ProofQualityResponseSurface.patterns,
       );
+      final patternsProUnderstandingLiftVisible = showPatternsPostProofProBridge &&
+          !_archiveIsPro &&
+          ProUnderstandingLiftEngine.shouldShowCard(
+            input: ProUnderstandingLiftVisibilityInput(
+              surface: ProUnderstandingLiftSurface.archivePatterns,
+              source: 'archive_patterns',
+              entryCount: _entries.length,
+              isPro: _archiveIsPro,
+              hasUsefulProof: patternsFeedbackStateForLift ==
+                  ProofQualityFeedbackState.useful,
+              confidenceLevel: patternsLoosenSignalsPreAudit.confidenceLevel ??
+                  ProofConfidenceLevel.watchOnly,
+              feedbackState: patternsFeedbackStateForLift,
+              hasProEngagement: _betaActivationLoopCounts.paywallSeen > 0 ||
+                  _betaActivationLoopCounts.purchaseTapped > 0 ||
+                  _betaActivationLoopCounts.proBoundarySeen > 0,
+              hasFreshReturnAfterCorrection:
+                  patternsLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+              hasChangeAnchor: patternsEvidenceAnchorPreAudit.hasChangeAnchor,
+              isRecording: false,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+            ),
+          );
       final patternsProVisibilityLiftVisible = showPatternsPostProofProBridge &&
           !_archiveIsPro &&
+          !patternsProUnderstandingLiftVisible &&
           ProVisibilityLiftEngine.shouldShowCard(
             entryCount: _entries.length,
             isPro: _archiveIsPro,
@@ -4866,6 +4899,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           showPatternsPostProofProBridge &&
               !patternsProEvidenceValueVisible &&
               !patternsProBridgeVisibilityVisible &&
+              !patternsProUnderstandingLiftVisible &&
               !patternsProVisibilityLiftVisible;
       final betaFeedbackCapturePatternsPreAudit =
           BetaFeedbackCaptureEngine.build(
@@ -4916,6 +4950,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               presentDayRelevanceCandidate != null,
           timelinePositioning: showTimelinePositioningOnPatterns,
           proPreview: patternsProPreviewVisible,
+          proUnderstandingLift: patternsProUnderstandingLiftVisible,
           proVisibilityLift: patternsProVisibilityLiftVisible,
           proBridgeVisibility: patternsProBridgeVisibilityVisible,
           betaInviteLoop: showBetaInviteLoopOnPatterns,
@@ -5008,6 +5043,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         SurfacePriorityCardKey.archiveBackupBridge,
         candidate: showArchiveBackupBridgeOnPatterns,
       );
+      var showPatternsProUnderstandingLiftCard = patternsAudit.isVisible(
+        SurfacePriorityCardKey.proUnderstandingLift,
+        candidate: patternsProUnderstandingLiftVisible,
+      );
       var showPatternsProPreviewCard = patternsAudit.isVisible(
         SurfacePriorityCardKey.proPreview,
         candidate: patternsProPreviewVisible,
@@ -5051,20 +5090,24 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       showPatternsProPreviewCard = ProMomentTimingEngine.applyGate(
         candidate: showPatternsProPreviewCard,
         timing: patternsProTiming.copyWith(
-          proSlotAvailable: !showPatternsProVisibilityLiftCard,
+          proSlotAvailable: !showPatternsProUnderstandingLiftCard &&
+              !showPatternsProVisibilityLiftCard,
         ),
       );
       showPatternsProBridgeVisibilityCard = ProMomentTimingEngine.applyGate(
         candidate: showPatternsProBridgeVisibilityCard,
         timing: patternsProTiming.copyWith(
           proSlotAvailable:
-              !showPatternsProVisibilityLiftCard && !showPatternsProPreviewCard,
+              !showPatternsProUnderstandingLiftCard &&
+              !showPatternsProVisibilityLiftCard &&
+              !showPatternsProPreviewCard,
         ),
       );
       showPatternsProEvidenceValueCard = ProMomentTimingEngine.applyGate(
         candidate: showPatternsProEvidenceValueCard,
         timing: patternsProTiming.copyWith(
           proSlotAvailable:
+              !showPatternsProUnderstandingLiftCard &&
               !showPatternsProVisibilityLiftCard &&
               !showPatternsProPreviewCard &&
               !showPatternsProBridgeVisibilityCard,
@@ -5134,6 +5177,37 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               ),
             )
           : null;
+      final patternsProUnderstandingLiftResult =
+          showPatternsProUnderstandingLiftCard
+              ? ProUnderstandingLiftEngine.build(
+                  input: ProUnderstandingLiftVisibilityInput(
+                    surface: ProUnderstandingLiftSurface.archivePatterns,
+                    source: 'archive_patterns',
+                    entryCount: _entries.length,
+                    isPro: _archiveIsPro,
+                    hasUsefulProof: patternsFeedbackStateForLift ==
+                        ProofQualityFeedbackState.useful,
+                    confidenceLevel:
+                        patternsLoosenSignalsPreAudit.confidenceLevel ??
+                            ProofConfidenceLevel.watchOnly,
+                    feedbackState: patternsFeedbackStateForLift,
+                    hasProEngagement:
+                        _betaActivationLoopCounts.paywallSeen > 0 ||
+                            _betaActivationLoopCounts.purchaseTapped > 0 ||
+                            _betaActivationLoopCounts.proBoundarySeen > 0,
+                    hasFreshReturnAfterCorrection: patternsLoosenSignalsPreAudit
+                        .hasFreshReturnAfterCorrection,
+                    hasChangeAnchor:
+                        patternsEvidenceAnchorPreAudit.hasChangeAnchor,
+                    isRecording: false,
+                    isDegradedTranscriptState: false,
+                    isPostSaveDegradedState: false,
+                    whatChangedQuestionActive: false,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActiveOnPatterns,
+                  ),
+                )
+              : null;
       final patternsProVisibilityLiftResult = showPatternsProVisibilityLiftCard
           ? ProVisibilityLiftEngine.build(
               surface: ProVisibilityLiftSurface.archivePatterns,
@@ -5915,7 +5989,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showPatternsProVisibilityLiftCard &&
+                if (showPatternsProUnderstandingLiftCard &&
+                    patternsProUnderstandingLiftResult != null) ...[
+                  ProUnderstandingLiftCard(
+                    result: patternsProUnderstandingLiftResult,
+                    compact: proofSurfaceLayout.proBridgeCompact,
+                    onSeePro: () => _openProEvidenceValueSubscription(
+                      analyticsSource: 'patterns_pro_understanding_lift',
+                    ),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ] else if (showPatternsProVisibilityLiftCard &&
                     patternsProVisibilityLiftResult != null) ...[
                   ProVisibilityLiftCard(
                     result: patternsProVisibilityLiftResult,

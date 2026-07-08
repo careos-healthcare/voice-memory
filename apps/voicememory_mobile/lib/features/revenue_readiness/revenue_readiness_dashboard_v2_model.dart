@@ -65,6 +65,8 @@ enum RevenueReadinessDashboardV2DiagnosisId {
   returnAfterProofLiftNeeded,
   proVisibilityLiftNeeded,
   paywallCtaLiftNeeded,
+  firstSessionCaptureWeak,
+  proUnderstandingWeak,
 }
 
 class RevenueReadinessDashboardV2MetricRow {
@@ -136,6 +138,10 @@ class RevenueReadinessDashboardV2Input {
     this.purchaseCompleted = 0,
     this.restoreAttempted = 0,
     this.restoreCompleted = 0,
+    this.firstSaveInFirstSession = 0,
+    this.firstSessionOpportunities = 0,
+    this.understandsProYesMaybe = 0,
+    this.understandsProSurveyResponses = 0,
   });
 
   final int recordScreenSeen;
@@ -159,6 +165,10 @@ class RevenueReadinessDashboardV2Input {
   final int purchaseCompleted;
   final int restoreAttempted;
   final int restoreCompleted;
+  final int firstSaveInFirstSession;
+  final int firstSessionOpportunities;
+  final int understandsProYesMaybe;
+  final int understandsProSurveyResponses;
 
   int get totalFeedbackCount =>
       usefulCount + tooVagueCount + alreadyKnewCount + notRelevantCount;

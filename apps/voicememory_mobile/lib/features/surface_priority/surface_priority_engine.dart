@@ -10,6 +10,7 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.firstSessionLift,
     SurfacePriorityCardKey.firstSaveLift,
     SurfacePriorityCardKey.betaActivationPath,
     SurfacePriorityCardKey.threeMomentCompletion,
@@ -59,6 +60,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordProOrder = [
+    SurfacePriorityCardKey.proUnderstandingLift,
     SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
@@ -68,6 +70,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _patternsProOrder = [
+    SurfacePriorityCardKey.proUnderstandingLift,
     SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
@@ -78,6 +81,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _postSaveProOrder = [
+    SurfacePriorityCardKey.proUnderstandingLift,
     SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,

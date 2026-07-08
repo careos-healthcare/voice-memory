@@ -6,6 +6,8 @@ import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../revenue_metrics/revenue_funnel_analytics.dart';
 import '../revenue_metrics/revenue_funnel_event.dart';
+import '../first_session_lift/first_session_lift_engine.dart';
+import '../pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'revenue_readiness_dashboard_v2_copy.dart';
@@ -22,6 +24,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
   static const returnAfterProofTarget = 0.25;
   static const paywallSeenAfterProofTarget = 0.35;
   static const purchaseCtaTarget = 0.05;
+  static const firstSessionCaptureTarget = 0.30;
+  static const proUnderstandingTarget = 0.20;
 
   static bool shouldShow({required bool betaMissionEnabled}) =>
       betaMissionEnabled;
@@ -108,6 +112,12 @@ abstract final class RevenueReadinessDashboardV2Engine {
       purchaseCompleted: purchaseCompleted,
       restoreAttempted: _max(loop.restoreTapped, restoreAttempted + sessionRestoreTapped),
       restoreCompleted: restoreCompleted,
+      firstSaveInFirstSession: loop.firstMomentSaved > 0 && loop.appOpened > 0
+          ? loop.firstMomentSaved.clamp(0, 1)
+          : 0,
+      firstSessionOpportunities: loop.appOpened > 0 ? loop.appOpened : loop.recordScreenSeen,
+      understandsProYesMaybe: 0,
+      understandsProSurveyResponses: 0,
     );
   }
 
@@ -436,6 +446,39 @@ abstract final class RevenueReadinessDashboardV2Engine {
     final paywallSeenRate =
         _rate(input.paywallSeen, input.confirmedRepeatSeen);
     final ctaRate = _rate(input.paywallCtaTapped, input.paywallSeen);
+    final firstSessionSaveRate = _rate(
+      input.firstSaveInFirstSession,
+      input.firstSessionOpportunities,
+    );
+    final proUnderstandingRate = _rate(
+      input.understandsProYesMaybe,
+      input.understandsProSurveyResponses,
+    );
+
+    if (input.firstSessionOpportunities > 0 &&
+        firstSessionSaveRate < firstSessionCaptureTarget) {
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.firstSessionCaptureWeak,
+          title: RevenueReadinessDashboardV2Copy.diagnosisFirstSessionCaptureWeak,
+          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFirstSessionLift,
+          metricValueLabel: _formatRate(firstSessionSaveRate),
+        ),
+      );
+    }
+
+    if (input.understandsProSurveyResponses > 0 &&
+        proUnderstandingRate < proUnderstandingTarget) {
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.proUnderstandingWeak,
+          title: RevenueReadinessDashboardV2Copy.diagnosisProUnderstandingWeak,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionProUnderstandingLift,
+          metricValueLabel: _formatRate(proUnderstandingRate),
+        ),
+      );
+    }
 
     if (input.recordScreenSeen > 0 && firstSaveRate < firstSaveTarget) {
       diagnoses.add(

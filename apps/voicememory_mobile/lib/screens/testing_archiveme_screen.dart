@@ -45,7 +45,11 @@ import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../widgets/beta/beta_feedback_capture_card.dart';
+import '../features/first_session_lift/first_session_lift_engine.dart';
 import '../features/first_save_lift/first_save_lift_engine.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
+import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
 import '../features/return_after_proof_lift_v2/return_after_proof_lift_v2_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
@@ -53,8 +57,10 @@ import '../features/proof_confidence_calibration/proof_confidence_calibration_mo
 import '../features/proof_quality_response/proof_quality_response_model.dart';
 import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
 import '../billing/paywall_source.dart';
+import '../widgets/record/first_session_lift_card.dart';
 import '../widgets/record/first_save_lift_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
+import '../widgets/pro/pro_understanding_lift_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/paywall_cta_lift_block.dart';
 import '../widgets/pro/pro_preview_card.dart';
@@ -292,6 +298,20 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               showDiagnosis: true,
             ),
             const SizedBox(height: AppSpacing.md),
+            _FirstSessionProUnderstandingLiftTestingPanel(
+              entryCount: _entries.length,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FirstSessionLiftCard.test(
+              result: FirstSessionLiftEngine.build(
+                entryCount: 0,
+                source: 'testing_archiveme',
+              ),
+              onTypeOneSentence: () {},
+              onUseVoiceInstead: () {},
+              onChipSelected: (_) {},
+            ),
+            const SizedBox(height: AppSpacing.md),
             FirstSaveLiftCard.test(
               result: FirstSaveLiftEngine.build(
                 entryCount: 0,
@@ -311,6 +331,29 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               ),
               onPrimaryCta: () {},
               onPromptSelected: (_) {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProUnderstandingLiftCard.test(
+              result: ProUnderstandingLiftEngine.build(
+                input: ProUnderstandingLiftVisibilityInput(
+                  surface: ProUnderstandingLiftSurface.recordReady,
+                  source: 'testing_archiveme',
+                  entryCount: _entries.isEmpty ? 3 : _entries.length,
+                  isPro: false,
+                  hasUsefulProof: true,
+                  confidenceLevel: ProofConfidenceLevel.useful,
+                  feedbackState: ProofQualityFeedbackState.useful,
+                  hasProEngagement: false,
+                  hasFreshReturnAfterCorrection: false,
+                  hasChangeAnchor: false,
+                  isRecording: false,
+                  isDegradedTranscriptState: false,
+                  isPostSaveDegradedState: false,
+                  whatChangedQuestionActive: false,
+                  patternReviewInboxHasActiveItems: false,
+                ),
+              ),
+              onSeePro: () {},
             ),
             const SizedBox(height: AppSpacing.md),
             ProVisibilityLiftCard.test(
@@ -445,6 +488,98 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FirstSessionProUnderstandingLiftTestingPanel extends StatelessWidget {
+  const _FirstSessionProUnderstandingLiftTestingPanel({
+    required this.entryCount,
+  });
+
+  final int entryCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final firstSessionVisible = FirstSessionLiftEngine.shouldShow(
+      result: FirstSessionLiftEngine.build(
+        entryCount: entryCount,
+        source: 'testing_archiveme',
+      ),
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      isReady: true,
+      isRecording: false,
+      isPostSave: false,
+      isDegradedTranscriptState: false,
+      isPermissionBlocked: false,
+      entryCount: entryCount,
+    );
+    final proUnderstandingVisible = ProUnderstandingLiftEngine.shouldShowCard(
+      input: ProUnderstandingLiftVisibilityInput(
+        surface: ProUnderstandingLiftSurface.recordReady,
+        source: 'testing_archiveme',
+        entryCount: entryCount >= 3 ? entryCount : 3,
+        isPro: false,
+        hasUsefulProof: true,
+        confidenceLevel: ProofConfidenceLevel.useful,
+        feedbackState: ProofQualityFeedbackState.useful,
+        hasProEngagement: false,
+        hasFreshReturnAfterCorrection: false,
+        hasChangeAnchor: false,
+        isRecording: false,
+        isDegradedTranscriptState: false,
+        isPostSaveDegradedState: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: false,
+      ),
+    );
+    final firstSessionWeak = FirstSessionLiftEngine.isFirstSessionCaptureWeak(
+      firstSaveInFirstSession: 1,
+      firstSessionOpportunities: 10,
+    );
+    final proUnderstandingWeak = ProUnderstandingLiftEngine.isProUnderstandingWeak(
+      understandsProYesMaybe: 1,
+      understandsProSurveyResponses: 10,
+    );
+    final diagnosis = ProUnderstandingLiftEngine.resolveCurrentDiagnosis(
+      firstSessionCaptureWeak: firstSessionWeak,
+      proUnderstandingWeak: proUnderstandingWeak,
+    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+
+    return Container(
+      key: const Key('first_session_pro_understanding_lift_testing_panel'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'First session + Pro understanding lift',
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'First Session Lift: ${FirstSessionLiftEngine.statusLabel(visible: firstSessionVisible)}',
+            key: const Key('first_session_lift_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Pro Understanding Lift: ${ProUnderstandingLiftEngine.statusLabel(visible: proUnderstandingVisible)}',
+            key: const Key('pro_understanding_lift_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Current diagnosis: $diagnosis',
+            key: const Key('first_session_pro_understanding_lift_diagnosis'),
+            style: bodyStyle,
+          ),
+        ],
       ),
     );
   }
