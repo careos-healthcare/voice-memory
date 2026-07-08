@@ -60,6 +60,10 @@ enum RevenueReadinessDashboardV2DiagnosisId {
   weakCtaTap,
   purchaseCompletionIssue,
   restoreFailure,
+  firstSaveLiftNeeded,
+  returnAfterProofLiftNeeded,
+  proVisibilityLiftNeeded,
+  paywallCtaLiftNeeded,
 }
 
 class RevenueReadinessDashboardV2MetricRow {

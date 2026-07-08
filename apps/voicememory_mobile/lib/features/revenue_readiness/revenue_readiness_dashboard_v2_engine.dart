@@ -443,6 +443,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           metricValueLabel: _formatRate(firstSaveRate),
         ),
       );
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.firstSaveLiftNeeded,
+          title: RevenueReadinessDashboardV2Copy.diagnosisFirstSaveLiftNeeded,
+          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFirstSaveLift,
+          metricValueLabel: _formatRate(firstSaveRate),
+        ),
+      );
     }
 
     if (input.firstMomentSaved > 0 && secondSaveRate < secondSaveTarget) {
@@ -502,6 +510,16 @@ abstract final class RevenueReadinessDashboardV2Engine {
           metricValueLabel: _formatRate(returnRate),
         ),
       );
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.returnAfterProofLiftNeeded,
+          title:
+              RevenueReadinessDashboardV2Copy.diagnosisReturnAfterProofLiftNeeded,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionReturnAfterProofLift,
+          metricValueLabel: _formatRate(returnRate),
+        ),
+      );
     }
 
     if (input.confirmedRepeatSeen > 0 &&
@@ -515,6 +533,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           metricValueLabel: _formatRate(paywallSeenRate),
         ),
       );
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.proVisibilityLiftNeeded,
+          title: RevenueReadinessDashboardV2Copy.diagnosisProVisibilityLiftNeeded,
+          nextActionLabel: RevenueReadinessDashboardV2Copy.actionProVisibilityLift,
+          metricValueLabel: _formatRate(paywallSeenRate),
+        ),
+      );
     }
 
     if (input.paywallSeen > 0 && ctaRate < purchaseCtaTarget) {
@@ -523,6 +549,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           id: RevenueReadinessDashboardV2DiagnosisId.weakCtaTap,
           title: RevenueReadinessDashboardV2Copy.diagnosisWeakCtaTap,
           nextActionLabel: RevenueReadinessDashboardV2Copy.actionFixPaywallValue,
+          metricValueLabel: _formatRate(ctaRate),
+        ),
+      );
+      diagnoses.add(
+        _diagnosis(
+          id: RevenueReadinessDashboardV2DiagnosisId.paywallCtaLiftNeeded,
+          title: RevenueReadinessDashboardV2Copy.diagnosisPaywallCtaLiftNeeded,
+          nextActionLabel: RevenueReadinessDashboardV2Copy.actionPaywallCtaLift,
           metricValueLabel: _formatRate(ctaRate),
         ),
       );

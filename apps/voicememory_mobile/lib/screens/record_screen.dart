@@ -315,14 +315,26 @@ import '../features/low_friction_return/low_friction_return_engine.dart';
 import '../features/return_after_proof/return_after_proof_engine.dart';
 import '../features/return_after_proof/return_after_proof_store.dart';
 import '../features/first_moment_capture/first_moment_capture_engine.dart';
+import '../features/first_save_lift/first_save_lift_engine.dart';
+import '../features/return_after_proof_lift_v2/return_after_proof_lift_v2_engine.dart';
+import '../features/return_after_proof_lift_v2/return_after_proof_lift_v2_store.dart';
+import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
+import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
+import '../features/pro_visibility_lift/pro_visibility_lift_store.dart';
+import '../features/evidence_anchors/evidence_anchor_engine.dart';
+import '../features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../features/second_moment_return/second_moment_return_engine.dart';
 import '../features/second_moment_return/second_moment_return_store.dart';
 import '../features/three_moment_completion/three_moment_completion_engine.dart';
 import '../features/beta/beta_activation_loop_counts.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
+import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta_activation_path/beta_activation_path_engine.dart';
 import '../features/beta_activation_path/beta_activation_path_model.dart';
 import '../features/beta_activation_path/beta_activation_path_store.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../features/three_moment_completion/three_moment_completion_store.dart';
 import '../features/first_run_positioning/first_run_positioning_engine.dart';
 import '../features/beta_today_summary/beta_today_summary_engine.dart';
@@ -340,9 +352,13 @@ import '../widgets/record/open_capture_prompt_chips.dart';
 import '../widgets/record/low_friction_return_card.dart';
 import '../widgets/record/return_after_proof_card.dart';
 import '../widgets/record/first_moment_capture_card.dart';
+import '../widgets/record/first_save_lift_card.dart';
+import '../widgets/record/return_after_proof_lift_v2_card.dart';
+import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/record/second_moment_return_card.dart';
 import '../widgets/record/three_moment_completion_card.dart';
 import '../widgets/beta/beta_activation_path_card.dart';
+import '../widgets/beta/beta_feedback_capture_card.dart';
 import '../widgets/record/first_run_positioning_card.dart';
 import '../widgets/beta/beta_today_summary_card.dart';
 import '../widgets/record/what_to_notice_next_card.dart';
@@ -935,6 +951,21 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       BetaActivationPathStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      BetaFeedbackCaptureStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      ReturnAfterProofLiftV2Store.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      ProVisibilityLiftStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -5141,6 +5172,20 @@ class _RecordScreenState extends State<RecordScreen> {
       entryCount: _journalEntryCount,
       source: 'record',
     );
+    final firstSaveLiftCandidate = FirstSaveLiftEngine.build(
+      entryCount: _journalEntryCount,
+      source: 'record',
+    );
+    var showFirstSaveLiftCard = FirstSaveLiftEngine.shouldShow(
+      result: firstSaveLiftCandidate,
+      betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      isPermissionBlocked: ui == RecordUiState.permissionBlocked,
+      entryCount: _journalEntryCount,
+    );
     var showFirstMomentCaptureCard = FirstMomentCaptureEngine.shouldShow(
       result: firstMomentCaptureCandidate,
       isReady: ui == RecordUiState.ready,
@@ -5353,6 +5398,80 @@ class _RecordScreenState extends State<RecordScreen> {
     var showReturnAfterProofOnRecordReady =
         showReturnAfterProofStrengthenedOnRecordReady ||
             showReturnAfterProofGenericOnRecordReady;
+    final returnAfterProofLiftV2Candidate = ReturnAfterProofLiftV2Engine.build(
+      entries: _journalEntries,
+      source: 'record',
+      firstProofSeen: firstProofPayoffSeenOnRecord,
+      timelineProofVisible: showTimelineProofMomentOnRecord &&
+          timelineProofMomentCandidate != null,
+    );
+    var showReturnAfterProofLiftV2OnRecordReady =
+        ReturnAfterProofLiftV2Engine.shouldShow(
+      result: returnAfterProofLiftV2Candidate,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: false,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      isPostSaveDegradedState: false,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+    );
+    final recordLoosenSignalsPreAudit = ProBridgeTimingLoosenEngine.resolveSignals(
+      entries: _journalEntries,
+      source: 'record_ready',
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final recordEvidenceAnchorPreAudit = EvidenceAnchorEngine.build(
+      entries: _journalEntries,
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      source: 'record_ready',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final recordFeedbackStateForLift = ProMomentTimingEngine.resolveFeedbackState(
+      entries: _journalEntries,
+      surface: ProofQualityResponseSurface.timelineProofMoment,
+    );
+    var showProVisibilityLiftOnRecordReady = ProVisibilityLiftEngine.shouldShowCard(
+      entryCount: _journalEntryCount,
+      isPro: _recordReturnProIsPro,
+      hasUsefulProof:
+          recordFeedbackStateForLift == ProofQualityFeedbackState.useful,
+      confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+          ProofConfidenceLevel.watchOnly,
+      feedbackState: recordFeedbackStateForLift,
+      hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+      hasFreshReturnAfterCorrection:
+          recordLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+      hasChangeAnchor: recordEvidenceAnchorPreAudit.hasChangeAnchor,
+      isRecording: ui == RecordUiState.recording,
+      isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+      isPostSaveDegradedState: false,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+    );
+    final proVisibilityLiftRecordReadyResult = showProVisibilityLiftOnRecordReady
+        ? ProVisibilityLiftEngine.build(
+            surface: ProVisibilityLiftSurface.recordReady,
+            source: 'record_ready',
+            entryCount: _journalEntryCount,
+            isPro: _recordReturnProIsPro,
+            hasUsefulProof:
+                recordFeedbackStateForLift == ProofQualityFeedbackState.useful,
+            confidenceLevel: recordLoosenSignalsPreAudit.confidenceLevel ??
+                ProofConfidenceLevel.watchOnly,
+            feedbackState: recordFeedbackStateForLift,
+            hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+            hasFreshReturnAfterCorrection:
+                recordLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+            hasChangeAnchor: recordEvidenceAnchorPreAudit.hasChangeAnchor,
+            isRecording: ui == RecordUiState.recording,
+            isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+            isPostSaveDegradedState: false,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+          )
+        : null;
     var showProofQualityResponseOnRecordReady = ui == RecordUiState.ready &&
         proofQualityResponseTimelineCandidate.shouldShow &&
         ProofQualityResponseEngine.shouldRender(
@@ -5442,7 +5561,8 @@ class _RecordScreenState extends State<RecordScreen> {
       hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
       hasPurchaseCtaTapped: _betaActivationLoopCounts.purchaseTapped > 0,
       strongerProCardVisible: showProBridgeVisibilityOnRecordReady ||
-          showProEvidenceValueOnRecordReady,
+          showProEvidenceValueOnRecordReady ||
+          showProVisibilityLiftOnRecordReady,
       isReady: ui == RecordUiState.ready,
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
@@ -5456,12 +5576,54 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     var showBetaActivationPathCard = betaActivationPathPreAuditResult.shouldShow;
     BetaActivationPathResult? betaActivationPathResult;
+    final betaFeedbackCaptureRecordReadyPreAudit = BetaFeedbackCaptureEngine.build(
+      context: BetaFeedbackCaptureEngine.buildContext(
+        surface: BetaFeedbackCaptureSurface.recordReady,
+        source: 'record',
+        entryCount: _journalEntryCount,
+        isReady: ui == RecordUiState.ready,
+        isRecording: ui == RecordUiState.recording,
+        isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+        hasPurchaseCtaTapped: _betaActivationLoopCounts.purchaseTapped > 0,
+        isPro: _recordReturnProIsPro,
+        timelineProofVisible: showTimelineProofMomentOnRecord &&
+            timelineProofMomentCandidate != null,
+        existingProofFeedbackVisible:
+            BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+          surface: BetaProofFeedbackSurface.timelineProofMoment,
+          parentVisible: showTimelineProofMomentOnRecord &&
+              timelineProofMomentCandidate != null,
+          entryCount: _journalEntryCount,
+          hasConfirmedRepeat:
+              EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+            _journalEntries,
+          ),
+          isRecording: ui == RecordUiState.recording,
+          isPostSaveDegraded: false,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
+        ),
+        coreCaptureCtaVisible: showFirstMomentCaptureCard ||
+            showThreeMomentCompletionCard ||
+            showSecondMomentReturnCard,
+      ),
+    );
+    var showBetaFeedbackCaptureRecordReady =
+        betaFeedbackCaptureRecordReadyPreAudit.shouldShow;
+    BetaFeedbackCaptureResult? betaFeedbackCaptureRecordReadyResult =
+        betaFeedbackCaptureRecordReadyPreAudit.shouldShow
+            ? betaFeedbackCaptureRecordReadyPreAudit
+            : null;
     SurfacePriorityResult? recordReadySurfacePriority;
     if (ui == RecordUiState.ready) {
       recordReadySurfacePriority = SurfacePriorityEngine.auditRecordReady(
         entryCount: _journalEntryCount,
         source: 'record',
         candidates: SurfacePriorityCandidates.recordReady(
+          firstSaveLift: showFirstSaveLiftCard,
           betaActivationPath: showBetaActivationPathCard &&
               betaActivationPathPreAuditResult.slot ==
                   BetaActivationPathSlot.guidance,
@@ -5472,6 +5634,7 @@ class _RecordScreenState extends State<RecordScreen> {
           firstMomentCapture: showFirstMomentCaptureCard,
           secondMomentReturn: showSecondMomentReturnCard,
           returnAfterProofStrengthened: showReturnAfterProofStrengthenedOnRecordReady,
+          returnAfterProofLiftV2: showReturnAfterProofLiftV2OnRecordReady,
           returnAfterProof: showReturnAfterProofGenericOnRecordReady,
           lowFrictionReturn: showLowFrictionReturnCard,
           whatToNoticeNext: showWhatToNoticeNextCard,
@@ -5503,14 +5666,21 @@ class _RecordScreenState extends State<RecordScreen> {
               showPatternConfidenceExplanationOnRecordReady &&
                   patternConfidenceExplanationCandidate != null,
           betaTesterReport: showBetaTesterReportOnRecord,
+          proVisibilityLift: showProVisibilityLiftOnRecordReady,
+          proPreview: false,
           proBridgeVisibility: showProBridgeVisibilityOnRecordReady,
           proEvidenceValue: showProEvidenceValueOnRecordReady,
           privateReportProBridge: showProEvidenceValuePrivateReportOnRecord,
           suppressLegacyEducation: suppressLegacyEducationCardsForSpineOnRecord,
+          betaFeedbackCapture: showBetaFeedbackCaptureRecordReady,
         ),
       );
       SurfacePriorityAnalytics.seen(result: recordReadySurfacePriority);
       final audit = recordReadySurfacePriority;
+      showFirstSaveLiftCard = audit.isVisible(
+        SurfacePriorityCardKey.firstSaveLift,
+        candidate: showFirstSaveLiftCard,
+      );
       showFirstMomentCaptureCard = audit.isVisible(
         SurfacePriorityCardKey.firstMomentCapture,
         candidate: showFirstMomentCaptureCard,
@@ -5526,6 +5696,10 @@ class _RecordScreenState extends State<RecordScreen> {
       showReturnAfterProofStrengthenedOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProofStrengthened,
         candidate: showReturnAfterProofStrengthenedOnRecordReady,
+      );
+      showReturnAfterProofLiftV2OnRecordReady = audit.isVisible(
+        SurfacePriorityCardKey.returnAfterProofLiftV2,
+        candidate: showReturnAfterProofLiftV2OnRecordReady,
       );
       showReturnAfterProofGenericOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProof,
@@ -5624,6 +5798,10 @@ class _RecordScreenState extends State<RecordScreen> {
         SurfacePriorityCardKey.proBridgeVisibility,
         candidate: showProBridgeVisibilityOnRecordReady,
       );
+      showProVisibilityLiftOnRecordReady = audit.isVisible(
+        SurfacePriorityCardKey.proVisibilityLift,
+        candidate: showProVisibilityLiftOnRecordReady,
+      );
       showProEvidenceValueOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proEvidenceValue,
         candidate: showProEvidenceValueOnRecordReady,
@@ -5672,12 +5850,15 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       showProBridgeVisibilityOnRecordReady = ProMomentTimingEngine.applyGate(
         candidate: showProBridgeVisibilityOnRecordReady,
-        timing: recordReadyProTiming,
+        timing: recordReadyProTiming.copyWith(
+          proSlotAvailable: !showProVisibilityLiftOnRecordReady,
+        ),
       );
       showProEvidenceValueOnRecordReady = ProMomentTimingEngine.applyGate(
         candidate: showProEvidenceValueOnRecordReady,
         timing: recordReadyProTiming.copyWith(
-          proSlotAvailable: !showProBridgeVisibilityOnRecordReady,
+          proSlotAvailable: !showProVisibilityLiftOnRecordReady &&
+              !showProBridgeVisibilityOnRecordReady,
         ),
       );
       showProEvidenceValuePrivateReportOnRecord = ProMomentTimingEngine.applyGate(
@@ -5685,6 +5866,7 @@ class _RecordScreenState extends State<RecordScreen> {
         timing: recordReadyProTiming.copyWith(
           hasMonthlyPrivateReportPreviewVisible: true,
           proSlotAvailable: showProEvidenceValuePrivateReportOnRecord &&
+              !showProVisibilityLiftOnRecordReady &&
               !showProBridgeVisibilityOnRecordReady &&
               !showProEvidenceValueOnRecordReady,
         ),
@@ -5698,7 +5880,8 @@ class _RecordScreenState extends State<RecordScreen> {
         hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
         hasPurchaseCtaTapped: _betaActivationLoopCounts.purchaseTapped > 0,
         strongerProCardVisible: showProBridgeVisibilityOnRecordReady ||
-            showProEvidenceValueOnRecordReady,
+            showProEvidenceValueOnRecordReady ||
+            showProVisibilityLiftOnRecordReady,
         isReady: ui == RecordUiState.ready,
         isRecording: ui == RecordUiState.recording,
         isPostSave: _isPostSaveSurface,
@@ -5725,12 +5908,22 @@ class _RecordScreenState extends State<RecordScreen> {
       } else {
         showBetaActivationPathCard = false;
       }
+      if (showFirstSaveLiftCard) {
+        showBetaActivationPathCard = false;
+      }
       if (showBetaActivationPathCard &&
           betaActivationPathResult.slot == BetaActivationPathSlot.guidance) {
         showThreeMomentCompletionCard = false;
         showFirstMomentCaptureCard = false;
         showSecondMomentReturnCard = false;
       }
+      showBetaFeedbackCaptureRecordReady = audit.isVisible(
+        SurfacePriorityCardKey.betaFeedbackCapture,
+        candidate: showBetaFeedbackCaptureRecordReady,
+      );
+      betaFeedbackCaptureRecordReadyResult = showBetaFeedbackCaptureRecordReady
+          ? betaFeedbackCaptureRecordReadyPreAudit
+          : null;
     }
     if (showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null) {
@@ -5876,22 +6069,42 @@ class _RecordScreenState extends State<RecordScreen> {
     )) {
       showProofSpecificityBoostOnTimelineProof = false;
     }
+    final showReturnAfterProofLiftV2BelowProofOnRecord =
+        showReturnAfterProofLiftV2OnRecordReady &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord);
+    final showReturnAfterProofLiftV2InGuidanceStack =
+        showReturnAfterProofLiftV2OnRecordReady &&
+            !showReturnAfterProofLiftV2BelowProofOnRecord;
     final showReturnAfterProofBelowProofOnRecord =
         showReturnAfterProofOnRecordReady &&
+            !showReturnAfterProofLiftV2OnRecordReady &&
             ((showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord);
     final showReturnAfterProofInGuidanceStack =
         showReturnAfterProofOnRecordReady &&
             !showReturnAfterProofBelowProofOnRecord;
+    final showProVisibilityLiftBelowProofOnRecord =
+        showProVisibilityLiftOnRecordReady &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord ||
+                showReturnAfterProofLiftV2BelowProofOnRecord);
+    final showProVisibilityLiftInProSectionOnRecord =
+        showProVisibilityLiftOnRecordReady &&
+            !showProVisibilityLiftBelowProofOnRecord;
     final showProBridgeBelowProofOnRecord =
         showProBridgeVisibilityOnRecordReady &&
+            !showProVisibilityLiftOnRecordReady &&
             ((showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
                 showReturnAfterProofStrengthenedOnRecordReady);
     final showProBridgeInProSectionOnRecord =
         showProBridgeVisibilityOnRecordReady &&
+            !showProVisibilityLiftOnRecordReady &&
             !showProBridgeBelowProofOnRecord;
     final proBridgeVisibilityRecordResult = showProBridgeVisibilityOnRecordReady
         ? ProBridgeVisibilityEngine.build(
@@ -6177,6 +6390,85 @@ class _RecordScreenState extends State<RecordScreen> {
     var showReturnAfterProofOnFirstProofPayoff =
         showReturnAfterProofStrengthenedOnFirstProofPayoff ||
             showReturnAfterProofGenericOnFirstProofPayoff;
+    final returnAfterProofLiftV2PostSaveCandidate =
+        ReturnAfterProofLiftV2Engine.build(
+      entries: entriesAfterSave,
+      source: 'record_post_save',
+      firstProofSeen: true,
+      timelineProofVisible: showTimelineProofMomentOnFirstProofPayoff &&
+          timelineProofMomentPostSaveCandidate != null,
+    );
+    var showReturnAfterProofLiftV2OnPostSave =
+        ReturnAfterProofLiftV2Engine.shouldShow(
+      result: returnAfterProofLiftV2PostSaveCandidate,
+      isReady: false,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: ui == RecordUiState.done,
+      isDegradedTranscriptState: false,
+      isPostSaveDegradedState: postSaveDegraded,
+      whatChangedQuestionActive: showWhatChangedV2,
+      patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+    );
+    final postSaveLoosenSignalsPreAudit = ProBridgeTimingLoosenEngine.resolveSignals(
+      entries: entriesAfterSave,
+      source: 'record_post_save',
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final postSaveEvidenceAnchorPreAudit = EvidenceAnchorEngine.build(
+      entries: entriesAfterSave,
+      beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+      source: 'record_post_save',
+      beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+    );
+    final postSaveFeedbackStateForLift = ProMomentTimingEngine.resolveFeedbackState(
+      entries: entriesAfterSave,
+      surface: ProofQualityResponseSurface.firstProofPayoff,
+    );
+    var showProVisibilityLiftOnPostSave = ui == RecordUiState.done &&
+        entriesAfterSave.isNotEmpty &&
+        showFirstProofPayoff &&
+        firstProofPayoffCandidate != null &&
+        ProVisibilityLiftEngine.shouldShowCard(
+          entryCount: postSaveEntryCount,
+          isPro: _recordReturnProIsPro,
+          hasUsefulProof:
+              postSaveFeedbackStateForLift == ProofQualityFeedbackState.useful,
+          confidenceLevel: postSaveLoosenSignalsPreAudit.confidenceLevel ??
+              ProofConfidenceLevel.watchOnly,
+          feedbackState: postSaveFeedbackStateForLift,
+          hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+          hasFreshReturnAfterCorrection:
+              postSaveLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+          hasChangeAnchor: postSaveEvidenceAnchorPreAudit.hasChangeAnchor,
+          isRecording: ui == RecordUiState.recording,
+          isDegradedTranscriptState: false,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        );
+    final proVisibilityLiftPostSaveResult = showProVisibilityLiftOnPostSave
+        ? ProVisibilityLiftEngine.build(
+            surface: ProVisibilityLiftSurface.recordPostSave,
+            source: 'record_post_save',
+            entryCount: postSaveEntryCount,
+            isPro: _recordReturnProIsPro,
+            hasUsefulProof:
+                postSaveFeedbackStateForLift == ProofQualityFeedbackState.useful,
+            confidenceLevel: postSaveLoosenSignalsPreAudit.confidenceLevel ??
+                ProofConfidenceLevel.watchOnly,
+            feedbackState: postSaveFeedbackStateForLift,
+            hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+            hasFreshReturnAfterCorrection:
+                postSaveLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+            hasChangeAnchor: postSaveEvidenceAnchorPreAudit.hasChangeAnchor,
+            isRecording: ui == RecordUiState.recording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          )
+        : null;
     var showProEvidenceValuePostSave = ui == RecordUiState.done &&
         entriesAfterSave.isNotEmpty &&
         showFirstProofPayoff &&
@@ -6524,6 +6816,66 @@ class _RecordScreenState extends State<RecordScreen> {
       showWhatChangedV2Display: showWhatChangedV2Display,
       showHelpedTracking: showHelpedTracking,
     );
+    final betaFeedbackCapturePostSavePreAudit = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? BetaFeedbackCaptureEngine.build(
+            context: BetaFeedbackCaptureEngine.buildContext(
+              surface: BetaFeedbackCaptureSurface.recordPostSave,
+              source: 'record_post_save',
+              entryCount: postSaveEntryCount,
+              isPostSave: true,
+              isRecording: ui == RecordUiState.recording,
+              isPostSaveDegradedState: postSaveDegraded,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+              hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+              hasPurchaseCtaTapped: _betaActivationLoopCounts.purchaseTapped > 0,
+              isPro: _recordReturnProIsPro,
+              timelineProofVisible:
+                  showTimelineProofMomentOnFirstProofPayoff &&
+                      timelineProofMomentPostSaveCandidate != null,
+              proPreviewVisible: showProPreviewPostSave,
+              existingProofFeedbackVisible:
+                  BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                    surface: BetaProofFeedbackSurface.timelineProofMoment,
+                    parentVisible:
+                        showTimelineProofMomentOnFirstProofPayoff &&
+                            timelineProofMomentPostSaveCandidate != null,
+                    entryCount: postSaveEntryCount,
+                    hasConfirmedRepeat:
+                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      entriesAfterSave,
+                    ),
+                    isRecording: ui == RecordUiState.recording,
+                    isPostSaveDegraded: postSaveDegraded,
+                    whatChangedQuestionActive: showWhatChangedV2,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActivePostSave,
+                  ) ||
+                  BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                    surface: BetaProofFeedbackSurface.firstProofPayoff,
+                    parentVisible: showFirstProofPayoff &&
+                        firstProofPayoffCandidate != null,
+                    entryCount: postSaveEntryCount,
+                    hasConfirmedRepeat:
+                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      entriesAfterSave,
+                    ),
+                    isRecording: ui == RecordUiState.recording,
+                    isPostSaveDegraded: postSaveDegraded,
+                    whatChangedQuestionActive: showWhatChangedV2,
+                    patternReviewInboxHasActiveItems:
+                        patternReviewInboxActivePostSave,
+                  ),
+            ),
+          )
+        : BetaFeedbackCaptureResult.hidden;
+    var showBetaFeedbackCapturePostSave =
+        betaFeedbackCapturePostSavePreAudit.shouldShow;
+    BetaFeedbackCaptureResult? betaFeedbackCapturePostSaveResult =
+        betaFeedbackCapturePostSavePreAudit.shouldShow
+            ? betaFeedbackCapturePostSavePreAudit
+            : null;
     SurfacePriorityResult? recordPostSaveSurfacePriority;
     if (ui == RecordUiState.done) {
       recordPostSaveSurfacePriority = SurfacePriorityEngine.auditRecordPostSave(
@@ -6551,12 +6903,15 @@ class _RecordScreenState extends State<RecordScreen> {
               showBetaProofLiftUnderTimelineProofPostSave,
           returnAfterProofStrengthened:
               showReturnAfterProofStrengthenedOnFirstProofPayoff,
+          returnAfterProofLiftV2: showReturnAfterProofLiftV2OnPostSave,
           returnAfterProof: showReturnAfterProofGenericOnFirstProofPayoff,
           proPreview: showProPreviewPostSave,
+          proVisibilityLift: showProVisibilityLiftOnPostSave,
           proBridgeVisibility: showProBridgeVisibilityPostSave,
           proEvidenceValue: showProEvidenceValuePostSave,
           proLockMoment: showProLockMomentPostSave,
           privateReportProBridge: showMonthlyPrivateReportPreviewPostSave,
+          betaFeedbackCapture: showBetaFeedbackCapturePostSave,
         ),
       );
       SurfacePriorityAnalytics.seen(result: recordPostSaveSurfacePriority);
@@ -6592,6 +6947,17 @@ class _RecordScreenState extends State<RecordScreen> {
       showReturnAfterProofOnFirstProofPayoff =
           showReturnAfterProofStrengthenedOnFirstProofPayoff ||
               showReturnAfterProofGenericOnFirstProofPayoff;
+      showReturnAfterProofLiftV2OnPostSave = audit.isVisible(
+        SurfacePriorityCardKey.returnAfterProofLiftV2,
+        candidate: showReturnAfterProofLiftV2OnPostSave &&
+            showFirstProofPayoff &&
+            firstProofPayoffCandidate != null,
+      );
+      if (showReturnAfterProofLiftV2OnPostSave) {
+        showReturnAfterProofStrengthenedOnFirstProofPayoff = false;
+        showReturnAfterProofGenericOnFirstProofPayoff = false;
+        showReturnAfterProofOnFirstProofPayoff = false;
+      }
       showProPreviewPostSave = audit.isVisible(
         SurfacePriorityCardKey.proPreview,
         candidate: showProPreviewPostSave,
@@ -6604,6 +6970,10 @@ class _RecordScreenState extends State<RecordScreen> {
         SurfacePriorityCardKey.proBridgeVisibility,
         candidate: showProBridgeVisibilityPostSave,
       );
+      showProVisibilityLiftOnPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proVisibilityLift,
+        candidate: showProVisibilityLiftOnPostSave,
+      );
       showProEvidenceValuePostSave = audit.isVisible(
         SurfacePriorityCardKey.proEvidenceValue,
         candidate: showProEvidenceValuePostSave,
@@ -6612,6 +6982,13 @@ class _RecordScreenState extends State<RecordScreen> {
         SurfacePriorityCardKey.proLockMoment,
         candidate: showProLockMomentPostSave,
       );
+      showBetaFeedbackCapturePostSave = audit.isVisible(
+        SurfacePriorityCardKey.betaFeedbackCapture,
+        candidate: showBetaFeedbackCapturePostSave,
+      );
+      betaFeedbackCapturePostSaveResult = showBetaFeedbackCapturePostSave
+          ? betaFeedbackCapturePostSavePreAudit
+          : null;
       final postSaveLoosenSignals = ProBridgeTimingLoosenEngine.resolveSignals(
         entries: entriesAfterSave,
         source: 'record_post_save',
@@ -6650,25 +7027,31 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       showProPreviewPostSave = ProMomentTimingEngine.applyGate(
         candidate: showProPreviewPostSave,
-        timing: postSaveProTiming,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable: !showProVisibilityLiftOnPostSave,
+        ),
       );
       showProBridgeVisibilityPostSave = ProMomentTimingEngine.applyGate(
         candidate: showProBridgeVisibilityPostSave,
         timing: postSaveProTiming.copyWith(
-          proSlotAvailable: !showProPreviewPostSave,
+          proSlotAvailable:
+              !showProVisibilityLiftOnPostSave && !showProPreviewPostSave,
         ),
       );
       showProEvidenceValuePostSave = ProMomentTimingEngine.applyGate(
         candidate: showProEvidenceValuePostSave,
         timing: postSaveProTiming.copyWith(
           proSlotAvailable:
-              !showProPreviewPostSave && !showProBridgeVisibilityPostSave,
+              !showProVisibilityLiftOnPostSave &&
+              !showProPreviewPostSave &&
+              !showProBridgeVisibilityPostSave,
         ),
       );
       showProLockMomentPostSave = ProMomentTimingEngine.applyGate(
         candidate: showProLockMomentPostSave,
         timing: postSaveProTiming.copyWith(
           proSlotAvailable: showProLockMomentPostSave &&
+              !showProVisibilityLiftOnPostSave &&
               !showProPreviewPostSave &&
               !showProBridgeVisibilityPostSave,
         ),
@@ -6678,10 +7061,63 @@ class _RecordScreenState extends State<RecordScreen> {
         timing: postSaveProTiming.copyWith(
           hasMonthlyPrivateReportPreviewVisible: true,
           proSlotAvailable: showMonthlyPrivateReportPreviewPostSave &&
+              !showProVisibilityLiftOnPostSave &&
               !showProPreviewPostSave &&
               !showProBridgeVisibilityPostSave,
         ),
       );
+      final betaFeedbackCapturePostSaveFinal = BetaFeedbackCaptureEngine.build(
+        context: BetaFeedbackCaptureEngine.buildContext(
+          surface: BetaFeedbackCaptureSurface.recordPostSave,
+          source: 'record_post_save',
+          entryCount: postSaveEntryCount,
+          isPostSave: true,
+          isRecording: ui == RecordUiState.recording,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          hasPaywallSeen: _betaActivationLoopCounts.paywallSeen > 0,
+          hasPurchaseCtaTapped: _betaActivationLoopCounts.purchaseTapped > 0,
+          isPro: _recordReturnProIsPro,
+          timelineProofVisible: showTimelineProofMomentOnFirstProofPayoff &&
+              timelineProofMomentPostSaveCandidate != null,
+          proPreviewVisible: showProPreviewPostSave,
+          existingProofFeedbackVisible:
+              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                surface: BetaProofFeedbackSurface.timelineProofMoment,
+                parentVisible: showTimelineProofMomentOnFirstProofPayoff &&
+                    timelineProofMomentPostSaveCandidate != null,
+                entryCount: postSaveEntryCount,
+                hasConfirmedRepeat:
+                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                  entriesAfterSave,
+                ),
+                isRecording: ui == RecordUiState.recording,
+                isPostSaveDegraded: postSaveDegraded,
+                whatChangedQuestionActive: showWhatChangedV2,
+                patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+              ) ||
+              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                surface: BetaProofFeedbackSurface.firstProofPayoff,
+                parentVisible:
+                    showFirstProofPayoff && firstProofPayoffCandidate != null,
+                entryCount: postSaveEntryCount,
+                hasConfirmedRepeat:
+                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                  entriesAfterSave,
+                ),
+                isRecording: ui == RecordUiState.recording,
+                isPostSaveDegraded: postSaveDegraded,
+                whatChangedQuestionActive: showWhatChangedV2,
+                patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+              ),
+        ),
+      );
+      showBetaFeedbackCapturePostSave = showBetaFeedbackCapturePostSave &&
+          betaFeedbackCapturePostSaveFinal.shouldShow;
+      betaFeedbackCapturePostSaveResult = showBetaFeedbackCapturePostSave
+          ? betaFeedbackCapturePostSaveFinal
+          : null;
     }
     final proPreviewPostSaveResult = showProPreviewPostSave
         ? ProPreviewEngine.build(
@@ -7178,6 +7614,32 @@ class _RecordScreenState extends State<RecordScreen> {
                         result: recordReadySurfacePriority,
                       ),
                     ],
+                    if (showFirstSaveLiftCard) ...[
+                      FirstSaveLiftCard(
+                        result: firstSaveLiftCandidate,
+                        onTypeOneSentence: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onRecordInstead: () => unawaited(
+                          _onRecordPressed(source: 'first_save_lift'),
+                        ),
+                        onExampleSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                          unawaited(
+                            navigateToTypeInsteadCapture(
+                              context,
+                              prompt: prompt,
+                              onSaved: _finishSuccessfulCapture,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     if (showBetaActivationPathCard &&
                         betaActivationPathResult != null) ...[
                       BetaActivationPathCard(
@@ -7253,6 +7715,22 @@ class _RecordScreenState extends State<RecordScreen> {
                           setState(
                             () => _selectedPromptLine = chip.promptStarter,
                           );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    if (showReturnAfterProofLiftV2InGuidanceStack) ...[
+                      ReturnAfterProofLiftV2Card(
+                        result: returnAfterProofLiftV2Candidate,
+                        onPrimaryCta: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onPromptSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
                         },
                       ),
                       const SizedBox(height: 8),
@@ -7561,7 +8039,24 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                       const SizedBox(height: 12),
                     ],
-                    if (showReturnAfterProofBelowProofOnRecord &&
+                    if (showReturnAfterProofLiftV2BelowProofOnRecord &&
+                        showTimelineProofMomentOnRecord &&
+                        timelineProofMomentCandidate != null) ...[
+                      ReturnAfterProofLiftV2Card(
+                        result: returnAfterProofLiftV2Candidate,
+                        onPrimaryCta: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onPromptSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showReturnAfterProofBelowProofOnRecord &&
                         showTimelineProofMomentOnRecord &&
                         timelineProofMomentCandidate != null) ...[
                       ReturnAfterProofCard(
@@ -7571,6 +8066,19 @@ class _RecordScreenState extends State<RecordScreen> {
                         onPromptSelected: (prompt) {
                           setState(() => _selectedPromptLine = prompt);
                         },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showBetaFeedbackCaptureRecordReady &&
+                        betaFeedbackCaptureRecordReadyResult != null) ...[
+                      BetaFeedbackCaptureCard(
+                        result: betaFeedbackCaptureRecordReadyResult!,
+                        proofFeedbackSurface: betaFeedbackCaptureRecordReadyResult!
+                                    .moment ==
+                                BetaFeedbackCaptureMoment.afterTimelineProof
+                            ? BetaProofFeedbackSurface.timelineProofMoment
+                            : null,
+                        onChanged: () => setState(() {}),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -7617,7 +8125,22 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showReturnAfterProofBelowProofOnRecord &&
+                    if (showReturnAfterProofLiftV2BelowProofOnRecord) ...[
+                      ReturnAfterProofLiftV2Card(
+                        result: returnAfterProofLiftV2Candidate,
+                        onPrimaryCta: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onPromptSelected: (prompt) {
+                          setState(() => _selectedPromptLine = prompt);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showReturnAfterProofBelowProofOnRecord &&
                         !showTimelineProofMomentOnRecord &&
                         showBetaTesterReportOnRecord) ...[
                       ReturnAfterProofCard(
@@ -7630,7 +8153,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showProBridgeBelowProofOnRecord &&
+                    if (showProVisibilityLiftBelowProofOnRecord &&
+                        proVisibilityLiftRecordReadyResult != null) ...[
+                      ProVisibilityLiftCard(
+                        result: proVisibilityLiftRecordReadyResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_pro_visibility_lift',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showProBridgeBelowProofOnRecord &&
                         proBridgeVisibilityRecordResult != null) ...[
                       ProBridgeVisibilityCard(
                         result: proBridgeVisibilityRecordResult,
@@ -7940,7 +8473,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showProBridgeInProSectionOnRecord &&
+                    if (showProVisibilityLiftInProSectionOnRecord &&
+                        proVisibilityLiftRecordReadyResult != null) ...[
+                      ProVisibilityLiftCard(
+                        result: proVisibilityLiftRecordReadyResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_pro_visibility_lift',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showProBridgeInProSectionOnRecord &&
                         proBridgeVisibilityRecordResult != null) ...[
                       ProBridgeVisibilityCard(
                         result: proBridgeVisibilityRecordResult,
@@ -8674,7 +9217,22 @@ class _RecordScreenState extends State<RecordScreen> {
                                 surface: 'record_post_save_first_proof',
                               ),
                             ],
-                            if (showReturnAfterProofOnFirstProofPayoff) ...[
+                            if (showReturnAfterProofLiftV2OnPostSave) ...[
+                              const SizedBox(height: 12),
+                              ReturnAfterProofLiftV2Card(
+                                result: returnAfterProofLiftV2PostSaveCandidate,
+                                onPrimaryCta: () => unawaited(
+                                  navigateToTypeInsteadCapture(
+                                    context,
+                                    prompt: _selectedPromptLine,
+                                    onSaved: _finishSuccessfulCapture,
+                                  ),
+                                ),
+                                onPromptSelected: (prompt) {
+                                  setState(() => _selectedPromptLine = prompt);
+                                },
+                              ),
+                            ] else if (showReturnAfterProofOnFirstProofPayoff) ...[
                               const SizedBox(height: 12),
                               ReturnAfterProofCard(
                                 result: returnAfterProofPostSaveCandidate,
@@ -8685,7 +9243,17 @@ class _RecordScreenState extends State<RecordScreen> {
                                 },
                               ),
                             ],
-                            if (showProPreviewPostSave &&
+                            if (showProVisibilityLiftOnPostSave &&
+                                proVisibilityLiftPostSaveResult != null) ...[
+                              const SizedBox(height: 12),
+                              ProVisibilityLiftCard(
+                                result: proVisibilityLiftPostSaveResult,
+                                onSeePro: () => _openProEvidenceValueSubscription(
+                                  analyticsSource:
+                                      'record_post_save_pro_visibility_lift',
+                                ),
+                              ),
+                            ] else if (showProPreviewPostSave &&
                                 proPreviewPostSaveResult != null) ...[
                               const SizedBox(height: 12),
                               ProPreviewCard(
@@ -8927,6 +9495,24 @@ class _RecordScreenState extends State<RecordScreen> {
                               onSubmitted: () {
                                 if (mounted) setState(() {});
                               },
+                            ),
+                          ],
+                          if (showBetaFeedbackCapturePostSave &&
+                              betaFeedbackCapturePostSaveResult != null) ...[
+                            const SizedBox(height: 12),
+                            BetaFeedbackCaptureCard(
+                              result: betaFeedbackCapturePostSaveResult!,
+                              proofFeedbackSurface: betaFeedbackCapturePostSaveResult!
+                                          .moment ==
+                                      BetaFeedbackCaptureMoment.afterTimelineProof
+                                  ? (showTimelineProofMomentOnFirstProofPayoff &&
+                                          timelineProofMomentPostSaveCandidate !=
+                                              null
+                                      ? BetaProofFeedbackSurface
+                                          .timelineProofMoment
+                                      : null)
+                                  : null,
+                              onChanged: () => setState(() {}),
                             ),
                           ],
                           if (showFirstProofTruth) ...[

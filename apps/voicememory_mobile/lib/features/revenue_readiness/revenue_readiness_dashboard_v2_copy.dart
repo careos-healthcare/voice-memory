@@ -71,6 +71,17 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const actionFixBillingConfidence = 'Billing/purchase confidence issue';
   static const actionFixRestoreFlow = 'Restore flow issue';
 
+  static const diagnosisFirstSaveLiftNeeded = 'First save lift needed';
+  static const diagnosisReturnAfterProofLiftNeeded =
+      'Return after proof lift needed';
+  static const diagnosisProVisibilityLiftNeeded = 'Pro visibility lift needed';
+  static const diagnosisPaywallCtaLiftNeeded = 'Paywall CTA lift needed';
+
+  static const actionFirstSaveLift = 'Show first save lift card';
+  static const actionReturnAfterProofLift = 'Show return after proof lift v2';
+  static const actionProVisibilityLift = 'Show pro visibility lift card';
+  static const actionPaywallCtaLift = 'Show paywall CTA lift block';
+
   static Iterable<String> allVisibleStrings() sync* {
     yield title;
     yield subtitle;
@@ -126,5 +137,13 @@ abstract final class RevenueReadinessDashboardV2Copy {
     yield actionFixPaywallValue;
     yield actionFixBillingConfidence;
     yield actionFixRestoreFlow;
+    yield diagnosisFirstSaveLiftNeeded;
+    yield diagnosisReturnAfterProofLiftNeeded;
+    yield diagnosisProVisibilityLiftNeeded;
+    yield diagnosisPaywallCtaLiftNeeded;
+    yield actionFirstSaveLift;
+    yield actionReturnAfterProofLift;
+    yield actionProVisibilityLift;
+    yield actionPaywallCtaLift;
   }
 }

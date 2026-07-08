@@ -13,12 +13,14 @@ enum SurfacePriorityCardKey {
   firstMomentCapture,
   secondMomentReturn,
   returnAfterProofStrengthened,
+  returnAfterProofLiftV2,
   returnAfterProof,
   lowFrictionReturn,
   whatToNoticeNext,
   betaTodaySummary,
   openCapturePromptChips,
   captureFreedomLine,
+  firstSaveLift,
   betaActivationPath,
   betaActivationPathRevenue,
   firstRunPositioning,
@@ -38,12 +40,14 @@ enum SurfacePriorityCardKey {
   betaTesterReport,
   betaProofFeedback,
   betaInviteLoop,
+  betaFeedbackCapture,
   firstProofPayoff,
   whatChanged,
   returnPayoff,
   timelineProofMomentPostSave,
   proofSpecificityPostSave,
   proBridgeVisibility,
+  proVisibilityLift,
   proPreview,
   proEvidenceValue,
   archiveIntelligenceProBridge,
@@ -52,6 +56,7 @@ enum SurfacePriorityCardKey {
   archiveBackupBridge,
   paywallPrimaryReason,
   paywallSecondaryReason,
+  paywallCtaLift,
 }
 
 /// Raw candidate visibility before priority caps.
@@ -75,6 +80,8 @@ class SurfacePriorityCandidates {
     required bool captureFreedomLine,
     bool betaActivationPath = false,
     bool betaActivationPathRevenue = false,
+    bool firstSaveLift = false,
+    bool returnAfterProofLiftV2 = false,
     bool firstRunPositioning = false,
     required bool timelineProofMoment,
     required bool archiveTimelineSpine,
@@ -91,9 +98,11 @@ class SurfacePriorityCandidates {
     required bool betaTesterReport,
     bool proBridgeVisibility = false,
     bool proPreview = false,
+    bool proVisibilityLift = false,
     required bool proEvidenceValue,
     required bool privateReportProBridge,
     required bool suppressLegacyEducation,
+    bool betaFeedbackCapture = false,
   }) =>
       SurfacePriorityCandidates({
         SurfacePriorityCardKey.threeMomentCompletion: threeMomentCompletion,
@@ -101,12 +110,14 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.secondMomentReturn: secondMomentReturn,
         SurfacePriorityCardKey.returnAfterProofStrengthened:
             returnAfterProofStrengthened,
+        SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
         SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
         SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
         SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
         SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
         SurfacePriorityCardKey.openCapturePromptChips: openCapturePromptChips,
         SurfacePriorityCardKey.captureFreedomLine: captureFreedomLine,
+        SurfacePriorityCardKey.firstSaveLift: firstSaveLift,
         SurfacePriorityCardKey.betaActivationPath: betaActivationPath,
         SurfacePriorityCardKey.betaActivationPathRevenue:
             betaActivationPathRevenue,
@@ -133,8 +144,10 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
         SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proPreview: proPreview,
+        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
+        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
       });
 
   factory SurfacePriorityCandidates.recordPostSave({
@@ -150,11 +163,14 @@ class SurfacePriorityCandidates {
     required bool proofSpecificityPostSave,
     required bool betaProofFeedback,
     bool betaInviteLoop = false,
+    bool betaFeedbackCapture = false,
     bool betaProofLift = false,
     bool returnAfterProofStrengthened = false,
     bool returnAfterProof = false,
+    bool returnAfterProofLiftV2 = false,
     bool proBridgeVisibility = false,
     bool proPreview = false,
+    bool proVisibilityLift = false,
     required bool proEvidenceValue,
     required bool proLockMoment,
     required bool privateReportProBridge,
@@ -177,12 +193,15 @@ class SurfacePriorityCandidates {
         SurfacePriorityCardKey.betaProofLift: betaProofLift,
         SurfacePriorityCardKey.returnAfterProofStrengthened:
             returnAfterProofStrengthened,
+        SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
         SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
         SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proPreview: proPreview,
+        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.proLockMoment: proLockMoment,
         SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
+        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
       });
 
   factory SurfacePriorityCandidates.patterns({
@@ -202,7 +221,9 @@ class SurfacePriorityCandidates {
     required bool timelinePositioning,
     bool proBridgeVisibility = false,
     bool proPreview = false,
+    bool proVisibilityLift = false,
     bool betaInviteLoop = false,
+    bool betaFeedbackCapture = false,
     required bool proEvidenceValue,
     required bool archiveIntelligenceProBridge,
     required bool privateReportProBridge,
@@ -233,21 +254,27 @@ class SurfacePriorityCandidates {
             timelinePositioning && !suppressLegacyEducation,
         SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
         SurfacePriorityCardKey.proPreview: proPreview,
+        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
         SurfacePriorityCardKey.betaInviteLoop: betaInviteLoop,
         SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
         SurfacePriorityCardKey.archiveIntelligenceProBridge:
             archiveIntelligenceProBridge,
         SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
         SurfacePriorityCardKey.archiveBackupBridge: archiveBackupBridge,
+        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
       });
 
   factory SurfacePriorityCandidates.paywall({
     required bool primaryReason,
     required bool secondaryReason,
+    bool paywallCtaLift = false,
+    bool betaFeedbackCapture = false,
   }) =>
       SurfacePriorityCandidates({
         SurfacePriorityCardKey.paywallPrimaryReason: primaryReason,
         SurfacePriorityCardKey.paywallSecondaryReason: secondaryReason,
+        SurfacePriorityCardKey.paywallCtaLift: paywallCtaLift,
+        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
       });
 }
 

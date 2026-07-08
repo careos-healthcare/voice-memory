@@ -35,6 +35,11 @@ import '../features/paywall_objection_handling/paywall_objection_engine.dart';
 import '../features/paywall_objection_handling/paywall_objection_model.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_analytics.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
+import '../widgets/pro/paywall_cta_lift_block.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
 import '../models/entitlement.dart';
 import '../services/activation_funnel_analytics.dart';
 import '../services/app_services.dart';
@@ -45,6 +50,7 @@ import '../widgets/billing/paywall_rejection_prompt.dart';
 import '../widgets/billing/plan_selection_confidence_block.dart';
 import '../widgets/paywall/purchase_confidence_card.dart';
 import '../widgets/pro/paywall_objection_section.dart';
+import '../widgets/beta/beta_feedback_capture_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
@@ -119,6 +125,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// Last captured rejection reason — loaded once at init, so the same flow
   /// that captures a reason can never render its own follow-up.
   PaywallRejectionReason? _objectionFollowUpReason;
+  bool _showBetaFeedbackCaptureNoCta = false;
+  bool _showBetaFeedbackCapturePurchaseFail = false;
+  bool _purchaseAttemptedThisSession = false;
 
   bool get _usesGeneralConversionClarity {
     final source = widget.triggerArgs?.source;
@@ -290,7 +299,39 @@ class _PaywallScreenState extends State<PaywallScreen> {
       suggestionStage: SuggestionAttributionEventType.suggestionToPaywallSeen,
     );
     _loadObjectionFollowUp();
+    unawaited(
+      BetaFeedbackCaptureStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
     _load();
+  }
+
+  BetaFeedbackCaptureResult _betaFeedbackCapturePaywallResult({
+    required bool paywallNoCtaRequested,
+    required bool paywallPurchaseAttempted,
+  }) =>
+      BetaFeedbackCaptureEngine.build(
+        context: BetaFeedbackCaptureEngine.buildContext(
+          surface: BetaFeedbackCaptureSurface.paywall,
+          source: _attributionSource.id,
+          entryCount: 0,
+          hasPaywallSeen: _paywallSeenTracked,
+          hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
+          isPro: _entitlements?.isPro == true,
+          paywallNoCtaRequested: paywallNoCtaRequested,
+          paywallPurchaseAttempted: paywallPurchaseAttempted,
+        ),
+      );
+
+  void _handleBetaFeedbackCapturePaywallChanged({required bool dismissAfter}) {
+    setState(() {
+      _showBetaFeedbackCaptureNoCta = false;
+      _showBetaFeedbackCapturePurchaseFail = false;
+    });
+    if (dismissAfter) {
+      unawaited(_dismissWithCapture());
+    }
   }
 
   PaywallObjectionStore get _objectionStore =>
@@ -524,6 +565,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       : PaywallPlanSelectionConfidence.monthlyPlanId;
 
   Future<void> _continue() async {
+    _purchaseAttemptedThisSession = true;
     _recordAttribution(
       PaywallAttributionEventType.purchaseStarted,
       suggestionStage:
@@ -585,6 +627,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
     } catch (e) {
       if (!mounted) return;
+      final failResult = _betaFeedbackCapturePaywallResult(
+        paywallNoCtaRequested: false,
+        paywallPurchaseAttempted: true,
+      );
+      if (failResult.shouldShow) {
+        setState(() => _showBetaFeedbackCapturePurchaseFail = true);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1191,6 +1240,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
               .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
               .toList()
         : const <_PaywallBenefit>[];
+    final paywallCtaLiftResult = PaywallCtaLiftEngine.build(
+      source: widget.triggerArgs?.source,
+      analyticsSource: _attributionSource.id,
+      isPro: _entitlements?.isPro == true,
+    );
 
     return ArchiveResponsiveLayout.constrainContent(
       context: context,
@@ -1256,6 +1310,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           if (_paywallObjectionSectionResult.shouldShow) ...[
             const SizedBox(height: 14),
             _paywallObjectionSection(),
+          ],
+          if (paywallCtaLiftResult.shouldShow) ...[
+            const SizedBox(height: 14),
+            PaywallCtaLiftBlock(result: paywallCtaLiftResult),
           ],
           const SizedBox(height: 24),
           ...orderedPaywallPlans(
@@ -1353,6 +1411,29 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ),
                   ),
           ),
+          if (_showBetaFeedbackCapturePurchaseFail) ...[
+            const SizedBox(height: 12),
+            BetaFeedbackCaptureCard(
+              result: _betaFeedbackCapturePaywallResult(
+                paywallNoCtaRequested: false,
+                paywallPurchaseAttempted: true,
+              ),
+              onChanged: () => _handleBetaFeedbackCapturePaywallChanged(
+                dismissAfter: false,
+              ),
+            ),
+          ] else if (_showBetaFeedbackCaptureNoCta) ...[
+            const SizedBox(height: 12),
+            BetaFeedbackCaptureCard(
+              result: _betaFeedbackCapturePaywallResult(
+                paywallNoCtaRequested: true,
+                paywallPurchaseAttempted: _purchaseAttemptedThisSession,
+              ),
+              onChanged: () => _handleBetaFeedbackCapturePaywallChanged(
+                dismissAfter: true,
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
           TextButton(
             onPressed: _busy
@@ -1366,6 +1447,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     First25UserMetrics.trackPaywallDismissed(
                       surface: 'paywall_screen',
                     );
+                    final noCtaResult = _betaFeedbackCapturePaywallResult(
+                      paywallNoCtaRequested: true,
+                      paywallPurchaseAttempted: _purchaseAttemptedThisSession,
+                    );
+                    if (noCtaResult.shouldShow) {
+                      setState(() => _showBetaFeedbackCaptureNoCta = true);
+                      return;
+                    }
                     unawaited(_dismissWithCapture());
                   },
             child: const Text(ConsumerUiCopy.paywallSecondaryCta),

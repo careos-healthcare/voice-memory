@@ -40,6 +40,23 @@ import '../features/beta_invite/beta_invite_engine.dart';
 import '../features/beta_invite/beta_invite_model.dart';
 import '../features/beta_activation_path/beta_activation_path_engine.dart';
 import '../widgets/beta/beta_activation_path_card.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_copy.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
+import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
+import '../widgets/beta/beta_feedback_capture_card.dart';
+import '../features/first_save_lift/first_save_lift_engine.dart';
+import '../features/return_after_proof_lift_v2/return_after_proof_lift_v2_engine.dart';
+import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
+import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
+import '../features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
+import '../features/proof_quality_response/proof_quality_response_model.dart';
+import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
+import '../billing/paywall_source.dart';
+import '../widgets/record/first_save_lift_card.dart';
+import '../widgets/record/return_after_proof_lift_v2_card.dart';
+import '../widgets/pro/pro_visibility_lift_card.dart';
+import '../widgets/pro/paywall_cta_lift_block.dart';
 import '../widgets/pro/pro_preview_card.dart';
 import '../widgets/beta/beta_invite_card.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -59,6 +76,11 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
   void initState() {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
+    unawaited(
+      BetaFeedbackCaptureStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
     _loadEntries();
   }
 
@@ -270,6 +292,70 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               showDiagnosis: true,
             ),
             const SizedBox(height: AppSpacing.md),
+            FirstSaveLiftCard.test(
+              result: FirstSaveLiftEngine.build(
+                entryCount: 0,
+                source: 'testing_archiveme',
+              ),
+              onTypeOneSentence: () {},
+              onRecordInstead: () {},
+              onExampleSelected: (_) {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ReturnAfterProofLiftV2Card.test(
+              result: ReturnAfterProofLiftV2Engine.build(
+                entries: _entries,
+                source: 'testing_archiveme',
+                firstProofSeen: true,
+                timelineProofVisible: true,
+              ),
+              onPrimaryCta: () {},
+              onPromptSelected: (_) {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProVisibilityLiftCard.test(
+              result: ProVisibilityLiftEngine.build(
+                surface: ProVisibilityLiftSurface.recordReady,
+                source: 'testing_archiveme',
+                entryCount: _entries.isEmpty ? 3 : _entries.length,
+                isPro: false,
+                hasUsefulProof: true,
+                confidenceLevel: ProofConfidenceLevel.useful,
+                feedbackState: ProofQualityFeedbackState.useful,
+                hasPaywallSeen: false,
+                hasFreshReturnAfterCorrection: false,
+                hasChangeAnchor: false,
+                isRecording: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                whatChangedQuestionActive: false,
+                patternReviewInboxHasActiveItems: false,
+              ),
+              onSeePro: () {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            PaywallCtaLiftBlock.test(
+              result: PaywallCtaLiftEngine.build(
+                source: PaywallSource.valueMoment,
+                analyticsSource: 'testing_archiveme',
+                isPro: false,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _BetaFeedbackCaptureTestingPanel(entries: _entries),
+            const SizedBox(height: AppSpacing.md),
+            BetaFeedbackCaptureCard.test(
+              result: BetaFeedbackCaptureEngine.build(
+                context: BetaFeedbackCaptureEngine.buildContext(
+                  surface: BetaFeedbackCaptureSurface.recordPostSave,
+                  source: 'testing_archiveme',
+                  entryCount: _entries.isEmpty ? 1 : _entries.length,
+                  betaMissionEnabled: true,
+                  isPostSave: true,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             const TestFlightMetricsDashboardCard(
               source: 'testing_archiveme',
               surface: 'testing_archiveme_screen',
@@ -359,6 +445,63 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _BetaFeedbackCaptureTestingPanel extends StatelessWidget {
+  const _BetaFeedbackCaptureTestingPanel({required this.entries});
+
+  final List<JournalEntry> entries;
+
+  @override
+  Widget build(BuildContext context) {
+    final latest = BetaFeedbackCaptureStore.latestAnsweredRecord;
+    final previewContext = BetaFeedbackCaptureEngine.buildContext(
+      surface: BetaFeedbackCaptureSurface.recordPostSave,
+      source: 'testing_archiveme',
+      entryCount: entries.isEmpty ? 1 : entries.length,
+      betaMissionEnabled: true,
+      isPostSave: true,
+    );
+    final unresolved = BetaFeedbackCaptureEngine.unresolvedRevenueQuestion(
+      context: previewContext,
+    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+
+    return Container(
+      key: const Key('testing_archiveme_beta_feedback_capture_panel'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Beta feedback capture',
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Latest moment: ${BetaFeedbackCaptureCopy.panelLatestMomentLabel(latest?.moment)}',
+            key: const Key('testing_archiveme_beta_feedback_capture_moment'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Latest answer: ${BetaFeedbackCaptureCopy.panelLatestAnswerLabel(moment: latest?.moment, answerId: latest?.answerId)}',
+            key: const Key('testing_archiveme_beta_feedback_capture_answer'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Unresolved revenue question: $unresolved',
+            key: const Key('testing_archiveme_beta_feedback_capture_unresolved'),
+            style: bodyStyle,
+          ),
+        ],
       ),
     );
   }

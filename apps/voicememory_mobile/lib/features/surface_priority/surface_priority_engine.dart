@@ -10,11 +10,13 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.firstSaveLift,
     SurfacePriorityCardKey.betaActivationPath,
     SurfacePriorityCardKey.threeMomentCompletion,
     SurfacePriorityCardKey.firstMomentCapture,
     SurfacePriorityCardKey.secondMomentReturn,
     SurfacePriorityCardKey.returnAfterProofStrengthened,
+    SurfacePriorityCardKey.returnAfterProofLiftV2,
     SurfacePriorityCardKey.returnAfterProof,
     SurfacePriorityCardKey.lowFrictionReturn,
     SurfacePriorityCardKey.whatToNoticeNext,
@@ -57,6 +59,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordProOrder = [
+    SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
@@ -65,6 +68,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _patternsProOrder = [
+    SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
@@ -74,6 +78,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _postSaveProOrder = [
+    SurfacePriorityCardKey.proVisibilityLift,
     SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
@@ -184,6 +189,8 @@ abstract final class SurfacePriorityEngine {
       reason: SurfacePriorityCopy.hiddenReasonProCap,
     );
 
+    _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
+
     return _result(
       surface: SurfacePrioritySurface.recordReady,
       entryCount: entryCount,
@@ -250,7 +257,9 @@ abstract final class SurfacePriorityEngine {
       if (candidates.candidate(SurfacePriorityCardKey.betaInviteLoop)) {
         visible.add(SurfacePriorityCardKey.betaInviteLoop);
       }
-      if (candidates.candidate(
+      if (candidates.candidate(SurfacePriorityCardKey.returnAfterProofLiftV2)) {
+        visible.add(SurfacePriorityCardKey.returnAfterProofLiftV2);
+      } else if (candidates.candidate(
         SurfacePriorityCardKey.returnAfterProofStrengthened,
       )) {
         visible.add(SurfacePriorityCardKey.returnAfterProofStrengthened);
@@ -276,6 +285,8 @@ abstract final class SurfacePriorityEngine {
       hiddenReasons: hiddenReasons,
       reason: SurfacePriorityCopy.hiddenReasonProCap,
     );
+
+    _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
 
     return _result(
       surface: SurfacePrioritySurface.recordPostSave,
@@ -391,6 +402,8 @@ abstract final class SurfacePriorityEngine {
       reason: SurfacePriorityCopy.hiddenReasonProCap,
     );
 
+    _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
+
     return _result(
       surface: SurfacePrioritySurface.patterns,
       entryCount: entryCount,
@@ -422,9 +435,13 @@ abstract final class SurfacePriorityEngine {
     if (candidates.candidate(SurfacePriorityCardKey.paywallPrimaryReason)) {
       visible.add(SurfacePriorityCardKey.paywallPrimaryReason);
     }
+    if (candidates.candidate(SurfacePriorityCardKey.paywallCtaLift)) {
+      visible.add(SurfacePriorityCardKey.paywallCtaLift);
+    }
     if (candidates.candidate(SurfacePriorityCardKey.paywallSecondaryReason)) {
       hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPaywallDuplicateReason);
     }
+    _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
 
     return _result(
       surface: SurfacePrioritySurface.paywall,
@@ -499,6 +516,27 @@ abstract final class SurfacePriorityEngine {
       SurfacePriorityCardKey.betaTesterReport,
       candidate: true,
     );
+  }
+
+  static void _addBetaFeedbackCaptureIfAllowed(
+    SurfacePriorityCandidates candidates,
+    List<SurfacePriorityCardKey> visible,
+    List<String> hiddenReasons,
+  ) {
+    if (!candidates.candidate(SurfacePriorityCardKey.betaFeedbackCapture)) {
+      return;
+    }
+    if (candidates.candidate(SurfacePriorityCardKey.firstMomentCapture) ||
+        candidates.candidate(SurfacePriorityCardKey.threeMomentCompletion) ||
+        candidates.candidate(SurfacePriorityCardKey.secondMomentReturn)) {
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveGuidance);
+      return;
+    }
+    if (candidates.candidate(SurfacePriorityCardKey.whatChanged)) {
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins);
+      return;
+    }
+    visible.add(SurfacePriorityCardKey.betaFeedbackCapture);
   }
 
   static SurfacePriorityCardKey? _pickFirst(
