@@ -28,6 +28,20 @@ import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/beta/beta_feedback_summary_card.dart';
 import '../widgets/beta/testflight_metrics_dashboard_card.dart';
 import '../widgets/beta/beta_conversion_diagnosis_card.dart';
+import '../widgets/beta/revenue_readiness_dashboard_v2_card.dart';
+import '../widgets/beta/purchase_smoke_test_card.dart';
+import '../widgets/beta/pro_moment_timing_audit_v2_card.dart';
+import '../widgets/record/first_run_positioning_card.dart';
+import '../features/first_run_positioning/first_run_positioning_engine.dart';
+import '../features/pro_preview/pro_preview_engine.dart';
+import '../features/pro_preview/pro_preview_model.dart';
+import '../features/beta_invite/beta_invite_copy.dart';
+import '../features/beta_invite/beta_invite_engine.dart';
+import '../features/beta_invite/beta_invite_model.dart';
+import '../features/beta_activation_path/beta_activation_path_engine.dart';
+import '../widgets/beta/beta_activation_path_card.dart';
+import '../widgets/pro/pro_preview_card.dart';
+import '../widgets/beta/beta_invite_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Beta-only tester mission guide — steps, feedback question, and email feedback.
@@ -191,6 +205,69 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             BetaFeedbackSummaryCard(
               entries: _entries,
               summary: feedbackSummary,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FirstRunPositioningCard.test(
+              result: FirstRunPositioningEngine.build(
+                entryCount: _entries.length.clamp(0, 1),
+                source: 'testing_archiveme',
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const RevenueReadinessDashboardV2Card(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const PurchaseSmokeTestCard(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const ProMomentTimingAuditV2Card(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProPreviewCard.test(
+              result: ProPreviewEngine.build(
+                context: ProPreviewEngine.buildContext(
+                  surface: ProPreviewSurface.testing,
+                  source: 'testing_archiveme',
+                  entryCount: _entries.isEmpty ? 1 : _entries.length,
+                  isPro: false,
+                  dismissed: ProPreviewEngine.isDismissed(),
+                  entries: _entries,
+                  hasTimelineProofVisible: true,
+                  firstProofPayoffVisible: firstProofReached,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            BetaInviteCard.test(
+              result: const BetaInviteLoopResult(
+                shouldShow: true,
+                title: BetaInviteCopy.loopCardTitle,
+                body: BetaInviteCopy.loopCardBody,
+                cta: BetaInviteCopy.loopCta,
+                secondary: BetaInviteCopy.loopSecondary,
+                inviteText: BetaInviteCopy.loopInviteText,
+                source: 'testing_archiveme',
+                surface: BetaInviteLoopSurface.testing,
+                entryCount: 1,
+                trigger: BetaInviteLoopTrigger.usefulFeedback,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            BetaActivationPathCard.test(
+              result: BetaActivationPathEngine.build(
+                context: BetaActivationPathEngine.buildContext(
+                  source: 'testing_archiveme',
+                  entryCount: _entries.length,
+                  betaMissionEnabled: true,
+                ),
+              ),
+              showDiagnosis: true,
             ),
             const SizedBox(height: AppSpacing.md),
             const TestFlightMetricsDashboardCard(

@@ -31,6 +31,8 @@ import '../product/consumer_ui_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/first25/first25_user_metrics.dart';
 import '../features/revenue_metrics/revenue_funnel_analytics.dart';
+import '../features/paywall_objection_handling/paywall_objection_engine.dart';
+import '../features/paywall_objection_handling/paywall_objection_model.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_analytics.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import '../models/entitlement.dart';
@@ -42,6 +44,7 @@ import '../widgets/billing/paywall_objection_follow_up_card.dart';
 import '../widgets/billing/paywall_rejection_prompt.dart';
 import '../widgets/billing/plan_selection_confidence_block.dart';
 import '../widgets/paywall/purchase_confidence_card.dart';
+import '../widgets/pro/paywall_objection_section.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
@@ -129,6 +132,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
       source: _attributionSource.id,
       surface: 'paywall_screen',
     );
+  }
+
+  PaywallObjectionSectionResult get _paywallObjectionSectionResult =>
+      PaywallObjectionEngine.build(
+        source: widget.triggerArgs?.source,
+        surface: 'paywall_screen',
+      );
+
+  Widget _paywallObjectionSection() {
+    return PaywallObjectionSection(result: _paywallObjectionSectionResult);
   }
 
   Widget _paywallPrimaryValueBlock() {
@@ -804,6 +817,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           const SizedBox(height: 16),
           _proofPreviewSection(),
         ],
+        if (_paywallObjectionSectionResult.shouldShow) ...[
+          const SizedBox(height: 16),
+          _paywallObjectionSection(),
+        ],
         const SizedBox(height: 16),
         if (_showsPurchaseConfidenceCard) ...[
           _purchaseConfidenceSection(),
@@ -1078,6 +1095,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
             const SizedBox(height: 10),
             _paywallBackupLine(),
+            const SizedBox(height: 14),
+            _paywallObjectionSection(),
             const SizedBox(height: 20),
             _mockPlanCard(
               context: context,
@@ -1233,6 +1252,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 14),
             _longTermArchiveLine(),
+          ],
+          if (_paywallObjectionSectionResult.shouldShow) ...[
+            const SizedBox(height: 14),
+            _paywallObjectionSection(),
           ],
           const SizedBox(height: 24),
           ...orderedPaywallPlans(

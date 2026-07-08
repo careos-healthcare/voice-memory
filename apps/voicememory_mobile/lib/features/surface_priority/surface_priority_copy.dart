@@ -27,6 +27,8 @@ abstract final class SurfacePriorityCopy {
   static const hiddenReasonPatternsProBeforeTimeline =
       'patterns_pro_after_timeline';
   static const hiddenReasonPaywallDuplicateReason = 'paywall_one_paid_reason';
+  static const hiddenReasonFirstRunEducationCap =
+      'first_run_education_slot_blocked';
 
   static List<String> allVisibleStrings() => [
         coreRule,

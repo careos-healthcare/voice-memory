@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../beta/archive_beta_mission_gate.dart';
+import '../first_run_positioning/first_run_positioning_engine.dart';
 import 'surface_priority_copy.dart';
 import 'surface_priority_model.dart';
 
@@ -9,6 +10,7 @@ abstract final class SurfacePriorityEngine {
   SurfacePriorityEngine._();
 
   static const _guidanceOrder = [
+    SurfacePriorityCardKey.betaActivationPath,
     SurfacePriorityCardKey.threeMomentCompletion,
     SurfacePriorityCardKey.firstMomentCapture,
     SurfacePriorityCardKey.secondMomentReturn,
@@ -55,13 +57,15 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordProOrder = [
-    // Timing loosen v1: post-proof bridge wins the single Pro slot when eligible.
+    SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.privateReportProBridge,
+    SurfacePriorityCardKey.betaActivationPathRevenue,
   ];
 
   static const _patternsProOrder = [
+    SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.archiveIntelligenceProBridge,
@@ -70,6 +74,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _postSaveProOrder = [
+    SurfacePriorityCardKey.proPreview,
     SurfacePriorityCardKey.proBridgeVisibility,
     SurfacePriorityCardKey.proEvidenceValue,
     SurfacePriorityCardKey.proLockMoment,
@@ -96,6 +101,17 @@ abstract final class SurfacePriorityEngine {
       hiddenReasons: hiddenReasons,
       reason: SurfacePriorityCopy.hiddenReasonGuidanceCap,
     );
+
+    if (entryCount <= 1 &&
+        candidates.candidate(SurfacePriorityCardKey.firstRunPositioning) &&
+        FirstRunPositioningEngine.allowsEducationSlot(
+          guidanceSlot: guidanceSlot,
+        )) {
+      visible.add(SurfacePriorityCardKey.firstRunPositioning);
+    } else if (entryCount <= 1 &&
+        candidates.candidate(SurfacePriorityCardKey.firstRunPositioning)) {
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonFirstRunEducationCap);
+    }
 
     final proofSlot = _pickFirst(candidates, _recordProofOrder);
     if (proofSlot != null) {
@@ -231,6 +247,9 @@ abstract final class SurfacePriorityEngine {
       if (candidates.candidate(SurfacePriorityCardKey.betaProofLift)) {
         visible.add(SurfacePriorityCardKey.betaProofLift);
       }
+      if (candidates.candidate(SurfacePriorityCardKey.betaInviteLoop)) {
+        visible.add(SurfacePriorityCardKey.betaInviteLoop);
+      }
       if (candidates.candidate(
         SurfacePriorityCardKey.returnAfterProofStrengthened,
       )) {
@@ -335,6 +354,9 @@ abstract final class SurfacePriorityEngine {
 
     if (candidates.candidate(SurfacePriorityCardKey.betaTesterReport)) {
       visible.add(SurfacePriorityCardKey.betaTesterReport);
+    }
+    if (candidates.candidate(SurfacePriorityCardKey.betaInviteLoop)) {
+      visible.add(SurfacePriorityCardKey.betaInviteLoop);
     }
 
     final timelineVisible = visible.any(

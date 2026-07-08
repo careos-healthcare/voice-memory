@@ -67,6 +67,37 @@ abstract final class BetaInviteCopy {
       'Did you understand the app? Did it show anything useful by the third moment? '
       'Would you pay to keep the full timeline as it grows?';
 
+  static const loopCardTitle = 'Know one person who would test this?';
+  static const loopCardBody =
+      'ArchiveMe works best when someone saves a few real moments and comes back when something returns.';
+  static const loopCta = 'Copy beta invite';
+  static const loopSecondary = 'Not now';
+  static const loopInviteText =
+      'Want to test ArchiveMe? It is a private timeline app. You save small moments when something stands out, and it shows what returns, changes, or fades over time. No daily journal required.';
+  static const loopCopiedConfirmation = 'Beta invite copied';
+
+  static const loopBannedPrivateTerms = <String>[
+    'transcript',
+    'journal entry',
+    'private entry',
+    'your words',
+  ];
+
+  static const loopBannedEvidenceTerms = <String>[
+    'locked',
+    'testimonial',
+    'users say',
+  ];
+
+  static List<String> loopDisplayedStrings() => [
+        loopCardTitle,
+        loopCardBody,
+        loopCta,
+        loopSecondary,
+        loopInviteText,
+        loopCopiedConfirmation,
+      ];
+
   static String variantTitle(BetaInviteVariantId id) => switch (id) {
         BetaInviteVariantId.general => variantGeneralTitle,
         BetaInviteVariantId.workPatterns => variantWorkPatternsTitle,

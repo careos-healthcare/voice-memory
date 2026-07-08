@@ -24,6 +24,7 @@ import 'package:voicememory_mobile/features/archive_history/archive_history_copy
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
 import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
+import 'package:voicememory_mobile/features/first_run_positioning/first_run_positioning_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
@@ -65,6 +66,7 @@ import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/widgets/record/first_run_positioning_card.dart';
 import 'package:voicememory_mobile/widgets/record/record_screen_close_button.dart';
 
 import 'support/memory_pressure_stores.dart';
@@ -843,7 +845,15 @@ void main() {
       expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
       expect(find.textContaining('1 of 3'), findsOneWidget);
-      expect(find.textContaining('first proof'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('archive_journey_explainer_card_compact')),
+          matching: find.textContaining('first proof'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(FirstRunPositioningCard), findsOneWidget);
+      expect(find.text(FirstRunPositioningCopy.footer), findsOneWidget);
       for (final example in RecordFirstUsePromptCopy.examples) {
         expect(find.text(example), findsNothing);
       }
