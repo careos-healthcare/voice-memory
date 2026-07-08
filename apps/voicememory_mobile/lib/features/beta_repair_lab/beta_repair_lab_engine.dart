@@ -251,7 +251,9 @@ abstract final class BetaRepairLabEngine {
     );
   }
 
-  static bool isRepairLabOpeningCapture(FirstSessionCaptureRepairResult result) =>
+  static bool isRepairLabOpeningCapture(
+    FirstSessionCaptureRepairResult result,
+  ) =>
       result.title == BetaRepairLabCopy.openingTitle &&
       result.primaryCta == BetaRepairLabCopy.openingPrimaryCta;
 
