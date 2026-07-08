@@ -4,6 +4,7 @@ import '../../features/first_session_proof_repair/first_session_proof_repair_cop
 import '../../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../../features/beta_decision_rules/beta_decision_rule_model.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
+import '../../features/beta_fix_playbooks/beta_fix_playbook_engine.dart';
 import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_copy.dart';
 import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_model.dart';
 import '../../features/proof_floor_rescue/proof_floor_rescue_model.dart';
@@ -243,6 +244,8 @@ class _ValidationDecisionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playbook =
+        BetaFixPlaybookEngine.buildForOutcome(validationDecision.outcome);
     return Container(
       key: const Key('revenue_readiness_dashboard_v2_validation_decision'),
       padding: const EdgeInsets.all(10),
@@ -274,7 +277,7 @@ class _ValidationDecisionBlock extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            validationDecision.reason,
+            playbook.shouldShow ? playbook.diagnosis : validationDecision.reason,
             key: const Key(
               'revenue_readiness_dashboard_v2_validation_decision_reason',
             ),

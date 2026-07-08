@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../features/beta/archive_beta_mission_gate.dart';
+import '../../features/beta_fix_playbooks/beta_fix_playbook_copy.dart';
+import '../../features/beta_fix_playbooks/beta_fix_playbook_engine.dart';
 import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_copy.dart';
 import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_engine.dart';
 import '../../features/beta_validation_decision_matrix/beta_validation_decision_matrix_model.dart';
@@ -158,6 +160,18 @@ class _BetaValidationDecisionMatrixCardState
                   fontWeight: FontWeight.w700,
                 ),
           ),
+          if (BetaFixPlaybookEngine.hasPlaybook(result.outcome)) ...[
+            const SizedBox(height: 6),
+            Text(
+              BetaFixPlaybookCopy.cardTitle,
+              key: const Key('beta_validation_decision_matrix_playbook_hint'),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 12,
+                height: 1.35,
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerLeft,
