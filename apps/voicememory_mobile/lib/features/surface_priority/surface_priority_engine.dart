@@ -38,6 +38,7 @@ abstract final class SurfacePriorityEngine {
   ];
 
   static const _recordCorrectionOrder = [
+    SurfacePriorityCardKey.proofFloorRescue,
     SurfacePriorityCardKey.proofQualityRepair,
     SurfacePriorityCardKey.proofQualityResponse,
     SurfacePriorityCardKey.betaProofLift,
@@ -182,7 +183,7 @@ abstract final class SurfacePriorityEngine {
       }
     }
 
-    final proSlot = _pickFirst(candidates, _recordProOrder);
+    final proSlot = _pickProSlot(candidates, _recordProOrder);
     if (proSlot != null) {
       visible.add(proSlot);
     }
@@ -192,7 +193,9 @@ abstract final class SurfacePriorityEngine {
       winner: proSlot,
       visible: visible,
       hiddenReasons: hiddenReasons,
-      reason: SurfacePriorityCopy.hiddenReasonProCap,
+      reason: candidates.candidate(SurfacePriorityCardKey.proofFloorRescue)
+          ? SurfacePriorityCopy.hiddenReasonProofFloorBlocksPro
+          : SurfacePriorityCopy.hiddenReasonProCap,
     );
 
     _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
@@ -279,7 +282,7 @@ abstract final class SurfacePriorityEngine {
       );
     }
 
-    final proSlot = _pickFirst(candidates, _postSaveProOrder);
+    final proSlot = _pickProSlot(candidates, _postSaveProOrder);
     if (proSlot != null) {
       visible.add(proSlot);
     }
@@ -289,7 +292,9 @@ abstract final class SurfacePriorityEngine {
       winner: proSlot,
       visible: visible,
       hiddenReasons: hiddenReasons,
-      reason: SurfacePriorityCopy.hiddenReasonProCap,
+      reason: candidates.candidate(SurfacePriorityCardKey.proofFloorRescue)
+          ? SurfacePriorityCopy.hiddenReasonProofFloorBlocksPro
+          : SurfacePriorityCopy.hiddenReasonProCap,
     );
 
     _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
@@ -385,7 +390,7 @@ abstract final class SurfacePriorityEngine {
     );
 
     final proSlot = timelineVisible
-        ? _pickFirst(candidates, _patternsProOrder)
+        ? _pickProSlot(candidates, _patternsProOrder)
         : null;
     if (proSlot != null) {
       visible.add(proSlot);
@@ -405,7 +410,9 @@ abstract final class SurfacePriorityEngine {
       winner: proSlot,
       visible: visible,
       hiddenReasons: hiddenReasons,
-      reason: SurfacePriorityCopy.hiddenReasonProCap,
+      reason: candidates.candidate(SurfacePriorityCardKey.proofFloorRescue)
+          ? SurfacePriorityCopy.hiddenReasonProofFloorBlocksPro
+          : SurfacePriorityCopy.hiddenReasonProCap,
     );
 
     _addBetaFeedbackCaptureIfAllowed(candidates, visible, hiddenReasons);
@@ -543,6 +550,16 @@ abstract final class SurfacePriorityEngine {
       return;
     }
     visible.add(SurfacePriorityCardKey.betaFeedbackCapture);
+  }
+
+  static SurfacePriorityCardKey? _pickProSlot(
+    SurfacePriorityCandidates candidates,
+    List<SurfacePriorityCardKey> order,
+  ) {
+    if (candidates.candidate(SurfacePriorityCardKey.proofFloorRescue)) {
+      return null;
+    }
+    return _pickFirst(candidates, order);
   }
 
   static SurfacePriorityCardKey? _pickFirst(

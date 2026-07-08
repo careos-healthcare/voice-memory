@@ -10,6 +10,7 @@ import '../beta_decision_rules/beta_decision_rule_engine.dart';
 import '../first_session_proof_repair/first_session_proof_repair_engine.dart';
 import '../first_session_lift/first_session_lift_engine.dart';
 import '../pro_understanding_lift/pro_understanding_lift_engine.dart';
+import '../proof_floor_rescue/proof_floor_rescue_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'revenue_readiness_dashboard_v2_copy.dart';
@@ -146,6 +147,7 @@ abstract final class RevenueReadinessDashboardV2Engine {
       subtitle: RevenueReadinessDashboardV2Copy.subtitle,
       liftFocus: RevenueLiftExperimentV2Engine.resolveLiftFocus(input),
       repairFocus: FirstSessionProofRepairEngine.resolveRepairFocus(input),
+      proofFloorRescueFocus: ProofFloorRescueEngine.resolveRepairFocus(input),
       sections: [
         _captureSection(input, diagnosisActions),
         _proofSection(input, diagnosisActions),

@@ -4,6 +4,7 @@ import '../../features/first_session_proof_repair/first_session_proof_repair_cop
 import '../../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../../features/beta_decision_rules/beta_decision_rule_model.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
+import '../../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import '../../features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
@@ -96,7 +97,10 @@ class _RevenueReadinessDashboardV2CardState
             ),
           ),
           const SizedBox(height: 12),
-          _RepairFocusBlock(repairFocus: dashboard.repairFocus),
+          _RepairFocusBlock(
+            repairFocus: dashboard.repairFocus,
+            proofFloorRescueFocus: dashboard.proofFloorRescueFocus,
+          ),
           const SizedBox(height: 12),
           _LiftFocusBlock(liftFocus: dashboard.liftFocus),
           const SizedBox(height: 12),
@@ -124,12 +128,17 @@ class _RevenueReadinessDashboardV2CardState
 }
 
 class _RepairFocusBlock extends StatelessWidget {
-  const _RepairFocusBlock({required this.repairFocus});
+  const _RepairFocusBlock({
+    required this.repairFocus,
+    this.proofFloorRescueFocus,
+  });
 
   final FirstSessionProofRepairFocus repairFocus;
+  final ProofFloorRescueRepairFocus? proofFloorRescueFocus;
 
   @override
   Widget build(BuildContext context) {
+    final focus = proofFloorRescueFocus;
     return Container(
       key: const Key('revenue_readiness_dashboard_v2_repair_focus'),
       padding: const EdgeInsets.all(10),
@@ -149,7 +158,7 @@ class _RepairFocusBlock extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            repairFocus.label,
+            focus?.label ?? repairFocus.label,
             key: const Key('revenue_readiness_dashboard_v2_repair_focus_label'),
             style: const TextStyle(
               fontSize: 13,
@@ -157,6 +166,18 @@ class _RepairFocusBlock extends StatelessWidget {
               height: 1.35,
             ),
           ),
+          if (focus != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              focus.body,
+              key: const Key('revenue_readiness_dashboard_v2_proof_floor_body'),
+              style: const TextStyle(
+                fontSize: 12,
+                height: 1.35,
+                color: AppTheme.muted,
+              ),
+            ),
+          ],
         ],
       ),
     );

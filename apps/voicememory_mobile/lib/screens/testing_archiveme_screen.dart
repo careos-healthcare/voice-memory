@@ -49,6 +49,9 @@ import '../widgets/beta/beta_feedback_capture_card.dart';
 import '../features/first_session_proof_repair/first_session_proof_repair_copy.dart';
 import '../features/first_session_proof_repair/first_session_proof_repair_engine.dart';
 import '../features/first_session_proof_repair/first_session_proof_repair_model.dart';
+import '../features/proof_floor_rescue/proof_floor_rescue_copy.dart';
+import '../features/proof_floor_rescue/proof_floor_rescue_engine.dart';
+import '../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../features/first_session_lift/first_session_lift_engine.dart';
 import '../features/first_save_lift/first_save_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
@@ -63,6 +66,7 @@ import '../features/proof_quality_response/proof_quality_response_model.dart';
 import '../features/paywall_cta_lift/paywall_cta_lift_engine.dart';
 import '../billing/paywall_source.dart';
 import '../widgets/record/first_session_proof_repair_card.dart';
+import '../widgets/proof/proof_floor_rescue_card.dart';
 import '../widgets/record/first_session_lift_card.dart';
 import '../widgets/record/first_save_lift_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
@@ -311,6 +315,30 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             const SizedBox(height: AppSpacing.md),
             _FirstSessionProofRepairTestingPanel(
               entryCount: _entries.length,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _ProofFloorRescueTestingPanel(
+              entryCount: _entries.length,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProofFloorRescueCard.test(
+              result: ProofFloorRescueEngine.build(
+                input: ProofFloorRescueInput(
+                  entryCount: _entries.isEmpty ? 3 : _entries.length,
+                  source: 'testing_archiveme',
+                  isPro: false,
+                  hasTimelineProofVisible: true,
+                  hasConfirmedRepeat: _entries.length >= 3,
+                  confidenceLevel: ProofConfidenceLevel.watchOnly,
+                  hasSafeAnchor: false,
+                  hasLowMatchQuality: true,
+                  usefulFeedbackCount: 0,
+                  isRecording: false,
+                  isDegradedTranscriptState: false,
+                  whatChangedQuestionActive: false,
+                  patternReviewInboxHasActiveItems: false,
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             FirstSessionCaptureRepairCard.test(
@@ -613,6 +641,80 @@ class _FirstSessionProofRepairTestingPanel extends StatelessWidget {
           Text(
             'Current next fix: ${repairFocus.label}',
             key: const Key('first_session_proof_repair_next_fix'),
+            style: bodyStyle,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProofFloorRescueTestingPanel extends StatelessWidget {
+  const _ProofFloorRescueTestingPanel({required this.entryCount});
+
+  final int entryCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final input = ProofFloorRescueInput(
+      entryCount: entryCount >= 3 ? entryCount : 3,
+      source: 'testing_archiveme',
+      isPro: false,
+      hasTimelineProofVisible: entryCount >= 3,
+      hasConfirmedRepeat: entryCount >= 3,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasSafeAnchor: false,
+      hasLowMatchQuality: true,
+      usefulFeedbackCount: 0,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+    );
+    final state = ProofFloorRescueEngine.resolveState(input);
+    final blocksPro = ProofFloorRescueEngine.blocksProMonetization(input);
+    final proofSafe = ProofFloorRescueEngine.isProofSafeForMonetization(input);
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+      color: AppColors.textSecondary,
+    );
+
+    return Container(
+      key: const Key('proof_floor_rescue_testing_panel'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Proof floor rescue',
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'State: ${ProofFloorRescueEngine.stateStatusLabel(state)}',
+            key: const Key('proof_floor_rescue_state_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            ProofFloorRescueEngine.proBlockStatusLabel(blocked: blocksPro),
+            key: const Key('proof_floor_rescue_pro_block_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            ProofFloorRescueEngine.proofSafeStatusLabel(safe: proofSafe),
+            key: const Key('proof_floor_rescue_monetize_status'),
+            style: bodyStyle,
+          ),
+          Text(
+            'Repair focus: ${ProofFloorRescueEngine.resolveRepairFocus(
+              const RevenueReadinessDashboardV2Input(
+                testerCount: 10,
+                usefulCount: 1,
+              ),
+            )?.title ?? ProofFloorRescueCopy.dashboardFocusTitle}',
+            key: const Key('proof_floor_rescue_repair_focus'),
             style: bodyStyle,
           ),
         ],

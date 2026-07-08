@@ -15,6 +15,7 @@ abstract final class SurfacePriorityCopy {
   static const hiddenReasonReportWithMultipleProof =
       'report_with_multiple_proof';
   static const hiddenReasonProCap = 'pro_cap_one';
+  static const hiddenReasonProofFloorBlocksPro = 'proof_floor_rescue_blocks_pro';
   static const hiddenReasonPostSaveGuidance = 'post_save_no_guidance';
   static const hiddenReasonPostSaveFirstProofWins = 'post_save_first_proof_wins';
   static const hiddenReasonPostSaveWhatChangedWins =

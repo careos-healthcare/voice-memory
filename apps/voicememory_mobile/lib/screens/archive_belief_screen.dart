@@ -334,6 +334,8 @@ import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_store.dart';
+import '../features/proof_floor_rescue/proof_floor_rescue_engine.dart';
+import '../features/proof_floor_rescue/proof_floor_rescue_model.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_copy.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_engine.dart';
 import '../features/pro_visibility_lift/pro_visibility_lift_store.dart';
@@ -383,6 +385,7 @@ import '../widgets/beta/beta_invite_card.dart';
 import '../widgets/beta/beta_feedback_capture_card.dart';
 import '../widgets/pro/pro_bridge_visibility_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
+import '../widgets/proof/proof_floor_rescue_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
@@ -4819,7 +4822,45 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         surface: ProofQualityResponseSurface.patterns,
       );
-      final patternsProUnderstandingLiftVisible = showPatternsPostProofProBridge &&
+      final patternsProofFloorRescueInput = ProofFloorRescueEngine.inputFromStore(
+        entryCount: _entries.length,
+        source: 'archive_patterns',
+        isPro: _archiveIsPro,
+        hasTimelineProofVisible: showTimelineProofMomentOnPatterns &&
+            timelineProofMomentCandidate != null,
+        hasConfirmedRepeat:
+            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries),
+        confidenceLevel: patternsLoosenSignalsPreAudit.confidenceLevel ??
+            ProofConfidenceLevel.watchOnly,
+        hasSafeAnchor: patternsLoosenSignalsPreAudit.hasSafeAnchor,
+        hasLowMatchQuality: ProofFloorRescueEngine.resolveHasLowMatchQuality(
+          entries: _entries,
+          beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+          source: 'archive_patterns',
+          beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+        ),
+        isRecording: false,
+        isDegradedTranscriptState: false,
+        whatChangedQuestionActive: false,
+        patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
+      );
+      var showProofFloorRescueOnPatterns =
+          ProofFloorRescueEngine.shouldShowCard(
+        input: patternsProofFloorRescueInput,
+      );
+      final patternsProofFloorRescueResult = showProofFloorRescueOnPatterns
+          ? ProofFloorRescueEngine.build(input: patternsProofFloorRescueInput)
+          : ProofFloorRescueResult.hidden;
+      final blocksProByProofFloorOnPatterns =
+          ProofFloorRescueEngine.blocksProMonetization(
+        patternsProofFloorRescueInput,
+      );
+      if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
+        patternsProofFloorRescueInput,
+      )) {
+        showBetaProofLiftOnPatterns = false;
+      }
+      var patternsProUnderstandingLiftVisible = showPatternsPostProofProBridge &&
           !_archiveIsPro &&
           ProUnderstandingLiftEngine.shouldShowCard(
             input: ProUnderstandingLiftVisibilityInput(
@@ -4900,7 +4941,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               !patternsProEvidenceValueVisible &&
               !patternsProBridgeVisibilityVisible &&
               !patternsProUnderstandingLiftVisible &&
-              !patternsProVisibilityLiftVisible;
+              !patternsProVisibilityLiftVisible &&
+              !blocksProByProofFloorOnPatterns;
       final betaFeedbackCapturePatternsPreAudit =
           BetaFeedbackCaptureEngine.build(
         context: BetaFeedbackCaptureEngine.buildContext(
@@ -4949,10 +4991,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           presentDayRelevance: showPresentDayRelevanceOnPatterns &&
               presentDayRelevanceCandidate != null,
           timelinePositioning: showTimelinePositioningOnPatterns,
-          proPreview: patternsProPreviewVisible,
-          proUnderstandingLift: patternsProUnderstandingLiftVisible,
-          proVisibilityLift: patternsProVisibilityLiftVisible,
-          proBridgeVisibility: patternsProBridgeVisibilityVisible,
+          proPreview: patternsProPreviewVisible && !blocksProByProofFloorOnPatterns,
+          proUnderstandingLift:
+              patternsProUnderstandingLiftVisible && !blocksProByProofFloorOnPatterns,
+          proVisibilityLift:
+              patternsProVisibilityLiftVisible && !blocksProByProofFloorOnPatterns,
+          proBridgeVisibility:
+              patternsProBridgeVisibilityVisible && !blocksProByProofFloorOnPatterns,
+          proofFloorRescue: showProofFloorRescueOnPatterns ||
+              blocksProByProofFloorOnPatterns,
           betaInviteLoop: showBetaInviteLoopOnPatterns,
           proEvidenceValue: patternsProEvidenceValueVisible,
           archiveIntelligenceProBridge: patternsArchiveIntelligenceProBridgeVisible,
@@ -5516,27 +5563,42 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       surface: 'patterns',
                     ),
                   ],
-                  BetaProofFeedbackRow(
-                    surface: BetaProofFeedbackSurface.timelineProofMoment,
-                    source: 'patterns',
-                    entryCount: _entries.length,
-                    hasConfirmedRepeat:
-                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                      _entries,
+                  if (showProofFloorRescueOnPatterns &&
+                      patternsProofFloorRescueResult.shouldShow) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    ProofFloorRescueCard(
+                      result: patternsProofFloorRescueResult,
+                      onNotRelevantAnswered: () =>
+                          NotRelevantRecoveryEngine
+                              .syncBackgroundCorrectionIfNeeded(
+                        entries: _entries,
+                        source: 'patterns',
+                      ),
+                      onChanged: () => setState(() {}),
                     ),
-                    parentVisible: true,
-                    isRecording: false,
-                    isPostSaveDegraded: false,
-                    whatChangedQuestionActive: false,
-                    patternReviewInboxHasActiveItems:
-                        patternReviewInboxActiveOnPatterns,
-                    onNotRelevantAnswered: () =>
-                        NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                      entries: _entries,
+                  ] else ...[
+                    BetaProofFeedbackRow(
+                      surface: BetaProofFeedbackSurface.timelineProofMoment,
                       source: 'patterns',
+                      entryCount: _entries.length,
+                      hasConfirmedRepeat:
+                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                        _entries,
+                      ),
+                      parentVisible: true,
+                      isRecording: false,
+                      isPostSaveDegraded: false,
+                      whatChangedQuestionActive: false,
+                      patternReviewInboxHasActiveItems:
+                          patternReviewInboxActiveOnPatterns,
+                      onNotRelevantAnswered: () =>
+                          NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                        entries: _entries,
+                        source: 'patterns',
+                      ),
+                      onChanged: () => setState(() {}),
                     ),
-                    onChanged: () => setState(() {}),
-                  ),
+                  ],
                   if (showProofQualityResponseUnderTimelineProof) ...[
                     SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                     ProofQualityResponseCard(
