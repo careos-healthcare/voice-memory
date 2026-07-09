@@ -105,6 +105,18 @@ void main() {
       },
     );
 
+    test('build override activates paywallValue when beta mission is true', () {
+      BetaRepairLabStore.repairModeOverrideForTest = 'paywallValue';
+      expect(
+        BetaRepairLabStore.buildOverrideMode,
+        BetaRepairLabMode.paywallValue,
+      );
+      expect(
+        BetaRepairLabStore.buildOverrideActiveLabel,
+        'Build override active: Paywall value repair',
+      );
+    });
+
     test('build override ignored when beta mission is false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
       BetaRepairLabStore.repairModeOverrideForTest =

@@ -65,6 +65,7 @@ abstract final class BetaRepairLabCopy {
         BetaRepairLabMode.proPlacementAfterUsefulProof =>
           'Pro placement after useful proof',
         BetaRepairLabMode.proExplanation => 'Pro explanation',
+        BetaRepairLabMode.paywallValue => 'Paywall value repair',
       };
 
   static String modeFixes(BetaRepairLabMode mode) => switch (mode) {
@@ -77,6 +78,8 @@ abstract final class BetaRepairLabCopy {
           'Saw Pro after useful proof without stacking cards.',
         BetaRepairLabMode.proExplanation =>
           'Understands Pro after Pro is already visible.',
+        BetaRepairLabMode.paywallValue =>
+          'Paywall CTA tap after users understand Pro.',
       };
 
   static String modeWhenToUse(BetaRepairLabMode mode) => switch (mode) {
@@ -89,6 +92,8 @@ abstract final class BetaRepairLabCopy {
           'When proof and first-session pass but Saw Pro is low.',
         BetaRepairLabMode.proExplanation =>
           'When Saw Pro passes but Understands Pro is low.',
+        BetaRepairLabMode.paywallValue =>
+          'When Understands Pro passes but Paywall CTA tap is 0.',
       };
 
   static String modeChanges(BetaRepairLabMode mode) => switch (mode) {
@@ -101,6 +106,8 @@ abstract final class BetaRepairLabCopy {
           'One Pro card after useful proof only.',
         BetaRepairLabMode.proExplanation =>
           'Pro explanation copy only.',
+        BetaRepairLabMode.paywallValue =>
+          'One pre-paywall value card after useful proof only.',
       };
 
   static String modeDoNotTouch(BetaRepairLabMode mode) => switch (mode) {
@@ -113,6 +120,8 @@ abstract final class BetaRepairLabCopy {
           'Paywall copy, billing, placement before proof.',
         BetaRepairLabMode.proExplanation =>
           'Placement, purchase mechanics, pricing.',
+        BetaRepairLabMode.paywallValue =>
+          'Paywall screen, billing, pricing, proof thresholds.',
       };
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -175,5 +184,6 @@ extension BetaRepairLabModeAnalytics on BetaRepairLabMode {
         BetaRepairLabMode.proPlacementAfterUsefulProof =>
           'pro_placement_after_useful_proof',
         BetaRepairLabMode.proExplanation => 'pro_explanation',
+        BetaRepairLabMode.paywallValue => 'paywall_value',
       };
 }

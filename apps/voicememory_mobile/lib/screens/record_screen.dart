@@ -326,6 +326,8 @@ import '../features/beta_repair_lab/beta_repair_lab_model.dart';
 import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../features/pro_placement_trigger_audit/pro_placement_trigger_audit_engine.dart';
 import '../features/pro_placement_trigger_audit/pro_placement_trigger_audit_model.dart';
+import '../features/paywall_value_repair/paywall_value_repair_engine.dart';
+import '../features/paywall_value_repair/paywall_value_repair_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -371,6 +373,7 @@ import '../widgets/record/first_session_lift_card.dart';
 import '../widgets/record/first_session_proof_repair_card.dart';
 import '../widgets/proof/proof_floor_rescue_card.dart';
 import '../widgets/beta/beta_repair_lab_card.dart';
+import '../widgets/pro/paywall_value_repair_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
@@ -5536,6 +5539,11 @@ class _RecordScreenState extends State<RecordScreen> {
     final betaRepairLabProPlacementResult = showBetaRepairLabProPlacementOnRecord
         ? BetaRepairLabEngine.buildProPlacement(input: betaRepairLabInput)
         : BetaRepairLabProPlacementResult.hidden;
+    var showBetaRepairLabPaywallValueOnRecord =
+        PaywallValueRepairEngine.shouldShow(input: betaRepairLabInput);
+    final betaRepairLabPaywallValueResult = showBetaRepairLabPaywallValueOnRecord
+        ? PaywallValueRepairEngine.build(input: betaRepairLabInput)
+        : PaywallValueRepairResult.hidden;
     final hasProEngagementOnRecord = _betaActivationLoopCounts.paywallSeen > 0 ||
         _betaActivationLoopCounts.purchaseTapped > 0 ||
         _betaActivationLoopCounts.proBoundarySeen > 0;
@@ -5837,6 +5845,8 @@ class _RecordScreenState extends State<RecordScreen> {
       showProBridgeVisibilityOnRecordReady = false;
       showProEvidenceValueOnRecordReady = false;
       showProEvidenceValuePrivateReportOnRecord = false;
+      showBetaRepairLabProPlacementOnRecord = false;
+      showBetaRepairLabPaywallValueOnRecord = false;
     }
     if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
       proofFloorRescueInput,
@@ -5865,6 +5875,10 @@ class _RecordScreenState extends State<RecordScreen> {
         BetaRepairLabEngine.blocksOtherProCardsWhenPlacementRepairActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           showProPlacement: showBetaRepairLabProPlacementOnRecord,
+        ) ||
+        PaywallValueRepairEngine.blocksOtherProCardsWhenPaywallValueRepairActive(
+          betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+          showPaywallValue: showBetaRepairLabPaywallValueOnRecord,
         )) {
       showProUnderstandingLiftOnRecordReady = false;
       showProVisibilityLiftOnRecordReady = false;
@@ -6382,6 +6396,13 @@ class _RecordScreenState extends State<RecordScreen> {
             !showReturnAfterProofBelowProofOnRecord;
     final showProUnderstandingLiftBelowProofOnRecord =
         showProUnderstandingLiftOnRecordReady &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord ||
+                showReturnAfterProofLiftV2BelowProofOnRecord);
+    final showBetaRepairLabPaywallValueBelowProofOnRecord =
+        showBetaRepairLabPaywallValueOnRecord &&
+            betaRepairLabPaywallValueResult.shouldShow &&
             ((showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
@@ -8705,7 +8726,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showBetaRepairLabProPlacementBelowProofOnRecord) ...[
+                    if (showBetaRepairLabPaywallValueBelowProofOnRecord) ...[
+                      PaywallValueRepairCard(
+                        result: betaRepairLabPaywallValueResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_beta_repair_lab_paywall_value',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showBetaRepairLabProPlacementBelowProofOnRecord) ...[
                       BetaRepairLabProPlacementCard(
                         result: betaRepairLabProPlacementResult,
                         compact: proofSurfaceLayout.proBridgeCompact,

@@ -7,6 +7,7 @@ enum BetaRepairLabMode {
   proofSpecificityCaution,
   proPlacementAfterUsefulProof,
   proExplanation,
+  paywallValue,
 }
 
 enum BetaRepairLabProofVariant {
