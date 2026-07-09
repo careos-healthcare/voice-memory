@@ -66,6 +66,7 @@ abstract final class BetaRepairLabCopy {
           'Pro placement after useful proof',
         BetaRepairLabMode.proExplanation => 'Pro explanation',
         BetaRepairLabMode.paywallValue => 'Paywall value repair',
+        BetaRepairLabMode.pricingValueFraming => 'Pricing value framing',
       };
 
   static String modeFixes(BetaRepairLabMode mode) => switch (mode) {
@@ -80,6 +81,8 @@ abstract final class BetaRepairLabCopy {
           'Understands Pro after Pro is already visible.',
         BetaRepairLabMode.paywallValue =>
           'Paywall CTA tap after users understand Pro.',
+        BetaRepairLabMode.pricingValueFraming =>
+          'Would Pay after Paywall CTA tap is weak.',
       };
 
   static String modeWhenToUse(BetaRepairLabMode mode) => switch (mode) {
@@ -94,6 +97,8 @@ abstract final class BetaRepairLabCopy {
           'When Saw Pro passes but Understands Pro is low.',
         BetaRepairLabMode.paywallValue =>
           'When Understands Pro passes but Paywall CTA tap is 0.',
+        BetaRepairLabMode.pricingValueFraming =>
+          'When Paywall CTA tap improves but Would Pay stays weak.',
       };
 
   static String modeChanges(BetaRepairLabMode mode) => switch (mode) {
@@ -108,6 +113,8 @@ abstract final class BetaRepairLabCopy {
           'Pro explanation copy only.',
         BetaRepairLabMode.paywallValue =>
           'One pre-paywall value card after useful proof only.',
+        BetaRepairLabMode.pricingValueFraming =>
+          'One pricing value framing card after useful proof only.',
       };
 
   static String modeDoNotTouch(BetaRepairLabMode mode) => switch (mode) {
@@ -122,6 +129,8 @@ abstract final class BetaRepairLabCopy {
           'Placement, purchase mechanics, pricing.',
         BetaRepairLabMode.paywallValue =>
           'Paywall screen, billing, pricing, proof thresholds.',
+        BetaRepairLabMode.pricingValueFraming =>
+          'Paywall screen, billing, pricing, purchase mechanics.',
       };
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -185,5 +194,6 @@ extension BetaRepairLabModeAnalytics on BetaRepairLabMode {
           'pro_placement_after_useful_proof',
         BetaRepairLabMode.proExplanation => 'pro_explanation',
         BetaRepairLabMode.paywallValue => 'paywall_value',
+        BetaRepairLabMode.pricingValueFraming => 'pricing_value_framing',
       };
 }

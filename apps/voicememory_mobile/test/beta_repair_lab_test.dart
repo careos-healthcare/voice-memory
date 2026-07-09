@@ -117,6 +117,19 @@ void main() {
       );
     });
 
+    test('build override activates pricingValueFraming when beta mission is true',
+        () {
+      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValueFraming';
+      expect(
+        BetaRepairLabStore.buildOverrideMode,
+        BetaRepairLabMode.pricingValueFraming,
+      );
+      expect(
+        BetaRepairLabStore.buildOverrideActiveLabel,
+        'Build override active: Pricing value framing',
+      );
+    });
+
     test('build override ignored when beta mission is false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
       BetaRepairLabStore.repairModeOverrideForTest =
