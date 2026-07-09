@@ -129,8 +129,13 @@ abstract final class BetaProofLiftEngine {
       level: proofConfidenceCalibration.level,
     );
 
+    final shouldShow = ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
+      calibration: proofConfidenceCalibration,
+      hasSafeAnchor: hasSafeAnchor,
+    );
+
     return BetaProofLiftResult(
-      shouldShow: true,
+      shouldShow: shouldShow,
       entryCount: entries.length,
       source: source,
       surface: surface,
@@ -163,6 +168,11 @@ abstract final class BetaProofLiftEngine {
   }) {
     if (!ArchiveBetaMissionGate.isEnabled) return false;
     if (!result.shouldShow) return false;
+    if (!result.hasSafeAnchor ||
+        !result.proofConfidenceCalibration.isProofLevel ||
+        result.proofConfidenceCalibration.isWatchOnly) {
+      return false;
+    }
     if (!parentVisible) return false;
     if (isRecording) return false;
     if (isDegradedTranscriptState) return false;

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/archive_timeline_spine/archive_timeline_spine_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_model.dart';
@@ -449,6 +450,14 @@ void main() {
   });
 
   group('Downstream integration', () {
+    setUp(() {
+      ArchiveBetaMissionGate.enabledOverride = false;
+    });
+
+    tearDown(() {
+      ArchiveBetaMissionGate.resetForTest();
+    });
+
     test('TimelineProofMoment uses guarded level', () {
       final entries = _threeRelatedEntries();
       final spine = ArchiveTimelineSpineEngine.build(

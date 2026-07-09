@@ -114,8 +114,9 @@ abstract final class PatternMatchQualityEngine {
       hasSafeAnchorInline: hasSafeAnchorInline,
     );
     final confidenceBand = _resolveBand(score);
-    final shouldShowAsProof = confidenceBand == PatternMatchConfidenceBand.solid ||
-        confidenceBand == PatternMatchConfidenceBand.strong;
+    final shouldShowAsProof = hasSafeAnchorInline &&
+        (confidenceBand == PatternMatchConfidenceBand.solid ||
+            confidenceBand == PatternMatchConfidenceBand.strong);
     final shouldShowAsWatchOnly =
         confidenceBand == PatternMatchConfidenceBand.weak ||
         weakReasons.contains(PatternMatchWeakReason.userMarkedNotRelevant) ||

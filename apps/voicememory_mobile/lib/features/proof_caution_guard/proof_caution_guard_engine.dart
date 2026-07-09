@@ -230,7 +230,9 @@ abstract final class ProofCautionGuardEngine {
           hasConfirmedRepeat;
       if (!hasOverlapSignal) return null;
 
-      if (hasConfirmedRepeat && matchQuality.matchedDimensions.length >= 2) {
+      if (hasConfirmedRepeat &&
+          matchQuality.matchedDimensions.length >= 2 &&
+          matchQuality.shouldShowAsProof) {
         return (
           ProofConfidenceLevel.useful,
           true,

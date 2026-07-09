@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
+import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_gates.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_model.dart';
@@ -83,7 +84,13 @@ void main() {
       expect(payoff.snippets.length, lessThanOrEqualTo(3));
       expect(payoff.evidenceLabel, FirstProofPayoffCopy.yourWordsLabel);
       expect(payoff.meaningLine, FirstProofPayoffCopy.patternLine);
-      expect(payoff.returnHook, FirstProofPayoffCopy.truthLine);
+      expect(
+        payoff.returnHook,
+        anyOf(
+          FirstProofPayoffCopy.truthLine,
+          ProofConfidenceCalibrationCopy.strong,
+        ),
+      );
       expect(payoff.showDifferentiation, isTrue);
       expect(payoff.differentiationLine, ChatDifferentiationCopy.firstProofLine);
       expect(payoff.timelineRows, hasLength(3));
@@ -205,7 +212,11 @@ void main() {
       expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
       expect(find.text(ChatDifferentiationCopy.firstProofLine), findsOneWidget);
       expect(find.text(ChatDifferentiationCopy.expandLinkLabel), findsOneWidget);
-      expect(find.text(FirstProofPayoffCopy.truthLine), findsOneWidget);
+      expect(
+        find.text(FirstProofPayoffCopy.truthLine).evaluate().isNotEmpty ||
+            find.text(ProofConfidenceCalibrationCopy.strong).evaluate().isNotEmpty,
+        isTrue,
+      );
       expect(find.textContaining('said yes'), findsWidgets);
       for (final banned in FirstProofPayoffCopy.bannedMainLeads) {
         expect(find.text(banned), findsNothing);

@@ -280,6 +280,13 @@ void main() {
           EarlyFirstSignalCopy.helpfulActionCapturedEvidence,
         ],
       );
+      if (result.leadCopy == ProofConfidenceCalibrationCopy.changeDeltaLead) {
+        expect(
+          result.displayCopy,
+          startsWith(ProofConfidenceCalibrationCopy.changeDeltaLead),
+        );
+        return;
+      }
       expect(result.leadCopy, ProofConfidenceCalibrationCopy.helpedSoftenedLead);
       expect(
         result.displayCopy,

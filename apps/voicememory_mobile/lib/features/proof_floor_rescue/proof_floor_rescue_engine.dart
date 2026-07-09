@@ -189,11 +189,16 @@ abstract final class ProofFloorRescueEngine {
 
   static bool _isStrongUsefulProof(ProofFloorRescueInput input) {
     return input.latestFeedbackType == BetaProofFeedbackType.useful &&
-        !_isWeakConfidence(input.confidenceLevel) &&
+        _isProofLevel(input.confidenceLevel) &&
         input.hasSafeAnchor &&
         !input.hasLowMatchQuality &&
         input.usefulFeedbackCount >= 1;
   }
+
+  static bool _isProofLevel(ProofConfidenceLevel level) =>
+      level == ProofConfidenceLevel.useful ||
+      level == ProofConfidenceLevel.strong ||
+      level == ProofConfidenceLevel.freshReturn;
 
   static bool _isWeakConfidence(ProofConfidenceLevel level) =>
       level == ProofConfidenceLevel.watchOnly ||

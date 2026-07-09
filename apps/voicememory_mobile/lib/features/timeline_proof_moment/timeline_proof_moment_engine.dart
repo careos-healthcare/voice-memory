@@ -136,8 +136,13 @@ abstract final class TimelineProofMomentEngine {
       level: proofConfidenceCalibration.level,
     );
 
+    final shouldShow = ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
+      calibration: proofConfidenceCalibration,
+      hasSafeAnchor: anchorExtraction.hasSafeAnchor,
+    );
+
     return TimelineProofMomentResult(
-      shouldShow: true,
+      shouldShow: shouldShow,
       entryCount: spine.entryCount,
       source: source,
       hasConfirmedRepeat: spine.hasConfirmedRepeat,
