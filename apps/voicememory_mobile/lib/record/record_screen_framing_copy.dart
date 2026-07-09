@@ -10,10 +10,9 @@ abstract class RecordScreenFramingCopy {
   static const String helperLine = '';
 
   /// True empty archive — count 0 only.
-  static const String emptyArchiveTitle =
-      'Your archive starts with one real moment.';
+  static const String emptyArchiveTitle = 'Record one real moment';
   static const String emptyArchiveBody =
-      'Three short moments unlock your first proof. No need to explain everything.';
+      'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.';
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
@@ -57,16 +56,14 @@ abstract final class RecordFirstUsePromptCopy {
   static const title = 'Record one real moment';
 
   static const body =
-      'Three short moments unlock your first proof. No need to explain everything — '
-      'just say what happened, what your mind said, or what you did next.';
+      'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.';
 
   static const examplesHeading = 'Examples';
 
   static const examples = [
-    'I checked again even though I knew it was fine',
-    'I avoided the message',
-    'I paused before replying',
-    'I felt calmer after walking outside',
+    'I kept checking even after I was done.',
+    'I avoided replying again.',
+    'I felt pressure before starting.',
   ];
 
   static const footer = '1 of 3 · Ten seconds is enough.';

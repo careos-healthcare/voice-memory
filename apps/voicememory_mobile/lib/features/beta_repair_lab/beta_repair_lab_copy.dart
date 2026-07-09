@@ -1,4 +1,6 @@
 import 'beta_repair_lab_model.dart';
+import '../beta_proof_feedback/beta_proof_feedback_copy.dart';
+import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 
 /// Beta repair lab copy — testing-only repair guidance and overrides.
 abstract final class BetaRepairLabCopy {
@@ -12,6 +14,8 @@ abstract final class BetaRepairLabCopy {
   static const guidanceOnlyNote =
       'Repairs only apply when beta mode is on and a mode is selected.';
   static const buildOverrideActivePrefix = 'Build override active:';
+  static const defaultBaselineActivePrefix = 'Default beta baseline active:';
+  static const defaultBaselineLabel = 'Proof protection';
   static const buildOverrideWarning =
       'This build is testing one repair mode. Do not compare it with mixed-mode testers.';
   static const activeModeLabel = 'Active repair';
@@ -36,11 +40,21 @@ abstract final class BetaRepairLabCopy {
   static const proofStrongBody =
       'ArchiveMe is showing this because the same kind of moment came back, '
       'not because one entry was important.';
-  static const proofFeedbackPrompt = 'Did this feel like a real connection?';
+  static const proofStrongWhyAppeared =
+      'Why this appeared: this pattern appeared across saved moments.';
+  static const proofFeedbackPrompt = 'Does this feel right?';
+  static const proofFeedbackYes = 'Yes';
+  static const proofFeedbackTooVague = 'Too vague';
+  static const proofFeedbackNotRelevant = 'Not relevant';
+  static const proofFeedbackTooVagueResponse =
+      'Got it. ArchiveMe will wait for clearer evidence before showing this again.';
+  static const proofFeedbackNotRelevantResponse =
+      'Got it. ArchiveMe will not treat this as a useful pattern.';
 
-  static const proPlacementTitle = 'Keep tracking this';
+  static const proPlacementTitle = 'Keep the longer trail';
   static const proPlacementBody =
-      'Free showed this first proof. Pro keeps watching what happens next.';
+      'Free shows the first useful proof. Pro keeps tracking whether this pattern '
+      'returns, changes, fades, or needs correcting.';
   static const proPlacementPrimaryCta = 'See Pro timeline';
   static const proPlacementSecondaryCta = 'Not now';
 
@@ -139,6 +153,8 @@ abstract final class BetaRepairLabCopy {
     yield warning;
     yield guidanceOnlyNote;
     yield buildOverrideActivePrefix;
+    yield defaultBaselineActivePrefix;
+    yield defaultBaselineLabel;
     yield buildOverrideWarning;
     yield activeModeLabel;
     yield noneLabel;
@@ -155,7 +171,13 @@ abstract final class BetaRepairLabCopy {
     yield proofWeakBody;
     yield proofStrongTitle;
     yield proofStrongBody;
+    yield proofStrongWhyAppeared;
     yield proofFeedbackPrompt;
+    yield proofFeedbackYes;
+    yield proofFeedbackTooVague;
+    yield proofFeedbackNotRelevant;
+    yield proofFeedbackTooVagueResponse;
+    yield proofFeedbackNotRelevantResponse;
     yield proPlacementTitle;
     yield proPlacementBody;
     yield proPlacementPrimaryCta;
@@ -175,6 +197,30 @@ abstract final class BetaRepairLabCopy {
       yield modeDoNotTouch(mode);
     }
   }
+}
+
+extension BetaRepairLabProofFeedbackCopy on BetaRepairLabCopy {
+  static const feedbackTypes = [
+    BetaProofFeedbackType.useful,
+    BetaProofFeedbackType.tooVague,
+    BetaProofFeedbackType.notRelevant,
+  ];
+
+  static String feedbackLabel(BetaProofFeedbackType type) => switch (type) {
+        BetaProofFeedbackType.useful => BetaRepairLabCopy.proofFeedbackYes,
+        BetaProofFeedbackType.tooVague => BetaRepairLabCopy.proofFeedbackTooVague,
+        BetaProofFeedbackType.notRelevant =>
+          BetaRepairLabCopy.proofFeedbackNotRelevant,
+        BetaProofFeedbackType.alreadyKnew => BetaProofFeedbackCopy.answerAlreadyKnew,
+      };
+
+  static String? feedbackResponse(BetaProofFeedbackType type) => switch (type) {
+        BetaProofFeedbackType.tooVague =>
+          BetaRepairLabCopy.proofFeedbackTooVagueResponse,
+        BetaProofFeedbackType.notRelevant =>
+          BetaRepairLabCopy.proofFeedbackNotRelevantResponse,
+        _ => null,
+      };
 }
 
 enum BetaRepairLabChipId {

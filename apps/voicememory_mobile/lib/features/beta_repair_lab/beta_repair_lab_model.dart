@@ -40,6 +40,7 @@ class BetaRepairLabProofResult {
     required this.variant,
     required this.title,
     required this.body,
+    required this.whyAppearedLine,
     required this.feedbackPrompt,
     required this.source,
     required this.entryCount,
@@ -50,6 +51,7 @@ class BetaRepairLabProofResult {
     variant: BetaRepairLabProofVariant.weak,
     title: '',
     body: '',
+    whyAppearedLine: '',
     feedbackPrompt: '',
     source: '',
     entryCount: 0,
@@ -59,6 +61,7 @@ class BetaRepairLabProofResult {
   final BetaRepairLabProofVariant variant;
   final String title;
   final String body;
+  final String whyAppearedLine;
   final String feedbackPrompt;
   final String source;
   final int entryCount;
@@ -137,7 +140,9 @@ class BetaRepairLabState {
     required this.activeModeLabel,
     required this.warning,
     required this.buildOverrideActive,
+    required this.defaultBaselineActive,
     this.buildOverrideLabel,
+    this.defaultBaselineStatusLabel,
   });
 
   final BetaRepairLabMode mode;
@@ -145,5 +150,7 @@ class BetaRepairLabState {
   final String activeModeLabel;
   final String warning;
   final bool buildOverrideActive;
+  final bool defaultBaselineActive;
   final String? buildOverrideLabel;
+  final String? defaultBaselineStatusLabel;
 }

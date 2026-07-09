@@ -104,9 +104,13 @@ void main() {
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
     });
 
-    test('invalid mode still falls back to none', () {
+    test('invalid mode still falls back to proof protection in beta', () {
       BetaRepairLabStore.repairModeOverrideForTest = 'not_a_mode';
       expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(
+        BetaRepairLabStore.activeMode,
+        BetaRepairLabMode.proofSpecificityCaution,
+      );
     });
   });
 

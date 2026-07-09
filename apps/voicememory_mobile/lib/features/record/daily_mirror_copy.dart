@@ -7,8 +7,8 @@ abstract class DailyMirrorCopy {
       'ArchiveMe watches what repeats across your own words.';
   static const String emptyCardTitle = 'Your archive is empty';
   static const String emptyCardBody =
-      'Record short moments. ArchiveMe watches what repeats.';
-  static const String emptyPrimaryCta = 'Record one moment';
+      'Record a few real moments. ArchiveMe will look for what repeats across them.';
+  static const String emptyPrimaryCta = 'Record moment';
 
   static const String heardHeroTitle = 'Archive started';
   static const String heardHeroBody =

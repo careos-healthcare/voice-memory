@@ -30,7 +30,7 @@ abstract class ConsumerUiCopy {
   static const String archiveTimelineSubtitle =
       'See how this has changed over time.';
   static const String patternsEarlyStateBody =
-      'Patterns appear after ArchiveMe has something to compare.';
+      'Record a few real moments. ArchiveMe will look for what repeats across them.';
   static const String onboardingPositioningHeadline =
       LandingAppContinuityCopy.hero;
   static const String onboardingPositioningBody =
@@ -172,8 +172,7 @@ abstract class ConsumerUiCopy {
   static const String patternsWorthNoticingHeading = 'SOMETHING WORTH NOTICING';
   static const String patternsRecordCta = 'Record another moment';
 
-  static const String patternsEmptyPageTitle =
-      'Your archive starts with one real moment.';
+  static const String patternsEmptyPageTitle = 'Record a few real moments';
   static const String patternsEmptyPageBody =
       VisibleArchiveProofCopy.patternsMindMapEmptyBody;
   static const String patternsFirstEntrySavedTitle =
@@ -197,7 +196,7 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptySubtitle = patternsEarlyStateBody;
   static const String patternsHeroCardTitle = patternsEmptyPageTitle;
   static const String patternsHeroCardBody = patternsEarlyStateBody;
-  static const String patternsEmptyCta = 'Save your first moment';
+  static const String patternsEmptyCta = 'Record moment';
   static const String patternsExamplesLead =
       'Examples of patterns you may notice later';
   static const List<String> patternsScreenshotExamples = [
@@ -621,16 +620,15 @@ abstract class ConsumerUiCopy {
   static const String narrativeShifting = 'This pattern is shifting';
 
   // ——— Legacy empty / progress surfaces (still reachable) ———
-  static const String progressEmptyTitle =
-      'Your archive starts with one real moment.';
+  static const String progressEmptyTitle = 'Record a few real moments';
   static const String progressEmptyBody =
-      'Three short moments unlock your first proof.';
+      'ArchiveMe will look for what repeats across them.';
   static const String needMoreReflectionsTitle = 'A few more moments help';
   static const String needMoreReflectionsBody =
-      'ArchiveMe needs similar moments before it can compare what repeats.';
-  static const String searchIdleTitle = 'Search your reflections';
+      'Record a few real moments. ArchiveMe will look for what repeats across them.';
+  static const String searchIdleTitle = 'Search your moments';
   static const String searchIdleBody =
-      'Find moments and themes after you add reflections.';
+      'Find saved moments after you record a few real ones.';
   static const String needAnIdea = 'Need an idea?';
   static const String onboardingBeginCta = onboardingFinalCta;
   static const String archiveMeNoticedHeading = 'ARCHIVEME NOTICED';

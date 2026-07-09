@@ -216,15 +216,11 @@ void main() {
       expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
       expect(
         RecordFirstUsePromptCopy.body,
-        contains('first proof'),
-      );
-      expect(
-        RecordFirstUsePromptCopy.body.toLowerCase(),
-        anyOf(contains('no prompt needed'), contains('no need to explain')),
+        'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.',
       );
       expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
       expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
-      expect(RecordFirstUsePromptCopy.examples, hasLength(4));
+      expect(RecordFirstUsePromptCopy.examples, hasLength(3));
       for (final copy in [
         RecordFirstUsePromptCopy.title,
         RecordFirstUsePromptCopy.body,
@@ -233,6 +229,9 @@ void main() {
       ]) {
         expect(copy.toLowerCase(), isNot(contains('therapy')));
         expect(copy.toLowerCase(), isNot(contains('diagnosis')));
+        expect(copy.toLowerCase(), isNot(contains('journal')));
+        expect(copy.toLowerCase(), isNot(contains('coach')));
+        expect(copy.toLowerCase(), isNot(contains('advice')));
       }
     });
 
@@ -249,11 +248,13 @@ void main() {
     });
 
     test('empty and started copy match the clean first-load spec', () {
-      expect(RecordScreenFramingCopy.emptyArchiveTitle,
-          'Your archive starts with one real moment.');
+      expect(
+        RecordScreenFramingCopy.emptyArchiveTitle,
+        'Record one real moment',
+      );
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Three short moments unlock your first proof. No need to explain everything.',
+        'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.',
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveFootnote,
@@ -811,7 +812,7 @@ void main() {
       }
     }
 
-    testWidgets('first-use shows one voice-start CTA: Save one moment', (
+    testWidgets('first-use shows one voice-start CTA: Record moment', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
@@ -825,7 +826,6 @@ void main() {
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
@@ -878,7 +878,6 @@ void main() {
 
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
 

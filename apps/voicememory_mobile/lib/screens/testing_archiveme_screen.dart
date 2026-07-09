@@ -750,6 +750,14 @@ class _BetaRepairLabTestingPanel extends StatelessWidget {
               style: bodyStyle.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.xs),
+          ] else if (state.defaultBaselineActive &&
+              state.defaultBaselineStatusLabel != null) ...[
+            Text(
+              state.defaultBaselineStatusLabel!,
+              key: const Key('beta_repair_lab_testing_default_baseline'),
+              style: bodyStyle.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpacing.xs),
           ],
           Text(
             BetaRepairLabEngine.activeModeStatusLabel(),

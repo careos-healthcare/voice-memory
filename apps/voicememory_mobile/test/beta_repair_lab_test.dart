@@ -78,9 +78,24 @@ void main() {
   });
 
   group('BetaRepairLabBuildOverride', () {
-    test('default active mode is none without build override', () {
+    test('default active mode is proof protection baseline in beta mission', () {
+      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(
+        BetaRepairLabStore.activeMode,
+        BetaRepairLabMode.proofSpecificityCaution,
+      );
+      expect(BetaRepairLabStore.isDefaultBaselineActive, isTrue);
+      expect(
+        BetaRepairLabEngine.defaultBaselineStatusLabel(),
+        'Default beta baseline active: Proof protection',
+      );
+    });
+
+    test('default active mode is none outside beta mission', () {
+      ArchiveBetaMissionGate.enabledOverride = false;
       expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
+      expect(BetaRepairLabStore.isDefaultBaselineActive, isFalse);
     });
 
     test(
@@ -138,7 +153,18 @@ void main() {
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
     });
 
-    test('invalid build override falls back to none', () {
+    test('invalid build override falls back to proof protection in beta', () {
+      BetaRepairLabStore.repairModeOverrideForTest = 'not_a_real_repair_mode';
+      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+      expect(
+        BetaRepairLabStore.activeMode,
+        BetaRepairLabMode.proofSpecificityCaution,
+      );
+      expect(BetaRepairLabStore.isDefaultBaselineActive, isTrue);
+    });
+
+    test('invalid build override falls back to none outside beta', () {
+      ArchiveBetaMissionGate.enabledOverride = false;
       BetaRepairLabStore.repairModeOverrideForTest = 'not_a_real_repair_mode';
       expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
@@ -169,11 +195,22 @@ void main() {
       );
       final state = BetaRepairLabEngine.currentState();
       expect(state.buildOverrideActive, isTrue);
+      expect(state.defaultBaselineActive, isFalse);
       expect(
         state.buildOverrideLabel,
         'Build override active: Pro placement after useful proof',
       );
       expect(state.warning, BetaRepairLabCopy.buildOverrideWarning);
+    });
+
+    test('testing screen default baseline label', () {
+      final state = BetaRepairLabEngine.currentState();
+      expect(state.buildOverrideActive, isFalse);
+      expect(state.defaultBaselineActive, isTrue);
+      expect(
+        state.defaultBaselineStatusLabel,
+        'Default beta baseline active: Proof protection',
+      );
     });
   });
 
@@ -244,6 +281,23 @@ void main() {
   });
 
   group('BetaRepairLabEngine proof repair', () {
+    test('proof protection baseline active without explicit selection', () {
+      expect(
+        BetaRepairLabEngine.isRepairActive(
+          BetaRepairLabMode.proofSpecificityCaution,
+        ),
+        isTrue,
+      );
+      final result = BetaRepairLabEngine.buildProof(
+        input: _input(
+          mode: BetaRepairLabMode.proofSpecificityCaution,
+          confidenceLevel: ProofConfidenceLevel.watchOnly,
+        ),
+      );
+      expect(result.shouldShow, isTrue);
+      expect(result.title, BetaRepairLabCopy.proofWeakTitle);
+    });
+
     test('changes weak proof copy only when active', () {
       BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.proofSpecificityCaution,
@@ -257,6 +311,22 @@ void main() {
       expect(result.shouldShow, isTrue);
       expect(result.title, BetaRepairLabCopy.proofWeakTitle);
       expect(result.body, BetaRepairLabCopy.proofWeakBody);
+      expect(result.feedbackPrompt, BetaRepairLabCopy.proofFeedbackPrompt);
+      expect(result.whyAppearedLine, isEmpty);
+    });
+
+    test('strong proof includes why appeared line', () {
+      BetaRepairLabStore.setModeForTest(
+        BetaRepairLabMode.proofSpecificityCaution,
+      );
+      final result = BetaRepairLabEngine.buildProof(
+        input: _input(
+          mode: BetaRepairLabMode.proofSpecificityCaution,
+          confidenceLevel: ProofConfidenceLevel.strong,
+          feedbackType: BetaProofFeedbackType.useful,
+        ),
+      );
+      expect(result.whyAppearedLine, BetaRepairLabCopy.proofStrongWhyAppeared);
     });
 
     test('does not change proof thresholds', () {
@@ -287,6 +357,37 @@ void main() {
       );
     });
 
+    test('blocks Pro after weak proof with default baseline', () {
+      expect(
+        BetaRepairLabEngine.blocksProWhenProofProtectionActive(
+          input: _input(
+            mode: BetaRepairLabMode.proofSpecificityCaution,
+            confidenceLevel: ProofConfidenceLevel.watchOnly,
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('blocks Pro after Too vague / Not relevant with default baseline', () {
+      for (final type in [
+        BetaProofFeedbackType.tooVague,
+        BetaProofFeedbackType.notRelevant,
+      ]) {
+        expect(
+          BetaRepairLabEngine.blocksProWhenProofProtectionActive(
+            input: _input(
+              mode: BetaRepairLabMode.proofSpecificityCaution,
+              confidenceLevel: ProofConfidenceLevel.strong,
+              feedbackType: type,
+              isNegativeFeedback: true,
+            ),
+          ),
+          isTrue,
+        );
+      }
+    });
+
     test('blocks Pro after weak proof', () {
       BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.proofSpecificityCaution,
@@ -305,7 +406,7 @@ void main() {
   });
 
   group('BetaRepairLabEngine pro placement repair', () {
-    test('shows Pro only after useful/strong proof', () {
+    test('Pro placement only after strong useful proof', () {
       BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.proPlacementAfterUsefulProof,
       );
@@ -318,16 +419,17 @@ void main() {
         ),
         isFalse,
       );
-      expect(
-        BetaRepairLabEngine.shouldShowProPlacement(
-          input: _input(
-            mode: BetaRepairLabMode.proPlacementAfterUsefulProof,
-            confidenceLevel: ProofConfidenceLevel.strong,
-            feedbackType: BetaProofFeedbackType.useful,
-          ),
+      final placement = BetaRepairLabEngine.buildProPlacement(
+        input: _input(
+          mode: BetaRepairLabMode.proPlacementAfterUsefulProof,
+          confidenceLevel: ProofConfidenceLevel.strong,
+          feedbackType: BetaProofFeedbackType.useful,
         ),
-        isTrue,
       );
+      expect(placement.shouldShow, isTrue);
+      expect(placement.title, BetaRepairLabCopy.proPlacementTitle);
+      expect(placement.body, BetaRepairLabCopy.proPlacementBody);
+      expect(placement.primaryCta, BetaRepairLabCopy.proPlacementPrimaryCta);
     });
 
     test('blocks Pro after Too vague / Not relevant', () {
@@ -405,17 +507,25 @@ void main() {
       );
     });
 
-    test('default mode behavior unchanged', () {
+    test('production default mode behavior unchanged when beta off', () {
+      ArchiveBetaMissionGate.enabledOverride = false;
       expect(BetaRepairLabStore.mode, BetaRepairLabMode.none);
+      expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
       expect(
         BetaRepairLabEngine.shouldShowProof(
-          input: _input(mode: BetaRepairLabMode.none),
+          input: _input(
+            mode: BetaRepairLabMode.none,
+            betaMissionEnabled: false,
+          ),
         ),
         isFalse,
       );
       expect(
         BetaRepairLabEngine.shouldShowProPlacement(
-          input: _input(mode: BetaRepairLabMode.none),
+          input: _input(
+            mode: BetaRepairLabMode.none,
+            betaMissionEnabled: false,
+          ),
         ),
         isFalse,
       );

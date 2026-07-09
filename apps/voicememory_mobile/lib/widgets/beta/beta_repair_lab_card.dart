@@ -243,12 +243,14 @@ class BetaRepairLabProofCard extends StatefulWidget {
 
 class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
   var _answered = false;
+  BetaProofFeedbackType? _selectedFeedback;
 
   @override
   void initState() {
     super.initState();
     if (widget.skipPrefsLoad) {
       _answered = widget.initialAnswered;
+      _selectedFeedback = widget.initialAnswerType;
       return;
     }
     unawaited(_load());
@@ -275,7 +277,10 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
       await widget.onNotRelevantAnswered?.call();
     }
     if (!mounted) return;
-    setState(() => _answered = true);
+    setState(() {
+      _answered = true;
+      _selectedFeedback = feedbackType;
+    });
     widget.onChanged?.call();
   }
 
@@ -309,6 +314,14 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
             key: const Key('beta_repair_lab_proof_body'),
             style: bodyStyle.copyWith(color: AppColors.textPrimary),
           ),
+          if (widget.result.whyAppearedLine.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              widget.result.whyAppearedLine,
+              key: const Key('beta_repair_lab_proof_why_appeared'),
+              style: bodyStyle,
+            ),
+          ],
           if (!_answered) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -324,7 +337,7 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
               children: [
-                for (final type in BetaProofFeedbackType.values)
+                for (final type in BetaRepairLabProofFeedbackCopy.feedbackTypes)
                   TextButton(
                     key: Key(
                       'beta_repair_lab_proof_option_${type.storageValue}',
@@ -334,9 +347,19 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
                       textStyle: const TextStyle(fontSize: 13),
                     ),
                     onPressed: () => unawaited(_selectAnswer(type)),
-                    child: Text(BetaProofFeedbackCopy.labelFor(type)),
+                    child: Text(BetaRepairLabProofFeedbackCopy.feedbackLabel(type)),
                   ),
               ],
+            ),
+          ] else if (_selectedFeedback != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              BetaRepairLabProofFeedbackCopy.feedbackResponse(_selectedFeedback!) ??
+                  BetaProofFeedbackCopy.thanksMessage,
+              key: Key(
+                'beta_repair_lab_proof_feedback_response_${_selectedFeedback!.storageValue}',
+              ),
+              style: bodyStyle,
             ),
           ],
         ],

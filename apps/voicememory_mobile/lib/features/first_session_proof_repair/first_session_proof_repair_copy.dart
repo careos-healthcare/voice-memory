@@ -59,11 +59,11 @@ abstract final class FirstSessionProofRepairCopy {
   static const proofNextStepUseful =
       'Good. ArchiveMe will watch whether this gets louder, softer, or fades.';
   static const proofNextStepTooVague =
-      'Thanks. ArchiveMe will be more careful and wait for clearer evidence.';
+      'Got it. ArchiveMe will wait for clearer evidence before showing this again.';
   static const proofNextStepAlreadyKnew =
       'Got it. ArchiveMe will look for what changed, not just what repeated.';
   static const proofNextStepNotRelevant =
-      'Thanks. ArchiveMe will reduce this thread and avoid forcing the pattern.';
+      'Got it. ArchiveMe will not treat this as a useful pattern.';
 
   static String proofNextStepFor(BetaProofFeedbackType type) => switch (type) {
         BetaProofFeedbackType.useful => proofNextStepUseful,

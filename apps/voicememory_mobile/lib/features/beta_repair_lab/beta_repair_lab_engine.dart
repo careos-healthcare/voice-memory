@@ -20,12 +20,17 @@ abstract final class BetaRepairLabEngine {
   static BetaRepairLabState currentState() {
     final active = BetaRepairLabStore.activeMode;
     final buildActive = BetaRepairLabStore.isBuildOverrideActive;
+    final baselineActive = BetaRepairLabStore.isDefaultBaselineActive;
     return BetaRepairLabState(
       mode: active,
       localMode: BetaRepairLabStore.localMode,
       activeModeLabel: BetaRepairLabCopy.modeLabel(active),
       buildOverrideActive: buildActive,
       buildOverrideLabel: BetaRepairLabStore.buildOverrideActiveLabel,
+      defaultBaselineActive: baselineActive,
+      defaultBaselineStatusLabel: baselineActive
+          ? defaultBaselineStatusLabel()
+          : null,
       warning: buildActive
           ? BetaRepairLabCopy.buildOverrideWarning
           : BetaRepairLabCopy.warning,
@@ -116,6 +121,9 @@ abstract final class BetaRepairLabEngine {
       body: variant == BetaRepairLabProofVariant.weak
           ? BetaRepairLabCopy.proofWeakBody
           : BetaRepairLabCopy.proofStrongBody,
+      whyAppearedLine: variant == BetaRepairLabProofVariant.strong
+          ? BetaRepairLabCopy.proofStrongWhyAppeared
+          : '',
       feedbackPrompt: BetaRepairLabCopy.proofFeedbackPrompt,
       source: input.source,
       entryCount: input.entryCount,
@@ -152,13 +160,25 @@ abstract final class BetaRepairLabEngine {
   static bool blocksProWhenProofRepairActive({
     required BetaRepairLabVisibilityInput input,
     required bool showProofRepair,
+  }) =>
+      blocksProWhenProofProtectionActive(input: input);
+
+  static bool blocksProWhenProofProtectionActive({
+    required BetaRepairLabVisibilityInput input,
   }) {
-    if (!showProofRepair) return false;
     if (!shouldShowLab(betaMissionEnabled: input.betaMissionEnabled)) {
       return false;
     }
     if (!isRepairActive(BetaRepairLabMode.proofSpecificityCaution)) {
       return false;
+    }
+    if (input.confidenceLevel == ProofConfidenceLevel.watchOnly ||
+        input.confidenceLevel == ProofConfidenceLevel.emerging) {
+      return true;
+    }
+    if (input.feedbackType == BetaProofFeedbackType.tooVague ||
+        input.feedbackType == BetaProofFeedbackType.notRelevant) {
+      return true;
     }
     if (_resolveProofVariant(input) == BetaRepairLabProofVariant.weak) {
       return true;
@@ -263,6 +283,10 @@ abstract final class BetaRepairLabEngine {
 
   static String activeModeStatusLabel() =>
       'Active repair: ${BetaRepairLabCopy.modeLabel(BetaRepairLabStore.activeMode)}';
+
+  static String defaultBaselineStatusLabel() =>
+      '${BetaRepairLabCopy.defaultBaselineActivePrefix} '
+      '${BetaRepairLabCopy.defaultBaselineLabel}';
 
   static String? buildOverrideStatusLabel() =>
       BetaRepairLabStore.buildOverrideActiveLabel;

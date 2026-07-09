@@ -13,6 +13,8 @@ abstract final class BetaRepairLabStore {
   static const prefsKey = 'betaRepairLabMode_v1';
   static const buildRepairModeDefineKey = 'ARCHIVEME_BETA_REPAIR_MODE';
 
+  static const defaultBetaBaselineMode = BetaRepairLabMode.proofSpecificityCaution;
+
   static const _repairModeFromEnvironment = String.fromEnvironment(
     buildRepairModeDefineKey,
     defaultValue: '',
@@ -29,20 +31,39 @@ abstract final class BetaRepairLabStore {
 
   static BetaRepairLabMode get localMode => _mode;
 
-  /// Effective repair mode: build override when beta mission is on, else local.
+  /// Effective repair mode: build override, local picker, or beta baseline.
   static BetaRepairLabMode get activeMode {
-    final override = buildOverrideMode;
-    if (override != BetaRepairLabMode.none) return override;
-    return _mode;
+    if (!ArchiveBetaMissionGate.isEnabled) return BetaRepairLabMode.none;
+    if (isBuildOverrideActive) return buildOverrideMode;
+    if (_hasInvalidExplicitBuildOverride) return defaultBetaBaselineMode;
+    if (_mode != BetaRepairLabMode.none) return _mode;
+    return defaultBetaBaselineMode;
   }
 
   static bool get isBuildOverrideActive =>
       buildOverrideMode != BetaRepairLabMode.none;
 
+  /// Valid explicit dart-define override only — empty/invalid do not count.
   static BetaRepairLabMode get buildOverrideMode {
     if (!ArchiveBetaMissionGate.isEnabled) return BetaRepairLabMode.none;
+    if (!_hasExplicitBuildRepairOverride) return BetaRepairLabMode.none;
     return parseBuildRepairMode(_rawBuildRepairMode);
   }
+
+  static bool get isDefaultBaselineActive {
+    if (!ArchiveBetaMissionGate.isEnabled) return false;
+    if (isBuildOverrideActive) return false;
+    return activeMode == defaultBetaBaselineMode;
+  }
+
+  static bool get _hasExplicitBuildRepairOverride {
+    final normalized = _rawBuildRepairMode.trim();
+    return normalized.isNotEmpty && normalized != BetaRepairLabMode.none.name;
+  }
+
+  static bool get _hasInvalidExplicitBuildOverride =>
+      _hasExplicitBuildRepairOverride &&
+      parseBuildRepairMode(_rawBuildRepairMode) == BetaRepairLabMode.none;
 
   static String get _rawBuildRepairMode =>
       repairModeOverrideForTest ?? _repairModeFromEnvironment;

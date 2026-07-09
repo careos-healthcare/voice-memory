@@ -19,10 +19,11 @@ abstract final class RevenueLiftExperimentV2Copy {
       'You have the first proof now. The next return shows whether it is getting louder, softer, or fading.';
 
   // D) Pro visibility sharpen
-  static const proVisibilityTitle = 'Keep the timeline behind this proof';
+  static const proVisibilityTitle = 'Keep the longer trail';
   static const proVisibilityBody =
-      'Free shows this first proof. Pro keeps the longer evidence trail as it returns, changes, or fades.';
-  static const proVisibilityPrimaryCta = 'See what Pro keeps';
+      'Free shows the first useful proof. Pro keeps tracking whether this pattern '
+      'returns, changes, fades, or needs correcting.';
+  static const proVisibilityPrimaryCta = 'See Pro timeline';
   static const proVisibilitySecondaryCta = 'Not now';
 
   // E) Paywall CTA sharpen

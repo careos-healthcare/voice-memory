@@ -60,12 +60,12 @@ void main() {
 
   group('ProVisibilityLiftCopy', () {
     test('uses compact pro bridge copy', () {
-      expect(ProVisibilityLiftCopy.title, 'Keep the timeline behind this proof');
+      expect(ProVisibilityLiftCopy.title, 'Keep the longer trail');
       expect(
         ProVisibilityLiftCopy.body,
-        'Free shows this first proof. Pro keeps the longer evidence trail as it returns, changes, or fades.',
+        'Free shows the first useful proof. Pro keeps tracking whether this pattern returns, changes, fades, or needs correcting.',
       );
-      expect(ProVisibilityLiftCopy.primaryCta, 'See what Pro keeps');
+      expect(ProVisibilityLiftCopy.primaryCta, 'See Pro timeline');
       expect(ProVisibilityLiftCopy.secondaryCta, 'Not now');
     });
   });

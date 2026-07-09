@@ -2,14 +2,16 @@
 abstract final class ProBridgeVisibilityCopy {
   ProBridgeVisibilityCopy._();
 
-  static const title = 'Keep the full timeline';
+  static const title = 'Keep the longer trail';
 
   static const body =
-      'Free shows this proof. Pro keeps the longer timeline as it grows.';
+      'Free shows the first useful proof. Pro keeps tracking whether this pattern '
+      'returns, changes, fades, or needs correcting.';
 
-  static const compactBody = 'Pro keeps the longer story.';
+  static const compactBody =
+      'Pro keeps tracking whether this pattern returns, changes, or fades.';
 
-  static const cta = 'See Pro';
+  static const cta = 'See Pro timeline';
 
   static const secondary = 'Not now';
 }
