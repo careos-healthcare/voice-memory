@@ -82,6 +82,8 @@ abstract final class BetaRepairLabCopy {
         BetaRepairLabMode.paywallValue => 'Paywall value repair',
         BetaRepairLabMode.pricingValueFraming => 'Pricing value framing',
         BetaRepairLabMode.pricingValidation => 'Pricing validation',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'Evidence trail timeline clarity',
       };
 
   static String modeFixes(BetaRepairLabMode mode) => switch (mode) {
@@ -100,6 +102,8 @@ abstract final class BetaRepairLabCopy {
           'Would Pay after Paywall CTA tap is weak.',
         BetaRepairLabMode.pricingValidation =>
           'Monthly price intent after Pro value moment.',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'Timeline clarity after useful proof before price changes.',
       };
 
   static String modeWhenToUse(BetaRepairLabMode mode) => switch (mode) {
@@ -118,6 +122,8 @@ abstract final class BetaRepairLabCopy {
           'When Paywall CTA tap improves but Would Pay stays weak.',
         BetaRepairLabMode.pricingValidation =>
           'When Paywall CTA / Would Pay stay weak after polish.',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'When pricing feedback says clarify timeline or evidence trail.',
       };
 
   static String modeChanges(BetaRepairLabMode mode) => switch (mode) {
@@ -136,6 +142,8 @@ abstract final class BetaRepairLabCopy {
           'One pricing value framing card after useful proof only.',
         BetaRepairLabMode.pricingValidation =>
           'One pricing validation card after useful proof only.',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'One evidence trail clarity card after useful proof only.',
       };
 
   static String modeDoNotTouch(BetaRepairLabMode mode) => switch (mode) {
@@ -154,6 +162,8 @@ abstract final class BetaRepairLabCopy {
           'Paywall screen, billing, pricing, purchase mechanics.',
         BetaRepairLabMode.pricingValidation =>
           'Paywall screen, billing, products, purchase mechanics.',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'Paywall screen, billing, pricing, purchase mechanics.',
       };
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -251,5 +261,7 @@ extension BetaRepairLabModeAnalytics on BetaRepairLabMode {
         BetaRepairLabMode.paywallValue => 'paywall_value',
         BetaRepairLabMode.pricingValueFraming => 'pricing_value_framing',
         BetaRepairLabMode.pricingValidation => 'pricing_validation',
+        BetaRepairLabMode.evidenceTrailTimelineClarity =>
+          'evidence_trail_timeline_clarity',
       };
 }

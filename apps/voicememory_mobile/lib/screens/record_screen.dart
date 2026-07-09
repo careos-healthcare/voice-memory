@@ -332,6 +332,8 @@ import '../features/pricing_value_framing/pricing_value_framing_engine.dart';
 import '../features/pricing_value_framing/pricing_value_framing_model.dart';
 import '../features/pricing_validation/pricing_validation_engine.dart';
 import '../features/pricing_validation/pricing_validation_model.dart';
+import '../features/evidence_trail_clarity/evidence_trail_clarity_engine.dart';
+import '../features/evidence_trail_clarity/evidence_trail_clarity_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -380,6 +382,7 @@ import '../widgets/beta/beta_repair_lab_card.dart';
 import '../widgets/pro/paywall_value_repair_card.dart';
 import '../widgets/pro/pricing_value_framing_card.dart';
 import '../widgets/pro/pricing_validation_card.dart';
+import '../widgets/pro/evidence_trail_clarity_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
@@ -5564,6 +5567,7 @@ class _RecordScreenState extends State<RecordScreen> {
       input: betaRepairLabInput,
       hasProEngagement: hasProEngagementOnRecord,
     );
+    var showBetaRepairLabEvidenceTrailClarityOnRecord = false;
     final betaRepairLabPricingValidationResult =
         showBetaRepairLabPricingValidationOnRecord
             ? PricingValidationEngine.build(
@@ -5873,6 +5877,7 @@ class _RecordScreenState extends State<RecordScreen> {
       showBetaRepairLabPaywallValueOnRecord = false;
       showBetaRepairLabPricingValueFramingOnRecord = false;
       showBetaRepairLabPricingValidationOnRecord = false;
+      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
     }
     if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
       proofFloorRescueInput,
@@ -5887,6 +5892,27 @@ class _RecordScreenState extends State<RecordScreen> {
     final betaRepairLabProofResult = showBetaRepairLabProofOnRecord
         ? BetaRepairLabEngine.buildProof(input: betaRepairLabInput)
         : BetaRepairLabProofResult.hidden;
+    final blocksProCardsByProofProtectionOnRecord =
+        BetaRepairLabEngine.blocksProWhenProofRepairActive(
+          input: betaRepairLabInput,
+          showProofRepair: showBetaRepairLabProofOnRecord,
+        );
+    showBetaRepairLabEvidenceTrailClarityOnRecord =
+        EvidenceTrailClarityEngine.shouldShow(
+      input: betaRepairLabInput,
+      hasSafeAnchor: recordLoosenSignalsPreAudit.hasSafeAnchor,
+      blocksProCards: blocksProByProofFloorOnRecord ||
+          blocksProCardsByProofProtectionOnRecord,
+    );
+    final betaRepairLabEvidenceTrailClarityResult =
+        showBetaRepairLabEvidenceTrailClarityOnRecord
+            ? EvidenceTrailClarityEngine.build(
+                input: betaRepairLabInput,
+                hasSafeAnchor: recordLoosenSignalsPreAudit.hasSafeAnchor,
+                blocksProCards: blocksProByProofFloorOnRecord ||
+                    blocksProCardsByProofProtectionOnRecord,
+              )
+            : EvidenceTrailClarityResult.hidden;
     if (BetaRepairLabEngine.suppressProofFloorRescueWhenProofRepairActive(
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
       showProofRepair: showBetaRepairLabProofOnRecord,
@@ -5914,6 +5940,12 @@ class _RecordScreenState extends State<RecordScreen> {
         PricingValidationEngine.blocksOtherProCardsWhenPricingValidationActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           showPricingValidation: showBetaRepairLabPricingValidationOnRecord,
+        ) ||
+        EvidenceTrailClarityEngine
+            .blocksOtherProCardsWhenEvidenceTrailClarityActive(
+          betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+          showEvidenceTrailClarity:
+              showBetaRepairLabEvidenceTrailClarityOnRecord,
         )) {
       showProUnderstandingLiftOnRecordReady = false;
       showProVisibilityLiftOnRecordReady = false;
@@ -6431,6 +6463,13 @@ class _RecordScreenState extends State<RecordScreen> {
             !showReturnAfterProofBelowProofOnRecord;
     final showProUnderstandingLiftBelowProofOnRecord =
         showProUnderstandingLiftOnRecordReady &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord ||
+                showReturnAfterProofLiftV2BelowProofOnRecord);
+    final showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord =
+        showBetaRepairLabEvidenceTrailClarityOnRecord &&
+            betaRepairLabEvidenceTrailClarityResult.shouldShow &&
             ((showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
@@ -8775,7 +8814,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showBetaRepairLabPricingValidationBelowProofOnRecord) ...[
+                    if (showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord) ...[
+                      EvidenceTrailClarityCard(
+                        result: betaRepairLabEvidenceTrailClarityResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource:
+                              'record_beta_repair_lab_evidence_trail_clarity',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showBetaRepairLabPricingValidationBelowProofOnRecord) ...[
                       PricingValidationCard(
                         result: betaRepairLabPricingValidationResult,
                         compact: proofSurfaceLayout.proBridgeCompact,

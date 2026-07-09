@@ -158,6 +158,21 @@ void main() {
       );
     });
 
+    test(
+        'build override activates evidenceTrailTimelineClarity when beta mission is true',
+        () {
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'evidenceTrailTimelineClarity';
+      expect(
+        BetaRepairLabStore.buildOverrideMode,
+        BetaRepairLabMode.evidenceTrailTimelineClarity,
+      );
+      expect(
+        BetaRepairLabStore.buildOverrideActiveLabel,
+        'Build override active: Evidence trail timeline clarity',
+      );
+    });
+
     test('build override ignored when beta mission is false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
       BetaRepairLabStore.repairModeOverrideForTest =

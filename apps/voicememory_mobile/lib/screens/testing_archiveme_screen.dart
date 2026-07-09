@@ -42,6 +42,9 @@ import '../features/pricing_value_framing/pricing_value_framing_model.dart';
 import '../widgets/pro/pricing_validation_card.dart';
 import '../features/pricing_validation/pricing_validation_copy.dart';
 import '../features/pricing_validation/pricing_validation_model.dart';
+import '../widgets/pro/evidence_trail_clarity_card.dart';
+import '../features/evidence_trail_clarity/evidence_trail_clarity_copy.dart';
+import '../features/evidence_trail_clarity/evidence_trail_clarity_model.dart';
 import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
 import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../widgets/beta/revenue_readiness_dashboard_v2_card.dart';
@@ -337,6 +340,25 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
                 entryCount: 4,
                 hasUsefulProof: true,
                 activeRepairMode: 'pricing_validation',
+              ),
+              onSeePro: () {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            EvidenceTrailClarityCard.test(
+              result: EvidenceTrailClarityResult(
+                shouldShow: true,
+                title: EvidenceTrailClarityCopy.title,
+                body: EvidenceTrailClarityCopy.body,
+                timelineRows: EvidenceTrailClarityCopy.timelineRows,
+                supportLine: EvidenceTrailClarityCopy.supportLine,
+                primaryCta: EvidenceTrailClarityCopy.primaryCta,
+                secondaryCta: EvidenceTrailClarityCopy.secondaryCta,
+                feedbackPrompt: EvidenceTrailClarityCopy.feedbackPrompt,
+                source: 'testing_archiveme',
+                entryCount: 4,
+                hasUsefulProof: true,
+                confidenceLevel: ProofConfidenceLevel.strong,
+                activeRepairMode: 'evidence_trail_timeline_clarity',
               ),
               onSeePro: () {},
             ),
