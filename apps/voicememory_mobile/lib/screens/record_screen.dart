@@ -330,6 +330,8 @@ import '../features/paywall_value_repair/paywall_value_repair_engine.dart';
 import '../features/paywall_value_repair/paywall_value_repair_model.dart';
 import '../features/pricing_value_framing/pricing_value_framing_engine.dart';
 import '../features/pricing_value_framing/pricing_value_framing_model.dart';
+import '../features/pricing_validation/pricing_validation_engine.dart';
+import '../features/pricing_validation/pricing_validation_model.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -377,6 +379,7 @@ import '../widgets/proof/proof_floor_rescue_card.dart';
 import '../widgets/beta/beta_repair_lab_card.dart';
 import '../widgets/pro/paywall_value_repair_card.dart';
 import '../widgets/pro/pricing_value_framing_card.dart';
+import '../widgets/pro/pricing_validation_card.dart';
 import '../widgets/record/return_after_proof_lift_v2_card.dart';
 import '../widgets/pro/pro_visibility_lift_card.dart';
 import '../widgets/pro/pro_understanding_lift_card.dart';
@@ -5556,6 +5559,18 @@ class _RecordScreenState extends State<RecordScreen> {
     final hasProEngagementOnRecord = _betaActivationLoopCounts.paywallSeen > 0 ||
         _betaActivationLoopCounts.purchaseTapped > 0 ||
         _betaActivationLoopCounts.proBoundarySeen > 0;
+    var showBetaRepairLabPricingValidationOnRecord =
+        PricingValidationEngine.shouldShow(
+      input: betaRepairLabInput,
+      hasProEngagement: hasProEngagementOnRecord,
+    );
+    final betaRepairLabPricingValidationResult =
+        showBetaRepairLabPricingValidationOnRecord
+            ? PricingValidationEngine.build(
+                input: betaRepairLabInput,
+                hasProEngagement: hasProEngagementOnRecord,
+              )
+            : PricingValidationResult.hidden;
     final proUnderstandingLiftRecordReadyInput = ProUnderstandingLiftVisibilityInput(
       surface: ProUnderstandingLiftSurface.recordReady,
       source: 'record_ready',
@@ -5857,6 +5872,7 @@ class _RecordScreenState extends State<RecordScreen> {
       showBetaRepairLabProPlacementOnRecord = false;
       showBetaRepairLabPaywallValueOnRecord = false;
       showBetaRepairLabPricingValueFramingOnRecord = false;
+      showBetaRepairLabPricingValidationOnRecord = false;
     }
     if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
       proofFloorRescueInput,
@@ -5894,6 +5910,10 @@ class _RecordScreenState extends State<RecordScreen> {
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           showPricingValueFraming:
               showBetaRepairLabPricingValueFramingOnRecord,
+        ) ||
+        PricingValidationEngine.blocksOtherProCardsWhenPricingValidationActive(
+          betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
+          showPricingValidation: showBetaRepairLabPricingValidationOnRecord,
         )) {
       showProUnderstandingLiftOnRecordReady = false;
       showProVisibilityLiftOnRecordReady = false;
@@ -6411,6 +6431,13 @@ class _RecordScreenState extends State<RecordScreen> {
             !showReturnAfterProofBelowProofOnRecord;
     final showProUnderstandingLiftBelowProofOnRecord =
         showProUnderstandingLiftOnRecordReady &&
+            ((showTimelineProofMomentOnRecord &&
+                    timelineProofMomentCandidate != null) ||
+                showBetaTesterReportOnRecord ||
+                showReturnAfterProofLiftV2BelowProofOnRecord);
+    final showBetaRepairLabPricingValidationBelowProofOnRecord =
+        showBetaRepairLabPricingValidationOnRecord &&
+            betaRepairLabPricingValidationResult.shouldShow &&
             ((showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null) ||
                 showBetaTesterReportOnRecord ||
@@ -8748,7 +8775,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showBetaRepairLabPricingValueFramingBelowProofOnRecord) ...[
+                    if (showBetaRepairLabPricingValidationBelowProofOnRecord) ...[
+                      PricingValidationCard(
+                        result: betaRepairLabPricingValidationResult,
+                        compact: proofSurfaceLayout.proBridgeCompact,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource:
+                              'record_beta_repair_lab_pricing_validation',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (showBetaRepairLabPricingValueFramingBelowProofOnRecord) ...[
                       PricingValueFramingCard(
                         result: betaRepairLabPricingValueFramingResult,
                         compact: proofSurfaceLayout.proBridgeCompact,

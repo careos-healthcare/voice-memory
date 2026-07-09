@@ -81,6 +81,7 @@ abstract final class BetaRepairLabCopy {
         BetaRepairLabMode.proExplanation => 'Pro explanation',
         BetaRepairLabMode.paywallValue => 'Paywall value repair',
         BetaRepairLabMode.pricingValueFraming => 'Pricing value framing',
+        BetaRepairLabMode.pricingValidation => 'Pricing validation',
       };
 
   static String modeFixes(BetaRepairLabMode mode) => switch (mode) {
@@ -97,6 +98,8 @@ abstract final class BetaRepairLabCopy {
           'Paywall CTA tap after users understand Pro.',
         BetaRepairLabMode.pricingValueFraming =>
           'Would Pay after Paywall CTA tap is weak.',
+        BetaRepairLabMode.pricingValidation =>
+          'Monthly price intent after Pro value moment.',
       };
 
   static String modeWhenToUse(BetaRepairLabMode mode) => switch (mode) {
@@ -113,6 +116,8 @@ abstract final class BetaRepairLabCopy {
           'When Understands Pro passes but Paywall CTA tap is 0.',
         BetaRepairLabMode.pricingValueFraming =>
           'When Paywall CTA tap improves but Would Pay stays weak.',
+        BetaRepairLabMode.pricingValidation =>
+          'When Paywall CTA / Would Pay stay weak after polish.',
       };
 
   static String modeChanges(BetaRepairLabMode mode) => switch (mode) {
@@ -129,6 +134,8 @@ abstract final class BetaRepairLabCopy {
           'One pre-paywall value card after useful proof only.',
         BetaRepairLabMode.pricingValueFraming =>
           'One pricing value framing card after useful proof only.',
+        BetaRepairLabMode.pricingValidation =>
+          'One pricing validation card after useful proof only.',
       };
 
   static String modeDoNotTouch(BetaRepairLabMode mode) => switch (mode) {
@@ -145,6 +152,8 @@ abstract final class BetaRepairLabCopy {
           'Paywall screen, billing, pricing, proof thresholds.',
         BetaRepairLabMode.pricingValueFraming =>
           'Paywall screen, billing, pricing, purchase mechanics.',
+        BetaRepairLabMode.pricingValidation =>
+          'Paywall screen, billing, products, purchase mechanics.',
       };
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -241,5 +250,6 @@ extension BetaRepairLabModeAnalytics on BetaRepairLabMode {
         BetaRepairLabMode.proExplanation => 'pro_explanation',
         BetaRepairLabMode.paywallValue => 'paywall_value',
         BetaRepairLabMode.pricingValueFraming => 'pricing_value_framing',
+        BetaRepairLabMode.pricingValidation => 'pricing_validation',
       };
 }

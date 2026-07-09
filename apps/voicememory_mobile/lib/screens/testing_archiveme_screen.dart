@@ -39,6 +39,9 @@ import '../features/paywall_value_repair/paywall_value_repair_model.dart';
 import '../widgets/pro/pricing_value_framing_card.dart';
 import '../features/pricing_value_framing/pricing_value_framing_copy.dart';
 import '../features/pricing_value_framing/pricing_value_framing_model.dart';
+import '../widgets/pro/pricing_validation_card.dart';
+import '../features/pricing_validation/pricing_validation_copy.dart';
+import '../features/pricing_validation/pricing_validation_model.dart';
 import '../features/beta_repair_lab/beta_repair_lab_engine.dart';
 import '../features/beta_repair_lab/beta_repair_lab_store.dart';
 import '../widgets/beta/revenue_readiness_dashboard_v2_card.dart';
@@ -317,6 +320,23 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
                 entryCount: 4,
                 hasUsefulProof: true,
                 activeRepairMode: 'pricing_value_framing',
+              ),
+              onSeePro: () {},
+            ),
+            const SizedBox(height: AppSpacing.md),
+            PricingValidationCard.test(
+              result: const PricingValidationResult(
+                shouldShow: true,
+                title: PricingValidationCopy.title,
+                body: PricingValidationCopy.body,
+                pricePrompt: PricingValidationCopy.pricePrompt,
+                reasonPrompt: PricingValidationCopy.reasonPrompt,
+                primaryCta: PricingValidationCopy.primaryCta,
+                secondaryCta: PricingValidationCopy.secondaryCta,
+                source: 'testing_archiveme',
+                entryCount: 4,
+                hasUsefulProof: true,
+                activeRepairMode: 'pricing_validation',
               ),
               onSeePro: () {},
             ),

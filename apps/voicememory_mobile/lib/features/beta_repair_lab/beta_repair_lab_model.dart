@@ -9,6 +9,7 @@ enum BetaRepairLabMode {
   proExplanation,
   paywallValue,
   pricingValueFraming,
+  pricingValidation,
 }
 
 enum BetaRepairLabProofVariant {

@@ -145,6 +145,19 @@ void main() {
       );
     });
 
+    test('build override activates pricingValidation when beta mission is true',
+        () {
+      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+      expect(
+        BetaRepairLabStore.buildOverrideMode,
+        BetaRepairLabMode.pricingValidation,
+      );
+      expect(
+        BetaRepairLabStore.buildOverrideActiveLabel,
+        'Build override active: Pricing validation',
+      );
+    });
+
     test('build override ignored when beta mission is false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
       BetaRepairLabStore.repairModeOverrideForTest =
