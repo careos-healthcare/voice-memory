@@ -299,6 +299,17 @@ abstract final class EvidenceAnchorEngine {
           : eligible;
       final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
       if (evidence.isStrong) {
+        final behaviorSpecific =
+            AnchorSpecificityGuard.behaviorSpecificPhraseFromEntries(foundation);
+        if (behaviorSpecific != null) {
+          add(
+            type: _typeForPhrase(behaviorSpecific),
+            summary: behaviorSpecific,
+            strength: 0.9,
+            recencyWeight: _recencyWeightForEntries(foundation, now),
+            sourceCount: foundation.length,
+          );
+        }
         for (final phrase in ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
           evidence.phrases,
           foundation,

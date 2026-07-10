@@ -1,8 +1,10 @@
+import '../../models/journal_entry.dart';
 import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../evidence_anchors/evidence_anchor_copy.dart';
 import '../evidence_anchors/evidence_anchor_model.dart';
 import '../evidence_weighting/evidence_weighting_copy.dart';
 import '../present_day_relevance/present_day_relevance_copy.dart';
+import '../timeline/timeline_entry_display.dart';
 
 /// Tightens anchor eligibility for proof-level surfaces — metadata-safe only.
 abstract final class AnchorSpecificityGuard {
@@ -49,6 +51,13 @@ abstract final class AnchorSpecificityGuard {
     'felt tired again',
     'felt pressure again',
     'not sure what changed',
+    'work stress',
+    'kept coming back',
+    'same pressure',
+    'before bed',
+    'before work',
+    'before starting',
+    'tired and unsure',
   };
 
   static const weakContextTerms = {
@@ -62,6 +71,11 @@ abstract final class AnchorSpecificityGuard {
     'felt',
     'pressure',
     'stress',
+    'unsettled',
+    'tired',
+    'unsure',
+    'busy',
+    'bed',
   };
 
   static const systemLikeTerms = {
@@ -82,6 +96,67 @@ abstract final class AnchorSpecificityGuard {
     'chatgpt',
   };
 
+  static const _vagueBehaviorPatterns = {
+    'checking again',
+    'avoiding again',
+    'putting it off again',
+    'put it off again',
+    're-reading again',
+    'rereading again',
+    'said yes again',
+    'replying later',
+    'waiting too long',
+    'kept checking',
+    'kept avoiding',
+    'kept delaying',
+    'no capacity',
+    'said yes',
+  };
+
+  static const _emotionalContextOnlyPatterns = {
+    'feeling pressure before work',
+    'stress after work again',
+    'felt unsettled today at the office',
+    'bad day with pressure again',
+    'work stress kept coming back',
+    'the same pressure at work',
+    'feeling tired and unsure again',
+    'busy day and same thing again',
+    'pressure before starting',
+    'stress before bed',
+  };
+
+  static const _behaviorSpecificPatterns = [
+    'checking the same message before sending',
+    'avoiding replying after feeling pressure',
+    're-reading the email before feeling done',
+    'putting off the same task after work pressure',
+    'said yes when i had no capacity for one more thing',
+    'checking the door twice before leaving',
+    'delaying the same invoice after opening it',
+    'rewriting the same reply before sending',
+  ];
+
+  static const _contextMarkers = {
+    'before sending',
+    'before leaving',
+    'after opening it',
+    'after feeling pressure',
+    'when i had no capacity',
+    'before feeling done',
+    'after work pressure',
+    'for one more thing',
+    'for one more ask',
+    'twice before',
+    'same message',
+    'same task',
+    'same reply',
+    'same invoice',
+    'same email',
+    'same door',
+    'same ask',
+  };
+
   static const _knownSystemCopy = {
     EvidenceAnchorCopy.fallbackSummary,
     EvidenceWeightingCopy.explanationFresh,
@@ -96,34 +171,6 @@ abstract final class AnchorSpecificityGuard {
     PresentDayRelevanceCopy.unclearStateBody,
   };
 
-  static const _concreteActionPatterns = [
-    'said yes again',
-    'said yes when',
-    'said yes',
-    'no capacity',
-    'checking the same message',
-    'checking the message',
-    'avoiding replying',
-    'avoided replying',
-    'avoided the message',
-    're-reading the email',
-    're-reading the',
-    're-reading',
-    'rereading',
-    'putting off the same task',
-    'putting off',
-    'put it off',
-    'before sending',
-    'after feeling pressure',
-    'after work pressure',
-    'before feeling done',
-    'same task',
-    'same message',
-    'same ask',
-    'one more thing',
-    'one more ask',
-  ];
-
   static const _strongActionVerbs = {
     'agreed',
     'asked',
@@ -131,9 +178,13 @@ abstract final class AnchorSpecificityGuard {
     'avoiding',
     'checked',
     'checking',
+    'delayed',
+    'delaying',
+    'kept',
     'paused',
     'replied',
     'replying',
+    'rewriting',
     'reread',
     'rereading',
     'reading',
@@ -141,6 +192,7 @@ abstract final class AnchorSpecificityGuard {
     'said',
     'stopped',
     'putting',
+    'waiting',
   };
 
   static const _concreteObjectHints = {
@@ -169,6 +221,23 @@ abstract final class AnchorSpecificityGuard {
     'boundary',
     'boundaries',
     'done',
+    'invoice',
+    'invoices',
+    'door',
+    'call',
+    'calls',
+    'form',
+    'forms',
+    'application',
+    'applications',
+    'document',
+    'documents',
+    'note',
+    'notes',
+    'plan',
+    'plans',
+    'decision',
+    'decisions',
   };
 
   static const _fillerWords = {
@@ -193,31 +262,114 @@ abstract final class AnchorSpecificityGuard {
     'with',
   };
 
-  static const _selfSufficientBoundaryPatterns = {
-    'said yes again',
-    'said yes when',
-    'said yes',
-    'no capacity',
-    'one more thing',
-    'one more ask',
-  };
-
   static bool isProofLevelEligible(String anchor) {
     final cleaned = anchor.replaceAll(RegExp(r'\s+'), ' ').trim();
     if (cleaned.isEmpty) return false;
     if (_isKnownSystemCopy(cleaned)) return false;
     if (isSystemLikeAnchor(cleaned)) return false;
+    if (isVagueBehaviorAnchor(cleaned)) return false;
+    if (isEmotionalContextOnlyAnchor(cleaned)) return false;
     if (isGenericAnchor(cleaned)) return false;
     if (isWeakContextOnly(cleaned)) return false;
-    if (hasGenericDensityTooHigh(cleaned) && !_hasConcreteActionAndObject(cleaned)) {
+    if (hasGenericDensityTooHigh(cleaned) && !isBehaviorSpecific(cleaned)) {
       return false;
     }
-    return hasPhraseSpecificity(cleaned);
+    return isBehaviorSpecific(cleaned);
   }
 
   static bool hasProofLevelSafeAnchor(EvidenceAnchorExtractionResult? extraction) {
     if (extraction == null || !extraction.shouldExtract) return false;
     return extraction.anchors.any((anchor) => anchor.isSafeForDisplay);
+  }
+
+  static String? behaviorSpecificPhraseFromEntries(List<JournalEntry> entries) =>
+      findBehaviorSpecificPhraseInTexts(
+        entries
+            .map(_entryText)
+            .where((text) => text.trim().isNotEmpty)
+            .toList(),
+      );
+
+  static String? findBehaviorSpecificPhraseInTexts(List<String> texts) {
+    if (texts.isEmpty) return null;
+    final lowerTexts = texts.map((text) => text.toLowerCase()).toList();
+    final ranked = [..._behaviorSpecificPatterns]
+      ..sort((a, b) => b.length.compareTo(a.length));
+    for (final pattern in ranked) {
+      if (!lowerTexts.any((text) => text.contains(pattern))) continue;
+      if (isProofLevelEligible(pattern)) return pattern;
+    }
+    return null;
+  }
+
+  static bool isVagueBehaviorAnchor(String anchor) {
+    final lower = anchor.trim().toLowerCase();
+    if (lower.isEmpty) return true;
+    if (_vagueBehaviorPatterns.contains(lower)) return true;
+    for (final pattern in _vagueBehaviorPatterns) {
+      if (lower == pattern) return true;
+      if (lower.contains(pattern) && !hasRecognizableContext(lower)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static bool isEmotionalContextOnlyAnchor(String anchor) {
+    final lower = anchor.trim().toLowerCase();
+    if (lower.isEmpty) return true;
+    for (final pattern in _emotionalContextOnlyPatterns) {
+      if (lower == pattern || lower.contains(pattern)) {
+        return !isBehaviorSpecific(lower);
+      }
+    }
+    if (!_hasStrongActionAndConcreteObject(lower)) {
+      final words = _words(lower);
+      final hasEmotionalOnly = words.any(
+        (word) =>
+            weakContextTerms.contains(word) || genericTerms.contains(word),
+      );
+      if (hasEmotionalOnly && !hasRecognizableContext(lower)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static bool isBehaviorSpecific(String anchor) {
+    final lower = anchor.trim().toLowerCase();
+    if (lower.isEmpty) return false;
+    if (!_hasStrongActionAndConcreteObject(lower)) return false;
+    if (!hasRecognizableContext(lower)) return false;
+    if (hasGenericDensityTooHigh(lower)) return false;
+
+    final contentWords =
+        _words(lower).where((word) => !_fillerWords.contains(word)).toList();
+    if (contentWords.isEmpty) return false;
+
+    final onlyWeakContext = contentWords.every(
+      (word) =>
+          weakContextTerms.contains(word) ||
+          genericTerms.contains(word) ||
+          word == 'busy',
+    );
+    return !onlyWeakContext;
+  }
+
+  static bool hasRecognizableContext(String anchor) {
+    final lower = anchor.trim().toLowerCase();
+    if (_contextMarkers.any(lower.contains)) return true;
+    if (_behaviorSpecificPatterns.any(lower.contains)) return true;
+    if (lower.contains('same ') &&
+        _hasConcreteObject(_words(lower)) &&
+        _words(lower).any(_matchesActionVerb)) {
+      return true;
+    }
+    if (lower.contains('capacity') &&
+        (lower.contains('one more') || lower.contains('when i had'))) {
+      return true;
+    }
+    return false;
   }
 
   static bool isGenericAnchor(String anchor) {
@@ -226,7 +378,9 @@ abstract final class AnchorSpecificityGuard {
 
     for (final term in genericTerms) {
       if (lower == term) return true;
-      if (term.contains(' ') && lower.contains(term) && !_hasConcreteActionAndObject(lower)) {
+      if (term.contains(' ') &&
+          lower.contains(term) &&
+          !isBehaviorSpecific(lower)) {
         return true;
       }
     }
@@ -234,7 +388,7 @@ abstract final class AnchorSpecificityGuard {
     for (final term
         in ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels) {
       if (lower == term || lower.contains(term)) {
-        if (!_hasConcreteActionAndObject(lower)) return true;
+        if (!isBehaviorSpecific(lower)) return true;
       }
     }
 
@@ -245,7 +399,7 @@ abstract final class AnchorSpecificityGuard {
     if (words.length <= 2 && words.every(genericTerms.contains)) {
       return true;
     }
-    if (hasGenericDensityTooHigh(lower) && !_hasConcreteActionAndObject(lower)) {
+    if (hasGenericDensityTooHigh(lower) && !isBehaviorSpecific(lower)) {
       return true;
     }
 
@@ -270,7 +424,7 @@ abstract final class AnchorSpecificityGuard {
   static bool isWeakContextOnly(String anchor) {
     final lower = anchor.trim().toLowerCase();
     if (lower.isEmpty) return true;
-    if (_hasStrongActionAndConcreteObject(lower)) return false;
+    if (isBehaviorSpecific(lower)) return false;
 
     final words = _words(lower);
     final contentWords =
@@ -303,52 +457,7 @@ abstract final class AnchorSpecificityGuard {
     return genericCount / words.length > maxGenericDensityRatio;
   }
 
-  static bool hasPhraseSpecificity(String anchor) {
-    final lower = anchor.trim().toLowerCase();
-    if (lower.isEmpty) return false;
-
-    if (_isSelfSufficientBoundaryPhrase(lower)) {
-      return !isWeakContextOnly(lower) && !isGenericAnchor(lower);
-    }
-
-    for (final pattern in _concreteActionPatterns) {
-      if (!lower.contains(pattern)) continue;
-      if (_selfSufficientBoundaryPatterns.contains(pattern)) {
-        return true;
-      }
-      if (_hasConcreteActionAndObject(lower)) {
-        return true;
-      }
-    }
-
-    return _hasConcreteActionAndObject(lower);
-  }
-
-  static bool _isSelfSufficientBoundaryPhrase(String lower) {
-    if (_selfSufficientBoundaryPatterns.contains(lower)) {
-      return true;
-    }
-    return _selfSufficientBoundaryPatterns.any(lower.contains);
-  }
-
-  static bool _hasConcreteActionAndObject(String anchor) {
-    final lower = anchor.trim().toLowerCase();
-    if (!_hasStrongActionAndConcreteObject(lower)) return false;
-    if (hasGenericDensityTooHigh(lower)) return false;
-
-    final words = _words(lower);
-    final contentWords =
-        words.where((word) => !_fillerWords.contains(word)).toList();
-    if (contentWords.isEmpty) return false;
-
-    final onlyWeakContext = contentWords.every(
-      (word) =>
-          weakContextTerms.contains(word) ||
-          genericTerms.contains(word) ||
-          word == 'busy',
-    );
-    return !onlyWeakContext;
-  }
+  static bool hasPhraseSpecificity(String anchor) => isBehaviorSpecific(anchor);
 
   static bool _hasStrongActionAndConcreteObject(String anchor) {
     final words = _words(anchor.trim().toLowerCase());
@@ -371,6 +480,12 @@ abstract final class AnchorSpecificityGuard {
 
   static List<String> _words(String lower) =>
       lower.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).toList();
+
+  static String _entryText(JournalEntry entry) {
+    final resolution = resolveEntryDisplayText(entry);
+    if (resolution.text.trim().isNotEmpty) return resolution.text.trim();
+    return entry.transcript.trim();
+  }
 
   static bool _isKnownSystemCopy(String anchor) {
     final normalized = anchor.trim().toLowerCase();

@@ -457,6 +457,11 @@ abstract final class PatternMatchQualityEngine {
     final evidence =
         ConfirmedRepeatEvidencePhraseEngine.extract(eligible.sublist(0, 3));
     if (!evidence.isStrong) return false;
+    if (AnchorSpecificityGuard.behaviorSpecificPhraseFromEntries(
+      eligible.sublist(0, 3),
+    ) != null) {
+      return true;
+    }
     return ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
       evidence.phrases,
       eligible.sublist(0, 3),
