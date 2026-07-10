@@ -22,6 +22,7 @@ import '../proof_quality_response/proof_quality_response_copy.dart';
 import '../proof_detail_repair/proof_detail_repair_copy.dart';
 import '../evidence_trail_pro_understanding/evidence_trail_pro_understanding_copy.dart';
 import '../pricing_offer_validation/pricing_offer_validation_v2_copy.dart';
+import '../value_prop_ranking_diagnostic/value_prop_ranking_diagnostic_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -116,6 +117,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...ProofClarityImportanceDiagnosticCopy.allVisibleStrings(),
         ...EvidenceTrailProUnderstandingCopy.allVisibleStrings(),
         ...PricingOfferValidationV2Copy.allVisibleStrings(),
+        ...ValuePropRankingDiagnosticCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
