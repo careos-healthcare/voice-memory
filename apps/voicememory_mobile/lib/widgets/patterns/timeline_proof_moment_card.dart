@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/proof_detail_repair/proof_detail_repair_engine.dart';
 import '../../features/timeline_proof_moment/timeline_proof_moment_analytics.dart';
 import '../../features/timeline_proof_moment/timeline_proof_moment_model.dart';
 import '../../theme/app_colors.dart';
@@ -30,6 +31,7 @@ class TimelineProofMomentCard extends StatefulWidget {
 
 class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
   var _trackedSeen = false;
+  var _detailExpanded = false;
 
   void _trackSeenOnce() {
     if (_trackedSeen) return;
@@ -52,6 +54,7 @@ class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
       color: AppColors.textPrimary,
       fontWeight: FontWeight.w600,
     );
+    final detail = ProofDetailRepairEngine.buildFromTimelineMoment(widget.result);
 
     return Container(
       key: const Key('timeline_proof_moment_card'),
@@ -77,6 +80,34 @@ class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
               key: const Key('timeline_proof_moment_body'),
               style: bodyStyle.copyWith(color: AppColors.textPrimary),
             ),
+            if (detail.shouldShow) ...[
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                key: const Key('proof_detail_repair_cta'),
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 32),
+                ),
+                onPressed: () =>
+                    setState(() => _detailExpanded = !_detailExpanded),
+                child: Text(detail.ctaLabel),
+              ),
+              if (_detailExpanded) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  detail.title,
+                  key: const Key('proof_detail_repair_title'),
+                  style: rowStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  detail.body,
+                  key: const Key('proof_detail_repair_body'),
+                  style: bodyStyle.copyWith(color: AppColors.textPrimary),
+                ),
+              ],
+            ],
           ],
           const SizedBox(height: AppSpacing.sm),
           for (final row in widget.result.rows) ...[
