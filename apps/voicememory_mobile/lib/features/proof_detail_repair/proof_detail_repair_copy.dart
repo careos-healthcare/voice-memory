@@ -1,4 +1,5 @@
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
+import '../proof_selection/proof_selection_principle_copy.dart';
 
 /// Optional proof detail copy — safe behaviour phrase only, no journal text.
 abstract final class ProofDetailRepairCopy {
@@ -12,20 +13,16 @@ abstract final class ProofDetailRepairCopy {
   static const similarMomentsLead =
       'This appeared because similar saved moments mention:';
 
-  static const whyThisOneLine =
-      'Why this one: ArchiveMe is showing the clearest specific repeat it can '
-      'compare safely right now.';
+  static const whyThisOneLine = ProofSelectionPrincipleCopy.whyThisOneLine;
 
   static const notRankingOrMostImportantLine =
-      'It is not ranking every past mention yet, and it is not saying this is '
-      'the most important thing.';
+      ProofSelectionPrincipleCopy.notRankingOrMostImportantLine;
 
   static const whyItMayMatterLine =
       'Why it may matter: it showed up more than once, and the wording was '
       'specific enough to compare safely.';
 
-  static const correctionLine =
-      'If this feels wrong, mark it Too vague or Not relevant.';
+  static const correctionLine = ProofSelectionPrincipleCopy.correctionLine;
 
   static const bannedDetailPhrases = [
     'ranked list',
