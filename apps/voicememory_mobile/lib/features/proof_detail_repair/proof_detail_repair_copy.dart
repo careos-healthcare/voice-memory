@@ -12,18 +12,24 @@ abstract final class ProofDetailRepairCopy {
   static const similarMomentsLead =
       'This appeared because similar saved moments mention:';
 
+  static const whyThisOneLine =
+      'Why this one: ArchiveMe is showing the clearest specific repeat it can '
+      'compare safely right now.';
+
+  static const notRankingOrMostImportantLine =
+      'It is not ranking every past mention yet, and it is not saying this is '
+      'the most important thing.';
+
   static const whyItMayMatterLine =
       'Why it may matter: it showed up more than once, and the wording was '
       'specific enough to compare safely.';
-
-  static const notMostImportantLine =
-      'ArchiveMe is not saying this is the most important thing. It is showing '
-      'one specific repeat you can confirm or correct.';
 
   static const correctionLine =
       'If this feels wrong, mark it Too vague or Not relevant.';
 
   static const bannedDetailPhrases = [
+    'ranked list',
+    'most important pattern',
     'the key issue',
     'you should focus on',
     'this means',
@@ -41,8 +47,8 @@ abstract final class ProofDetailRepairCopy {
 
   static String composeBody(String behaviorPhrase) {
     final formatted = formatBehaviorPhrase(behaviorPhrase);
-    return '$similarMomentsLead $formatted $whyItMayMatterLine '
-        '$notMostImportantLine $correctionLine';
+    return '$similarMomentsLead $formatted $whyThisOneLine '
+        '$notRankingOrMostImportantLine $whyItMayMatterLine $correctionLine';
   }
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -50,8 +56,9 @@ abstract final class ProofDetailRepairCopy {
     yield ctaWhyThis;
     yield title;
     yield similarMomentsLead;
+    yield whyThisOneLine;
+    yield notRankingOrMostImportantLine;
     yield whyItMayMatterLine;
-    yield notMostImportantLine;
     yield correctionLine;
     yield composeBody('said yes when I had no capacity');
   }

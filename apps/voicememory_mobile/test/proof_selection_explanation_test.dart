@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
-import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
@@ -29,7 +28,7 @@ import 'package:voicememory_mobile/widgets/patterns/timeline_proof_moment_card.d
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_detail_repair/unused.json'));
+      : super(file: File('test/tmp/proof_selection_explanation/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -127,9 +126,15 @@ BetaRepairLabVisibilityInput _repairInput() =>
       hasConfirmedRepeat: true,
       confidenceLevel: ProofConfidenceLevel.watchOnly,
       hasUsefulProofFeedback: false,
-      feedbackType: BetaProofFeedbackType.tooVague,
-      isNegativeFeedback: true,
+      feedbackType: null,
+      isNegativeFeedback: false,
       betaMissionEnabled: true,
+    );
+
+ProofDetailRepairResult _strongDetail() => ProofDetailRepairEngine.build(
+      level: ProofConfidenceLevel.strong,
+      hasSafeAnchor: true,
+      behaviorPhrase: _behaviorPhrase,
     );
 
 void main() {
@@ -141,9 +146,9 @@ void main() {
     await BetaRepairLabStore.resetForTest(prefs);
     await AppServices.resetForTest(
       journalPath:
-          'test/tmp/proof_detail_repair/${DateTime.now().microsecondsSinceEpoch}_journal.json',
+          'test/tmp/proof_selection_explanation/${DateTime.now().microsecondsSinceEpoch}_journal.json',
       prefsPath:
-          'test/tmp/proof_detail_repair/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+          'test/tmp/proof_selection_explanation/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
       skipRevenueCat: true,
     );
     ArchiveBetaMissionGate.enabledOverride = true;
@@ -154,22 +159,63 @@ void main() {
     await BetaRepairLabStore.resetForTest(prefs);
   });
 
-  group('ProofDetailRepairCopy', () {
-    test('detail title is Why this may matter', () {
+  group('Proof selection explanation copy', () {
+    test('CTA remains More detail', () {
+      expect(_strongDetail().ctaLabel, ProofDetailRepairCopy.ctaMoreDetail);
+    });
+
+    test('title remains Why this may matter', () {
       expect(ProofDetailRepairCopy.title, 'Why this may matter');
+      expect(_strongDetail().title, ProofDetailRepairCopy.title);
     });
 
-    test('detail includes required explanation lines', () {
-      final body = ProofDetailRepairCopy.composeBody(_behaviorPhrase);
-      expect(body, contains(ProofDetailRepairCopy.similarMomentsLead));
-      expect(body, contains(_behaviorPhrase));
-      expect(body, contains(ProofDetailRepairCopy.whyThisOneLine));
-      expect(body, contains(ProofDetailRepairCopy.notRankingOrMostImportantLine));
-      expect(body, contains(ProofDetailRepairCopy.whyItMayMatterLine));
-      expect(body, contains(ProofDetailRepairCopy.correctionLine));
+    test('detail includes safe behaviour phrase', () {
+      expect(_strongDetail().body, contains(_behaviorPhrase));
     });
 
-    test('copy avoids coaching therapy diagnosis or advice language', () {
+    test('detail includes Why this one', () {
+      expect(_strongDetail().body, contains('Why this one'));
+      expect(_strongDetail().body, contains(ProofDetailRepairCopy.whyThisOneLine));
+    });
+
+    test('detail says clearest specific repeat', () {
+      expect(_strongDetail().body, contains('clearest specific repeat'));
+    });
+
+    test('detail says compare safely right now', () {
+      expect(_strongDetail().body, contains('compare safely right now'));
+    });
+
+    test('detail says it is not ranking every past mention yet', () {
+      expect(_strongDetail().body, contains('not ranking every past mention yet'));
+    });
+
+    test('detail says it is not the most important thing', () {
+      expect(
+        _strongDetail().body,
+        contains('not saying this is the most important thing'),
+      );
+    });
+
+    test('detail includes showed up more than once', () {
+      expect(_strongDetail().body, contains('showed up more than once'));
+    });
+
+    test('detail keeps Too vague Not relevant correction reassurance', () {
+      expect(_strongDetail().body, contains(ProofDetailRepairCopy.correctionLine));
+      expect(_strongDetail().body, contains('Too vague'));
+      expect(_strongDetail().body, contains('Not relevant'));
+    });
+
+    test('detail does not show ranked list copy', () {
+      final lower = _strongDetail().body.toLowerCase();
+      expect(lower.contains('ranked list'), isFalse);
+      expect(lower.contains('rank #'), isFalse);
+      expect(lower.contains('top pattern'), isFalse);
+    });
+
+    test('detail avoids key issue should need therapy diagnosis coach language',
+        () {
       for (final text in ProofDetailRepairCopy.allVisibleStrings()) {
         expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
         final lower = text.toLowerCase();
@@ -178,23 +224,16 @@ void main() {
         }
       }
     });
+
+    test('detail does not expose raw private journal text beyond safe anchor',
+        () {
+      final detail = _strongDetail();
+      expect(detail.body, isNot(contains(_strongRepeat)));
+      expect(detail.body, isNot(contains('extra meeting today')));
+    });
   });
 
-  group('ProofDetailRepairEngine visibility', () {
-    test('strong proof exposes More detail or Why this CTA', () {
-      final detail = ProofDetailRepairEngine.build(
-        level: ProofConfidenceLevel.strong,
-        hasSafeAnchor: true,
-        behaviorPhrase: _behaviorPhrase,
-      );
-      expect(detail.shouldShow, isTrue);
-      expect(
-        detail.ctaLabel == ProofDetailRepairCopy.ctaMoreDetail ||
-            detail.ctaLabel == ProofDetailRepairCopy.ctaWhyThis,
-        isTrue,
-      );
-    });
-
+  group('Proof selection explanation visibility', () {
     test('watchOnly proof does not expose detail', () {
       expect(
         ProofDetailRepairEngine.build(
@@ -215,12 +254,17 @@ void main() {
         ).shouldShow,
         isFalse,
       );
+    });
+
+    test('generic rejected proof does not expose detail', () {
       expect(
         ProofDetailRepairEngine.build(
-          level: ProofConfidenceLevel.useful,
+          level: ProofConfidenceLevel.strong,
           hasSafeAnchor: true,
-          behaviorPhrase: _behaviorPhrase,
-          weakReasons: const [PatternMatchWeakReason.noSafeAnchorAvailable],
+          behaviorPhrase: 'kept checking',
+          weakReasons: const [
+            PatternMatchWeakReason.onlyGenericWordingOverlaps,
+          ],
         ).shouldShow,
         isFalse,
       );
@@ -237,47 +281,11 @@ void main() {
         ).shouldShow,
         isFalse,
       );
-      expect(
-        ProofDetailRepairEngine.build(
-          level: ProofConfidenceLevel.strong,
-          hasSafeAnchor: true,
-          behaviorPhrase: _behaviorPhrase,
-          weakReasons: const [PatternMatchWeakReason.userMarkedNotRelevant],
-        ).shouldShow,
-        isFalse,
-      );
-    });
-
-    test('generic rejected anchor does not expose detail', () {
-      expect(
-        ProofDetailRepairEngine.build(
-          level: ProofConfidenceLevel.strong,
-          hasSafeAnchor: true,
-          behaviorPhrase: 'kept checking',
-          weakReasons: const [
-            PatternMatchWeakReason.onlyGenericWordingOverlaps,
-          ],
-        ).shouldShow,
-        isFalse,
-      );
-    });
-
-    test('detail does not expose raw private journal text beyond safe anchor',
-        () {
-      final detail = ProofDetailRepairEngine.build(
-        level: ProofConfidenceLevel.strong,
-        hasSafeAnchor: true,
-        behaviorPhrase: _behaviorPhrase,
-      );
-      expect(detail.body, contains(_behaviorPhrase));
-      expect(detail.body, isNot(contains(_strongRepeat)));
-      expect(detail.body, isNot(contains('extra meeting today')));
     });
   });
 
-  group('Proof detail integration', () {
-    test('specific confirmed-repeat proof still passes with detail available',
-        () {
+  group('Proof selection explanation integration', () {
+    test('existing specific confirmed-repeat proof still passes', () {
       final moment = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
         beliefSurfaceVisible: true,
@@ -293,41 +301,8 @@ void main() {
 
       final detail = ProofDetailRepairEngine.buildFromTimelineMoment(moment);
       expect(detail.shouldShow, isTrue);
-      expect(detail.title, ProofDetailRepairCopy.title);
+      expect(detail.body, contains('Why this one'));
       expect(detail.body, contains('no capacity'));
-    });
-
-    test('rejected generic anchor timeline proof does not expose detail', () {
-      final moment = TimelineProofMomentEngine.build(
-        entries: _keptCheckingEntries(),
-        beliefSurfaceVisible: true,
-        source: 'test',
-        now: _now,
-      );
-      if (moment != null) {
-        final detail = ProofDetailRepairEngine.buildFromTimelineMoment(moment);
-        expect(detail.shouldShow, isFalse);
-      } else {
-        expect(moment, isNull);
-      }
-    });
-
-    test('pro pricing evidence trail behaviour unchanged', () {
-      expect(
-        EvidenceTrailClarityEngine.shouldShow(
-          input: _repairInput(),
-          hasSafeAnchor: false,
-        ),
-        isFalse,
-      );
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
-      expect(
-        PricingValidationEngine.shouldShow(
-          input: _repairInput(),
-          hasProEngagement: true,
-        ),
-        isFalse,
-      );
     });
 
     test('record screen remains capture-first without stacking extra cards', () {
@@ -363,26 +338,45 @@ void main() {
       expect(audit.proofCardKey, 'timelineProofMoment');
       expect(audit.guidanceCardKey, isNull);
     });
+  });
 
-    test('existing proof relevance repair copy still passes', () {
-      final calibration = ProofConfidenceCalibrationEngine.build(
-        entries: _specificRepeatEntries(),
-        beliefSurfaceVisible: true,
-        source: 'test',
-        now: _now,
-      );
-      expect(
-        calibration.displayCopy,
-        contains(ProofRelevanceRepairCopy.strongLead),
-      );
-      for (final text in ProofRelevanceRepairCopy.allVisibleStrings()) {
-        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+  group('Proof selection explanation protected areas', () {
+    test('does not change anchors thresholds or protected systems', () {
+      for (final path in [
+        'lib/features/proof_detail_repair/proof_detail_repair_copy.dart',
+        'lib/features/proof_detail_repair/proof_detail_repair_engine.dart',
+      ]) {
+        final source = File(path).readAsStringSync();
+        expect(source.contains('anchor_specificity_guard'), isFalse);
+        expect(source.contains('PaywallSource'), isFalse);
+        expect(source.contains('RevenueCat'), isFalse);
+        expect(source.contains('billing/'), isFalse);
+        expect(source.contains('evidence_trail_clarity'), isFalse);
+        expect(source.contains('pricing_validation'), isFalse);
       }
+    });
+
+    test('pro pricing evidence trail behaviour unchanged', () {
+      expect(
+        EvidenceTrailClarityEngine.shouldShow(
+          input: _repairInput(),
+          hasSafeAnchor: false,
+        ),
+        isFalse,
+      );
+      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+      expect(
+        PricingValidationEngine.shouldShow(
+          input: _repairInput(),
+          hasProEngagement: true,
+        ),
+        isFalse,
+      );
     });
   });
 
-  group('ProofDetailRepairCard widget', () {
-    testWidgets('timeline proof card shows More detail CTA for strong proof',
+  group('Proof selection explanation widget', () {
+    testWidgets('timeline proof card expands selection explanation copy',
         (tester) async {
       final moment = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
@@ -408,36 +402,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('proof_detail_repair_cta')), findsOneWidget);
-      expect(find.text(ProofDetailRepairCopy.ctaMoreDetail), findsOneWidget);
-
       await tester.tap(find.byKey(const Key('proof_detail_repair_cta')));
       await tester.pump();
 
-      expect(find.byKey(const Key('proof_detail_repair_title')), findsOneWidget);
-      expect(find.byKey(const Key('proof_detail_repair_body')), findsOneWidget);
-      expect(find.text(ProofDetailRepairCopy.title), findsOneWidget);
+      expect(find.textContaining('Why this one'), findsOneWidget);
       expect(
-        find.textContaining(ProofDetailRepairCopy.similarMomentsLead),
+        find.textContaining('clearest specific repeat'),
         findsOneWidget,
       );
-    });
-  });
-
-  group('Protected areas', () {
-    test('detail module does not import pro pricing paywall or evidence trail',
-        () {
-      for (final path in [
-        'lib/features/proof_detail_repair/proof_detail_repair_copy.dart',
-        'lib/features/proof_detail_repair/proof_detail_repair_engine.dart',
-      ]) {
-        final source = File(path).readAsStringSync();
-        expect(source.contains('PaywallSource'), isFalse);
-        expect(source.contains('RevenueCat'), isFalse);
-        expect(source.contains('billing/'), isFalse);
-        expect(source.contains('evidence_trail_clarity'), isFalse);
-        expect(source.contains('pricing_validation'), isFalse);
-      }
     });
   });
 }

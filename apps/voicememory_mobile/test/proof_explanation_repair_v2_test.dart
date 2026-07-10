@@ -196,20 +196,29 @@ void main() {
       );
     });
 
-    test('detail says ArchiveMe is not saying this is the most important thing',
-        () {
+    test('detail says it is not the most important thing', () {
       expect(
         _strongDetail().body,
-        contains(
-          'ArchiveMe is not saying this is the most important thing',
-        ),
+        contains('not saying this is the most important thing'),
       );
     });
 
-    test('detail says one specific repeat users can confirm or correct', () {
+    test('detail explains one specific repeat users can confirm or correct', () {
       expect(
         _strongDetail().body,
-        contains('one specific repeat you can confirm or correct'),
+        contains('clearest specific repeat'),
+      );
+      expect(_strongDetail().body, contains(ProofDetailRepairCopy.correctionLine));
+    });
+
+    test('detail clarifies why this one was selected and not ranked yet', () {
+      expect(
+        _strongDetail().body,
+        contains(ProofDetailRepairCopy.whyThisOneLine),
+      );
+      expect(
+        _strongDetail().body,
+        contains(ProofDetailRepairCopy.notRankingOrMostImportantLine),
       );
     });
 
