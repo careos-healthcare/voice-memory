@@ -6,6 +6,7 @@ import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/beta_proof_feedback/beta_proof_feedback_analytics.dart';
 import '../../features/beta_proof_feedback/beta_proof_feedback_copy.dart';
+import '../../features/proof_relevance_repair/proof_relevance_repair_copy.dart';
 import '../../features/beta_proof_feedback/beta_proof_feedback_engine.dart';
 import '../../features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../../features/beta_proof_feedback/beta_proof_feedback_store.dart';
@@ -71,6 +72,7 @@ class BetaProofFeedbackRow extends StatefulWidget {
 
 class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
   var _answered = false;
+  BetaProofFeedbackType? _selectedType;
   var _seenLogged = false;
 
   @override
@@ -129,7 +131,10 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
       await widget.onNotRelevantAnswered?.call();
     }
     if (!mounted) return;
-    setState(() => _answered = true);
+    setState(() {
+      _answered = true;
+      _selectedType = feedbackType;
+    });
     widget.onChanged?.call();
   }
 
@@ -154,7 +159,9 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
         key: Key('beta_proof_feedback_thanks_${widget.surface.name}'),
         padding: const EdgeInsets.only(top: AppSpacing.xs),
         child: Text(
-          BetaProofFeedbackCopy.thanksMessage,
+          BetaProofFeedbackCopy.responseFor(
+            _selectedType ?? BetaProofFeedbackType.useful,
+          ),
           key: const Key('beta_proof_feedback_thanks_message'),
           style: helperStyle.copyWith(color: AppColors.textPrimary),
         ),
@@ -188,7 +195,7 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
             children: [
-              for (final type in BetaProofFeedbackType.values)
+              for (final type in ProofRelevanceRepairCopy.relevanceFeedbackTypes)
                 TextButton(
                   key: _optionKey(type),
                   style: TextButton.styleFrom(

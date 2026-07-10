@@ -14,6 +14,7 @@ import '../anchor_calibration/anchor_calibration_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../proof_caution_guard/proof_caution_guard_engine.dart';
 import '../current_relevance/current_relevance_store.dart';
+import '../proof_relevance_repair/proof_relevance_repair_engine.dart';
 import 'proof_confidence_calibration_analytics.dart';
 import 'proof_confidence_calibration_copy.dart';
 import 'proof_confidence_calibration_model.dart';
@@ -128,7 +129,12 @@ abstract final class ProofConfidenceCalibrationEngine {
       hasHelpedSoftened: hasHelpedSoftened,
       level: level,
     );
-    final displayCopy = _composeDisplayCopy(
+    final displayCopy = ProofRelevanceRepairEngine.composeDisplayCopy(
+      level: level,
+      behaviorPhrase: resolvedAnchors?.safeSummaries.isNotEmpty == true
+          ? resolvedAnchors!.safeSummaries.first
+          : null,
+      hasSafeAnchor: resolvedHasSafeAnchor,
       leadCopy: leadCopy,
       primaryCopy: primaryCopy,
     );

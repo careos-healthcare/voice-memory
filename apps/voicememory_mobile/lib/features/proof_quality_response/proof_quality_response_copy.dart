@@ -13,7 +13,7 @@ abstract final class ProofQualityResponseCopy {
       'More than one saved moment pointed in the same direction.';
   static const stillTooVagueLabel = 'Still too vague';
   static const stillTooVagueFollowUp =
-      'ArchiveMe needs clearer evidence before making this feel strong.';
+      'Got it. ArchiveMe will wait for more specific evidence before showing this again.';
 
   static const tooVagueRows = [
     'What repeated',
