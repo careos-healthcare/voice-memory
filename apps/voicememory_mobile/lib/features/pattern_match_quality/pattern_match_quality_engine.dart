@@ -11,6 +11,7 @@ import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../evidence_anchors/evidence_anchor_model.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
 import '../not_relevant_recovery/not_relevant_recovery_engine.dart';
+import '../proof_protection/anchor_specificity_guard.dart';
 import '../retention/second_session_signal_engine.dart';
 import 'pattern_match_quality_analytics.dart';
 import 'pattern_match_quality_copy.dart';
@@ -77,11 +78,11 @@ abstract final class PatternMatchQualityEngine {
             now: clock,
           )
         : null;
-    final hasSafeAnchorInline = anchorExtraction?.hasSafeAnchor ??
-        _hasInlineSafeAnchor(
-          entries: entries,
-          beliefEvidencePhrases: beliefEvidencePhrases,
-        );
+    final hasSafeAnchorInline = _hasProofLevelSafeAnchor(
+      anchorExtraction: anchorExtraction,
+      entries: entries,
+      beliefEvidencePhrases: beliefEvidencePhrases,
+    );
 
     final matchedDimensions = _resolveMatchedDimensions(
       entries: entries,
@@ -115,6 +116,7 @@ abstract final class PatternMatchQualityEngine {
     );
     final confidenceBand = _resolveBand(score);
     final shouldShowAsProof = hasSafeAnchorInline &&
+        !_onlyNonSpecificAnchors(anchorExtraction) &&
         (confidenceBand == PatternMatchConfidenceBand.solid ||
             confidenceBand == PatternMatchConfidenceBand.strong);
     final shouldShowAsWatchOnly =
@@ -271,6 +273,8 @@ abstract final class PatternMatchQualityEngine {
 
     if (!hasSafeAnchorInline) {
       add(PatternMatchWeakReason.noSafeAnchorAvailable);
+    } else if (_onlyNonSpecificAnchors(anchorExtraction)) {
+      add(PatternMatchWeakReason.onlyGenericWordingOverlaps);
     }
 
     if (!_hasChangeDelta(
@@ -384,14 +388,33 @@ abstract final class PatternMatchQualityEngine {
     return evidence.phrases.every(_isGenericPhrase);
   }
 
-  static bool _isGenericPhrase(String phrase) {
-    final lower = phrase.trim().toLowerCase();
-    if (lower.isEmpty) return true;
-    for (final banned
-        in ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels) {
-      if (lower == banned || lower.contains(banned)) return true;
+  static bool _isGenericPhrase(String phrase) =>
+      !AnchorSpecificityGuard.isProofLevelEligible(phrase);
+
+  static bool _hasProofLevelSafeAnchor({
+    required EvidenceAnchorExtractionResult? anchorExtraction,
+    required List<JournalEntry> entries,
+    required List<String> beliefEvidencePhrases,
+  }) {
+    if (AnchorSpecificityGuard.hasProofLevelSafeAnchor(anchorExtraction)) {
+      return true;
     }
-    return lower.length < 8;
+    return _hasInlineSafeAnchor(
+      entries: entries,
+      beliefEvidencePhrases: beliefEvidencePhrases,
+    );
+  }
+
+  static bool _onlyNonSpecificAnchors(
+    EvidenceAnchorExtractionResult? anchorExtraction,
+  ) {
+    if (anchorExtraction == null || !anchorExtraction.shouldExtract) {
+      return false;
+    }
+    if (anchorExtraction.hasSafeAnchor) return false;
+    return anchorExtraction.anchors.any(
+      (anchor) => anchor.safeSummary.trim().isNotEmpty,
+    );
   }
 
   static bool _isStaleOnly(List<JournalEntry> eligible, DateTime now) {
@@ -425,7 +448,7 @@ abstract final class PatternMatchQualityEngine {
     required List<String> beliefEvidencePhrases,
   }) {
     for (final phrase in beliefEvidencePhrases) {
-      if (phrase.trim().isNotEmpty && !_isGenericPhrase(phrase)) {
+      if (AnchorSpecificityGuard.isProofLevelEligible(phrase)) {
         return true;
       }
     }
@@ -433,11 +456,11 @@ abstract final class PatternMatchQualityEngine {
     if (eligible.length < 3) return false;
     final evidence =
         ConfirmedRepeatEvidencePhraseEngine.extract(eligible.sublist(0, 3));
-    return evidence.isStrong &&
-        ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
-          evidence.phrases,
-          eligible.sublist(0, 3),
-        ).isNotEmpty;
+    if (!evidence.isStrong) return false;
+    return ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+      evidence.phrases,
+      eligible.sublist(0, 3),
+    ).any(AnchorSpecificityGuard.isProofLevelEligible);
   }
 
   static bool _passesEvidenceQuality(List<JournalEntry> entries) {

@@ -18,6 +18,7 @@ import '../present_day_relevance/present_day_relevance_copy.dart';
 import '../present_day_relevance/present_day_relevance_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
 import '../anchor_calibration/anchor_calibration_engine.dart';
+import '../proof_protection/anchor_specificity_guard.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'evidence_anchor_analytics.dart';
 import 'evidence_anchor_copy.dart';
@@ -461,7 +462,8 @@ abstract final class EvidenceAnchorEngine {
             sourceCount: candidate.sourceCount,
             isUserCorrected: candidate.isUserCorrected,
             isFreshReturn: candidate.isFreshReturn,
-            isSafeForDisplay: true,
+            isSafeForDisplay:
+                AnchorSpecificityGuard.isProofLevelEligible(candidate.safeSummary),
           ),
         )
         .toList();

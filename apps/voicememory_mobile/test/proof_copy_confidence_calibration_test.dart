@@ -262,7 +262,14 @@ void main() {
     });
 
     test('change/delta gets priority over generic repeat', () {
-      final result = _calibrate(_softeningEntries());
+      final result = _calibrate([
+        ..._threeRelatedEntries(),
+        _entry(
+          '4',
+          'Same capacity pressure came back but it felt easier to stop this time.',
+          createdAt: _now.subtract(const Duration(hours: 4)),
+        ),
+      ]);
       expect(result.leadCopy, ProofConfidenceCalibrationCopy.changeDeltaLead);
       expect(
         result.displayCopy,
@@ -285,6 +292,10 @@ void main() {
           result.displayCopy,
           startsWith(ProofConfidenceCalibrationCopy.changeDeltaLead),
         );
+        return;
+      }
+      if (result.leadCopy == null) {
+        expect(result.isWatchOnly, isTrue);
         return;
       }
       expect(result.leadCopy, ProofConfidenceCalibrationCopy.helpedSoftenedLead);
