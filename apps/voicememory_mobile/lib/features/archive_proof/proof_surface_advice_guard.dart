@@ -30,6 +30,7 @@ import '../change_trail_clarity/change_trail_clarity_copy.dart';
 import '../low_effort_archive_capture/low_effort_archive_capture_copy.dart';
 import '../archive_prompt_assist/archive_prompt_assist_copy.dart';
 import '../positive_archive_reinforcement/positive_archive_reinforcement_copy.dart';
+import '../context_trail_clarity/context_trail_clarity_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -132,6 +133,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...LowEffortArchiveCaptureCopy.allVisibleStrings(),
         ...ArchivePromptAssistCopy.allVisibleStrings(),
         ...PositiveArchiveReinforcementCopy.allVisibleStrings(),
+        ...ContextTrailClarityCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
