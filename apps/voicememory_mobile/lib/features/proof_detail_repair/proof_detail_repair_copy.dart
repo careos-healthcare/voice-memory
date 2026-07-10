@@ -7,23 +7,26 @@ abstract final class ProofDetailRepairCopy {
   static const ctaMoreDetail = 'More detail';
   static const ctaWhyThis = 'Why this?';
 
-  static const title = 'Why ArchiveMe noticed this';
+  static const title = 'Why this may matter';
 
   static const similarMomentsLead =
       'This appeared because similar saved moments mention:';
 
-  static const specificEnoughLine =
-      'ArchiveMe is treating it as useful proof only because the wording is '
-      'specific enough.';
+  static const whyItMayMatterLine =
+      'Why it may matter: it showed up more than once, and the wording was '
+      'specific enough to compare safely.';
 
-  static const importanceLine =
-      'This may be worth watching because it has appeared more than once.';
+  static const notMostImportantLine =
+      'ArchiveMe is not saying this is the most important thing. It is showing '
+      'one specific repeat you can confirm or correct.';
 
   static const correctionLine =
       'If this feels wrong, mark it Too vague or Not relevant.';
 
   static const bannedDetailPhrases = [
-    'important idea',
+    'the key issue',
+    'you should focus on',
+    'this means',
     'this is your pattern',
     'you should',
     'you need to',
@@ -38,8 +41,8 @@ abstract final class ProofDetailRepairCopy {
 
   static String composeBody(String behaviorPhrase) {
     final formatted = formatBehaviorPhrase(behaviorPhrase);
-    return '$similarMomentsLead $formatted $specificEnoughLine '
-        '$importanceLine $correctionLine';
+    return '$similarMomentsLead $formatted $whyItMayMatterLine '
+        '$notMostImportantLine $correctionLine';
   }
 
   static Iterable<String> allVisibleStrings() sync* {
@@ -47,8 +50,8 @@ abstract final class ProofDetailRepairCopy {
     yield ctaWhyThis;
     yield title;
     yield similarMomentsLead;
-    yield specificEnoughLine;
-    yield importanceLine;
+    yield whyItMayMatterLine;
+    yield notMostImportantLine;
     yield correctionLine;
     yield composeBody('said yes when I had no capacity');
   }
