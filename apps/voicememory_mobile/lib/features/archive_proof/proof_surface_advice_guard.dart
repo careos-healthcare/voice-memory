@@ -27,6 +27,7 @@ import '../payment_blocker_matrix/payment_blocker_decision_copy.dart';
 import '../core_archive_journey/core_archive_journey_copy.dart';
 import '../release_candidate_comprehension/release_candidate_comprehension_copy.dart';
 import '../change_trail_clarity/change_trail_clarity_copy.dart';
+import '../low_effort_archive_capture/low_effort_archive_capture_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -126,6 +127,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...CoreArchiveJourneyCopy.allVisibleStrings(),
         ...ReleaseCandidateComprehensionCopy.allVisibleStrings(),
         ...ChangeTrailClarityCopy.allVisibleStrings(),
+        ...LowEffortArchiveCaptureCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
