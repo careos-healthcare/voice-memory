@@ -49,4 +49,8 @@ echo "==> First proof field readiness"
 bash tool/run_first_proof_field_readiness.sh
 
 echo ""
+echo "==> Commercial readiness gate"
+bash tool/run_commercial_readiness_gate.sh
+
+echo ""
 echo "Core validation passed."
