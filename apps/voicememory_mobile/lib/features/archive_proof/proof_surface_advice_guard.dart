@@ -33,6 +33,7 @@ import '../positive_archive_reinforcement/positive_archive_reinforcement_copy.da
 import '../context_trail_clarity/context_trail_clarity_copy.dart';
 import '../proof_trail_positioning/proof_trail_positioning_copy.dart';
 import '../save_a_repeat_habit/save_a_repeat_habit_copy.dart';
+import '../preserved_proof_value/preserved_proof_value_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -138,6 +139,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...ContextTrailClarityCopy.allVisibleStrings(),
         ...ProofTrailPositioningCopy.allVisibleStrings(),
         ...SaveARepeatHabitCopy.allVisibleStrings(),
+        ...PreservedProofValueCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
