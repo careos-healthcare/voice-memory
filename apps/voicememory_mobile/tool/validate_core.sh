@@ -72,4 +72,8 @@ echo "==> Commercial proof executor"
 bash tool/run_commercial_proof_executor.sh
 
 echo ""
+echo "==> RevenueCat live proof runner"
+bash tool/run_revenuecat_live_proof_checklist.sh
+
+echo ""
 echo "Core validation passed."
