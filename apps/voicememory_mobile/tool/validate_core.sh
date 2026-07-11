@@ -37,4 +37,8 @@ echo "==> Pro access enforcement audit CI bundle"
 bash tool/run_pro_access_enforcement_audit.sh
 
 echo ""
+echo "==> Widget release risk gate"
+bash tool/run_widget_release_risk_gate.sh
+
+echo ""
 echo "Core validation passed."

@@ -40,7 +40,7 @@ Your reflections are personal. The journal file on this device is encrypted. Arc
 ## Release identity (listing prep)
 
 - **App name:** ArchiveMe (public consumer name)
-- **Android application ID:** `com.voicememory.app`
+- **Android application ID:** `com.voicememory.mobile`
 - **Support URL:** https://careosapp.co.uk/archiveme-support
 - **Purchases:** unavailable until RevenueCat / store banking setup — do not use subscribe-or-buy CTAs in listing copy while billing is paused.
 
