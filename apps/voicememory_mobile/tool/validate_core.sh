@@ -68,4 +68,8 @@ echo "==> V1 visible surface reducer"
 bash tool/run_v1_visible_surface_reducer.sh
 
 echo ""
+echo "==> Commercial proof executor"
+bash tool/run_commercial_proof_executor.sh
+
+echo ""
 echo "Core validation passed."
