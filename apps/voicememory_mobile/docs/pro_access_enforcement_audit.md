@@ -61,3 +61,21 @@ flutter test test/pro_access_enforcement_audit_test.dart
 ```
 
 Included in `tool/validate_core.sh`.
+
+## v2 additions
+
+- **Developer dashboard** — `ProAccessEnforcementAuditCard` on Internal diagnostics (`/developer-diagnostics`)
+- **Local signals bridge** — `ProAccessEnforcementAuditV2.buildFromLocalSignals()` maps RevenueCat diagnostics, entitlement cache, backend config, and app lock state
+- **CI bundle** — `tool/run_pro_access_enforcement_audit.sh`
+
+### v2 code modules
+
+- Dashboard + CI v2: `lib/features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart`
+- Developer card: `lib/widgets/debug/pro_access_enforcement_audit_card.dart`
+
+### Run CI bundle
+
+```bash
+cd apps/voicememory_mobile
+bash tool/run_pro_access_enforcement_audit.sh
+```

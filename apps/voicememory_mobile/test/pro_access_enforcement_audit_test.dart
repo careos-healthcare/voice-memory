@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/freeze_drift_scanner/freeze_drift_scanner.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof_copy.dart';
+import 'package:voicememory_mobile/billing/revenuecat_diagnostics.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit.dart';
+import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart';
+import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
@@ -331,10 +334,114 @@ void main() {
       expect(docs.toLowerCase(), contains('privacy lock'));
       expect(docs, contains('notEnforcedYet'));
       expect(docs, contains('productionBlocker'));
+      expect(docs.toLowerCase(), contains('developer-diagnostics'));
+      expect(docs.toLowerCase(), contains('run_pro_access_enforcement_audit.sh'));
+    });
+  });
+
+  group('ProAccessEnforcementAuditV2', () {
+    test('buildFromLocalSignals delegates to v1 classifier', () {
+      final dashboard = ProAccessEnforcementAuditV2.buildFromLocalSignals(
+        const ProAccessEnforcementLocalSignals(
+          revenueCatConfigured: true,
+          revenueCatApiKeyMissing: false,
+          productsLoaded: true,
+          proStateReadable: true,
+          proEntitlementActive: true,
+          backendConfigured: true,
+          appLockEnabled: true,
+        ),
+      );
+
+      expect(dashboard.rows.length, ProAccessEnforcementAudit.auditItemCount);
+      expect(
+        dashboard.decision,
+        ProAccessEnforcementAuditDecision.testFlightAcceptable,
+      );
+      expect(dashboard.proEntitlementActive, isTrue);
+      expect(dashboard.appLockEnabled, isTrue);
+    });
+
+    test('stale cached Pro with live RevenueCat free -> productionBlocked', () {
+      final dashboard = ProAccessEnforcementAuditV2.buildFromLocalSignals(
+        const ProAccessEnforcementLocalSignals(
+          revenueCatConfigured: true,
+          revenueCatApiKeyMissing: false,
+          productsLoaded: true,
+          proStateReadable: true,
+          proEntitlementActive: false,
+          cachedProOnDisk: true,
+        ),
+      );
+
+      expect(
+        dashboard.decision,
+        ProAccessEnforcementAuditDecision.productionBlocked,
+      );
+      expect(dashboard.productionBlockerCount, greaterThan(0));
+    });
+
+    test('fromDiagnostics maps RevenueCat diagnostics without SDK import', () {
+      final signals = ProAccessEnforcementAuditV2.fromDiagnostics(
+        const RevenueCatDiagnostics(
+          revenueCatConfigured: false,
+          apiKeyMissing: true,
+          offeringsLoaded: false,
+          offeringCount: 0,
+          packageCount: 0,
+        ),
+      );
+      final dashboard = ProAccessEnforcementAuditV2.buildFromLocalSignals(signals);
+
+      expect(dashboard.revenueCatConfigured, isFalse);
+      expect(
+        dashboard.decision,
+        ProAccessEnforcementAuditDecision.testFlightAcceptable,
+      );
+    });
+
+    test('toAuditInput detects stale cache risk', () {
+      final input = ProAccessEnforcementAuditV2.toAuditInput(
+        const ProAccessEnforcementLocalSignals(
+          revenueCatConfigured: true,
+          revenueCatApiKeyMissing: false,
+          productsLoaded: true,
+          proStateReadable: true,
+          proEntitlementActive: false,
+          cachedProOnDisk: true,
+        ),
+      );
+
+      expect(input.localCachePreventsStalePro, isFalse);
+    });
+
+    test('v2 copy avoids therapy diagnosis coaching and advice claims', () {
+      for (final text in ProAccessEnforcementAuditV2Copy.allVisibleStrings()) {
+        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+      }
     });
   });
 
   group('Protected areas', () {
+    test('v2 module does not import purchases_flutter or billing_service', () {
+      for (final path in [
+        'lib/features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart',
+        'lib/features/pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart',
+        'lib/widgets/debug/pro_access_enforcement_audit_card.dart',
+      ]) {
+        final source = File(path).readAsStringSync();
+        expect(source.contains('package:purchases_flutter'), isFalse);
+        expect(source.contains('billing_service'), isFalse);
+        expect(source.contains('paywall_source'), isFalse);
+      }
+    });
+
+    test('developer diagnostics screen wires pro access enforcement card', () {
+      final source =
+          File('lib/screens/developer_diagnostics_screen.dart').readAsStringSync();
+      expect(source, contains('ProAccessEnforcementAuditCard'));
+      expect(source, contains('ProAccessEnforcementAuditV2.buildFromLocalSignals'));
+    });
     test('module does not import purchase paywall or RevenueCat SDK paths', () {
       for (final path in [
         'lib/features/pro_access_enforcement/pro_access_enforcement_audit.dart',

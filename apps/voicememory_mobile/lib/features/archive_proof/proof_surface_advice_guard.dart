@@ -48,6 +48,7 @@ import '../core_metrics_minimum/core_metrics_minimum_set_copy.dart';
 import '../core_metrics_minimum/core_metrics_minimum_set_v2_copy.dart';
 import '../store_readiness_single_source/store_readiness_single_source_copy.dart';
 import '../pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
+import '../pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart';
 import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
@@ -172,6 +173,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...CoreMetricsMinimumSetV2Copy.allVisibleStrings(),
         ...StoreReadinessSingleSourceCopy.allVisibleStrings(),
         ...ProAccessEnforcementAuditCopy.allVisibleStrings(),
+        ...ProAccessEnforcementAuditV2Copy.allVisibleStrings(),
         ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...RevenueCatSandboxProofCopy.allVisibleStrings(),
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),

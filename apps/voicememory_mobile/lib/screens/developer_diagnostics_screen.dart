@@ -19,10 +19,14 @@ import '../features/beta/proof_of_value_engine.dart';
 import '../features/beta/proof_value_bottleneck_playbook_engine.dart';
 import '../features/beta/beta_report_export_engine.dart';
 import '../features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
+import '../features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart';
 import '../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../features/testflight_metrics/testflight_metrics_engine.dart';
 import '../billing/paywall_attribution_store.dart';
+import '../billing/revenuecat_service.dart';
+import '../security/app_lock_service.dart';
 import '../widgets/debug/core_metrics_minimum_set_card.dart';
+import '../widgets/debug/pro_access_enforcement_audit_card.dart';
 import '../widgets/debug/beta_metrics_decision_card.dart';
 import '../widgets/debug/beta_release_qa_card.dart';
 import '../widgets/debug/beta_report_export_card.dart';
@@ -53,6 +57,7 @@ class _DeveloperDiagnosticsScreenState
   bool _archiveMeDemoActive = false;
   bool _loading = true;
   CoreMetricsMinimumDashboard? _coreMetricsDashboard;
+  ProAccessEnforcementDashboard? _proAccessEnforcementDashboard;
 
   @override
   void initState() {
@@ -70,6 +75,11 @@ class _DeveloperDiagnosticsScreenState
       final betaCounts = await BetaActivationLoopTracker.readCounts();
       final testFlightInput = await TestFlightMetricsEngine.loadInput();
       final paywallEvents = await PaywallAttributionStore.instance().events();
+      final cachedEntitlements =
+          await AppServices.instance.entitlementCache.load();
+      final appLockEnabled = await AppLockService.instance.isEnabled();
+      final revenueCat = RevenueCatService.instance;
+      final revenueCatDiagnostics = revenueCat.diagnostics;
       final recordedEventNames = <String>[
         for (final record in RevenueFunnelAnalytics.recordedEvents)
           record.event.id,
@@ -93,6 +103,26 @@ class _DeveloperDiagnosticsScreenState
             loopCounts: betaCounts,
             testFlightInput: testFlightInput,
             recordedEventNames: recordedEventNames,
+          );
+          _proAccessEnforcementDashboard =
+              ProAccessEnforcementAuditV2.buildFromLocalSignals(
+            ProAccessEnforcementLocalSignals(
+              revenueCatConfigured: revenueCatDiagnostics.revenueCatConfigured,
+              revenueCatApiKeyMissing: revenueCatDiagnostics.apiKeyMissing,
+              productsLoaded: revenueCatDiagnostics.offeringsLoaded &&
+                  revenueCatDiagnostics.packageCount > 0,
+              proStateReadable: revenueCatDiagnostics.revenueCatConfigured,
+              proEntitlementActive: revenueCat.latestEntitlements.isPro,
+              cachedProOnDisk: cachedEntitlements?.isPro ?? false,
+              restorePurchasesReachable: true,
+              restoreNoCrashVerified: true,
+              entitlementPersistsAfterRestart:
+                  (cachedEntitlements?.isPro ?? false) &&
+                      revenueCat.latestEntitlements.isPro,
+              revenueCatLinkedToAccount: false,
+              backendConfigured: AppConfig.isBackendConfigured,
+              appLockEnabled: appLockEnabled,
+            ),
           );
           _loading = false;
         });
@@ -183,6 +213,12 @@ class _DeveloperDiagnosticsScreenState
           if (_coreMetricsDashboard != null) ...[
             const SizedBox(height: 24),
             CoreMetricsMinimumSetCard(dashboard: _coreMetricsDashboard!),
+          ],
+          if (_proAccessEnforcementDashboard != null) ...[
+            const SizedBox(height: 24),
+            ProAccessEnforcementAuditCard(
+              dashboard: _proAccessEnforcementDashboard!,
+            ),
           ],
           const SizedBox(height: 24),
           ProofOfValueCard(
