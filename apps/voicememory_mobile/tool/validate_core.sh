@@ -64,4 +64,8 @@ echo "==> Payment proof not interest gate"
 bash tool/run_payment_proof_not_interest_gate.sh
 
 echo ""
+echo "==> V1 visible surface reducer"
+bash tool/run_v1_visible_surface_reducer.sh
+
+echo ""
 echo "Core validation passed."
