@@ -29,7 +29,6 @@ flutter test \
   test/routine_anchor_store_test.dart \
   test/localized_copy_test.dart \
   test/core_metrics_minimum_set_test.dart \
-  test/paid_intent_beta_proof_test.dart \
   test/freeze_drift_scanner_test.dart
 
 echo ""

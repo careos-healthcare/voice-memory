@@ -1,4 +1,5 @@
 import '../paid_intent_beta_proof/paid_intent_beta_proof.dart';
+import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
 import '../store_readiness_single_source/store_readiness_single_source.dart';
 import 'commercial_readiness_gate_copy.dart';
 
@@ -12,15 +13,59 @@ abstract final class CommercialReadinessGate {
     CommercialReadinessGateInput input,
   ) {
     final checks = _buildChecks(input);
-    final status = _resolveStatus(input, checks);
+    final status = _resolveStatus(input);
     return CommercialReadinessGateResult(
       status: status,
       message: CommercialReadinessGateCopy.messageFor(status),
       recommendation: CommercialReadinessGateCopy.recommendationFor(status),
       checks: checks,
-      earliestBlocker: _earliestBlocker(checks),
+      earliestBlocker: _earliestBlockerForStatus(status, checks),
       commerciallyReady: status == CommercialReadinessGateStatus.commerciallyReady,
       productReadyOnly: status == CommercialReadinessGateStatus.productReadyOnly,
+    );
+  }
+
+  static CommercialReadinessGateResult buildFromSources(
+    CommercialReadinessGateSources sources,
+  ) =>
+      build(composeInput(sources));
+
+  static CommercialReadinessGateInput composeInput(
+    CommercialReadinessGateSources sources,
+  ) {
+    final paidIntentResult = sources.paidIntent != null
+        ? PaidIntentBetaProof.build(sources.paidIntent!)
+        : null;
+    final base = sources.store != null
+        ? fromStoreReadinessInput(
+            sources.store!,
+            productPromiseClear: sources.productPromiseClear,
+            firstJourneyStable: sources.firstJourneyStable,
+            firstProofUsefulEnough: sources.firstProofUsefulEnough,
+            proPromiseClear: sources.proPromiseClear,
+            paywallPriceVisible: sources.sandbox?.productTitlePriceVisible ?? false,
+            sandboxPurchaseWorks:
+                sources.sandbox?.sandboxPurchaseSucceeds == true,
+          )
+        : CommercialReadinessGateInput(
+            productPromiseClear: sources.productPromiseClear,
+            firstJourneyStable: sources.firstJourneyStable,
+            firstProofUsefulEnough: sources.firstProofUsefulEnough,
+            proPromiseClear: sources.proPromiseClear,
+          );
+
+    final withSandbox = sources.sandbox != null
+        ? fromRevenueCatSandboxProof(sources.sandbox!, base: base)
+        : base;
+
+    if (paidIntentResult == null) {
+      return withSandbox;
+    }
+
+    return _mergePaidIntent(
+      withSandbox,
+      paidIntentResult,
+      storePaidIntentReady: sources.store?.paidIntentBetaReady ?? false,
     );
   }
 
@@ -77,6 +122,54 @@ abstract final class CommercialReadinessGate {
         paidIntentBetaComplete: input.paidIntentBetaReady,
         secretsRotationDone: input.secretsRotated,
       );
+
+  static CommercialReadinessGateInput fromRevenueCatSandboxProof(
+    RevenueCatSandboxProofInput sandbox, {
+    required CommercialReadinessGateInput base,
+  }) =>
+      CommercialReadinessGateInput(
+        productPromiseClear: base.productPromiseClear,
+        firstJourneyStable: base.firstJourneyStable,
+        firstProofUsefulEnough: base.firstProofUsefulEnough,
+        proPromiseClear: base.proPromiseClear,
+        revenueCatProductLoads:
+            sandbox.iosApiKeyPresent && sandbox.offeringLoads,
+        paywallPriceVisible: sandbox.productTitlePriceVisible,
+        sandboxPurchaseWorks: sandbox.sandboxPurchaseSucceeds == true,
+        restoreWorks: sandbox.restorePurchasesSucceeds == true,
+        entitlementPersists: sandbox.entitlementPersistsAfterRestart == true,
+        testFlightBuildUploaded: base.testFlightBuildUploaded,
+        paidIntentBetaComplete: base.paidIntentBetaComplete,
+        secretsRotationDone: base.secretsRotationDone,
+      );
+
+  static CommercialReadinessGateInput _mergePaidIntent(
+    CommercialReadinessGateInput input,
+    PaidIntentBetaProofResult paidIntent, {
+    required bool storePaidIntentReady,
+  }) {
+    final betaComplete = storePaidIntentReady ||
+        paidIntentBetaCompleteFromDecision(paidIntent.decision);
+    final purchaseBlocked =
+        paidIntent.decision == PaidIntentBetaProofDecision.purchaseBlocked;
+
+    return CommercialReadinessGateInput(
+      productPromiseClear: input.productPromiseClear,
+      firstJourneyStable: input.firstJourneyStable,
+      firstProofUsefulEnough: input.firstProofUsefulEnough,
+      proPromiseClear: input.proPromiseClear,
+      revenueCatProductLoads: input.revenueCatProductLoads,
+      paywallPriceVisible:
+          purchaseBlocked ? false : input.paywallPriceVisible,
+      sandboxPurchaseWorks:
+          purchaseBlocked ? false : input.sandboxPurchaseWorks,
+      restoreWorks: input.restoreWorks,
+      entitlementPersists: input.entitlementPersists,
+      testFlightBuildUploaded: input.testFlightBuildUploaded,
+      paidIntentBetaComplete: betaComplete,
+      secretsRotationDone: input.secretsRotationDone,
+    );
+  }
 
   static CommercialReadinessGateInput fromRepoSignals({
     required String proEvidenceValueCopySource,
@@ -275,7 +368,6 @@ abstract final class CommercialReadinessGate {
 
   static CommercialReadinessGateStatus _resolveStatus(
     CommercialReadinessGateInput input,
-    List<CommercialReadinessGateCheck> checks,
   ) {
     if (!input.productPromiseClear ||
         !input.firstJourneyStable ||
@@ -308,19 +400,50 @@ abstract final class CommercialReadinessGate {
       return CommercialReadinessGateStatus.productionBlockedBySecrets;
     }
 
-    final allPass = checks.every(
-      (check) => check.status == CommercialReadinessGateCheckStatus.pass,
-    );
-    if (allPass) {
-      return CommercialReadinessGateStatus.commerciallyReady;
-    }
-
-    return CommercialReadinessGateStatus.betaBlocked;
+    return CommercialReadinessGateStatus.commerciallyReady;
   }
 
-  static CommercialReadinessGateCheck? _earliestBlocker(
+  static CommercialReadinessGateCheck? _earliestBlockerForStatus(
+    CommercialReadinessGateStatus status,
     List<CommercialReadinessGateCheck> checks,
   ) {
+    final priority = switch (status) {
+      CommercialReadinessGateStatus.productReadyOnly => [
+        CommercialReadinessGateCheckId.productPromiseClear,
+        CommercialReadinessGateCheckId.firstJourneyStable,
+        CommercialReadinessGateCheckId.firstProofUsefulEnough,
+        CommercialReadinessGateCheckId.proPromiseClear,
+      ],
+      CommercialReadinessGateStatus.storeBlocked => [
+        CommercialReadinessGateCheckId.revenueCatProductLoads,
+        CommercialReadinessGateCheckId.testFlightBuildUploaded,
+      ],
+      CommercialReadinessGateStatus.purchaseBlocked => [
+        CommercialReadinessGateCheckId.paywallPriceVisible,
+        CommercialReadinessGateCheckId.sandboxPurchaseWorks,
+      ],
+      CommercialReadinessGateStatus.restoreBlocked => [
+        CommercialReadinessGateCheckId.restoreWorks,
+      ],
+      CommercialReadinessGateStatus.entitlementBlocked => [
+        CommercialReadinessGateCheckId.entitlementPersists,
+      ],
+      CommercialReadinessGateStatus.betaBlocked => [
+        CommercialReadinessGateCheckId.paidIntentBetaComplete,
+      ],
+      CommercialReadinessGateStatus.productionBlockedBySecrets => [
+        CommercialReadinessGateCheckId.secretsRotationDone,
+      ],
+      CommercialReadinessGateStatus.commerciallyReady => const [],
+    };
+
+    for (final id in priority) {
+      final check = checks.firstWhere((item) => item.id == id);
+      if (check.status == CommercialReadinessGateCheckStatus.fail) {
+        return check;
+      }
+    }
+
     for (final check in checks) {
       if (check.status == CommercialReadinessGateCheckStatus.fail) {
         return check;
@@ -420,4 +543,24 @@ class CommercialReadinessGateReport {
   final String orderLine;
   final String guardrail;
   final CommercialReadinessGateResult result;
+}
+
+class CommercialReadinessGateSources {
+  const CommercialReadinessGateSources({
+    this.store,
+    this.sandbox,
+    this.paidIntent,
+    this.productPromiseClear = true,
+    this.firstJourneyStable = true,
+    this.firstProofUsefulEnough = true,
+    this.proPromiseClear = true,
+  });
+
+  final StoreReadinessSingleSourceInput? store;
+  final RevenueCatSandboxProofInput? sandbox;
+  final PaidIntentBetaProofInput? paidIntent;
+  final bool productPromiseClear;
+  final bool firstJourneyStable;
+  final bool firstProofUsefulEnough;
+  final bool proPromiseClear;
 }

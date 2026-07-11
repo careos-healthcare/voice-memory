@@ -5,6 +5,7 @@ import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_g
 import 'package:voicememory_mobile/features/commercial_readiness_gate/commercial_readiness_gate.dart';
 import 'package:voicememory_mobile/features/commercial_readiness_gate/commercial_readiness_gate_copy.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
+import 'package:voicememory_mobile/features/revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
 import 'package:voicememory_mobile/features/store_readiness_single_source/store_readiness_single_source.dart';
 
 const _docsPath = 'docs/COMMERCIAL_READINESS_GATE.md';
@@ -234,6 +235,109 @@ void main() {
         ),
       );
       expect(result.status, CommercialReadinessGateStatus.purchaseBlocked);
+    });
+  });
+
+  group('CommercialReadinessGate.buildFromSources', () {
+    PaidIntentBetaProofInput _paidIntentInput({
+      bool purchaseCompleted = true,
+      bool purchaseMechanicsBlocked = false,
+      PaidIntentBetaWouldPay? testerWouldPay = PaidIntentBetaWouldPay.yes,
+    }) =>
+        PaidIntentBetaProofInput(
+          firstSaveCompleted: true,
+          firstUsefulProofSeen: true,
+          proofAcceptedOrCorrected: true,
+          proPromiseSeen: true,
+          proTapped: true,
+          purchaseAttempted: true,
+          purchaseCompleted: purchaseCompleted,
+          purchaseMechanicsBlocked: purchaseMechanicsBlocked,
+          testerWouldPay: testerWouldPay,
+        );
+
+    RevenueCatSandboxProofInput _sandboxInput({
+      bool sandboxPurchaseSucceeds = true,
+      bool restorePurchasesSucceeds = true,
+      bool entitlementPersistsAfterRestart = true,
+    }) =>
+        RevenueCatSandboxProofInput(
+          iosApiKeyPresent: true,
+          offeringLoads: true,
+          productTitlePriceVisible: true,
+          sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+          restorePurchasesSucceeds: restorePurchasesSucceeds,
+          entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+        );
+
+    test('integrated sources -> commerciallyReady', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(),
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.commerciallyReady);
+    });
+
+    test('sandbox purchase failure -> purchaseBlocked', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(),
+          sandbox: _sandboxInput(sandboxPurchaseSucceeds: false),
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.purchaseBlocked);
+      expect(
+        result.earliestBlocker?.id,
+        CommercialReadinessGateCheckId.sandboxPurchaseWorks,
+      );
+    });
+
+    test('paid intent purchase mechanics blocked -> purchaseBlocked', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(
+            paidIntentBetaComplete: false,
+          ),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(
+            purchaseCompleted: false,
+            purchaseMechanicsBlocked: true,
+          ),
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.purchaseBlocked);
+    });
+
+    test('paid intent weak without purchase -> betaBlocked', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(paidIntentBetaComplete: false),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(
+            purchaseCompleted: false,
+            testerWouldPay: PaidIntentBetaWouldPay.no,
+          ),
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.betaBlocked);
+    });
+
+    test('product promise failure prioritizes earliest product blocker', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(),
+          sandbox: _sandboxInput(),
+          productPromiseClear: false,
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.productReadyOnly);
+      expect(
+        result.earliestBlocker?.id,
+        CommercialReadinessGateCheckId.productPromiseClear,
+      );
     });
   });
 

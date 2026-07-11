@@ -54,6 +54,15 @@ Earliest blocker wins:
 
 `CommercialReadinessGate.fromStoreReadinessInput()` bridges the unified store readiness checklist into commercial classification.
 
+`CommercialReadinessGate.buildFromSources()` composes store readiness, RevenueCat sandbox proof, and paid-intent beta proof into one commercial classification.
+
+## CI bundle
+
+`tool/run_commercial_readiness_gate.sh` runs:
+
+- `test/commercial_readiness_gate_test.dart`
+- `test/paid_intent_beta_proof_test.dart`
+
 ## Code modules
 
 - Engine: `lib/features/commercial_readiness_gate/commercial_readiness_gate.dart`
