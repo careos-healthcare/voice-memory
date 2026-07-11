@@ -52,4 +52,8 @@ echo "==> Commercial readiness gate"
 bash tool/run_commercial_readiness_gate.sh
 
 echo ""
+echo "==> Physical device smoke proof"
+bash tool/run_physical_device_release_smoke.sh
+
+echo ""
 echo "Core validation passed."
