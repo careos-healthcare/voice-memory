@@ -35,6 +35,7 @@ import '../proof_trail_positioning/proof_trail_positioning_copy.dart';
 import '../save_a_repeat_habit/save_a_repeat_habit_copy.dart';
 import '../preserved_proof_value/preserved_proof_value_copy.dart';
 import '../trail_language_guard/trail_language_guard_copy.dart';
+import '../feature_noise_reduction/feature_noise_reduction_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -142,6 +143,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...SaveARepeatHabitCopy.allVisibleStrings(),
         ...PreservedProofValueCopy.allVisibleStrings(),
         ...TrailLanguageGuardCopy.allVisibleStrings(),
+        ...FeatureNoiseReductionCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
