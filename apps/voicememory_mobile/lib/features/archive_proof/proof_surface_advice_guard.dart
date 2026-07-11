@@ -41,6 +41,7 @@ import '../prompt_assist_visibility/prompt_assist_visibility_copy.dart';
 import '../post_save_reinforcement/post_save_reinforcement_placement_copy.dart';
 import '../pro_single_promise/pro_single_promise_copy.dart';
 import '../release_candidate_freeze/release_candidate_freeze_copy.dart';
+import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
 import '../proof_relevance_repair/proof_relevance_repair_copy.dart';
@@ -154,6 +155,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...PostSaveReinforcementPlacementCopy.allVisibleStrings(),
         ...ProSinglePromiseCopy.allVisibleStrings(),
         ...ReleaseCandidateFreezeCopy.allVisibleStrings(),
+        ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
