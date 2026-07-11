@@ -41,4 +41,8 @@ echo "==> Widget release risk gate"
 bash tool/run_widget_release_risk_gate.sh
 
 echo ""
+echo "==> Product language consistency guard"
+bash tool/run_product_language_consistency_guard.sh
+
+echo ""
 echo "Core validation passed."

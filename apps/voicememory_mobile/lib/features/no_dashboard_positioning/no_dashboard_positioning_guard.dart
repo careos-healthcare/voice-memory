@@ -156,6 +156,8 @@ abstract final class NoDashboardPositioningGuard {
       'storage app, second brain, or dashboard to maintain',
       'the value is meaningful resurfacing — not more notes, more dashboards',
       'therapist dashboard',
+      'risky: full timeline',
+      'avoid dashboard, command center, life operating system',
     ];
     for (final marker in markers) {
       if (lower.contains(marker)) return true;

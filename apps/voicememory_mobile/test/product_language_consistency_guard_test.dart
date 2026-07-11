@@ -206,6 +206,11 @@ void main() {
       );
     });
 
+    test('validate_core.sh includes product language consistency guard bundle', () {
+      final source = File('tool/validate_core.sh').readAsStringSync();
+      expect(source, contains('run_product_language_consistency_guard.sh'));
+    });
+
     test('action items secondary gate regressions unchanged', () {
       expect(
         ActionItemsV1SecondaryGate.evaluateCopy(
