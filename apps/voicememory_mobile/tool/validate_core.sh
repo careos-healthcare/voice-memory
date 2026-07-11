@@ -45,4 +45,8 @@ echo "==> Product language consistency guard"
 bash tool/run_product_language_consistency_guard.sh
 
 echo ""
+echo "==> First proof field readiness"
+bash tool/run_first_proof_field_readiness.sh
+
+echo ""
 echo "Core validation passed."

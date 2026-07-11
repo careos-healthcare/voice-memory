@@ -54,6 +54,7 @@ import '../widget_release_risk/widget_release_risk_gate_copy.dart';
 import '../no_dashboard_positioning/no_dashboard_positioning_guard_copy.dart';
 import '../action_items_v1_gate/action_items_v1_secondary_gate_copy.dart';
 import '../product_language_consistency/product_language_consistency_guard_copy.dart';
+import '../first_proof_field_readiness/first_proof_field_readiness_copy.dart';
 import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
@@ -184,6 +185,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...NoDashboardPositioningGuardCopy.allVisibleStrings(),
         ...ActionItemsV1SecondaryGateCopy.allVisibleStrings(),
         ...ProductLanguageConsistencyGuardCopy.allVisibleStrings(),
+        ...FirstProofFieldReadinessCopy.allVisibleStrings(),
         ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...RevenueCatSandboxProofCopy.allVisibleStrings(),
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),
