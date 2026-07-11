@@ -60,4 +60,8 @@ echo "==> Secrets rotation launch gate"
 bash tool/run_secrets_rotation_launch_gate.sh
 
 echo ""
+echo "==> Payment proof not interest gate"
+bash tool/run_payment_proof_not_interest_gate.sh
+
+echo ""
 echo "Core validation passed."
