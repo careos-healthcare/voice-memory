@@ -51,6 +51,7 @@ import '../pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import '../pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart';
 import '../pro_access_enforcement/pro_access_enforcement_audit_v3_copy.dart';
 import '../widget_release_risk/widget_release_risk_gate_copy.dart';
+import '../no_dashboard_positioning/no_dashboard_positioning_guard_copy.dart';
 import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
@@ -178,6 +179,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...ProAccessEnforcementAuditV2Copy.allVisibleStrings(),
         ...ProAccessEnforcementAuditV3Copy.allVisibleStrings(),
         ...WidgetReleaseRiskGateCopy.allVisibleStrings(),
+        ...NoDashboardPositioningGuardCopy.allVisibleStrings(),
         ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...RevenueCatSandboxProofCopy.allVisibleStrings(),
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),
