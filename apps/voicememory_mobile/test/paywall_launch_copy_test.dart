@@ -30,11 +30,11 @@ void main() {
   test('paywall benefits include aligned timeline bullets', () {
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Full pattern timeline'),
+      contains('Longer proof trail'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Monthly private report'),
+      contains('What returned over time'),
     );
     expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });

@@ -107,8 +107,8 @@ void main() {
       );
       expect(ProPackagingCopy.proSectionTitle, 'Pro');
       expect(ProPackagingCopy.proBullets, hasLength(6));
-      expect(ProPackagingCopy.proBullets, contains('Full pattern timeline'));
-      expect(ProPackagingCopy.proBullets, contains('Monthly private report'));
+      expect(ProPackagingCopy.proBullets, contains('Longer proof trail'));
+      expect(ProPackagingCopy.proBullets, contains('What returned over time'));
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
         PaywallAlignmentCopy.secondaryReassurance,
@@ -137,7 +137,7 @@ void main() {
       );
       expect(
         ProEvidenceValueCopy.proBulletsForDisplay(exportReportsLive: true),
-        contains('Full pattern timeline'),
+        contains('Longer proof trail'),
       );
     });
   });
@@ -187,8 +187,8 @@ void main() {
         find.text('Start your archive and unlock your first proof.'),
         findsOneWidget,
       );
-      expect(find.text('Full pattern timeline'), findsOneWidget);
-      expect(find.text('Monthly private report'), findsOneWidget);
+      expect(find.text('Longer proof trail'), findsOneWidget);
+      expect(find.text('What returned over time'), findsOneWidget);
     });
   });
 
@@ -221,8 +221,8 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text('Full pattern timeline'), findsOneWidget);
-      expect(find.text('Monthly private report'), findsOneWidget);
+      expect(find.text('Longer proof trail'), findsOneWidget);
+      expect(find.text('What returned over time'), findsOneWidget);
       expect(find.textContaining(r'$'), findsNothing);
       expect(find.textContaining('0.00'), findsNothing);
     });

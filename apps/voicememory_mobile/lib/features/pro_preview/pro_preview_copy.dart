@@ -10,13 +10,13 @@ abstract final class ProPreviewCopy {
   static const cta = 'See Pro';
   static const secondary = 'Not now';
 
-  static const fullPatternTimeline = 'Full pattern timeline';
+  static const fullPatternTimeline = 'Longer proof trail';
   static const whatReturned = 'What returned';
   static const whatChanged = 'What changed';
   static const whatYouCorrected = 'What you corrected';
   static const currentVsFading = 'Current vs fading signals';
-  static const monthlyPrivateReport = 'Monthly private report';
-  static const backupContinuity = 'Backup and continuity';
+  static const monthlyPrivateReport = 'What faded';
+  static const backupContinuity = 'Trail continuity over weeks';
 
   static const bannedFakeClaims = <String>[
     'limited time',

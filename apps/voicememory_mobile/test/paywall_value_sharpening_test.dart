@@ -81,7 +81,7 @@ void main() {
       );
       expect(
         PaywallValueSharpeningCopy.benefitBullets,
-        contains('Full pattern timeline'),
+        contains('Longer proof trail'),
       );
     });
 

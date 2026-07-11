@@ -374,7 +374,7 @@ void main() {
       expect(find.text(ProEvidenceValueCopy.freeSectionTitle), findsOneWidget);
       expect(find.text(ProEvidenceValueCopy.proSectionTitle), findsOneWidget);
       expect(find.text('First repeat proof'), findsOneWidget);
-      expect(find.text('Full pattern timeline'), findsOneWidget);
+      expect(find.text('Longer proof trail'), findsOneWidget);
     });
 
     testWidgets('dismiss fires analytics', (tester) async {
@@ -430,7 +430,7 @@ void main() {
 
       expect(find.text('Basic correction'), findsOneWidget);
       expect(find.text('Changing current weight'), findsOneWidget);
-      expect(find.text('Monthly private report'), findsOneWidget);
+      expect(find.text('What returned over time'), findsOneWidget);
       expect(find.text(PaywallAlignmentCopy.benefitBullets.first), findsOneWidget);
     });
   });

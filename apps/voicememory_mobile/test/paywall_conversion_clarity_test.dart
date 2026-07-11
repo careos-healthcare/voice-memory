@@ -113,9 +113,9 @@ void main() {
       );
 
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
-      expect(find.text('Full pattern timeline'), findsOneWidget);
+      expect(find.text('Longer proof trail'), findsOneWidget);
       expect(find.text('Correction history'), findsOneWidget);
-      expect(find.text('Monthly private report'), findsOneWidget);
+      expect(find.text('What returned over time'), findsOneWidget);
     });
 
     testWidgets('renders differentiation, trust, and backup honesty', (

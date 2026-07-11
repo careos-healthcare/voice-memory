@@ -595,7 +595,7 @@ abstract class ConsumerUiCopy {
   static const String paywallContinue = paywallPrimaryCta;
   static const String paywallBackToPatterns = 'Back to Patterns';
   static const String paywallProActiveBody =
-      'Longer archive history, private monthly reports, and evidence over time '
+      'Longer proof trail, what returned or changed, and evidence over time '
       'are available on this device.';
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
@@ -609,7 +609,7 @@ abstract class ConsumerUiCopy {
   static const String freeKeepsSevenKeyMoments =
       'Free keeps your first 7 key moments.';
   static const String proKeepsFullMemory =
-      'Pro keeps the full memory across weeks and months.';
+      'Pro keeps the longer proof trail across weeks and months.';
   static const String unlockFullMemoryCta = 'See deeper history';
 
   // ——— Narrative headlines (change stories) ———

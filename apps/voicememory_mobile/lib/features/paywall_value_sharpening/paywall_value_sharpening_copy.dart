@@ -21,12 +21,12 @@ abstract final class PaywallValueSharpeningCopy {
       'You stay in control. You can delete entries and correct what you saved.';
 
   static const benefitBullets = <String>[
-    'Full pattern timeline',
+    'Longer proof trail',
     'Correction history',
     'Current vs fading signals',
     'Longer evidence trail',
-    'Monthly private report',
-    'Backup and continuity',
+    'What returned over time',
+    'Trail continuity over weeks',
   ];
 
   static const corePaidReason = 'Keep the longer proof trail.';

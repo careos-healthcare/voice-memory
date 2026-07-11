@@ -33,7 +33,7 @@ ProValuePreviewType _typeForTrigger(PaywallTrigger trigger) =>
   ProValuePreviewType.memoryLimit || ProValuePreviewType.keyMomentSearch => (
     title: 'Your pattern memory is growing',
     body:
-        'Free keeps your first 7 key moments. Pro keeps the full memory across weeks and months.',
+        'Free keeps your first 7 key moments. Pro keeps the longer proof trail across weeks and months.',
     bullets: const [
       'Keep older moments',
       'Search all your moments',

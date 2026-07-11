@@ -38,7 +38,7 @@ void main() {
       );
     });
 
-    test('subhead sells the full timeline value', () {
+    test('subhead sells the proof trail value', () {
       expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
       expect(
         PaywallSourceCopy.generalPro.subheadline,
@@ -46,15 +46,15 @@ void main() {
       );
     });
 
-    test('bullets cover timeline, corrections, reports, and continuity', () {
+    test('bullets cover proof trail, corrections, returns, and continuity', () {
       final bullets = ConsumerUiCopy.paywallBullets;
       expect(bullets, PaywallAlignmentCopy.benefitBullets);
-      expect(bullets, contains('Full pattern timeline'));
+      expect(bullets, contains('Longer proof trail'));
       expect(bullets, contains('Correction history'));
       expect(bullets, contains('Current vs fading signals'));
       expect(bullets, contains('Longer evidence trail'));
-      expect(bullets, contains('Monthly private report'));
-      expect(bullets, contains('Backup and continuity'));
+      expect(bullets, contains('What returned over time'));
+      expect(bullets, contains('Trail continuity over weeks'));
       expect(PaywallSourceCopy.generalPro.bullets, bullets);
     });
 

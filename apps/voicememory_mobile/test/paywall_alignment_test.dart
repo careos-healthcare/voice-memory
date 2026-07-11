@@ -46,7 +46,7 @@ void main() {
 
     test('defines six benefit bullets', () {
       expect(PaywallAlignmentCopy.benefitBullets, hasLength(6));
-      expect(PaywallAlignmentCopy.benefitBullets, contains('Full pattern timeline'));
+      expect(PaywallAlignmentCopy.benefitBullets, contains('Longer proof trail'));
       expect(PaywallAlignmentCopy.benefitBullets, contains('Correction history'));
       expect(
         PaywallAlignmentCopy.benefitBullets,
@@ -58,7 +58,7 @@ void main() {
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('Monthly private report'),
+        contains('What returned over time'),
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
