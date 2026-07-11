@@ -16,7 +16,7 @@ class ValueMomentBridge {
     this.cardType = '',
   });
 
-  static const String title = 'Keep the full archive';
+  static const String title = 'Keep the longer proof trail';
   static const String ctaLabel = 'See Pro';
   static const String dismissLabel = 'Not now';
 

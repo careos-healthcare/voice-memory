@@ -22,10 +22,10 @@ abstract final class ArchiveJourneyCopy {
   static const step4Body =
       'ArchiveMe watches whether it gets stronger, softer, different, or helpful.';
 
-  static const step5Title = 'Keep the full archive';
+  static const step5Title = 'Keep the longer proof trail';
 
   static const step5Body =
-      'Pro keeps the evidence timeline, private report, and weekly reviews.';
+      'Pro keeps the longer proof trail over time.';
 
   /// Compact Record explainer — short step labels only.
   static const compactStep1Title = 'Record';

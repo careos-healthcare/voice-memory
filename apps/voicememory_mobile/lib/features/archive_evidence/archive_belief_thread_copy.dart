@@ -25,34 +25,34 @@ abstract class ArchiveBeliefThreadCopy {
   static const String supportingEvidenceLabel = 'Supporting evidence';
   static const String confidenceLabel = 'Signal strength';
 
-  static const String proKeepsThread = 'Keep the full archive';
-  static const String proNearbyTitle = 'Keep the full archive';
-  static const String fullArchiveHistoryTitle = 'Keep the full archive';
+  static const String proKeepsThread = 'Keep the longer proof trail';
+  static const String proNearbyTitle = 'Keep the longer proof trail';
+  static const String fullArchiveHistoryTitle = 'Keep the longer proof trail';
   static const String fullArchiveHistoryBody =
-      'Your first repeat is free. Pro keeps the evidence timeline, private report, '
-      'and weekly reviews so ArchiveMe can show what changes over time.';
+      'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+      'can show what returns, changes, fades, or gets corrected over time.';
   static const List<String> fullArchiveHistoryBullets = [
-    'Full evidence timeline',
-    'Private archive report',
-    'Weekly reviews',
-    'Change tracking over time',
+    'Longer proof trail',
+    'What returned and changed',
+    'Correction history',
+    'Continuity over time',
   ];
   static const String freeShowsFirstRepeat = 'First repeat';
   static const String proKeepsTimeline =
-      'Pro keeps the full evidence timeline over time.';
+      'Pro keeps the longer proof trail over time.';
   static const String proComparesReturns =
       'Pro lets ArchiveMe compare returns over time.';
   static const String whyPro =
       'ArchiveMe becomes more useful as the evidence trail grows.';
   static const String proDeeperHistory =
-      'Pro keeps the full evidence timeline so ArchiveMe can compare returns over time.';
+      'Pro keeps the longer proof trail so ArchiveMe can compare returns over time.';
   static const String proReviewChanges =
       'Pro keeps change tracking across your archive over time.';
   static const String proBridgeBody =
-      'Your first repeat is free. Pro keeps the evidence timeline, private report, '
-      'and weekly reviews so ArchiveMe can show what changes over time.';
+      'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+      'can show what returns, changes, fades, or gets corrected over time.';
   static const String proNearbyBridgeBody =
-      'Free shows the first repeat. Pro keeps the full archive over time.';
+      'Free shows the first repeat. Pro keeps the longer proof trail over time.';
   static const String proBridgeCta = 'See Pro';
   static const String proBridgeSecondary = 'Not now';
 

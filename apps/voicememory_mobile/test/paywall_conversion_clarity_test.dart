@@ -72,7 +72,7 @@ void main() {
         ConsumerUiCopy.paywallPrimaryValueBlock,
         PaywallAlignmentCopy.secondaryReassurance,
       );
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallBackupLine,
         contains('planned Pro areas'),
@@ -149,7 +149,7 @@ void main() {
     testWidgets('purchase CTA copy is defined for live paywall body', (
       tester,
     ) async {
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,

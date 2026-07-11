@@ -605,7 +605,7 @@ void main() {
   });
 
   group('Longitudinal change differentiation', () {
-    test('pro bridge explains full archive and change tracking', () {
+    test('pro bridge explains longer proof trail and change tracking', () {
       final joined = [
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ArchiveBeliefThreadCopy.whyPro,
@@ -613,8 +613,8 @@ void main() {
         ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('change tracking'));
-      expect(joined, contains('what changes'));
+      expect(joined, contains('longer proof trail'));
+      expect(joined, contains('changes'));
       expect(joined, contains('over time'));
       expect(joined, contains('evidence'));
     });

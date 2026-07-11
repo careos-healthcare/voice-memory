@@ -42,7 +42,7 @@ void main() {
     test('proof source uses proof-connected headline', () {
       expect(
         PaywallValueSharpeningCopy.headlineFor(PaywallSource.valueMoment),
-        'Keep the timeline behind this proof',
+        'Keep the proof trail behind this repeat',
       );
       expect(
         PaywallSourceCopy.forSource(PaywallSource.valueMoment).headline,
@@ -53,7 +53,7 @@ void main() {
     test('generic source uses generic headline', () {
       expect(
         PaywallValueSharpeningCopy.headlineFor(PaywallSource.generalPro),
-        'Keep the full timeline',
+        'Keep the longer proof trail',
       );
       expect(
         PaywallSourceCopy.forSource(PaywallSource.generalPro).headline,
@@ -64,13 +64,13 @@ void main() {
     test('defines proof-connected body and differentiation line', () {
       expect(
         PaywallValueSharpeningCopy.body,
-        contains('Free shows the first proof'),
+        contains('first useful proof'),
       );
       expect(
         PaywallValueSharpeningCopy.proofConnectedLine,
         contains('not more chat'),
       );
-      expect(PaywallValueSharpeningCopy.cta, 'Keep my full timeline');
+      expect(PaywallValueSharpeningCopy.cta, 'Keep the longer trail');
     });
 
     test('defines full timeline benefit bullets', () {

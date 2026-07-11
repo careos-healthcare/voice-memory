@@ -59,7 +59,7 @@ abstract final class BetaFixPlaybookCopy {
   static const proPlacementFix4 =
       'Prefer post-useful-proof placement over generic settings/paywall placement';
   static const proPlacementFix5 =
-      'Keep the message: Free shows first proof, Pro keeps the longer timeline';
+      'Keep the message: Free shows first proof, Pro keeps the longer proof trail';
   static const proPlacementDont1 = 'Do not show Pro before proof';
   static const proPlacementDont2 = 'Do not stack multiple Pro cards';
   static const proPlacementDont3 =
@@ -69,7 +69,7 @@ abstract final class BetaFixPlaybookCopy {
   static const proExplanationTitle = 'Fix Pro explanation';
   static const proExplanationDiagnosis =
       'Testers are seeing Pro, but not enough understand it. '
-      'The value of the longer timeline is not clear enough.';
+      'The value of the longer proof trail is not clear enough.';
   static const proExplanationFix1 = 'Explain Free vs Pro in one sentence';
   static const proExplanationFix2 =
       'Show that Pro keeps what returns, changes, fades, and gets corrected';

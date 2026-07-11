@@ -107,13 +107,17 @@ void main() {
 
   group('ProBridgeVisibilityCopy', () {
     test('uses post-proof timeline copy', () {
-      expect(ProBridgeVisibilityCopy.title, 'Keep the full timeline');
+      expect(ProBridgeVisibilityCopy.title, 'Keep the longer trail');
       expect(
         ProBridgeVisibilityCopy.body,
-        'Free shows this proof. Pro keeps the longer timeline as it grows.',
+        'Free shows the first useful proof. Pro keeps tracking whether this pattern '
+        'returns, changes, fades, or needs correcting.',
       );
-      expect(ProBridgeVisibilityCopy.compactBody, 'Pro keeps the longer story.');
-      expect(ProBridgeVisibilityCopy.cta, 'See Pro');
+      expect(
+        ProBridgeVisibilityCopy.compactBody,
+        'Pro keeps tracking whether this pattern returns, changes, or fades.',
+      );
+      expect(ProBridgeVisibilityCopy.cta, 'See Pro timeline');
       expect(ProBridgeVisibilityCopy.secondary, 'Not now');
     });
   });

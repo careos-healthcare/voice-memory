@@ -16,7 +16,7 @@ abstract final class ArchiveTimelineSpineCopy {
   static const differentiationLine =
       'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.';
 
-  static const proBridgeCopy = 'Pro keeps the full timeline as it grows.';
+  static const proBridgeCopy = 'Pro keeps the longer proof trail over time.';
 
   static const firstSeenLabel = 'Seen';
   static const firstSeenDetail = 'First saved moment on record.';

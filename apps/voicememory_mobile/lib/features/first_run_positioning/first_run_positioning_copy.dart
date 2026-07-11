@@ -8,7 +8,7 @@ abstract final class FirstRunPositioningCopy {
       'Save small moments when something stands out. ArchiveMe looks for what returns, changes, fades, or becomes useful.';
 
   static const footer =
-      'Free shows the first proof. Pro keeps the longer timeline.';
+      'Free shows the first useful proof. Pro keeps the longer proof trail.';
 
   static Iterable<String> allVisibleStrings() sync* {
     yield title;

@@ -6,7 +6,7 @@ abstract final class ProPreviewCopy {
 
   static const title = 'What Pro keeps';
   static const body =
-      'Your first proof is free. Pro keeps the longer timeline as it grows.';
+      'Your first proof is free. Pro keeps the longer proof trail over time.';
   static const cta = 'See Pro';
   static const secondary = 'Not now';
 

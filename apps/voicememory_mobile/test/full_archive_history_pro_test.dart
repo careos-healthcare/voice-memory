@@ -305,20 +305,20 @@ void main() {
     test('uses exact boundary copy', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
-        'Keep the full archive',
+        'Keep the longer proof trail',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        'Your first repeat is free. Pro keeps the evidence timeline, private report, '
-        'and weekly reviews so ArchiveMe can show what changes over time.',
+        'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+        'can show what returns, changes, fades, or gets corrected over time.',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full evidence timeline',
-          'Private archive report',
-          'Weekly reviews',
-          'Change tracking over time',
+          'Longer proof trail',
+          'What returned and changed',
+          'Correction history',
+          'Continuity over time',
         ]),
       );
       expect(ArchiveBeliefThreadCopy.whyPro, isNotEmpty);

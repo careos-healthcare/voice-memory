@@ -723,7 +723,7 @@ void main() {
       );
 
       expect(SurfacePriorityCopy.paidReason,
-          'Pro keeps the full timeline as it grows.');
+          'Pro keeps the longer proof trail over time.');
       expect(result.visibleCardCount, 1);
       expect(result.isVisible(
         SurfacePriorityCardKey.paywallPrimaryReason,

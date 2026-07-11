@@ -26,7 +26,7 @@ abstract final class TimelineProofMomentCopy {
   static const differentiationLine =
       'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.';
 
-  static const proLine = 'Pro keeps the full timeline as it grows.';
+  static const proLine = 'Pro keeps the longer proof trail over time.';
 
   static const currentWeightStrong = 'Current weight: strong';
   static const currentWeightLight = 'Current weight: light';

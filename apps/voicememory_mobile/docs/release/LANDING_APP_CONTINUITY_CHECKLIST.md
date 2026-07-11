@@ -9,16 +9,16 @@ Internal release checklist so the public website promise matches the in-app expe
 | Website + App | Subheadline | `No daily journal required.` |
 | Website + App | Hero | `See what keeps returning` |
 | Website + App | Hero body | `Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now.` |
-| Website + App | How it works | `Save one small moment` · `Come back when something stands out` · `See what returned` · `Correct what is not relevant` · `Keep the full timeline with Pro` |
+| Website + App | How it works | `Save one small moment` · `Come back when something stands out` · `See what returned` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
 | Website + App | ChatGPT differentiation | `ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.` |
 | App (Record, early) | Step 1 / 2 / 3 guidance | Uses the first three how-it-works steps above |
-| Paywall | Keep the full timeline | Headline: `Keep the full timeline` · CTA: `Keep my longer story` |
-| Paywall | Paid positioning | `Free shows the first proof. Pro keeps the full timeline as it grows.` |
-| Pro active | Full timeline continuity | `Pro is active. ArchiveMe keeps the full timeline as it grows.` |
+| Paywall | Keep the longer proof trail | Headline: `Keep the longer proof trail` · CTA: `Keep the longer trail` |
+| Paywall | Paid positioning | `Free shows the first useful proof. Pro keeps the longer proof trail.` |
+| Pro active | Proof trail continuity | `Pro is active. ArchiveMe keeps the longer proof trail over time.` |
 
 ## What Pro is (and is not)
 
-- [ ] Pro keeps **the full timeline as it grows** — pattern timeline, correction history, private monthly reports, evidence over time.
+- [ ] Pro keeps **the longer proof trail over time** — what returns, changes, fades, or gets corrected.
 - [ ] Pro is **not more chat** — differentiation line: `Pro is not more chat. It keeps the evidence.`
 - [ ] No **therapy**, **diagnosis**, or **treatment** claims anywhere on landing, paywall, or early guidance copy.
 - [ ] Trust line stays honest: `Private by default. Based on moments you save. Not therapy or medical advice.`

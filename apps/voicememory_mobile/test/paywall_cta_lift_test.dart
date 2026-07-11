@@ -21,7 +21,7 @@ void main() {
       expect(PaywallCtaLiftCopy.title, 'Keep the evidence trail');
       expect(
         PaywallCtaLiftCopy.body,
-        'The proof you just saw is only the start. Pro keeps the full timeline as more moments return, change, or fade.',
+        'The proof you just saw is only the start. Pro keeps the longer proof trail as more moments return, change, or fade.',
       );
       expect(
         PaywallCtaLiftCopy.supportLine,

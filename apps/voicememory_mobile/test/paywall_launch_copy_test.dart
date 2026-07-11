@@ -40,7 +40,7 @@ void main() {
   });
 
   test('paywall CTAs match launch copy', () {
-    expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+    expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
     expect(ConsumerUiCopy.paywallSecondaryCta, 'Not now');
     expect(ValueMomentPaywallLogic.ctaLabel, ConsumerUiCopy.paywallPrimaryCta);
     expect(

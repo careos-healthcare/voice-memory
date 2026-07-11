@@ -38,7 +38,7 @@ abstract final class BetaDecisionRuleCopy {
         BetaDecisionRuleOutcome.fixProPlacement =>
           'First-session saving improved, but Pro is still too hidden. Move the Pro moment closer to useful proof.',
         BetaDecisionRuleOutcome.fixProExplanation =>
-          'People are seeing Pro, but not enough understand it. Explain the longer timeline more clearly before changing placement again.',
+          'People are seeing Pro, but not enough understand it. Explain the longer proof trail more clearly before changing placement again.',
         BetaDecisionRuleOutcome.continueMoreTesters =>
           'The main beta signals are healthy enough. Do not build more until the next tester group confirms the pattern.',
       };

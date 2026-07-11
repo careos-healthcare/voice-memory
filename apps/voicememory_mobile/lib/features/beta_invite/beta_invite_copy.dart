@@ -61,11 +61,11 @@ abstract final class BetaInviteCopy {
   static const betaSuccessChecklist =
       'Beta success means: save a few real moments, return when something stands out, '
       'review what returned, tell us if it fits, and say whether you would pay to keep '
-      'the full timeline.';
+      'the longer proof trail.';
 
   static const reportBackPrompt =
       'Did you understand the app? Did it show anything useful by the third moment? '
-      'Would you pay to keep the full timeline as it grows?';
+      'Would you pay to keep the longer proof trail over time?';
 
   static const loopCardTitle = 'Know one person who would test this?';
   static const loopCardBody =

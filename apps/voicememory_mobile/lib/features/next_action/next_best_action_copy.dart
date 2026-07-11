@@ -42,7 +42,7 @@ abstract final class NextBestActionCopy {
   static const privateReportFormingTitle =
       'Next: keep the evidence trail going.';
   static const privateReportFormingHelper =
-      'Pro keeps the full archive over time.';
+      'Pro keeps the longer proof trail over time.';
 
   static List<String> get allVisibleStrings => [
         noEntriesTitle,

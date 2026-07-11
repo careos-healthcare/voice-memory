@@ -132,7 +132,7 @@ void main() {
       expect(find.text('Private by default'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallPrimaryCta), findsNothing);
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
     });
 
     testWidgets('paywall does not duplicate private-by-default trust line', (
@@ -192,7 +192,7 @@ void main() {
     });
 
     test('restore and purchase copy constants unchanged', () {
-      expect(ArchivePaywallCopy.primaryCta, 'Keep my longer story');
+      expect(ArchivePaywallCopy.primaryCta, 'Keep the longer trail');
       expect(
         ArchivePaywallCopy.restoreSuccess,
         'Purchase restored. Pro is active.',

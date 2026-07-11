@@ -33,7 +33,7 @@ void main() {
       );
       expect(
         ArchivePaywallCopy.purchaseSuccess,
-        'Pro is active. ArchiveMe keeps the full timeline as it grows.',
+        'Pro is active. ArchiveMe keeps the longer proof trail over time.',
       );
       expect(
         ArchivePaywallCopy.restoreChecking,
@@ -47,7 +47,7 @@ void main() {
         ArchivePaywallCopy.restoreEmpty,
         'No previous Pro purchase was found on this Apple ID.',
       );
-      expect(ArchivePaywallCopy.primaryCta, 'Keep my full timeline');
+      expect(ArchivePaywallCopy.primaryCta, 'Keep the longer trail');
     });
 
     test('restore copy constants stay aligned with paywall confidence copy', () {

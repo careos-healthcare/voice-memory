@@ -94,7 +94,7 @@ void main() {
   });
 
   group('ProPackagingCopy', () {
-    test('defines full timeline Pro positioning', () {
+    test('defines longer proof trail Pro positioning', () {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');
       expect(
         ProPackagingCopy.subtitle,
@@ -111,7 +111,7 @@ void main() {
       expect(ProPackagingCopy.proBullets, contains('Monthly private report'));
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
-        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+        PaywallAlignmentCopy.secondaryReassurance,
       );
       expect(
         ProPackagingCopy.bridgeAfterBeliefChange,
@@ -125,8 +125,8 @@ void main() {
   });
 
   group('ProEvidenceValueCopy', () {
-    test('aligns full-timeline Pro bridge with packaging', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the full timeline');
+    test('aligns longer proof trail Pro bridge with packaging', () {
+      expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
         contains('ChatGPT can answer a conversation'),

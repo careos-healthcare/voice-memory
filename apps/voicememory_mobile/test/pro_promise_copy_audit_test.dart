@@ -11,6 +11,10 @@ import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promis
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/proof_trail_positioning/proof_trail_positioning_copy.dart';
+import 'package:voicememory_mobile/features/surface_priority/surface_priority_copy.dart';
+import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
 import 'package:voicememory_mobile/features/release_candidate_freeze/release_candidate_freeze.dart';
 import 'package:voicememory_mobile/features/revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
@@ -140,6 +144,46 @@ void main() {
 
       expect(batch.conflictCount, 1);
       expect(batch.allAligned, isFalse);
+    });
+  });
+
+  group('Pro promise copy corpus', () {
+    final corpus = <ProPromiseCopyAuditEntry>[
+      for (final copy in ProSinglePromiseCopy.allVisibleStrings())
+        ProPromiseCopyAuditEntry(id: 'pro_single_promise', copy: copy),
+      ProPromiseCopyAuditEntry(
+        id: 'proof_trail_positioning',
+        copy: ProofTrailPositioningCopy.proLine,
+      ),
+      ProPromiseCopyAuditEntry(
+        id: 'timeline_proof_moment',
+        copy: TimelineProofMomentCopy.proLine,
+      ),
+      ProPromiseCopyAuditEntry(
+        id: 'surface_priority',
+        copy: SurfacePriorityCopy.paidReason,
+      ),
+      ProPromiseCopyAuditEntry(
+        id: 'landing_continuity',
+        copy: LandingAppContinuityCopy.freePositioning,
+      ),
+      for (final copy in PaywallValueSharpeningCopy.allPaywallStrings())
+        ProPromiseCopyAuditEntry(id: 'paywall_value_sharpening', copy: copy),
+    ];
+
+    test('known Pro surfaces pass audit or only need review', () {
+      final batch = ProPromiseCopyAudit.auditAll(corpus);
+      final conflicts = batch.results
+          .where(
+            (result) =>
+                result.decision == ProPromiseCopyAuditDecision.conflictFound,
+          )
+          .toList();
+      expect(
+        conflicts,
+        isEmpty,
+        reason: conflicts.map((r) => '${r.copy} -> ${r.message}').join('\n'),
+      );
     });
   });
 

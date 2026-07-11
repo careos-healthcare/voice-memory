@@ -72,19 +72,19 @@ void main() {
   setUp(ProMomentTimingAnalytics.resetForTest);
 
   group('ProMomentTimingCopy', () {
-    test('uses full timeline language', () {
-      expect(ProMomentTimingCopy.headline, 'Keep the full timeline');
+    test('uses longer proof trail language', () {
+      expect(ProMomentTimingCopy.headline, 'Keep the longer proof trail');
       expect(
         ProMomentTimingCopy.body,
         PaywallAlignmentCopy.body,
       );
       expect(
         ProMomentTimingCopy.compactLine,
-        'Pro keeps the full timeline as it grows.',
+        'Pro keeps the longer proof trail over time.',
       );
       expect(
         ProMomentTimingCopy.coreRule,
-        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+        'Free shows the first useful proof. Pro keeps the longer proof trail over time.',
       );
     });
   });

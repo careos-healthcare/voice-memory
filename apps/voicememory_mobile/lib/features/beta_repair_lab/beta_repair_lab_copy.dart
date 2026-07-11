@@ -60,7 +60,7 @@ abstract final class BetaRepairLabCopy {
 
   static const proExplanationTitle = 'Free vs Pro';
   static const proExplanationBody =
-      'Free shows the first useful proof. Pro keeps the longer timeline: '
+      'Free shows the first useful proof. Pro keeps the longer proof trail: '
       'what returns, what changes, what fades, and what you correct.';
   static const proExplanationBulletFree = 'Free: first proof';
   static const proExplanationBulletPro = 'Pro: longer evidence trail';

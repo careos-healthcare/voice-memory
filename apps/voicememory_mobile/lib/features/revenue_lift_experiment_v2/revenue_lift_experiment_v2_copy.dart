@@ -29,7 +29,7 @@ abstract final class RevenueLiftExperimentV2Copy {
   // E) Paywall CTA sharpen
   static const paywallCtaTitle = 'Keep the evidence trail';
   static const paywallCtaBody =
-      'The proof you just saw is only the start. Pro keeps the full timeline as more moments return, change, or fade.';
+      'The proof you just saw is only the start. Pro keeps the longer proof trail as more moments return, change, or fade.';
   static const paywallCtaSupportLine =
       'Not more chat. The longer record behind the pattern.';
   static const paywallPurchaseCtaLine =

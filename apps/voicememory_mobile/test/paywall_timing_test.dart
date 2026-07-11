@@ -419,7 +419,7 @@ void main() {
     test('boundary ties Pro to continuity without blocking free proof', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
-        'Keep the full archive',
+        'Keep the longer proof trail',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,

@@ -6,7 +6,7 @@ abstract final class ProMomentTimingCopy {
   ProMomentTimingCopy._();
 
   static const coreRule =
-      'Free shows the first proof. Pro keeps the full timeline as it grows.';
+      'Free shows the first useful proof. Pro keeps the longer proof trail over time.';
 
   static const headline = PaywallAlignmentCopy.headline;
 

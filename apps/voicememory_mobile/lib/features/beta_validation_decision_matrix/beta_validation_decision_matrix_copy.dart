@@ -51,7 +51,7 @@ abstract final class BetaValidationDecisionMatrixCopy {
               'Move the Pro moment closer to useful proof.',
         BetaValidationDecisionOutcome.fixProExplanation =>
           'Testers are seeing Pro, but not enough understand it. '
-              'Explain the longer timeline more clearly.',
+              'Explain the longer proof trail more clearly.',
         BetaValidationDecisionOutcome.fixPaywallValue =>
           'The core path is working, but no one tapped the paywall CTA. '
               'Make the paid value more concrete before changing pricing.',

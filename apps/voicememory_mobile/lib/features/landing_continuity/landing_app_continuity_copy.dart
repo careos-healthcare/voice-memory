@@ -14,10 +14,10 @@ abstract final class LandingAppContinuityCopy {
   static const chatGptDifferentiation =
       'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.';
 
-  static const proPaidReason = 'Pro keeps the full timeline as it grows.';
+  static const proPaidReason = 'Pro keeps the longer proof trail over time.';
 
   static const freePositioning =
-      'Free shows the first proof. Pro keeps the full timeline as it grows.';
+      'Free shows the first useful proof. Pro keeps the longer proof trail.';
 
   static const step1Title = 'Save one small moment';
   static const step1Body =
@@ -34,7 +34,7 @@ abstract final class LandingAppContinuityCopy {
   static const step4Title = 'Correct what is not relevant';
   static const step4Body = 'Mark what does not fit. Your timeline stays yours.';
 
-  static const step5Title = 'Keep the full timeline with Pro';
+  static const step5Title = 'Keep the longer proof trail with Pro';
   static const step5Body = freePositioning;
 
   static const howItWorksStepTitles = <String>[

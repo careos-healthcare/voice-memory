@@ -130,10 +130,10 @@ void main() {
 
   group('ProEvidenceValueCopy', () {
     test('defines required bridge copy', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the full timeline');
+      expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail');
       expect(
         ProEvidenceValueCopy.body,
-        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+        PaywallAlignmentCopy.secondaryReassurance,
       );
       expect(ProEvidenceValueCopy.cta, 'See what Pro keeps');
       expect(ProEvidenceValueCopy.secondary, 'Not now');

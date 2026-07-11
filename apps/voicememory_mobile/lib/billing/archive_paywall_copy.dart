@@ -42,7 +42,7 @@ abstract class ArchivePaywallCopy {
   static const String proActiveTitle = 'ArchiveMe Pro is active';
   static const String proActiveBody = ConsumerUiCopy.paywallProActiveBody;
   static const String proActiveConfirmation =
-      'Pro is active. ArchiveMe keeps the full timeline as it grows.';
+      'Pro is active. ArchiveMe keeps the longer proof trail over time.';
 
   static const String checkingProAccess = 'Checking your Pro access…';
   static const String purchaseStarting = 'Starting secure purchase…';

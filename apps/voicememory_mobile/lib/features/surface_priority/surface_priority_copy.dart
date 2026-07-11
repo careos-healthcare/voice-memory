@@ -5,7 +5,7 @@ abstract final class SurfacePriorityCopy {
   static const coreRule =
       'Record screen is capture-first. Patterns screen is timeline-first. Paywall has one reason.';
 
-  static const paidReason = 'Pro keeps the full timeline as it grows.';
+  static const paidReason = 'Pro keeps the longer proof trail over time.';
 
   static const debugSummaryTitle = 'Surface priority';
 

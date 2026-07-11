@@ -29,7 +29,7 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 
 void main() {
   group('Paywall copy alignment v1', () {
-    test('headline uses Keep the full timeline', () {
+    test('headline uses Keep the longer proof trail', () {
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
       expect(ArchivePaywallCopy.headline, ConsumerUiCopy.paywallHeadline);
       expect(

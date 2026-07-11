@@ -30,7 +30,7 @@ abstract final class BetaActivationPathCopy {
 
   static const valueMomentTitle = 'You reached the value moment';
   static const valueMomentBody =
-      'If the proof feels useful, the next question is whether the full timeline is worth keeping.';
+      'If the proof feels useful, the next question is whether the longer proof trail is worth keeping.';
   static const valueMomentPrimaryCta = 'See what Pro keeps';
   static const valueMomentSecondaryCta = 'Not now';
 

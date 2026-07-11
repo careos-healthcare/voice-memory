@@ -33,14 +33,14 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 void main() {
   group('PaywallAlignmentCopy', () {
     test('defines canonical headline and body', () {
-      expect(PaywallAlignmentCopy.headline, 'Keep the full timeline');
+      expect(PaywallAlignmentCopy.headline, 'Keep the longer proof trail');
       expect(
         PaywallAlignmentCopy.body,
-        contains('Free shows the first proof'),
+        contains('first useful proof'),
       );
       expect(
         PaywallAlignmentCopy.secondaryReassurance,
-        'You stay in control. You can delete entries and correct the timeline.',
+        'You stay in control. You can delete entries and correct what you saved.',
       );
     });
 
@@ -128,7 +128,7 @@ void main() {
     });
 
     test('purchase CTA constant remains wired for billing-ready paywall', () {
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my full timeline');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(ArchivePaywallCopy.primaryCta, ConsumerUiCopy.paywallPrimaryCta);
     });
   });
@@ -150,10 +150,10 @@ void main() {
     });
 
     test('archive paywall confidence strings unchanged', () {
-      expect(ArchivePaywallCopy.primaryCta, 'Keep my full timeline');
+      expect(ArchivePaywallCopy.primaryCta, 'Keep the longer trail');
       expect(
         ArchivePaywallCopy.purchaseSuccess,
-        'Pro is active. ArchiveMe keeps the full timeline as it grows.',
+        'Pro is active. ArchiveMe keeps the longer proof trail over time.',
       );
       expect(
         ArchivePaywallCopy.restoreSuccess,

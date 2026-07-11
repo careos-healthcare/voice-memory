@@ -397,7 +397,7 @@ void main() {
     });
 
     test('copy uses loosened timeline language', () {
-      expect(ProBridgeVisibilityCopy.title, 'Keep the full timeline');
+      expect(ProBridgeVisibilityCopy.title, 'Keep the longer proof trail');
       expect(
         ProBridgeVisibilityCopy.body,
         contains('Free shows this proof'),

@@ -59,11 +59,11 @@ void main() {
       );
       expect(
         LandingAppContinuityCopy.proPaidReason,
-        'Pro keeps the full timeline as it grows.',
+        'Pro keeps the longer proof trail over time.',
       );
       expect(
         LandingAppContinuityCopy.freePositioning,
-        'Free shows the first proof. Pro keeps the full timeline as it grows.',
+        'Free shows the first useful proof. Pro keeps the longer proof trail.',
       );
       expect(
         LandingAppContinuityCopy.howItWorksStepTitles,
@@ -72,7 +72,7 @@ void main() {
           'Come back when something stands out',
           'See what returned',
           'Correct what is not relevant',
-          'Keep the full timeline with Pro',
+          'Keep the longer proof trail with Pro',
         ],
       );
 
@@ -82,15 +82,15 @@ void main() {
       expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
 
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the full timeline');
-      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep my longer story');
+      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer proof trail');
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
-        LandingAppContinuityCopy.freePositioning,
+        PaywallAlignmentCopy.secondaryReassurance,
       );
       expect(
         ArchivePaywallCopy.proActiveConfirmation,
-        contains('keeps the full timeline as it grows'),
+        contains('keeps the longer proof trail'),
       );
       expect(
         RevenueValueCopy.chatGptDifferentiationLine,
@@ -122,17 +122,17 @@ void main() {
       expect(doc, contains('Come back when something stands out'));
       expect(doc, contains('See what returned'));
       expect(doc, contains('Correct what is not relevant'));
-      expect(doc, contains('Keep the full timeline with Pro'));
+      expect(doc, contains('Keep the longer proof trail with Pro'));
       expect(
         doc,
         contains(
           'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
         ),
       );
-      expect(doc, contains('Keep the full timeline'));
+      expect(doc, contains('Keep the longer proof trail'));
       expect(
         doc,
-        contains('Free shows the first proof. Pro keeps the full timeline as it grows.'),
+        contains('Free shows the first useful proof. Pro keeps the longer proof trail.'),
       );
       expect(doc.toLowerCase(), contains('not therapy'));
       expect(doc.toLowerCase(), contains('cloud backup'));

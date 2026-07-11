@@ -17,16 +17,16 @@ abstract final class PaywallAlignmentCopy {
 
   /// Compact bridge line — avoids repeating the full paywall body on lock cards.
   static const lockMomentPaidReason =
-      'Pro keeps the full timeline — correction history, private reports, and evidence over time.';
+      'Pro keeps the longer proof trail — what returns, changes, fades, or gets corrected over time.';
 
   static const monthlyReportProReason =
-      'Pro keeps the full timeline — and the longer report history.';
+      'Pro keeps the longer proof trail over time.';
 
   static const backupBridgeBody =
-      'You are building evidence over time. Pro keeps the full timeline as it grows.';
+      'You are building evidence over time. Pro keeps the longer proof trail as moments return, change, or fade.';
 
   static const backupProPreservation =
-      'Pro is built around keeping the full timeline.';
+      'Pro is built around keeping the longer proof trail.';
 
   static List<String> allPaywallStrings() => [
         headline,

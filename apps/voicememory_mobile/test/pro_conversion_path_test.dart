@@ -164,7 +164,7 @@ void main() {
       expect(ProConversionAuditEngine.passesRevenueCopyAudit(), isTrue);
     });
 
-    test('paid reason mentions full timeline history or evidence', () {
+    test('paid reason mentions longer proof trail or evidence', () {
       expect(
         ProConversionAuditCopy.mentionsPaidMemoryReason(
           ProConversionAuditEngine.revenueFeatureCopy(),
@@ -173,15 +173,15 @@ void main() {
       );
       expect(
         ProLockMomentCopy.paidReason.toLowerCase(),
-        contains('full timeline'),
+        contains('longer proof trail'),
       );
       expect(
         ProEvidenceValueCopy.title.toLowerCase(),
-        contains('full timeline'),
+        contains('longer proof trail'),
       );
       expect(
         MonthlyPrivateReportCopy.proReason.toLowerCase(),
-        contains('full timeline'),
+        contains('longer proof trail'),
       );
     });
 
