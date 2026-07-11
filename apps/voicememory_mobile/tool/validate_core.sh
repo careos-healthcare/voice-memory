@@ -30,7 +30,8 @@ flutter test \
   test/localized_copy_test.dart \
   test/core_metrics_minimum_set_test.dart \
   test/paid_intent_beta_proof_test.dart \
-  test/freeze_drift_scanner_test.dart
+  test/freeze_drift_scanner_test.dart \
+  test/store_readiness_single_source_test.dart
 
 echo ""
 echo "Core validation passed."
