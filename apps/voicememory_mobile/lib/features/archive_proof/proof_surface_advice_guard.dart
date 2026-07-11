@@ -62,6 +62,7 @@ import '../payment_proof_not_interest/payment_proof_not_interest_gate_copy.dart'
 import '../v1_visible_surface_reducer/v1_visible_surface_reducer_copy.dart';
 import '../commercial_proof_executor/commercial_proof_executor_copy.dart';
 import '../revenuecat_live_proof/revenuecat_live_proof_copy.dart';
+import '../payment_proof_beta/payment_proof_beta_copy.dart';
 import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
@@ -200,6 +201,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...V1VisibleSurfaceReducerCopy.allVisibleStrings(),
         ...CommercialProofExecutorCopy.allVisibleStrings(),
         ...RevenueCatLiveProofCopy.allVisibleStrings(),
+        ...PaymentProofBetaCopy.allVisibleStrings(),
         ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...RevenueCatSandboxProofCopy.allVisibleStrings(),
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),
