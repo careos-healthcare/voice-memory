@@ -54,7 +54,9 @@ Earliest blocker wins:
 
 `CommercialReadinessGate.fromStoreReadinessInput()` bridges the unified store readiness checklist into commercial classification.
 
-`CommercialReadinessGate.buildFromSources()` composes store readiness, RevenueCat sandbox proof, and paid-intent beta proof into one commercial classification.
+`CommercialReadinessGate.buildFromSources()` composes store readiness, RevenueCat sandbox proof, paid-intent beta proof, and secrets rotation launch gate into one commercial classification.
+
+`CommercialReadinessGate.secretsRotationDoneFromLaunchGate()` maps `SecretsRotationLaunchGate` to the commercial `secretsRotationDone` check: only `readyForProductionSubmission` counts as done; `safeForInternalTestFlight` and `blockedForProductionSubmission` keep production blocked.
 
 ## CI bundle
 
@@ -62,6 +64,7 @@ Earliest blocker wins:
 
 - `test/commercial_readiness_gate_test.dart`
 - `test/paid_intent_beta_proof_test.dart`
+- `test/secrets_rotation_launch_gate_test.dart`
 
 ## Code modules
 

@@ -50,6 +50,16 @@ Make exposed or old production secrets a **hard launch blocker**. TestFlight may
 
 Manual rotation confirmations remain `pending` until a human marks them complete.
 
+## Commercial readiness bridge
+
+`CommercialReadinessGate.buildFromSources()` accepts optional `secretsRotation` input. When present, it overrides the store `secretsRotated` flag and maps launch-gate status to commercial `secretsRotationDone`:
+
+| Launch gate status | Commercial `secretsRotationDone` |
+| --- | --- |
+| `readyForProductionSubmission` | `true` → can reach `commerciallyReady` |
+| `safeForInternalTestFlight` | `false` → `productionBlockedBySecrets` |
+| `blockedForProductionSubmission` | `false` → `productionBlockedBySecrets` |
+
 ## CI bundle
 
 `tool/run_secrets_rotation_launch_gate.sh` runs:

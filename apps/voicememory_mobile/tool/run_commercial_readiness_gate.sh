@@ -12,7 +12,8 @@ cd "$APP_DIR"
 echo "==> Commercial readiness gate tests"
 flutter test \
   test/commercial_readiness_gate_test.dart \
-  test/paid_intent_beta_proof_test.dart
+  test/paid_intent_beta_proof_test.dart \
+  test/secrets_rotation_launch_gate_test.dart
 
 echo ""
 echo "Commercial readiness gate validation passed."

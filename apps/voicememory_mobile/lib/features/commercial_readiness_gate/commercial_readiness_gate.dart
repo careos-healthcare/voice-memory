@@ -1,5 +1,6 @@
 import '../paid_intent_beta_proof/paid_intent_beta_proof.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
+import '../secrets_rotation_gate/secrets_rotation_launch_gate.dart';
 import '../store_readiness_single_source/store_readiness_single_source.dart';
 import 'commercial_readiness_gate_copy.dart';
 
@@ -59,15 +60,60 @@ abstract final class CommercialReadinessGate {
         : base;
 
     if (paidIntentResult == null) {
-      return withSandbox;
+      return _applySecretsRotation(withSandbox, sources.secretsRotation);
     }
 
-    return _mergePaidIntent(
-      withSandbox,
-      paidIntentResult,
-      storePaidIntentReady: sources.store?.paidIntentBetaReady ?? false,
+    return _applySecretsRotation(
+      _mergePaidIntent(
+        withSandbox,
+        paidIntentResult,
+        storePaidIntentReady: sources.store?.paidIntentBetaReady ?? false,
+      ),
+      sources.secretsRotation,
     );
   }
+
+  static CommercialReadinessGateInput _applySecretsRotation(
+    CommercialReadinessGateInput input,
+    SecretsRotationLaunchGateInput? secretsRotation,
+  ) {
+    if (secretsRotation == null) {
+      return input;
+    }
+    return mergeSecretsRotationLaunchGate(input, secretsRotation);
+  }
+
+  static bool secretsRotationDoneFromLaunchGate(
+    SecretsRotationLaunchGateResult result,
+  ) =>
+      result.productionSubmissionReady;
+
+  static CommercialReadinessGateInput mergeSecretsRotationLaunchGate(
+    CommercialReadinessGateInput base,
+    SecretsRotationLaunchGateInput secrets,
+  ) =>
+      CommercialReadinessGateInput(
+        productPromiseClear: base.productPromiseClear,
+        firstJourneyStable: base.firstJourneyStable,
+        firstProofUsefulEnough: base.firstProofUsefulEnough,
+        proPromiseClear: base.proPromiseClear,
+        revenueCatProductLoads: base.revenueCatProductLoads,
+        paywallPriceVisible: base.paywallPriceVisible,
+        sandboxPurchaseWorks: base.sandboxPurchaseWorks,
+        restoreWorks: base.restoreWorks,
+        entitlementPersists: base.entitlementPersists,
+        testFlightBuildUploaded: base.testFlightBuildUploaded,
+        paidIntentBetaComplete: base.paidIntentBetaComplete,
+        secretsRotationDone: secretsRotationDoneFromLaunchGate(
+          SecretsRotationLaunchGate.build(secrets),
+        ),
+      );
+
+  static CommercialReadinessGateInput fromSecretsRotationLaunchGate(
+    SecretsRotationLaunchGateInput secrets, {
+    required CommercialReadinessGateInput base,
+  }) =>
+      mergeSecretsRotationLaunchGate(base, secrets);
 
   static CommercialReadinessGateReport report(CommercialReadinessGateResult result) =>
       CommercialReadinessGateReport(
@@ -550,6 +596,7 @@ class CommercialReadinessGateSources {
     this.store,
     this.sandbox,
     this.paidIntent,
+    this.secretsRotation,
     this.productPromiseClear = true,
     this.firstJourneyStable = true,
     this.firstProofUsefulEnough = true,
@@ -559,6 +606,7 @@ class CommercialReadinessGateSources {
   final StoreReadinessSingleSourceInput? store;
   final RevenueCatSandboxProofInput? sandbox;
   final PaidIntentBetaProofInput? paidIntent;
+  final SecretsRotationLaunchGateInput? secretsRotation;
   final bool productPromiseClear;
   final bool firstJourneyStable;
   final bool firstProofUsefulEnough;

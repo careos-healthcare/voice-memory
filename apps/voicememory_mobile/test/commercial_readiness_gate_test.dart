@@ -6,6 +6,8 @@ import 'package:voicememory_mobile/features/commercial_readiness_gate/commercial
 import 'package:voicememory_mobile/features/commercial_readiness_gate/commercial_readiness_gate_copy.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
 import 'package:voicememory_mobile/features/revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
+import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate.dart';
+import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate_copy.dart';
 import 'package:voicememory_mobile/features/store_readiness_single_source/store_readiness_single_source.dart';
 
 const _docsPath = 'docs/COMMERCIAL_READINESS_GATE.md';
@@ -75,6 +77,28 @@ StoreReadinessSingleSourceInput _storeInput({
       testFlightUploadReady: testFlightBuildUploaded,
       paidIntentBetaReady: paidIntentBetaComplete,
       secretsRotated: secretsRotationDone,
+    );
+
+SecretsRotationLaunchGateInput _secretsRotationInput({
+  bool? stripeSecretKeyRotated = true,
+  bool? stripeWebhookSecretRotated = true,
+  bool? productionEnvUpdated = true,
+  bool? oldWebhookDisabled = true,
+  bool revenueCatApiKeySeparatedFromDocsLogs = true,
+  bool noSecretValuesCommitted = true,
+  bool noSecretValuesPrintedInLogs = true,
+  bool? vercelEnvProductionVerified = true,
+}) =>
+    SecretsRotationLaunchGateInput(
+      stripeSecretKeyRotated: stripeSecretKeyRotated,
+      stripeWebhookSecretRotated: stripeWebhookSecretRotated,
+      productionEnvUpdated: productionEnvUpdated,
+      oldWebhookDisabled: oldWebhookDisabled,
+      revenueCatApiKeySeparatedFromDocsLogs:
+          revenueCatApiKeySeparatedFromDocsLogs,
+      noSecretValuesCommitted: noSecretValuesCommitted,
+      noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
+      vercelEnvProductionVerified: vercelEnvProductionVerified,
     );
 
 void main() {
@@ -337,6 +361,92 @@ void main() {
       expect(
         result.earliestBlocker?.id,
         CommercialReadinessGateCheckId.productPromiseClear,
+      );
+    });
+
+    test('launch gate ready -> commerciallyReady', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(),
+          secretsRotation: _secretsRotationInput(),
+        ),
+      );
+      expect(result.status, CommercialReadinessGateStatus.commerciallyReady);
+    });
+
+    test('launch gate pending rotation overrides store secretsRotated flag',
+        () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(secretsRotationDone: true),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(),
+          secretsRotation: _secretsRotationInput(
+            stripeSecretKeyRotated: null,
+            stripeWebhookSecretRotated: null,
+            productionEnvUpdated: null,
+            oldWebhookDisabled: null,
+            vercelEnvProductionVerified: null,
+          ),
+        ),
+      );
+      expect(
+        result.status,
+        CommercialReadinessGateStatus.productionBlockedBySecrets,
+      );
+      expect(
+        _check(result, CommercialReadinessGateCheckId.secretsRotationDone)
+            .status,
+        CommercialReadinessGateCheckStatus.fail,
+      );
+    });
+
+    test('launch gate repo safety failure -> productionBlockedBySecrets', () {
+      final result = CommercialReadinessGate.buildFromSources(
+        CommercialReadinessGateSources(
+          store: _storeInput(),
+          sandbox: _sandboxInput(),
+          paidIntent: _paidIntentInput(),
+          secretsRotation: _secretsRotationInput(
+            noSecretValuesCommitted: false,
+          ),
+        ),
+      );
+      expect(
+        result.status,
+        CommercialReadinessGateStatus.productionBlockedBySecrets,
+      );
+    });
+  });
+
+  group('CommercialReadinessGate.secretsRotationLaunchGate bridge', () {
+    test('maps ready launch gate to secretsRotationDone', () {
+      final launchResult = SecretsRotationLaunchGate.build(
+        _secretsRotationInput(),
+      );
+      expect(
+        CommercialReadinessGate.secretsRotationDoneFromLaunchGate(launchResult),
+        isTrue,
+      );
+      expect(
+        launchResult.status,
+        SecretsRotationLaunchGateStatus.readyForProductionSubmission,
+      );
+    });
+
+    test('maps pending launch gate to secretsRotationDone false', () {
+      final launchResult = SecretsRotationLaunchGate.build(
+        _secretsRotationInput(stripeSecretKeyRotated: null),
+      );
+      expect(
+        CommercialReadinessGate.secretsRotationDoneFromLaunchGate(launchResult),
+        isFalse,
+      );
+      expect(
+        launchResult.status,
+        SecretsRotationLaunchGateStatus.safeForInternalTestFlight,
       );
     });
   });
