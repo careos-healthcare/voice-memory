@@ -5,6 +5,8 @@ import '../../features/pro_access_enforcement/pro_access_enforcement_audit.dart'
 import '../../features/pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import '../../features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart';
 import '../../features/pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart';
+import '../../features/pro_access_enforcement/pro_access_enforcement_audit_v3.dart';
+import '../../features/pro_access_enforcement/pro_access_enforcement_audit_v3_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
@@ -13,9 +15,11 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
   const ProAccessEnforcementAuditCard({
     super.key,
     required this.dashboard,
+    this.storeReadinessBridge,
   });
 
   final ProAccessEnforcementDashboard dashboard;
+  final ProAccessEnforcementStoreReadinessBridge? storeReadinessBridge;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +58,29 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          if (storeReadinessBridge != null) ...[
+            Text(
+              '${ProAccessEnforcementAuditV3Copy.bridgeSectionTitle}: '
+              '${storeReadinessBridge!.alignmentLabel}',
+              key: const Key('pro_access_enforcement_audit_bridge'),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: storeReadinessBridge!.aligned
+                    ? AppColors.textPrimary
+                    : AppColors.warning,
+              ),
+            ),
+            if (storeReadinessBridge!.misalignedTagCount > 0)
+              Text(
+                '${storeReadinessBridge!.misalignedTagCount} billing step tags misaligned',
+                style: const TextStyle(
+                  color: AppTheme.muted,
+                  fontSize: 12,
+                ),
+              ),
+            const SizedBox(height: 8),
+          ],
           Text(
             '${ProAccessEnforcementAuditV2Copy.decisionLabel}: ${dashboard.decisionLabel}',
             key: const Key('pro_access_enforcement_audit_decision'),

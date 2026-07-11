@@ -8,6 +8,8 @@ import 'package:voicememory_mobile/billing/revenuecat_diagnostics.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v2_copy.dart';
+import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v3.dart';
+import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_v3_copy.dart';
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
@@ -336,6 +338,97 @@ void main() {
       expect(docs, contains('productionBlocker'));
       expect(docs.toLowerCase(), contains('developer-diagnostics'));
       expect(docs.toLowerCase(), contains('run_pro_access_enforcement_audit.sh'));
+      expect(docs.toLowerCase(), contains('validate_core.sh'));
+    });
+  });
+
+  group('ProAccessEnforcementAuditV3', () {
+    StoreReadinessSingleSourceInput _storeInput({
+      bool revenueCatConfigured = true,
+      bool productsLoaded = true,
+      bool purchaseFlowReachable = true,
+      bool restorePurchasesReachable = true,
+      bool restoreNoCrashVerified = true,
+      bool proStateCanBeRead = true,
+      bool entitlementPersistsAfterRestart = true,
+    }) =>
+        StoreReadinessSingleSourceInput(
+          signingConfigured: true,
+          appStoreMetadataReady: true,
+          supportUrlSet: true,
+          privacyUrlSet: true,
+          termsUrlSet: true,
+          screenshotsReady: true,
+          revenueCatApiKeyProvided: true,
+          revenueCatConfigured: revenueCatConfigured,
+          productsLoaded: productsLoaded,
+          proEntitlementConfigured: true,
+          purchaseFlowReachable: purchaseFlowReachable,
+          restorePurchasesReachable: restorePurchasesReachable,
+          restoreNoCrashVerified: restoreNoCrashVerified,
+          purchasesUnavailableFallbackVerified: true,
+          proStateCanBeRead: proStateCanBeRead,
+          entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+          physicalDeviceSmokePassed: true,
+          testFlightUploadReady: true,
+          paidIntentBetaReady: true,
+          secretsRotated: true,
+        );
+
+    test('fromStoreReadiness tags four billing store steps', () {
+      final bridge = ProAccessEnforcementAuditV3.fromStoreReadiness(
+        _storeInput(),
+      );
+
+      expect(bridge.tags.length, 4);
+      expect(bridge.aligned, isTrue);
+    });
+
+    test('misaligned when store billing passes but enforcement blocks', () {
+      final bridge = ProAccessEnforcementAuditV3.fromStoreReadiness(
+        _storeInput(),
+        localCachePreventsStalePro: false,
+      );
+
+      expect(bridge.enforcementResult.hasProductionBlocker, isTrue);
+      expect(bridge.aligned, isFalse);
+    });
+
+    test('fromLocalSignals builds bridge without duplicating store logic', () {
+      final bridge = ProAccessEnforcementAuditV3.fromLocalSignals(
+        const ProAccessEnforcementLocalSignals(
+          revenueCatConfigured: true,
+          revenueCatApiKeyMissing: false,
+          productsLoaded: true,
+          proStateReadable: true,
+          proEntitlementActive: true,
+          entitlementPersistsAfterRestart: true,
+        ),
+      );
+
+      expect(bridge.storeResult.submissionReady, isTrue);
+      expect(
+        bridge.enforcementDecision,
+        ProAccessEnforcementAuditDecision.testFlightAcceptable,
+      );
+    });
+
+    test('ciEnforcementPasses requires green bundle', () {
+      expect(
+        ProAccessEnforcementAuditV3.ciEnforcementPasses(bundleTestsGreen: true),
+        isTrue,
+      );
+      expect(
+        ProAccessEnforcementAuditV3.ciEnforcementPasses(bundleTestsGreen: false),
+        isFalse,
+      );
+      expect(ProAccessEnforcementAuditV3.ciTestBundle, hasLength(3));
+    });
+
+    test('v3 copy avoids therapy diagnosis coaching and advice claims', () {
+      for (final text in ProAccessEnforcementAuditV3Copy.allVisibleStrings()) {
+        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+      }
     });
   });
 
@@ -423,6 +516,30 @@ void main() {
   });
 
   group('Protected areas', () {
+    test('validate_core.sh enforces pro access audit CI bundle', () {
+      final source = File('tool/validate_core.sh').readAsStringSync();
+      expect(source, contains('run_pro_access_enforcement_audit.sh'));
+    });
+
+    test('v3 module does not import purchases_flutter or billing_service', () {
+      for (final path in [
+        'lib/features/pro_access_enforcement/pro_access_enforcement_audit_v3.dart',
+        'lib/features/pro_access_enforcement/pro_access_enforcement_audit_v3_copy.dart',
+      ]) {
+        final source = File(path).readAsStringSync();
+        expect(source.contains('package:purchases_flutter'), isFalse);
+        expect(source.contains('billing_service'), isFalse);
+        expect(source.contains('paywall_source'), isFalse);
+      }
+    });
+
+    test('developer diagnostics wires store readiness bridge to card', () {
+      final source =
+          File('lib/screens/developer_diagnostics_screen.dart').readAsStringSync();
+      expect(source, contains('ProAccessEnforcementAuditV3.fromLocalSignals'));
+      expect(source, contains('storeReadinessBridge'));
+    });
+
     test('v2 module does not import purchases_flutter or billing_service', () {
       for (final path in [
         'lib/features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart',

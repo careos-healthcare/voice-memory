@@ -79,3 +79,13 @@ Included in `tool/validate_core.sh`.
 cd apps/voicememory_mobile
 bash tool/run_pro_access_enforcement_audit.sh
 ```
+
+## v3 additions
+
+- **Store readiness bridge** — `ProAccessEnforcementAuditV3.fromStoreReadiness()` cross-tags billing store steps (5–8) with enforcement classifications
+- **CI enforcement** — `tool/validate_core.sh` runs `tool/run_pro_access_enforcement_audit.sh` (includes `revenuecat_sandbox_proof_test.dart`)
+- **Developer card** — shows store readiness bridge alignment on Internal diagnostics
+
+### v3 code modules
+
+- Bridge + CI v3: `lib/features/pro_access_enforcement/pro_access_enforcement_audit_v3.dart`

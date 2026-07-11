@@ -20,6 +20,7 @@ import '../features/beta/proof_value_bottleneck_playbook_engine.dart';
 import '../features/beta/beta_report_export_engine.dart';
 import '../features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
 import '../features/pro_access_enforcement/pro_access_enforcement_audit_v2.dart';
+import '../features/pro_access_enforcement/pro_access_enforcement_audit_v3.dart';
 import '../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../features/testflight_metrics/testflight_metrics_engine.dart';
 import '../billing/paywall_attribution_store.dart';
@@ -58,6 +59,7 @@ class _DeveloperDiagnosticsScreenState
   bool _loading = true;
   CoreMetricsMinimumDashboard? _coreMetricsDashboard;
   ProAccessEnforcementDashboard? _proAccessEnforcementDashboard;
+  ProAccessEnforcementStoreReadinessBridge? _proAccessStoreReadinessBridge;
 
   @override
   void initState() {
@@ -104,26 +106,29 @@ class _DeveloperDiagnosticsScreenState
             testFlightInput: testFlightInput,
             recordedEventNames: recordedEventNames,
           );
+          final proAccessSignals = ProAccessEnforcementLocalSignals(
+            revenueCatConfigured: revenueCatDiagnostics.revenueCatConfigured,
+            revenueCatApiKeyMissing: revenueCatDiagnostics.apiKeyMissing,
+            productsLoaded: revenueCatDiagnostics.offeringsLoaded &&
+                revenueCatDiagnostics.packageCount > 0,
+            proStateReadable: revenueCatDiagnostics.revenueCatConfigured,
+            proEntitlementActive: revenueCat.latestEntitlements.isPro,
+            cachedProOnDisk: cachedEntitlements?.isPro ?? false,
+            restorePurchasesReachable: true,
+            restoreNoCrashVerified: true,
+            entitlementPersistsAfterRestart:
+                (cachedEntitlements?.isPro ?? false) &&
+                    revenueCat.latestEntitlements.isPro,
+            revenueCatLinkedToAccount: false,
+            backendConfigured: AppConfig.isBackendConfigured,
+            appLockEnabled: appLockEnabled,
+          );
           _proAccessEnforcementDashboard =
               ProAccessEnforcementAuditV2.buildFromLocalSignals(
-            ProAccessEnforcementLocalSignals(
-              revenueCatConfigured: revenueCatDiagnostics.revenueCatConfigured,
-              revenueCatApiKeyMissing: revenueCatDiagnostics.apiKeyMissing,
-              productsLoaded: revenueCatDiagnostics.offeringsLoaded &&
-                  revenueCatDiagnostics.packageCount > 0,
-              proStateReadable: revenueCatDiagnostics.revenueCatConfigured,
-              proEntitlementActive: revenueCat.latestEntitlements.isPro,
-              cachedProOnDisk: cachedEntitlements?.isPro ?? false,
-              restorePurchasesReachable: true,
-              restoreNoCrashVerified: true,
-              entitlementPersistsAfterRestart:
-                  (cachedEntitlements?.isPro ?? false) &&
-                      revenueCat.latestEntitlements.isPro,
-              revenueCatLinkedToAccount: false,
-              backendConfigured: AppConfig.isBackendConfigured,
-              appLockEnabled: appLockEnabled,
-            ),
+            proAccessSignals,
           );
+          _proAccessStoreReadinessBridge =
+              ProAccessEnforcementAuditV3.fromLocalSignals(proAccessSignals);
           _loading = false;
         });
       }
@@ -218,6 +223,7 @@ class _DeveloperDiagnosticsScreenState
             const SizedBox(height: 24),
             ProAccessEnforcementAuditCard(
               dashboard: _proAccessEnforcementDashboard!,
+              storeReadinessBridge: _proAccessStoreReadinessBridge,
             ),
           ],
           const SizedBox(height: 24),
