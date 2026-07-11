@@ -7,6 +7,9 @@ import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_analytics.dart';
+import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set.dart';
+import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_copy.dart';
+import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_copy.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_engine.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_model.dart';
@@ -81,6 +84,35 @@ void main() {
         (row) => row.id == TestFlightMetricId.paywallIntent,
       );
       expect(paywallRow.seen, isTrue);
+    });
+
+    test('minimum set tags useful as core proof accepted', () {
+      final dashboard = TestFlightMetricsEngine.buildFromInput(
+        const TestFlightMetricsInput(usefulCount: 1),
+      );
+      final tag = CoreMetricsMinimumSetV2.classifyTestFlightRow(
+        dashboard.coreMetrics.firstWhere(
+          (row) => row.id == TestFlightMetricId.useful,
+        ),
+      );
+      expect(tag.classification.isCoreBeta, isTrue);
+      expect(
+        tag.classification.coreMetricId,
+        CoreMetricsMinimumMetricId.proofAccepted,
+      );
+    });
+
+    test('minimum set tags too vague as diagnostic only', () {
+      final dashboard = TestFlightMetricsEngine.buildFromInput(
+        const TestFlightMetricsInput(tooVagueCount: 1),
+      );
+      final tag = CoreMetricsMinimumSetV2.classifyTestFlightRow(
+        dashboard.coreMetrics.firstWhere(
+          (row) => row.id == TestFlightMetricId.tooVague,
+        ),
+      );
+      expect(tag.classification.diagnosticOnly, isTrue);
+      expect(tag.classification.notReleaseBlocking, isTrue);
     });
   });
 

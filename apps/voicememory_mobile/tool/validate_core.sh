@@ -27,7 +27,10 @@ flutter test \
   test/pattern_map_engine_test.dart \
   test/pattern_map_card_test.dart \
   test/routine_anchor_store_test.dart \
-  test/localized_copy_test.dart
+  test/localized_copy_test.dart \
+  test/core_metrics_minimum_set_test.dart \
+  test/paid_intent_beta_proof_test.dart \
+  test/freeze_drift_scanner_test.dart
 
 echo ""
 echo "Core validation passed."

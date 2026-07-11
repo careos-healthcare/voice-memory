@@ -18,6 +18,11 @@ import '../features/beta/release_candidate_smoke_engine.dart';
 import '../features/beta/proof_of_value_engine.dart';
 import '../features/beta/proof_value_bottleneck_playbook_engine.dart';
 import '../features/beta/beta_report_export_engine.dart';
+import '../features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
+import '../features/revenue_metrics/revenue_funnel_analytics.dart';
+import '../features/testflight_metrics/testflight_metrics_engine.dart';
+import '../billing/paywall_attribution_store.dart';
+import '../widgets/debug/core_metrics_minimum_set_card.dart';
 import '../widgets/debug/beta_metrics_decision_card.dart';
 import '../widgets/debug/beta_release_qa_card.dart';
 import '../widgets/debug/beta_report_export_card.dart';
@@ -47,6 +52,7 @@ class _DeveloperDiagnosticsScreenState
   String _confirmedRepeatBetaFeedbackSummary = 'Not captured yet';
   bool _archiveMeDemoActive = false;
   bool _loading = true;
+  CoreMetricsMinimumDashboard? _coreMetricsDashboard;
 
   @override
   void initState() {
@@ -62,6 +68,13 @@ class _DeveloperDiagnosticsScreenState
       final h = await AppServices.instance.api.health();
       final entries = await AppServices.instance.journalStore.loadAll();
       final betaCounts = await BetaActivationLoopTracker.readCounts();
+      final testFlightInput = await TestFlightMetricsEngine.loadInput();
+      final paywallEvents = await PaywallAttributionStore.instance().events();
+      final recordedEventNames = <String>[
+        for (final record in RevenueFunnelAnalytics.recordedEvents)
+          record.event.id,
+        for (final event in paywallEvents) event.type.id,
+      ];
       await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
       await CoreValueFeedbackStore.ensureLoaded();
       final confirmedRepeatFeedback =
@@ -76,6 +89,11 @@ class _DeveloperDiagnosticsScreenState
                   ? confirmedRepeatFeedback.toReviewSummary()
                   : 'Not captured yet';
           _archiveMeDemoActive = ArchiveMeDemoState.isActive;
+          _coreMetricsDashboard = CoreMetricsMinimumSetV2.buildFromLocalSignals(
+            loopCounts: betaCounts,
+            testFlightInput: testFlightInput,
+            recordedEventNames: recordedEventNames,
+          );
           _loading = false;
         });
       }
@@ -162,6 +180,10 @@ class _DeveloperDiagnosticsScreenState
               ),
             ),
           ),
+          if (_coreMetricsDashboard != null) ...[
+            const SizedBox(height: 24),
+            CoreMetricsMinimumSetCard(dashboard: _coreMetricsDashboard!),
+          ],
           const SizedBox(height: 24),
           ProofOfValueCard(
             report: ProofOfValueEngine.build(

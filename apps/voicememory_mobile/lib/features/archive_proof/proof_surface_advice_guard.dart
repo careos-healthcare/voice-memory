@@ -45,6 +45,7 @@ import '../release_candidate_freeze/release_candidate_freeze_copy.dart';
 import '../freeze_drift_scanner/freeze_drift_scanner_copy.dart';
 import '../paid_intent_beta_proof/paid_intent_beta_proof_copy.dart';
 import '../core_metrics_minimum/core_metrics_minimum_set_copy.dart';
+import '../core_metrics_minimum/core_metrics_minimum_set_v2_copy.dart';
 import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
@@ -166,6 +167,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...FreezeDriftScannerCopy.allVisibleStrings(),
         ...PaidIntentBetaProofCopy.allVisibleStrings(),
         ...CoreMetricsMinimumSetCopy.allVisibleStrings(),
+        ...CoreMetricsMinimumSetV2Copy.allVisibleStrings(),
         ...ReleaseBlockerPriorityCopy.allVisibleStrings(),
         ...RevenueCatSandboxProofCopy.allVisibleStrings(),
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),

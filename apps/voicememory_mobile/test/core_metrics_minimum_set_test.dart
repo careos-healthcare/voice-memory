@@ -4,6 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set.dart';
 import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_copy.dart';
+import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
+import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_v2_copy.dart';
+import 'package:voicememory_mobile/features/beta/beta_activation_loop_counts.dart';
+import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_engine.dart';
+import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_model.dart';
 import 'package:voicememory_mobile/features/freeze_drift_scanner/freeze_drift_scanner.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
 import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise.dart';
@@ -14,6 +19,8 @@ import 'package:voicememory_mobile/features/release_candidate_freeze/release_can
 import 'package:voicememory_mobile/features/revenuecat_sandbox_proof/revenuecat_sandbox_proof.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
+
+const _docsPath = 'docs/core_metrics_minimum_set_v2.md';
 
 void main() {
   group('CoreMetricsMinimumSet.build', () {
@@ -181,6 +188,98 @@ void main() {
     });
   });
 
+  group('CoreMetricsMinimumSetV2', () {
+    test('buildFromLocalSignals maps fourteen core rows', () {
+      final dashboard = CoreMetricsMinimumSetV2.buildFromLocalSignals(
+        loopCounts: const BetaActivationLoopCounts(
+          appOpened: 1,
+          firstMomentSaved: 1,
+          secondMomentSaved: 1,
+          paywallSeen: 1,
+          purchaseTapped: 1,
+          restoreTapped: 1,
+        ),
+        testFlightInput: const TestFlightMetricsInput(
+          firstProofReached: 1,
+          usefulCount: 1,
+          timelineProofSeen: true,
+          sessionPaywallIntent: true,
+        ),
+        recordedEventNames: const [
+          'purchase_started',
+          'purchase_completed',
+          'restore_completed',
+          'entitlement_active',
+        ],
+      );
+
+      expect(dashboard.rows, hasLength(14));
+      expect(dashboard.observedCoreCount, 12);
+      expect(dashboard.missingCoreCount, 2);
+      expect(dashboard.paidIntentRows, hasLength(9));
+    });
+
+    test('classifyTestFlightDashboard tags third save as diagnostic', () {
+      final dashboard = TestFlightMetricsEngine.buildFromInput(
+        const TestFlightMetricsInput(thirdMomentSaved: 1),
+      );
+      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(dashboard);
+      final thirdSave = tags.firstWhere(
+        (tag) => tag.metricId == TestFlightMetricId.thirdSave,
+      );
+      expect(thirdSave.classification.diagnosticOnly, isTrue);
+      expect(thirdSave.classification.notUsedForPaidIntentDecision, isTrue);
+    });
+
+    test('classifyTestFlightDashboard tags first save as core beta', () {
+      final dashboard = TestFlightMetricsEngine.buildFromInput(
+        const TestFlightMetricsInput(firstMomentSaved: 1),
+      );
+      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(dashboard);
+      final firstSave = tags.firstWhere(
+        (tag) => tag.metricId == TestFlightMetricId.firstSave,
+      );
+      expect(firstSave.classification.isCoreBeta, isTrue);
+      expect(firstSave.classification.coreMetricId,
+          CoreMetricsMinimumMetricId.firstSave);
+    });
+
+    test('auditEventCatalog splits core and diagnostic events', () {
+      final audit = CoreMetricsMinimumSetV2.auditEventCatalog(const [
+        'first_recording_saved',
+        'thread_return_evidence_seen',
+        'purchase_completed',
+        'weekly_thread_review_seen',
+      ]);
+      expect(audit.coreCount, 2);
+      expect(audit.diagnosticCount, 2);
+      expect(audit.coreEvents, contains('first_recording_saved'));
+      expect(audit.diagnosticEvents, contains('thread_return_evidence_seen'));
+    });
+
+    test('ci test bundle lists proof regression files', () {
+      expect(CoreMetricsMinimumSetV2.ciTestBundle, hasLength(3));
+      expect(CoreMetricsMinimumSetV2.ciTestBundle, contains(
+        'test/core_metrics_minimum_set_test.dart',
+      ));
+    });
+  });
+
+  group('CoreMetricsMinimumSetV2Copy', () {
+    test('guardrail says do not delete analytics', () {
+      expect(
+        CoreMetricsMinimumSetV2Copy.guardrail.toLowerCase(),
+        contains('do not delete analytics'),
+      );
+    });
+
+    test('copy avoids therapy diagnosis coaching and advice claims', () {
+      for (final text in CoreMetricsMinimumSetV2Copy.allVisibleStrings()) {
+        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+      }
+    });
+  });
+
   group('CoreMetricsMinimumSetCopy', () {
     test('headline says Core metrics minimum set', () {
       expect(
@@ -226,10 +325,20 @@ void main() {
   });
 
   group('Protected areas', () {
+    test('docs file exists with CI bundle command', () {
+      expect(File(_docsPath).existsSync(), isTrue);
+      final docs = File(_docsPath).readAsStringSync().toLowerCase();
+      expect(docs, contains('run_core_metrics_minimum_set.sh'));
+      expect(docs, contains('developer diagnostics'));
+    });
+
     test('module does not import billing or purchases_flutter', () {
       for (final path in [
         'lib/features/core_metrics_minimum/core_metrics_minimum_set.dart',
         'lib/features/core_metrics_minimum/core_metrics_minimum_set_copy.dart',
+        'lib/features/core_metrics_minimum/core_metrics_minimum_set_v2.dart',
+        'lib/features/core_metrics_minimum/core_metrics_minimum_set_v2_copy.dart',
+        'lib/widgets/debug/core_metrics_minimum_set_card.dart',
       ]) {
         final source = File(path).readAsStringSync();
         expect(source.contains('package:purchases_flutter'), isFalse);
