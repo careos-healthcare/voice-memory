@@ -74,6 +74,7 @@ import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
 import '../release_evidence/release_evidence_pack_copy.dart';
 import '../loop_packs_future/loop_packs_future_copy.dart';
 import '../private_reports_future/private_reports_future_copy.dart';
+import '../safe_exports_future/safe_exports_future_copy.dart';
 import '../three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import '../future_expansion_roadmap/future_expansion_roadmap_copy.dart';
 import '../release_fragility/release_fragility_copy.dart';
@@ -228,6 +229,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...LoopPacksFutureCopy.allVisibleStrings(),
         ...ThreeDayProofChallengeCopy.allVisibleStrings(),
         ...PrivateReportsFutureCopy.allVisibleStrings(),
+        ...SafeExportsFutureCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
