@@ -7,6 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../billing/archive_entitlement_reader.dart';
+import '../billing/revenuecat_service.dart';
+import '../billing/subscription_copy.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
@@ -313,8 +315,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/pro-preview'),
             ),
-            _tile(
-              ConsumerUiCopy.restorePurchases,
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ConsumerUiCopy.restorePurchases,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: RevenueCatService.instance.isConfigured
+                  ? null
+                  : Text(
+                      SubscriptionCopy.temporarilyUnavailable,
+                      style: ArchiveMobileTypography.listSubtitle(context),
+                    ),
+              trailing: const Icon(Icons.chevron_right),
               onTap: _restoreBusy ? null : _restorePurchases,
             ),
             const PrivacyDataControlsSection(),

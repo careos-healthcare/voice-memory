@@ -16,6 +16,8 @@ abstract final class ReleaseFragilityAudit {
   static const canonicalDeploymentTarget = '13.0';
   static const canonicalProductId = 'archive_loop_pro_monthly';
 
+  static final RegExp _legacyBundleIdPattern = RegExp(r'com\.voicememory\.app');
+
   static const canonicalRiskOrder = [
     ReleaseFragilityRiskId.signing,
     ReleaseFragilityRiskId.bundleId,
@@ -177,7 +179,7 @@ abstract final class ReleaseFragilityAudit {
       pbxprojSource.contains(
         'PRODUCT_BUNDLE_IDENTIFIER = $canonicalBundleId;',
       ) &&
-      !pbxprojSource.contains('com.voicememory.app');
+      !_legacyBundleIdPattern.hasMatch(pbxprojSource);
 
   static bool detectIosDeploymentTargetAligned({
     required String pbxprojSource,

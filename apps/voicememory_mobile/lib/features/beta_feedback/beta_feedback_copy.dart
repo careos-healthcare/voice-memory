@@ -57,7 +57,7 @@ abstract final class BetaFeedbackCopy {
   static const optionWouldPay = 'I would pay for this';
   static const optionWouldNotPayYet = 'I would not pay for this yet';
   static const optionNotDifferentFromChat =
-      'I still do not see why this is different from ChatGPT';
+      'I still do not see why this is different from other apps';
   static const optionOther = 'Other';
 
   static const sheetNoteLabel = 'Add a note';

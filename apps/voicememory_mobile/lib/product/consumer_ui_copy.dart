@@ -600,7 +600,7 @@ abstract class ConsumerUiCopy {
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
   static const String paywallBillingNotConfigured =
-      'Pro keeps the longer proof trail over time. Purchases are not available right now.';
+      'ArchiveMe keeps the longer proof trail over time. Purchases are not available right now.';
   static const String plansUnavailable = 'Plans are not available yet.';
 
   // ——— Pattern memory limits (Pro) ———

@@ -25,7 +25,7 @@ abstract final class LandingAppContinuityCopy {
 
   static const step2Title = 'Come back when something stands out';
   static const step2Body =
-      'No daily streak required. Return when another moment matters.';
+      'Return when another moment matters, and ArchiveMe can compare cautiously.';
 
   static const step3Title = 'See what returned';
   static const step3Body =
