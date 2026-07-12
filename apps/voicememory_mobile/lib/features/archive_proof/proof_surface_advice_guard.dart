@@ -80,6 +80,7 @@ import '../cross_device_continuity_future/cross_device_continuity_future_copy.da
 import '../b2b_workplace_pressure_future/b2b_workplace_pressure_future_copy.dart';
 import '../return_tomorrow_ritual/return_tomorrow_ritual_copy.dart';
 import '../contradiction_change_future/contradiction_change_future_copy.dart';
+import '../safe_sharing_future/safe_sharing_future_copy.dart';
 import '../three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import '../future_expansion_roadmap/future_expansion_roadmap_copy.dart';
 import '../release_fragility/release_fragility_copy.dart';
@@ -240,6 +241,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...B2bWorkplacePressureFutureCopy.allVisibleStrings(),
         ...ReturnTomorrowRitualCopy.allVisibleStrings(),
         ...ContradictionChangeFutureCopy.allVisibleStrings(),
+        ...SafeSharingFutureCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
