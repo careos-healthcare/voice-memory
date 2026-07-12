@@ -72,6 +72,7 @@ import '../release_blocker_priority/release_blocker_priority_copy.dart';
 import '../revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import '../v1_surface_scope/v1_surface_scope_audit_copy.dart';
 import '../release_evidence/release_evidence_pack_copy.dart';
+import '../release_fragility/release_fragility_copy.dart';
 import '../single_launch_checklist/single_launch_checklist_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
 import '../proof_selection/proof_selection_principle_copy.dart';
@@ -218,6 +219,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...V1SurfaceScopeAuditCopy.allVisibleStrings(),
         ...ReleaseEvidencePackCopy.allVisibleStrings(),
         ...SingleLaunchChecklistCopy.allVisibleStrings(),
+        ...ReleaseFragilityCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
