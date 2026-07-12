@@ -85,6 +85,7 @@ import '../android_after_ios_proof/android_after_ios_proof_copy.dart';
 import '../archive_memory_after_v1/archive_memory_after_v1_copy.dart';
 import '../premium_tiers_future/premium_tiers_future_copy.dart';
 import '../post_proof_pro_cta/post_proof_pro_cta_copy.dart';
+import '../price_objection_feedback/price_objection_feedback_copy.dart';
 import '../three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import '../future_expansion_roadmap/future_expansion_roadmap_copy.dart';
 import '../release_fragility/release_fragility_copy.dart';
@@ -250,6 +251,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ...ArchiveMemoryAfterV1Copy.allVisibleStrings(),
         ...PremiumTiersFutureCopy.allVisibleStrings(),
         ...PostProofProCtaCopy.allVisibleStrings(),
+        ...PriceObjectionFeedbackCopy.allVisibleStrings(),
         ...ProofSelectionPrincipleCopy.allVisibleStrings(),
         ...PatternLifecycleCopy.allVisibleStrings(),
         ...QuietSignalCopy.allVisibleStrings(),
