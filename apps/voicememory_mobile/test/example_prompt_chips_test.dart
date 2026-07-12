@@ -160,11 +160,9 @@ void main() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
-    testWidgets('shows starter prompts above record CTA when ready', (
+    testWidgets('capture-first record suppresses starter prompt chips', (
       tester,
     ) async {
-      // Starter prompts only appear once the archive has pattern evidence
-      // (3+ saved reflections). Seed three and wait for the async stack load.
       await tester.runAsync(() async {
         for (var i = 0; i < 3; i++) {
           await AppServices.instance.journalStore.save(
@@ -205,12 +203,9 @@ void main() {
       await tester.pump();
       for (var i = 0; i < 20; i++) {
         await tester.pump(const Duration(milliseconds: 100));
-        if (find.text(ConsumerUiCopy.trySayingOneOfThese).evaluate().isNotEmpty) {
-          break;
-        }
       }
 
-      expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
   });

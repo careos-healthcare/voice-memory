@@ -315,7 +315,7 @@ void main() {
       }
     }
 
-    testWidgets('appears as a secondary option below One Small Recording', (
+    testWidgets('low effort check-in suppressed on capture-first record', (
       tester,
     ) async {
       await seedReflections(tester);
@@ -324,34 +324,42 @@ void main() {
         store: MemoryPressureCheckInStore(_workThread3()),
       );
 
-      final primary = find.byKey(const Key('one_small_recording_card'));
-      final fallback = find.byKey(const Key('low_effort_check_in_card'));
-      expect(primary, findsOneWidget);
-      expect(fallback, findsOneWidget);
-      // The fallback never overrides the primary recording path: it sits
-      // below it, and the record CTA stays.
-      expect(
-        tester.getTopLeft(primary).dy,
-        lessThan(tester.getTopLeft(fallback).dy),
-      );
+      expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+      expect(find.byKey(const Key('low_effort_check_in_card')), findsNothing);
     });
 
     testWidgets('tapping an option persists a real lightweight record', (
       tester,
     ) async {
-      await seedReflections(tester);
       final store = MemoryPressureCheckInStore(_workThread3());
-      await pumpRecordScreen(tester, store: store);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: LowEffortCheckInCard(
+              onSelect: (option) async {
+                await store.save(
+                  PressureCheckInRecord(
+                    entryId: 'low_effort_${store.records.length}',
+                    createdAt: DateTime(2026, 6, 12, 12),
+                    optionId: option.recordOptionId,
+                    contextIds: const ['work'],
+                    transcript: 'low effort check-in',
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
 
       final option = find.byKey(const Key('low_effort_option_returned'));
       await tester.ensureVisible(option);
-      await tester.pump();
       await tester.tap(option);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
-      // Persisted: one new record with the marker option id and the tracked
-      // thread context — and the confirmation only shows because it saved.
       expect(store.records.length, 4);
       final saved = store.records.last;
       expect(saved.optionId, 'low_effort_returned');

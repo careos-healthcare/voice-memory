@@ -107,8 +107,8 @@ void main() {
     ActivationFunnelAnalytics.resetForTest();
     await RepeatReturnCheckStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_psrca.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: '${(await Directory.systemTemp.createTemp('vm_psrca_')).path}/journal.json',
+      prefsPath: '${(await Directory.systemTemp.createTemp('vm_psrca_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
   });

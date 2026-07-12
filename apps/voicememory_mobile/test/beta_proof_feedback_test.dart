@@ -11,6 +11,7 @@ import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedb
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'package:voicememory_mobile/features/proof_relevance_repair/proof_relevance_repair_copy.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_proof_feedback_row.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
@@ -241,7 +242,7 @@ void main() {
       expect(find.text(BetaProofFeedbackCopy.question), findsOneWidget);
     });
 
-    for (final type in BetaProofFeedbackType.values) {
+    for (final type in ProofRelevanceRepairCopy.relevanceFeedbackTypes) {
       testWidgets('tapping ${type.storageValue} stores local feedback', (
         tester,
       ) async {

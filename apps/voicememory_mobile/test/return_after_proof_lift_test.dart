@@ -408,11 +408,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('What to watch for next'), findsOneWidget);
-      expect(
-        find.textContaining('ArchiveMe has enough to start a timeline'),
-        findsOneWidget,
-      );
+      expect(find.text(result.title), findsOneWidget);
+      expect(find.text(result.body), findsOneWidget);
       for (final type in ReturnAfterProofPromptTypeLists.capturePrompts) {
         expect(
           find.text(ReturnAfterProofCopy.chipLabelFor(type)),

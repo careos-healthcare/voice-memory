@@ -465,7 +465,7 @@ void main() {
 
   group('First-three retention loop copy', () {
     test('entry 0 primary capture CTA is Save one moment', () {
-      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Save one moment');
+      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Record moment');
       expect(RecordReturnProCopy.recordOnceCta, 'Record one moment');
     });
 
@@ -730,7 +730,7 @@ void main() {
     });
 
     test('record capture CTA stays capture-first', () {
-      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Save one moment');
+      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Record moment');
     });
   });
 }

@@ -38,6 +38,27 @@ JournalEntry _voiceEntry({
       captureContextTag: captureContextTag,
     );
 
+JournalEntry _blankVoiceEntry({
+  required String id,
+  String? captureContextTag,
+}) =>
+    JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 12, 12),
+      transcript: '   ',
+      durationSeconds: 30,
+      localAudioPath: '/tmp/$id.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+      captureContextTag: captureContextTag,
+    );
+
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
@@ -155,9 +176,8 @@ void main() {
 
       final blankTagged = ArchiveEvidenceMapEngine.eligibleEntriesForContext(
         entries: [
-          _voiceEntry(
+          _blankVoiceEntry(
             id: 'blank',
-            transcript: '   ',
             captureContextTag: CaptureContextTagIds.work,
           ),
         ],

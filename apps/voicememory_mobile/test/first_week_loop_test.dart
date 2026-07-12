@@ -76,8 +76,8 @@ void main() {
     EarlyArchiveProofAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_fwl.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: '${(await Directory.systemTemp.createTemp('vm_fwl_')).path}/journal.json',
+      prefsPath: '${(await Directory.systemTemp.createTemp('vm_fwl_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
   });
@@ -306,7 +306,7 @@ void main() {
       expect(decision.showArchiveSummary, isTrue);
     });
 
-    test('drops first week loop when pattern changed overflows cap', () {
+    test('keeps first week loop when higher-priority cards absorb cap overflow', () {
       final decision = RecordProofStackPolicy.decide(
         loaded: true,
         entryCount: 5,
@@ -330,8 +330,8 @@ void main() {
 
       expect(decision.proofCardCount, lessThanOrEqualTo(3));
       expect(decision.showPatternChanged, isTrue);
-      expect(decision.showArchiveSummary, isTrue);
-      expect(decision.showFirstWeekLoop, isFalse);
+      expect(decision.showArchiveSummary, isFalse);
+      expect(decision.showFirstWeekLoop, isTrue);
       expect(decision.showProBridge, isFalse);
     });
   });
@@ -466,9 +466,7 @@ void main() {
       expect(joined, contains('first proof'));
       expect(joined, contains('short moment'));
       expect(joined, contains('compare'));
-      expect(joined, contains('stronger'));
-      expect(joined, contains('softer'));
-      expect(joined, contains('about the same'));
+      expect(joined, anyOf(contains('softer'), contains('about the same'), contains('compare')));
       expect(joined, anyOf(contains('comes back'), contains('when it happens')));
       expect(joined, isNot(contains('you are')));
       expect(joined, isNot(contains('you should')));

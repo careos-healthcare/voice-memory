@@ -237,11 +237,11 @@ void main() {
 
       expect(find.byKey(const Key('first_run_positioning_card')), findsOneWidget);
       expect(
-        find.textContaining('Free shows the first proof'),
+        find.textContaining('Free shows the first useful proof'),
         findsOneWidget,
       );
       expect(
-        find.textContaining('Pro keeps the longer timeline'),
+        find.textContaining('Pro keeps the longer proof trail'),
         findsOneWidget,
       );
       expect(find.textContaining('upgrade to pro'), findsNothing);

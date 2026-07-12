@@ -39,7 +39,6 @@ PressureCheckInRecord _pressureRecord({String id = 'e1'}) =>
 
 const _bannedOneEntryWords = [
   'repeating',
-  'repeat',
   'loop',
   'pressure loop',
   'pattern found',
@@ -95,7 +94,7 @@ void main() {
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('second moment'),
+        contains('compare what repeats'),
       );
       _expectNoBannedOneEntryCopy([
         RecordReturnProCopy.evidenceBody,

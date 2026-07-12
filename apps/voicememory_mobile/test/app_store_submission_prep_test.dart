@@ -132,7 +132,7 @@ void main() {
       final pubspec = File('pubspec.yaml').readAsStringSync();
       expect(pubspec, contains('version: ${AppStoreSubmissionCopy.expectedVersionLine}'));
       expect(AppStoreSubmissionCopy.expectedVersion, '0.2.0');
-      expect(AppStoreSubmissionCopy.expectedBuildNumber, 43);
+      expect(AppStoreSubmissionCopy.expectedBuildNumber, 48);
     });
 
     test('support URL matches app config', () {

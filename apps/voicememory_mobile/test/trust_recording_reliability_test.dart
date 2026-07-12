@@ -365,7 +365,7 @@ void main() {
       );
       expect(
         PrivateArchiveReportCopy.intro,
-        contains('raw recordings are not included'),
+        contains('private summary from your saved moments'),
       );
       expect(
         PrivateArchiveReportCopy.intro.toLowerCase(),

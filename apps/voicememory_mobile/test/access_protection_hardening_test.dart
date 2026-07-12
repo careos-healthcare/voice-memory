@@ -19,6 +19,8 @@ import 'package:voicememory_mobile/security/archive_privacy_controls_copy.dart';
 import 'package:voicememory_mobile/security/pin_hash.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/security/security_settings_copy.dart';
+import 'package:voicememory_mobile/security/security_settings_copy.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/auth_service.dart';
 import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
@@ -240,8 +242,14 @@ void main() {
   group('Settings / Security routing', () {
     late AppLockService appLock;
     late AuthService auth;
+    late Directory tempDir;
 
-    setUp(() {
+    setUp(() async {
+      tempDir = Directory.systemTemp.createTempSync('vm_access_protection_');
+      await AppServices.resetForTest(
+        journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
+      );
       final memory = MemoryAppLockStore();
       appLock = AppLockService(
         store: AppLockStore(store: memory),
@@ -262,7 +270,15 @@ void main() {
           home: const SettingsScreen(),
         ),
       );
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await tester.dragUntilVisible(
+        find.byKey(const Key('settings_security_tile')),
+        find.byType(ListView),
+        const Offset(0, -300),
+      );
+      await tester.pump();
 
       expect(find.byKey(const Key('settings_security_tile')), findsOneWidget);
       expect(find.text(SecuritySettingsCopy.title), findsOneWidget);

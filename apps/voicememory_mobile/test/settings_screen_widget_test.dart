@@ -1,10 +1,24 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/config/developer_settings_gate.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 
 void main() {
+  late Directory tempDir;
+
+  setUp(() async {
+    tempDir = Directory.systemTemp.createTempSync('vm_settings_widget_');
+    await AppServices.resetForTest(
+      journalPath: '${tempDir.path}/journal.json',
+      skipRevenueCat: true,
+    );
+  });
+
   tearDown(() {
     DeveloperSettingsGate.resetForTest();
     DeveloperSettingsGate.suppressDebugBuildForTests = false;
@@ -13,7 +27,7 @@ void main() {
   Future<void> pumpSettings(WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 300));
   }
 
   testWidgets('consumer settings hide developer tools', (tester) async {
@@ -23,7 +37,13 @@ void main() {
     await pumpSettings(tester);
 
     expect(find.text('Privacy'), findsOneWidget);
-    expect(find.text('Restore purchases'), findsOneWidget);
+    await tester.dragUntilVisible(
+      find.text(ConsumerUiCopy.restorePurchases),
+      find.byType(ListView),
+      const Offset(0, -300),
+    );
+    await tester.pump();
+    expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     await tester.dragUntilVisible(
       find.text(PrivacyDataControlsCopy.exportArchiveTitle),
       find.byType(ListView),

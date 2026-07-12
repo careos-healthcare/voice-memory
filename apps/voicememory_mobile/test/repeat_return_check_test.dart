@@ -127,8 +127,8 @@ void main() {
           captured.add((event: event, properties: properties)),
     );
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_repeat_return.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: '${(await Directory.systemTemp.createTemp('vm_repeat_return_')).path}/journal.json',
+      prefsPath: '${(await Directory.systemTemp.createTemp('vm_repeat_return_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
     await RepeatReturnCheckStore.resetForTest();

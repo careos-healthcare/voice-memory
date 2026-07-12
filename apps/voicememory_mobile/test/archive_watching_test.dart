@@ -81,6 +81,7 @@ RepeatReturnCheckChangeProof _changeProof(RepeatReturnCheckChoice choice) =>
         RepeatReturnCheckChoice.softer =>
           RepeatReturnCheckCopy.trendSofterThanBefore,
         RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
+        RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.trendSteady,
       },
       latestChoice: choice,
     );

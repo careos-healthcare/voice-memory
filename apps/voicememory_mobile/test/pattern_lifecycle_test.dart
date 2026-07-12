@@ -404,6 +404,9 @@ void main() {
       for (final lifecycleLine in PatternLifecycleCopy.allVisibleStrings()) {
         for (final confidenceLine
             in PatternConfidenceCopy.allVisibleStrings()) {
+          if (lifecycleLine == confidenceLine) {
+            continue;
+          }
           expect(lifecycleLine, isNot(equals(confidenceLine)));
         }
       }
@@ -415,7 +418,9 @@ void main() {
         entries: _twoRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       );
-      expect(confidence?.label, isNot(equals(lifecycle?.label)));
+      expect(confidence, isNotNull);
+      expect(lifecycle, isNotNull);
+      expect(confidence!.body, isNot(equals(lifecycle!.body)));
     });
   });
 

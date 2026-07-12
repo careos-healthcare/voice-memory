@@ -137,7 +137,7 @@ void main() {
       final prompt = NextMomentPromptEngine.build(entries: _entries(3))!;
       expect(prompt.title, VisibleArchiveProofCopy.correctionNextGenericTitle);
       expect(prompt.body, contains('not quite right'));
-      expect(prompt.body, contains('still thin'));
+      expect(prompt.body, contains('missed'));
       expect(prompt.secondaryCta, isNull);
     });
 

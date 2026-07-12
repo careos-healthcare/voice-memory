@@ -1870,7 +1870,7 @@ void main() {
     });
 
     testWidgets('expanding why shows grounded evidence reasons', (tester) async {
-      final entries = _fourEntriesWithSofterRelatedReturn();
+      final entries = _fiveEntriesWithHelpfulActionCapture();
       final timeline = EarlyEvidenceTimelineEngine.build(entries: entries);
 
       await tester.pumpWidget(
@@ -1879,8 +1879,8 @@ void main() {
             body: SingleChildScrollView(
               child: EarlyEvidenceTimelineCard(
                 timeline: timeline!,
-                analyticsSurface: 'patterns',
-                entryCount: 4,
+                analyticsSurface: 'record',
+                entryCount: 5,
                 entriesForWhy: entries,
               ),
             ),

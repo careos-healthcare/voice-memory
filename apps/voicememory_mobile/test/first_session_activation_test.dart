@@ -8,7 +8,10 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -557,6 +560,7 @@ void main() {
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
+      await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
@@ -674,15 +678,20 @@ void main() {
       );
     });
 
-    testWidgets('zero entries show archive promise hero not legacy cards', (
+    testWidgets('zero entries show capture-first onboarding not legacy cards', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
-      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
-        expect(find.text(step), findsOneWidget);
+      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
+      expect(find.text(FirstSessionOnboardingCopy.title), findsOneWidget);
+      for (var i = 0; i < FirstSessionOnboardingCopy.steps.length; i++) {
+        expect(
+          find.byKey(Key('first_session_onboarding_step_title_$i')),
+          findsOneWidget,
+        );
       }
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
       expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.text("Today's map prompt"), findsNothing);
@@ -711,9 +720,14 @@ void main() {
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.oneEntryBody), findsOneWidget);
+      expect(
+        find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+        findsOneWidget,
+      );
+      expect(find.text(LowEvidenceCopy.oneEntryTitle), findsOneWidget);
+      expect(find.text(LowEvidenceCopy.oneEntryBody), findsOneWidget);
+      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsNothing);
+      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
       expect(find.text(EarlyFirstSignalCopy.addMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
@@ -1455,6 +1469,7 @@ void main() {
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
+      await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();
       VisualAuditOverrides.setRecordPresentation(
@@ -1513,18 +1528,18 @@ void main() {
 
         expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
         expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-        expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+        expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
         expect(find.byType(CaptureEntryActions), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
 
-    testWidgets('hidden without attribution — hero onboarding only', (tester) async {
+    testWidgets('hidden without attribution — onboarding only', (tester) async {
       await pumpRecordScreen(tester, store: storeWith());
 
       expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
       expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -1843,6 +1858,7 @@ void main() {
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
+      await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();
       InviteFunnelMetrics.resetForTest();

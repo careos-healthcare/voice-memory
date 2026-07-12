@@ -34,10 +34,28 @@ JournalEntry _entry(String text) {
 }
 
 Future<void> _reset(String stamp) async {
+  final tmp = await Directory.systemTemp.createTemp('vm_watch_coord_$stamp');
   await AppServices.resetForTest(
-    journalPath: '/tmp/vm_watch_coord_journal_$stamp.json',
-    prefsPath: '/tmp/vm_watch_coord_prefs_$stamp.json',
+    journalPath: '${tmp.path}/journal.json',
+    prefsPath: '${tmp.path}/prefs.json',
   );
+}
+
+Future<ActivationEventCounts> _readEventsWhenReady({
+  required int shown,
+  required int selected,
+}) async {
+  for (var i = 0; i < 100; i++) {
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
+    if (events.tomorrowQuestionVariantShown >= shown &&
+        events.tomorrowQuestionVariantSelected >= selected) {
+      return events;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 25));
+  }
+  return ActivationEventsStore(AppServices.instance.prefs).read();
 }
 
 void main() {
@@ -201,16 +219,12 @@ void main() {
       variantId: 'sharper',
       categoryId: 'worry',
     );
-    await Future<void>.delayed(const Duration(milliseconds: 50));
     ActivationTracker.trackTomorrowQuestionVariantSelected(
       variantId: 'practical',
       categoryId: 'responsibility',
     );
-    await Future<void>.delayed(const Duration(milliseconds: 50));
 
-    final events = await ActivationEventsStore(
-      AppServices.instance.prefs,
-    ).read();
+    final events = await _readEventsWhenReady(shown: 1, selected: 1);
     expect(events.tomorrowQuestionVariantShown, 1);
     expect(events.tomorrowQuestionVariantSelected, 1);
   });

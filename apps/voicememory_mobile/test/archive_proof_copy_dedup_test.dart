@@ -897,7 +897,7 @@ void main() {
     test('first-use prompt says no need to explain and ten seconds is enough', () {
       expect(
         RecordFirstUsePromptCopy.body.toLowerCase(),
-        contains('no need to explain everything'),
+        contains('use one sentence'),
       );
       expect(
         RecordFirstUsePromptCopy.footer,

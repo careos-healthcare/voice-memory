@@ -438,12 +438,20 @@ void main() {
     late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_fsl_journal_');
+      tempDir = Directory.systemTemp.createTempSync(
+        'vm_fsl_journal_${DateTime.now().microsecondsSinceEpoch}_',
+      );
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
         prefsPath: '${tempDir.path}/prefs.json',
         skipRevenueCat: true,
       );
+    });
+
+    tearDown(() {
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
     });
 
     Future<void> pumpJournal(WidgetTester tester) async {
@@ -456,9 +464,18 @@ void main() {
             home: JournalScreen(key: UniqueKey()),
           ),
         );
-        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
       });
       await tester.pump();
+      for (var i = 0;
+          i < 40 &&
+              find.byKey(const Key('first_archive_value_card')).evaluate().isEmpty;
+          i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 25)),
+        );
+      }
     }
 
     testWidgets('appears for one entry with search and pin', (tester) async {

@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:voicememory_mobile/features/pro/pro_value_preview_gates.dart';
 import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro_value_preview_card.dart';
 
@@ -172,6 +173,16 @@ void main() {
   });
 
   group('Pro value preview settings', () {
+    late Directory tempDir;
+
+    setUp(() async {
+      tempDir = Directory.systemTemp.createTempSync('vm_pro_value_preview_');
+      await AppServices.resetForTest(
+        journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
+      );
+    });
+
     testWidgets('settings shows ArchiveMe Pro row', (tester) async {
       final router = GoRouter(
         routes: [
@@ -191,6 +202,14 @@ void main() {
           theme: AppTheme.light(),
           routerConfig: router,
         ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await tester.dragUntilVisible(
+        find.byKey(const Key('settings_pro_value_preview_tile')),
+        find.byType(ListView),
+        const Offset(0, -300),
       );
       await tester.pump();
 

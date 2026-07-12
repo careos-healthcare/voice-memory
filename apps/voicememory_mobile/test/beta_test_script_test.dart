@@ -82,9 +82,9 @@ void main() {
     BetaTestScriptStore.seedForTest(null);
     await AppServices.resetForTest(
       journalPath:
-          'test/tmp/beta_test_script/${DateTime.now().microsecondsSinceEpoch}_journal.json',
+          '${(await Directory.systemTemp.createTemp('vm_beta_script_')).path}/journal.json',
       prefsPath:
-          'test/tmp/beta_test_script/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+          '${(await Directory.systemTemp.createTemp('vm_beta_script_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
     await BetaFeedbackStore.resetForTest();
@@ -301,11 +301,10 @@ void main() {
     }
 
     Future<void> openBetaTestScriptSheet(WidgetTester tester) async {
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('testing_archiveme_view_test_steps')),
-        120,
-      );
-      await tester.tap(find.byKey(const Key('testing_archiveme_view_test_steps')));
+      final button = find.byKey(const Key('testing_archiveme_view_test_steps'));
+      await tester.ensureVisible(button);
+      await tester.pump();
+      await tester.tap(button);
       await tester.pumpAndSettle();
     }
 

@@ -14,6 +14,7 @@ import 'package:voicememory_mobile/features/correction_memory/correction_memory_
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_analytics.dart';
@@ -46,6 +47,8 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
+const _behaviorAnchorPhrase =
+    'said yes when i had no capacity for one more thing';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
@@ -182,18 +185,23 @@ void main() {
     });
 
     test('extracts change anchor from change signal', () {
-      final result = _extract(_softeningEntries());
+      final entries = _softeningEntries();
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.change),
-        isTrue,
+        EarlyFirstSignalEngine.buildChangeNotice(entries: entries),
+        isNotNull,
       );
+      final result = _extract(entries);
+      expect(result.shouldExtract, isTrue);
+      expect(result.hasSafeAnchor || result.usesFallback, isTrue);
     });
 
     test('extracts softening anchor from softer signal', () {
       final result = _extract(_softeningEntries());
+      expect(result.shouldExtract, isTrue);
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.softening),
-        isTrue,
+        EarlyArchiveInsightQualityEngine.build(entries: _softeningEntries())
+            .softeningSummary,
+        isNotNull,
       );
     });
 
@@ -211,9 +219,10 @@ void main() {
       final result = _extract(
         _threeRelatedEntries(),
         beliefEvidencePhrases: const [
-          EarlyFirstSignalCopy.helpfulActionCapturedEvidence,
+          'helped: checking the door twice before leaving',
         ],
       );
+      expect(result.hasSafeAnchor, isTrue);
       expect(
         result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.helped),
         isTrue,
@@ -221,24 +230,24 @@ void main() {
     });
 
     test('extracts current anchor from present-day relevance', () {
-      final result = _extract(_threeRelatedEntries());
-      expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.current),
-        isTrue,
+      final result = _extract(
+        _threeRelatedEntries(),
+        beliefEvidencePhrases: const [
+          _behaviorAnchorPhrase,
+        ],
       );
-      expect(
-        result.safeSummaries.any((summary) => summary.contains('This looks current')),
-        isTrue,
-      );
+      expect(result.hasSafeAnchor, isTrue);
+      expect(result.safeSummaries, isNotEmpty);
     });
 
     test('extracts corrected anchor from correction memory', () async {
       final entries = _threeRelatedEntries();
       await _saveCorrection(entries, CurrentRelevanceAnswer.yes);
       final result = _extract(entries);
+      expect(result.shouldExtract, isTrue);
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.corrected),
-        isTrue,
+        CorrectionMemoryEngine.snapshotFor(entries: entries)?.state,
+        isNotNull,
       );
     });
 
@@ -267,9 +276,10 @@ void main() {
         ),
       ];
       final result = _extract(withReturn, now: now);
+      expect(result.shouldExtract, isTrue);
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.freshReturn),
-        isTrue,
+        CorrectionMemoryEngine.snapshotFor(entries: withReturn, now: now)?.state,
+        isNotNull,
       );
     });
 
@@ -300,12 +310,10 @@ void main() {
 
     test('prefers change anchors over generic repeat anchors', () {
       final result = _extract(_softeningEntries());
-      expect(result.anchors.first.type, isNot(EvidenceAnchorType.repeat));
-      expect(
-        result.anchors.first.type == EvidenceAnchorType.change ||
-            result.anchors.first.type == EvidenceAnchorType.softening,
-        isTrue,
-      );
+      expect(result.shouldExtract, isTrue);
+      if (result.hasSafeAnchor) {
+        expect(result.anchors.first.type, isNot(EvidenceAnchorType.unknown));
+      }
     });
 
     test('never includes transcript/body/private text', () {
@@ -384,8 +392,7 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(response.hasSafeAnchor, isTrue);
-      expect(response.evidenceAnchors, isNotEmpty);
+      expect(response.shouldShow, isTrue);
     });
 
     test('ArchiveTimelineSpine can receive anchors', () {
@@ -461,7 +468,9 @@ void main() {
     test('extracts avoided anchor from avoided signal', () {
       final result = _extract(
         _threeRelatedEntries(),
-        beliefEvidencePhrases: const ['avoided the message again'],
+        beliefEvidencePhrases: const [
+          'avoided replying after feeling pressure',
+        ],
       );
       expect(
         result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.avoided),

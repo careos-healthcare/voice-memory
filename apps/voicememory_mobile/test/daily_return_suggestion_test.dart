@@ -11,6 +11,7 @@ import 'package:voicememory_mobile/features/pressure_retention/daily_return_sugg
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -624,11 +625,10 @@ void main() {
       }
     }
 
-    testWidgets('shows suggestions when pressure evidence exists', (
+    testWidgets('capture-first record suppresses daily suggestions', (
       tester,
     ) async {
       await tester.runAsync(() async {
-        // Suggestions load only after three saved reflections.
         await _seedJournalForSuggestions(3);
       });
 
@@ -637,8 +637,10 @@ void main() {
         store: MemoryPressureCheckInStore(_richRecords()),
       );
 
-      expect(find.text('Worth checking today'), findsOneWidget);
-      expect(find.text("Based on what you've recorded"), findsWidgets);
+      expect(find.text('Start here today'), findsNothing);
+      expect(find.byKey(const Key('start_here_today_card')), findsNothing);
+      expect(find.text('Worth checking today'), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
@@ -654,7 +656,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('records seen and tap attribution events', (tester) async {
+    testWidgets('capture-first record suppresses suggestion attribution', (tester) async {
       await tester.runAsync(() async {
         await _seedJournalForSuggestions(3);
       });
@@ -666,43 +668,7 @@ void main() {
         suggestionStore: suggestionStore,
       );
 
-      expect(find.text('Worth checking today'), findsOneWidget);
-
-      expect(
-        suggestionStore.recorded.map((e) => e.type),
-        contains(SuggestionAttributionEventType.dailySuggestionsSeen),
-      );
-
-      // Tap the primary "Start here today" recommendation.
-      final primary = find.byKey(
-        const Key('daily_return_primary_recommendation'),
-      );
-      await tester.ensureVisible(primary);
-      await tester.tap(primary);
-      await tester.pump();
-
-      final tapped = suggestionStore.recorded
-          .where(
-            (e) => e.type == SuggestionAttributionEventType.startHereTapped,
-          )
-          .toList();
-      expect(tapped, hasLength(1));
-      expect(tapped.single.suggestionId, isNotNull);
-
-      // Tap a secondary suggestion as well.
-      final card = tester.widget<DailyReturnSuggestionsCard>(
-        find.byType(DailyReturnSuggestionsCard),
-      );
-      final secondary = card.suggestionSet.otherSuggestions.first;
-      final secondaryRow = find.text(secondary.title);
-      await tester.ensureVisible(secondaryRow);
-      await tester.tap(secondaryRow);
-      await tester.pump();
-
-      expect(
-        suggestionStore.recorded.map((e) => e.type),
-        contains(SuggestionAttributionEventType.dailySuggestionTapped),
-      );
+      expect(find.text('Start here today'), findsNothing);
     });
   });
 }

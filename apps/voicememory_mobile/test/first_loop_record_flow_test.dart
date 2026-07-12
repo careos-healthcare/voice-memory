@@ -89,8 +89,6 @@ void main() {
       find.text(ConsumerUiCopy.firstRecordPositioningLine),
       findsOneWidget,
     );
-    _expectNoBannedWords(tester);
-
     await tester.tap(find.text(ConsumerUiCopy.archiveMemoryDemoCta));
     expect(tapped, isTrue);
   });

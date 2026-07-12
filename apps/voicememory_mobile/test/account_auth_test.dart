@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
@@ -5,9 +7,11 @@ import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/auth/account_auth.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/session.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/account_auth_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/auth_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/secure_storage.dart';
@@ -347,10 +351,27 @@ void main() {
   });
 
   group('Restore purchases stays available', () {
+    late Directory tempDir;
+
+    setUp(() async {
+      tempDir = Directory.systemTemp.createTempSync('vm_account_auth_');
+      await AppServices.resetForTest(
+        journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
+      );
+    });
+
     testWidgets('settings still offers Restore purchases', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
       await tester.pump();
-      expect(find.text('Restore purchases'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.dragUntilVisible(
+        find.text(ConsumerUiCopy.restorePurchases),
+        find.byType(ListView),
+        const Offset(0, -300),
+      );
+      await tester.pump();
+      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
   });
 

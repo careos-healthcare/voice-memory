@@ -246,8 +246,8 @@ void main() {
 
     test('record card sits after capture freedom line', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine)');
-      final timelineIndex = source.indexOf('if (showTimelinePositioningOnRecordReady)');
+      final freedomIndex = source.indexOf('if (showCaptureFreedomLine) ...[');
+      final timelineIndex = source.indexOf('showTimelinePositioningOnRecordReady)');
       expect(freedomIndex, greaterThan(0));
       expect(timelineIndex, greaterThan(freedomIndex));
     });

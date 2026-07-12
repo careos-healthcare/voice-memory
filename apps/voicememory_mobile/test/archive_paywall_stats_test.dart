@@ -79,8 +79,7 @@ void main() {
       ),
     );
     final text = stats.subheadlineFor(ArchivePaywallVariant.b);
-    expect(text, contains('patterns keep returning'));
-    expect(text, contains('Pro keeps key moments'));
+    expect(text, contains('first useful proof'));
   });
 
   test('variant B pre-cta lists patterns theories contradictions', () {

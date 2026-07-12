@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
@@ -384,15 +385,9 @@ void main() {
 
       expect(
         find.text(EarlySavedMomentsCopy.viewSavedMomentsCta),
-        findsOneWidget,
+        findsNothing,
       );
-      await tester.tap(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('archive_history_sheet')), findsOneWidget);
-      expect(find.text(ArchiveHistoryCopy.sheetSubtitle), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
     test('first proof flow still works with archive history engine present', () {

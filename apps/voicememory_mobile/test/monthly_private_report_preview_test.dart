@@ -206,7 +206,7 @@ void main() {
       );
       expect(
         MonthlyPrivateReportCopy.proReason,
-        contains('longer report history'),
+        contains('longer proof trail'),
       );
       expect(
         MonthlyPrivateReportCopy.chatDifferentiation,

@@ -167,8 +167,8 @@ void main() {
         find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
         findsOneWidget,
       );
-      expect(find.textContaining('Save a few real moments'), findsOneWidget);
-      expect(find.text('Save your first moment'), findsOneWidget);
+      expect(find.textContaining('Record a few real moments'), findsOneWidget);
+      expect(find.text('Record moment'), findsOneWidget);
       expect(find.text('Type instead'), findsOneWidget);
       expect(find.text('Current belief'), findsNothing);
       expect(find.text('Start your first week'), findsNothing);

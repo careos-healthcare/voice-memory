@@ -99,7 +99,7 @@ void main() {
       );
       expect(
         ProVisibilityLiftCopy.body,
-        contains('evidence trail'),
+        contains('first useful proof'),
       );
     });
 

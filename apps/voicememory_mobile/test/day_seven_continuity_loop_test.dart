@@ -396,41 +396,24 @@ void main() {
       expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
-    testWidgets('early-thread card appears at 2 entries, without a CTA', (
+    testWidgets('early-thread card suppressed on capture-first record at 2 entries', (
       tester,
     ) async {
       await tester.runAsync(() => seedEntries(2));
       await pumpRecordScreen(tester);
-      expect(
-        find.byKey(const Key('day_seven_continuity_card')),
-        findsOneWidget,
-      );
-      expect(find.text('Keep the thread visible'), findsOneWidget);
-      expect(find.byKey(const Key('day_seven_continuity_cta')), findsNothing);
-      // Recording is never blocked.
+      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('review-ready card routes to the existing weekly review', (
+    testWidgets('review-ready card suppressed on capture-first record', (
       tester,
     ) async {
       await tester.runAsync(() => seedEntries(3));
       await pumpRecordScreen(tester, checkIns: _reviewReadyRecords());
 
-      expect(find.text('Your weekly review is ready'), findsOneWidget);
-      final cta = find.byKey(const Key('day_seven_continuity_cta'));
-      expect(cta, findsOneWidget);
-
-      await tester.ensureVisible(cta);
-      await tester.pump();
-      await tester.tap(cta);
-      await tester.pumpAndSettle();
-      expect(find.text('INSIGHTS_MARKER'), findsOneWidget);
-      expect(
-        eventsNamed(ActivationFunnelAnalytics.day7ContinuityWeeklyReviewTapped),
-        hasLength(1),
-      );
+      expect(find.text('Your weekly review is ready'), findsNothing);
+      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
     testWidgets('hides at 7+ entries when no weekly review exists', (

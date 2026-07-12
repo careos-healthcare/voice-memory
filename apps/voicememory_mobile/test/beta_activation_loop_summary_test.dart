@@ -40,6 +40,7 @@ void main() {
     prefs = _MemoryPrefs();
     prefs.maps.clear();
     BetaActivationLoopTracker.resetSessionForTest();
+    await BetaActivationLoopTracker.clearCounts();
     EarlyArchiveProofAnalytics.resetForTest();
     await AppServices.resetForTest(
       journalPath:
@@ -115,6 +116,9 @@ void main() {
 
   group('Existing analytics bridges', () {
     test('early archive proof forwards one-entry and related states', () async {
+      BetaActivationLoopTracker.resetSessionForTest();
+      await BetaActivationLoopTracker.clearCounts();
+      EarlyArchiveProofAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.heardReceiptSeen(
         entryCount: 1,
         surface: 'record',
@@ -131,9 +135,18 @@ void main() {
         entryCount: 3,
         surface: 'record',
       );
-      await Future<void>.delayed(const Duration(milliseconds: 20));
+      BetaActivationLoopCounts counts =
+          await BetaActivationLoopTracker.readCounts();
+      for (var i = 0;
+          i < 50 &&
+              (counts.oneEntryReturnScreenSeen == 0 ||
+                  counts.twoEntryRelatedSeen == 0 ||
+                  counts.confirmedRepeatSeen == 0);
+          i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        counts = await BetaActivationLoopTracker.readCounts();
+      }
 
-      final counts = await BetaActivationLoopTracker.readCounts();
       expect(counts.oneEntryReturnScreenSeen, 1);
       expect(counts.twoEntryRelatedSeen, 1);
       expect(counts.confirmedRepeatSeen, 1);

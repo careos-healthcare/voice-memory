@@ -1073,6 +1073,7 @@ void main() {
       expect(
         RegExp(
           r'_confidenceSection\(\),\s*'
+          r'if \(paywallCtaLiftResult\.shouldShow\)[\s\S]*?'
           r'// Final price-confidence line directly before the purchase CTA\.\s*'
           r'const SizedBox\(height: 10\),\s*'
           r'_appStoreConfirmLine\(\),\s*'

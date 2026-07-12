@@ -425,18 +425,16 @@ void main() {
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         allOf(
           contains('Your first repeat is free'),
-          contains('evidence timeline'),
-          contains('private report'),
-          contains('weekly reviews'),
+          contains('longer proof trail'),
         ),
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full evidence timeline',
-          'Private archive report',
-          'Weekly reviews',
-          'Change tracking over time',
+          'Longer proof trail',
+          'What returned and changed',
+          'Correction history',
+          'Continuity over time',
         ]),
       );
       expect(ArchiveBeliefThreadCopy.whyPro, contains('evidence trail'));

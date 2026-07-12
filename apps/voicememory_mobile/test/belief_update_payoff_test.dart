@@ -6,7 +6,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/activation/belief_update_payoff.dart';
 import 'package:voicememory_mobile/features/activation/third_entry_belief_payoff.dart';
-import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
+import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/analysis_fallback_payoff.dart';
@@ -399,11 +399,10 @@ void main() {
       expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
       expect(find.byKey(const Key('weekly_archive_review_compact_card')), findsNothing);
       expect(find.byKey(const Key('weekly_archive_review_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.viewEvidence), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
     });
 
     testWidgets('four repeat entries show discovery without belief card', (
@@ -417,7 +416,7 @@ void main() {
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
       expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
       expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
     });
 
     testWidgets('four repeat entries prefer discovery over belief card', (
@@ -431,13 +430,24 @@ void main() {
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
       expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
       expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
     });
 
-    testWidgets('focused actions route to record and evidence', (tester) async {
+    testWidgets('two unrelated entries keep focused post-save actions', (tester) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: _fourRepeatCapacityEntries(),
+        entriesAfterSave: [
+          _voiceEntry(
+            id: 'e1',
+            transcript: 'A quiet moment about lunch with a friend today.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          _voiceEntry(
+            id: 'e2',
+            transcript: 'Another unrelated note about errands this afternoon.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+        ],
       );
 
       expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);

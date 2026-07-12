@@ -42,9 +42,10 @@ JournalEntry _entry({String id = 'e1', String? transcript}) {
 }
 
 Future<void> _resetServices() async {
+  final tmp = await Directory.systemTemp.createTemp('vm_first_archive_');
   await AppServices.resetForTest(
-    journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-    prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+    journalPath: '${tmp.path}/journal.json',
+    prefsPath: '${tmp.path}/prefs.json',
     skipRevenueCat: true,
   );
 }
@@ -58,12 +59,12 @@ void main() {
     test('zero-entry copy uses mind-map preview', () {
       expect(
         ConsumerUiCopy.patternsEmptyPageTitle,
-        'Your archive starts with one real moment.',
+        'Record a few real moments',
       );
-      expect(ConsumerUiCopy.patternsEmptyCta, 'Save your first moment');
+      expect(ConsumerUiCopy.patternsEmptyCta, 'Record moment');
       expect(
         ConsumerUiCopy.patternsEmptyPageBody,
-        contains('When something comes back'),
+        contains('what repeats'),
       );
     });
 
@@ -97,14 +98,17 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Your archive starts with one real moment.'),
+        find.text('Record a few real moments'),
         findsOneWidget,
       );
-      expect(find.textContaining('When something comes back'), findsOneWidget);
+      expect(
+        find.textContaining('what repeats'),
+        findsOneWidget,
+      );
       expect(find.text('Patterns'), findsOneWidget);
       expect(find.text('Changes'), findsOneWidget);
       expect(find.text('Next to watch'), findsOneWidget);
-      expect(find.text('Save your first moment'), findsOneWidget);
+      expect(find.text('Record moment'), findsOneWidget);
       expect(find.text('Type instead'), findsOneWidget);
       expect(find.text('Current belief'), findsNothing);
       expect(find.text('Not enough evidence yet'), findsNothing);
@@ -129,7 +133,7 @@ void main() {
         find.byKey(const Key('patterns_mind_map_empty_primary_cta')),
         findsOneWidget,
       );
-      expect(find.text('Save your first moment'), findsOneWidget);
+      expect(find.text('Record moment'), findsOneWidget);
       expect(find.text('Record one moment'), findsNothing);
       expect(find.text('Record first moment'), findsNothing);
     });
@@ -252,18 +256,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        find.text('Your archive starts with one real moment.'),
+        find.text('Record a few real moments'),
         findsOneWidget,
       );
-      expect(find.textContaining('When something comes back'), findsOneWidget);
-      expect(find.text('Save your first moment'), findsOneWidget);
+      expect(find.textContaining('what repeats'), findsOneWidget);
+      expect(find.text('Record moment'), findsOneWidget);
       expect(find.text('Type instead'), findsOneWidget);
       expect(find.text('Current belief'), findsNothing);
       expect(find.text('Not enough evidence yet'), findsNothing);
       expect(find.text('Start your first week'), findsNothing);
       expect(find.textContaining('Step 0 of 7'), findsNothing);
       expect(find.textContaining('Save seven moments'), findsNothing);
-      expect(find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle), findsNothing);
       expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
       expect(find.textContaining('archive exercise'), findsNothing);
       expect(find.text("Today's exercise"), findsNothing);
@@ -336,7 +339,7 @@ void main() {
         if (formingTitle.evaluate().isNotEmpty) {
           expect(
             find.textContaining(
-              'ArchiveMe needs more usable moments before it can name this thread',
+              VisibleArchiveProofCopy.patternsMindMapFormingBody,
             ),
             findsOneWidget,
           );
@@ -350,7 +353,7 @@ void main() {
           );
         } else if (emptyTitle.evaluate().isNotEmpty) {
           expect(
-            find.text('Save your first moment').evaluate().isNotEmpty ||
+            find.text('Record moment').evaluate().isNotEmpty ||
                 find.text(VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta)
                     .evaluate()
                     .isNotEmpty,
@@ -376,7 +379,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.textContaining('ArchiveMe needs more usable moments before it can name this thread'),
+        find.textContaining(VisibleArchiveProofCopy.patternsMindMapFormingBody),
         findsOneWidget,
       );
       expect(

@@ -58,7 +58,7 @@ void main() {
     expect(EmptyArchiveCopy.intentionalEmptyLongTermRecord, isNotEmpty);
     expect(EmptyArchiveCopy.intentionalEmptyPatternsOverTime, isNotEmpty);
     expect(EmptyArchiveCopy.intentionalEmptyFutureIntro, isNotEmpty);
-    expect(EmptyArchiveCopy.intentionalEmptyFutureQuotes, hasLength(4));
+    expect(EmptyArchiveCopy.intentionalEmptyFutureQuotes, hasLength(3));
     expect(EmptyArchiveCopy.intentionalEmptyClosing, isNotEmpty);
     expect(
       EmptyArchiveCopy.intentionalEmptyLongTermRecord,

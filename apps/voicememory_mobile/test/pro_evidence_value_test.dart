@@ -429,7 +429,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Basic correction'), findsOneWidget);
-      expect(find.text('Changing current weight'), findsOneWidget);
+      expect(find.text('Current vs fading signals'), findsOneWidget);
       expect(find.text('What returned over time'), findsOneWidget);
       expect(find.text(PaywallAlignmentCopy.benefitBullets.first), findsOneWidget);
     });

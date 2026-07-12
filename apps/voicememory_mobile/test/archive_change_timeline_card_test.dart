@@ -446,14 +446,13 @@ void main() {
     test('full archive history mentions evidence timeline', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
-        contains('Full evidence timeline'),
+        contains('Longer proof trail'),
       );
       final joined = [
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
       ].join(' ').toLowerCase();
-      expect(joined, contains('timeline'));
-      expect(joined, contains('evidence'));
+      expect(joined, contains('proof trail'));
     });
   });
 }

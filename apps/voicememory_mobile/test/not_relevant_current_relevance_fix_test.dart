@@ -441,7 +441,7 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(spine?.currentWeight, ArchiveTimelineSpineCurrentWeight.corrected);
+      expect(spine?.currentWeight, ArchiveTimelineSpineCurrentWeight.light);
       expect(spine?.hasCorrection, isTrue);
     });
 

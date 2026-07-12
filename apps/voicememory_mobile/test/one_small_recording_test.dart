@@ -347,59 +347,31 @@ void main() {
       }
     }
 
-    testWidgets('shows the card above daily suggestions and prompt chips', (
+    testWidgets('capture-first record suppresses one small recording card', (
       tester,
     ) async {
       await seedArchiveEntries(tester);
       await pumpRecordScreen(
         tester,
         store: MemoryPressureCheckInStore(_workThread3()),
-        waitForOneSmallRecordingCard: true,
       );
 
-      final cardFinder = find.byKey(const Key('one_small_recording_card'));
-      expect(cardFinder, findsOneWidget);
-      expect(find.text('One small recording'), findsOneWidget);
-      final expectedPrompt =
-          engine.build(_workThread3(), entryCount: 3).prompt;
-      expect(find.text(expectedPrompt), findsOneWidget);
-
-      // Daily suggestions stay present, below the one-small-recording card.
-      final suggestionsHeading = find.text('Worth checking today');
-      expect(suggestionsHeading, findsOneWidget);
-      expect(
-        tester.getTopLeft(cardFinder).dy,
-        lessThan(tester.getTopLeft(suggestionsHeading).dy),
-      );
-
-      // Generic prompts still exist, below the card and visually stepped
-      // back — one clear primary action, not many equal choices.
-      final genericSection = find.byType(ConsumerRecordPromptsSection);
-      expect(genericSection, findsOneWidget);
-      expect(
-        tester.getTopLeft(cardFinder).dy,
-        lessThan(tester.getTopLeft(genericSection).dy),
-      );
-      expect(
-        find.byKey(const Key('generic_prompts_deemphasized')),
-        findsOneWidget,
-      );
-      expect(find.text('Start here. The rest can wait.'), findsOneWidget);
+      expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+      expect(find.text('Worth checking today'), findsNothing);
+      expect(find.byType(ConsumerRecordPromptsSection), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('one small recording card hides duplicate CTA when main record CTA is shown', (
+    testWidgets('capture-first record keeps single record CTA without duplicate card CTA', (
       tester,
     ) async {
       await seedArchiveEntries(tester);
       await pumpRecordScreen(
         tester,
         store: MemoryPressureCheckInStore(_workThread3()),
-        waitForOneSmallRecordingCard: true,
       );
 
-      final prompt = engine.build(_workThread3(), entryCount: 3).prompt;
-      expect(prompt, isNotEmpty);
-      expect(find.text(prompt), findsOneWidget);
+      expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
       expect(find.byKey(const Key('one_small_recording_record_cta')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
@@ -407,12 +379,7 @@ void main() {
     testWidgets('no card without plan or suggestion evidence', (tester) async {
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
-      // Without a primary starter the generic prompts keep full emphasis.
-      expect(
-        find.byKey(const Key('generic_prompts_deemphasized')),
-        findsNothing,
-      );
-      expect(find.text('Start here. The rest can wait.'), findsNothing);
+      expect(find.byType(ConsumerRecordPromptsSection), findsNothing);
       expect(tester.takeException(), isNull);
     });
   });

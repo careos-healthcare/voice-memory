@@ -493,14 +493,15 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(const MaterialApp(home: AccountScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('account_beta_feedback_tile')),
-        200,
-      );
-      expect(find.text(BetaFeedbackCopy.sheetLinkLabel), findsOneWidget);
       expect(find.text(ConsumerUiCopy.accountTitle), findsOneWidget);
+
+      final tile = find.byKey(const Key('account_beta_feedback_tile'));
+      await tester.dragUntilVisible(tile, find.byType(ListView), const Offset(0, -300));
+      await tester.pump();
+      expect(find.text(BetaFeedbackCopy.sheetLinkLabel), findsOneWidget);
     });
 
     testWidgets('feedback sheet opens from Account', (tester) async {
@@ -759,7 +760,7 @@ Future<String> _fixedVersion() async => '9.9.9 (99)';
 Future<void> _resetServicesForAccount() async {
   final stamp = DateTime.now().microsecondsSinceEpoch.toString();
   await AppServices.resetForTest(
-    journalPath: '/tmp/vm_beta_feedback_journal_$stamp.json',
-    prefsPath: '/tmp/vm_beta_feedback_prefs_$stamp.json',
+    journalPath: '${Directory.systemTemp.path}/vm_beta_feedback_journal_$stamp.json',
+    prefsPath: '${Directory.systemTemp.path}/vm_beta_feedback_prefs_$stamp.json',
   );
 }

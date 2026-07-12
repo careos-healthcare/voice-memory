@@ -7,8 +7,8 @@ import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/widgets/archive_paywall/paywall_unavailable_fallback.dart';
 
 void main() {
-  test('paywall title constant is ArchiveMe Pro', () {
-    expect(ConsumerUiCopy.paywallPrimaryCta, contains('ArchiveMe Pro'));
+  test('paywall primary CTA uses proof-trail language', () {
+    expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
   });
 
   test('empty offerings fallback copy is consumer-safe', () {
@@ -16,11 +16,11 @@ void main() {
       ConsumerUiCopy.paywallSetupUnavailableBody,
       'Purchases are not available right now.',
     );
-    expect(PaywallUnavailableFallback.benefits.length, 5);
-      expect(
-        PaywallUnavailableFallback.benefits.first,
-        'Longer archive history',
-      );
+    expect(PaywallUnavailableFallback.benefits.length, 6);
+    expect(
+      PaywallUnavailableFallback.benefits.first,
+      'Longer proof trail',
+    );
   });
 
   test('annual appears before monthly when both present', () {
@@ -45,7 +45,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('ArchiveMe Pro'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.textContaining('VoiceMemory Pro'), findsNothing);
       expect(find.textContaining('VoiceMemory'), findsNothing);
@@ -54,10 +53,10 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('Longer archive history'),
+        find.text('Longer proof trail'),
         findsOneWidget,
       );
-      expect(find.text('Private monthly reports'), findsOneWidget);
+      expect(find.text('Private monthly reports'), findsNothing);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.text('Done'), findsAtLeast(1));
     },

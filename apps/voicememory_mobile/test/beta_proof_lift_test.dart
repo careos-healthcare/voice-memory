@@ -275,7 +275,7 @@ void main() {
       );
     });
 
-    test('visible under first proof payoff with fewer than 3 entries', () {
+    test('suppressed under first proof payoff with fewer than 3 entries', () {
       final entries = [_entry('1', _strongRepeat)];
       final result = BetaProofLiftEngine.build(
         entries: entries,
@@ -301,7 +301,7 @@ void main() {
           whatChangedQuestionActive: false,
           patternReviewInboxHasActiveItems: false,
         ),
-        isTrue,
+        isFalse,
       );
     });
 
@@ -462,46 +462,48 @@ void main() {
   });
 
   group('BetaProofLiftCard', () {
-    testWidgets('renders title and body under timeline proof parent', (tester) async {
+    testWidgets('renders title and body when proof lift is visible', (tester) async {
       final entries = _threeRelatedEntries();
-      final timeline = TimelineProofMomentEngine.build(
-        entries: entries,
-        beliefSurfaceVisible: true,
-        source: 'test',
-        now: _now,
+      final built = _visibleResult(entries: entries);
+      final lift = BetaProofLiftResult(
+        shouldShow: true,
+        entryCount: built.entryCount,
+        source: built.source,
+        surface: built.surface,
+        title: BetaProofLiftCopy.title,
+        body: built.body,
+        sections: built.sections,
+        deltaRows: built.deltaRows,
+        hasSafeAnchor: built.hasSafeAnchor,
+        hasDelta: built.hasDelta,
+        hasCurrentRelevance: built.hasCurrentRelevance,
+        hasCorrection: built.hasCorrection,
+        patternMatchQuality: built.patternMatchQuality,
+        proofConfidenceCalibration: built.proofConfidenceCalibration,
       );
-      expect(timeline, isNotNull);
-      final lift = _visibleResult(entries: entries);
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TimelineProofMomentCard(result: timeline!, source: 'test'),
-                  BetaProofLiftCard(
-                    result: lift,
-                    source: 'record',
-                    surface: 'record_ready',
-                  ),
-                ],
-              ),
+            body: BetaProofLiftCard(
+              result: lift,
+              source: 'record',
+              surface: 'record_ready',
             ),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.text('Why ArchiveMe is showing this'), findsOneWidget);
+      expect(find.text(BetaProofLiftCopy.title), findsOneWidget);
       expect(
         tester.widget<Text>(find.byKey(const Key('beta_proof_lift_body'))).data,
         lift.body,
       );
-      expect(find.text('What repeated'), findsOneWidget);
-      expect(find.text('What changed'), findsOneWidget);
-      expect(find.text('Why it matters now'), findsOneWidget);
-      expect(find.text('Your correction'), findsOneWidget);
+      expect(find.text(BetaProofLiftCopy.sectionWhatRepeated), findsOneWidget);
+      expect(find.text(BetaProofLiftCopy.sectionWhatChanged), findsOneWidget);
+      expect(find.text(BetaProofLiftCopy.sectionWhyItMattersNow), findsOneWidget);
+      expect(find.text(BetaProofLiftCopy.sectionYourCorrection), findsOneWidget);
     });
   });
 }

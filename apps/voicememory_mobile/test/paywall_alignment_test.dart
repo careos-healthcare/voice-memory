@@ -62,7 +62,7 @@ void main() {
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('Backup and continuity'),
+        contains('Trail continuity over weeks'),
       );
     });
   });

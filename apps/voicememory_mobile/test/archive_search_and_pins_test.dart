@@ -438,8 +438,9 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 300));
       });
       await tester.pump();
-      for (var i = 0; i < 20; i++) {
+      for (var i = 0; i < 80; i++) {
         await tester.pump(const Duration(milliseconds: 50));
+        if (find.byType(CircularProgressIndicator).evaluate().isEmpty) break;
       }
 
       expect(find.byType(CircularProgressIndicator), findsNothing);

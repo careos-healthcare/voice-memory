@@ -335,11 +335,11 @@ void main() {
   test('paywall copy aligned to continuity concept', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      contains('longer story'),
+      contains('longer proof trail'),
     );
     expect(
       ConsumerUiCopy.paywallBullets.first,
-      contains('Longer archive history'),
+      contains('Longer proof trail'),
     );
     expect(
       ConsumerUiCopy.paywallDifferentiation,

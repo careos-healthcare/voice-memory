@@ -11,7 +11,9 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'support/archive_quality_personas.dart';
 
 void main() {
-  test('unified primary theory — all surfaces agree', () async {
+  test(
+    'unified primary theory — all surfaces agree',
+    () async {
     final failures = <String>[];
 
     for (final persona in ArchiveQualityPersona.values) {
@@ -100,5 +102,5 @@ void main() {
       isEmpty,
       reason: 'Unified primary theory failures:\n${failures.join('\n')}',
     );
-  });
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }

@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/second_session_payoff_card.dart';
 
@@ -293,7 +294,7 @@ void main() {
       expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);
-      expect(find.text('View Patterns'), findsOneWidget);
+      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 

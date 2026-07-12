@@ -167,7 +167,7 @@ void main() {
       );
       expect(
         ArchiveBackupBridgeCopy.proPreservation.toLowerCase(),
-        contains('preserving'),
+        contains('longer proof trail'),
       );
     });
 

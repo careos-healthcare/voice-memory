@@ -546,15 +546,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('weekly_thread_review_card')),
-        findsOneWidget,
-      );
-      // Existing cards are not hidden by the new one.
-      expect(
-        find.byKey(const Key('thread_return_evidence_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('weekly_thread_review_card')), findsNothing);
+      expect(find.byKey(const Key('thread_return_evidence_card')), findsOneWidget);
       expect(
         find.byKey(const Key('archive_proof_counter_card')),
         findsOneWidget,

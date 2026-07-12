@@ -331,11 +331,11 @@ void main() {
     test('empty states use guided evidence-first language', () {
       expect(
         RecordScreenFramingCopy.emptyArchiveTitle,
-        'Your archive starts with one real moment.',
+        'Record one real moment',
       );
       expect(
         VisibleArchiveProofCopy.patternsMindMapEmptyBody,
-        contains('Patterns appear after ArchiveMe has something to compare'),
+        contains('what repeats'),
       );
       expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
     });

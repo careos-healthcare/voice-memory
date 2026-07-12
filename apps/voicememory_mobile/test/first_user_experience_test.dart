@@ -159,7 +159,7 @@ void main() {
       await pumpEmptyRecord(tester);
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(find.text(DailyMirrorCopy.emptyPrimaryCta), findsNothing);
+      expect(find.byKey(const Key('daily_mirror_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
     });
   });

@@ -504,7 +504,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(
-        find.text(ProMemoryBoundaryCopy.offeringsUnavailableBody),
+        find.text(ConsumerUiCopy.paywallBillingNotConfigured),
         findsOneWidget,
       );
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);

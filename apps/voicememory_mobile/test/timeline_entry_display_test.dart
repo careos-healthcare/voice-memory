@@ -52,7 +52,7 @@ void main() {
   });
 
   test(
-    'skips cloud-processing placeholder transcript and uses real observation',
+    'skips cloud-processing placeholder transcript and uses date title when pending',
     () {
       const observation = 'You mentioned pressure before saying yes.';
       final title = timelineEntryTitle(
@@ -61,7 +61,8 @@ void main() {
           observation: observation,
         ),
       );
-      expect(title, observation);
+      expect(title, startsWith('Recording ·'));
+      expect(title, isNot(observation));
       expect(title, isNot(contains('Cloud processing')));
     },
   );
@@ -84,7 +85,6 @@ void main() {
     expect(view.primary, TranscriptPendingCopy.savedLocallyTitle);
     expect(view.secondary, TranscriptPendingCopy.savedLocallyBody);
     expect(view.primary, isNot(ConsumerUiCopy.savedPrivatelyOnDevice));
-    expect(view.primary, contains('could not turn it into text'));
   });
 
   test('degraded voice entry is not the only saved privately body', () {

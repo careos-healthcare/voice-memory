@@ -91,7 +91,7 @@ void main() {
     test('0 entries shows archive start copy without belief claims', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: const []);
       expect(summary.stage, ArchiveHomeStage.empty);
-      expect(summary.title, 'Your archive starts with one moment.');
+      expect(summary.title, VisibleArchiveProofCopy.archiveHomeEmptyTitle);
       expect(summary.body, contains(VisibleArchiveProofCopy.firstRunBuildingLine));
       expect(summary.footnoteLine, VisibleArchiveProofCopy.archiveHomeEmptySampleHint);
       expect(summary.primaryCta, 'Record a moment');
@@ -104,7 +104,7 @@ void main() {
     test('1 entry shows one-piece evidence without repeat claims', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
       expect(summary.stage, ArchiveHomeStage.one);
-      expect(summary.title, 'Your archive has one piece of evidence.');
+      expect(summary.title, VisibleArchiveProofCopy.archiveHomeOneTitle);
       expect(summary.body, VisibleArchiveProofCopy.archiveHomeOneBody);
       expect(summary.body.toLowerCase(), isNot(contains('repeat')));
       expect(summary.body.toLowerCase(), isNot(contains('pattern')));
@@ -197,14 +197,21 @@ void main() {
           summary.body,
           summary.footnoteLine,
         ].whereType<String>();
-        if (count == 0 || count == 1) {
+        if (count == 0) {
           expect(
             visible,
             anyElement(contains(VisibleArchiveProofCopy.firstRunBuildingLine)),
             reason: 'count $count should mention saved words',
           );
         }
-        if (count == 1 || count == 2) {
+        if (count == 1) {
+          expect(
+            visible,
+            anyElement(contains('first piece of evidence')),
+            reason: 'count $count should stay evidence-first',
+          );
+        }
+        if (count == 2) {
           expect(
             visible,
             anyElement(contains('compare')),

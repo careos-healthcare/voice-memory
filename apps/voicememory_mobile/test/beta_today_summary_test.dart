@@ -426,16 +426,14 @@ void main() {
   });
 
   group('Beta today summary placement', () {
-    test('card sits below low-friction return and above deeper proof cards', () {
+    test('card sits below low-friction return and above capture freedom line', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final lowFrictionIndex = source.indexOf('if (showLowFrictionReturnCard)');
-      final summaryIndex = source.indexOf('if (showBetaTodaySummaryCard)');
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine)');
-      final timelineIndex = source.indexOf('if (showTimelineProofMomentOnRecord');
+      final lowFrictionIndex = source.indexOf('if (showLowFrictionReturnCard) ...[');
+      final summaryIndex = source.indexOf('if (showBetaTodaySummaryCard) ...[');
+      final freedomIndex = source.indexOf('if (showCaptureFreedomLine) ...[');
       expect(lowFrictionIndex, greaterThan(0));
       expect(summaryIndex, greaterThan(lowFrictionIndex));
       expect(freedomIndex, greaterThan(summaryIndex));
-      expect(timelineIndex, greaterThan(summaryIndex));
     });
   });
 }

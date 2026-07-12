@@ -183,7 +183,7 @@ void main() {
         ],
       );
       expect(trail.hasEnoughEvidence, isTrue);
-      expect(trail.uncertaintyLine, 'The evidence is still thin.');
+      expect(trail.uncertaintyLine, BeliefEvidenceTrailCopy.evidenceStillThin);
       expect(
         trail.nextActionLine,
         VisibleArchiveProofCopy.beliefEvidenceNextWhenThin,

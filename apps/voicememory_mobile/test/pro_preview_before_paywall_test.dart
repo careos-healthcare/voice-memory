@@ -86,7 +86,7 @@ void main() {
       expect(ProPreviewCopy.title, 'What Pro keeps');
       expect(
         ProPreviewCopy.body,
-        'Your first proof is free. Pro keeps the longer timeline as it grows.',
+        'Your first proof is free. Pro keeps the longer proof trail over time.',
       );
       expect(ProPreviewCopy.cta, 'See Pro');
       expect(ProPreviewCopy.secondary, 'Not now');

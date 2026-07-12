@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_event.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 
@@ -126,16 +127,9 @@ void main() {
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
 
-      expect(
-        find.text('Pro is not more chat. It keeps the evidence.'),
-        findsOneWidget,
-      );
-      expect(
-        find.text(
-          'Private by default. Based on moments you save. Not therapy or medical advice.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
+      expect(find.byKey(const Key('purchase_confidence_card')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallBackupLine), findsOneWidget);
       expect(find.textContaining('sync is active'), findsNothing);
       expect(find.textContaining('your archive is backed up'), findsNothing);

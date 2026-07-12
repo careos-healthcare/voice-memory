@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/day_two_return_loop_card.dart';
 
@@ -114,7 +115,7 @@ void main() {
       expect(payoff, isNotNull);
       expect(
         payoff!.body,
-        'One more moment can make the thread clearer.',
+        'ArchiveMe needs one more moment before it can compare clearly.',
       );
       expect(payoff.secondaryCta, 'View archive');
     });
@@ -265,7 +266,9 @@ void main() {
 
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
       expect(
-        find.textContaining('One more moment can make the thread clearer'),
+        find.textContaining(
+          'ArchiveMe needs one more moment before it can compare clearly',
+        ),
         findsOneWidget,
       );
       expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
@@ -303,7 +306,7 @@ void main() {
       expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.text('Add one more moment'), findsOneWidget);
-      expect(find.text('View Patterns'), findsOneWidget);
+      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
     });
   });
 }

@@ -314,7 +314,7 @@ void main() {
       // tests cannot fabricate — so pin the structure at the source.
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
       final clarityIdx = source.indexOf(
-        '_aboveFoldClaritySection(),\n          // Objection follow-up',
+        '// Objection follow-up: below the clarity block, above plan cards.',
       );
       expect(clarityIdx, greaterThan(-1));
       final followUpIdx = source.indexOf(

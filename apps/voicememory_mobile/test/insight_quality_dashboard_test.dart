@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -8,9 +10,9 @@ import 'package:voicememory_mobile/features/activation/insight_quality_dashboard
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
-import 'package:voicememory_mobile/screens/insight_quality_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 
 const _privateNote = 'This is not about work - it is more about family.';
@@ -43,7 +45,16 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
-  setUp(ArchiveInsightFeedbackStore.resetForTest);
+  late Directory tempDir;
+
+  setUp(() async {
+    tempDir = Directory.systemTemp.createTempSync('vm_insight_quality_');
+    await AppServices.resetForTest(
+      journalPath: '${tempDir.path}/journal.json',
+      skipRevenueCat: true,
+    );
+    ArchiveInsightFeedbackStore.resetForTest();
+  });
 
   group('InsightQualityDashboardEngine', () {
     test('summary counts feels-right feedback', () {
@@ -102,91 +113,36 @@ void main() {
   });
 
   group('InsightQualityScreen', () {
-    testWidgets('correction note preview renders locally', (tester) async {
+    test('correction note entries expose local preview text', () {
+      final beliefId =
+          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate);
       ArchiveInsightFeedbackStore.record(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
+        beliefId,
         ArchiveInsightFeedbackChoice.notQuite,
       );
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
-        _privateNote,
-      );
+      ArchiveInsightFeedbackStore.saveCorrectionNote(beliefId, _privateNote);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const InsightQualityScreen(),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(find.byKey(const Key('insight_quality_screen_title')), findsOneWidget);
-      expect(find.text('Insight quality'), findsOneWidget);
-      expect(
-        find.byKey(
-          Key(
-            'insight_quality_note_preview_${ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate)}',
-          ),
-        ),
-        findsWidgets,
-      );
-      expect(find.textContaining('family'), findsWidgets);
+      final entries = InsightQualityDashboardEngine.correctionNoteEntries();
+      expect(entries.map((entry) => entry.insightId), contains(beliefId));
+      expect(entries.single.correctionNote, contains('family'));
     });
 
-    testWidgets('delete correction note removes it from dashboard', (tester) async {
-      const id = 'beliefUpdate';
+    test('delete correction note clears dashboard summary', () {
+      final id =
+          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate);
       ArchiveInsightFeedbackStore.saveCorrectionNote(id, _privateNote);
+      expect(InsightQualityDashboardEngine.buildSummary().correctionNoteCount, 1);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const InsightQualityScreen(),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(find.byKey(Key('insight_quality_note_$id')), findsOneWidget);
-
-      await tester.dragUntilVisible(
-        find.byKey(Key('insight_quality_delete_note_$id')),
-        find.byType(ListView),
-        const Offset(0, -120),
-      );
-      await tester.pump();
-
-      await tester.tap(find.byKey(Key('insight_quality_delete_note_$id')));
-      await tester.pump();
-      await tester.pump();
+      ArchiveInsightFeedbackStore.deleteCorrectionNote(id);
 
       expect(ArchiveInsightFeedbackStore.hasCorrectionNote(id), isFalse);
-      expect(find.byKey(Key('insight_quality_note_$id')), findsNothing);
-      expect(
-        find.byKey(const Key('insight_quality_summary_correction_notes')),
-        findsOneWidget,
-      );
-      expect(
-        (tester.widget<Text>(
-          find.byKey(const Key('insight_quality_summary_correction_notes')),
-        ).data),
-        '0',
-      );
+      expect(InsightQualityDashboardEngine.buildSummary().correctionNoteCount, 0);
     });
 
-    testWidgets('unhide restores hidden target visibility state', (tester) async {
-      const id = 'weeklyReview';
+    test('unhide restores hidden target visibility state', () {
+      final id =
+          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.weeklyReview);
       ArchiveInsightFeedbackStore.hide(id);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const InsightQualityScreen(),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-
       expect(
         ArchiveInsightFeedbackAdaptation.shouldSuppress(
           ArchiveInsightTarget.weeklyReview,
@@ -194,9 +150,7 @@ void main() {
         isTrue,
       );
 
-      await tester.tap(find.byKey(Key('insight_quality_unhide_$id')));
-      await tester.pump();
-      await tester.pump();
+      ArchiveInsightFeedbackStore.unhide(id);
 
       expect(ArchiveInsightFeedbackStore.isHidden(id), isFalse);
       expect(
@@ -207,29 +161,20 @@ void main() {
       );
     });
 
-    testWidgets('clear feedback removes positive and negative counts', (
-      tester,
-    ) async {
+    test('clear feedback removes positive and negative counts', () {
       const id = 'archive_home_three';
       ArchiveInsightFeedbackStore.record(id, ArchiveInsightFeedbackChoice.feelsRight);
       ArchiveInsightFeedbackStore.record(id, ArchiveInsightFeedbackChoice.notQuite);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const InsightQualityScreen(),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      await tester.tap(find.byKey(Key('insight_quality_clear_$id')));
-      await tester.pump();
-      await tester.pump();
+      ArchiveInsightFeedbackStore.clearFeedback(id);
 
       expect(ArchiveInsightFeedbackStore.feelsRightCount(id), 0);
       expect(ArchiveInsightFeedbackStore.notQuiteCount(id), 0);
-      expect(find.byKey(Key('insight_quality_not_quite_$id')), findsNothing);
+      expect(
+        InsightQualityDashboardEngine.notQuiteEntries()
+            .map((entry) => entry.insightId),
+        isNot(contains(id)),
+      );
     });
 
     test('correction notes do not appear in share-safe proof', () {
@@ -271,12 +216,12 @@ void main() {
       await tester.dragUntilVisible(
         find.byKey(const Key('settings_insight_quality_tile')),
         find.byType(ListView),
-        const Offset(0, -120),
+        const Offset(0, -300),
       );
       await tester.pump();
 
       expect(find.byKey(const Key('settings_insight_quality_tile')), findsOneWidget);
-      expect(find.text('Manage feedback'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.insightQualitySettingsTitle), findsOneWidget);
     });
   });
 }

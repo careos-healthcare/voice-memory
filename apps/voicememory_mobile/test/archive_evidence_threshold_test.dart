@@ -203,7 +203,7 @@ void main() {
     test('forming copy matches product wedge', () {
       expect(
         ArchiveEvidenceThreshold.formingTitle,
-        'Patterns are still forming',
+        'Your mind map is still forming',
       );
       expect(
         ArchiveEvidenceThreshold.formingBody,

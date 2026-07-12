@@ -465,9 +465,12 @@ void main() {
     Future<Directory> seedAppServices(WidgetTester tester) async {
       late Directory dir;
       await tester.runAsync(() async {
-        dir = Directory.systemTemp.createTempSync('vm_bulk_flow_');
+        dir = Directory.systemTemp.createTempSync(
+          'vm_bulk_flow_${DateTime.now().microsecondsSinceEpoch}_',
+        );
         await AppServices.resetForTest(
           journalPath: '${dir.path}/entries.json',
+          prefsPath: '${dir.path}/prefs.json',
           skipRevenueCat: true,
         );
         final journal = AppServices.instance.journalStore;
@@ -486,6 +489,22 @@ void main() {
         );
       });
       return dir;
+    }
+
+    Future<void> waitForJournalEntryCount(
+      WidgetTester tester,
+      int expected, {
+      String reason = '',
+    }) async {
+      await tester.runAsync(() async {
+        for (var i = 0; i < 50; i++) {
+          final entries = await AppServices.instance.journalStore.loadAll();
+          if (entries.length == expected) return;
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+        final entries = await AppServices.instance.journalStore.loadAll();
+        expect(entries.length, expected, reason: reason);
+      });
     }
 
     Future<void> pumpPinned(WidgetTester tester) async {
@@ -653,13 +672,14 @@ void main() {
           await tester.tap(find.byKey(const Key('bulk_delete_cancel')));
           await tester.pump();
           await tester.pump(const Duration(milliseconds: 350));
-          await Future<void>.delayed(const Duration(milliseconds: 100));
+          await Future<void>.delayed(const Duration(milliseconds: 200));
         });
         await tester.pump();
-        await tester.runAsync(() async {
-          final entries = await AppServices.instance.journalStore.loadAll();
-          expect(entries.length, 2, reason: 'cancelled delete changes nothing');
-        });
+        await waitForJournalEntryCount(
+          tester,
+          2,
+          reason: 'cancelled delete changes nothing',
+        );
         expect(
           _events.map((e) => e.name),
           isNot(contains('archive_bulk_delete_confirmed')),
@@ -672,21 +692,30 @@ void main() {
           await tester.tap(find.byKey(const Key('bulk_delete_confirm')));
           await tester.pump();
           await tester.pump(const Duration(milliseconds: 350));
-          await Future<void>.delayed(const Duration(milliseconds: 150));
+          await Future<void>.delayed(const Duration(milliseconds: 400));
         });
         await tester.pump();
 
-        await tester.runAsync(() async {
-          final entries = await AppServices.instance.journalStore.loadAll();
-          expect(entries, isEmpty);
-        });
-        final names = _events.map((e) => e.name).toList();
+        await waitForJournalEntryCount(tester, 0);
+        var names = _events.map((e) => e.name).toList();
+        for (var i = 0;
+            i < 50 && !names.contains('archive_bulk_action_completed');
+            i++) {
+          await tester.pump(const Duration(milliseconds: 20));
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 20)),
+          );
+          names = _events.map((e) => e.name).toList();
+        }
         expect(names, contains('archive_bulk_delete_confirmed'));
         expect(names, contains('archive_bulk_action_completed'));
         expect(
           find.byKey(const Key('archive_selection_bar')),
           findsNothing,
           reason: 'selection clears after a completed action',
+        );
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 300)),
         );
       },
     );
@@ -722,10 +751,17 @@ void main() {
         expect(a!.isArchived, isTrue);
         expect(a.transcript, 'Pinned reflection alpha');
       });
-      expect(
-        _events.map((e) => e.name),
-        contains('archive_bulk_archive_completed'),
-      );
+      var names = _events.map((e) => e.name).toList();
+      for (var i = 0;
+          i < 50 && !names.contains('archive_bulk_archive_completed');
+          i++) {
+        await tester.pump(const Duration(milliseconds: 20));
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)),
+        );
+        names = _events.map((e) => e.name).toList();
+      }
+      expect(names, contains('archive_bulk_archive_completed'));
     });
 
     testWidgets('pin-selected style bulk action completes from sheet', (

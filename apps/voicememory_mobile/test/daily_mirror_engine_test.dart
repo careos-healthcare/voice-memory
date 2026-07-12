@@ -57,7 +57,7 @@ void main() {
       expect(result.hasGroundedEvidence, isFalse);
     });
 
-    test('2 capacity entries returns possibleLoop with own words evidence', () {
+    test('2 capacity entries stay weak-started until a third usable moment', () {
       final result = _engine.build([
         _entry(
           id: 'a',
@@ -72,14 +72,14 @@ void main() {
         ),
       ]);
 
-      expect(result.stage, DailyMirrorStage.possibleLoop);
-      expect(result.hasGroundedEvidence, isTrue);
-      expect(result.heroBody, contains('say yes'));
-      expect(result.evidenceLine, isNotNull);
-      expect(result.evidenceLine!.toLowerCase(), contains('your words:'));
-      expect(result.evidenceTerms, isNotEmpty);
-      expect(result.nextQuestion, isNotNull);
-      expect(result.primaryCta, DailyMirrorCopy.possibleLoopPrimaryCta);
+      expect(result.stage, DailyMirrorStage.heardFirstMoment);
+      expect(result.hasGroundedEvidence, isFalse);
+      expect(result.heroTitle, DailyMirrorCopy.weakStartedHeroTitle);
+      expect(result.heroBody, DailyMirrorCopy.weakStartedHeroBody);
+      expect(result.evidenceLine, isNull);
+      expect(result.evidenceTerms, isEmpty);
+      expect(result.nextQuestion, isNull);
+      expect(result.primaryCta, DailyMirrorCopy.heardPrimaryCta);
     });
 
     test('3 work pressure entries returns possibleLoop', () {

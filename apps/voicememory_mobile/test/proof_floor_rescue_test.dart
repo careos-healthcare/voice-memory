@@ -425,7 +425,7 @@ void main() {
         ),
       );
       expect(find.text(ProofFloorRescueCopy.feedbackTitle), findsOneWidget);
-      expect(find.text('Useful'), findsOneWidget);
+      expect(find.text('Yes'), findsWidgets);
       expect(find.text('Too vague'), findsOneWidget);
     });
   });

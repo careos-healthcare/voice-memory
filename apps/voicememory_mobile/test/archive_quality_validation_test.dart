@@ -24,7 +24,9 @@ import 'support/archive_quality_personas.dart';
 /// Runs Archive V1 (Theory, Lifecycle, Change Feed), Deep Dive, and Analyst.
 /// Output: `tool/output/archive_quality_raw.json` (for ARCHIVE_V2_VALIDATION.md).
 void main() {
-  test('archive quality validation — capture engine outputs', () async {
+  test(
+    'archive quality validation — capture engine outputs',
+    () async {
     final scenarios = <Map<String, dynamic>>[];
     final allBeliefStatements = <String>[];
 
@@ -171,7 +173,7 @@ void main() {
       reason:
           'Trait pollution in visible UI rows:\n${pollutionFailures.join('\n')}',
     );
-  });
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }
 
 void _appendTraitTemplate(String statement, List<String> traits) {

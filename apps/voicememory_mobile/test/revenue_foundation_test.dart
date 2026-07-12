@@ -28,8 +28,8 @@ void main() {
       ].join(' ').toLowerCase();
       expect(blob, isNot(contains('more ai')));
       expect(blob, isNot(contains('smarter chat')));
-      expect(blob, contains('history'));
-      expect(blob, contains('report'));
+      expect(blob, contains('first useful proof'));
+      expect(blob, contains('private'));
     });
 
     test('safe sharing copy has no medical claims', () {

@@ -559,11 +559,7 @@ void main() {
       final cardFinder = find.byKey(const Key('thread_return_evidence_card'));
       expect(cardFinder, findsOneWidget);
 
-      // The follow-up CTA ships with the card on the insights screen.
-      expect(
-        find.byKey(const Key('thread_return_follow_up_cta')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('thread_return_follow_up_cta')), findsNothing);
 
       // Existing pattern reveal card is still shown, below the thread card.
       final revealFinder = find.byKey(

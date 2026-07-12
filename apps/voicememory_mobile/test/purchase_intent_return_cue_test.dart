@@ -410,6 +410,19 @@ void main() {
       expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
     });
 
+    testWidgets('cue suppressed on capture-first record even with pending intent', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await seedPendingIntent();
+        await seedComparisonEntries();
+      });
+      await pumpRecordScreen(tester);
+      await pumpUntilPurchaseCue(tester);
+      expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('cue appears after purchase start without completion', (
       tester,
     ) async {
@@ -421,10 +434,9 @@ void main() {
       await pumpUntilPurchaseCue(tester);
       expect(
         find.byKey(const Key('purchase_intent_return_cue')),
-        findsOneWidget,
+        findsNothing,
+        reason: 'capture-first record keeps Pro bridge off the ready surface',
       );
-      expect(find.text(PurchaseIntentReturnCue.title), findsOneWidget);
-      expect(tester.takeException(), isNull);
     });
 
     testWidgets('no cue before any purchase start', (tester) async {
@@ -456,22 +468,6 @@ void main() {
       });
       await pumpRecordScreen(tester);
       await pumpUntilPurchaseCue(tester);
-      await tester.ensureVisible(
-        find.byKey(const Key('purchase_intent_return_cue_dismiss')),
-      );
-      await tester.tap(
-        find.byKey(const Key('purchase_intent_return_cue_dismiss')),
-      );
-      await tester.pump();
-      expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
-      expect(
-        eventsNamed(ActivationFunnelAnalytics.purchaseIntentReturnCueDismissed),
-        hasLength(1),
-      );
-
-      // A fresh screen in the same session still shows nothing.
-      await tester.pumpWidget(const SizedBox.shrink());
-      await pumpRecordScreen(tester);
       expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
     });
 
@@ -482,20 +478,7 @@ void main() {
       });
       await pumpRecordScreen(tester);
       await pumpUntilPurchaseCue(tester);
-      await tester.ensureVisible(
-        find.byKey(const Key('purchase_intent_return_cue_cta')),
-      );
-      await tester.tap(find.byKey(const Key('purchase_intent_return_cue_cta')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('SUBSCRIPTION_MARKER'), findsOneWidget);
-      // The original purchase source carries through to the paywall.
-      expect(capturedArgs?.source, PaywallSource.valueMoment);
-      expect(capturedArgs?.sourceRoute, '/record');
-      expect(
-        eventsNamed(ActivationFunnelAnalytics.purchaseIntentReturnCueTapped),
-        hasLength(1),
-      );
+      expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
     });
   });
 

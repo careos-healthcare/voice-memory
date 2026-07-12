@@ -395,13 +395,14 @@ void main() {
 
       expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
 
-    testWidgets('analysis unavailable still keeps focused post-save at third entry', (
+    testWidgets('analysis unavailable still keeps first-proof payoff at third entry', (
       tester,
     ) async {
       await pumpDoneState(
@@ -412,7 +413,8 @@ void main() {
 
       expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
   });

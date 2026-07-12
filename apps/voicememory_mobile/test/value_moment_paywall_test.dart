@@ -226,11 +226,11 @@ void main() {
   group('Value moment paywall copy', () {
     test('value moment routes to the continuity paywall copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.valueMoment);
-      expect(copy.headline, 'Keep the thread connected');
+      expect(copy.headline, 'Keep the proof trail behind this repeat');
       final all = '${copy.subheadline} ${copy.bullets.join(' ')}'.toLowerCase();
-      expect(all, contains('returns'));
+      expect(all, contains('returned'));
       expect(all, contains('fad')); // fades / fading
-      expect(all, contains('changes'));
+      expect(all, contains('corrected'));
     });
 
     test('free users keep today\u2019s save', () {
