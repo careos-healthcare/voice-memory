@@ -11,7 +11,7 @@ Internal release checklist so the public website promise matches the in-app expe
 | Website + App | Hero | `When it repeats, save it` |
 | Website + App | Hero body | `When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.` |
 | Website + App | How it works | `Save one real moment` · `Come back when it repeats` · `See what appeared and returned` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
-| Website + App | ChatGPT differentiation | `ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.` |
+| Website + App | ChatGPT differentiation | `ChatGPT can suggest what to do. ArchiveMe shows what you already said before.` |
 | App (Record, early) | Step 1 / 2 / 3 guidance | Uses the first three how-it-works steps above |
 | Paywall | Keep the longer proof trail | Headline: `Keep the longer proof trail` · CTA: `Keep the longer trail` |
 | Paywall | Paid positioning | `Free shows the first useful proof. Pro keeps the longer proof trail.` |

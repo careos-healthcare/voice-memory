@@ -16,7 +16,8 @@ abstract final class ProductLanguageConsistencyGuardCopy {
 
   static const riskyLanguageLine =
       'Risky: full timeline, longer story, dashboard, archive health score, memory quality '
-      'score, report as primary value, storage, second brain, life operating system.';
+      'score, report as primary value, storage, second brain, life operating system, '
+      'assistant-style ai, chatgpt replacement, more ai, unlimited answers.';
 
   static const blockLine =
       'High-risk product language detected. Rewrite with proof-trail language.';

@@ -15,7 +15,7 @@ abstract final class ShareableProofCopy {
       'I started using ArchiveMe to notice what keeps returning. No daily journal required.';
 
   static const templateChatGptDifferentiation =
-      'ChatGPT answers a conversation. ArchiveMe shows the timeline behind the pattern.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
 
   static const templateTrackingTimeline =
       'I am tracking what appeared, what returned, and what changed — without sharing my private entries.';

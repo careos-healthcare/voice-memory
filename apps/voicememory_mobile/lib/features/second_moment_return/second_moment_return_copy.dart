@@ -1,5 +1,7 @@
 import 'second_moment_return_model.dart';
 
+import '../three_moment_activation/three_moment_activation_copy.dart';
+
 /// Second-moment return copy — one reason to come back, no daily pressure.
 abstract final class SecondMomentReturnCopy {
   SecondMomentReturnCopy._();
@@ -9,12 +11,13 @@ abstract final class SecondMomentReturnCopy {
 
   static const title = 'Come back when something stands out';
 
-  static const bodyStart = 'One moment starts the archive.';
+  static const bodyStart = ThreeMomentActivationCopy.momentOneLine;
 
-  static const bodyCompare =
-      'A second moment gives ArchiveMe something to compare.';
+  static const bodyCompare = ThreeMomentActivationCopy.momentTwoLine;
 
-  static const body = '$bodyStart $bodyCompare';
+  static const bodyThird = ThreeMomentActivationCopy.momentThreeLine;
+
+  static const body = '$bodyStart $bodyCompare $bodyThird';
 
   static const noticeLine =
       'Watch for what repeats, changes, feels lighter, feels heavier, or helps a little.';
@@ -65,6 +68,7 @@ abstract final class SecondMomentReturnCopy {
         title,
         bodyStart,
         bodyCompare,
+        bodyThird,
         body,
         noticeLine,
         noPressureLine,

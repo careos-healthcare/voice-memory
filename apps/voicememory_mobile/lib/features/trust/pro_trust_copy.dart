@@ -27,7 +27,7 @@ abstract class ProTrustCopy {
   static const String receiptNotNow = 'Not now';
 
   // B. Pro value clarity.
-  static const String proTitle = 'Keep your archive useful over time';
+  static const String proTitle = 'Keep the longer proof trail';
   static const String proBody =
       'Unlock deeper history, saved evidence, and continuity as your '
       'archive grows.';

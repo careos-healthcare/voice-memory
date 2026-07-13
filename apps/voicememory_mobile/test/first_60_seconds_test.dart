@@ -148,7 +148,7 @@ void main() {
     });
 
     test('Pro bridge copy is exact', () {
-      expect(First60Copy.proTitle, 'Keep your archive useful over time');
+      expect(First60Copy.proTitle, 'Keep the longer proof trail');
       expect(
         First60Copy.proBody,
         'Unlock deeper history, saved evidence, and what keeps returning '

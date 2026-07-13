@@ -90,6 +90,10 @@ import '../niche_landing_revenue/niche_landing_revenue_copy.dart';
 import '../annual_plan_future/annual_plan_future_copy.dart';
 import '../three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import '../future_expansion_roadmap/future_expansion_roadmap_copy.dart';
+import '../beta_expansion_proof/beta_expansion_proof_copy.dart';
+import '../future_revenue_scope/future_revenue_scope_copy.dart';
+import '../release_candidate/v1_revenue_focus_policy.dart';
+import '../three_moment_activation/three_moment_activation_copy.dart';
 import '../release_fragility/release_fragility_copy.dart';
 import '../single_launch_checklist/single_launch_checklist_copy.dart';
 import '../proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart';
@@ -249,6 +253,10 @@ abstract final class ProofSurfaceAdviceGuard {
         ...ReturnTomorrowRitualCopy.allVisibleStrings(),
         ...ContradictionChangeFutureCopy.allVisibleStrings(),
         ...SafeSharingFutureCopy.allVisibleStrings(),
+        ...FutureRevenueScopeCopy.allVisibleStrings(),
+        ...V1RevenueFocusPolicy.allVisibleStrings(),
+        ...ThreeMomentActivationCopy.allVisibleStrings(),
+        ...BetaExpansionProofCopy.allVisibleStrings(),
         ...AndroidAfterIosProofCopy.allVisibleStrings(),
         ...ArchiveMemoryAfterV1Copy.allVisibleStrings(),
         ...PremiumTiersFutureCopy.allVisibleStrings(),

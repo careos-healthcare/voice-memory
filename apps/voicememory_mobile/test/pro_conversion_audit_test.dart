@@ -16,6 +16,9 @@ void main() {
 
     test('banned live claims block more ai storage and dashboard', () {
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('more ai'));
+      expect(ProConversionAuditCopy.bannedLiveClaims, contains('better ai'));
+      expect(ProConversionAuditCopy.bannedLiveClaims, contains('unlimited answers'));
+      expect(ProConversionAuditCopy.bannedLiveClaims, contains('ai coach'));
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('unlimited storage'));
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('life dashboard'));
       expect(

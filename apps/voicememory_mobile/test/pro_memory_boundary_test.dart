@@ -170,7 +170,7 @@ void main() {
       );
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeBody,
-        'Keep a longer memory of what repeats and how it changes.',
+        contains('longer proof trail'),
       );
       expect(ProMemoryBoundaryCopy.seeProCta, 'See Pro');
       expect(

@@ -308,11 +308,11 @@ void main() {
     test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
-        contains('ChatGPT answers a conversation'),
+        contains('ChatGPT can suggest what to do'),
       );
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
-        contains('keeps the evidence trail'),
+        contains('ArchiveMe shows what you already said before'),
       );
     });
 

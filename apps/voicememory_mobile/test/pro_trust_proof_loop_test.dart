@@ -188,7 +188,7 @@ void main() {
 
   group('Pro value clarity', () {
     test('copy is exact', () {
-      expect(ProTrustCopy.proTitle, 'Keep your archive useful over time');
+      expect(ProTrustCopy.proTitle, 'Keep the longer proof trail');
       expect(
         ProTrustCopy.proBody,
         'Unlock deeper history, saved evidence, and continuity as your '

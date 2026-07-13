@@ -49,6 +49,7 @@ import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/release_candidate/v1_revenue_focus_policy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
@@ -255,7 +256,7 @@ void main() {
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'One real sentence is enough. ArchiveMe compares saved moments later.',
+        V1RevenueFocusPolicy.firstUserJourney,
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveFootnote,

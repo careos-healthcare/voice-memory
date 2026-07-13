@@ -13,7 +13,10 @@ abstract final class LandingAppContinuityCopy {
       '$publicPromise Not a diary. Not ChatGPT. Not homework.';
 
   static const chatGptDifferentiation =
-      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+
+  static const notesDifferentiation =
+      'Notes store what happened. ArchiveMe checks what returns.';
 
   static const proPaidReason = 'Pro keeps the longer proof trail over time.';
 
@@ -52,6 +55,7 @@ abstract final class LandingAppContinuityCopy {
         hero,
         heroBody,
         chatGptDifferentiation,
+        notesDifferentiation,
         proPaidReason,
         freePositioning,
         step1Title,

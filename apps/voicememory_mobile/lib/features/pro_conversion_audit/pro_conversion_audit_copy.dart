@@ -12,8 +12,11 @@ abstract final class ProConversionAuditCopy {
 
   static const bannedLiveClaims = <String>[
     'more ai',
+    'better ai',
     'better chat answers',
     'smarter chat',
+    'unlimited answers',
+    'ai coach',
     'sync is active',
     'cloud backup included',
     'your archive is backed up',
@@ -23,6 +26,8 @@ abstract final class ProConversionAuditCopy {
     'unlimited storage',
     'life dashboard',
     'second brain',
+    'chatgpt replacement',
+    'better than chatgpt',
   ];
 
   static const proTrailCanonical =
@@ -34,7 +39,9 @@ abstract final class ProConversionAuditCopy {
     'treatment',
     'medical treatment',
     'mental health assessment',
+    'mental-health scoring',
     'clinical report',
+    'ai coach',
   ];
 
   static bool mentionsPaidMemoryReason(Iterable<String> strings) {
@@ -43,6 +50,7 @@ abstract final class ProConversionAuditCopy {
         blob.contains('longer story') ||
         blob.contains('longer report') ||
         blob.contains('longer archive') ||
+        blob.contains('longer proof trail') ||
         blob.contains('evidence over time') ||
         blob.contains('pattern history') ||
         blob.contains('preserving the longer archive') ||

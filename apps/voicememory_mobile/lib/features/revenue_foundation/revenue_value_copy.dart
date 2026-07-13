@@ -6,7 +6,7 @@ abstract final class RevenueValueCopy {
   RevenueValueCopy._();
 
   static const positioningHeadline =
-      'ArchiveMe is not trying to answer better than ChatGPT.';
+      LandingAppContinuityCopy.chatGptDifferentiation;
   static const positioningSubhead = 'ArchiveMe remembers differently.';
 
   static const memoryJob =
@@ -33,7 +33,7 @@ abstract final class RevenueValueCopy {
   static const privateReportHeadline = 'Private reports';
 
   static const privateReportBody =
-      'Recap what the archive noticed across your moments — private, in your words, not generic advice.';
+      'Private reports are planned — coming after Pro proof. Not part of the V1 purchase promise.';
 
   static const exportHeadline = 'Export a copy you control';
 
@@ -41,7 +41,7 @@ abstract final class RevenueValueCopy {
       'Take a private report or recap out of the app when you choose.';
 
   static const exportBodyPlanned =
-      'Exportable reports are planned — Pro is still for keeping longer evidence in the archive.';
+      'Exports are planned — coming after Pro proof. Pro is still for keeping the longer proof trail.';
 
   static const safeSharingHeadline = 'Talk about patterns with someone you trust';
 
@@ -49,7 +49,7 @@ abstract final class RevenueValueCopy {
       'Private sharing may help you talk about patterns with someone you trust.';
 
   static const safeSharingDisclaimer =
-      'ArchiveMe does not diagnose or treat anything.';
+      'ArchiveMe is not a healthcare product.';
 
   static const safeSharingChoice = 'Only share what you choose.';
 

@@ -295,7 +295,7 @@ void main() {
       );
       expect(
         find.textContaining(
-          'A second moment gives ArchiveMe something to compare',
+          'A second similar moment gives ArchiveMe something to compare',
         ),
         findsOneWidget,
       );

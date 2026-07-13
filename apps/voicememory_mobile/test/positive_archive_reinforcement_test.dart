@@ -199,11 +199,11 @@ void main() {
       () {
         expect(
           PositiveArchiveReinforcementCopy.chatDifferenceLine,
-          contains('ChatGPT can help you talk now'),
+          contains('ChatGPT can suggest what to do'),
         );
         expect(
           PositiveArchiveReinforcementCopy.chatDifferenceLine,
-          contains('patterns can prove themselves later'),
+          contains('ArchiveMe shows what you already said before'),
         );
       },
     );

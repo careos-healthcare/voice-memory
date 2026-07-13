@@ -1,6 +1,11 @@
 /// First-five-minutes simplification copy — save one repeat, compare later.
+import '../release_candidate/v1_revenue_focus_policy.dart';
+import '../three_moment_activation/three_moment_activation_copy.dart';
+
 abstract final class FirstFiveMinutesSimplificationCopy {
   FirstFiveMinutesSimplificationCopy._();
+
+  static const firstUserJourney = V1RevenueFocusPolicy.firstUserJourney;
 
   static const headline = 'Save one repeat';
 
@@ -29,7 +34,9 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'No reports, dashboards, action items, or context work needed now.';
 
   static const notChatLine =
-      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+
+  static const threeMomentLine = ThreeMomentActivationCopy.combinedBody;
 
   static const notStorageLine =
       'This is not where you store everything. It is where you save what repeats.';
@@ -47,6 +54,8 @@ abstract final class FirstFiveMinutesSimplificationCopy {
   }
 
   static Iterable<String> allVisibleStrings() sync* {
+    yield firstUserJourney;
+    yield threeMomentLine;
     yield headline;
     yield body;
     yield oneLinePositioning;

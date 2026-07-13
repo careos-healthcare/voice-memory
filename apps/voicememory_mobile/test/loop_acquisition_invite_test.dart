@@ -56,7 +56,7 @@ void main() {
     test('capacity variant includes required fields', () {
       final v = LoopAcquisitionCopy.capacityYes;
       expect(v.headline, contains('Catch the yes before it costs you'));
-      expect(v.subheadline, contains('before checking your capacity'));
+      expect(v.subheadline, LoopAcquisitionCopy.wedgeRoutePromise);
       expect(v.bullets, hasLength(3));
       expect(v.cta, 'Save yes moment');
     });
@@ -64,14 +64,15 @@ void main() {
     test('prove variant includes required fields', () {
       final v = LoopAcquisitionCopy.proveEnough;
       expect(v.headline, contains('do more to feel enough'));
+      expect(v.subheadline, LoopAcquisitionCopy.wedgeRoutePromise);
       expect(v.bullets, hasLength(4));
       expect(v.cta, contains('proving-enough'));
     });
 
-    test('generic variant uses landing alignment headline', () {
+    test('generic variant uses umbrella repeat copy', () {
       final v = LoopAcquisitionCopy.generic;
-      expect(v.headline, 'See what keeps returning');
-      expect(v.subheadline.toLowerCase(), contains('keeps returning'));
+      expect(v.headline, 'When it repeats, save it');
+      expect(v.subheadline.toLowerCase(), contains('compares it later'));
       expect(v.cta, 'Start with one moment');
       expect(v.bullets, isEmpty);
     });
@@ -224,7 +225,7 @@ void main() {
       );
       expect(
         TestFlightInviteCopy.clipboardPack(TestFlightInviteVariant.generic),
-        contains('keeps returning'),
+        contains('compares it later'),
       );
     });
   });

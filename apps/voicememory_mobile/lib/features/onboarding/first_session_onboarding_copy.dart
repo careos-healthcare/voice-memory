@@ -14,7 +14,7 @@ abstract final class FirstSessionOnboardingCopy {
 
   static const step2Title = 'Come back when it repeats';
   static const step2Body =
-      'When you notice this again, save one real moment here.';
+      'Save the repeat here because ArchiveMe compares it later.';
 
   static const step3Title = 'See what ArchiveMe compares';
   static const step3Body =
@@ -24,7 +24,7 @@ abstract final class FirstSessionOnboardingCopy {
   static const exploreCta = "I'll explore first";
 
   static const notChatFootnote =
-      'ChatGPT can help you talk it through. ArchiveMe keeps the trail.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
 
   static const steps = <({String title, String body})>[
     (title: step1Title, body: step1Body),

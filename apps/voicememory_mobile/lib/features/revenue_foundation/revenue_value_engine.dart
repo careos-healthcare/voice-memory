@@ -80,7 +80,8 @@ abstract final class RevenueValueEngine {
     final blob = foundation.allVisibleStrings.join(' ').toLowerCase();
     return blob.contains('chatgpt') &&
         blob.contains('not a chat') &&
-        blob.contains('remembers differently');
+        (blob.contains('shows what you already said') ||
+            blob.contains('not a chatbot'));
   }
 
   static bool hasNoMedicalClaims(Iterable<String> strings) {

@@ -161,25 +161,25 @@ void main() {
     test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
       expect(
         ProofTrailPositioningCopy.notChatLine,
-        contains('ChatGPT answers a conversation'),
+        contains('ChatGPT can suggest what to do'),
       );
       expect(
         ProofTrailPositioningCopy.notChatLine,
-        contains('keeps the evidence trail'),
+        contains('ArchiveMe shows what you already said before'),
       );
     });
 
-    test('notStorageLine says notes store information', () {
+    test('notStorageLine says notes store what happened', () {
       expect(
         ProofTrailPositioningCopy.notStorageLine,
-        contains('Notes store information'),
+        contains('Notes store what happened'),
       );
     });
 
-    test('notStorageLine says ArchiveMe resurfaces evidence', () {
+    test('notStorageLine says ArchiveMe checks what returns', () {
       expect(
         ProofTrailPositioningCopy.notStorageLine,
-        contains('ArchiveMe resurfaces evidence'),
+        contains('ArchiveMe checks what returns'),
       );
     });
 

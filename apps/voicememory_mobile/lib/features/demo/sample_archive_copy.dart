@@ -28,17 +28,19 @@ abstract final class SampleArchiveCopy {
   static const tourExpand = 'Show steps';
   static const tourDismiss = 'Dismiss for now';
 
-  static const tourStep1Title = 'A pattern appeared';
+  static const tourStep1Title = 'Day 1: save a real moment';
   static const tourStep1Body =
-      'After a few saved moments, ArchiveMe shows a cautious belief — example data only.';
+      'Example data only — you save one real moment when something stands out. '
+      'ArchiveMe compares it later.';
 
-  static const tourStep2Title = 'It returned';
+  static const tourStep2Title = 'Day 2: something similar returns';
   static const tourStep2Body =
-      'See where the example moments show up again across contexts.';
+      'Example data only — a second similar moment gives ArchiveMe something to compare.';
 
-  static const tourStep3Title = 'It changed, faded, or got corrected';
+  static const tourStep3Title = 'Day 3: see what repeated';
   static const tourStep3Body =
-      'The review section shows what returned, changed, faded, or you corrected.';
+      'Example data only — around three moments, ArchiveMe can show what repeated. '
+      'Cautiously, not as a guarantee.';
 
   static const tourStep4Title = 'This is example data only';
   static const tourStep4Body =

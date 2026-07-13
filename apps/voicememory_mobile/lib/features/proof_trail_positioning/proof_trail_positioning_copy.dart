@@ -9,10 +9,10 @@ abstract final class ProofTrailPositioningCopy {
       'moments so your archive can show what keeps coming back.';
 
   static const notChatLine =
-      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
 
   static const notStorageLine =
-      'Notes store information. ArchiveMe resurfaces evidence.';
+      'Notes store what happened. ArchiveMe checks what returns.';
 
   static const proofTrailLine =
       'A proof trail shows the first repeat, why it appeared, what you confirmed or '

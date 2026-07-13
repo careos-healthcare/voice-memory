@@ -138,9 +138,8 @@ void main() {
     test('coreLine lists core V1 surfaces', () {
       final lower = V1SurfaceScopeAuditCopy.coreLine.toLowerCase();
       expect(lower, contains('record'));
-      expect(lower, contains('post-save reinforcement'));
-      expect(lower, contains('prompt assist'));
-      expect(lower, contains('first proof'));
+      expect(lower, contains('first useful proof'));
+      expect(lower, contains('longer proof trail'));
       expect(lower, contains('restore purchases'));
     });
 

@@ -12,7 +12,7 @@ abstract class RecordScreenFramingCopy {
   /// True empty archive — count 0 only.
   static const String emptyArchiveTitle = 'Record one real moment';
   static const String emptyArchiveBody =
-      'One real sentence is enough. ArchiveMe compares saved moments later.';
+      'Save one real moment. Come back when it shows up again. ArchiveMe compares it over time.';
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.

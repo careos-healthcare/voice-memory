@@ -126,7 +126,7 @@ void main() {
     test('loop acquisition capacity variant aligned', () {
       final v = LoopAcquisitionCopy.capacityYes;
       expect(v.headline, ArchivePositioningCopy.wedgeHeadline);
-      expect(v.subheadline.toLowerCase(), contains('agreeing'));
+      expect(v.subheadline, LoopAcquisitionCopy.wedgeRoutePromise);
       expect(v.cta, 'Save yes moment');
     });
 

@@ -55,7 +55,7 @@ void main() {
       );
       expect(
         LandingAppContinuityCopy.chatGptDifferentiation,
-        'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
+        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
       );
       expect(
         LandingAppContinuityCopy.proPaidReason,
@@ -126,7 +126,7 @@ void main() {
       expect(
         doc,
         contains(
-          'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
+          'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
         ),
       );
       expect(doc, contains('Keep the longer proof trail'));

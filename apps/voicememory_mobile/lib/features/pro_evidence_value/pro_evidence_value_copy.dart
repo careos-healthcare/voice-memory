@@ -38,7 +38,7 @@ abstract final class ProEvidenceValueCopy {
   static const proExportReportsPlanned = 'Exportable reports (planned)';
 
   static const sheetFooter =
-      'ArchiveMe is not trying to answer better than ChatGPT. It remembers differently.';
+      'ArchiveMe compares what you saved over time. It is not a chatbot.';
 
   static const productPromise =
       'ArchiveMe is not a chat. It compares real moments you saved at different times.';

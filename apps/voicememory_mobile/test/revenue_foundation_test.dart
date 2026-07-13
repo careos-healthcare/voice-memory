@@ -15,7 +15,7 @@ void main() {
       expect(RevenueValueCopy.comparesMomentsLine, contains('not a chat'));
       expect(
         RevenueValueCopy.positioningHeadline,
-        contains('not trying to answer better than ChatGPT'),
+        contains('ArchiveMe shows what you already said before'),
       );
     });
 

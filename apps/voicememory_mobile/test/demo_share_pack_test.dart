@@ -159,10 +159,23 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('demo_share_pack_card')), findsOneWidget);
-      expect(find.text(SampleArchiveCopy.demoShareShareButton), findsOneWidget);
-      expect(find.text(SampleArchiveCopy.demoShareCopyButton), findsOneWidget);
-      expect(find.text(SampleArchiveCopy.demoShareSubtitle), findsWidgets);
+      final shareCard = find.byKey(
+        const Key('demo_share_pack_card'),
+        skipOffstage: false,
+      );
+      expect(shareCard, findsOneWidget);
+      expect(
+        find.text(SampleArchiveCopy.demoShareShareButton, skipOffstage: false),
+        findsOneWidget,
+      );
+      expect(
+        find.text(SampleArchiveCopy.demoShareCopyButton, skipOffstage: false),
+        findsOneWidget,
+      );
+      expect(
+        find.text(SampleArchiveCopy.demoShareSubtitle, skipOffstage: false),
+        findsWidgets,
+      );
     });
 
     testWidgets('share and copy require explicit button taps', (tester) async {

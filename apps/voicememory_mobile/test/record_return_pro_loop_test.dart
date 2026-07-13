@@ -143,15 +143,15 @@ void main() {
     test('Pro bridge copy is exact', () {
       expect(
         RecordReturnProCopy.proTitle,
-        'Keep your archive useful over time.',
+        'Keep the longer proof trail.',
       );
       expect(
         RecordReturnProCopy.proBody,
-        'See deeper history and saved evidence.',
+        'Free shows the first useful proof. Pro keeps older evidence and longer archive history.',
       );
       expect(
         RecordReturnProCopy.proContinuityLine,
-        'Free keeps today\u2019s save. Pro keeps the thread connected over time.',
+        'Free keeps recent proof. Pro keeps the longer proof trail over time.',
       );
       expect(RecordReturnProCopy.proCta, 'See Pro');
       expect(RecordReturnProCopy.proSecondary, 'Not now');
@@ -492,14 +492,16 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Keep your archive useful over time.'), findsOneWidget);
+      expect(find.text('Keep the longer proof trail.'), findsOneWidget);
       expect(
-        find.text('See deeper history and saved evidence.'),
+        find.text(
+          'Free shows the first useful proof. Pro keeps older evidence and longer archive history.',
+        ),
         findsOneWidget,
       );
       expect(
         find.text(
-          'Free keeps today\u2019s save. Pro keeps the thread connected over time.',
+          'Free keeps recent proof. Pro keeps the longer proof trail over time.',
         ),
         findsOneWidget,
       );

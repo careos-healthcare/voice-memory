@@ -54,12 +54,12 @@ void main() {
     test('teaches save-a-repeat habit', () {
       expect(
         AudienceWedgeHabitCopy.saveLine,
-        contains('save one real moment here'),
+        contains('ArchiveMe compares it later'),
       );
-      expect(AudienceWedgeHabitCopy.notesLine, contains('Notes store it'));
+      expect(AudienceWedgeHabitCopy.notesLine, contains('Notes store what happened'));
       expect(
         AudienceWedgeHabitCopy.chatLine,
-        contains('ChatGPT can help you talk it through'),
+        contains('ChatGPT can suggest what to do'),
       );
     });
 

@@ -407,13 +407,18 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Keep your archive useful over time.'),
+        find.text('Keep the longer proof trail.'),
         findsOneWidget,
       );
-      expect(find.text('See deeper history and saved evidence.'), findsOneWidget);
       expect(
         find.text(
-          'Free keeps today\u2019s save. Pro keeps the thread connected over time.',
+          'Free shows the first useful proof. Pro keeps older evidence and longer archive history.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Free keeps recent proof. Pro keeps the longer proof trail over time.',
         ),
         findsOneWidget,
       );

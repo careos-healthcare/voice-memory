@@ -9,14 +9,15 @@ abstract final class V1SurfaceScopeAuditCopy {
       'secondary surfaces out of the default journey. No product deletion.';
 
   static const coreLine =
-      'Core V1: record, save, post-save reinforcement, prompt assist, first proof, '
-      'why proof appeared, confirm/correct, Pro longer proof trail, restore purchases, '
-      'privacy/support.';
+      'Core V1: record one real moment, return later, first useful proof, confirm or '
+      'correct, Pro longer proof trail, live billing verification, wedge acquisition into '
+      'record-return-proof loop, restore purchases, privacy/support.';
 
   static const secondaryLine =
-      'Secondary hidden: reports, dashboards, action items, archive packs, archive '
-      'analyst, search, calendar, widgets, monthly reviews, share cards, action plans, '
-      'context maps.';
+      'Secondary hidden: private reports, exports, referrals, safe sharing, dashboards, '
+      'action items, archive packs, archive analyst, search, calendar, widgets, monthly '
+      'reviews, share cards, action plans, context maps, Android, B2B, loop packs, '
+      'premium tiers.';
 
   static const blockerLine =
       'Release blocker only: purchase, restore, entitlement, TestFlight, metadata, '

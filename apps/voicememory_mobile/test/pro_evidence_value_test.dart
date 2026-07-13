@@ -139,7 +139,7 @@ void main() {
       expect(ProEvidenceValueCopy.secondary, 'Not now');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
+        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
       );
       expect(
         ProEvidenceValueCopy.evidenceLine,
@@ -147,7 +147,7 @@ void main() {
       );
       expect(
         ProEvidenceValueCopy.sheetFooter,
-        'ArchiveMe is not trying to answer better than ChatGPT. It remembers differently.',
+        'ArchiveMe compares what you saved over time. It is not a chatbot.',
       );
     });
 

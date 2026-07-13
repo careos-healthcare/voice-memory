@@ -15,7 +15,8 @@ abstract final class FutureRevenueScopeCopy {
 
   static const guardrail =
       'Do not surface future revenue directions as live V1 claims. Hide or gate '
-      'them until proof and beta validation complete.';
+      'them until proof and beta validation complete. Revenue focus: sharper packaging, '
+      'live billing, wedge acquisition, cleaner first proof journey — not more product surface.';
 
   static const futureDirections = <String>[
     'reports',

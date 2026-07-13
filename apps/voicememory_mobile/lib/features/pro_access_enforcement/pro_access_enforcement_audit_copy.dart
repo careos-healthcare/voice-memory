@@ -39,6 +39,10 @@ abstract final class ProAccessEnforcementAuditCopy {
       'Purchase, restore, and entitlement mechanics are acceptable for TestFlight. '
       'Documented gaps remain before full production anti-sharing.';
 
+  static const localAppLockLine =
+      'Local app lock protects the archive on this device. Server entitlement and '
+      'receipt anti-sharing remain a release dependency — not a solved feature yet.';
+
   static const productionBlockedLine =
       'Pro access enforcement has a production blocker. Fix purchase, restore, '
       'or entitlement mechanics before submission.';
@@ -105,6 +109,7 @@ abstract final class ProAccessEnforcementAuditCopy {
     yield detailNotApplicableYet;
     yield detailRestoreRequired;
     yield testFlightAcceptableLine;
+    yield localAppLockLine;
     yield productionBlockedLine;
     yield enforcementDocumentedLine;
     yield guardrail;

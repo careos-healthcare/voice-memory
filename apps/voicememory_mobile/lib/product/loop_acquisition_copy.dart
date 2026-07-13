@@ -27,11 +27,13 @@ class LoopAcquisitionVariant {
 abstract class LoopAcquisitionCopy {
   LoopAcquisitionCopy._();
 
+  static const wedgeRoutePromise =
+      'Save the moments where this happens. See whether it repeats.';
+
   static const proveEnough = LoopAcquisitionVariant(
     id: 'prove_enough',
     headline: 'Catch the moment you do more to feel enough.',
-    subheadline:
-        'ArchiveMe helps you record short moments and test whether your proving-enough loop keeps returning.',
+    subheadline: wedgeRoutePromise,
     bullets: [
       'Spot when stopping feels unsafe',
       'See whether effort comes from choice or pressure',
@@ -46,8 +48,7 @@ abstract class LoopAcquisitionCopy {
   static const capacityYes = LoopAcquisitionVariant(
     id: 'capacity_yes',
     headline: 'Catch the yes before it costs you.',
-    subheadline:
-        'ArchiveMe helps you spot why you keep agreeing before checking your capacity.',
+    subheadline: wedgeRoutePromise,
     bullets: [
       'Save a yes moment',
       'See what pulled you in',
@@ -59,10 +60,9 @@ abstract class LoopAcquisitionCopy {
 
   static const generic = LoopAcquisitionVariant(
     id: 'generic',
-    headline: 'See what keeps returning',
+    headline: 'When it repeats, save it',
     subheadline:
-        'Save small moments when something stands out. ArchiveMe shows what '
-        'keeps returning over time.',
+        'Save one real moment when something stands out. ArchiveMe compares it later.',
     bullets: [],
     cta: 'Start with one moment',
     cohortRoutePath: '/start/prove-enough',

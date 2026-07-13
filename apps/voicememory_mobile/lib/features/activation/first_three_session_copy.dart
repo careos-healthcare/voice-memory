@@ -54,10 +54,11 @@ abstract class FirstThreeSessionCopy {
       'Your archive is more useful when you add one honest moment at a time.';
 
   // Soft Pro boundary (after repeat / archive value).
-  static const String proTitle = 'Keep your archive useful over time.';
-  static const String proBody = 'See deeper history and saved evidence.';
+  static const String proTitle = 'Keep the longer proof trail.';
+  static const String proBody =
+      'Free shows the first useful proof. Pro keeps older evidence and longer archive history.';
   static const String proContinuityLine =
-      'Free keeps today\u2019s save. Pro keeps the thread connected over time.';
+      'Free keeps recent proof. Pro keeps the longer proof trail over time.';
   static const String proCta = 'See Pro';
   static const String proSecondary = 'Not now';
 

@@ -24,8 +24,7 @@ abstract final class PositiveArchiveReinforcementCopy {
       'No daily homework. No streak. No mind-map maintenance.';
 
   static const chatDifferenceLine =
-      'ChatGPT can help you talk now. ArchiveMe keeps the evidence so patterns '
-      'can prove themselves later.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
 
   static const guardrail =
       'Reinforce evidence capture without creating streaks, daily pressure, advice, '

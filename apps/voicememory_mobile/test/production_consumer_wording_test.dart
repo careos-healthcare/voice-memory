@@ -80,9 +80,9 @@ void main() {
     }
 
     test('Pro bridge titles use continuity framing', () {
-      expect(ProTrustCopy.proTitle, 'Keep your archive useful over time');
-      expect(First60Copy.proTitle, 'Keep your archive useful over time');
-      expect(RecordReturnProCopy.proTitle, 'Keep your archive useful over time.');
+      expect(ProTrustCopy.proTitle, 'Keep the longer proof trail');
+      expect(First60Copy.proTitle, 'Keep the longer proof trail');
+      expect(RecordReturnProCopy.proTitle, 'Keep the longer proof trail.');
     });
 
     test('paywall headline uses continuity framing', () {

@@ -163,7 +163,7 @@ abstract class First60Copy {
   static const String returnLocalCta = 'I\u2019ll come back tomorrow';
 
   // D. Pro continuity bridge.
-  static const String proTitle = 'Keep your archive useful over time';
+  static const String proTitle = 'Keep the longer proof trail';
   static const String proBody =
       'Unlock deeper history, saved evidence, and what keeps returning '
       'as your archive grows.';

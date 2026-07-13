@@ -18,9 +18,10 @@ abstract final class SaveARepeatHabitCopy {
       'Saved moments give ArchiveMe evidence to compare later.';
 
   static const chatDifferenceLine =
-      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
+      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
 
-  static const notesDifferenceLine = 'Notes store it. ArchiveMe compares it.';
+  static const notesDifferenceLine =
+      'Notes store what happened. ArchiveMe checks what returns.';
 
   static const proLine =
       'Free shows the first useful proof. Pro keeps the longer trail.';

@@ -175,15 +175,15 @@ void main() {
       );
     });
 
-    test('chatDifferenceLine distinguishes ChatGPT conversation from ArchiveMe evidence trail',
+    test('chatDifferenceLine distinguishes ChatGPT from ArchiveMe evidence trail',
         () {
       expect(
         SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('ChatGPT answers a conversation'),
+        contains('ChatGPT can suggest what to do'),
       );
       expect(
         SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('keeps the evidence trail'),
+        contains('ArchiveMe shows what you already said before'),
       );
     });
 
@@ -191,11 +191,11 @@ void main() {
         () {
       expect(
         SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('Notes store it'),
+        contains('Notes store what happened'),
       );
       expect(
         SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('ArchiveMe compares it'),
+        contains('ArchiveMe checks what returns'),
       );
     });
 
