@@ -149,7 +149,7 @@ void main() {
       expect(line, contains('repeat'));
       expect(line, contains('proof trail'));
       expect(line, contains('longer proof trail'));
-      expect(line, contains('one sentence'));
+      expect(line, contains('one real sentence'));
       expect(line, contains('compares later'));
     });
 

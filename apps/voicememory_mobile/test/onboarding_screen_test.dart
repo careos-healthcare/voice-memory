@@ -17,15 +17,15 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester, frames: 5);
 
-    expect(
-      find.text('See what keeps returning'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('Save small moments'), findsOneWidget);
-    expect(
-      find.textContaining('private timeline'),
-      findsOneWidget,
-    );
+      expect(
+        find.text('When it repeats, save it'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('save one real moment'), findsOneWidget);
+      expect(
+        find.textContaining('Not a diary'),
+        findsOneWidget,
+      );
     expect(find.text('Notice the pressure loops that keep repeating'), findsNothing);
     expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
   });

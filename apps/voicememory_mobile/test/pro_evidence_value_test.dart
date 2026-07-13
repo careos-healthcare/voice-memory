@@ -139,7 +139,7 @@ void main() {
       expect(ProEvidenceValueCopy.secondary, 'Not now');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
+        'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
       );
       expect(
         ProEvidenceValueCopy.evidenceLine,

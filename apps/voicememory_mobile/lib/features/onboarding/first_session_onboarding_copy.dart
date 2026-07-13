@@ -2,26 +2,29 @@
 abstract final class FirstSessionOnboardingCopy {
   FirstSessionOnboardingCopy._();
 
-  static const title = 'Build your archive from real moments';
+  static const title = 'When it repeats, save it';
 
   static const body =
-      'ArchiveMe does not need a perfect journal. Record small things, come back when something repeats, and your archive will show what changed.';
+      'Not a diary. Not ChatGPT. Not homework. Save one real moment when you '
+      'notice something coming back — ArchiveMe compares it later.';
 
-  static const step1Title = 'Record anything real';
-  static const step1Body = 'A thought, a small win, pressure, or a quiet day.';
+  static const step1Title = 'Save one real moment';
+  static const step1Body =
+      'One real sentence is enough. No perfect journal required.';
 
-  static const step2Title = 'Come back when life repeats';
-  static const step2Body = 'ArchiveMe compares your own words over time.';
+  static const step2Title = 'Come back when it repeats';
+  static const step2Body =
+      'When you notice this again, save one real moment here.';
 
-  static const step3Title = 'See what changed';
+  static const step3Title = 'See what ArchiveMe compares';
   static const step3Body =
-      'Look for repeats, softer moments, and what helped.';
+      'After enough real moments, the first useful proof can appear.';
 
   static const startCta = 'Start with a moment';
   static const exploreCta = "I'll explore first";
 
   static const notChatFootnote =
-      'ArchiveMe is not a chat. It helps you notice what keeps returning.';
+      'ChatGPT can help you talk it through. ArchiveMe keeps the trail.';
 
   static const steps = <({String title, String body})>[
     (title: step1Title, body: step1Body),

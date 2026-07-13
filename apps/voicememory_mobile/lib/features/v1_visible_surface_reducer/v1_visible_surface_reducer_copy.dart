@@ -13,8 +13,11 @@ abstract final class V1VisibleSurfaceReducerCopy {
       'longer proof trail.';
 
   static const hiddenLine =
-      'Hide dashboards, reports, action items, widgets, packs, analyst surfaces, '
-      'search, and context expansion until they clearly support the proof trail.';
+      'Hide dashboards, reports, exports, referrals, safe sharing, action items, '
+      'widgets, packs, analyst surfaces, search, context expansion, cross-device '
+      'continuity, Android expansion, B2B, annual plan, premium tiers, private '
+      'reports, loop packs, contradiction detection, archive memory expansion, '
+      'and ranking/importance surfaces until they clearly support the proof trail.';
 
   static const guardrail =
       'Do not delete features. Keep non-core surfaces out of the first journey.';

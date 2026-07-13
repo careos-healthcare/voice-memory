@@ -9,8 +9,7 @@ abstract final class ProofTrailPositioningCopy {
       'moments so your archive can show what keeps coming back.';
 
   static const notChatLine =
-      'Chat is for what you need help with now. ArchiveMe is for what keeps '
-      'repeating over time.';
+      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
 
   static const notStorageLine =
       'Notes store information. ArchiveMe resurfaces evidence.';
@@ -27,7 +26,7 @@ abstract final class ProofTrailPositioningCopy {
       'the pattern.';
 
   static const lowEffortLine =
-      'One real sentence is enough. No daily homework. No mind-map maintenance.';
+      'One real sentence is enough. No daily homework. No dashboard to maintain.';
 
   static const proLine =
       'Free shows the first useful proof. Pro keeps the longer proof trail.';

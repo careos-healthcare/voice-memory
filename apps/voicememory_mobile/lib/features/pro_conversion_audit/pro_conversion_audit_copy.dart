@@ -20,7 +20,13 @@ abstract final class ProConversionAuditCopy {
     'recovered automatically',
     'guaranteed transformation',
     'universal mental health',
+    'unlimited storage',
+    'life dashboard',
+    'second brain',
   ];
+
+  static const proTrailCanonical =
+      'Free shows the first useful proof. Pro keeps the longer proof trail.';
 
   static const bannedMedicalTerms = <String>[
     'therapy',

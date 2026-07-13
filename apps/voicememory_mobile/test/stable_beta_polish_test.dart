@@ -62,7 +62,7 @@ void main() {
       expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Record one real moment');
       expect(
         RecordFirstUsePromptCopy.body,
-        'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.',
+        'One real sentence is enough. ArchiveMe compares saved moments later.',
       );
     });
 

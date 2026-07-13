@@ -158,14 +158,14 @@ void main() {
       );
     });
 
-    test('notChatLine distinguishes chat now vs repeats over time', () {
+    test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
       expect(
         ProofTrailPositioningCopy.notChatLine,
-        contains('what you need help with now'),
+        contains('ChatGPT answers a conversation'),
       );
       expect(
         ProofTrailPositioningCopy.notChatLine,
-        contains('what keeps repeating over time'),
+        contains('keeps the evidence trail'),
       );
     });
 
@@ -246,10 +246,10 @@ void main() {
       );
     });
 
-    test('lowEffortLine says no mind-map maintenance', () {
+    test('lowEffortLine says no dashboard to maintain', () {
       expect(
         ProofTrailPositioningCopy.lowEffortLine,
-        contains('No mind-map maintenance'),
+        contains('No dashboard to maintain'),
       );
     });
 

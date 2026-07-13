@@ -19,7 +19,7 @@ import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
 
 const _requiredPhrases = [
   'Catch the yes before it costs you',
-  'See what keeps returning',
+  'When it repeats, save it',
   'Save a yes moment',
   'See what pulled you in',
   'Review what changed',
@@ -153,7 +153,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityHowItWorksSteps,
-        contains('Save one small moment'),
+        contains('Save one real moment'),
       );
     });
 

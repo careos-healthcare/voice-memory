@@ -1,5 +1,6 @@
 import '../loop_mode/loop_mode_model.dart';
 import '../../product/loop_mode_copy.dart';
+import 'audience_wedge_habit_copy.dart';
 
 /// Pressure-loop wedge selected during onboarding — analytics + ranking.
 enum AudienceWedge {
@@ -84,20 +85,25 @@ extension AudienceWedgeIds on AudienceWedge {
       case AudienceWedge.guiltAroundRest:
       case AudienceWedge.provingThroughWork:
       case AudienceWedge.proveEnough:
-        return 'When did you feel pressure to do more to feel okay?';
+        return 'When you feel pressure to do more to feel okay, save one real moment here.';
       case AudienceWedge.sayingYesNoCapacity:
       case AudienceWedge.sayingYesCapacity:
         return LoopModeCopy.capacityHandoffPrompt;
       case AudienceWedge.relationshipReplay:
-        return 'What interaction kept replaying in your head?';
+        return 'When an interaction keeps replaying, save one real moment here.';
       case AudienceWedge.avoidingDirectConversations:
-        return 'What did you avoid saying directly?';
+        return 'When you avoid saying something directly, save one real moment here.';
       case AudienceWedge.repeatingHabit:
-        return 'What did you do again even though you noticed it?';
+        return AudienceWedgeHabitCopy.saveLine;
       case AudienceWedge.notSureYet:
-        return 'When did you feel pressure to do more to feel okay?';
+        return AudienceWedgeHabitCopy.broadRepeatFallbackPrompt;
     }
   }
+
+  /// Habit-replacement lines shown near the first recording prompt.
+  String get habitNotesLine => AudienceWedgeHabitCopy.notesLine;
+
+  String get habitChatLine => AudienceWedgeHabitCopy.chatLine;
 
   List<String> get templateIds {
     switch (this) {

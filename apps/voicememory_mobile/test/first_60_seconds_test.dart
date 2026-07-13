@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_60_second_state.dart';
 import 'package:voicememory_mobile/features/onboarding/first_60_second_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
@@ -103,11 +104,10 @@ void main() {
 
   group('Copy guardrails', () {
     test('intro copy is exact', () {
-      expect(First60Copy.introTitle, 'See what keeps returning');
+      expect(First60Copy.introTitle, 'When it repeats, save it');
       expect(
         First60Copy.introBody,
-        'Save small moments when something stands out. ArchiveMe turns them into '
-        'a private timeline in your own words. Start with one honest moment.',
+        LandingAppContinuityCopy.heroBody,
       );
       expect(First60Copy.introCta, 'Record one moment');
       expect(

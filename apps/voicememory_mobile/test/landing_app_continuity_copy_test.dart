@@ -47,15 +47,15 @@ void main() {
     test('website and app promises stay aligned', () {
       expect(
         LandingAppContinuityCopy.hero,
-        'See what keeps returning',
+        'When it repeats, save it',
       );
       expect(
         LandingAppContinuityCopy.subheadline,
-        'No daily journal required.',
+        'No daily journal. No streak. No dashboard to maintain.',
       );
       expect(
         LandingAppContinuityCopy.chatGptDifferentiation,
-        'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
+        'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
       );
       expect(
         LandingAppContinuityCopy.proPaidReason,
@@ -68,9 +68,9 @@ void main() {
       expect(
         LandingAppContinuityCopy.howItWorksStepTitles,
         [
-          'Save one small moment',
-          'Come back when something stands out',
-          'See what returned',
+          'Save one real moment',
+          'Come back when it repeats',
+          'See what appeared and returned',
           'Correct what is not relevant',
           'Keep the longer proof trail with Pro',
         ],
@@ -116,17 +116,17 @@ void main() {
     test('continuity checklist doc exists with required promises', () {
       final doc = File('docs/release/LANDING_APP_CONTINUITY_CHECKLIST.md')
           .readAsStringSync();
-      expect(doc, contains('See what keeps returning'));
-      expect(doc, contains('No daily journal required.'));
-      expect(doc, contains('Save one small moment'));
-      expect(doc, contains('Come back when something stands out'));
-      expect(doc, contains('See what returned'));
+      expect(doc, contains('When it repeats, save it'));
+      expect(doc, contains('No daily journal. No streak. No dashboard to maintain.'));
+      expect(doc, contains('Save one real moment'));
+      expect(doc, contains('Come back when it repeats'));
+      expect(doc, contains('See what appeared and returned'));
       expect(doc, contains('Correct what is not relevant'));
       expect(doc, contains('Keep the longer proof trail with Pro'));
       expect(
         doc,
         contains(
-          'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.',
+          'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.',
         ),
       );
       expect(doc, contains('Keep the longer proof trail'));

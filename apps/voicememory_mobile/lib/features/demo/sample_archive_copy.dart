@@ -6,7 +6,8 @@ abstract final class SampleArchiveCopy {
 
   static const emptyStateTitle = 'See a sample archive';
   static const emptyStateSubtitle =
-      'Explore how ArchiveMe builds a private pattern map before adding your own moments. '
+      'Example data only — see what happens after a few real moments. '
+      'ArchiveMe compares appeared, returned, changed, faded, and corrected moments. '
       '${ArchivePositioningCopy.mapLine}';
 
   static const settingsTitle = 'View sample archive';
@@ -22,39 +23,39 @@ abstract final class SampleArchiveCopy {
   static const exampleOnlySnackbar = 'This preview uses example data only.';
 
   static const tourLabel = 'Sample tour — example data only';
-  static const tourTitle = 'Explore ArchiveMe in 3 steps';
+  static const tourTitle = 'What happens after a few real moments';
   static const tourCollapse = 'Hide steps';
   static const tourExpand = 'Show steps';
   static const tourDismiss = 'Dismiss for now';
 
-  static const tourStep1Title = 'Start with the archive belief';
+  static const tourStep1Title = 'A pattern appeared';
   static const tourStep1Body =
-      'ArchiveMe shows a cautious belief based on saved moments.';
+      'After a few saved moments, ArchiveMe shows a cautious belief — example data only.';
 
-  static const tourStep2Title = 'Check the evidence map';
+  static const tourStep2Title = 'It returned';
   static const tourStep2Body =
-      'See where the example moments show up.';
+      'See where the example moments show up again across contexts.';
 
-  static const tourStep3Title = 'Open a context';
+  static const tourStep3Title = 'It changed, faded, or got corrected';
   static const tourStep3Body =
-      'Tap Work or Home to see the example moments behind the count.';
+      'The review section shows what returned, changed, faded, or you corrected.';
 
-  static const tourStep4Title = 'Review what changed';
+  static const tourStep4Title = 'This is example data only';
   static const tourStep4Body =
-      'The review/history section shows how the archive compares moments over time.';
+      'Nothing here counts as real proof, export, or share. Your private archive stays separate.';
 
   static const tourStep5Title = 'Go back to your archive';
   static const tourStep5Body =
-      'Sample data is only an example. Your real archive stays separate.';
+      'Save real moments when something repeats. ArchiveMe compares them later.';
 
   static const demoShareTitle = 'ArchiveMe sample archive';
   static const demoShareSubtitle = 'Example data only — not your private archive';
   static const demoShareBulletOne =
-      'ArchiveMe compares saved moments over time.';
+      'After a few real moments, a pattern can appear.';
   static const demoShareBulletTwo =
-      'It shows cautious beliefs with evidence.';
+      'ArchiveMe compares what returned, changed, faded, or got corrected.';
   static const demoShareBulletThree =
-      'It highlights where evidence is strong, thin, or needs attention.';
+      'Example data only — never your private archive.';
   static const demoShareEvidenceMapHeading = 'Sample evidence map:';
   static const demoShareReviewLine =
       'This sample shows how a pattern can appear across contexts.';

@@ -6,11 +6,12 @@ Internal release checklist so the public website promise matches the in-app expe
 
 | Surface | Promise | Canonical copy |
 | --- | --- | --- |
-| Website + App | Subheadline | `No daily journal required.` |
-| Website + App | Hero | `See what keeps returning` |
-| Website + App | Hero body | `Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now.` |
-| Website + App | How it works | `Save one small moment` · `Come back when something stands out` · `See what returned` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
-| Website + App | ChatGPT differentiation | `ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.` |
+| Website + App | Public promise | `When something repeats, save one real moment. ArchiveMe compares it later.` |
+| Website + App | Subheadline | `No daily journal. No streak. No dashboard to maintain.` |
+| Website + App | Hero | `When it repeats, save it` |
+| Website + App | Hero body | `When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.` |
+| Website + App | How it works | `Save one real moment` · `Come back when it repeats` · `See what appeared and returned` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
+| Website + App | ChatGPT differentiation | `ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.` |
 | App (Record, early) | Step 1 / 2 / 3 guidance | Uses the first three how-it-works steps above |
 | Paywall | Keep the longer proof trail | Headline: `Keep the longer proof trail` · CTA: `Keep the longer trail` |
 | Paywall | Paid positioning | `Free shows the first useful proof. Pro keeps the longer proof trail.` |
@@ -41,9 +42,9 @@ Internal release checklist so the public website promise matches the in-app expe
 
 ## Early record guidance (app only)
 
-- [ ] Step 1 body: save one small moment when something stands out.
-- [ ] Step 2 body: no daily streak required — return when another moment matters.
-- [ ] Step 3 body: after a few saves, see what appeared, returned, or went quiet.
+- [ ] Step 1 body: save one real moment when something repeats.
+- [ ] Step 2 body: come back when it repeats — no daily streak required.
+- [ ] Step 3 body: after enough real moments, see the first useful proof.
 - [ ] Completion stays hidden on Record when guidance is complete.
 - [ ] No push notifications added for early guidance.
 - [ ] Proof thresholds and evidence gates unchanged.

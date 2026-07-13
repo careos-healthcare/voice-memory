@@ -128,14 +128,14 @@ void main() {
       expect(SaveARepeatHabitCopy.headline, 'When it repeats, save it');
     });
 
-    test('body says save one small moment', () {
-      expect(SaveARepeatHabitCopy.body, contains('save one small moment'));
+    test('body says save one real moment', () {
+      expect(SaveARepeatHabitCopy.body, contains('save one real moment'));
     });
 
-    test('body says as soon as you notice something coming back', () {
+    test('body says ArchiveMe compares it later', () {
       expect(
         SaveARepeatHabitCopy.body,
-        contains('as soon as you notice something coming back'),
+        contains('ArchiveMe compares it later'),
       );
     });
 
@@ -146,10 +146,10 @@ void main() {
       );
     });
 
-    test('oneSentenceLine says one sentence is enough', () {
+    test('oneSentenceLine says one real sentence is enough', () {
       expect(
         SaveARepeatHabitCopy.oneSentenceLine,
-        contains('One sentence is enough'),
+        contains('One real sentence is enough'),
       );
     });
 
@@ -161,55 +161,55 @@ void main() {
       expect(SaveARepeatHabitCopy.notDailyLine, contains('No streak'));
     });
 
-    test('notDailyLine says no pressure to record more', () {
+    test('notDailyLine says no dashboard to maintain', () {
       expect(
         SaveARepeatHabitCopy.notDailyLine,
-        contains('No pressure to record more'),
+        contains('No dashboard to maintain'),
       );
     });
 
-    test('whyItMattersLine says gives archive evidence to compare later', () {
+    test('whyItMattersLine says ArchiveMe evidence to compare later', () {
       expect(
         SaveARepeatHabitCopy.whyItMattersLine,
-        contains('gives your archive evidence to compare later'),
+        contains('ArchiveMe evidence to compare later'),
       );
     });
 
-    test('chatDifferenceLine distinguishes ChatGPT now from ArchiveMe preserving repeat',
+    test('chatDifferenceLine distinguishes ChatGPT conversation from ArchiveMe evidence trail',
         () {
       expect(
         SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('ChatGPT helps you think through now'),
+        contains('ChatGPT answers a conversation'),
       );
       expect(
         SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('ArchiveMe preserves the repeat'),
+        contains('keeps the evidence trail'),
       );
     });
 
-    test('notesDifferenceLine distinguishes notes storage from ArchiveMe watching whether it comes back',
+    test('notesDifferenceLine distinguishes notes storage from ArchiveMe comparing',
         () {
       expect(
         SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('Notes store what you write'),
+        contains('Notes store it'),
       );
       expect(
         SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('watches whether the same thing comes back'),
+        contains('ArchiveMe compares it'),
       );
     });
 
-    test('proLine says Free can show first useful proof', () {
+    test('proLine says Free shows first useful proof', () {
       expect(
         SaveARepeatHabitCopy.proLine,
-        contains('Free can show the first useful proof'),
+        contains('Free shows the first useful proof'),
       );
     });
 
-    test('proLine says Pro keeps longer trail after repeat returns', () {
+    test('proLine says Pro keeps longer trail', () {
       expect(
         SaveARepeatHabitCopy.proLine,
-        contains('Pro keeps the longer trail after the repeat returns'),
+        contains('Pro keeps the longer trail'),
       );
     });
 

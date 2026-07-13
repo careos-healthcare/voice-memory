@@ -14,10 +14,10 @@ void main() {
     expect(page.body, ConsumerUiCopy.onboardingPositioningBody);
     expect(
       page.title,
-      'See what keeps returning',
+      'When it repeats, save it',
     );
-    expect(page.body, contains('Save small moments'));
-    expect(page.body, contains('private timeline'));
+    expect(page.body, contains('save one real moment'));
+    expect(page.body, contains('Not a diary'));
     expect(page.title.toLowerCase(), isNot(contains('pressure loops')));
   });
 

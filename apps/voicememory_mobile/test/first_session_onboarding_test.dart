@@ -68,18 +68,18 @@ void main() {
     test('spec copy is stable', () {
       expect(
         FirstSessionOnboardingCopy.title,
-        'Build your archive from real moments',
+        'When it repeats, save it',
       );
       expect(
         FirstSessionOnboardingCopy.body,
-        contains('does not need a perfect journal'),
+        contains('Not a diary'),
       );
       expect(FirstSessionOnboardingCopy.startCta, 'Start with a moment');
       expect(FirstSessionOnboardingCopy.exploreCta, "I'll explore first");
       expect(FirstSessionOnboardingCopy.steps, hasLength(3));
       expect(
         FirstSessionOnboardingCopy.notChatFootnote,
-        'ArchiveMe is not a chat. It helps you notice what keeps returning.',
+        'ChatGPT can help you talk it through. ArchiveMe keeps the trail.',
       );
     });
 

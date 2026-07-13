@@ -129,7 +129,7 @@ void main() {
       expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
-        contains('ChatGPT can answer a conversation'),
+        contains('ChatGPT answers a conversation'),
       );
       expect(
         ProEvidenceValueCopy.sheetFooter,

@@ -24,6 +24,7 @@ Allow **future growth sharing** only if private text cannot leak. Classification
 - **Archive content sharing** — share product insight, not user archive content
 - **Early sharing** — no sharing in first five minutes or before first useful proof
 - **Live V1 sharing expansion** — no new live V1 sharing surfaces in V1
+- **V1 growth loop** — sharing is not a normal V1 growth loop; keep it explicit and future-gated
 
 ## Future growth sharing unlock
 

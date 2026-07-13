@@ -6,9 +6,9 @@ Short message Chirag can send to TestFlight testers. Copy/paste and add the Test
 
 Hi — I'm testing ArchiveMe with a small group before wider launch.
 
-**See what keeps returning.**
+**When it repeats, save it.**
 
-Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.
+When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.
 
 **Start with one pattern — saying yes when you have no capacity.**
 

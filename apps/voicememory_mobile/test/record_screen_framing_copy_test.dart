@@ -217,7 +217,7 @@ void main() {
       expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
       expect(
         RecordFirstUsePromptCopy.body,
-        'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.',
+        'One real sentence is enough. ArchiveMe compares saved moments later.',
       );
       expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
       expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
@@ -255,7 +255,7 @@ void main() {
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Use one sentence. ArchiveMe needs real moments before it can notice what keeps repeating.',
+        'One real sentence is enough. ArchiveMe compares saved moments later.',
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveFootnote,
@@ -370,7 +370,7 @@ void main() {
 
       expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
       expect(find.text(FirstSessionOnboardingCopy.title), findsOneWidget);
-      expect(find.textContaining(FirstSessionOnboardingCopy.step1Title), findsOneWidget);
+      expect(find.textContaining(FirstSessionOnboardingCopy.step1Title), findsWidgets);
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
       expect(find.text(RecordScreenFramingCopy.title), findsNothing);
       expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);

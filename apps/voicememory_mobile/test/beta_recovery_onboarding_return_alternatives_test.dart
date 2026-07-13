@@ -131,7 +131,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('See what keeps returning'),
+        contains('When it repeats, save it'),
       );
       expect(
         LoopAcquisitionCopy.capacityYes.headline,
@@ -145,10 +145,10 @@ void main() {
 
     test('how it works explains save choose pull come back review', () {
       expect(AcquisitionStartCopy.capacityHowItWorksSteps, [
-        'Save one small moment',
+        'Save one real moment',
         'Choose what pulled you in',
-        'Come back when something stands out',
-        'See what returned',
+        'Come back when it repeats',
+        'See what appeared and returned',
       ]);
       expect(
         LoopAcquisitionCopy.capacityYes.bullets,

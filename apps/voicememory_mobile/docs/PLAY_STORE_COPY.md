@@ -6,25 +6,25 @@ ArchiveMe
 
 ## Short description (≤80 characters)
 
-See what keeps returning. No daily journal required.
+When it repeats, save it. No daily journal required.
 
 ## Full description
 
-See what keeps returning.
+When it repeats, save it.
 
-Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.
+When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.
 
 **Start with one pattern**
 Saying yes when you have no capacity — catch the yes before it costs you. Save before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
-**Save one small moment**
-When something stands out, save it in your own words on this device.
+**Save one real moment**
+When something repeats, save it in your own words on this device.
 
-**Come back when something stands out**
-No daily streak required. Return when another moment matters.
+**Come back when it repeats**
+No daily streak required. Return when the same thread shows up again.
 
-**See what returned**
-After a few saves, see what appeared, returned, or went quiet.
+**See what appeared and returned**
+After a few saves, see what appeared, returned, changed, faded, or got corrected.
 
 **Correct what is not relevant**
 Mark what does not fit. Your timeline stays yours.

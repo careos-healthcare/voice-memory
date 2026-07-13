@@ -2,16 +2,19 @@
 abstract final class ReleaseCandidateComprehensionCopy {
   ReleaseCandidateComprehensionCopy._();
 
+  static const publicPromise =
+      'When something repeats, save one real moment. ArchiveMe compares it later.';
+
   static const headline = 'ArchiveMe is the proof trail';
 
   static const body =
-      'ArchiveMe is not voice chat. It shows one clear repeat, explains why it '
-      'appeared, lets you confirm or correct it, and keeps the trail as it returns, '
-      'changes, fades, or gets corrected.';
+      '$publicPromise Not a diary. Not ChatGPT. Not homework. After enough real '
+      'moments, ArchiveMe shows one clear repeat, explains why it appeared, lets '
+      'you confirm or correct it, and keeps the trail as it returns, changes, '
+      'fades, or gets corrected.';
 
   static const notVoiceChatLine =
-      'Not a voice assistant. Not transcription. ArchiveMe is the archive that '
-      'remembers repeats.';
+      'Not a diary. Not ChatGPT. Not homework. ArchiveMe keeps the evidence trail.';
 
   static const firstProofLine =
       'First proof: one clear repeat ArchiveMe can compare safely.';
@@ -24,7 +27,7 @@ abstract final class ReleaseCandidateComprehensionCopy {
       'Confirm or correct: mark it accurate, too vague, or not relevant.';
 
   static const proTrailLine =
-      'Pro keeps the trail after the first useful proof.';
+      'Free shows the first useful proof. Pro keeps the longer proof trail.';
 
   static const changeProofLine =
       'The trail shows whether the repeat returns, changes, fades, or gets corrected.';
@@ -51,6 +54,7 @@ abstract final class ReleaseCandidateComprehensionCopy {
   ];
 
   static Iterable<String> allVisibleStrings() sync* {
+    yield publicPromise;
     yield headline;
     yield body;
     yield notVoiceChatLine;

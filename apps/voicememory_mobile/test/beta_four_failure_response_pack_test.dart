@@ -131,7 +131,7 @@ void main() {
     test('fallback title uses landing alignment hero', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('See what keeps returning'),
+        contains('When it repeats, save it'),
       );
     });
 

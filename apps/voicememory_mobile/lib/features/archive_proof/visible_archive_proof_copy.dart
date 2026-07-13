@@ -3,10 +3,10 @@ import '../early_archive/early_first_signal_copy.dart';
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
-  static const firstRunPromiseStep1 = 'Record short moments';
-  static const firstRunPromiseStep2 =
-      'ArchiveMe tracks what repeats in your words';
-  static const firstRunPromiseStep3 = 'See whether it changes';
+  static const firstRunPromiseStep1 = 'When it repeats, save one real moment';
+  static const firstRunPromiseStep2 = 'ArchiveMe compares saved moments later';
+  static const firstRunPromiseStep3 =
+      'After enough real moments, see the first useful proof';
 
   static const firstRunPromiseSteps = [
     firstRunPromiseStep1,
@@ -14,10 +14,9 @@ abstract final class VisibleArchiveProofCopy {
     firstRunPromiseStep3,
   ];
 
-  static const firstRunBuildingLine = 'Record short moments.';
+  static const firstRunBuildingLine = 'When it repeats, save one real moment.';
 
-  static const firstRunCompareLine =
-      'ArchiveMe tracks what repeats in your words.';
+  static const firstRunCompareLine = 'ArchiveMe compares saved moments later.';
 
   static const firstRunEvidenceLine =
       'When something shows up again, your archive builds an evidence trail.';

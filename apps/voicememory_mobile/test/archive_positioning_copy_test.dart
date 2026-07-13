@@ -57,21 +57,21 @@ void main() {
     test('umbrella headline matches landing alignment v1', () {
       expect(
         ArchivePositioningCopy.umbrellaHeadline,
-        'See what keeps returning',
+        'When it repeats, save it',
       );
       expect(
         ArchivePositioningCopy.umbrellaShort,
-        'No daily journal required.',
+        'No daily journal. No streak. No dashboard to maintain.',
       );
     });
 
-    test('product body describes private timeline', () {
+    test('product body describes public promise', () {
       expect(
         ArchivePositioningCopy.umbrellaBody.toLowerCase(),
         allOf(
-          contains('private timeline'),
-          contains('returned'),
-          contains('corrected'),
+          contains('save one real moment'),
+          contains('compares it later'),
+          contains('not a diary'),
         ),
       );
     });
@@ -126,7 +126,7 @@ void main() {
         AcquisitionStartCopy.genericBody,
       ].join('\n').toLowerCase();
       expect(generic, isNot(contains('catch the yes')));
-      expect(generic, contains('keeps returning'));
+      expect(generic, contains('when it repeats'));
     });
 
     test('capacity start uses simpler fallback headline', () {
@@ -136,7 +136,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('See what keeps returning'),
+        contains('When it repeats, save it'),
       );
       expect(
         ArchivePositioningCopy.wedgeHeadline,

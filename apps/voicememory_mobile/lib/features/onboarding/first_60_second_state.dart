@@ -137,9 +137,7 @@ abstract class First60Copy {
 
   // A. First open / pre-record clarity.
   static const String introTitle = LandingAppContinuityCopy.hero;
-  static const String introBody =
-      'Save small moments when something stands out. ArchiveMe turns them into '
-      'a private timeline in your own words. Start with one honest moment.';
+  static const String introBody = LandingAppContinuityCopy.heroBody;
   static const String introCta = 'Record one moment';
   static const String introReassurance =
       'Your recordings stay on this device unless you choose sync or transcription.';

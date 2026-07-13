@@ -103,8 +103,8 @@ void main() {
         contains('pressure to do more'),
       );
       expect(
-        AudienceWedge.notSureYet.firstPrompt.toLowerCase(),
-        contains('pressure to do more'),
+        AudienceWedge.notSureYet.firstPrompt,
+        contains('repeating'),
       );
     });
 

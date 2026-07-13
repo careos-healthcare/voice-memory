@@ -216,10 +216,22 @@ void main() {
       );
     });
 
-    test('copy says ArchiveMe is not voice chat', () {
+    test('copy says public promise and not diary/chat/homework', () {
+      expect(
+        ReleaseCandidateComprehensionCopy.publicPromise,
+        'When something repeats, save one real moment. ArchiveMe compares it later.',
+      );
       expect(
         ReleaseCandidateComprehensionCopy.body,
-        contains('ArchiveMe is not voice chat'),
+        contains('Not a diary'),
+      );
+      expect(
+        ReleaseCandidateComprehensionCopy.body,
+        contains('Not ChatGPT'),
+      );
+      expect(
+        ReleaseCandidateComprehensionCopy.body,
+        contains('Not homework'),
       );
     });
 
@@ -249,17 +261,18 @@ void main() {
       expect(body, contains('corrected'));
     });
 
-    test('notVoiceChatLine says not voice assistant', () {
+    test('notVoiceChatLine says not diary chat or homework', () {
       expect(
         ReleaseCandidateComprehensionCopy.notVoiceChatLine,
-        contains('Not a voice assistant'),
+        contains('Not a diary'),
       );
-    });
-
-    test('notVoiceChatLine says not transcription', () {
       expect(
         ReleaseCandidateComprehensionCopy.notVoiceChatLine,
-        contains('Not transcription'),
+        contains('Not ChatGPT'),
+      );
+      expect(
+        ReleaseCandidateComprehensionCopy.notVoiceChatLine,
+        contains('Not homework'),
       );
     });
 
@@ -299,10 +312,10 @@ void main() {
       );
     });
 
-    test('proTrailLine says Pro keeps the trail', () {
+    test('proTrailLine says longer proof trail', () {
       expect(
         ReleaseCandidateComprehensionCopy.proTrailLine,
-        contains('Pro keeps the trail'),
+        contains('longer proof trail'),
       );
     });
 

@@ -5,29 +5,25 @@ abstract final class SaveARepeatHabitCopy {
   static const headline = 'When it repeats, save it';
 
   static const body =
-      'ArchiveMe works best when you save one small moment as soon as you notice '
-      'something coming back.';
+      'When something repeats, save one real moment. ArchiveMe compares it later.';
 
   static const triggerLine = 'The trigger is simple: I noticed this again.';
 
-  static const oneSentenceLine = 'One sentence is enough.';
+  static const oneSentenceLine = 'One real sentence is enough.';
 
   static const notDailyLine =
-      'No daily journal. No streak. No pressure to record more.';
+      'No daily journal. No streak. No dashboard to maintain.';
 
   static const whyItMattersLine =
-      'Saving the repeat gives your archive evidence to compare later.';
+      'Saved moments give ArchiveMe evidence to compare later.';
 
   static const chatDifferenceLine =
-      'ChatGPT helps you think through now. ArchiveMe preserves the repeat so it '
-      'can prove whether it returns or changes.';
+      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
 
-  static const notesDifferenceLine =
-      'Notes store what you write. ArchiveMe watches whether the same thing comes back.';
+  static const notesDifferenceLine = 'Notes store it. ArchiveMe compares it.';
 
   static const proLine =
-      'Free can show the first useful proof. Pro keeps the longer trail after the '
-      'repeat returns.';
+      'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const guardrail =
       'Make ArchiveMe a low-pressure place to save a repeat, not a daily habit '

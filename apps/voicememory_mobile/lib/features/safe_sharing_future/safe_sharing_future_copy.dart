@@ -9,11 +9,13 @@ abstract final class SafeSharingFutureCopy {
       'Classification and documentation only.';
 
   static const positioning =
-      'Future growth sharing stays explicit and privacy-safe — product insight only, never raw archive content by default.';
+      'Future growth sharing stays explicit and privacy-safe — product insight only, '
+      'never raw archive content by default. Not a V1 growth loop.';
 
   static const orderLine =
       'Rules: no raw private text by default, explicit user share/export, product insight not archive content, '
-      'no first-five-minute sharing, no sharing before first useful proof, no live V1 sharing expansion.';
+      'no first-five-minute sharing, no sharing before first useful proof, no live V1 sharing expansion, '
+      'no share-to-unlock, no clinical framing, no assessment-style claims.';
 
   static const prereqOrderLine =
       'Prerequisites: first useful proof seen and paid-intent beta complete.';
@@ -24,7 +26,8 @@ abstract final class SafeSharingFutureCopy {
       'No sharing in first five minutes or before first useful proof. No new live V1 sharing UI.';
 
   static const sharingFrozenLine =
-      'Keep growth sharing frozen until first useful proof and paid-intent beta proof are complete.';
+      'Keep growth sharing frozen until first useful proof and paid-intent beta proof are complete. '
+      'Sharing is not a V1 growth loop.';
 
   static const futureGrowthSharingDocumentedLine =
       'Proof and beta complete. Document growth sharing as future-only — explicit, product insight, no raw private text leak.';

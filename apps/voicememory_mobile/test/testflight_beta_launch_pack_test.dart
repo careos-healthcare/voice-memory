@@ -78,7 +78,7 @@ void main() {
     test('contains required tester wording', () {
       expect(
         message,
-        contains('See what keeps returning'),
+        contains('When it repeats, save it'),
       );
       expect(
         message,

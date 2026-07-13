@@ -136,7 +136,7 @@ void main() {
       );
       expect(
         AcquisitionStartCopy.capacityTitle,
-        contains('See what keeps returning'),
+        contains('When it repeats, save it'),
       );
     });
 
@@ -151,10 +151,10 @@ void main() {
       expect(
         AcquisitionStartCopy.capacityHowItWorksSteps,
         [
-          'Save one small moment',
+          'Save one real moment',
           'Choose what pulled you in',
-          'Come back when something stands out',
-          'See what returned',
+          'Come back when it repeats',
+          'See what appeared and returned',
         ],
       );
     });

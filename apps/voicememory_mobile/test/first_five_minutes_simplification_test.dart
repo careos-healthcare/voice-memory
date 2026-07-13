@@ -272,10 +272,10 @@ void main() {
       expect(line, contains('checked this before'));
     });
 
-    test('oneSentenceLine says one sentence is enough', () {
+    test('oneSentenceLine says one real sentence is enough', () {
       expect(
         FirstFiveMinutesSimplificationCopy.oneSentenceLine,
-        'One sentence is enough.',
+        'One real sentence is enough.',
       );
     });
 
@@ -305,17 +305,14 @@ void main() {
       expect(line, contains('context work'));
     });
 
-    test('notChatLine says not chat', () {
+    test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
-        contains('not chat'),
+        contains('ChatGPT answers a conversation'),
       );
-    });
-
-    test('notChatLine says proof trail', () {
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
-        contains('proof trail'),
+        contains('keeps the evidence trail'),
       );
     });
 

@@ -15,7 +15,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'Use it when you notice: I have felt this before, done this before, avoided '
       'this before, or checked this before.';
 
-  static const oneSentenceLine = 'One sentence is enough.';
+  static const oneSentenceLine = 'One real sentence is enough.';
 
   static const savedMattersLine =
       'Saved moments give your archive something real to compare.';
@@ -29,7 +29,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'No reports, dashboards, action items, or context work needed now.';
 
   static const notChatLine =
-      'This is not chat. It is a proof trail.';
+      'ChatGPT answers a conversation. ArchiveMe keeps the evidence trail.';
 
   static const notStorageLine =
       'This is not where you store everything. It is where you save what repeats.';

@@ -6,29 +6,27 @@ ArchiveMe
 
 ## Subtitle
 
-See what keeps returning
+When it repeats, save it
 
 ## Short description
 
-No daily journal required. Save small moments. See what returned.
+No daily journal. No streak. No dashboard to maintain.
 
 ## Long description
 
-See what keeps returning.
+When it repeats, save it.
 
-Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.
+When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.
 
 Start with one pattern — saying yes when you have no capacity. Catch the yes before it costs you — before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
-Save one small moment when something stands out — in your own words on this device.
+Save one real moment when something repeats — in your own words on this device.
 
-Come back when another moment matters. No daily streak required.
+Come back when it repeats. No daily streak required.
 
-After a few saves, see what appeared, returned, or went quiet.
+After a few saves, see what appeared, returned, changed, faded, or got corrected.
 
-Mark what does not fit. Your timeline stays yours.
-
-Free shows the first proof. Pro keeps the full timeline as it grows.
+Free shows the first useful proof. Pro keeps the longer proof trail.
 
 ArchiveMe is built for useful reflection over time — not endless note-taking.
 
@@ -38,18 +36,20 @@ Your reflections are personal. The journal file on this device is encrypted. Arc
 
 ## Release identity (listing prep)
 
-- **App name:** ArchiveMe (public consumer name)
-- **iOS bundle ID:** `com.voicememory.mobile`
-- **Support URL:** https://careosapp.co.uk/archiveme-support
-- **Purchases:** unavailable until RevenueCat / store banking setup — do not use subscribe-or-buy CTAs in listing copy while billing is paused.
-- Open **`ios/Runner.xcworkspace`** for iOS archive/upload.
+- Bundle ID: `com.voicememory.mobile`
+- Display name: ArchiveMe
 
-Reviewers can use **Sample Archive** and **Support & feedback** without a backend account.
+## Screenshot storyboard (draft)
 
-## Screenshot themes (suggested)
+1. Onboarding — "When it repeats, save it"
+2. Record — save one real moment
+3. Archive — first useful proof
+4. Pro — longer proof trail
 
-1. Onboarding — "See what keeps returning"
-2. Record — save one small moment
-3. Return — come back when something stands out
-4. Patterns — see what returned
-5. Paywall — "Pro keeps the full timeline as it grows"
+## Do not include
+
+- Therapy, diagnosis, or mental health assessment claims
+- Guaranteed transformation
+- Cloud backup guarantee
+- More AI positioning
+- Share-to-unlock growth loops
