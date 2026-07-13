@@ -1,5 +1,7 @@
 # V1 expansion gate
 
+Canonical gate list: `docs/V1_EXPANSION_GATES.md`.
+
 The revenue increase now comes from sharper packaging, live billing, wedge acquisition, and a cleaner first proof journey — not more product surface.
 
 ## Blocked until first-proof and paid-intent evidence pass

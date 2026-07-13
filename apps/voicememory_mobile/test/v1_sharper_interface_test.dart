@@ -93,10 +93,12 @@ void main() {
   });
 
   group('Expansion and wedge gates', () {
-    test('expansion gate doc contains manifesto line', () {
-      final doc = File('docs/V1_EXPANSION_GATE.md').readAsStringSync();
-      expect(doc, contains(V1RevenueFocusPolicy.manifestoLine));
-      for (final surface in V1ExpansionGateCopy.blockedLiveSurfaces) {
+    test('expansion gates doc contains core V1 sentence and gated ideas', () {
+      final doc =
+          File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      expect(doc, contains(V1ExpansionGateCopy.expansionBlockedLine));
+      expect(doc, contains(V1CoreProductSentence.line));
+      for (final surface in V1ExpansionGateCopy.blockedExpansionIdeas) {
         expect(doc.toLowerCase(), contains(surface.toLowerCase()));
       }
     });
