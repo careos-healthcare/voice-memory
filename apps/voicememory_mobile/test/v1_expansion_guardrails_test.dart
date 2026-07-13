@@ -205,6 +205,13 @@ void main() {
         expect(doc.toLowerCase(), contains(idea.toLowerCase()));
       }
     });
+
+    test('beta decision system is measurement-only not product expansion', () {
+      final doc = File('docs/BETA_DECISION_SYSTEM.md').readAsStringSync();
+      expect(doc.toLowerCase(), contains('not a user-facing product expansion'));
+      expect(doc, contains('docs/V1_EXPANSION_GATES.md'));
+      expect(doc.toLowerCase(), contains('do not build ask archive'));
+    });
   });
 
   group('Future revenue guard', () {

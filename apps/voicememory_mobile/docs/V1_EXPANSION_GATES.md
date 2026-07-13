@@ -39,4 +39,4 @@ Do not ship these as live V1 consumer surfaces until proof and paid-intent evide
 - Pro = longer trail (not more AI)
 - Prove-enough and capacity-yes wedge routes only
 
-See also `docs/V1_REVENUE_FOCUS.md` and `lib/features/v1_interface/v1_expansion_gate_copy.dart`.
+See also `docs/V1_REVENUE_FOCUS.md`, `docs/BETA_DECISION_SYSTEM.md`, and `lib/features/v1_interface/v1_expansion_gate_copy.dart`.

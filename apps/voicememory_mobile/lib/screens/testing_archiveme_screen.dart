@@ -29,6 +29,7 @@ import '../widgets/beta/beta_feedback_summary_card.dart';
 import '../widgets/beta/testflight_metrics_dashboard_card.dart';
 import '../widgets/beta/beta_conversion_diagnosis_card.dart';
 import '../widgets/beta/beta_decision_rule_card.dart';
+import '../widgets/beta/beta_next_build_decision_card.dart';
 import '../widgets/beta/beta_validation_decision_matrix_card.dart';
 import '../widgets/beta/beta_fix_playbook_card.dart';
 import '../widgets/beta/beta_repair_lab_card.dart';
@@ -272,6 +273,11 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             const BetaDecisionRuleCard(
+              source: 'testing_archiveme',
+              compact: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const BetaNextBuildDecisionCard(
               source: 'testing_archiveme',
               compact: true,
             ),
