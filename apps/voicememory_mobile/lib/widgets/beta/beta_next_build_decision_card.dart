@@ -1,26 +1,89 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/beta_decision/beta_decision_copy.dart';
 import '../../features/beta_decision/beta_decision_engine.dart';
 import '../../features/beta_decision/beta_decision_model.dart';
+import '../../features/beta_decision/beta_tester_outcome_store.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
 /// Beta-only next-build decision card — metadata only, no behaviour changes.
-class BetaNextBuildDecisionCard extends StatelessWidget {
+class BetaNextBuildDecisionCard extends StatefulWidget {
   const BetaNextBuildDecisionCard({
     super.key,
     this.source = 'testing_archiveme',
     this.compact = false,
     this.outcomesOverride,
     this.resultOverride,
+    this.refreshToken = 0,
   });
 
   final String source;
   final bool compact;
   final List<BetaTesterOutcome>? outcomesOverride;
   final BetaDecisionResult? resultOverride;
+  final int refreshToken;
+
+  @override
+  State<BetaNextBuildDecisionCard> createState() =>
+      _BetaNextBuildDecisionCardState();
+}
+
+class _BetaNextBuildDecisionCardState extends State<BetaNextBuildDecisionCard> {
+  BetaDecisionResult? _result;
+  var _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_loadResult());
+  }
+
+  @override
+  void didUpdateWidget(covariant BetaNextBuildDecisionCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.resultOverride != null) {
+      _result = widget.resultOverride;
+      _loaded = true;
+      return;
+    }
+    if (widget.refreshToken != oldWidget.refreshToken ||
+        widget.outcomesOverride != oldWidget.outcomesOverride) {
+      unawaited(_loadResult());
+    }
+  }
+
+  Future<void> _loadResult() async {
+    if (widget.resultOverride != null) {
+      if (!mounted) return;
+      setState(() {
+        _result = widget.resultOverride;
+        _loaded = true;
+      });
+      return;
+    }
+
+    if (widget.outcomesOverride != null) {
+      if (!mounted) return;
+      setState(() {
+        _result = BetaDecisionEngine.build(outcomes: widget.outcomesOverride!);
+        _loaded = true;
+      });
+      return;
+    }
+
+    await BetaTesterOutcomeStore.ensureLoaded();
+    if (!mounted) return;
+    setState(() {
+      _result = BetaDecisionEngine.build(
+        outcomes: BetaTesterOutcomeStore.allOutcomes,
+      );
+      _loaded = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +95,17 @@ class BetaNextBuildDecisionCard extends StatelessWidget {
       );
     }
 
-    final result = resultOverride ??
-        BetaDecisionEngine.build(outcomes: outcomesOverride ?? const []);
+    if (!_loaded || _result == null) {
+      return const SizedBox.shrink(
+        key: Key('beta_next_build_decision_card_loading'),
+      );
+    }
+
+    final result = _result!;
 
     return Container(
       key: const Key('beta_next_build_decision_card'),
-      padding: EdgeInsets.all(compact ? 10 : 12),
+      padding: EdgeInsets.all(widget.compact ? 10 : 12),
       decoration: BoxDecoration(
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -95,7 +163,7 @@ class BetaNextBuildDecisionCard extends StatelessWidget {
           ],
           const SizedBox(height: 8),
           Text(
-            'Source: $source · expansion allowed: ${result.expansionAllowed}',
+            'Source: ${widget.source} · logged: ${result.testerCount} · expansion allowed: ${result.expansionAllowed}',
             key: const Key('beta_next_build_decision_meta'),
             style: const TextStyle(
               color: AppTheme.muted,

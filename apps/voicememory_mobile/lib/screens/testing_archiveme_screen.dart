@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../design/archive_mobile_typography.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
+import '../features/beta_decision/beta_tester_outcome_store.dart';
 import '../features/beta/tester_mission_copy.dart';
 import '../features/beta_activation/beta_activation_summary_copy.dart';
 import '../features/beta_test_script/beta_test_script_copy.dart';
@@ -30,6 +31,7 @@ import '../widgets/beta/testflight_metrics_dashboard_card.dart';
 import '../widgets/beta/beta_conversion_diagnosis_card.dart';
 import '../widgets/beta/beta_decision_rule_card.dart';
 import '../widgets/beta/beta_next_build_decision_card.dart';
+import '../widgets/beta/beta_tester_outcome_log_card.dart';
 import '../widgets/beta/beta_validation_decision_matrix_card.dart';
 import '../widgets/beta/beta_fix_playbook_card.dart';
 import '../widgets/beta/beta_repair_lab_card.dart';
@@ -106,6 +108,7 @@ class TestingArchiveMeScreen extends StatefulWidget {
 
 class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
   List<JournalEntry> _entries = const [];
+  var _betaDecisionRefreshToken = 0;
 
   @override
   void initState() {
@@ -117,6 +120,7 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
         if (mounted) setState(() {});
       }),
     );
+    unawaited(BetaTesterOutcomeStore.ensureLoaded());
     _loadEntries();
   }
 
@@ -277,9 +281,16 @@ class _TestingArchiveMeScreenState extends State<TestingArchiveMeScreen> {
               compact: true,
             ),
             const SizedBox(height: AppSpacing.md),
-            const BetaNextBuildDecisionCard(
+            BetaTesterOutcomeLogCard(
               source: 'testing_archiveme',
               compact: true,
+              onChanged: () => setState(() => _betaDecisionRefreshToken++),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            BetaNextBuildDecisionCard(
+              source: 'testing_archiveme',
+              compact: true,
+              refreshToken: _betaDecisionRefreshToken,
             ),
             const SizedBox(height: AppSpacing.md),
             const BetaValidationDecisionMatrixCard(

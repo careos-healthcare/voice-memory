@@ -19,7 +19,7 @@ Run with 5 testers before changing product surface:
 1. Send invite with no positioning beyond the core V1 sentence.
 2. Watch silently for the first 2 minutes — do not coach.
 3. Ask the seven questions below.
-4. Log signals in `BetaTesterOutcome` (see `lib/features/beta_decision/beta_decision_model.dart`).
+4. Log signals in `BetaTesterOutcome` via **Testing ArchiveMe → Log tester outcome** (saved locally on device).
 5. Run `BetaDecisionEngine.build(outcomes: ...)` for the cohort recommendation.
 6. Ship **one** fix matching the primary recommendation. Re-test with 5 more people.
 
@@ -132,7 +132,7 @@ Until then, measurement and copy fixes only.
 - Engine: `lib/features/beta_decision/beta_decision_engine.dart`
 - Copy: `lib/features/beta_decision/beta_decision_copy.dart`
 - Tests: `test/beta_decision_engine_test.dart`
-- Internal surface: `BetaNextBuildDecisionCard` on `/testing-archiveme` (beta mission gate only)
+- Internal surface: `BetaTesterOutcomeLogCard` + `BetaNextBuildDecisionCard` on `/testing-archiveme` (beta mission gate only)
 
 ## Blocked until V1 beta proof passes
 

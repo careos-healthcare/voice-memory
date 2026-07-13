@@ -268,10 +268,12 @@ void main() {
       expect(find.text(BetaDecisionCopy.nextFixRecordOnboarding), findsOneWidget);
     });
 
-    test('testing screen includes beta next-build decision card', () {
+    test('testing screen includes beta outcome log and decision cards', () {
       final source =
           File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
       expect(source, contains('BetaNextBuildDecisionCard'));
+      expect(source, contains('BetaTesterOutcomeLogCard'));
+      expect(source, contains('BetaTesterOutcomeStore'));
     });
   });
 }

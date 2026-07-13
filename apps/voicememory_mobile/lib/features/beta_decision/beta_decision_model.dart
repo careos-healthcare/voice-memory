@@ -38,11 +38,13 @@ class BetaTesterOutcome {
     required this.testerId,
     required this.signals,
     this.notes,
+    this.loggedAt,
   });
 
   final String testerId;
   final Set<BetaDecisionSignal> signals;
   final String? notes;
+  final DateTime? loggedAt;
 
   bool has(BetaDecisionSignal signal) => signals.contains(signal);
 
@@ -60,6 +62,40 @@ class BetaTesterOutcome {
   bool get reachedProof =>
       has(BetaDecisionSignal.reachedThreeMoments) ||
       has(BetaDecisionSignal.sawFirstProof);
+
+  Map<String, dynamic> toJson() => {
+        'testerId': testerId,
+        'signals': signals.map((signal) => signal.name).toList(),
+        if (notes != null && notes!.isNotEmpty) 'notes': notes,
+        if (loggedAt != null) 'loggedAt': loggedAt!.toUtc().toIso8601String(),
+      };
+
+  factory BetaTesterOutcome.fromJson(Map<String, dynamic> json) {
+    final rawSignals = json['signals'];
+    final signals = <BetaDecisionSignal>{};
+    if (rawSignals is List) {
+      for (final value in rawSignals) {
+        if (value is! String) continue;
+        final signal = BetaDecisionSignal.values
+            .where((candidate) => candidate.name == value)
+            .firstOrNull;
+        if (signal != null) signals.add(signal);
+      }
+    }
+    final loggedAtRaw = json['loggedAt'];
+    DateTime? loggedAt;
+    if (loggedAtRaw is String && loggedAtRaw.isNotEmpty) {
+      loggedAt = DateTime.tryParse(loggedAtRaw);
+    }
+    return BetaTesterOutcome(
+      testerId: (json['testerId'] as String?)?.trim().isNotEmpty == true
+          ? (json['testerId'] as String).trim()
+          : 'tester-unknown',
+      signals: signals,
+      notes: (json['notes'] as String?)?.trim(),
+      loggedAt: loggedAt,
+    );
+  }
 }
 
 /// Cohort-level recommendation from aggregated tester outcomes.

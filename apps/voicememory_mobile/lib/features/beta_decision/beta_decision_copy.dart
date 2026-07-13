@@ -24,6 +24,72 @@ abstract final class BetaDecisionCopy {
   static const noFailingBranchBody =
       'No failing branch detected in logged outcomes. Continue observation or run more testers.';
 
+  static const outcomeLogTitle = 'Log tester outcome';
+  static const outcomeLogSubtitle =
+      'Toggle observed signals after the 7 interview questions. Saved locally on this device.';
+  static const outcomeTesterIdLabel = 'Tester id';
+  static const outcomeNotesLabel = 'Notes (optional, local only)';
+  static const outcomeSaveCta = 'Save tester outcome';
+  static const outcomeClearCta = 'Clear all logged outcomes';
+  static const outcomeLoggedCount = 'Logged outcomes';
+  static const outcomeNoSignalsSelected = 'Select at least one signal before saving.';
+
+  static String signalLabel(BetaDecisionSignal signal) => switch (signal) {
+        BetaDecisionSignal.understoodPromise => 'Understood promise',
+        BetaDecisionSignal.misunderstoodAsGenericJournal =>
+          'Sounded like a daily notes app',
+        BetaDecisionSignal.misunderstoodAsChatbot =>
+          'Sounded like a chat assistant',
+        BetaDecisionSignal.misunderstoodAsTherapy =>
+          'Sounded like clinical support',
+        BetaDecisionSignal.tappedRecord => 'Tapped Record/Type',
+        BetaDecisionSignal.savedFirstMoment => 'Saved first moment',
+        BetaDecisionSignal.returnedDay2 => 'Returned day 2',
+        BetaDecisionSignal.reachedThreeMoments => 'Reached 3 moments',
+        BetaDecisionSignal.sawFirstProof => 'Saw first proof/thread',
+        BetaDecisionSignal.proofFeltMeaningful => 'Proof felt meaningful',
+        BetaDecisionSignal.willingToPayForLongerTrail =>
+          'Would pay for longer trail',
+        BetaDecisionSignal.askedForHistory => 'Asked for history',
+        BetaDecisionSignal.askedForExport => 'Asked for export',
+        BetaDecisionSignal.askedForReport => 'Asked for monthly report',
+        BetaDecisionSignal.askedForReminder => 'Asked for reminder',
+        BetaDecisionSignal.hesitatedAtCapture => 'Hesitated at capture',
+        BetaDecisionSignal.confusedWhatToWrite => 'Confused what to write',
+      };
+
+  static const signalGroups = <String, List<BetaDecisionSignal>>{
+    'Understanding': [
+      BetaDecisionSignal.understoodPromise,
+      BetaDecisionSignal.misunderstoodAsGenericJournal,
+      BetaDecisionSignal.misunderstoodAsChatbot,
+      BetaDecisionSignal.misunderstoodAsTherapy,
+    ],
+    'Capture': [
+      BetaDecisionSignal.tappedRecord,
+      BetaDecisionSignal.savedFirstMoment,
+      BetaDecisionSignal.hesitatedAtCapture,
+      BetaDecisionSignal.confusedWhatToWrite,
+    ],
+    'Return': [
+      BetaDecisionSignal.returnedDay2,
+      BetaDecisionSignal.askedForReminder,
+    ],
+    'Proof': [
+      BetaDecisionSignal.reachedThreeMoments,
+      BetaDecisionSignal.sawFirstProof,
+      BetaDecisionSignal.proofFeltMeaningful,
+    ],
+    'Monetization': [
+      BetaDecisionSignal.willingToPayForLongerTrail,
+    ],
+    'Utility asks': [
+      BetaDecisionSignal.askedForHistory,
+      BetaDecisionSignal.askedForExport,
+      BetaDecisionSignal.askedForReport,
+    ],
+  };
+
   static String recommendationFor(BetaNextBuildRecommendation recommendation) =>
       switch (recommendation) {
         BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
@@ -61,7 +127,14 @@ abstract final class BetaDecisionCopy {
     yield nextExpandProUtility;
     yield insufficientDataBody;
     yield noFailingBranchBody;
+    yield outcomeLogTitle;
+    yield outcomeLogSubtitle;
+    yield outcomeSaveCta;
+    yield outcomeClearCta;
     yield* decisionTreeBranches;
     yield* BetaTesterOutcomeChecklist.interviewQuestions;
+    for (final signal in BetaDecisionSignal.values) {
+      yield signalLabel(signal);
+    }
   }
 }
