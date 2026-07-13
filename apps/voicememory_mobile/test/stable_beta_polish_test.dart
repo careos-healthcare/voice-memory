@@ -57,12 +57,12 @@ void main() {
   });
 
   group('first-session clarity', () {
-    test('first-session copy says Record one real moment', () {
-      expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
-      expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Record one real moment');
+    test('first-session copy says Save one real moment', () {
+      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
+      expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Save one real moment.');
       expect(
         RecordFirstUsePromptCopy.body,
-        'One real sentence is enough. ArchiveMe compares saved moments later.',
+        contains('returned, changed, faded, or corrected'),
       );
     });
 

@@ -1,3 +1,5 @@
+import '../v1_interface/v1_core_product_sentence.dart';
+
 /// V1 revenue focus policy — packaging, billing, wedge, and proof loop only.
 abstract final class V1RevenueFocusPolicy {
   V1RevenueFocusPolicy._();
@@ -6,8 +8,7 @@ abstract final class V1RevenueFocusPolicy {
       'The revenue increase now comes from sharper packaging, live billing, wedge '
       'acquisition, and a cleaner first proof journey — not more product surface.';
 
-  static const firstUserJourney =
-      'Save one real moment. Come back when it shows up again. ArchiveMe compares it over time.';
+  static const firstUserJourney = V1CoreProductSentence.line;
 
   static const allowedPillars = <String>[
     'record one real moment',

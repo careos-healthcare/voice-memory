@@ -1,3 +1,4 @@
+import '../features/v1_interface/progressive_evidence_state_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../security/privacy_copy_policy.dart';
 
@@ -10,10 +11,12 @@ abstract class RecordScreenFramingCopy {
   static const String helperLine = '';
 
   /// True empty archive — count 0 only.
-  static const String emptyArchiveTitle = 'Record one real moment';
-  static const String emptyArchiveBody =
-      'Save one real moment. Come back when it shows up again. ArchiveMe compares it over time.';
+  static const String emptyArchiveTitle = 'Save one real moment.';
+  static const String emptyArchiveBody = ProgressiveEvidenceStateCopy.zeroBody;
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
+
+  /// Demo archive entry on Record first use.
+  static const String seeExampleFirstLink = 'See an example first';
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
   static const String firstRunPrivacyTitle = 'Before you record';
@@ -26,14 +29,13 @@ abstract class RecordScreenFramingCopy {
       'Or start with: a pressure moment';
 
   /// One saved moment — calm started state, no pattern claims.
-  static const String archiveStartedTitle = 'Archive started';
-  static const String archiveStartedBody =
-      'ArchiveMe needs a second moment before it can compare what repeats.';
+  static const String archiveStartedTitle =
+      ProgressiveEvidenceStateCopy.oneTitle;
+  static const String archiveStartedBody = ProgressiveEvidenceStateCopy.oneBody;
   static const String archiveStartedCta = 'Add one more moment';
 
   /// Two–three entries without a grounded repeat yet.
-  static const String weakCompareBody =
-      'Add one more moment so ArchiveMe can compare the behaviour, not just the words.';
+  static const String weakCompareBody = ProgressiveEvidenceStateCopy.twoBody;
   static const String weakCompareFootnote =
       'Not chat history — patterns only appear when your own words repeat.';
 
@@ -53,10 +55,9 @@ abstract class RecordScreenFramingCopy {
 abstract final class RecordFirstUsePromptCopy {
   RecordFirstUsePromptCopy._();
 
-  static const title = 'Record one real moment';
+  static const title = 'Save one real moment.';
 
-  static const body =
-      'One real sentence is enough. ArchiveMe compares saved moments later.';
+  static const body = ProgressiveEvidenceStateCopy.zeroBody;
 
   static const examplesHeading = 'Examples';
 

@@ -139,7 +139,7 @@ void main() {
   });
 
   group('Sample archive UI', () {
-    testWidgets('0-entry card shows See a sample archive copy', (tester) async {
+    testWidgets('0-entry card shows See an example first copy', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),

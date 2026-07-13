@@ -53,6 +53,7 @@ abstract final class PhysicalDeviceSmokeProof {
       visibleArchiveProofCopySource.contains('typeInsteadCta');
 
   static bool detectVoiceSavePath(String recordFramingCopySource) =>
+      recordFramingCopySource.contains('Save one real moment') ||
       recordFramingCopySource.contains('Record one real moment');
 
   static bool detectTranscriptCorrectionPath(

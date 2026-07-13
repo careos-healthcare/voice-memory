@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../features/onboarding/archive_journey_model.dart';
+import '../../record/record_screen_framing_copy.dart';
 import '../../services/capture_pipeline_service.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../capture_entry_actions.dart';
-import '../onboarding/archive_journey_explainer_card.dart';
+import '../onboarding/first_proof_journey_strip_card.dart';
 import '../security/archive_data_flow_sheet.dart';
 import 'record_first_use_prompt_block.dart';
 
@@ -19,7 +19,8 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
     this.typeCapturePrompt,
     this.onTextThoughtSaved,
     this.onLogPressureMoment,
-    this.showArchiveJourneyExplainer = false,
+    this.showFirstProofJourneyStrip = false,
+    this.onViewSampleExample,
   });
 
   final VoidCallback onRecord;
@@ -28,7 +29,8 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
   final String? typeCapturePrompt;
   final Future<void> Function(CapturePipelineResult result)? onTextThoughtSaved;
   final VoidCallback? onLogPressureMoment;
-  final bool showArchiveJourneyExplainer;
+  final bool showFirstProofJourneyStrip;
+  final VoidCallback? onViewSampleExample;
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +43,11 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           RecordFirstUsePromptBlock(
-            hideLeadCopy: showArchiveJourneyExplainer,
+            hideLeadCopy: showFirstProofJourneyStrip,
           ),
-          if (showArchiveJourneyExplainer) ...[
+          if (showFirstProofJourneyStrip) ...[
             const SizedBox(height: AppSpacing.xs),
-            ArchiveJourneyExplainerCard(
-              explainer: ArchiveJourneyExplainer.compact(),
-            ),
+            const FirstProofJourneyStripCard(),
           ],
           const SizedBox(height: AppSpacing.md),
           CaptureEntryActions(
@@ -60,6 +60,17 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
             pressureMomentPresentation: CapturePressureMomentPresentation.textLink,
             onHowItWorks: () => showArchiveDataFlowSheet(context),
           ),
+          if (onViewSampleExample != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('record_see_example_first_link'),
+                onPressed: onViewSampleExample,
+                child: const Text(RecordScreenFramingCopy.seeExampleFirstLink),
+              ),
+            ),
+          ],
         ],
       ),
     );

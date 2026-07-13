@@ -38,9 +38,10 @@ void main() {
     test('first user journey is concrete', () {
       expect(
         V1RevenueFocusPolicy.firstUserJourney,
-        contains('Save one real moment'),
+        contains('Record one real moment'),
       );
-      expect(V1RevenueFocusPolicy.firstUserJourney, contains('compares it over time'));
+      expect(V1RevenueFocusPolicy.firstUserJourney, contains('Return when it happens again'));
+      expect(V1RevenueFocusPolicy.firstUserJourney, contains('Pro keeps the longer trail'));
     });
 
     test('allowed pillars and blocked surfaces are defined', () {
@@ -108,10 +109,14 @@ void main() {
   });
 
   group('First-session promise — concrete but not overclaimed', () {
-    test('record framing uses first user journey', () {
+    test('record framing uses progressive zero-entry body', () {
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
+        contains('returned, changed, faded, or corrected'),
+      );
+      expect(
         V1RevenueFocusPolicy.firstUserJourney,
+        contains('Record one real moment'),
       );
     });
 

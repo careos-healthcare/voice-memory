@@ -46,6 +46,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/first_proof_journey_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
@@ -215,10 +216,10 @@ void main() {
     });
 
     test('first-use prompt copy is concrete and not diagnostic', () {
-      expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
+      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
       expect(
         RecordFirstUsePromptCopy.body,
-        'One real sentence is enough. ArchiveMe compares saved moments later.',
+        contains('returned, changed, faded, or corrected'),
       );
       expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
       expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
@@ -252,11 +253,11 @@ void main() {
     test('empty and started copy match the clean first-load spec', () {
       expect(
         RecordScreenFramingCopy.emptyArchiveTitle,
-        'Record one real moment',
+        'Save one real moment.',
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        V1RevenueFocusPolicy.firstUserJourney,
+        contains('returned, changed, faded, or corrected'),
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveFootnote,
@@ -264,11 +265,11 @@ void main() {
       );
       expect(
         RecordScreenFramingCopy.archiveStartedTitle,
-        'Archive started',
+        'You started your archive.',
       );
       expect(
         RecordScreenFramingCopy.archiveStartedBody,
-        'ArchiveMe needs a second moment before it can compare what repeats.',
+        contains('second similar moment'),
       );
     });
 
@@ -839,18 +840,18 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('record_first_use_prompt_block')), findsOneWidget);
-      expect(find.byKey(const Key('archive_journey_explainer_card_compact')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_journey_strip_card')), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.title), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.body), findsNothing);
-      expect(find.text(ArchiveJourneyCopy.compactHelper), findsOneWidget);
+      expect(find.text(FirstProofJourneyCopy.helper), findsOneWidget);
       expect(find.text(ArchiveJourneyCopy.step3Body), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
       expect(find.textContaining('1 of 3'), findsOneWidget);
       expect(
         find.descendant(
-          of: find.byKey(const Key('archive_journey_explainer_card_compact')),
-          matching: find.textContaining('first proof'),
+          of: find.byKey(const Key('first_proof_journey_strip_card')),
+          matching: find.textContaining('First thread'),
         ),
         findsOneWidget,
       );

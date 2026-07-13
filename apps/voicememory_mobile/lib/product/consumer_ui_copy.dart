@@ -162,8 +162,11 @@ abstract class ConsumerUiCopy {
   static const String positioningClearerEachCheck = archiveClearerEachCheckLine;
   static const String recordNextMomentCta = 'Record next moment';
 
-  // ——— Patterns tab ———
-  static const String patternsTabLabel = 'Patterns';
+  // ——— Archive tab (Patterns route) ———
+  static const String patternsTabLabel = 'Archive';
+  static const String archiveDiscoverPatternsLink = 'See all patterns';
+  static const String archiveTimelineLink = 'Timeline';
+  static const String archiveSearchLink = 'Find saved moments';
   static const String patternsHeroHeading = 'WHAT KEEPS REPEATING IN YOUR LIFE';
   static const String patternsShiftingHeading = 'WHAT MAY BE CHANGING';
   static const String patternsEvolutionHeading = 'CHANGING OVER TIME';

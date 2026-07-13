@@ -561,6 +561,7 @@ import '../widgets/record/one_small_recording_card.dart';
 import '../widgets/record/daily_mirror_record_card.dart';
 import '../widgets/record/microphone_permission_blocked_panel.dart';
 import '../widgets/record/record_first_use_capture_section.dart';
+import '../widgets/onboarding/first_proof_journey_strip_card.dart';
 import '../widgets/record/record_top_archive_promise_hero.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
@@ -8115,13 +8116,16 @@ class _RecordScreenState extends State<RecordScreen> {
                         onTextThoughtSaved: _finishSuccessfulCapture,
                         onLogPressureMoment: () =>
                             context.push('/pressure-check-in'),
-                        showArchiveJourneyExplainer:
-                            ArchiveJourneyExplainerGates.showCompactOnRecord(
+                        showFirstProofJourneyStrip:
+                            ArchiveJourneyExplainerGates
+                                .showFirstProofJourneyStripOnRecord(
                           loaded: _journalEntryCountReady,
                           entryCount: _journalEntryCount,
                           isPostSave: _isPostSaveSurface,
                           entries: _journalEntries,
                         ),
+                        onViewSampleExample: () =>
+                            context.push('/sample-archive'),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -8133,6 +8137,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready && !firstUseSimplifiedRecord) ...[
+                      if (ArchiveJourneyExplainerGates
+                          .showFirstProofJourneyStripOnRecord(
+                        loaded: _journalEntryCountReady,
+                        entryCount: _journalEntryCount,
+                        isPostSave: _isPostSaveSurface,
+                        entries: _journalEntries,
+                      )) ...[
+                        const FirstProofJourneyStripCard(),
+                        const SizedBox(height: 12),
+                      ],
                       Builder(
                         builder: (context) {
                           final readyPolicy = readyCapturePolicy;

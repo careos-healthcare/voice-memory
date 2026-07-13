@@ -5,6 +5,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_explainer_gates.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_model.dart';
+import 'package:voicememory_mobile/features/onboarding/first_proof_journey_copy.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
@@ -97,6 +98,30 @@ void main() {
           entryCount: 3,
           isPostSave: false,
           entries: entries,
+        ),
+        isFalse,
+      );
+    });
+
+    test('journey strip appears at two entries before first proof', () {
+      expect(
+        ArchiveJourneyExplainerGates.showFirstProofJourneyStripOnRecord(
+          loaded: true,
+          entryCount: 2,
+          isPostSave: false,
+          entries: const [],
+        ),
+        isTrue,
+      );
+    });
+
+    test('journey strip hidden after four entries', () {
+      expect(
+        ArchiveJourneyExplainerGates.showFirstProofJourneyStripOnRecord(
+          loaded: true,
+          entryCount: 4,
+          isPostSave: false,
+          entries: const [],
         ),
         isFalse,
       );
@@ -230,7 +255,7 @@ void main() {
   });
 
   group('Record first-use integration', () {
-    testWidgets('compact explainer appears inside first-use capture section',
+    testWidgets('journey strip appears inside first-use capture section',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -239,7 +264,7 @@ void main() {
               child: RecordFirstUseCaptureSection(
                 onRecord: () {},
                 recordButtonLabel: VisibleArchiveProofCopy.firstUseCaptureCta,
-                showArchiveJourneyExplainer: true,
+                showFirstProofJourneyStrip: true,
               ),
             ),
           ),
@@ -247,9 +272,10 @@ void main() {
       );
 
       expect(
-        find.byKey(const Key('archive_journey_explainer_card_compact')),
+        find.byKey(const Key('first_proof_journey_strip_card')),
         findsOneWidget,
       );
+      expect(find.text(FirstProofJourneyCopy.strip), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     });
@@ -263,14 +289,14 @@ void main() {
             body: RecordFirstUseCaptureSection(
               onRecord: () {},
               recordButtonLabel: VisibleArchiveProofCopy.firstUseCaptureCta,
-              showArchiveJourneyExplainer: false,
+              showFirstProofJourneyStrip: false,
             ),
           ),
         ),
       );
 
       expect(
-        find.byKey(const Key('archive_journey_explainer_card_compact')),
+        find.byKey(const Key('first_proof_journey_strip_card')),
         findsNothing,
       );
     });
@@ -331,7 +357,7 @@ void main() {
     test('empty states use guided evidence-first language', () {
       expect(
         RecordScreenFramingCopy.emptyArchiveTitle,
-        'Record one real moment',
+        'Save one real moment.',
       );
       expect(
         VisibleArchiveProofCopy.patternsMindMapEmptyBody,

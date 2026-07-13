@@ -894,10 +894,10 @@ void main() {
       }
     });
 
-    test('first-use prompt says no need to explain and ten seconds is enough', () {
+    test('first-use prompt promises future compare and ten seconds is enough', () {
       expect(
         RecordFirstUsePromptCopy.body.toLowerCase(),
-        contains('one real sentence'),
+        contains('returned, changed, faded, or corrected'),
       );
       expect(
         RecordFirstUsePromptCopy.footer,

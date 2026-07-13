@@ -96,6 +96,7 @@ import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/archive_beliefs_dashboard.dart';
 import '../widgets/archive/archive_insight_card.dart';
+import '../widgets/patterns/archive_secondary_nav_links.dart';
 import '../widgets/patterns/patterns_deep_links.dart';
 import '../features/tomorrow_return/change_summary_model.dart';
 import '../features/tomorrow_return/return_comparison_coordinator.dart';
@@ -1913,6 +1914,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       const ArchiveRecordEvidenceCta(),
       const SizedBox(height: AppSpacing.md),
       const PatternsDeepLinks(),
+      const SizedBox(height: AppSpacing.md),
+      ArchiveSecondaryNavLinks(entryCount: _entries.length),
       const SizedBox(height: AppSpacing.lg),
     ];
   }
