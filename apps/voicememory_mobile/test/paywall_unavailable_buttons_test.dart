@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +10,7 @@ import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_unavailable_state.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
+import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/billing/store_billing_port.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
@@ -133,6 +135,26 @@ void main() {
       expect(retried, isTrue);
     });
 
+    testWidgets('Try again shows inline spinner while retrying', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PaywallUnavailableFallback(
+              body: ConsumerUiCopy.paywallSetupUnavailableBody,
+              hideBenefits: true,
+              showRetry: true,
+              retrying: true,
+              onRetry: () {},
+              onDismiss: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
+    });
+
     testWidgets('restore purchases remains visible', (tester) async {
       var restored = false;
       await tester.pumpWidget(
@@ -181,6 +203,7 @@ void main() {
 
     tearDown(() async {
       PaywallRejectionCapture.resetSessionForTest();
+      RevenueCatService.fetchOfferingsOverrideForTest = null;
       if (await tempDir.exists()) {
         await tempDir.delete(recursive: true);
       }
@@ -295,16 +318,53 @@ void main() {
     });
 
     testWidgets('Try again reloads offerings without purchasing', (tester) async {
+      RevenueCatService.fetchOfferingsOverrideForTest = () async => null;
       await pumpUnavailablePaywall(tester, billingReady: true);
 
       expect(find.byKey(const Key('paywall_unavailable_try_again')), findsOneWidget);
       await tester.tap(find.byKey(const Key('paywall_unavailable_try_again')));
       await tester.pump();
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 25));
 
       expect(store.purchaseCalls, 0);
-      expect(find.text(PaywallUnavailableState.continueWithoutProLabel), findsOneWidget);
+      expect(
+        find.text(PaywallUnavailableState.continueWithoutProLabel),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('Try again returns to unavailable UI after offerings timeout', (
+      tester,
+    ) async {
+      RevenueCatService.fetchOfferingsOverrideForTest = () =>
+          Completer<Offerings?>().future;
+
+      await pumpUnavailablePaywall(tester, billingReady: true);
+      expect(
+        find.textContaining('Purchases are not available right now'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const Key('paywall_unavailable_try_again')));
+      await tester.pump();
+      expect(
+        find.text(PaywallUnavailableState.continueWithoutProLabel),
+        findsOneWidget,
+      );
+      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 25));
+
+      expect(store.purchaseCalls, 0);
+      expect(
+        find.textContaining('Purchases are not available right now'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PaywallUnavailableState.continueWithoutProLabel),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('paywall_unavailable_try_again')), findsOneWidget);
     });
 
     testWidgets('restore purchases remains available and does not purchase', (

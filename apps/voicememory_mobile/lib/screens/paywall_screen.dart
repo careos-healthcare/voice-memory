@@ -24,6 +24,7 @@ import '../features/activation/activation_tracker.dart';
 import '../billing/restore_purchases_copy.dart';
 import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
+import '../billing/revenuecat_diagnostics_log.dart';
 import '../billing/revenuecat_service.dart';
 import '../billing/revenuecat_offerings_debug_log.dart';
 import '../billing/subscription_copy.dart';
@@ -117,6 +118,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Offerings? _offerings;
   PremiumEntitlements? _entitlements;
   bool _loading = true;
+  bool _offeringsReloading = false;
   bool _busy = false;
   _PaywallBusyKind _busyKind = _PaywallBusyKind.none;
   RestorePurchasesFlow? _restoreFlow;
@@ -378,7 +380,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return packages != null && packages.isNotEmpty;
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool isRetry = false}) async {
     if (!mounted) return;
 
     RevenueCatOfferingsDebugLog.paywallLoadStarted(
@@ -388,8 +390,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
 
     setState(() {
-      _loading = true;
-      _error = null;
+      if (isRetry) {
+        _offeringsReloading = true;
+      } else {
+        _loading = true;
+      }
+      if (!isRetry) {
+        _error = null;
+      }
     });
 
     Offerings? offerings;
@@ -404,7 +412,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       if (!billingConfigured && !ScreenshotMode.enabled) {
         if (AppServices.isInitialized) {
-          await RevenueCatService.instance.initialize();
+          try {
+            await RevenueCatService.instance
+                .initialize()
+                .timeout(_loadTimeout);
+          } on TimeoutException {
+            loadReason = 'configure_timeout';
+            RevenueCatDiagnosticsLog.paywallFallback(
+              reason: loadReason,
+              isRetry: isRetry,
+            );
+          }
           billingConfigured = RevenueCatService.instance.isConfigured;
         }
         if (!billingConfigured) {
@@ -413,13 +431,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             reason: loadReason,
           );
           _trackPaywallSeen(PremiumEntitlements.free());
-          if (!mounted) return;
-          setState(() {
-            _loading = false;
-            _entitlements = PremiumEntitlements.free();
-            _offerings = null;
-            _error = ConsumerUiCopy.paywallBillingNotConfigured;
-          });
+          entitlements = PremiumEntitlements.free();
+          error = ConsumerUiCopy.paywallBillingNotConfigured;
           return;
         }
       }
@@ -427,13 +440,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (ScreenshotMode.enabled) {
         loadReason = 'screenshot_mode';
         RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
-        if (!mounted) return;
-        setState(() {
-          _loading = false;
-          _entitlements = PremiumEntitlements.free();
-          _offerings = null;
-          _error = null;
-        });
+        entitlements = PremiumEntitlements.free();
         return;
       }
 
@@ -447,6 +454,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
               offerings: null,
               error: 'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
             );
+            RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+              success: false,
+              offerings: null,
+              error: 'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
+            );
             return null;
           },
         );
@@ -455,17 +467,24 @@ class _PaywallScreenState extends State<PaywallScreen> {
             .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
       } on TimeoutException {
         loadReason = 'load_timeout';
-        error = 'Loading timed out. Please try again in a moment.';
+        error = SubscriptionCopy.paywallNoOfferings;
         entitlements = rc.latestEntitlements;
         RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: loadReason,
+          error: error,
+          isRetry: isRetry,
+        );
       } catch (e) {
         loadReason = 'load_error';
-        error = userFacingErrorMessage(
-          e,
-          fallback: 'Could not load subscription details.',
-        );
+        error = SubscriptionCopy.paywallNoOfferings;
         entitlements = rc.latestEntitlements;
         RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: loadReason,
+          error: error,
+          isRetry: isRetry,
+        );
       }
 
       if (!mounted) {
@@ -486,22 +505,38 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (!_hasPackagesIn(offerings) && error == null) {
         loadReason = 'no_packages_in_current_offering';
         error = SubscriptionCopy.paywallNoOfferings;
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: loadReason,
+          error: error,
+          isRetry: isRetry,
+        );
       } else if (_hasPackagesIn(offerings)) {
         loadReason = 'plans_available';
       }
 
-      setState(() {
-        _offerings = offerings;
-        _entitlements = entitlements;
-        _loading = false;
-        _selected = selected;
-        _error = error;
-      });
-
       if (_hasPackagesIn(offerings) && entitlements.isPro == false) {
         _trackPlansShown();
       }
+    } catch (e) {
+      loadReason = 'load_unhandled_error';
+      error = SubscriptionCopy.paywallNoOfferings;
+      RevenueCatDiagnosticsLog.paywallFallback(
+        reason: loadReason,
+        error: error,
+        isRetry: isRetry,
+      );
     } finally {
+      if (mounted) {
+        setState(() {
+          _offerings = offerings;
+          _entitlements = entitlements;
+          _loading = false;
+          _offeringsReloading = false;
+          _selected = selected;
+          _error = error;
+        });
+      }
+
       final purchasePlansAvailable =
           billingConfigured && _hasPackagesIn(offerings);
       RevenueCatOfferingsDebugLog.paywallLoadResult(
@@ -518,6 +553,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
         reason: loadReason,
         error: error,
       );
+      if (!purchasePlansAvailable && entitlements.isPro != true) {
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: loadReason,
+          error: error,
+          isRetry: isRetry,
+        );
+      }
     }
   }
 
@@ -843,8 +885,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
           subhead: sourceCopy?.subheadline ?? ConsumerUiCopy.paywallSubhead,
           body: _unavailableBodyText,
           busy: _busy,
+          retrying: _offeringsReloading,
           showRetry: _billingReady,
-          onRetry: _load,
+          onRetry: () => unawaited(_load(isRetry: true)),
           onRestore: _restore,
           onDismiss: () => unawaited(_dismissWithCapture()),
           primaryDismissLabel: packaging.continueCta,

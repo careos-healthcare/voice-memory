@@ -18,6 +18,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
     this.busy = false,
     this.showRetry = false,
     this.onRetry,
+    this.retrying = false,
     this.hideBenefits = false,
     this.primaryDismissLabel,
   });
@@ -34,6 +35,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
   final bool busy;
   final bool showRetry;
   final VoidCallback? onRetry;
+  final bool retrying;
   final bool hideBenefits;
   final String? primaryDismissLabel;
 
@@ -123,8 +125,14 @@ class PaywallUnavailableFallback extends StatelessWidget {
           if (showRetry) ...[
             OutlinedButton(
               key: const Key('paywall_unavailable_try_again'),
-              onPressed: busy ? null : onRetry,
-              child: const Text(PaywallUnavailableState.tryAgainLabel),
+              onPressed: retrying ? null : onRetry,
+              child: retrying
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text(PaywallUnavailableState.tryAgainLabel),
             ),
             const SizedBox(height: 12),
           ],

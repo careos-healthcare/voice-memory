@@ -7,6 +7,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../api/api_error_message.dart';
 import '../billing/archive_paywall_copy.dart';
 import '../billing/archive_paywall_stats.dart';
+import '../billing/revenuecat_diagnostics_log.dart';
 import '../billing/revenuecat_service.dart';
 import '../features/first25/first25_user_metrics.dart';
 import '../billing/subscription_copy.dart';
@@ -43,6 +44,7 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
   ArchivePaywallStats? _paywallStats;
   ArchiveGrowthSnapshot? _growth;
   bool _loading = true;
+  bool _offeringsReloading = false;
   bool _busy = false;
   bool _productsUnavailable = false;
   String? _error;
@@ -86,12 +88,16 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
     return ArchivePaywallStats.fromEntries(entries: entries, archiveV1: v1);
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool isRetry = false}) async {
     if (!mounted) return;
     setState(() {
-      _loading = true;
-      _error = null;
-      _productsUnavailable = false;
+      if (isRetry) {
+        _offeringsReloading = true;
+      } else {
+        _loading = true;
+        _error = null;
+        _productsUnavailable = false;
+      }
     });
 
     ArchivePaywallStats stats = const ArchivePaywallStats(
@@ -112,58 +118,71 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
       // Paywall still renders with fallbacks.
     }
 
-    if (!_subscriptionsAvailable) {
-      setState(() {
-        _paywallStats = stats;
-        _growth = growth;
-        _loading = false;
-        _productsUnavailable = true;
-        _error = SubscriptionCopy.temporarilyUnavailable;
-        _entitlements = PremiumEntitlements.free();
-      });
-      _trackSubscriptionPaywallSeen(PremiumEntitlements.free());
-      return;
-    }
-
-    final rc = RevenueCatService.instance;
     Offerings? offerings;
     PremiumEntitlements entitlements = PremiumEntitlements.free();
     String? error;
+    var productsUnavailable = !_subscriptionsAvailable;
 
     try {
-      offerings = await rc.fetchOfferings().timeout(
-        _loadTimeout,
-        onTimeout: () => null,
-      );
-      entitlements = await AppServices.instance.billing
-          .loadEntitlements(forceRefresh: true)
-          .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
-    } on TimeoutException {
-      error = 'Loading timed out. Please try again in a moment.';
-      entitlements = rc.latestEntitlements;
-    } catch (e) {
-      error = userFacingErrorMessage(
-        e,
-        fallback: 'Could not load subscription details.',
-      );
-      entitlements = rc.latestEntitlements;
-    }
-
-    if (!mounted) return;
-    final productsOk = _hasStorePackages(offerings);
-    _trackSubscriptionPaywallSeen(entitlements);
-    setState(() {
-      _offerings = offerings;
-      _entitlements = entitlements;
-      _paywallStats = stats;
-      _growth = growth;
-      _loading = false;
-      _productsUnavailable = !productsOk;
-      _error = error;
-      if (!productsOk && error == null) {
-        _error = SubscriptionCopy.temporarilyUnavailable;
+      if (!_subscriptionsAvailable) {
+        error = SubscriptionCopy.temporarilyUnavailable;
+        _trackSubscriptionPaywallSeen(PremiumEntitlements.free());
+        return;
       }
-    });
+
+      final rc = RevenueCatService.instance;
+
+      try {
+        offerings = await rc.fetchOfferings().timeout(
+          _loadTimeout,
+          onTimeout: () => null,
+        );
+        entitlements = await AppServices.instance.billing
+            .loadEntitlements(forceRefresh: true)
+            .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
+      } on TimeoutException {
+        error = SubscriptionCopy.paywallNoOfferings;
+        entitlements = rc.latestEntitlements;
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: 'load_timeout',
+          error: error,
+          isRetry: isRetry,
+        );
+      } catch (e) {
+        error = SubscriptionCopy.paywallNoOfferings;
+        entitlements = rc.latestEntitlements;
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: 'load_error',
+          error: error,
+          isRetry: isRetry,
+        );
+      }
+
+      final productsOk = _hasStorePackages(offerings);
+      productsUnavailable = !productsOk;
+      if (!productsOk && error == null) {
+        error = SubscriptionCopy.paywallNoOfferings;
+        RevenueCatDiagnosticsLog.paywallFallback(
+          reason: 'no_packages_in_current_offering',
+          error: error,
+          isRetry: isRetry,
+        );
+      }
+      _trackSubscriptionPaywallSeen(entitlements);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _offerings = offerings;
+          _entitlements = entitlements;
+          _paywallStats = stats;
+          _growth = growth;
+          _loading = false;
+          _offeringsReloading = false;
+          _productsUnavailable = productsUnavailable;
+          _error = error;
+        });
+      }
+    }
   }
 
   Package? _packageForBillingPeriod(BillingPeriod period) {
@@ -341,8 +360,9 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
               PaywallUnavailableFallback(
                 body: _unavailableBodyText,
                 busy: _busy,
+                retrying: _offeringsReloading,
                 showRetry: _subscriptionsAvailable,
-                onRetry: _load,
+                onRetry: () => unawaited(_load(isRetry: true)),
                 onRestore: () => context.push('/restore-purchases'),
                 onDismiss: () {
                   if (context.canPop()) {

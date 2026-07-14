@@ -8,6 +8,7 @@ import '../config/app_config.dart';
 import '../models/entitlement.dart';
 import 'billing_async_guard.dart';
 import 'revenuecat_diagnostics.dart';
+import 'revenuecat_diagnostics_log.dart';
 import 'revenuecat_offerings_debug_log.dart';
 import 'store_billing_port.dart';
 
@@ -37,6 +38,10 @@ class RevenueCatService implements StoreBillingPort {
   bool get isConfigured => _configured;
 
   RevenueCatDiagnostics get diagnostics => _diagnostics;
+
+  /// Injectable delay/override for paywall timeout tests.
+  @visibleForTesting
+  static Future<Offerings?> Function()? fetchOfferingsOverrideForTest;
 
   bool get apiKeyMissing => _diagnostics.apiKeyMissing;
 
@@ -80,13 +85,22 @@ class RevenueCatService implements StoreBillingPort {
 
   Future<void> initialize() async {
     if (_configured) return;
-    debugPrint('RevenueCat: startup — platform=$_platformLabel');
     final apiKey = _apiKey;
+    RevenueCatDiagnosticsLog.configureStarted(
+      platform: _platformLabel,
+      apiKeyPresent: apiKey != null,
+      apiKey: apiKey,
+    );
+    debugPrint('RevenueCat: startup — platform=$_platformLabel');
     if (apiKey == null) {
       debugPrint(
         'RevenueCat: disabled — no API key (set REVENUECAT_${_platformLabel.toUpperCase()}_API_KEY or REVENUECAT_API_KEY at build time)',
       );
       _diagnostics = RevenueCatDiagnostics.initial();
+      RevenueCatDiagnosticsLog.configureFinished(
+        success: false,
+        reason: 'api_key_missing',
+      );
       return;
     }
     debugPrint('RevenueCat: API key detected for $_platformLabel');
@@ -96,7 +110,7 @@ class RevenueCatService implements StoreBillingPort {
       if (AppConfig.bundleId.isNotEmpty) {
         // App user id can be linked after sign-in via logIn().
       }
-      await Purchases.configure(config);
+      await Purchases.configure(config).timeout(billingOperationTimeout);
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfo);
       _configured = true;
       _diagnostics = _diagnostics.copyWith(
@@ -105,7 +119,21 @@ class RevenueCatService implements StoreBillingPort {
         clearError: true,
       );
       debugPrint('RevenueCat: configured successfully');
+      RevenueCatDiagnosticsLog.configureFinished(success: true);
       await refreshEntitlements();
+    } on TimeoutException {
+      _configured = false;
+      _diagnostics = _diagnostics.copyWith(
+        revenueCatConfigured: false,
+        apiKeyMissing: false,
+        lastRevenueCatError: 'configure_timeout',
+      );
+      debugPrint('RevenueCat: configure timed out — billing disabled');
+      RevenueCatDiagnosticsLog.configureFinished(
+        success: false,
+        reason: 'configure_timeout_${billingOperationTimeout.inSeconds}s',
+      );
+      _emit(PremiumEntitlements.free());
     } catch (e, st) {
       _configured = false;
       _diagnostics = _diagnostics.copyWith(
@@ -115,6 +143,10 @@ class RevenueCatService implements StoreBillingPort {
       );
       debugPrint('RevenueCat: configure failed — billing disabled: $e');
       if (kDebugMode) debugPrint('$st');
+      RevenueCatDiagnosticsLog.configureFinished(
+        success: false,
+        reason: e.toString(),
+      );
       _emit(PremiumEntitlements.free());
     }
   }
@@ -131,6 +163,10 @@ class RevenueCatService implements StoreBillingPort {
   }
 
   PremiumEntitlements _mapCustomerInfo(CustomerInfo info) {
+    RevenueCatDiagnosticsLog.entitlementsChecked(
+      source: 'mapCustomerInfo',
+      info: info,
+    );
     RevenueCatOfferingsDebugLog.entitlementsMapped(
       info: info,
       source: 'mapCustomerInfo',
@@ -174,17 +210,60 @@ class RevenueCatService implements StoreBillingPort {
   }
 
   Future<Offerings?> fetchOfferings() async {
+    final override = fetchOfferingsOverrideForTest;
+    if (override != null) {
+      RevenueCatDiagnosticsLog.fetchOfferingsStarted(
+        billingConfigured: _configured,
+      );
+      try {
+        final offerings = await override().timeout(billingOperationTimeout);
+        final fetchError = offerings == null
+            ? 'fetchOfferings_override_null'
+            : null;
+        _recordOfferings(offerings, error: fetchError);
+        RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+          success: offerings != null,
+          offerings: offerings,
+          error: fetchError,
+        );
+        return offerings;
+      } on TimeoutException {
+        _recordOfferings(null, error: 'fetchOfferings_override_timeout');
+        RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+          success: false,
+          offerings: null,
+          error: 'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
+        );
+        return null;
+      } catch (e) {
+        _recordOfferings(null, error: e.toString());
+        RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+          success: false,
+          offerings: null,
+          error: e.toString(),
+        );
+        return null;
+      }
+    }
+
     if (!_configured) {
+      RevenueCatDiagnosticsLog.fetchOfferingsStarted(billingConfigured: false);
       RevenueCatOfferingsDebugLog.fetchOfferingsStarted(
         billingConfigured: false,
       );
       _recordOfferings(null, error: 'revenuecat_not_configured');
+      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+        success: false,
+        offerings: null,
+        error: 'revenuecat_not_configured',
+      );
       RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
         offerings: null,
         error: 'revenuecat_not_configured',
       );
       return null;
     }
+    RevenueCatDiagnosticsLog.fetchOfferingsStarted(billingConfigured: true);
     RevenueCatOfferingsDebugLog.fetchOfferingsStarted(billingConfigured: true);
     try {
       final offerings = await withBillingTimeout(
@@ -195,6 +274,11 @@ class RevenueCatService implements StoreBillingPort {
           ? 'fetchOfferings timeout or null response'
           : null;
       _recordOfferings(offerings, error: fetchError);
+      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+        success: offerings != null,
+        offerings: offerings,
+        error: fetchError,
+      );
       RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
         offerings: offerings,
         error: fetchError,
@@ -203,6 +287,11 @@ class RevenueCatService implements StoreBillingPort {
     } catch (e) {
       debugPrint('RevenueCat fetchOfferings: $e');
       _recordOfferings(null, error: e.toString());
+      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+        success: false,
+        offerings: null,
+        error: e.toString(),
+      );
       RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
         offerings: null,
         error: e.toString(),

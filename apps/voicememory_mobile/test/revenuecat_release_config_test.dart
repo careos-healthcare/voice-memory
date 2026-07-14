@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/billing/revenuecat_diagnostics_log.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/config/release_config.dart';
 import 'package:voicememory_mobile/config/trial_mode.dart';
@@ -44,5 +45,14 @@ void main() {
     expect(d.offeringsLoaded, isFalse);
     expect(d.offeringCount, 0);
     expect(d.packageCount, 0);
+  });
+
+  test('diagnostics log key fingerprint never exposes full key', () {
+    expect(RevenueCatDiagnosticsLog.keyFingerprint(null), 'missing');
+    expect(RevenueCatDiagnosticsLog.keyFingerprint(''), 'missing');
+    expect(
+      RevenueCatDiagnosticsLog.keyFingerprint('appl_pOUlWdiVXlWpFLvaZscgayWhfpH'),
+      'appl_pOU…',
+    );
   });
 }
