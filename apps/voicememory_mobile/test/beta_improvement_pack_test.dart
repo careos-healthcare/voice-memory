@@ -140,8 +140,36 @@ void main() {
           ProPackagingCopyFix.allVisibleStrings().join(' ').toLowerCase();
       expect(blob, contains('longer trail'));
       expect(blob, contains('first useful repeat'));
-      expect(blob, isNot(contains('more ai')));
+      expect(blob, contains('older evidence'));
+      expect(blob, contains('not for more ai'));
       expect(blob, isNot(contains('chatgpt')));
+    });
+
+    test('activates when proof felt meaningful but user will not pay', () {
+      final outcomes = [
+        _outcome({
+          BetaDecisionSignal.understoodPromise,
+          BetaDecisionSignal.savedFirstMoment,
+          BetaDecisionSignal.returnedDay2,
+          BetaDecisionSignal.reachedThreeMoments,
+          BetaDecisionSignal.sawFirstProof,
+          BetaDecisionSignal.proofFeltMeaningful,
+        }),
+      ];
+      expect(
+        BetaImprovementRecommendationGate.activeBranch(
+          outcomesOverride: outcomes,
+        ),
+        BetaImprovementBranch.proPackaging,
+      );
+      expect(
+        BetaImprovementPackEngine.proBridgeLine(
+          entryCount: 3,
+          hasMeaningfulProof: true,
+          outcomesOverride: outcomes,
+        ),
+        ProPackagingCopyFix.proofBridge,
+      );
     });
   });
 

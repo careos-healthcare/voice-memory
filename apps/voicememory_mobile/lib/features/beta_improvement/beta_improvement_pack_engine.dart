@@ -8,6 +8,7 @@ import 'beta_improvement_recommendation_gate.dart';
 import 'capture_friction_copy_fix.dart';
 import 'proof_emotional_clarity_engine.dart';
 import 'proof_emotional_clarity_model.dart';
+import 'pro_packaging_branch_engine.dart';
 import 'pro_packaging_copy_fix.dart';
 import 'pro_utility_copy_fix.dart';
 import 'record_onboarding_copy_fix.dart';
@@ -201,16 +202,51 @@ abstract final class BetaImprovementPackEngine {
   static String? proBridgeLine({
     required int entryCount,
     required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
   }) {
     if (!BetaImprovementRecommendationGate.shouldApplyBranch(
       branch: BetaImprovementBranch.proPackaging,
       entryCount: entryCount,
       hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
     )) {
       return null;
     }
-    return ProPackagingCopyFix.proofBridgeLine;
+    return ProPackagingCopyFix.proofBridge;
   }
+
+  static String? proBridgeTitle({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) =>
+      ProPackagingBranchEngine.bridgeTitle(
+        entryCount: entryCount,
+        hasMeaningfulProof: hasMeaningfulProof,
+        outcomesOverride: outcomesOverride,
+      );
+
+  static String? proBridgeBody({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) =>
+      ProPackagingBranchEngine.bridgeBody(
+        entryCount: entryCount,
+        hasMeaningfulProof: hasMeaningfulProof,
+        outcomesOverride: outcomesOverride,
+      );
+
+  static List<String> firstProofProBridgeLines({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) =>
+      ProPackagingBranchEngine.firstProofBridgeLines(
+        entryCount: entryCount,
+        hasMeaningfulProof: hasMeaningfulProof,
+        outcomesOverride: outcomesOverride,
+      );
 
   static String? proFreeLine() =>
       BetaImprovementRecommendationGate.isBranchActive(
@@ -225,6 +261,14 @@ abstract final class BetaImprovementPackEngine {
       )
           ? ProPackagingCopyFix.proLine
           : null;
+
+  static String? paywallHeadline() => ProPackagingBranchEngine.paywallHeadline();
+
+  static String? paywallSubheadline() =>
+      ProPackagingBranchEngine.paywallSubheadline();
+
+  static List<String>? paywallBullets() =>
+      ProPackagingBranchEngine.paywallBullets();
 
   static List<String>? proUtilityPreviews({
     required int entryCount,

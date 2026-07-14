@@ -5,6 +5,7 @@ import '../../features/beta_improvement/beta_improvement_model.dart';
 import '../../features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import '../../features/beta_improvement/pro_utility_copy_fix.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
+import '../../features/beta_improvement/pro_packaging_copy_fix.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
@@ -73,6 +74,26 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
               height: 1.35,
             ),
           ),
+          if (branch == BetaImprovementBranch.proPackaging) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Preview: ${ProPackagingCopyFix.headline}',
+              key: const Key('beta_improvement_pro_packaging_preview'),
+              style: const TextStyle(fontSize: 12, height: 1.35),
+            ),
+            Text(
+              ProPackagingCopyFix.whyPayLine,
+              style: const TextStyle(fontSize: 12, height: 1.35),
+            ),
+            Text(
+              'Override: --dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proPackaging',
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 11,
+                height: 1.35,
+              ),
+            ),
+          ],
           if (branch == BetaImprovementBranch.proofEmotionalClarity) ...[
             const SizedBox(height: 8),
             Text(

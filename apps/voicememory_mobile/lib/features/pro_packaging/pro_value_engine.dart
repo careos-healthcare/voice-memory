@@ -1,3 +1,5 @@
+import '../beta_improvement/beta_improvement_pack_engine.dart';
+import '../beta_improvement/pro_packaging_copy_fix.dart';
 import '../../product/consumer_ui_copy.dart';
 import 'pro_value_copy.dart';
 import 'pro_value_model.dart';
@@ -11,16 +13,22 @@ abstract final class ProPackagingEngine {
     required bool showPlanPrices,
     String? purchaseCta,
   }) {
+    final branchHeadline = BetaImprovementPackEngine.paywallHeadline();
+    final branchSubhead = BetaImprovementPackEngine.paywallSubheadline();
+    final branchBullets = BetaImprovementPackEngine.paywallBullets();
+
     return ProPackagingDisplay(
-      title: ProPackagingCopy.title,
-      subtitle: ProPackagingCopy.subtitle,
-      free: const ProPackagingSection(
+      title: branchHeadline ?? ProPackagingCopy.title,
+      subtitle: branchSubhead ?? ProPackagingCopy.subtitle,
+      free: ProPackagingSection(
         title: ProPackagingCopy.freeSectionTitle,
-        bullets: ProPackagingCopy.freeBullets,
+        bullets: branchHeadline != null
+            ? [ProPackagingCopyFix.freeValue]
+            : ProPackagingCopy.freeBullets,
       ),
-      pro: const ProPackagingSection(
+      pro: ProPackagingSection(
         title: ProPackagingCopy.proSectionTitle,
-        bullets: ProPackagingCopy.proBullets,
+        bullets: branchBullets ?? ProPackagingCopy.proBullets,
       ),
       offeringsAvailable: offeringsAvailable,
       showPlanPrices: showPlanPrices && offeringsAvailable,

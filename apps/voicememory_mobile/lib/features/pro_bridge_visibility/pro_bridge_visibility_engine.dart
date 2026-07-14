@@ -23,21 +23,33 @@ abstract final class ProBridgeVisibilityEngine {
       entryCount: input.entryCount,
       hasMeaningfulProof: input.hasTimelineProofVisible,
     );
+    final branchTitle = BetaImprovementPackEngine.proBridgeTitle(
+      entryCount: input.entryCount,
+      hasMeaningfulProof: input.hasTimelineProofVisible,
+    );
+    final branchBody = BetaImprovementPackEngine.proBridgeBody(
+      entryCount: input.entryCount,
+      hasMeaningfulProof: input.hasTimelineProofVisible,
+    );
     final baseBody = input.compact
         ? ProBridgeVisibilityCopy.compactBody
         : ProBridgeVisibilityCopy.body;
     final freeLine = BetaImprovementPackEngine.proFreeLine();
     final paidLine = BetaImprovementPackEngine.proPaidLine();
     final bodyParts = <String>[
-      if (freeLine != null) freeLine,
-      if (paidLine != null) paidLine,
-      if (freeLine == null && paidLine == null) baseBody,
-      if (proBridgeLine != null) proBridgeLine,
+      if (branchBody != null)
+        branchBody
+      else ...[
+        if (freeLine != null) freeLine,
+        if (paidLine != null) paidLine,
+        if (freeLine == null && paidLine == null) baseBody,
+        if (proBridgeLine != null) proBridgeLine,
+      ],
     ];
 
     return ProBridgeVisibilityResult(
       shouldShow: shouldShow(input: input),
-      title: ProBridgeVisibilityCopy.title,
+      title: branchTitle ?? ProBridgeVisibilityCopy.title,
       body: bodyParts.join(' '),
       cta: ProBridgeVisibilityCopy.cta,
       secondary: ProBridgeVisibilityCopy.secondary,

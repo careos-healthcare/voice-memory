@@ -4,6 +4,7 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/chat_differentiation/chat_differentiation_copy.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_model.dart';
+import '../../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_model.dart';
@@ -191,13 +192,7 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ),
             ),
           ],
-          if (widget.showProPackagingBridge) ...[
-            const SizedBox(height: AppSpacing.sm),
-            ProPackagingBridgeLine(
-              line: ProPackagingCopy.bridgeAfterFirstProof,
-              lineKey: const Key('pro_packaging_bridge_first_proof'),
-            ),
-          ],
+          if (widget.showProPackagingBridge) ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           ContextualPrivacyReassurance(
             source: 'first_proof_payoff',
@@ -309,13 +304,7 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ),
             ),
           ],
-          if (widget.showProPackagingBridge) ...[
-            const SizedBox(height: AppSpacing.sm),
-            ProPackagingBridgeLine(
-              line: ProPackagingCopy.bridgeAfterFirstProof,
-              lineKey: const Key('pro_packaging_bridge_first_proof'),
-            ),
-          ],
+          if (widget.showProPackagingBridge) ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           Text(
             ProofEmotionalClarityCopyFix.cautionFooter,
@@ -330,5 +319,26 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildProPackagingBridge() {
+    final branchLines = BetaImprovementPackEngine.firstProofProBridgeLines(
+      entryCount: widget.entryCount,
+      hasMeaningfulProof: widget.entryCount >= 3,
+    );
+    final lines = branchLines.isNotEmpty
+        ? branchLines
+        : [ProPackagingCopy.bridgeAfterFirstProof];
+
+    return [
+      const SizedBox(height: AppSpacing.sm),
+      for (var i = 0; i < lines.length; i++)
+        ProPackagingBridgeLine(
+          line: lines[i],
+          lineKey: lines.length == 1
+              ? const Key('pro_packaging_bridge_first_proof')
+              : Key('pro_packaging_bridge_first_proof_$i'),
+        ),
+    ];
   }
 }

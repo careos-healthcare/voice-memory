@@ -67,14 +67,26 @@ Expansion remains blocked unless beta evidence supports it (`docs/V1_EXPANSION_G
 
 ### 5. Pro packaging
 
-**Trigger:** Users care but will not pay (`sharpenProPackaging`).
+**Trigger:** Users care about proof but will not pay (`sharpenProPackaging`).
+
+**Goal:** Make the paid value obvious — Pro keeps the longer trail.
 
 **Implemented:**
 - `lib/features/beta_improvement/pro_packaging_copy_fix.dart`
-- Free vs Pro bridge copy on `ProBridgeVisibilityEngine`
-- Longer trail promise — not more AI
+- `lib/features/beta_improvement/pro_packaging_branch_engine.dart`
+- Free vs Pro bridge on `ProBridgeVisibilityEngine` and `FirstProofPayoffCard`
+- Paywall/account packaging via `ProPackagingEngine` when branch active
+- Manual preview: `--dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proPackaging`
 
-**Blocked:** RevenueCat changes, fake purchase claims.
+**Rules:**
+- Core paid reason: Pro keeps the longer trail — not more AI
+- Do not claim unavailable utility or live reports
+- Free must still feel useful (first useful repeat)
+- Pro bridge only after meaningful proof (`hasMeaningfulProof`)
+
+**Blocked:** RevenueCat changes, fake purchase claims, urgency/scarcity.
+
+See also `docs/PRO_PACKAGING_V1.md`.
 
 ### 6. Pro utility expansion
 
