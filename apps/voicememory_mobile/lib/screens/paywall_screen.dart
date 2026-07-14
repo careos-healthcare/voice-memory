@@ -47,7 +47,6 @@ import '../models/entitlement.dart';
 import '../services/activation_funnel_analytics.dart';
 import '../services/app_services.dart';
 import '../theme/voicememory_colors.dart';
-import '../theme/voicememory_typography.dart';
 import '../widgets/billing/paywall_objection_follow_up_card.dart';
 import '../widgets/billing/paywall_rejection_prompt.dart';
 import '../widgets/billing/plan_selection_confidence_block.dart';
@@ -58,8 +57,9 @@ import '../widgets/pushed_screen_shell.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/pro_packaging/pro_value_model.dart';
-import '../widgets/account/archive_me_pro_value_section.dart';
 import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
+import '../widgets/billing/paywall_subscription_details_section.dart';
+import '../features/paywall/archive_loop_entitlements.dart';
 
 /// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
@@ -295,6 +295,43 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return packages != null && packages.isNotEmpty;
   }
 
+  String? get _monthlyPriceString =>
+      _packageFor(_PaywallPlan.monthly)?.storeProduct.priceString;
+
+  String? get _yearlyPriceString =>
+      _packageFor(_PaywallPlan.yearly)?.storeProduct.priceString;
+
+  Widget _subscriptionDetailsSection({required bool plansAvailable}) {
+    return PaywallSubscriptionDetailsSection(
+      monthlyPrice: _monthlyPriceString,
+      yearlyPrice: _yearlyPriceString,
+      plansAvailable: plansAvailable,
+    );
+  }
+
+  Future<PremiumEntitlements> _mergeReviewProEntitlements(
+    PremiumEntitlements entitlements,
+  ) async {
+    if (!AppServices.isInitialized || entitlements.isPro) return entitlements;
+    try {
+      final loopState =
+          await ArchiveLoopEntitlementStore(AppServices.instance.prefs)
+              .load()
+              .timeout(const Duration(seconds: 2), onTimeout: () {
+        return ArchiveLoopEntitlementState.empty;
+      });
+      if (!loopState.isPro) return entitlements;
+      return PremiumEntitlements(
+        tier: BillingTier.pro,
+        entitlementIds: const [],
+        billingConnected: false,
+        source: 'app_review',
+      );
+    } catch (_) {
+      return entitlements;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -465,6 +502,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         entitlements = await AppServices.instance.billing
             .loadEntitlements(forceRefresh: true)
             .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
+        entitlements = await _mergeReviewProEntitlements(entitlements);
       } on TimeoutException {
         loadReason = 'load_timeout';
         error = SubscriptionCopy.paywallNoOfferings;
@@ -894,49 +932,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           hideBenefits: true,
         ),
         const SizedBox(height: 16),
-        if (_usesGeneralConversionClarity)
-          _generalConversionClaritySection(includeBullets: true)
-        else ...[
-          _aboveFoldClaritySection(),
-          const SizedBox(height: 14),
-          _paywallDifferentiationAndTrustSection(
-          includeTrustLine: !_showsPurchaseConfidenceCard,
-        ),
-        ],
-        if (!_usesGeneralConversionClarity && sourceCopy == null) ...[
-          const SizedBox(height: 16),
-          ArchiveMeProValueSection(
-            packaging: packaging,
-            showTitle: false,
-          ),
-        ],
-        if (_objectionFollowUpReason != null) ...[
-          const SizedBox(height: 14),
-          _objectionFollowUpSection(),
-        ],
-        if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
-          const SizedBox(height: 16),
-          _longTermArchiveLine(),
-        ],
-        if (PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
-          const SizedBox(height: 16),
-          _proofPreviewSection(),
-        ],
-        if (_paywallObjectionSectionResult.shouldShow) ...[
-          const SizedBox(height: 16),
-          _paywallObjectionSection(),
-        ],
-        const SizedBox(height: 16),
-        if (_showsPurchaseConfidenceCard) ...[
-          _purchaseConfidenceSection(),
-          const SizedBox(height: 14),
-        ],
-        _confidenceSection(),
-        // Same price confidence as the live paywall body.
-        const SizedBox(height: 10),
-        _priceConfidenceLines(),
-        const SizedBox(height: 4),
-        _appStoreConfirmLine(),
+        _subscriptionDetailsSection(plansAvailable: false),
       ],
     );
   }
@@ -1532,6 +1528,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   : ConsumerUiCopy.restorePurchases,
             ),
           ),
+          const SizedBox(height: 16),
+          _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
         ],
       ),
     );

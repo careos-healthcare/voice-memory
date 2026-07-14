@@ -107,7 +107,7 @@ void main() {
       );
     });
 
-    test('returning deniedCanAskAgain shows Allow microphone', () {
+    test('returning deniedCanAskAgain shows Use voice to record', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 2,
@@ -119,13 +119,13 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.returning);
-      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
       expect(policy.action, RecordCtaAction.requestPermission);
       expect(policy.micPermissionState, MicrophonePermissionState.deniedCanAskAgain);
     });
 
-    test('first-use deniedCanAskAgain shows Allow microphone', () {
+    test('first-use deniedCanAskAgain shows Use voice to record', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,
@@ -137,11 +137,11 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.firstUse);
-      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.action, RecordCtaAction.requestPermission);
     });
 
-    test('denied + hasRecorder without prefer flag shows Allow microphone not Open Settings', () {
+    test('denied + hasRecorder without prefer flag shows Use voice to record not Open Settings', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 2,
@@ -152,7 +152,7 @@ void main() {
         micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
       );
 
-      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.primaryLabel, isNot(MicrophonePermissionCopy.openSettingsCta));
       expect(policy.action, RecordCtaAction.requestPermission);
     });
@@ -331,7 +331,7 @@ void main() {
       expect(policy.action, isNotNull);
     });
 
-    test('requestable denied state shows Allow microphone', () {
+    test('requestable denied state shows Use voice to record', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,
@@ -343,7 +343,7 @@ void main() {
         userDeniedThisSession: false,
       );
 
-      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.action, RecordCtaAction.requestPermission);
       expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
     });

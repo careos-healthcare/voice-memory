@@ -43,7 +43,7 @@ abstract final class PhysicalDeviceSmokeProof {
       launchScreenStoryboardSource.contains('LaunchImage');
 
   static bool detectMicPermissionAcceptCopy(String micPermissionCopySource) =>
-      micPermissionCopySource.contains('allowMicrophoneCta');
+      micPermissionCopySource.contains('requestMicrophoneCta');
 
   static bool detectMicPermissionDenyCopy(String micPermissionCopySource) =>
       micPermissionCopySource.contains('typeInsteadCta') &&

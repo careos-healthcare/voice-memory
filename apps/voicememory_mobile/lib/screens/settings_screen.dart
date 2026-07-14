@@ -42,6 +42,8 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
 import '../widgets/settings/privacy_data_controls_section.dart';
+import '../widgets/settings/app_review_access_settings_section.dart';
+import '../features/paywall/archive_loop_entitlements.dart';
 import '../features/revenue_metrics/revenue_readiness_engine.dart';
 import '../widgets/debug/revenue_readiness_card.dart';
 import '../widgets/beta/testflight_metrics_dashboard_card.dart';
@@ -131,9 +133,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadIsPro() async {
-    final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
+    if (!AppServices.isInitialized) return;
+    final snap = await ArchiveLoopEntitlementGate.load(
+      store: ArchiveLoopEntitlementStore(AppServices.instance.prefs),
+      reader: ArchiveEntitlementReader.forAccessCheck(),
+    );
     if (!mounted) return;
-    setState(() => _isPro = isPro);
+    setState(() => _isPro = snap.effectivePro);
+  }
+
+  Future<void> _onAppReviewAccessUnlocked() async {
+    await _loadJournalEntries();
+    await _loadIsPro();
   }
 
   Future<void> _dismissArchiveBackupBridge() async {
@@ -331,6 +342,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: _restoreBusy ? null : _restorePurchases,
             ),
             const PrivacyDataControlsSection(),
+            AppReviewAccessSettingsSection(
+              onUnlocked: _onAppReviewAccessUnlocked,
+            ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(

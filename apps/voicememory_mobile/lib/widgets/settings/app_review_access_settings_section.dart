@@ -8,7 +8,12 @@ import '../../theme/app_spacing.dart';
 
 /// Hidden App Store review unlock — only when review mode dart-define is set.
 class AppReviewAccessSettingsSection extends StatefulWidget {
-  const AppReviewAccessSettingsSection({super.key});
+  const AppReviewAccessSettingsSection({
+    super.key,
+    this.onUnlocked,
+  });
+
+  final VoidCallback? onUnlocked;
 
   @override
   State<AppReviewAccessSettingsSection> createState() =>
@@ -39,13 +44,14 @@ class _AppReviewAccessSettingsSectionState
         SnackBar(
           content: Text(
             unlocked
-                ? 'ArchiveMe Pro access enabled for App Review.'
+                ? 'Review access enabled. Sample archive and Pro features are ready.'
                 : 'Review code not recognized.',
           ),
         ),
       );
       if (unlocked) {
         _controller.clear();
+        widget.onUnlocked?.call();
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -69,7 +75,8 @@ class _AppReviewAccessSettingsSectionState
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Enter the review code provided in App Review notes to access Pro features.',
+          'Enter the review code from App Review notes to load sample archive '
+          'entries and Pro access.',
           style: ArchiveMobileTypography.listSubtitle(context),
         ),
         const SizedBox(height: AppSpacing.sm),

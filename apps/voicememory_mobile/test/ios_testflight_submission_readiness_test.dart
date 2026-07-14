@@ -83,10 +83,12 @@ void main() {
       expect(storeCopy, isNot(contains('VoiceMemory')));
     });
 
-    test('APP_REVIEW_NOTES contains reviewer path and support URL', () {
+    test('APP_REVIEW_NOTES contains reviewer path, review code, and support URL', () {
       expect(reviewNotes, contains('ArchiveMe'));
       expect(reviewNotes, contains(_bundleId));
       expect(reviewNotes, contains(_supportUrl));
+      expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));
+      expect(reviewNotes, contains('App Review Access'));
       expect(reviewNotes, contains('Sample Archive'));
       expect(reviewNotes, contains('Support'));
     });

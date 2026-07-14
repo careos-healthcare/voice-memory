@@ -106,7 +106,7 @@ void main() {
 
   group('Microphone permission copy', () {
     test('denied copy is calm and actionable', () {
-      expect(MicrophonePermissionCopy.neededTitle, 'Microphone access is needed');
+      expect(MicrophonePermissionCopy.neededTitle, 'Record with your voice');
       expect(
         MicrophonePermissionCopy.neededBody,
         contains('Ten seconds is enough'),

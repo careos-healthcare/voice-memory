@@ -126,6 +126,7 @@ class AppServices {
       journalStore: s.journalStore,
     );
     s.prefs = await MobilePrefsStore.open('$base/mobile_prefs.json');
+    await ArchiveMeDemoState.hydrateFromPrefs(s.prefs);
     s.entitlementCache = await EntitlementCache.open('$base/entitlements.json');
     s.pipeline = CapturePipelineService(
       api: s.api,

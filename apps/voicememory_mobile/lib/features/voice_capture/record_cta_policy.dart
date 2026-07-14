@@ -243,7 +243,7 @@ abstract class RecordCtaPolicy {
         micPermissionState == MicrophonePermissionState.deniedCanAskAgain) {
       return RecordCtaPolicyResolution(
         state: state,
-        primaryLabel: MicrophonePermissionCopy.allowMicrophoneCta,
+        primaryLabel: MicrophonePermissionCopy.requestMicrophoneCta,
         secondaryLabels: secondaryLabels,
         showMainBottomCta: true,
         hideCardRecordCtas: true,
