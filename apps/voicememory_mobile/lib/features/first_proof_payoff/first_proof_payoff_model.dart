@@ -1,3 +1,4 @@
+import '../beta_improvement/proof_emotional_clarity_model.dart';
 import '../chat_differentiation/chat_differentiation_model.dart';
 
 /// One quoted line pulled from a saved entry — never invented.
@@ -31,6 +32,7 @@ class FirstProofPayoff {
     required this.canShowPatternDetail,
     this.differentiationLine,
     this.timelineRows = const [],
+    this.emotionalClarity,
   });
 
   final FirstProofPayoffVariant variant;
@@ -45,8 +47,11 @@ class FirstProofPayoff {
   final bool canShowPatternDetail;
   final String? differentiationLine;
   final List<ChatDifferentiationTimelineRow> timelineRows;
+  final ProofEmotionalClarityDisplay? emotionalClarity;
 
   bool get hasSnippets => snippets.length >= 2;
+
+  bool get hasEmotionalClarity => emotionalClarity != null;
 
   bool get showDifferentiation =>
       differentiationLine != null && differentiationLine!.trim().isNotEmpty;

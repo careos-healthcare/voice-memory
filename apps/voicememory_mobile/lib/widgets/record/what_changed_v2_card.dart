@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/what_changed/what_changed_v2_analytics.dart';
+import '../../features/beta_improvement/proof_emotional_clarity_engine.dart';
 import '../../features/what_changed/what_changed_v2_copy.dart';
 import '../../features/what_changed/what_changed_v2_model.dart';
 import '../../features/what_changed/what_changed_v2_store.dart';
@@ -104,8 +105,13 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
     );
     final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
       color: AppColors.textSecondary,
+      fontWeight: FontWeight.w600,
     );
     final comparison = widget.prompt.comparison;
+    final emotionalHeadline = ProofEmotionalClarityEngine.payoffHeadlineForWhatChanged(
+      entryCount: widget.prompt.entryCount,
+      option: option,
+    );
 
     return Container(
       key: const Key('what_changed_v2_payoff_card'),
@@ -115,6 +121,14 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (emotionalHeadline != null) ...[
+            Text(
+              emotionalHeadline,
+              key: const Key('what_changed_v2_emotional_headline'),
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+          ],
           Text(
             WhatChangedV2Copy.payoffMessage(option),
             key: const Key('what_changed_v2_payoff_line'),

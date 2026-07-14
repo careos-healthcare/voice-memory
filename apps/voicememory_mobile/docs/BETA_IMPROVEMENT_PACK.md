@@ -47,11 +47,23 @@ Expansion remains blocked unless beta evidence supports it (`docs/V1_EXPANSION_G
 
 **Trigger:** Users reach proof but do not care (`improveProofEmotionalClarity`).
 
+**Goal:** Make proof emotionally understandable — what came back, what changed, and why it might matter.
+
 **Implemented:**
 - `lib/features/beta_improvement/proof_emotional_clarity_copy_fix.dart`
-- First proof headline/why-matters lines via `FirstProofPayoffEngine`
+- `lib/features/beta_improvement/proof_emotional_clarity_engine.dart`
+- `lib/features/beta_improvement/proof_emotional_clarity_model.dart`
+- First proof structured card via `FirstProofPayoffCard` + `FirstProofPayoffEngine`
+- What Changed v2 payoff headline when branch active
+- Correction row reuses `EarlyArchiveInsightFeedbackStore`
+- Manual preview: `--dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proofEmotionalClarity`
 
-**Blocked:** Diagnosis, certainty, therapy claims.
+**Rules:**
+- Proof must answer what came back, what changed, and why it might matter
+- Never overclaim beyond evidence — watch-only uses softer copy only
+- Strong headline ("This came back.") only when confidence guard allows
+
+**Blocked:** Diagnosis, certainty, therapy claims, stacked proof cards.
 
 ### 5. Pro packaging
 

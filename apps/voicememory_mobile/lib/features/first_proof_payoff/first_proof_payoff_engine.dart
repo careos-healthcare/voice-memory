@@ -73,6 +73,19 @@ abstract final class FirstProofPayoffEngine {
     final improvedWhy = BetaImprovementPackEngine.firstProofWhyMattersLine(
       entryCount: eligible.length,
       hasStrongEvidence: hasStrongEvidence,
+      emotionalClarity: null,
+    );
+    final emotionalClarity = BetaImprovementPackEngine.proofEmotionalClarityDisplay(
+      entries: eligible,
+      calibration: calibration,
+      hasStrongEvidence: hasStrongEvidence,
+      groundedPhrase: primaryPhrase,
+      snippetQuotes: snippets.map((snippet) => snippet.quote).toList(),
+    );
+    final resolvedWhy = BetaImprovementPackEngine.firstProofWhyMattersLine(
+      entryCount: eligible.length,
+      hasStrongEvidence: hasStrongEvidence,
+      emotionalClarity: emotionalClarity,
     );
 
     return FirstProofPayoff(
@@ -81,15 +94,20 @@ abstract final class FirstProofPayoffEngine {
         entryCount: eligible.length,
         hasStrongEvidence: hasStrongEvidence,
         fallback: fallbackHeadline,
+        emotionalClarity: emotionalClarity,
       ),
-      subhead: improvedWhy ?? '',
+      subhead: emotionalClarity?.subheadline ??
+          resolvedWhy ??
+          improvedWhy ??
+          '',
       groundedPhrase: primaryPhrase,
       evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
       snippets: snippets,
       meaningLine: hasSnippets && !calibration.isWatchOnly
           ? FirstProofPayoffCopy.patternLine
           : '',
-      returnHook: improvedWhy ??
+      returnHook: resolvedWhy ??
+          improvedWhy ??
           (hasSnippets
               ? (calibration.level == ProofConfidenceLevel.strong
                   ? calibration.primaryCopy
@@ -103,6 +121,7 @@ abstract final class FirstProofPayoffEngine {
       timelineRows: hasSnippets
           ? ChatDifferentiationEngine.timelineFromEntries(eligible)
           : const [],
+      emotionalClarity: emotionalClarity,
     );
   }
 

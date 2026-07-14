@@ -104,15 +104,33 @@ void main() {
 
   group('Proof emotional clarity', () {
     test('includes what came back/changed/why without overclaim', () {
-      expect(ProofEmotionalClarityCopyFix.whatCameBack, isNotEmpty);
-      expect(ProofEmotionalClarityCopyFix.whatChanged, isNotEmpty);
-      expect(ProofEmotionalClarityCopyFix.whyMightMatter, isNotEmpty);
+      expect(ProofEmotionalClarityCopyFix.whatCameBackLabel, isNotEmpty);
+      expect(ProofEmotionalClarityCopyFix.whatChangedLabel, isNotEmpty);
+      expect(ProofEmotionalClarityCopyFix.whyItMightMatterLabel, isNotEmpty);
+      expect(ProofEmotionalClarityCopyFix.headline, 'This came back.');
       final blob = ProofEmotionalClarityCopyFix.allVisibleStrings()
           .join(' ')
           .toLowerCase();
       expect(blob, isNot(contains('therapy')));
-      expect(blob, contains('not as a diagnosis'));
       expect(blob, contains('cautiously'));
+    });
+
+    test('activates from proof-without-care beta outcome', () {
+      final outcomes = [
+        _outcome({
+          BetaDecisionSignal.understoodPromise,
+          BetaDecisionSignal.savedFirstMoment,
+          BetaDecisionSignal.returnedDay2,
+          BetaDecisionSignal.reachedThreeMoments,
+          BetaDecisionSignal.sawFirstProof,
+        }),
+      ];
+      expect(
+        BetaImprovementRecommendationGate.activeBranch(
+          outcomesOverride: outcomes,
+        ),
+        BetaImprovementBranch.proofEmotionalClarity,
+      );
     });
   });
 

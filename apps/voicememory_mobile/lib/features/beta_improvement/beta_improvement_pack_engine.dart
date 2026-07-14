@@ -1,10 +1,13 @@
+import '../../models/journal_entry.dart';
 import '../first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../beta_decision/beta_decision_model.dart';
+import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../v1_interface/progressive_evidence_state_copy.dart';
 import 'beta_improvement_model.dart';
 import 'beta_improvement_recommendation_gate.dart';
 import 'capture_friction_copy_fix.dart';
-import 'proof_emotional_clarity_copy_fix.dart';
+import 'proof_emotional_clarity_engine.dart';
+import 'proof_emotional_clarity_model.dart';
 import 'pro_packaging_copy_fix.dart';
 import 'pro_utility_copy_fix.dart';
 import 'record_onboarding_copy_fix.dart';
@@ -158,34 +161,41 @@ abstract final class BetaImprovementPackEngine {
     return '${ReturnReasonCopyFix.optionalFraming} ${ReturnReasonCopyFix.noStreakFraming}';
   }
 
+  static ProofEmotionalClarityDisplay? proofEmotionalClarityDisplay({
+    required List<JournalEntry> entries,
+    required ProofConfidenceCalibrationResult calibration,
+    required bool hasStrongEvidence,
+    String? groundedPhrase,
+    List<String>? snippetQuotes,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) =>
+      ProofEmotionalClarityEngine.build(
+        entries: entries,
+        calibration: calibration,
+        hasStrongEvidence: hasStrongEvidence,
+        groundedPhrase: groundedPhrase,
+        snippetQuotes: snippetQuotes,
+        outcomesOverride: outcomesOverride,
+      );
+
   static String firstProofHeadline({
     required int entryCount,
     required bool hasStrongEvidence,
     required String fallback,
-  }) {
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proofEmotionalClarity,
-      entryCount: entryCount,
-      hasMeaningfulProof: entryCount >= 3,
-    )) {
-      return fallback;
-    }
-    return ProofEmotionalClarityCopyFix.whatCameBack;
-  }
+    ProofEmotionalClarityDisplay? emotionalClarity,
+  }) =>
+      emotionalClarity?.headline ?? fallback;
 
   static String? firstProofWhyMattersLine({
     required int entryCount,
     required bool hasStrongEvidence,
+    ProofEmotionalClarityDisplay? emotionalClarity,
   }) {
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proofEmotionalClarity,
-      entryCount: entryCount,
-      hasMeaningfulProof: entryCount >= 3,
-    )) {
-      return null;
+    if (emotionalClarity != null) {
+      return emotionalClarity.whyItMightMatterBody ??
+          emotionalClarity.subheadline;
     }
-    if (!hasStrongEvidence) return ProofEmotionalClarityCopyFix.whyMightMatter;
-    return ProofEmotionalClarityCopyFix.whyMattersStrongEvidence;
+    return null;
   }
 
   static String? proBridgeLine({
