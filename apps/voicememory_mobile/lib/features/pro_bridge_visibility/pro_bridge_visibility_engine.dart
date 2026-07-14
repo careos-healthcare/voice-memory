@@ -1,3 +1,4 @@
+import '../beta_improvement/beta_improvement_pack_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../pro_moment_timing/pro_moment_timing_model.dart';
 import 'pro_bridge_timing_loosen_engine.dart';
@@ -18,12 +19,26 @@ abstract final class ProBridgeVisibilityEngine {
     );
     final triggerReason = loosen.trigger?.analyticsValue ?? loosen.blockedReason?.analyticsValue;
 
+    final proBridgeLine = BetaImprovementPackEngine.proBridgeLine(
+      entryCount: input.entryCount,
+      hasMeaningfulProof: input.hasTimelineProofVisible,
+    );
+    final baseBody = input.compact
+        ? ProBridgeVisibilityCopy.compactBody
+        : ProBridgeVisibilityCopy.body;
+    final freeLine = BetaImprovementPackEngine.proFreeLine();
+    final paidLine = BetaImprovementPackEngine.proPaidLine();
+    final bodyParts = <String>[
+      if (freeLine != null) freeLine,
+      if (paidLine != null) paidLine,
+      if (freeLine == null && paidLine == null) baseBody,
+      if (proBridgeLine != null) proBridgeLine,
+    ];
+
     return ProBridgeVisibilityResult(
       shouldShow: shouldShow(input: input),
       title: ProBridgeVisibilityCopy.title,
-      body: input.compact
-          ? ProBridgeVisibilityCopy.compactBody
-          : ProBridgeVisibilityCopy.body,
+      body: bodyParts.join(' '),
       cta: ProBridgeVisibilityCopy.cta,
       secondary: ProBridgeVisibilityCopy.secondary,
       entryCount: input.entryCount,

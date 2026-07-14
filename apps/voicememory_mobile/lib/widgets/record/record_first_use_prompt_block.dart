@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../../features/beta/beta_activation_loop_tracker.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../record/record_screen_framing_copy.dart';
@@ -48,6 +49,28 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
             key: const Key('record_first_use_prompt_body'),
             style: bodyStyle,
           ),
+          if (BetaImprovementPackEngine.recordNotDiaryLine(entryCount: 0) !=
+              null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              BetaImprovementPackEngine.recordNotDiaryLine(entryCount: 0)!,
+              key: const Key('record_first_use_not_diary_line'),
+              style: bodyStyle,
+            ),
+          ],
+          if (BetaImprovementPackEngine.recordLowEvidenceClarifier(
+                entryCount: 0,
+              ) !=
+              null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              BetaImprovementPackEngine.recordLowEvidenceClarifier(
+                entryCount: 0,
+              )!,
+              key: const Key('record_first_use_clarifier_line'),
+              style: footerStyle,
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
         ],
         Text(

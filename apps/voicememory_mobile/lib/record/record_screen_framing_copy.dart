@@ -1,3 +1,4 @@
+import '../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../features/v1_interface/progressive_evidence_state_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../security/privacy_copy_policy.dart';
@@ -11,8 +12,14 @@ abstract class RecordScreenFramingCopy {
   static const String helperLine = '';
 
   /// True empty archive — count 0 only.
-  static const String emptyArchiveTitle = 'Save one real moment.';
-  static const String emptyArchiveBody = ProgressiveEvidenceStateCopy.zeroBody;
+  static String get emptyArchiveTitle => BetaImprovementPackEngine.recordTitle(
+        entryCount: 0,
+        fallback: 'Save one real moment.',
+      );
+  static String get emptyArchiveBody => BetaImprovementPackEngine.recordBody(
+        entryCount: 0,
+        fallback: ProgressiveEvidenceStateCopy.zeroBody,
+      );
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// Demo archive entry on Record first use.
@@ -55,9 +62,15 @@ abstract class RecordScreenFramingCopy {
 abstract final class RecordFirstUsePromptCopy {
   RecordFirstUsePromptCopy._();
 
-  static const title = 'Save one real moment.';
+  static String get title => BetaImprovementPackEngine.recordTitle(
+        entryCount: 0,
+        fallback: 'Save one real moment.',
+      );
 
-  static const body = ProgressiveEvidenceStateCopy.zeroBody;
+  static String get body => BetaImprovementPackEngine.recordBody(
+        entryCount: 0,
+        fallback: ProgressiveEvidenceStateCopy.zeroBody,
+      );
 
   static const examplesHeading = 'Examples';
 

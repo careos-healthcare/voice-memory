@@ -1,3 +1,4 @@
+import '../beta_improvement/beta_improvement_pack_engine.dart';
 import '../../models/journal_entry.dart';
 import '../archive_controls/archive_exclusion_engine.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
@@ -66,25 +67,34 @@ abstract final class FirstProofPayoffEngine {
       source: 'first_proof_payoff',
     );
 
+    final fallbackHeadline = hasSnippets
+        ? FirstProofPayoffCopy.headline
+        : FirstProofPayoffCopy.fallbackHeadline;
+    final improvedWhy = BetaImprovementPackEngine.firstProofWhyMattersLine(
+      entryCount: eligible.length,
+      hasStrongEvidence: hasStrongEvidence,
+    );
+
     return FirstProofPayoff(
       variant: variant,
-      headline: hasSnippets
-          ? FirstProofPayoffCopy.headline
-          : (calibration.isWatchOnly || calibration.level == ProofConfidenceLevel.emerging
-              ? FirstProofPayoffCopy.fallbackHeadline
-              : FirstProofPayoffCopy.fallbackHeadline),
-      subhead: '',
+      headline: BetaImprovementPackEngine.firstProofHeadline(
+        entryCount: eligible.length,
+        hasStrongEvidence: hasStrongEvidence,
+        fallback: fallbackHeadline,
+      ),
+      subhead: improvedWhy ?? '',
       groundedPhrase: primaryPhrase,
       evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
       snippets: snippets,
       meaningLine: hasSnippets && !calibration.isWatchOnly
           ? FirstProofPayoffCopy.patternLine
           : '',
-      returnHook: hasSnippets
-          ? (calibration.level == ProofConfidenceLevel.strong
-              ? calibration.primaryCopy
-              : FirstProofPayoffCopy.truthLine)
-          : calibration.primaryCopy,
+      returnHook: improvedWhy ??
+          (hasSnippets
+              ? (calibration.level == ProofConfidenceLevel.strong
+                  ? calibration.primaryCopy
+                  : FirstProofPayoffCopy.truthLine)
+              : calibration.primaryCopy),
       hasStrongEvidence: hasStrongEvidence,
       canShowPatternDetail: canShowPatternDetail,
       differentiationLine: hasSnippets

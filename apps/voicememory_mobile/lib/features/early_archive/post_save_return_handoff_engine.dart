@@ -1,3 +1,4 @@
+import '../beta_improvement/beta_improvement_pack_engine.dart';
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../retention/second_session_signal_engine.dart';
@@ -25,11 +26,15 @@ abstract final class PostSaveReturnHandoffEngine {
       return PostSaveReturnHandoff(
         stage: PostSaveReturnHandoffStage.afterFirstSave,
         relationState: PostSaveReturnHandoffRelationState.oneMoment,
-        title: PostSaveReturnHandoffCopy.afterFirstSaveTitle,
+        title: BetaImprovementPackEngine.postSaveReturnCue(
+          entryCount: 1,
+          fallback: PostSaveReturnHandoffCopy.afterFirstSaveTitle,
+        ),
         body: phrase != null
             ? PostSaveReturnHandoffCopy.afterFirstSaveBodyWithPhrase(phrase)
             : PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback,
-        footer: PostSaveReturnHandoffCopy.afterFirstSaveFooter,
+        footer: BetaImprovementPackEngine.returnOptionalFraming(entryCount: 1) ??
+            PostSaveReturnHandoffCopy.afterFirstSaveFooter,
         hasPhrase: phrase != null,
       );
     }

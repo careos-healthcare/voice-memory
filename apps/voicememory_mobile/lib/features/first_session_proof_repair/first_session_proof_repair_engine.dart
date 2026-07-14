@@ -1,3 +1,4 @@
+import '../beta_improvement/beta_improvement_pack_engine.dart';
 import '../app_review/archive_app_review_access_gate.dart';
 import '../beta/archive_beta_mission_gate.dart';
 import '../beta_proof_feedback/beta_proof_feedback_engine.dart';
@@ -17,25 +18,27 @@ abstract final class FirstSessionProofRepairEngine {
   static FirstSessionCaptureRepairResult buildCapture({
     required int entryCount,
     required String source,
-  }) =>
-      FirstSessionCaptureRepairResult(
-        shouldShow: entryCount == 0,
-        title: FirstSessionProofRepairCopy.captureTitle,
-        body: FirstSessionProofRepairCopy.captureBody,
-        primaryCta: FirstSessionProofRepairCopy.capturePrimaryCta,
-        secondaryCta: FirstSessionProofRepairCopy.captureSecondaryCta,
-        microcopy: FirstSessionProofRepairCopy.captureMicrocopy,
-        typedCapturePrompt: FirstSessionProofRepairCopy.typedCapturePrompt,
-        chips: [
-          for (final id in FirstSessionProofRepairCopy.captureChipOrder)
-            FirstSessionProofRepairChip(
-              id: id,
-              text: FirstSessionProofRepairCopy.captureChipText(id),
-            ),
-        ],
-        entryCount: entryCount,
-        source: source,
-      );
+  }) {
+    final base = FirstSessionCaptureRepairResult(
+      shouldShow: entryCount == 0,
+      title: FirstSessionProofRepairCopy.captureTitle,
+      body: FirstSessionProofRepairCopy.captureBody,
+      primaryCta: FirstSessionProofRepairCopy.capturePrimaryCta,
+      secondaryCta: FirstSessionProofRepairCopy.captureSecondaryCta,
+      microcopy: FirstSessionProofRepairCopy.captureMicrocopy,
+      typedCapturePrompt: FirstSessionProofRepairCopy.typedCapturePrompt,
+      chips: [
+        for (final id in FirstSessionProofRepairCopy.captureChipOrder)
+          FirstSessionProofRepairChip(
+            id: id,
+            text: FirstSessionProofRepairCopy.captureChipText(id),
+          ),
+      ],
+      entryCount: entryCount,
+      source: source,
+    );
+    return BetaImprovementPackEngine.applyCaptureRepair(base: base) ?? base;
+  }
 
   static bool shouldShowCapture({
     required FirstSessionCaptureRepairResult? result,

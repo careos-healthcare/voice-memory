@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/post_save_return_handoff_model.dart';
@@ -60,6 +61,23 @@ class PostSaveReturnHandoffCard extends StatelessWidget {
               fontSize: 13,
             ),
           ),
+          if (BetaImprovementPackEngine.returnThreeDayPlan(
+                entryCount: entryCount,
+              ) !=
+              null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            for (final line in BetaImprovementPackEngine.returnThreeDayPlan(
+              entryCount: entryCount,
+            )!)
+              Text(
+                line,
+                key: Key('post_save_return_plan_${line.hashCode}'),
+                style: ArchiveMobileTypography.explanationBody(context).copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
+              ),
+          ],
         ],
       ),
     );

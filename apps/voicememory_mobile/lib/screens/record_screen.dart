@@ -317,6 +317,7 @@ import '../features/return_after_proof/return_after_proof_store.dart';
 import '../features/first_moment_capture/first_moment_capture_engine.dart';
 import '../features/first_save_lift/first_save_lift_engine.dart';
 import '../features/first_session_lift/first_session_lift_engine.dart';
+import '../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../features/first_session_proof_repair/first_session_proof_repair_engine.dart';
 import '../features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import '../features/proof_floor_rescue/proof_floor_rescue_engine.dart';
@@ -2862,11 +2863,16 @@ class _RecordScreenState extends State<RecordScreen> {
     return CaptureEntryActions(
       onRecord: () => unawaited(_onRecordPressed(source: 'main')),
       recordButtonKey: const Key('capture_entry_record_cta'),
-      typeCapturePrompt: selectedPrompt,
+      typeCapturePrompt: BetaImprovementPackEngine.typedCapturePrompt(
+        fallback: selectedPrompt ?? '',
+      ),
       onTextThoughtSaved: _finishSuccessfulCapture,
       onLogPressureMoment: () => context.push('/pressure-check-in'),
       recordButtonLabel: policy.primaryLabel,
       underRecordHelper: null,
+      preferTypedFirst: BetaImprovementPackEngine.preferTypedCaptureFirst(
+        entryCount: _journalEntryCount,
+      ),
     );
   }
 

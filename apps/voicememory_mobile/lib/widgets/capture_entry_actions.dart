@@ -29,12 +29,16 @@ class CaptureEntryActions extends StatelessWidget {
     this.underRecordHelper,
     this.pressureMomentPresentation = CapturePressureMomentPresentation.button,
     this.onHowItWorks,
+    this.preferTypedFirst = false,
   });
 
   final VoidCallback onRecord;
   final bool onGradient;
   final String? recordButtonLabel;
   final Key? recordButtonKey;
+
+  /// When true, typed capture is primary before voice (capture friction fix).
+  final bool preferTypedFirst;
 
   /// Tiny confidence helper rendered directly under the record CTA — only
   /// passed before the first save. Plain text, never a new choice.
@@ -122,6 +126,48 @@ class CaptureEntryActions extends StatelessWidget {
         oncePerSession: true,
       );
     }
+
+    if (preferTypedFirst) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: FilledButton.icon(
+              key: const Key('capture_entry_type_first_cta'),
+              onPressed: () => unawaited(_typeInstead(context)),
+              icon: const Icon(Icons.keyboard_outlined),
+              label: Text(EmptyArchiveCopy.typeInsteadCta),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              key: recordButtonKey,
+              onPressed: onRecord,
+              icon: const Icon(Icons.mic),
+              label: Text(recordButtonLabel ?? ConsumerUiCopy.startRecording),
+            ),
+          ),
+          if (helper != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                helper,
+                key: const Key('first_save_one_sentence_helper'),
+                textAlign: TextAlign.center,
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
+              ),
+            ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
