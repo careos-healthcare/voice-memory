@@ -13,6 +13,8 @@ import 'pro_packaging_copy_fix.dart';
 import 'pro_utility_branch_engine.dart';
 import 'pro_utility_boundary_model.dart';
 import 'pro_utility_copy_fix.dart';
+import 'proof_to_pro_path_engine.dart';
+import 'proof_to_pro_path_model.dart';
 import 'record_onboarding_copy_fix.dart';
 import 'return_reason_copy_fix.dart';
 
@@ -214,8 +216,7 @@ abstract final class BetaImprovementPackEngine {
       return ProUtilityCopyFix.proofBridge;
     }
 
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proPackaging,
+    if (!ProofToProPathEngine.shouldShowProPackagingBridge(
       entryCount: entryCount,
       hasMeaningfulProof: hasMeaningfulProof,
       outcomesOverride: outcomesOverride,
@@ -311,18 +312,29 @@ abstract final class BetaImprovementPackEngine {
   }
 
   static String? proFreeLine() =>
-      BetaImprovementRecommendationGate.isBranchActive(
-        BetaImprovementBranch.proPackaging,
-      )
+      ProofToProPathEngine.allowsProPackaging()
           ? ProPackagingCopyFix.freeLine
           : null;
 
   static String? proPaidLine() =>
-      BetaImprovementRecommendationGate.isBranchActive(
-        BetaImprovementBranch.proPackaging,
-      )
+      ProofToProPathEngine.allowsProPackaging()
           ? ProPackagingCopyFix.proLine
           : null;
+
+  static ProofToProPathModel proofToProPath({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    bool proofClarityRenderable = false,
+    bool firstProofPayoffVisible = false,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) =>
+      ProofToProPathEngine.build(
+        entryCount: entryCount,
+        hasMeaningfulProof: hasMeaningfulProof,
+        proofClarityRenderable: proofClarityRenderable,
+        firstProofPayoffVisible: firstProofPayoffVisible,
+        outcomesOverride: outcomesOverride,
+      );
 
   static String? paywallHeadline() => ProPackagingBranchEngine.paywallHeadline();
 

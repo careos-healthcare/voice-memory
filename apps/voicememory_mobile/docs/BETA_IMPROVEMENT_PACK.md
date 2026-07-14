@@ -65,6 +65,8 @@ Expansion remains blocked unless beta evidence supports it (`docs/V1_EXPANSION_G
 
 **Blocked:** Diagnosis, certainty, therapy claims, stacked proof cards.
 
+**Paired with Pro packaging:** When `proPackaging` is the active branch, proof clarity copy may still render on the same proof card before the quiet Pro bridge. See `docs/PROOF_TO_PRO_PATH.md`.
+
 ### 5. Pro packaging
 
 **Trigger:** Users care about proof but will not pay (`sharpenProPackaging`).
@@ -87,6 +89,8 @@ Expansion remains blocked unless beta evidence supports it (`docs/V1_EXPANSION_G
 **Blocked:** RevenueCat changes, fake purchase claims, urgency/scarcity.
 
 See also `docs/PRO_PACKAGING_V1.md`.
+
+**Paired path:** When `proPackaging` is active, `proofEmotionalClarity` copy may also apply on the same proof card — proof first, quiet Pro bridge second. See `docs/PROOF_TO_PRO_PATH.md`. Manual paired preview: `--dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proofToPro`.
 
 ### 6. Pro utility expansion
 

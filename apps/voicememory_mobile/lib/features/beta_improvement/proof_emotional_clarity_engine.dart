@@ -5,8 +5,7 @@ import '../evidence_weighting/evidence_weighting_model.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../what_changed/what_changed_v2_model.dart';
-import 'beta_improvement_model.dart';
-import 'beta_improvement_recommendation_gate.dart';
+import 'proof_to_pro_path_engine.dart';
 import 'proof_emotional_clarity_copy_fix.dart';
 import 'proof_emotional_clarity_model.dart';
 
@@ -25,8 +24,7 @@ abstract final class ProofEmotionalClarityEngine {
     List<BetaTesterOutcome>? outcomesOverride,
   }) {
     final entryCount = entries.length;
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proofEmotionalClarity,
+    if (!ProofToProPathEngine.shouldShowProofEmotionalClarity(
       entryCount: entryCount,
       hasMeaningfulProof: entryCount >= 3,
       outcomesOverride: outcomesOverride,
@@ -89,8 +87,7 @@ abstract final class ProofEmotionalClarityEngine {
     required WhatChangedV2Option option,
     List<BetaTesterOutcome>? outcomesOverride,
   }) {
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proofEmotionalClarity,
+    if (!ProofToProPathEngine.shouldShowProofEmotionalClarity(
       entryCount: entryCount,
       hasMeaningfulProof: entryCount >= 3,
       outcomesOverride: outcomesOverride,

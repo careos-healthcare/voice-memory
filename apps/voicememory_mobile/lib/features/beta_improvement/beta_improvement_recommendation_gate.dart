@@ -3,6 +3,7 @@ import '../beta_decision/beta_decision_engine.dart';
 import '../beta_decision/beta_decision_model.dart';
 import '../beta_decision/beta_tester_outcome_store.dart';
 import 'beta_improvement_model.dart';
+import 'proof_to_pro_path_engine.dart';
 
 /// Resolves which beta improvement branch is active — one at a time.
 abstract final class BetaImprovementRecommendationGate {
@@ -112,7 +113,11 @@ abstract final class BetaImprovementRecommendationGate {
           BetaImprovementBranch.none,
       };
 
-  static String branchLabel(BetaImprovementBranch branch) => switch (branch) {
+  static String branchLabel(BetaImprovementBranch branch) {
+    if (ProofToProPathEngine.isProofToProOverride()) {
+      return 'Proof-to-Pro path (paired)';
+    }
+    return switch (branch) {
         BetaImprovementBranch.recordOnboardingCopy =>
           'Record/onboarding copy fix',
         BetaImprovementBranch.captureFriction => 'Capture friction fix',
@@ -123,4 +128,5 @@ abstract final class BetaImprovementRecommendationGate {
         BetaImprovementBranch.proUtility => 'Pro utility preview',
         BetaImprovementBranch.none => 'None (baseline V1)',
       };
+  }
 }

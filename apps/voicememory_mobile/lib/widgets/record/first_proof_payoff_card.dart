@@ -7,6 +7,7 @@ import '../../features/beta_improvement/proof_emotional_clarity_model.dart';
 import '../../features/beta_improvement/beta_improvement_model.dart';
 import '../../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../../features/beta_improvement/beta_improvement_recommendation_gate.dart';
+import '../../features/beta_improvement/proof_to_pro_path_engine.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_model.dart';
@@ -194,7 +195,12 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ),
             ),
           ],
-          if (widget.showProPackagingBridge) ..._buildProPackagingBridge(),
+          if (widget.showProPackagingBridge &&
+              ProofToProPathEngine.shouldShowProPackagingBridge(
+                entryCount: widget.entryCount,
+                hasMeaningfulProof: widget.entryCount >= 3,
+                proofClarityRenderable: payoff.emotionalClarity != null,
+              )) ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           ContextualPrivacyReassurance(
             source: 'first_proof_payoff',
@@ -306,7 +312,12 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ),
             ),
           ],
-          if (widget.showProPackagingBridge) ..._buildProPackagingBridge(),
+          if (widget.showProPackagingBridge &&
+              ProofToProPathEngine.shouldShowProPackagingBridge(
+                entryCount: widget.entryCount,
+                hasMeaningfulProof: widget.entryCount >= 3,
+                proofClarityRenderable: emotional != null,
+              )) ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           Text(
             ProofEmotionalClarityCopyFix.cautionFooter,

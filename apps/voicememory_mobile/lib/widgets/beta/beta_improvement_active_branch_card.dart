@@ -5,6 +5,7 @@ import '../../features/beta_improvement/beta_improvement_model.dart';
 import '../../features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import '../../features/beta_improvement/pro_packaging_copy_fix.dart';
 import '../../features/beta_improvement/pro_utility_copy_fix.dart';
+import '../../features/beta_improvement/proof_to_pro_path_engine.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
@@ -28,6 +29,7 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
       );
     }
 
+    final proofToProOverride = ProofToProPathEngine.isProofToProOverride();
     final branch =
         branchOverride ?? BetaImprovementRecommendationGate.activeBranch();
     final utilityPreviews = branch == BetaImprovementBranch.proUtility
@@ -57,7 +59,9 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            BetaImprovementRecommendationGate.branchLabel(branch),
+            proofToProOverride
+                ? 'Proof-to-Pro path (paired override)'
+                : BetaImprovementRecommendationGate.branchLabel(branch),
             key: const Key('beta_improvement_active_branch_label'),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
@@ -74,6 +78,22 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
               height: 1.35,
             ),
           ),
+          if (proofToProOverride) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Preview: ${ProofEmotionalClarityCopyFix.headline} → ${ProPackagingCopyFix.proofBridge}',
+              key: const Key('beta_improvement_proof_to_pro_preview'),
+              style: const TextStyle(fontSize: 12, height: 1.35),
+            ),
+            Text(
+              'Override: --dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proofToPro',
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 11,
+                height: 1.35,
+              ),
+            ),
+          ],
           if (branch == BetaImprovementBranch.proPackaging) ...[
             const SizedBox(height: 8),
             Text(

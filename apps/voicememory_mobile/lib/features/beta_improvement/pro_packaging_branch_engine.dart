@@ -1,6 +1,7 @@
 import '../beta_decision/beta_decision_model.dart';
 import 'beta_improvement_model.dart';
 import 'beta_improvement_recommendation_gate.dart';
+import 'proof_to_pro_path_engine.dart';
 import 'pro_packaging_boundary_model.dart';
 import 'pro_packaging_copy_fix.dart';
 
@@ -11,20 +12,25 @@ abstract final class ProPackagingBranchEngine {
   static bool isBranchRecommended({
     List<BetaTesterOutcome>? outcomesOverride,
   }) =>
-      BetaImprovementRecommendationGate.isBranchActive(
-        BetaImprovementBranch.proPackaging,
+      ProofToProPathEngine.allowsProPackaging(
         outcomesOverride: outcomesOverride,
-      );
+      ) &&
+      (ProofToProPathEngine.isProofToProOverride() ||
+          BetaImprovementRecommendationGate.isBranchActive(
+            BetaImprovementBranch.proPackaging,
+            outcomesOverride: outcomesOverride,
+          ));
 
   static bool shouldShowBridge({
     required int entryCount,
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
+    bool proofClarityRenderable = false,
   }) =>
-      BetaImprovementRecommendationGate.shouldApplyBranch(
-        branch: BetaImprovementBranch.proPackaging,
+      ProofToProPathEngine.shouldShowProPackagingBridge(
         entryCount: entryCount,
         hasMeaningfulProof: hasMeaningfulProof,
+        proofClarityRenderable: proofClarityRenderable,
         outcomesOverride: outcomesOverride,
       );
 

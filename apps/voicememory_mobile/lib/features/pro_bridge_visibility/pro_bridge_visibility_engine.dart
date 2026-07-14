@@ -1,4 +1,5 @@
 import '../beta_improvement/beta_improvement_pack_engine.dart';
+import '../beta_improvement/proof_to_pro_path_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../pro_moment_timing/pro_moment_timing_model.dart';
 import 'pro_bridge_timing_loosen_engine.dart';
@@ -71,6 +72,20 @@ abstract final class ProBridgeVisibilityEngine {
     if (!input.postProofProBridgeEnabled) return false;
     if (ProEvidenceValueDismissStore.isDismissed()) return false;
     if (input.entryCount < minEntryCount) return false;
+
+    if (input.hasFirstProofPayoffVisible &&
+        input.surface ==
+            ProBridgeVisibilitySurface.recordPostSaveAfterPayoff) {
+      return false;
+    }
+
+    if (ProofToProPathEngine.shouldSuppressStandaloneProBridgeCard(
+      entryCount: input.entryCount,
+      hasMeaningfulProof: input.hasTimelineProofVisible,
+      firstProofPayoffVisible: input.hasFirstProofPayoffVisible,
+    )) {
+      return false;
+    }
 
     return ProBridgeTimingLoosenEngine.evaluate(
       input: ProBridgeTimingLoosenEngine.fromVisibilityInput(input),
