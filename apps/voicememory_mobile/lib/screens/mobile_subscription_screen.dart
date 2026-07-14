@@ -344,6 +344,13 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
                 showRetry: _subscriptionsAvailable,
                 onRetry: _load,
                 onRestore: () => context.push('/restore-purchases'),
+                onDismiss: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go('/record');
+                  }
+                },
               ),
             ] else if (_error != null) ...[
               const SizedBox(height: 12),

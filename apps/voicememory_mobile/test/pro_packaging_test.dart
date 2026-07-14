@@ -201,7 +201,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
       expect(find.byKey(const Key('paywall_primary_value_block')), findsOneWidget);
       expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
-      expect(find.text(ProPackagingCopy.continueCta), findsOneWidget);
+      expect(find.text(ProPackagingCopy.continueWithoutProCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });

@@ -22,6 +22,7 @@ abstract final class ProPackagingCopy {
       'Seeing change over time is the reason to keep your archive.';
 
   static const continueCta = 'Continue';
+  static const continueWithoutProCta = 'Continue without Pro';
   static const restorePurchases = 'Restore purchases';
 
   static const offeringsUnavailableBody =
@@ -39,6 +40,7 @@ abstract final class ProPackagingCopy {
     yield bridgeAfterFirstProof;
     yield bridgeAfterBeliefChange;
     yield continueCta;
+    yield continueWithoutProCta;
     yield restorePurchases;
     yield offeringsUnavailableBody;
     yield accountTileSubtitle;

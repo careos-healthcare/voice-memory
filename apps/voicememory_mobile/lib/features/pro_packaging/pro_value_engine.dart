@@ -33,7 +33,9 @@ abstract final class ProPackagingEngine {
       offeringsAvailable: offeringsAvailable,
       showPlanPrices: showPlanPrices && offeringsAvailable,
       unavailableBody: ProPackagingCopy.offeringsUnavailableBody,
-      continueCta: ProPackagingCopy.continueCta,
+      continueCta: offeringsAvailable
+          ? ProPackagingCopy.continueCta
+          : ProPackagingCopy.continueWithoutProCta,
       purchaseCta: purchaseCta ?? ConsumerUiCopy.paywallPrimaryCta,
       restoreLabel: ProPackagingCopy.restorePurchases,
     );

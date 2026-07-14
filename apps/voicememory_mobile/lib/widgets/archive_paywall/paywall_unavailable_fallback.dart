@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../billing/paywall_unavailable_state.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
-import '../../features/pro_packaging/pro_value_copy.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../theme/voicememory_colors.dart';
 
@@ -12,6 +11,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
   const PaywallUnavailableFallback({
     super.key,
     required this.body,
+    required this.onDismiss,
     this.headline,
     this.subhead,
     this.onRestore,
@@ -19,6 +19,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
     this.showRetry = false,
     this.onRetry,
     this.hideBenefits = false,
+    this.primaryDismissLabel,
   });
 
   final String body;
@@ -28,13 +29,25 @@ class PaywallUnavailableFallback extends StatelessWidget {
 
   /// Optional source-aware subheadline shown above [body].
   final String? subhead;
+  final VoidCallback onDismiss;
   final VoidCallback? onRestore;
   final bool busy;
   final bool showRetry;
   final VoidCallback? onRetry;
   final bool hideBenefits;
+  final String? primaryDismissLabel;
 
   static const List<String> benefits = ConsumerUiCopy.paywallFallbackBullets;
+
+  String get _dismissLabel =>
+      primaryDismissLabel ??
+      PaywallUnavailableState.primaryDismissLabel(hideBenefits: hideBenefits);
+
+  Key get _dismissButtonKey => Key(
+        hideBenefits
+            ? 'paywall_unavailable_continue_without_pro'
+            : 'paywall_unavailable_done',
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +75,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             body,
+            key: const Key('paywall_unavailable_body'),
             style: ArchiveMobileTypography.responsiveBody(context),
             textAlign: TextAlign.center,
           ),
@@ -108,24 +122,27 @@ class PaywallUnavailableFallback extends StatelessWidget {
           if (!hideBenefits) const SizedBox(height: 16),
           if (showRetry) ...[
             OutlinedButton(
+              key: const Key('paywall_unavailable_try_again'),
               onPressed: busy ? null : onRetry,
-              child: const Text('Try again'),
+              child: const Text(PaywallUnavailableState.tryAgainLabel),
             ),
             const SizedBox(height: 12),
           ],
           const SizedBox(height: 12),
           FilledButton(
-            onPressed: busy ? null : () => context.pop(),
+            key: _dismissButtonKey,
+            onPressed: busy ? null : onDismiss,
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             child: Text(
-              hideBenefits ? ProPackagingCopy.continueCta : 'Done',
+              _dismissLabel,
               style: ArchiveMobileTypography.responsiveCta(context),
             ),
           ),
           const SizedBox(height: 8),
           TextButton(
+            key: const Key('paywall_unavailable_restore'),
             onPressed: busy ? null : onRestore,
             child: Text(ConsumerUiCopy.restorePurchases),
           ),

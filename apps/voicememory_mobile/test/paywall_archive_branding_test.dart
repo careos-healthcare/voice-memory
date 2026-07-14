@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_paywall_plans.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
+import 'package:voicememory_mobile/billing/paywall_unavailable_state.dart';
 import 'package:voicememory_mobile/widgets/archive_paywall/paywall_unavailable_fallback.dart';
 
 void main() {
@@ -58,7 +59,10 @@ void main() {
       );
       expect(find.text('Private monthly reports'), findsNothing);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
-      expect(find.text('Done'), findsAtLeast(1));
+      expect(
+        find.text(PaywallUnavailableState.continueWithoutProLabel),
+        findsOneWidget,
+      );
     },
   );
 

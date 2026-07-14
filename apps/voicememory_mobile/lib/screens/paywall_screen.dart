@@ -846,6 +846,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
           showRetry: _billingReady,
           onRetry: _load,
           onRestore: _restore,
+          onDismiss: () => unawaited(_dismissWithCapture()),
+          primaryDismissLabel: packaging.continueCta,
           hideBenefits: true,
         ),
         const SizedBox(height: 16),
