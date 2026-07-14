@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/beta_improvement/beta_improvement_model.dart';
 import '../../features/beta_improvement/beta_improvement_recommendation_gate.dart';
+import '../../features/beta_improvement/pro_packaging_copy_fix.dart';
 import '../../features/beta_improvement/pro_utility_copy_fix.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
-import '../../features/beta_improvement/pro_packaging_copy_fix.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
@@ -32,9 +32,9 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
         branchOverride ?? BetaImprovementRecommendationGate.activeBranch();
     final utilityPreviews = branch == BetaImprovementBranch.proUtility
         ? [
-            ProUtilityCopyFix.historyPreview,
-            ProUtilityCopyFix.exportPreview,
-            '${ProUtilityCopyFix.reportPreview} ${ProUtilityCopyFix.plannedSuffix}',
+            '${ProUtilityCopyFix.historyTitle}: ${ProUtilityCopyFix.historyBody}',
+            '${ProUtilityCopyFix.exportTitle}: ${ProUtilityCopyFix.exportBody}',
+            '${ProUtilityCopyFix.privateReportTitle}: ${ProUtilityCopyFix.privateReportBody} ${ProUtilityCopyFix.plannedSuffix}',
           ]
         : null;
 
@@ -103,6 +103,22 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
             ),
             Text(
               'Override: --dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proofEmotionalClarity',
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 11,
+                height: 1.35,
+              ),
+            ),
+          ],
+          if (branch == BetaImprovementBranch.proUtility) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Preview: ${ProUtilityCopyFix.headline}',
+              key: const Key('beta_improvement_pro_utility_preview'),
+              style: const TextStyle(fontSize: 12, height: 1.35),
+            ),
+            Text(
+              'Override: --dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proUtility',
               style: const TextStyle(
                 color: AppTheme.muted,
                 fontSize: 11,

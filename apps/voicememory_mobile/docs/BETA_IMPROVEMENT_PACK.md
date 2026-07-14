@@ -92,12 +92,27 @@ See also `docs/PRO_PACKAGING_V1.md`.
 
 **Trigger:** Users ask for history/export/report after caring (`expandProUtility`), only when expansion gate passes.
 
+**Goal:** Add narrow Pro utility around older proof history, export/ownership, and private report preview.
+
 **Implemented:**
 - `lib/features/beta_improvement/pro_utility_copy_fix.dart`
-- Preview copy only (planned/preview labels)
-- Shown on Testing ArchiveMe active-branch card
+- `lib/features/beta_improvement/pro_utility_branch_engine.dart`
+- `lib/features/beta_improvement/pro_utility_boundary_model.dart`
+- `lib/widgets/account/pro_utility_expansion_section.dart`
+- Post-proof bridge via `BetaImprovementPackEngine` + `FirstProofPayoffCard`
+- Account utility card when branch active and evidence threshold met
+- Manual preview: `--dart-define=ARCHIVEME_BETA_IMPROVEMENT_BRANCH=proUtility`
 
-**Blocked:** Ask Archive, loop packs, B2B, new top-level nav, full export/report unless tested.
+**Rules:**
+- History after meaningful proof
+- Export links to `/export` only when existing export surface is live; otherwise preview copy
+- Private report stays preview/planned unless fully tested live
+- Not more AI — more of your own evidence kept over time
+- One Pro utility card per surface; never on empty first-run
+
+**Blocked:** Ask Archive, loop packs, B2B, new top-level nav, annual plan, full monthly report claims, RevenueCat changes.
+
+See also `docs/PRO_UTILITY_V1.md`.
 
 ## Gating
 

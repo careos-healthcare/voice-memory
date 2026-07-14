@@ -10,6 +10,8 @@ import 'proof_emotional_clarity_engine.dart';
 import 'proof_emotional_clarity_model.dart';
 import 'pro_packaging_branch_engine.dart';
 import 'pro_packaging_copy_fix.dart';
+import 'pro_utility_branch_engine.dart';
+import 'pro_utility_boundary_model.dart';
 import 'pro_utility_copy_fix.dart';
 import 'record_onboarding_copy_fix.dart';
 import 'return_reason_copy_fix.dart';
@@ -204,6 +206,14 @@ abstract final class BetaImprovementPackEngine {
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
   }) {
+    if (ProUtilityBranchEngine.shouldShowBridge(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    )) {
+      return ProUtilityCopyFix.proofBridge;
+    }
+
     if (!BetaImprovementRecommendationGate.shouldApplyBranch(
       branch: BetaImprovementBranch.proPackaging,
       entryCount: entryCount,
@@ -219,34 +229,86 @@ abstract final class BetaImprovementPackEngine {
     required int entryCount,
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      ProPackagingBranchEngine.bridgeTitle(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        outcomesOverride: outcomesOverride,
-      );
+  }) {
+    final utilityTitle = ProUtilityBranchEngine.bridgeTitle(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+    if (utilityTitle != null) return utilityTitle;
+
+    return ProPackagingBranchEngine.bridgeTitle(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+  }
 
   static String? proBridgeBody({
     required int entryCount,
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      ProPackagingBranchEngine.bridgeBody(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        outcomesOverride: outcomesOverride,
-      );
+  }) {
+    final utilityBody = ProUtilityBranchEngine.bridgeBody(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+    if (utilityBody != null) return utilityBody;
+
+    return ProPackagingBranchEngine.bridgeBody(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+  }
 
   static List<String> firstProofProBridgeLines({
     required int entryCount,
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      ProPackagingBranchEngine.firstProofBridgeLines(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        outcomesOverride: outcomesOverride,
-      );
+  }) {
+    final utilityLines = ProUtilityBranchEngine.firstProofBridgeLines(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+    if (utilityLines.isNotEmpty) return utilityLines;
+
+    return ProPackagingBranchEngine.firstProofBridgeLines(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+  }
+
+  static ProUtilityBoundaryModel? proUtilityBoundary({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) {
+    final model = ProUtilityBranchEngine.build(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+    if (!model.shouldShowSection) return null;
+    return model;
+  }
+
+  static List<ProUtilityRow>? proUtilityRows({
+    required int entryCount,
+    required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
+  }) {
+    final rows = ProUtilityBranchEngine.utilityRows(
+      entryCount: entryCount,
+      hasMeaningfulProof: hasMeaningfulProof,
+      outcomesOverride: outcomesOverride,
+    );
+    if (rows.isEmpty) return null;
+    return rows;
+  }
 
   static String? proFreeLine() =>
       BetaImprovementRecommendationGate.isBranchActive(
@@ -273,19 +335,15 @@ abstract final class BetaImprovementPackEngine {
   static List<String>? proUtilityPreviews({
     required int entryCount,
     required bool hasMeaningfulProof,
+    List<BetaTesterOutcome>? outcomesOverride,
   }) {
-    if (!BetaImprovementRecommendationGate.shouldApplyBranch(
-      branch: BetaImprovementBranch.proUtility,
+    final rows = proUtilityRows(
       entryCount: entryCount,
       hasMeaningfulProof: hasMeaningfulProof,
-    )) {
-      return null;
-    }
-    return [
-      ProUtilityCopyFix.historyPreview,
-      ProUtilityCopyFix.exportPreview,
-      '${ProUtilityCopyFix.reportPreview} ${ProUtilityCopyFix.plannedSuffix}',
-    ];
+      outcomesOverride: outcomesOverride,
+    );
+    if (rows == null) return null;
+    return rows.map((row) => '${row.title}: ${row.body}').toList();
   }
 
   static String progressiveZeroBody() =>

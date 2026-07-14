@@ -14,6 +14,7 @@ import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
+import '../widgets/account/pro_utility_expansion_section.dart';
 import '../features/beta_feedback/beta_feedback_copy.dart';
 import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../widgets/account/beta_feedback_sheet.dart';
@@ -117,6 +118,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   offeringsAvailable: false,
                   showPlanPrices: false,
                 ),
+                compact: true,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              ProUtilityExpansionSection(
+                entryCount: _entryCount,
+                hasMeaningfulProof: _entryCount >= 3,
                 compact: true,
               ),
               const SizedBox(height: AppSpacing.md),

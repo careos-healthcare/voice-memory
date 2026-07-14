@@ -222,10 +222,16 @@ void main() {
         BetaImprovementBranch.proUtility,
       );
       expect(
-        ProUtilityCopyFix.reportPreview.toLowerCase(),
-        contains('private monthly'),
+        BetaImprovementPackEngine.proUtilityPreviews(
+          entryCount: 3,
+          hasMeaningfulProof: true,
+          outcomesOverride: allowedOutcomes,
+        ),
+        isNotNull,
       );
+      expect(ProUtilityCopyFix.privateReportTitle, 'Private report preview');
       expect(ProUtilityCopyFix.plannedSuffix.toLowerCase(), contains('preview'));
+      expect(ProUtilityCopyFix.headline, 'Keep more of the trail.');
     });
   });
 
