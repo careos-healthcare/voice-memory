@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../storage/mobile_prefs_store.dart';
 import 'screenshot_mode.dart';
 
 /// Clean ArchiveMe demo archive for screenshots and short videos.
@@ -16,6 +17,7 @@ abstract class ArchiveMeDemoState {
   ArchiveMeDemoState._();
 
   static const entryIdPrefix = 'archive_me_demo_';
+  static const reviewDemoPrefsKey = 'archiveAppReviewDemoUnlocked';
 
   /// True when screenshot demo define is set.
   static bool get enabledCompileTime => ScreenshotMode.archiveMeDemoPreview;
@@ -26,10 +28,29 @@ abstract class ArchiveMeDemoState {
   /// Debug-only in-memory toggle — never persisted, easy to reset.
   static bool _debugSessionEnabled = false;
 
+  /// Persisted when App Review code unlock succeeds.
+  static bool _reviewDemoUnlocked = false;
+
   static bool get debugSessionEnabled => kDebugMode && _debugSessionEnabled;
 
+  static bool get reviewDemoUnlocked => _reviewDemoUnlocked;
+
   static bool get isActive =>
-      enabledCompileTime || debugForceEnabledForTest || debugSessionEnabled;
+      enabledCompileTime ||
+      debugForceEnabledForTest ||
+      debugSessionEnabled ||
+      _reviewDemoUnlocked;
+
+  /// Restores review-demo flag from prefs after app restart.
+  static Future<void> hydrateFromPrefs(MobilePrefsStore prefs) async {
+    _reviewDemoUnlocked = await prefs.readBool(reviewDemoPrefsKey) ?? false;
+  }
+
+  /// Enables the in-memory sample archive used by App Review unlock.
+  static Future<void> enableReviewDemo(MobilePrefsStore prefs) async {
+    _reviewDemoUnlocked = true;
+    await prefs.writeBool(reviewDemoPrefsKey, true);
+  }
 
   /// Turn demo on/off in debug builds without recompiling.
   static void setDebugSessionEnabled(bool enabled) {
@@ -46,5 +67,6 @@ abstract class ArchiveMeDemoState {
   static void resetForTest() {
     debugForceEnabledForTest = false;
     _debugSessionEnabled = false;
+    _reviewDemoUnlocked = false;
   }
 }

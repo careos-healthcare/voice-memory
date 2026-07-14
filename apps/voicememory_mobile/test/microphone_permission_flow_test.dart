@@ -895,7 +895,7 @@ void main() {
         ),
       );
 
-      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsNothing);
       expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);
       expect(find.text(MicrophonePermissionCopy.typeInsteadBlockedHelper), findsOneWidget);
     });

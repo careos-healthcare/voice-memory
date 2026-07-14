@@ -225,6 +225,8 @@ abstract class ArchiveLoopPaywallCopy {
   static const notNowCta = 'Not now';
 
   static const subscriptionDetailsTitle = 'Subscription details';
+  static const subscriptionAutoRenewingSummary =
+      'Monthly or yearly auto-renewing subscription.';
   static const subscriptionMonthlyTitle = 'ArchiveMe Pro Monthly';
   static const subscriptionMonthlyDuration =
       'Monthly plan renews every month.';
@@ -232,17 +234,19 @@ abstract class ArchiveLoopPaywallCopy {
   static const subscriptionYearlyDuration = 'Yearly plan renews every year.';
   static const subscriptionPriceUnavailable =
       'Price shown by Apple at purchase.';
+  static const subscriptionPlansUnavailable =
+      'Monthly and yearly plans available once App Store products load.';
   static const subscriptionAutoRenewal =
       'Subscription renews automatically unless cancelled at least 24 hours '
       'before the end of the current period.';
   static const subscriptionCancellation =
       'Manage or cancel your subscription in your Apple ID subscription settings.';
   static const privacyPolicyUrl =
-      'https://careosapp.co.uk/archiveme-privacy';
+      'https://careosapp.co.uk/archiveme-support';
   static const privacyPolicyLabel = 'Privacy Policy';
   static const eulaUrl =
       'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
-  static const eulaLabel = 'Terms of Use (EULA)';
+  static const eulaLabel = 'Terms of Use';
 
   static const bullets = [
     'Save evidence to the exact part of the loop',

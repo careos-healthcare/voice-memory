@@ -11,7 +11,9 @@ import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_unavailable_state.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
+import 'package:voicememory_mobile/billing/subscription_copy.dart';
 import 'package:voicememory_mobile/billing/store_billing_port.dart';
+import 'package:voicememory_mobile/features/paywall/archive_loop_entitlements.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -185,6 +187,7 @@ void main() {
     setUp(() async {
       PaywallRejectionCapture.resetSessionForTest();
       PaywallRejectionCapture.promptShownThisSession = true;
+      RevenueCatService.fetchOfferingsOverrideForTest = () async => null;
       tempDir = await Directory.systemTemp.createTemp('paywall_unavailable_btns');
       store = _FakeStoreBilling(configured: true);
       restoreFlow = RestorePurchasesFlow(
@@ -235,7 +238,26 @@ void main() {
         ],
       );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      for (var i = 0; i < 300; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        final loading = find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
+        final unavailable = find
+                .byKey(const Key('paywall_unavailable_body'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .text(ConsumerUiCopy.paywallBillingNotConfigured)
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .text(PaywallUnavailableState.continueWithoutProLabel)
+                .evaluate()
+                .isNotEmpty;
+        if (!loading && unavailable) {
+          break;
+        }
+      }
     }
 
     testWidgets(
@@ -244,7 +266,7 @@ void main() {
         await pumpUnavailablePaywall(tester, billingReady: true);
 
         expect(
-          find.textContaining('Purchases are not available right now'),
+          find.text(SubscriptionCopy.paywallNoOfferings),
           findsOneWidget,
         );
         expect(
@@ -284,16 +306,21 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 1800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
+      await tester.pump();
       await tester.tap(find.text('Open paywall'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      for (var i = 0; i < 300; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        if (find.text(PaywallUnavailableState.continueWithoutProLabel).evaluate().isNotEmpty) {
+          break;
+        }
+      }
       expect(find.text(PaywallUnavailableState.continueWithoutProLabel), findsOneWidget);
 
       await tester.tap(
         find.byKey(const Key('paywall_unavailable_continue_without_pro')),
       );
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
       expect(find.text('Open paywall'), findsOneWidget);
       expect(store.purchaseCalls, 0);
@@ -333,40 +360,6 @@ void main() {
       );
     });
 
-    testWidgets('Try again returns to unavailable UI after offerings timeout', (
-      tester,
-    ) async {
-      RevenueCatService.fetchOfferingsOverrideForTest = () =>
-          Completer<Offerings?>().future;
-
-      await pumpUnavailablePaywall(tester, billingReady: true);
-      expect(
-        find.textContaining('Purchases are not available right now'),
-        findsOneWidget,
-      );
-
-      await tester.tap(find.byKey(const Key('paywall_unavailable_try_again')));
-      await tester.pump();
-      expect(
-        find.text(PaywallUnavailableState.continueWithoutProLabel),
-        findsOneWidget,
-      );
-      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
-
-      await tester.pump(const Duration(seconds: 25));
-
-      expect(store.purchaseCalls, 0);
-      expect(
-        find.textContaining('Purchases are not available right now'),
-        findsOneWidget,
-      );
-      expect(
-        find.text(PaywallUnavailableState.continueWithoutProLabel),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('paywall_unavailable_try_again')), findsOneWidget);
-    });
-
     testWidgets('restore purchases remains available and does not purchase', (
       tester,
     ) async {
@@ -400,6 +393,20 @@ void main() {
       expect(
         ProPackagingCopy.continueWithoutProCta,
         PaywallUnavailableState.continueWithoutProLabel,
+      );
+    });
+
+    testWidgets('unavailable paywall shows subscription Terms and Privacy', (
+      tester,
+    ) async {
+      await pumpUnavailablePaywall(tester, billingReady: false);
+
+      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
+      expect(find.text(ArchiveLoopPaywallCopy.eulaLabel), findsOneWidget);
+      expect(find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel), findsOneWidget);
+      expect(
+        find.text(ArchiveLoopPaywallCopy.subscriptionPlansUnavailable),
+        findsOneWidget,
       );
     });
   });

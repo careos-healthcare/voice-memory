@@ -904,7 +904,7 @@ void main() {
         userDeniedThisSession: false,
       );
 
-      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
@@ -1422,13 +1422,13 @@ void main() {
 
         expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
         expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
-        expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+        expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsNothing);
         expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
         expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       },
     );
 
-    testWidgets('Allow microphone CTA forwards tap to record handler', (
+    testWidgets('Use voice to record CTA forwards tap to record handler', (
       tester,
     ) async {
       var tapped = false;
@@ -1437,14 +1437,14 @@ void main() {
           home: Scaffold(
             body: CaptureEntryActions(
               recordButtonKey: const Key('capture_entry_record_cta'),
-              recordButtonLabel: MicrophonePermissionCopy.allowMicrophoneCta,
+              recordButtonLabel: MicrophonePermissionCopy.requestMicrophoneCta,
               onRecord: () => tapped = true,
             ),
           ),
         ),
       );
 
-      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
       await tester.tap(find.byKey(const Key('capture_entry_record_cta')));
       expect(tapped, isTrue);
     });
@@ -1459,7 +1459,7 @@ void main() {
         micPhase: RecordingPhase.permissionDenied,
         micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
       );
-      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.action, RecordCtaAction.requestPermission);
     });
 

@@ -6,51 +6,65 @@ Use the text below in **App Review Information → Notes** when resubmitting Arc
 
 ## Account
 
-No account is required to use ArchiveMe. All core features work on-device without sign-in. You can complete the first loop map, save evidence, and explore the app immediately after install.
+No account is required to use ArchiveMe. You can unlock full review access from
+Settings without sign-in.
 
 ---
 
-## Accessing full Pro features (Guideline 2.1a)
+## Accessing full Pro features and sample archive (Guideline 2.1a)
 
-To access all ArchiveMe Pro features without a purchase:
+To access all ArchiveMe Pro features and pre-populated sample archive entries
+without a purchase:
 
-1. Build/run the App Review build with `ARCHIVEME_APP_REVIEW_MODE=true` (this is enabled in the review build submitted to App Store Connect).
-2. Open **Settings** (Account tab).
-3. Scroll to the **App Review Access** section (visible only in the review build).
-4. Enter this review code:
+1. Open **Settings** (Account tab).
+2. Scroll to the **App Review Access** section (visible in this review build).
+3. Enter this review code:
 
    **ARCHIVEME-REVIEW-2026**
 
-5. Tap **Unlock Pro access**.
+4. Tap **Unlock Pro access**.
 
-This activates the same local Pro entitlement used by a paid subscription, unlocking:
+This activates:
 
-- Additional loop maps
-- Unlimited evidence saves
-- Additional node edits
-- Additional return checks
+- **Sample archive entries** with repeated patterns and archive proof visible
+  in the Archive tab
+- **ArchiveMe Pro** entitlement (loop maps, evidence, edits, return checks)
+- No debug controls in the public release build
 
-No debug controls are exposed in the public release build.
+Alternative without the code: open **Sample Archive** from Settings (example data
+only) or **Help & reviewer guide**.
 
 ---
 
 ## Subscription information (Guideline 3.1.2c)
 
-The ArchiveMe Pro paywall now shows all required auto-renewable subscription information **before purchase**, in a **Subscription details** section that is always visible:
+The ArchiveMe Pro paywall shows all required auto-renewable subscription
+information **before purchase**:
 
-- **Product titles:** ArchiveMe Pro Monthly / ArchiveMe Pro Yearly
-- **Duration:** Monthly plan renews every month; Yearly plan renews every year
-- **Price:** Shown from the App Store product when available; otherwise “Price shown by Apple at purchase.”
-- **Auto-renewal:** “Subscription renews automatically unless cancelled at least 24 hours before the end of the current period.”
-- **Cancellation:** “Manage or cancel your subscription in your Apple ID subscription settings.”
-- **Privacy Policy:** https://careosapp.co.uk/archiveme-privacy
-- **Terms of Use (EULA):** https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+- **Product name:** ArchiveMe Pro
+- **Plans:** Monthly or yearly auto-renewing subscription
+- **Price:** Shown from App Store products when available; otherwise:
+  "Monthly and yearly plans available once App Store products load"
+- **Auto-renewal:** Shown on paywall before purchase
+- **Terms of Use:** https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+- **Privacy Policy:** https://careosapp.co.uk/archiveme-support
 
-The paywall appears after completing the first activation loop, or when a gated Pro feature is accessed.
+The paywall appears after completing the first activation loop, or when a gated
+Pro feature is accessed, or from Settings → See Pro preview.
+
+---
+
+## Microphone (Guideline 5.1.1)
+
+Before the system microphone permission dialog, the Record screen uses the button
+**Use voice to record** — not Apple-style wording such as "Allow" or "OK".
+
+Users can always choose **Type instead** if microphone access is unavailable.
 
 ---
 
 ## Links
 
-- Privacy Policy: https://careosapp.co.uk/archiveme-privacy
+- Privacy Policy: https://careosapp.co.uk/archiveme-support
 - Terms of Use (Apple Standard EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+- Support: https://careosapp.co.uk/archiveme-support
