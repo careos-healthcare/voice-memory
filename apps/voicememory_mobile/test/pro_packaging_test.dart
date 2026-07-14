@@ -6,10 +6,16 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/features/belief_change/belief_change_moment_engine.dart';
-import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
-import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
+import 'package:voicememory_mobile/features/beta_decision/beta_tester_outcome_store.dart';
+import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_branch_keys.dart';
+import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_model.dart';
+import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
+import 'package:voicememory_mobile/features/beta_improvement/pro_packaging_branch_engine.dart';
+import 'package:voicememory_mobile/features/beta_improvement/pro_packaging_copy_fix.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gates.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
@@ -26,7 +32,6 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/archive_me_pro_value_section.dart';
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
-import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
       id: id,
@@ -55,6 +60,20 @@ List<JournalEntry> _threeRelatedEntries() => [
       _entry(
         'e3',
         'I said yes again even though I had no capacity for one more ask.',
+      ),
+    ];
+
+List<BetaTesterOutcome> _proPackagingOutcomes() => [
+      BetaTesterOutcome(
+        testerId: 't1',
+        signals: {
+          BetaDecisionSignal.understoodPromise,
+          BetaDecisionSignal.savedFirstMoment,
+          BetaDecisionSignal.returnedDay2,
+          BetaDecisionSignal.reachedThreeMoments,
+          BetaDecisionSignal.sawFirstProof,
+          BetaDecisionSignal.proofFeltMeaningful,
+        },
       ),
     ];
 
@@ -91,6 +110,7 @@ void main() {
       prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
       skipRevenueCat: true,
     );
+    await BetaTesterOutcomeStore.resetForTest(AppServices.instance.prefs);
   });
 
   group('ProPackagingCopy', () {
@@ -318,31 +338,34 @@ void main() {
   });
 
   group('value moment bridge copy', () {
-    testWidgets('first proof payoff shows full timeline bridge', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 1200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
-      expect(payoff, isNotNull);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: FirstProofPayoffCard(
-                payoff: payoff!,
-                entryCount: 3,
-                onWatchThisNext: () {},
-              ),
-            ),
-          ),
+    test('first proof payoff shows full timeline bridge', () {
+      final outcomes = _proPackagingOutcomes();
+      expect(
+        BetaImprovementRecommendationGate.activeBranch(
+          outcomesOverride: outcomes,
         ),
+        BetaImprovementBranch.proPackaging,
       );
-      await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('pro_packaging_bridge_first_proof')), findsOneWidget);
-      expect(find.text(ProPackagingCopy.bridgeAfterFirstProof), findsOneWidget);
+      final bridgeLines = ProPackagingBranchEngine.firstProofBridgeLines(
+        entryCount: 3,
+        hasMeaningfulProof: true,
+        outcomesOverride: outcomes,
+      );
+      expect(bridgeLines, hasLength(2));
+      expect(bridgeLines.first, ProPackagingCopyFix.proofBridge);
+      expect(bridgeLines.last, contains('first useful repeat'));
+
+      for (var i = 0; i < bridgeLines.length; i++) {
+        expect(
+          BetaImprovementBranchKeys.firstProofBridgeLineKey(
+            lineIndex: i,
+            lineCount: bridgeLines.length,
+            outcomesOverride: outcomes,
+          ),
+          'pro_packaging_bridge_first_proof_$i',
+        );
+      }
     });
 
     testWidgets('belief change moment shows keep archive bridge', (tester) async {

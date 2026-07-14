@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
+import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_branch_keys.dart';
 import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_model.dart';
 import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_pack_engine.dart';
 import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
@@ -202,6 +203,38 @@ void main() {
       );
       expect(result.title, ProBridgeVisibilityCopy.title);
       expect(result.body.toLowerCase(), isNot(contains('more ai')));
+    });
+  });
+
+  group('BetaImprovementBranchKeys', () {
+    test('proPackaging branch uses canonical first-proof bridge keys', () {
+      expect(
+        BetaImprovementBranchKeys.firstProofBridgeLineKey(
+          lineIndex: 0,
+          lineCount: 2,
+          outcomesOverride: proOutcomes,
+        ),
+        'pro_packaging_bridge_first_proof_0',
+      );
+      expect(
+        BetaImprovementBranchKeys.firstProofBridgeLineKey(
+          lineIndex: 1,
+          lineCount: 2,
+          outcomesOverride: proOutcomes,
+        ),
+        'pro_packaging_bridge_first_proof_1',
+      );
+    });
+
+    test('single-line bridge omits index suffix', () {
+      expect(
+        BetaImprovementBranchKeys.firstProofBridgeLineKey(
+          lineIndex: 0,
+          lineCount: 1,
+          outcomesOverride: proOutcomes,
+        ),
+        'pro_packaging_bridge_first_proof',
+      );
     });
   });
 

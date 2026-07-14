@@ -4,9 +4,8 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/chat_differentiation/chat_differentiation_copy.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
 import '../../features/beta_improvement/proof_emotional_clarity_model.dart';
-import '../../features/beta_improvement/beta_improvement_model.dart';
+import '../../features/beta_improvement/beta_improvement_branch_keys.dart';
 import '../../features/beta_improvement/beta_improvement_pack_engine.dart';
-import '../../features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import '../../features/beta_improvement/proof_to_pro_path_engine.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
@@ -342,26 +341,18 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
     final lines = branchLines.isNotEmpty
         ? branchLines
         : [ProPackagingCopy.bridgeAfterFirstProof];
-    final isUtilityBranch = BetaImprovementRecommendationGate.isBranchActive(
-      BetaImprovementBranch.proUtility,
-    );
 
     return [
       const SizedBox(height: AppSpacing.sm),
       for (var i = 0; i < lines.length; i++)
         ProPackagingBridgeLine(
           line: lines[i],
-          lineKey: lines.length == 1
-              ? Key(
-                  isUtilityBranch
-                      ? 'pro_utility_bridge_first_proof'
-                      : 'pro_packaging_bridge_first_proof',
-                )
-              : Key(
-                  isUtilityBranch
-                      ? 'pro_utility_bridge_first_proof_$i'
-                      : 'pro_packaging_bridge_first_proof_$i',
-                ),
+          lineKey: Key(
+            BetaImprovementBranchKeys.firstProofBridgeLineKey(
+              lineIndex: i,
+              lineCount: lines.length,
+            ),
+          ),
         ),
     ];
   }
