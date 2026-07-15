@@ -264,20 +264,20 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
             _isVoiceFallback
                 ? VoiceCaptureCopy.typeWhatYouSaid
                 : _useFocusedTypeEntry
-                    ? QuickTextCaptureCopy.focusedTitle
+                    ? ''
                     : 'Type a thought',
           ),
         ),
         body: SafeArea(
           child: _useFocusedTypeEntry
-              ? _buildFocusedTypeEntryBody(context, length)
+              ? _buildFocusedTypeEntryBody(context)
               : _buildLegacyTypeEntryBody(context, length),
         ),
       ),
     );
   }
 
-  Widget _buildFocusedTypeEntryBody(BuildContext context, int length) {
+  Widget _buildFocusedTypeEntryBody(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         const horizontalPadding = 24.0;
@@ -336,15 +336,6 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                       border: const OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  FocusedTypeEntryExamplesPanel(
-                    expanded: _examplesExpanded,
-                    onToggle: () =>
-                        setState(() => _examplesExpanded = !_examplesExpanded),
-                    onStarterSelected: (opening) {
-                      setState(() => _promptHint = opening);
-                    },
-                  ),
                   if (_error != null) ...[
                     const SizedBox(height: 8),
                     Text(
@@ -397,12 +388,13 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '$length characters',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: VoiceMemoryColors.textSecondary,
-                    ),
+                  FocusedTypeEntryExamplesPanel(
+                    expanded: _examplesExpanded,
+                    onToggle: () =>
+                        setState(() => _examplesExpanded = !_examplesExpanded),
+                    onStarterSelected: (opening) {
+                      setState(() => _promptHint = opening);
+                    },
                   ),
                 ],
               ),

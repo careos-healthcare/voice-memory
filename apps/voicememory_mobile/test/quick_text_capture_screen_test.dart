@@ -290,12 +290,17 @@ void main() {
       await pumpFocused(tester);
 
       expect(find.byKey(const Key('focused_type_entry_card')), findsOneWidget);
-      expect(find.text('Save one sentence'), findsWidgets);
+      expect(find.text('Save one sentence'), findsOneWidget);
       expect(find.text('Anything real from today counts.'), findsOneWidget);
       expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
       expect(find.text('Save moment'), findsOneWidget);
       expect(find.text('Use voice instead'), findsOneWidget);
       expect(find.text('Examples'), findsOneWidget);
+      expect(find.textContaining('characters'), findsNothing);
+
+      final appBar = tester.widget<AppBar>(find.byType(AppBar));
+      expect(appBar.title, isA<Text>());
+      expect((appBar.title! as Text).data, '');
 
       final field = tester.widget<TextField>(
         find.byKey(const Key('quick_text_capture_field')),
@@ -316,6 +321,8 @@ void main() {
 
       expect(find.text('I kept thinking about…'), findsOneWidget);
       expect(find.text('I felt pressure when…'), findsOneWidget);
+      expect(find.text('I nearly did the usual thing…'), findsOneWidget);
+      expect(find.text('I did something different…'), findsOneWidget);
     });
 
     testWidgets('starter tap sets placeholder without prefilling field', (
