@@ -36,7 +36,7 @@ class FocusedTypeEntryExamplesPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           child: TextButton(
             key: const Key('focused_type_entry_examples_toggle'),
             style: TextButton.styleFrom(
@@ -54,10 +54,13 @@ class FocusedTypeEntryExamplesPanel extends StatelessWidget {
           for (final prompt in FirstUseWordingCatalog.prompts)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-              child: InkWell(
-                key: Key('focused_type_entry_starter_${prompt.id}'),
-                onTap: () => onStarterSelected(prompt.opening),
-                child: Text(prompt.opening, style: starterStyle),
+              child: Align(
+                alignment: Alignment.center,
+                child: InkWell(
+                  key: Key('focused_type_entry_starter_${prompt.id}'),
+                  onTap: () => onStarterSelected(prompt.opening),
+                  child: Text(prompt.opening, style: starterStyle),
+                ),
               ),
             ),
         ],

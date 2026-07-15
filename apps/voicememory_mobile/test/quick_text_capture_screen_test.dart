@@ -266,8 +266,10 @@ void main() {
     Future<void> pumpFocused(
       WidgetTester tester, {
       String? promptHint,
+      String? initialText,
+      Size surfaceSize = _iphone17Pro,
     }) async {
-      await tester.binding.setSurfaceSize(_iphone17Pro);
+      await tester.binding.setSurfaceSize(surfaceSize);
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
@@ -275,6 +277,7 @@ void main() {
           theme: AppTheme.light(),
           home: QuickTextCaptureScreen(
             promptHint: promptHint,
+            initialText: initialText,
             focusedRecordTypeEntry: true,
           ),
         ),
@@ -307,6 +310,35 @@ void main() {
       );
       expect(field.decoration?.hintText, 'Today I noticed…');
       expect(field.controller?.text, isEmpty);
+      expect(field.minLines, 3);
+      expect(field.maxLines, 4);
+    });
+
+    testWidgets('ignores route prompt hints on focused path', (tester) async {
+      const routePrompt =
+          'When did you feel pressure to do more to feel okay?';
+      await pumpFocused(
+        tester,
+        promptHint: routePrompt,
+        initialText: routePrompt,
+      );
+
+      final field = tester.widget<TextField>(
+        find.byKey(const Key('quick_text_capture_field')),
+      );
+      expect(field.decoration?.hintText, 'Today I noticed…');
+      expect(find.text(routePrompt), findsNothing);
+    });
+
+    testWidgets('uses compact card on tall iPad surface', (tester) async {
+      await pumpFocused(
+        tester,
+        surfaceSize: const Size(1024, 1366),
+      );
+
+      final card = tester.getRect(find.byKey(const Key('focused_type_entry_card')));
+      expect(card.height, lessThan(500));
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('hides prompt starters until Examples is tapped', (tester) async {
