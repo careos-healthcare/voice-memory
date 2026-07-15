@@ -11,6 +11,7 @@ import '../features/help/help_reviewer_guide_copy.dart';
 import '../widgets/demo/demo_share_pack_card.dart';
 import '../widgets/demo/sample_archive_banner.dart';
 import '../widgets/demo/sample_archive_demo_paths_card.dart';
+import '../widgets/demo/sample_archive_starter_prompts_card.dart';
 import '../widgets/demo/sample_archive_tour_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
@@ -46,6 +47,7 @@ class _SampleArchiveScreenState extends State<SampleArchiveScreen> {
         padding: ArchiveMobileSpacing.pagePadding,
         children: [
           const SampleArchiveBanner(),
+          const SampleArchiveStarterPromptsCard(),
           const SampleArchiveTourCard(),
           SampleArchiveDemoPathsCard(
             scrollController: _scrollController,

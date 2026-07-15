@@ -262,6 +262,113 @@ void main() {
     });
   });
 
+  group('QuickTextCaptureScreen focused Record type entry', () {
+    Future<void> pumpFocused(
+      WidgetTester tester, {
+      String? promptHint,
+    }) async {
+      await tester.binding.setSurfaceSize(_iphone17Pro);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: QuickTextCaptureScreen(
+            promptHint: promptHint,
+            focusedRecordTypeEntry: true,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await AppServices.instance.journal.loadAll();
+      });
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    testWidgets('shows calm card with one field and Save moment', (tester) async {
+      await pumpFocused(tester);
+
+      expect(find.byKey(const Key('focused_type_entry_card')), findsOneWidget);
+      expect(find.text('Save one sentence'), findsWidgets);
+      expect(find.text('Anything real from today counts.'), findsOneWidget);
+      expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+      expect(find.text('Save moment'), findsOneWidget);
+      expect(find.text('Use voice instead'), findsOneWidget);
+      expect(find.text('Examples'), findsOneWidget);
+
+      final field = tester.widget<TextField>(
+        find.byKey(const Key('quick_text_capture_field')),
+      );
+      expect(field.decoration?.hintText, 'Today I noticed…');
+      expect(field.controller?.text, isEmpty);
+    });
+
+    testWidgets('hides prompt starters until Examples is tapped', (tester) async {
+      await pumpFocused(tester);
+
+      expect(find.byKey(const Key('first_use_wording_capture_panel')), findsNothing);
+      expect(find.text('Today I noticed…'), findsOneWidget);
+      expect(find.text('I kept thinking about…'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('focused_type_entry_examples_toggle')));
+      await tester.pump();
+
+      expect(find.text('I kept thinking about…'), findsOneWidget);
+      expect(find.text('I felt pressure when…'), findsOneWidget);
+    });
+
+    testWidgets('starter tap sets placeholder without prefilling field', (
+      tester,
+    ) async {
+      await pumpFocused(tester);
+
+      await tester.tap(find.byKey(const Key('focused_type_entry_examples_toggle')));
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const Key('focused_type_entry_starter_kept_thinking_about')),
+      );
+      await tester.pump();
+
+      final field = tester.widget<TextField>(
+        find.byKey(const Key('quick_text_capture_field')),
+      );
+      expect(field.decoration?.hintText, 'I kept thinking about…');
+      expect(field.controller?.text, isEmpty);
+    });
+
+    testWidgets('Use voice instead pops the screen', (tester) async {
+      await pumpFocused(tester);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const QuickTextCaptureScreen(
+                      focusedRecordTypeEntry: true,
+                    ),
+                  ),
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('focused_type_entry_card')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('focused_type_entry_use_voice_link')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('focused_type_entry_card')), findsNothing);
+    });
+  });
+
   group('QuickTextCaptureScreen voice fallback save', () {
     testWidgets('opens with voice entry id context', (tester) async {
       await tester.runAsync(() async {

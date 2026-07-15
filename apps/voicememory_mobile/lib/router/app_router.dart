@@ -105,6 +105,7 @@ import '../screens/signal_review_screen.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../screens/record_screen.dart';
 import '../screens/quick_text_capture_screen.dart';
+import '../record/quick_text_capture_presentation.dart';
 import '../screens/pressure_check_in_screen.dart';
 import '../screens/pressure_insights_screen.dart';
 // Timeline/Search screens unreachable — global redirect to Patterns.
@@ -533,6 +534,7 @@ final GoRouter appRouter = GoRouter(
         String? captureModeId;
         bool allowQuietDaySave = false;
         bool showFirstUseWordingHelper = false;
+        final focusedRecordTypeEntry = resolveFocusedRecordTypeEntry(extra);
         if (extra is String) {
           initialText = extra;
         } else if (extra is Map) {
@@ -554,6 +556,7 @@ final GoRouter appRouter = GoRouter(
           captureModeId: captureModeId,
           allowQuietDaySave: allowQuietDaySave,
           showFirstUseWordingHelper: showFirstUseWordingHelper,
+          focusedRecordTypeEntry: focusedRecordTypeEntry,
         );
       },
     ),

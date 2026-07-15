@@ -39,7 +39,8 @@ void main() {
     });
 
     test('demo entry label is clearly sample only', () {
-      expect(RecordScreenFramingCopy.seeExampleFirstLink, 'See an example first');
+      expect(RecordScreenFramingCopy.seeExampleLink, 'See an example');
+      expect(RecordScreenFramingCopy.seeExampleFirstLink, 'See an example');
       expect(SampleArchiveCopy.emptyStateTitle, 'See an example first');
       expect(SampleArchiveCopy.emptyStateSubtitle.toLowerCase(), contains('example'));
       expect(SampleArchiveCopy.emptyStateSubtitle, contains('Day 1'));

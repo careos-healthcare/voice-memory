@@ -17,6 +17,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_cop
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
+import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -678,21 +679,16 @@ void main() {
       );
     });
 
-    testWidgets('zero entries show capture-first onboarding not legacy cards', (
+    testWidgets('zero entries show simplified capture-first layout', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
-      expect(find.text(FirstSessionOnboardingCopy.title), findsOneWidget);
-      for (var i = 0; i < FirstSessionOnboardingCopy.steps.length; i++) {
-        expect(
-          find.byKey(Key('first_session_onboarding_step_title_$i')),
-          findsOneWidget,
-        );
-      }
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+      expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('first_session_onboarding_card')), findsNothing);
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
-      expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
+      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.text("Today's map prompt"), findsNothing);
       expect(find.textContaining('private mind map'), findsNothing);
@@ -703,7 +699,7 @@ void main() {
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
@@ -1522,24 +1518,24 @@ void main() {
     }
 
     testWidgets(
-      'empty archive uses hero onboarding — invited welcome stays off record screen',
+      'empty archive uses simplified promise — invited welcome stays off record screen',
       (tester) async {
         await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
         expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
         expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-        expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
+        expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
         expect(find.byType(CaptureEntryActions), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
 
-    testWidgets('hidden without attribution — onboarding only', (tester) async {
+    testWidgets('hidden without attribution — simplified promise only', (tester) async {
       await pumpRecordScreen(tester, store: storeWith());
 
       expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
       expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

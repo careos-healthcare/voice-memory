@@ -72,7 +72,7 @@ void main() {
     for (var i = 0; i < 30; i++) {
       await tester.pump(const Duration(milliseconds: 100));
       if (find
-          .byKey(const Key('record_first_use_capture_section'))
+          .byKey(const Key('record_first_run_screen_card'))
           .evaluate()
           .isNotEmpty) {
         return;
@@ -211,23 +211,27 @@ void main() {
     await go(tester, '/record');
     await waitForRecordFirstUse(tester);
 
-    expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+    expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+    expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
+    expect(find.text(RecordFirstRunPromiseCopy.body), findsOneWidget);
+    expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
     for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
-      expect(find.text(step), findsOneWidget);
+      expect(find.text(step), findsNothing);
     }
-    expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
     expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     expect(find.byType(CaptureEntryActions), findsOneWidget);
 
     final primaryLabelVisible =
-        find.text(VisibleArchiveProofCopy.firstUseCaptureCta).evaluate().isNotEmpty ||
-        find.text(MicrophonePermissionCopy.allowMicrophoneCta).evaluate().isNotEmpty ||
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta).evaluate().isNotEmpty ||
         find.text(MicrophonePermissionCopy.openSettingsCta).evaluate().isNotEmpty;
     expect(primaryLabelVisible, isTrue);
 
     expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
+    expect(find.byKey(const Key('record_see_example_link')), findsOneWidget);
+    expect(find.text(RecordScreenFramingCopy.seeExampleLink), findsOneWidget);
     expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
     expect(find.text(RecordScreenFramingCopy.firstRunPrivacyLink), findsOneWidget);
+    expect(find.text(RecordFirstRunPromiseCopy.proLine), findsOneWidget);
 
     expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
     expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);

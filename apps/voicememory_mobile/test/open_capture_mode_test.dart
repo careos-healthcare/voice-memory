@@ -346,12 +346,18 @@ void main() {
   });
 
   group('Open capture placement', () {
-    test('chips sit under RecordCaptureModesCard on record screen', () {
+    test('chips sit under RecordCaptureModesCard on record screen when not simplified', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final modesIndex = source.indexOf('RecordCaptureModesCard(');
-      final chipsIndex = source.indexOf('if (showOpenCapturePromptChips)');
+      final chipsIndex = source.indexOf(
+        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+      );
       expect(modesIndex, greaterThan(0));
       expect(chipsIndex, greaterThan(modesIndex));
+      expect(
+        source,
+        contains('!firstUseSimplifiedRecord'),
+      );
     });
 
     test('chip tap sets selected prompt line only', () {

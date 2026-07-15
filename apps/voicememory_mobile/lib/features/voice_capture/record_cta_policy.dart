@@ -8,7 +8,6 @@ import 'record_microphone_permission_ui.dart';
 import 'voice_capture_post_save.dart';
 import '../../models/journal_entry.dart';
 import '../../design/empty_archive_experience.dart';
-import '../archive_proof/visible_archive_proof_copy.dart';
 import '../trust/pending_transcript_recovery_copy.dart';
 import 'voice_capture_copy.dart';
 
@@ -261,7 +260,7 @@ abstract class RecordCtaPolicy {
       return RecordCtaPolicyResolution(
         state: state,
         primaryLabel: isFirstUse
-            ? VisibleArchiveProofCopy.firstUseCaptureCta
+            ? MicrophonePermissionCopy.requestMicrophoneCta
             : ConsumerUiCopy.recordMomentCta,
         secondaryLabels: secondaryLabels,
         showMainBottomCta: true,
@@ -280,7 +279,7 @@ abstract class RecordCtaPolicy {
     return RecordCtaPolicyResolution(
       state: state,
       primaryLabel: isFirstUse
-          ? VisibleArchiveProofCopy.firstUseCaptureCta
+          ? MicrophonePermissionCopy.requestMicrophoneCta
           : ConsumerUiCopy.recordMomentCta,
       secondaryLabels: secondaryLabels,
       showMainBottomCta: true,

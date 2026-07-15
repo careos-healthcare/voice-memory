@@ -510,7 +510,7 @@ void main() {
       for (var i = 0; i < 30; i++) {
         await tester.pump(const Duration(milliseconds: 50));
         if (entryCount == 0 &&
-            find.byKey(const Key('record_first_use_capture_section')).evaluate().isNotEmpty) {
+            find.byKey(const Key('record_first_run_screen_card')).evaluate().isNotEmpty) {
           return;
         }
         if (entryCount > 0 &&

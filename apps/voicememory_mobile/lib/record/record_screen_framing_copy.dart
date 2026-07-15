@@ -23,7 +23,10 @@ abstract class RecordScreenFramingCopy {
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// Demo archive entry on Record first use.
-  static const String seeExampleFirstLink = 'See an example first';
+  static const String seeExampleLink = 'See an example';
+
+  @Deprecated('Use seeExampleLink')
+  static const String seeExampleFirstLink = seeExampleLink;
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
   static const String firstRunPrivacyTitle = 'Before you record';
@@ -81,4 +84,16 @@ abstract final class RecordFirstUsePromptCopy {
   ];
 
   static const footer = '1 of 3 · Ten seconds is enough.';
+}
+
+/// Calm first-run promise on Record — entry count 0, simplified layout only.
+abstract final class RecordFirstRunPromiseCopy {
+  RecordFirstRunPromiseCopy._();
+
+  static const title = 'When it repeats, save it.';
+  static const body = 'Save one real moment. ArchiveMe compares it later.';
+  static const supportingLine =
+      'Not a diary. Not homework. One sentence is enough.';
+  static const proLine =
+      'Free shows the first useful proof. Pro keeps the longer trail.';
 }

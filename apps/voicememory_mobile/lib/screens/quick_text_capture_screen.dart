@@ -13,8 +13,12 @@ import '../features/first_use_wording/first_use_wording_analytics.dart';
 import '../features/first_use_wording/first_use_wording_model.dart';
 import '../features/record_capture_modes/record_capture_mode_copy.dart';
 import '../features/record_capture_modes/record_capture_mode_engine.dart';
+import '../record/quick_text_capture_copy.dart';
 import '../record/start_here_visibility.dart';
 import '../theme/voicememory_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/voicememory_cards.dart';
+import '../widgets/record/focused_type_entry_examples_panel.dart';
 import '../widgets/record/first_use_wording_helper_card.dart';
 import '../widgets/record/start_here_recording_section.dart';
 import '../widgets/moment_quality_card.dart';
@@ -29,6 +33,7 @@ class QuickTextCaptureScreen extends StatefulWidget {
     this.captureModeId,
     this.allowQuietDaySave = false,
     this.showFirstUseWordingHelper = false,
+    this.focusedRecordTypeEntry = false,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -51,6 +56,9 @@ class QuickTextCaptureScreen extends StatefulWidget {
   /// Show opening prompts in typed capture for early users.
   final bool showFirstUseWordingHelper;
 
+  /// Calm Record → Type instead layout: one field, examples behind toggle.
+  final bool focusedRecordTypeEntry;
+
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
 }
@@ -66,8 +74,12 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   int _recordingCount = 0;
   bool _firstArchiveMilestoneCompleted = false;
   bool _journalLoaded = false;
+  bool _examplesExpanded = false;
 
   late final CapturePipelineService _pipeline;
+
+  bool get _useFocusedTypeEntry =>
+      widget.focusedRecordTypeEntry && !_isVoiceFallback;
 
   @override
   void initState() {
@@ -160,8 +172,22 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
 
   bool get _isVoiceFallback => widget.entryId?.trim().isNotEmpty == true;
 
-  String get _saveButtonLabel =>
-      _isVoiceFallback ? 'Save words' : 'Save Thought';
+  String get _saveButtonLabel {
+    if (_useFocusedTypeEntry) return QuickTextCaptureCopy.saveMomentCta;
+    return _isVoiceFallback ? 'Save words' : 'Save Thought';
+  }
+
+  String get _fieldPlaceholder {
+    if (_useFocusedTypeEntry) {
+      final hint = _promptHint?.trim();
+      if (hint != null && hint.isNotEmpty && _controller.text.isEmpty) {
+        return hint;
+      }
+      return QuickTextCaptureCopy.focusedPlaceholder;
+    }
+    if (_showPromptHelper) return _promptHint!;
+    return 'Type your thought here…';
+  }
 
   Future<void> _save({String? overrideText}) async {
     final text = (overrideText ?? _controller.text).trim();
@@ -237,11 +263,158 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
           title: Text(
             _isVoiceFallback
                 ? VoiceCaptureCopy.typeWhatYouSaid
-                : 'Type a thought',
+                : _useFocusedTypeEntry
+                    ? QuickTextCaptureCopy.focusedTitle
+                    : 'Type a thought',
           ),
         ),
         body: SafeArea(
-          child: LayoutBuilder(
+          child: _useFocusedTypeEntry
+              ? _buildFocusedTypeEntryBody(context, length)
+              : _buildLegacyTypeEntryBody(context, length),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFocusedTypeEntryBody(BuildContext context, int length) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const horizontalPadding = 24.0;
+        const topPadding = 16.0;
+        const bottomPadding = 24.0;
+        final minScrollBodyHeight = (constraints.maxHeight -
+                topPadding -
+                bottomPadding)
+            .clamp(0.0, double.infinity);
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            horizontalPadding,
+            topPadding,
+            horizontalPadding,
+            bottomPadding,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: minScrollBodyHeight),
+            child: Container(
+              key: const Key('focused_type_entry_card'),
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration:
+                  VoiceMemoryCards.standard(background: const Color(0xFFF6F4FF)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    QuickTextCaptureCopy.focusedTitle,
+                    key: const Key('focused_type_entry_title'),
+                    style: ArchiveMobileTypography.pageTitle(context),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    QuickTextCaptureCopy.focusedBody,
+                    key: const Key('focused_type_entry_body'),
+                    style: const TextStyle(
+                      color: VoiceMemoryColors.textSecondary,
+                      height: 1.45,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    key: const Key('quick_text_capture_field'),
+                    controller: _controller,
+                    autofocus: true,
+                    minLines: 4,
+                    maxLines: 8,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: _fieldPlaceholder,
+                      alignLabelWithHint: true,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FocusedTypeEntryExamplesPanel(
+                    expanded: _examplesExpanded,
+                    onToggle: () =>
+                        setState(() => _examplesExpanded = !_examplesExpanded),
+                    onStarterSelected: (opening) {
+                      setState(() => _promptHint = opening);
+                    },
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      _error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 48,
+                    child: FilledButton(
+                      key: const Key('quick_text_capture_save_button'),
+                      onPressed: _canSave ? () => unawaited(_save()) : null,
+                      child: _saving
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(_saveButtonLabel),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      key: const Key('focused_type_entry_use_voice_link'),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        foregroundColor: VoiceMemoryColors.textSecondary,
+                      ),
+                      onPressed: _saving
+                          ? null
+                          : () {
+                              if (Navigator.of(context).canPop()) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                      child: Text(
+                        QuickTextCaptureCopy.useVoiceInsteadLink,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$length characters',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: VoiceMemoryColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLegacyTypeEntryBody(BuildContext context, int length) {
+    return LayoutBuilder(
             builder: (context, constraints) {
               const horizontalPadding = 24.0;
               const topPadding = 16.0;
@@ -347,9 +520,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                         keyboardType: TextInputType.multiline,
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
-                          hintText: _showPromptHelper
-                              ? _promptHint
-                              : 'Type your thought here…',
+                          hintText: _fieldPlaceholder,
                           alignLabelWithHint: true,
                           border: const OutlineInputBorder(),
                         ),
@@ -412,9 +583,6 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                 ),
               );
             },
-          ),
-        ),
-      ),
-    );
+          );
   }
 }

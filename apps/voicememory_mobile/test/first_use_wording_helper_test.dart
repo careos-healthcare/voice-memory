@@ -433,14 +433,11 @@ void main() {
       }
     }
 
-    testWidgets('helper shows for first-use users', (tester) async {
+    testWidgets('helper hides on simplified first-run Record screen', (tester) async {
       await pumpRecord(tester);
 
-      expect(
-        find.byKey(const Key('first_use_wording_helper_card')),
-        findsOneWidget,
-      );
-      expect(find.text(FirstUseWordingCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
+      expect(find.text(FirstUseWordingCopy.title), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     });
 
@@ -460,14 +457,12 @@ void main() {
       expect(find.byKey(const Key('record_capture_modes_card')), findsOneWidget);
     });
 
-    testWidgets('mic CTA stays above wording helper', (tester) async {
+    testWidgets('capture modes hidden on simplified first-run Record screen', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
-      final micY = tester.getTopLeft(find.byKey(const Key('capture_entry_record_cta'))).dy;
-      final helperY = tester
-          .getTopLeft(find.byKey(const Key('first_use_wording_helper_card')))
-          .dy;
-      expect(micY, lessThan(helperY));
+      expect(find.byKey(const Key('record_capture_modes_card')), findsNothing);
     });
   });
 

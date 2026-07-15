@@ -561,9 +561,9 @@ import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../widgets/record/daily_mirror_record_card.dart';
 import '../widgets/record/microphone_permission_blocked_panel.dart';
-import '../widgets/record/record_first_use_capture_section.dart';
 import '../widgets/onboarding/first_proof_journey_strip_card.dart';
 import '../widgets/record/record_top_archive_promise_hero.dart';
+import '../widgets/record/record_first_run_promise_card.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
 import '../features/onboarding/archive_journey_explainer_gates.dart';
@@ -8012,7 +8012,29 @@ class _RecordScreenState extends State<RecordScreen> {
                         width: 0,
                         height: 0,
                       ),
-                    if (showFirstSessionOnboarding) ...[
+                    if (firstUseSimplifiedRecord &&
+                        ui == RecordUiState.ready &&
+                        _journalEntryCountReady) ...[
+                      if (testerMissionCompact && testerMission != null) ...[
+                        TesterMissionCard(
+                          mission: testerMission,
+                          onDismissed: () => setState(() {}),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      RecordFirstRunScreenCard(
+                        onRecord: () =>
+                            unawaited(_onRecordPressed(source: 'main')),
+                        recordButtonLabel: readyCapturePolicy.primaryLabel,
+                        typeCapturePrompt: _selectedPromptLine,
+                        onTextThoughtSaved: _finishSuccessfulCapture,
+                        onViewSampleExample: () =>
+                            context.push('/sample-archive'),
+                      ),
+                      const SizedBox(height: 8),
+                      const RecordFirstRunProLine(),
+                      const SizedBox(height: 12),
+                    ] else if (showFirstSessionOnboarding) ...[
                       FirstSessionOnboardingCard(
                         onStartMoment: () =>
                             unawaited(_onRecordPressed(source: 'main')),
@@ -8106,36 +8128,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (firstUseSimplifiedRecord) ...[
-                      if (testerMissionCompact && testerMission != null) ...[
-                        TesterMissionCard(
-                          mission: testerMission,
-                          onDismissed: () => setState(() {}),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
-                      RecordFirstUseCaptureSection(
-                        onRecord: () =>
-                            unawaited(_onRecordPressed(source: 'main')),
-                        recordButtonLabel: readyCapturePolicy.primaryLabel,
-                        typeCapturePrompt: _selectedPromptLine,
-                        onTextThoughtSaved: _finishSuccessfulCapture,
-                        onLogPressureMoment: () =>
-                            context.push('/pressure-check-in'),
-                        showFirstProofJourneyStrip:
-                            ArchiveJourneyExplainerGates
-                                .showFirstProofJourneyStripOnRecord(
-                          loaded: _journalEntryCountReady,
-                          entryCount: _journalEntryCount,
-                          isPostSave: _isPostSaveSurface,
-                          entries: _journalEntries,
-                        ),
-                        onViewSampleExample: () =>
-                            context.push('/sample-archive'),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    if (showFirstUseWordingHelper) ...[
+                    if (showFirstUseWordingHelper && !firstUseSimplifiedRecord) ...[
                       FirstUseWordingHelperCard(
                         onUseOpening: (prompt) =>
                             unawaited(_openFirstUseWordingOpening(prompt)),
@@ -8178,7 +8171,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           loaded: _journalEntryCountReady,
                           isReady: true,
                           isPostSave: _isPostSaveSurface,
-                        )) ...[
+                        ) &&
+                        !firstUseSimplifiedRecord) ...[
                       RecordCaptureModesCard(
                         onModeTap: (mode) =>
                             unawaited(_openCaptureMode(mode)),
@@ -8190,7 +8184,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         result: recordReadySurfacePriority,
                       ),
                     ],
-                    if (showFirstSessionCaptureRepairCard) ...[
+                    if (showFirstSessionCaptureRepairCard &&
+                        !firstUseSimplifiedRecord) ...[
                       FirstSessionCaptureRepairCard(
                         result: firstSessionCaptureRepairCandidate,
                         onTypeOneSentence: () => unawaited(
@@ -8219,7 +8214,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showFirstSessionLiftCard) ...[
+                    if (showFirstSessionLiftCard && !firstUseSimplifiedRecord) ...[
                       FirstSessionLiftCard(
                         result: firstSessionLiftCandidate,
                         onTypeOneSentence: () => unawaited(
@@ -8281,7 +8276,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showThreeMomentCompletionCard) ...[
+                    if (showThreeMomentCompletionCard && !firstUseSimplifiedRecord) ...[
                       ThreeMomentCompletionCard(
                         result: threeMomentCompletionCandidate,
                         onPrimaryCta: () => unawaited(
@@ -8313,7 +8308,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showFirstMomentCaptureCard) ...[
+                    if (showFirstMomentCaptureCard && !firstUseSimplifiedRecord) ...[
                       FirstMomentCaptureCard(
                         result: firstMomentCaptureCandidate,
                         onSaveOneSentence: () => unawaited(
@@ -8332,13 +8327,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showFirstRunPositioningCard) ...[
+                    if (showFirstRunPositioningCard && !firstUseSimplifiedRecord) ...[
                       FirstRunPositioningCard(
                         result: firstRunPositioningCandidate,
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showOpenCapturePromptChips) ...[
+                    if (showOpenCapturePromptChips && !firstUseSimplifiedRecord) ...[
                       OpenCapturePromptChips(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8418,7 +8413,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                        showTimelinePositioningOnRecordReady) ...[
+                        showTimelinePositioningOnRecordReady &&
+                        !firstUseSimplifiedRecord) ...[
                       TimelinePositioningCard(
                         result: timelinePositioningCandidate,
                         source: 'record',

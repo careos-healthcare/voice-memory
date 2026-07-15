@@ -51,7 +51,7 @@ JournalEntry _usableVoiceEntry() => JournalEntry(
 
 void main() {
   group('RecordCtaPolicy', () {
-    test('first-use mic ready shows Save one moment + Type instead', () {
+    test('first-use mic ready shows Use voice + Type instead', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,
@@ -63,7 +63,7 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.firstUse);
-      expect(policy.primaryLabel, VisibleArchiveProofCopy.firstUseCaptureCta);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
       expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
       expect(policy.action, RecordCtaAction.startRecording);
       expect(policy.micPermissionState, MicrophonePermissionState.granted);
@@ -107,7 +107,7 @@ void main() {
       );
     });
 
-    test('returning deniedCanAskAgain shows Use voice to record', () {
+    test('returning deniedCanAskAgain shows Use voice', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 2,
@@ -125,7 +125,7 @@ void main() {
       expect(policy.micPermissionState, MicrophonePermissionState.deniedCanAskAgain);
     });
 
-    test('first-use deniedCanAskAgain shows Use voice to record', () {
+    test('first-use deniedCanAskAgain shows Use voice', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,
@@ -141,7 +141,7 @@ void main() {
       expect(policy.action, RecordCtaAction.requestPermission);
     });
 
-    test('denied + hasRecorder without prefer flag shows Use voice to record not Open Settings', () {
+    test('denied + hasRecorder without prefer flag shows Use voice not Open Settings', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 2,
@@ -331,7 +331,7 @@ void main() {
       expect(policy.action, isNotNull);
     });
 
-    test('requestable denied state shows Use voice to record', () {
+    test('requestable denied state shows Use voice', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,

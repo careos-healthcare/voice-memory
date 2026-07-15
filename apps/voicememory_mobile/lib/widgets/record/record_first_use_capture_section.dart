@@ -20,6 +20,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
     this.onTextThoughtSaved,
     this.onLogPressureMoment,
     this.showFirstProofJourneyStrip = false,
+    this.captureOnly = false,
     this.onViewSampleExample,
   });
 
@@ -30,6 +31,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
   final Future<void> Function(CapturePipelineResult result)? onTextThoughtSaved;
   final VoidCallback? onLogPressureMoment;
   final bool showFirstProofJourneyStrip;
+  final bool captureOnly;
   final VoidCallback? onViewSampleExample;
 
   @override
@@ -42,14 +44,16 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          RecordFirstUsePromptBlock(
-            hideLeadCopy: showFirstProofJourneyStrip,
-          ),
-          if (showFirstProofJourneyStrip) ...[
-            const SizedBox(height: AppSpacing.xs),
-            const FirstProofJourneyStripCard(),
+          if (!captureOnly) ...[
+            RecordFirstUsePromptBlock(
+              hideLeadCopy: showFirstProofJourneyStrip,
+            ),
+            if (showFirstProofJourneyStrip) ...[
+              const SizedBox(height: AppSpacing.xs),
+              const FirstProofJourneyStripCard(),
+            ],
+            const SizedBox(height: AppSpacing.md),
           ],
-          const SizedBox(height: AppSpacing.md),
           CaptureEntryActions(
             onRecord: onRecord,
             recordButtonKey: recordButtonKey,
@@ -65,9 +69,9 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                key: const Key('record_see_example_first_link'),
+                key: const Key('record_see_example_link'),
                 onPressed: onViewSampleExample,
-                child: const Text(RecordScreenFramingCopy.seeExampleFirstLink),
+                child: const Text(RecordScreenFramingCopy.seeExampleLink),
               ),
             ),
           ],

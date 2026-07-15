@@ -365,14 +365,16 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows first-session onboarding not generic framing', (
+    testWidgets('entry count 0 shows simplified promise card not generic framing', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
-      expect(find.text(FirstSessionOnboardingCopy.title), findsOneWidget);
-      expect(find.textContaining(FirstSessionOnboardingCopy.step1Title), findsWidgets);
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+      expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
+      expect(find.text(RecordFirstRunPromiseCopy.body), findsOneWidget);
+      expect(find.text(RecordFirstRunPromiseCopy.supportingLine), findsOneWidget);
+      expect(find.byKey(const Key('first_session_onboarding_card')), findsNothing);
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
       expect(find.text(RecordScreenFramingCopy.title), findsNothing);
       expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
@@ -815,18 +817,16 @@ void main() {
       }
     }
 
-    testWidgets('first-use shows one voice-start CTA: Record moment', (
+    testWidgets('first-use shows one voice-start CTA: Use voice', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(
-        find.byKey(const Key('first_session_onboarding_card')),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+      expect(find.text('Allow microphone'), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
@@ -834,33 +834,21 @@ void main() {
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
     });
 
-    testWidgets('first-use prompt appears at entryCount 0 without duplicate examples', (
+    testWidgets('first-use simplified layout hides duplicate education cards', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_first_use_prompt_block')), findsOneWidget);
-      expect(find.byKey(const Key('first_proof_journey_strip_card')), findsOneWidget);
-      expect(find.text(RecordFirstUsePromptCopy.title), findsNothing);
-      expect(find.text(RecordFirstUsePromptCopy.body), findsNothing);
-      expect(find.text(FirstProofJourneyCopy.helper), findsOneWidget);
-      expect(find.text(ArchiveJourneyCopy.step3Body), findsNothing);
-      expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsNothing);
-      expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
-      expect(find.textContaining('1 of 3'), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(const Key('first_proof_journey_strip_card')),
-          matching: find.textContaining('First thread'),
-        ),
-        findsOneWidget,
-      );
-      expect(find.byType(FirstRunPositioningCard), findsOneWidget);
-      expect(find.text(FirstRunPositioningCopy.footer), findsOneWidget);
-      for (final example in RecordFirstUsePromptCopy.examples) {
-        expect(find.text(example), findsNothing);
-      }
-      expect(find.byKey(const Key('first_use_wording_helper_card')), findsOneWidget);
+      expect(find.byKey(const Key('record_first_use_prompt_block')), findsNothing);
+      expect(find.byKey(const Key('first_proof_journey_strip_card')), findsNothing);
+      expect(find.text(RecordFirstUsePromptCopy.footer), findsNothing);
+      expect(find.textContaining('1 of 3'), findsNothing);
+      expect(find.byType(FirstRunPositioningCard), findsNothing);
+      expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
+      expect(find.byKey(const Key('record_capture_modes_card')), findsNothing);
+      expect(find.text('Start with one sentence'), findsNothing);
+      expect(find.text(RecordFirstRunPromiseCopy.proLine), findsOneWidget);
+      expect(find.byKey(const Key('record_see_example_link')), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
@@ -879,7 +867,7 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
@@ -1428,7 +1416,7 @@ void main() {
       },
     );
 
-    testWidgets('Use voice to record CTA forwards tap to record handler', (
+    testWidgets('Use voice CTA forwards tap to record handler', (
       tester,
     ) async {
       var tapped = false;
@@ -1523,7 +1511,7 @@ void main() {
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
     });
 
     testWidgets('one entry ready shows low-evidence guidance without map clutter', (

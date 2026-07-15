@@ -171,10 +171,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byKey(const Key('sample_archive_screen')), findsOneWidget);
+      expect(find.byKey(const Key('sample_archive_starter_prompts_card')), findsOneWidget);
       expect(find.byKey(const Key('sample_archive_banner_title')), findsOneWidget);
       expect(find.text(SampleArchiveCopy.bannerTitle), findsWidgets);
       expect(find.text(SampleArchiveCopy.bannerSubtitle), findsOneWidget);
       expect(find.text(SampleArchiveCopy.themeLabel), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('sample_archive_demo_paths_card')),
+        120,
+      );
       expect(find.byKey(const Key('sample_archive_demo_paths_card')), findsOneWidget);
       expect(find.text(SampleArchiveCopy.emptyStateTitle), findsNothing);
     });

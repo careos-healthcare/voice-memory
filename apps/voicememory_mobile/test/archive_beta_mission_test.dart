@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gates.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_store.dart';
+import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -273,7 +274,7 @@ void main() {
 
       expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
     });
 
     testWidgets('legacy card hidden when beta gate is off', (tester) async {

@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_gates.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
+import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:voicememory_mobile/features/trust/terms_screen_copy.dart';
@@ -155,9 +156,9 @@ void main() {
       expect(find.textContaining('What brought you back'), findsNothing);
     });
 
-    testWidgets('shows a clear Save one moment path without competing capture CTAs', (tester) async {
+    testWidgets('shows a clear voice capture path without competing capture CTAs', (tester) async {
       await pumpEmptyRecord(tester);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('daily_mirror_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);

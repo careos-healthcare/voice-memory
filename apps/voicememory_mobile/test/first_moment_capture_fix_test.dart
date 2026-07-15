@@ -318,10 +318,14 @@ void main() {
   });
 
   group('First moment capture placement', () {
-    test('appears above other guidance cards on Record', () {
+    test('appears above other guidance cards on Record when not simplified', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final cardIndex = source.indexOf('if (showFirstMomentCaptureCard)');
-      final openCaptureIndex = source.indexOf('if (showOpenCapturePromptChips)');
+      final cardIndex = source.indexOf(
+        'if (showFirstMomentCaptureCard && !firstUseSimplifiedRecord)',
+      );
+      final openCaptureIndex = source.indexOf(
+        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+      );
       final lowFrictionIndex =
           source.indexOf('if (showLowFrictionReturnCard)');
       expect(cardIndex, greaterThan(0));
