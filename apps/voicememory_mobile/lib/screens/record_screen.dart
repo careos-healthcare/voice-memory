@@ -8009,12 +8009,14 @@ class _RecordScreenState extends State<RecordScreen> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.fromLTRB(
                 24,
-                8,
+                firstUseSimplifiedRecord ? 0 : 8,
                 24,
                 (compact ? 12 : 16) + bottomInset,
               ),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                constraints: BoxConstraints(
+                  minHeight: firstUseSimplifiedRecord ? 0 : constraints.maxHeight,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -8039,9 +8041,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         onViewSampleExample: () =>
                             context.push('/sample-archive'),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       const RecordFirstRunProLine(),
-                      const SizedBox(height: 12),
                     ] else if (showFirstSessionOnboarding) ...[
                       FirstSessionOnboardingCard(
                         onStartMoment: () =>
@@ -8433,7 +8434,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showThreeDayChallengeOnRecord &&
-                        threeDayChallengeCandidate != null) ...[
+                        threeDayChallengeCandidate != null &&
+                        !firstUseSimplifiedRecord) ...[
                       ThreeDayChallengeCard(
                         challenge: threeDayChallengeCandidate,
                       ),
@@ -8441,7 +8443,8 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (ui == RecordUiState.ready &&
                         showNextBestActionOnRecord &&
-                        nextBestActionCandidate != null) ...[
+                        nextBestActionCandidate != null &&
+                        !firstUseSimplifiedRecord) ...[
                       NextBestActionLine(
                         action: nextBestActionCandidate,
                         surface: NextBestActionSurface.record,

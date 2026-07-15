@@ -137,10 +137,13 @@ class RecordFirstRunProLine extends StatelessWidget {
     return Text(
       RecordFirstRunPromiseCopy.proLine,
       key: const Key('record_first_run_pro_line'),
-      style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-        color: AppColors.textSecondary,
-        height: 1.4,
-      ),
+      textAlign: TextAlign.center,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.textSecondary.withValues(alpha: 0.85),
+            fontSize: 12,
+            height: 1.35,
+            fontWeight: FontWeight.w400,
+          ),
     );
   }
 }

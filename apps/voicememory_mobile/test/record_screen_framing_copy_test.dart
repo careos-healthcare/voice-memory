@@ -25,6 +25,8 @@ import 'package:voicememory_mobile/features/early_archive/early_saved_moments_co
 import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/first_save_lift/first_save_lift_copy.dart';
+import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:voicememory_mobile/features/next_action/next_best_action_copy.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import 'package:voicememory_mobile/features/first_run_positioning/first_run_positioning_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
@@ -855,6 +857,11 @@ void main() {
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
       expect(find.text(FirstSaveLiftCopy.title), findsNothing);
       expect(find.byKey(const Key('surface_priority_debug_badge')), findsNothing);
+      expect(find.byKey(const Key('three_day_challenge_card')), findsNothing);
+      expect(find.text(LandingAppContinuityCopy.step1Title), findsNothing);
+      expect(find.text(LandingAppContinuityCopy.step1Body), findsNothing);
+      expect(find.text(NextBestActionCopy.noEntriesTitle), findsNothing);
+      expect(find.text(NextBestActionCopy.noEntriesHelper), findsNothing);
     });
 
     testWidgets('first-use prompt hides after first entry', (tester) async {
