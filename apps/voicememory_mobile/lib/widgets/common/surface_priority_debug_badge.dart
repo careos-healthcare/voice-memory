@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../features/beta/archive_beta_mission_gate.dart';
+import '../../config/developer_settings_gate.dart';
 import '../../features/surface_priority/surface_priority_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -19,7 +19,7 @@ class SurfacePriorityDebugBadge extends StatelessWidget {
     if (!result.shouldShowDebugSummary) {
       return const SizedBox.shrink();
     }
-    if (!ArchiveBetaMissionGate.isEnabled) {
+    if (!DeveloperSettingsGate.canShowDeveloperSettings) {
       return const SizedBox.shrink();
     }
 

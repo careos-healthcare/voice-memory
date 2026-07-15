@@ -428,9 +428,15 @@ void main() {
   group('Beta today summary placement', () {
     test('card sits below low-friction return and above capture freedom line', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final lowFrictionIndex = source.indexOf('if (showLowFrictionReturnCard) ...[');
-      final summaryIndex = source.indexOf('if (showBetaTodaySummaryCard) ...[');
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine) ...[');
+      final lowFrictionIndex = source.indexOf(
+        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord) ...[',
+      );
+      final summaryIndex = source.indexOf(
+        'if (showBetaTodaySummaryCard && !firstUseSimplifiedRecord) ...[',
+      );
+      final freedomIndex = source.indexOf(
+        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord) ...[',
+      );
       expect(lowFrictionIndex, greaterThan(0));
       expect(summaryIndex, greaterThan(lowFrictionIndex));
       expect(freedomIndex, greaterThan(summaryIndex));

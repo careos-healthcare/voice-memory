@@ -1,3 +1,4 @@
+import '../app_review/archive_app_review_access_gate.dart';
 import '../voice_capture/record_microphone_permission_ui.dart';
 import 'archive_beta_mission_gate.dart';
 
@@ -13,6 +14,7 @@ abstract final class TesterMissionGates {
     required bool isPostSave,
   }) =>
       ArchiveBetaMissionGate.isEnabled &&
+      !ArchiveAppReviewAccessGate.isEnabled &&
       !dismissed &&
       entryCountLoaded &&
       ui == RecordUiState.ready &&

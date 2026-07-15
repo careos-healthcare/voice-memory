@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-/// Gates the beta mission card to debug IDE builds and explicit TestFlight flags.
+import '../../config/developer_settings_gate.dart';
+
+/// Gates the beta mission card to explicit TestFlight flags and developer unlock.
 ///
 /// Production App Store release builds stay off unless
 /// `--dart-define=ARCHIVEME_BETA_MISSION=true` is set at compile time.
@@ -24,8 +26,8 @@ abstract final class ArchiveBetaMissionGate {
     if (enabledOverride != null) return enabledOverride!;
     if (_releaseSmokeFromEnvironment) return false;
     if (_betaMissionFromEnvironment) return true;
-    if (kReleaseMode || kProfileMode) return false;
-    return kDebugMode;
+    if (DeveloperSettingsGate.canShowDeveloperSettings) return true;
+    return false;
   }
 
   @visibleForTesting

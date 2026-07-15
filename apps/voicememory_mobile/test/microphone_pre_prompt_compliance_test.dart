@@ -6,7 +6,7 @@ void main() {
     test('request CTA avoids system-style permission words', () {
       expect(
         MicrophonePermissionCopy.requestMicrophoneCta,
-        'Use voice',
+        'Use voice to record',
       );
       expect(
         MicrophonePermissionCopy.isAppleCompliantPrePromptCta(

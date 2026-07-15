@@ -19,7 +19,7 @@ abstract class MicrophonePermissionCopy {
   static const String openSettingsCta = 'Open Settings';
 
   /// Pre-system-prompt CTA — must not mimic Apple permission button wording.
-  static const String requestMicrophoneCta = 'Use voice';
+  static const String requestMicrophoneCta = 'Use voice to record';
 
   @Deprecated('Use requestMicrophoneCta')
   static const String allowMicrophoneCta = requestMicrophoneCta;

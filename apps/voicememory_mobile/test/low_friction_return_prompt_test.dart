@@ -454,8 +454,12 @@ void main() {
   group('Low friction return placement', () {
     test('card sits under OpenCapturePromptChips on record screen', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final chipsIndex = source.indexOf('if (showOpenCapturePromptChips)');
-      final cardIndex = source.indexOf('if (showLowFrictionReturnCard)');
+      final chipsIndex = source.indexOf(
+        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+      );
+      final cardIndex = source.indexOf(
+        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+      );
       expect(chipsIndex, greaterThan(0));
       expect(cardIndex, greaterThan(chipsIndex));
     });
@@ -463,7 +467,9 @@ void main() {
     test('card sits above deeper archive proof cards', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('LowFrictionReturnCard(');
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine)');
+      final freedomIndex = source.indexOf(
+        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+      );
       final timelineIndex =
           source.indexOf('if (!suppressLegacyEducationCardsForSpineOnRecord &&');
       expect(cardIndex, greaterThan(0));
@@ -475,7 +481,9 @@ void main() {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final snippet = source.substring(
         source.indexOf('LowFrictionReturnCard('),
-        source.indexOf('if (showCaptureFreedomLine)'),
+        source.indexOf(
+          'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+        ),
       );
       expect(snippet, contains('_selectedPromptLine = prompt'));
       expect(snippet, isNot(contains('context.push')));

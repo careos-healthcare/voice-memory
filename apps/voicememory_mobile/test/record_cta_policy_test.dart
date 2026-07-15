@@ -51,7 +51,7 @@ JournalEntry _usableVoiceEntry() => JournalEntry(
 
 void main() {
   group('RecordCtaPolicy', () {
-    test('first-use mic ready shows Use voice + Type instead', () {
+    test('first-use mic ready shows Use voice to record + Type instead', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,

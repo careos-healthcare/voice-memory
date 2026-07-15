@@ -24,6 +24,7 @@ import 'package:voicememory_mobile/features/archive_history/archive_history_copy
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
 import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
+import 'package:voicememory_mobile/features/first_save_lift/first_save_lift_copy.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import 'package:voicememory_mobile/features/first_run_positioning/first_run_positioning_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
@@ -817,7 +818,7 @@ void main() {
       }
     }
 
-    testWidgets('first-use shows one voice-start CTA: Use voice', (
+    testWidgets('first-use shows one voice-start CTA: Use voice to record', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
@@ -852,6 +853,8 @@ void main() {
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(find.text(FirstSaveLiftCopy.title), findsNothing);
+      expect(find.byKey(const Key('surface_priority_debug_badge')), findsNothing);
     });
 
     testWidgets('first-use prompt hides after first entry', (tester) async {
@@ -1416,7 +1419,7 @@ void main() {
       },
     );
 
-    testWidgets('Use voice CTA forwards tap to record handler', (
+    testWidgets('Use voice to record CTA forwards tap to record handler', (
       tester,
     ) async {
       var tapped = false;

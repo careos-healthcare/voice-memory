@@ -326,8 +326,9 @@ void main() {
       final openCaptureIndex = source.indexOf(
         'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
       );
-      final lowFrictionIndex =
-          source.indexOf('if (showLowFrictionReturnCard)');
+      final lowFrictionIndex = source.indexOf(
+        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+      );
       expect(cardIndex, greaterThan(0));
       expect(cardIndex, lessThan(openCaptureIndex));
       expect(cardIndex, lessThan(lowFrictionIndex));

@@ -412,9 +412,15 @@ void main() {
   group('What to notice next placement', () {
     test('card sits below beta today summary and above deeper proof cards', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final summaryIndex = source.indexOf('if (showBetaTodaySummaryCard)');
-      final noticeIndex = source.indexOf('if (showWhatToNoticeNextCard)');
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine)');
+      final summaryIndex = source.indexOf(
+        'if (showBetaTodaySummaryCard && !firstUseSimplifiedRecord)',
+      );
+      final noticeIndex = source.indexOf(
+        'if (showWhatToNoticeNextCard && !firstUseSimplifiedRecord)',
+      );
+      final freedomIndex = source.indexOf(
+        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+      );
       expect(summaryIndex, greaterThan(0));
       expect(noticeIndex, greaterThan(summaryIndex));
       expect(freedomIndex, greaterThan(noticeIndex));
@@ -424,7 +430,9 @@ void main() {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final snippet = source.substring(
         source.indexOf('WhatToNoticeNextCard('),
-        source.indexOf('if (showCaptureFreedomLine)'),
+        source.indexOf(
+          'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+        ),
       );
       expect(snippet, contains('_selectedPromptLine = prompt'));
       expect(snippet, isNot(contains('context.push')));

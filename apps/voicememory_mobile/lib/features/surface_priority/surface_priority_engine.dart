@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../config/developer_settings_gate.dart';
 import '../beta/archive_beta_mission_gate.dart';
 import '../first_run_positioning/first_run_positioning_engine.dart';
 import 'surface_priority_copy.dart';
@@ -617,8 +618,7 @@ abstract final class SurfacePriorityEngine {
       proSlot: proSlot,
       hiddenReasons: hiddenReasons,
       visibleCardKeys: visible,
-      shouldShowDebugSummary:
-          kDebugMode || ArchiveBetaMissionGate.isEnabled,
+      shouldShowDebugSummary: DeveloperSettingsGate.canShowDeveloperSettings,
       suppressedCardCount: suppressedCardCount < 0 ? 0 : suppressedCardCount,
     );
   }

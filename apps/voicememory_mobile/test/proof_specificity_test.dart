@@ -433,7 +433,9 @@ void main() {
     test('capture freedom line sits near RecordCaptureModesCard', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final modesIndex = source.indexOf('RecordCaptureModesCard(');
-      final freedomIndex = source.indexOf('if (showCaptureFreedomLine)');
+      final freedomIndex = source.indexOf(
+        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+      );
       expect(modesIndex, greaterThan(0));
       expect(freedomIndex, greaterThan(modesIndex));
     });

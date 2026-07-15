@@ -4224,6 +4224,11 @@ class _RecordScreenState extends State<RecordScreen> {
     var ui = _ui;
     var policyMic = _mic;
     var policyUserDenied = _micPermissionUserDenied;
+    final firstUseSimplifiedRecord = ui == RecordUiState.ready &&
+        RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+        );
     var error = _error;
     var localSaveTitle = _localSaveTitle;
     var syncNote = ConsumerCopyGuard.userFacingSyncNote(_syncNote);
@@ -6468,6 +6473,20 @@ class _RecordScreenState extends State<RecordScreen> {
     final showReturnAfterProofInGuidanceStack =
         showReturnAfterProofOnRecordReady &&
             !showReturnAfterProofBelowProofOnRecord;
+    if (firstUseSimplifiedRecord) {
+      showFirstSaveLiftCard = false;
+      showFirstSessionLiftCard = false;
+      showFirstSessionCaptureRepairCard = false;
+      showSecondMomentReturnCard = false;
+      showBetaActivationPathCard = false;
+      showCaptureFreedomLine = false;
+      showLowFrictionReturnCard = false;
+      showBetaTodaySummaryCard = false;
+      showWhatToNoticeNextCard = false;
+      showFirstMomentCaptureCard = false;
+      showThreeMomentCompletionCard = false;
+      showOpenCapturePromptChips = false;
+    }
     final showProUnderstandingLiftBelowProofOnRecord =
         showProUnderstandingLiftOnRecordReady &&
             ((showTimelineProofMomentOnRecord &&
@@ -7882,11 +7901,6 @@ class _RecordScreenState extends State<RecordScreen> {
       ),
     );
 
-    final firstUseSimplifiedRecord = ui == RecordUiState.ready &&
-        RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
-          loaded: _journalEntryCountReady,
-          entryCount: _journalEntryCount,
-        );
     final readyCapturePolicy = _recordCtaPolicy(
       ui,
       micPhase: policyMic,
@@ -7898,7 +7912,8 @@ class _RecordScreenState extends State<RecordScreen> {
       entryCountLoaded: _journalEntryCountReady,
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
-    );
+    ) &&
+        !firstUseSimplifiedRecord;
     final testerMissionCompact = showTesterMission &&
         TesterMissionGates.useCompactPresentation(
           entryCount: _journalEntryCount,
@@ -8015,13 +8030,6 @@ class _RecordScreenState extends State<RecordScreen> {
                     if (firstUseSimplifiedRecord &&
                         ui == RecordUiState.ready &&
                         _journalEntryCountReady) ...[
-                      if (testerMissionCompact && testerMission != null) ...[
-                        TesterMissionCard(
-                          mission: testerMission,
-                          onDismissed: () => setState(() {}),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
                       RecordFirstRunScreenCard(
                         onRecord: () =>
                             unawaited(_onRecordPressed(source: 'main')),
@@ -8240,7 +8248,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showFirstSaveLiftCard) ...[
+                    if (showFirstSaveLiftCard && !firstUseSimplifiedRecord) ...[
                       FirstSaveLiftCard(
                         result: firstSaveLiftCandidate,
                         onTypeOneSentence: () => unawaited(
@@ -8267,7 +8275,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 8),
                     ],
                     if (showBetaActivationPathCard &&
-                        betaActivationPathResult != null) ...[
+                        betaActivationPathResult != null &&
+                        !firstUseSimplifiedRecord) ...[
                       BetaActivationPathCard(
                         result: betaActivationPathResult,
                         onPrimaryCta: () => _handleBetaActivationPathPrimaryCta(
@@ -8289,7 +8298,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showSecondMomentReturnCard) ...[
+                    if (showSecondMomentReturnCard && !firstUseSimplifiedRecord) ...[
                       SecondMomentReturnCard(
                         result: secondMomentReturnCandidate,
                         onNoticedSomething: () {
@@ -8345,7 +8354,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showReturnAfterProofLiftV2InGuidanceStack) ...[
+                    if (showReturnAfterProofLiftV2InGuidanceStack &&
+                        !firstUseSimplifiedRecord) ...[
                       ReturnAfterProofLiftV2Card(
                         result: returnAfterProofLiftV2Candidate,
                         onPrimaryCta: () => unawaited(
@@ -8361,7 +8371,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showReturnAfterProofInGuidanceStack) ...[
+                    if (showReturnAfterProofInGuidanceStack &&
+                        !firstUseSimplifiedRecord) ...[
                       ReturnAfterProofCard(
                         result: returnAfterProofRecordCandidate,
                         useStrengthenedLayout:
@@ -8372,7 +8383,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showLowFrictionReturnCard) ...[
+                    if (showLowFrictionReturnCard && !firstUseSimplifiedRecord) ...[
                       LowFrictionReturnCard(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8389,13 +8400,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showBetaTodaySummaryCard) ...[
+                    if (showBetaTodaySummaryCard && !firstUseSimplifiedRecord) ...[
                       BetaTodaySummaryCard(
                         result: betaTodaySummaryCandidate,
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showWhatToNoticeNextCard) ...[
+                    if (showWhatToNoticeNextCard && !firstUseSimplifiedRecord) ...[
                       WhatToNoticeNextCard(
                         result: whatToNoticeNextCandidate,
                         onPromptSelected: (prompt) {
@@ -8404,7 +8415,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showCaptureFreedomLine) ...[
+                    if (showCaptureFreedomLine && !firstUseSimplifiedRecord) ...[
                       CaptureFreedomLine(
                         source: 'record',
                         entryCount: _journalEntryCount,

@@ -13,6 +13,8 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_store.dart
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
+import 'package:voicememory_mobile/models/journal_entry.dart';
+import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -267,14 +269,42 @@ void main() {
       }
     }
 
-    testWidgets('record screen uses tester mission instead of legacy card', (
+    testWidgets('first-use simplified record hides tester mission strip', (
       tester,
     ) async {
       await pumpEmptyRecord(tester);
 
       expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsOneWidget);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
       expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+    });
+
+    testWidgets('entry 1 shows tester mission when beta gate enabled', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          JournalEntry(
+            id: 'e0',
+            createdAt: DateTime.utc(2026, 1, 1),
+            transcript: 'First moment.',
+            durationSeconds: 30,
+            reflection: const Reflection(
+              mood: 'neutral',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: '',
+              concreteObservation: 'You mentioned pressure in this moment.',
+              repeatedSignal: '',
+            ),
+          ),
+        );
+      });
+      await pumpEmptyRecord(tester);
+
+      expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
     });
 
     testWidgets('legacy card hidden when beta gate is off', (tester) async {

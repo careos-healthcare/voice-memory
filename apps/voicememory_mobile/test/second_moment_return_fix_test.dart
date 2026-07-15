@@ -420,8 +420,12 @@ void main() {
     test('appears below capture controls and above low friction return', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final captureIndex = source.indexOf('_buildCaptureEntryActions');
-      final cardIndex = source.indexOf('if (showSecondMomentReturnCard)');
-      final lowFrictionIndex = source.indexOf('if (showLowFrictionReturnCard)');
+      final cardIndex = source.indexOf(
+        'if (showSecondMomentReturnCard && !firstUseSimplifiedRecord)',
+      );
+      final lowFrictionIndex = source.indexOf(
+        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+      );
       expect(cardIndex, greaterThan(captureIndex));
       expect(cardIndex, lessThan(lowFrictionIndex));
     });

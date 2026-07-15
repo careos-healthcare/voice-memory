@@ -283,7 +283,9 @@ void main() {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       expect(source, contains('_buildCaptureEntryActions'));
       expect(source.indexOf('_buildCaptureEntryActions'), lessThan(
-        source.indexOf('if (showLowFrictionReturnCard)'),
+        source.indexOf(
+          'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+        ),
       ));
     });
 

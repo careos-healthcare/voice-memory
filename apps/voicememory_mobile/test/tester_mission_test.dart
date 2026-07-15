@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
+import 'package:voicememory_mobile/features/app_review/archive_app_review_access_gate.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/beta/core_value_feedback_copy.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_analytics.dart';
@@ -122,6 +123,22 @@ void main() {
         ),
         isFalse,
       );
+    });
+
+    test('hidden when App Review access is enabled', () {
+      ArchiveBetaMissionGate.enabledOverride = true;
+      ArchiveAppReviewAccessGate.enabledOverride = true;
+      expect(
+        TesterMissionGates.shouldShow(
+          dismissed: false,
+          ui: RecordUiState.ready,
+          entryCountLoaded: true,
+          isRecording: false,
+          isPostSave: false,
+        ),
+        isFalse,
+      );
+      ArchiveAppReviewAccessGate.resetForTest();
     });
 
     test('shown when beta gate enabled on ready record', () {
@@ -527,15 +544,14 @@ void main() {
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
     });
 
-    testWidgets('entry 0 uses compact strip near first-use capture', (tester) async {
+    testWidgets('entry 0 first-use simplified hides tester mission', (tester) async {
       await pumpRecord(tester);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsOneWidget);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
-      expect(find.text(TesterMissionCopy.entry0Body), findsOneWidget);
-      expect(find.text(TesterMissionCopy.mission), findsOneWidget);
+      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
     });
 
-    testWidgets('entry 1 shows step 1 complete without duplicate primary CTA', (
+    testWidgets('entry 1 shows mission when beta gate enabled', (
       tester,
     ) async {
       await pumpRecord(tester, entryCount: 1);
