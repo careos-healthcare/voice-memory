@@ -74,7 +74,7 @@ flutter run --dart-define=ARCHIVEME_APP_REVIEW_MODE=true
 - Prices appear on the paywall when App Store products load; otherwise the paywall
   states that plans will appear once products load.
 - **Terms of Use:** https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
-- **Privacy Policy:** https://careosapp.co.uk/archiveme-support
+- **Privacy Policy:** https://careosapp.co.uk/archiveme-privacy
 - **Restore purchases** is available from Settings.
 - Support: https://careosapp.co.uk/archiveme-support
 

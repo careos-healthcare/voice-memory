@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/features/paywall/archive_loop_entitlements.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/widgets/billing/paywall_subscription_details_section.dart';
@@ -56,7 +57,7 @@ void main() {
       );
       expect(
         ArchiveLoopPaywallCopy.privacyPolicyUrl,
-        'https://careosapp.co.uk/archiveme-support',
+        AppConfig.privacyUrl,
       );
     });
   });

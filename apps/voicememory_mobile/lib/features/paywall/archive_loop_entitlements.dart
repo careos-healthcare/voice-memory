@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../billing/archive_entitlement_reader.dart';
+import '../../config/app_config.dart';
 import '../../storage/mobile_prefs_store.dart';
 
 enum ArchiveLoopEntitlementFeature {
@@ -241,8 +242,7 @@ abstract class ArchiveLoopPaywallCopy {
       'before the end of the current period.';
   static const subscriptionCancellation =
       'Manage or cancel your subscription in your Apple ID subscription settings.';
-  static const privacyPolicyUrl =
-      'https://careosapp.co.uk/archiveme-support';
+  static const privacyPolicyUrl = AppConfig.privacyUrl;
   static const privacyPolicyLabel = 'Privacy Policy';
   static const eulaUrl =
       'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';

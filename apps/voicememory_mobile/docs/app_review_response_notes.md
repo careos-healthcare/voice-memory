@@ -44,10 +44,11 @@ information **before purchase**:
 - **Product name:** ArchiveMe Pro
 - **Plans:** Monthly or yearly auto-renewing subscription
 - **Price:** Shown from App Store products when available; otherwise:
-  "Monthly and yearly plans available once App Store products load"
+  "Purchases are not available right now." and "Monthly and yearly plans will
+  appear when App Store products finish loading."
 - **Auto-renewal:** Shown on paywall before purchase
 - **Terms of Use:** https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
-- **Privacy Policy:** https://careosapp.co.uk/archiveme-support
+- **Privacy Policy:** https://careosapp.co.uk/archiveme-privacy
 
 The paywall appears after completing the first activation loop, or when a gated
 Pro feature is accessed, or from Settings → See Pro preview.
@@ -65,6 +66,19 @@ Users can always choose **Type instead** if microphone access is unavailable.
 
 ## Links
 
-- Privacy Policy: https://careosapp.co.uk/archiveme-support
+- Privacy Policy: https://careosapp.co.uk/archiveme-privacy
 - Terms of Use (Apple Standard EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 - Support: https://careosapp.co.uk/archiveme-support
+
+---
+
+## Before resubmitting (maintainer checklist)
+
+1. **App Store Connect** — Privacy Policy URL must match
+   https://careosapp.co.uk/archiveme-privacy (not the support page).
+2. **TestFlight** — Open Settings → See Pro preview (or `/subscription`) and
+   confirm monthly/yearly prices load from App Store products.
+3. **Screenshot** — Regenerate the subscription screenshot from
+   `/subscription-review-preview` after any paywall copy change.
+4. **Reviewer path** — Use App Review Access code **ARCHIVEME-REVIEW-2026** so
+   reviewers can evaluate Pro without purchase.
