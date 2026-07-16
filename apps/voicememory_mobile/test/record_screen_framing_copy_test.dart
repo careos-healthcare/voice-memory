@@ -1557,9 +1557,9 @@ void main() {
         degradedVoicePostSave: true,
       );
 
-      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsNWidgets(2));
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);

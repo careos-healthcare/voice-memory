@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/voice_capture/audio/audio_debug_actions.dart';
@@ -14,7 +13,6 @@ import '../../features/trust/pending_transcript_recovery_copy.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
 import '../../features/transcript_correction/transcript_correction_gate.dart';
 import '../../features/voice_capture/voice_capture_copy.dart';
-import '../../widgets/record/pending_transcript_recovery_prompt.dart';
 import '../../models/journal_entry.dart';
 import '../../widgets/record/entry_importance_button.dart';
 import '../../theme/app_colors.dart';
@@ -72,9 +70,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     if (_isDegraded) {
       return _DegradedTranscriptionCard(
         entry: entry,
-        bodyCopy: degradedBodyCopy ?? VoiceCaptureCopy.transcriptUnavailable,
-        showSilentInputWarning: showSilentInputWarning,
         onAddWhatYouSaid: onAddWhatYouSaid,
+        onRecordAgain: onBackToRecord,
       );
     }
 
@@ -292,26 +289,38 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   }
 }
 
-class _DegradedTranscriptionCard extends StatelessWidget {
+class _DegradedTranscriptionCard extends StatefulWidget {
   const _DegradedTranscriptionCard({
     required this.entry,
-    required this.bodyCopy,
-    this.showSilentInputWarning = false,
     this.onAddWhatYouSaid,
+    this.onRecordAgain,
   });
 
   final JournalEntry entry;
-  final String bodyCopy;
-  final bool showSilentInputWarning;
   final VoidCallback? onAddWhatYouSaid;
+  final VoidCallback? onRecordAgain;
+
+  @override
+  State<_DegradedTranscriptionCard> createState() =>
+      _DegradedTranscriptionCardState();
+}
+
+class _DegradedTranscriptionCardState extends State<_DegradedTranscriptionCard> {
+  bool _moreOptionsExpanded = false;
+
+  String? get _audioPath {
+    final trimmed = widget.entry.localAudioPath?.trim() ?? '';
+    return trimmed.isEmpty ? null : trimmed;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final successStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
+    final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textPrimary,
       height: 1.45,
     );
+    final noteStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('post_save_degraded_transcription_card'),
@@ -321,62 +330,69 @@ class _DegradedTranscriptionCard extends StatelessWidget {
         background: AppColors.backgroundSecondary,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          PendingTranscriptRecoveryPrompt(
-            onAddWhatYouSaid: onAddWhatYouSaid,
-            compact: true,
+          Text(
+            PendingTranscriptRecoveryCopy.postSaveTitle,
+            key: const Key('degraded_transcript_post_save_title'),
+            style: titleStyle,
           ),
-          if (bodyCopy != VoiceCaptureCopy.degradedRecoveryBody &&
-              bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue &&
-              bodyCopy != PendingTranscriptRecoveryCopy.body) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              bodyCopy,
-              key: const Key('post_save_transcription_failed_body'),
-              style: bodyStyle.copyWith(color: AppColors.textSecondary),
-            ),
-          ],
-          if (kDebugMode && showSilentInputWarning) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              VoiceCaptureCopy.silentMicrophoneInputDebugWarning,
-              key: const Key('post_save_silent_input_debug_warning'),
-              style: bodyStyle.copyWith(color: AppColors.textSecondary),
-            ),
-          ],
-          if (kDebugMode && (entry.localAudioPath?.trim().isNotEmpty ?? false)) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            PendingTranscriptRecoveryCopy.postSaveBody,
+            key: const Key('degraded_transcript_post_save_body'),
+            style: bodyStyle,
+          ),
+          if (widget.onAddWhatYouSaid != null) ...[
             const SizedBox(height: AppSpacing.md),
-            _AudioDebugControls(audioPath: entry.localAudioPath!.trim()),
+            FilledButton(
+              key: const Key('pending_transcript_recovery_add_what_you_said'),
+              onPressed: widget.onAddWhatYouSaid,
+              child: Text(PendingTranscriptRecoveryCopy.primaryAction),
+            ),
+          ],
+          if (widget.onRecordAgain != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('post_save_degraded_record_again'),
+              onPressed: widget.onRecordAgain,
+              child: Text(VoiceCaptureCopy.recordAgainCta),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.xs),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('post_save_degraded_more_options'),
+              onPressed: () => setState(
+                () => _moreOptionsExpanded = !_moreOptionsExpanded,
+              ),
+              child: Text(PendingTranscriptRecoveryCopy.moreOptionsLabel),
+            ),
+          ),
+          if (_moreOptionsExpanded) ...[
+            if (_audioPath != null) ...[
+              OutlinedButton(
+                key: const Key('post_save_play_recording'),
+                onPressed: () => AudioDebugActions.playRecording(_audioPath),
+                child: const Text('Play recording'),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              OutlinedButton(
+                key: const Key('post_save_share_audio'),
+                onPressed: () => AudioDebugActions.shareRecording(_audioPath),
+                child: const Text('Share audio file'),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+            Text(
+              PendingTranscriptRecoveryCopy.bluetoothAccessoryNote,
+              key: const Key('post_save_degraded_bluetooth_note'),
+              style: noteStyle,
+            ),
           ],
         ],
       ),
-    );
-  }
-}
-
-class _AudioDebugControls extends StatelessWidget {
-  const _AudioDebugControls({required this.audioPath});
-
-  final String audioPath;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        OutlinedButton(
-          key: const Key('post_save_play_recording_debug'),
-          onPressed: () => AudioDebugActions.playRecording(audioPath),
-          child: const Text('Play recording'),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          key: const Key('post_save_share_audio_debug'),
-          onPressed: () => AudioDebugActions.shareRecording(audioPath),
-          child: const Text('Share audio file'),
-        ),
-      ],
     );
   }
 }

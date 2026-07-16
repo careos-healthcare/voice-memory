@@ -119,9 +119,8 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.lowQualityTranscriptIssue), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
     });
 
     testWidgets('degraded voice capture shows transcription fallback', (
@@ -145,16 +144,20 @@ void main() {
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsNothing);
-      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
       expect(find.byKey(const Key('post_save_type_what_you_said')), findsNothing);
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
-      expect(find.byKey(const Key('post_save_play_recording_debug')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_share_audio_debug')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_play_recording')), findsNothing);
+      expect(find.byKey(const Key('post_save_share_audio')), findsNothing);
+      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('post_save_play_recording')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_share_audio')), findsOneWidget);
     });
 
-    testWidgets('degraded card shows silent input debug warning when flagged', (
+    testWidgets('degraded card keeps bluetooth note behind More options', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -168,6 +171,7 @@ void main() {
                 localAudioPath: '/tmp/audio.m4a',
               ),
               showSilentInputWarning: true,
+              onBackToRecord: () {},
             ),
           ),
         ),
@@ -175,8 +179,18 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(VoiceCaptureCopy.silentMicrophoneInputDebugWarning),
+        find.text(PendingTranscriptRecoveryCopy.bluetoothAccessoryNote),
+        findsNothing,
+      );
+      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.bluetoothAccessoryNote),
         findsOneWidget,
+      );
+      expect(
+        find.text(VoiceCaptureCopy.silentMicrophoneInputDebugWarning),
+        findsNothing,
       );
     });
 

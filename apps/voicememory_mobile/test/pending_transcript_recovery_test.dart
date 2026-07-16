@@ -118,6 +118,7 @@ void main() {
             body: PostSaveRecordedSummaryCard(
               entry: _degradedVoiceEntry(),
               onAddWhatYouSaid: () {},
+              onBackToRecord: () {},
             ),
           ),
         ),
@@ -128,8 +129,8 @@ void main() {
         find.byKey(const Key('post_save_degraded_transcription_card')),
         findsOneWidget,
       );
-      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
       expect(
         find.text(PendingTranscriptRecoveryCopy.primaryAction),
         findsOneWidget,
