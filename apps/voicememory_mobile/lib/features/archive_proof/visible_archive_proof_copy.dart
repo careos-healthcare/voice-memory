@@ -61,6 +61,18 @@ abstract final class VisibleArchiveProofCopy {
   static const repeatPostSaveBody =
       'ArchiveMe can now start comparing this pattern.';
 
+  // Archive tab — first comparison state (two eligible moments).
+  static const archiveFirstComparisonTitle = 'Something came back.';
+
+  static const archiveFirstComparisonBody =
+      'ArchiveMe found a pattern across your saved moments.';
+
+  static const archiveFirstComparisonWhatChangedLabel = 'What changed';
+
+  static const archiveFirstComparisonWhyMattersLabel = 'Why this matters';
+
+  static const archiveFirstComparisonProHint = 'Pro keeps the longer trail.';
+
   // Archive Home / Patterns one-entry surfaces keep the started framing.
   static const firstSaveTitle = 'Your archive has started.';
 

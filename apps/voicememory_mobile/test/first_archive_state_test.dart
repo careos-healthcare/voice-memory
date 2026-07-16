@@ -51,6 +51,17 @@ Future<void> _resetServices() async {
   );
 }
 
+Future<void> _pumpUntil(
+  WidgetTester tester,
+  Finder finder, {
+  int maxFrames = 50,
+}) async {
+  for (var i = 0; i < maxFrames; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+}
+
 void main() {
   setUp(() async {
     await _resetServices();
@@ -536,6 +547,104 @@ void main() {
         find.byKey(const Key('more_archive_tools_expanded_content')),
         findsNothing,
       );
+    });
+  });
+
+  group('ArchiveBeliefScreen — two entries first comparison', () {
+    testWidgets('grounded repeat shows calm first-comparison card', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        );
+      });
+
+      await tester.binding.setSurfaceSize(const Size(390, 2200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: ArchiveBeliefScreen(key: UniqueKey()),
+        ),
+      );
+      await tester.pump();
+      await _pumpUntil(
+        tester,
+        find.byKey(const Key('archive_first_comparison_card')),
+      );
+
+      expect(find.byKey(const Key('archive_first_comparison_card')), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.archiveFirstComparisonTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.archiveFirstComparisonBody),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('archive_first_comparison_view_evidence_cta')), findsOneWidget);
+      expect(find.byKey(const Key('archive_first_comparison_add_moment_cta')), findsOneWidget);
+      expect(find.byKey(const Key('early_first_signal_card_twoEntryFirstSignal')), findsNothing);
+      expect(find.byKey(const Key('early_first_signal_card_twoEntryNoPattern')), findsNothing);
+      expect(find.text(ArchiveHomeSummaryCopy.beliefLabel), findsNothing);
+      expect(find.text('Add a reflection'), findsNothing);
+    });
+
+    testWidgets('unrelated two entries keep compare framing without early signal clutter', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
+        );
+      });
+
+      await tester.binding.setSurfaceSize(const Size(390, 2200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: ArchiveBeliefScreen(key: UniqueKey()),
+        ),
+      );
+      await tester.pump();
+      await _pumpUntil(
+        tester,
+        find.byKey(const Key('archive_first_comparison_card')),
+      );
+
+      expect(find.byKey(const Key('archive_first_comparison_card')), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.twoEntryCompareTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.twoEntryBodyUngrounded),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyFirstSignalCopy.twoEntryNoPatternTitle), findsNothing);
+      expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
     });
   });
 

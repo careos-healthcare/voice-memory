@@ -458,7 +458,8 @@ import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
-import '../widgets/archive/archive_home_summary_card.dart';
+import '../features/archive_proof/archive_first_comparison_display.dart';
+import '../features/archive_proof/archive_first_comparison_ui_gates.dart';
 import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/archive/archive_workspace_section_heading.dart';
@@ -468,6 +469,8 @@ import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
+import '../widgets/archive/archive_first_comparison_card.dart';
+import '../widgets/archive/archive_home_summary_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -548,7 +551,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       return;
     }
     final peek = peekJournalEntriesSync(AppServices.instance.journalStore);
-    if (peek.isEmpty || peek.length == 1) {
+    if (peek.isEmpty || peek.length <= 2) {
       _entries = peek;
       _loading = false;
     }
@@ -1271,6 +1274,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
   bool get _suppressEarlyArchiveBeliefProof {
     if (!_patternsFirstThreeStack) return false;
+    if (ArchiveFirstComparisonUiGates.showCalmFirstComparisonCard(
+      eligibleEntryCount: ArchiveEvidenceGuard.eligibleReflectionCount(_entries),
+    )) {
+      return true;
+    }
     if (_entries.length < FirstThreeSessionGates.minEntriesForRepeatSurface) {
       return true;
     }
@@ -5465,8 +5473,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ConfirmedRepeatBetaFeedbackGates.suppressInlineAccuracyFeedback(
         state: ConfirmedRepeatBetaFeedbackStore.cached,
       );
+      final eligibleArchiveEntryCount =
+          ArchiveEvidenceGuard.eligibleReflectionCount(_entries);
+      final showArchiveFirstComparisonCard =
+          ArchiveFirstComparisonUiGates.showCalmFirstComparisonCard(
+        eligibleEntryCount: eligibleArchiveEntryCount,
+      );
+      final archiveFirstComparisonDisplay = showArchiveFirstComparisonCard
+          ? ArchiveFirstComparisonDisplay.resolve(_entries)
+          : const ArchiveFirstComparisonDisplay.hidden();
       final suppressArchiveHomeEarlyProofDuplicate =
-          showEarlyEvidenceTimeline || earlyFirstSignal != null;
+          showEarlyEvidenceTimeline ||
+              earlyFirstSignal != null ||
+              showArchiveFirstComparisonCard;
       final groundedSecondSessionRepeat =
           _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
@@ -5827,8 +5846,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                if (showArchiveFirstComparisonCard &&
+                    archiveFirstComparisonDisplay.show) ...[
+                  ArchiveFirstComparisonCard(
+                    display: archiveFirstComparisonDisplay,
+                    onViewEvidence: () =>
+                        context.push(BeliefEvidenceNavigation.route),
+                    onAddAnotherMoment: _goToRecord,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (!showEarlyEvidenceTimeline &&
                     earlyFirstSignal != null &&
+                    !showArchiveFirstComparisonCard &&
                     proofSurfaceLayout.effectiveConfirmedRepeatCardVisible) ...[
                   EarlyFirstSignalCard(
                     signal: earlyFirstSignal!,
@@ -6229,6 +6259,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     secondSessionPayoff != null &&
+                    !showArchiveFirstComparisonCard &&
                     earlyFirstSignal?.kind !=
                         EarlyFirstSignalKind.twoEntryFirstSignal) ...[
                   SecondSessionPayoffCard(
@@ -6251,6 +6282,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     secondSessionComparison?.hasEnoughData == true &&
+                    !showArchiveFirstComparisonCard &&
                     !ArchiveBeliefCorrectionStore.isDismissed(
                       'second_session_repeat',
                     )) ...[
@@ -6276,12 +6308,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                ..._buildArchiveIntelligenceWidgets(
-                  belief: archiveBeliefThread,
-                  weekly: weeklyWhatChanged,
-                  ohWow: ohWowMoment,
-                  suppressWhenPostProofShown: showPatternsPostProofProBridge,
-                ),
+                if (!showArchiveFirstComparisonCard)
+                  ..._buildArchiveIntelligenceWidgets(
+                    belief: archiveBeliefThread,
+                    weekly: weeklyWhatChanged,
+                    ohWow: ohWowMoment,
+                    suppressWhenPostProofShown: showPatternsPostProofProBridge,
+                  ),
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     _firstLoopPhase != null &&
                     _firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
@@ -6401,10 +6434,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         _signalJourney != null)) ...[
                   ..._signalArchiveSurfaces(),
                 ],
-                const PatternsComeBackTomorrowCard(),
-                const SizedBox(height: AppSpacing.xl),
-                const ArchiveRecordEvidenceCta(),
-                const SizedBox(height: AppSpacing.lg),
+                if (!showArchiveFirstComparisonCard) ...[
+                  const PatternsComeBackTomorrowCard(),
+                  const SizedBox(height: AppSpacing.xl),
+                  const ArchiveRecordEvidenceCta(),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
               ],
             ),
           ),
