@@ -174,20 +174,21 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.text(VisibleArchiveProofCopy.firstSaveTitle), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveSecondary), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance), findsOneWidget);
       expect(find.textContaining('compare what repeats'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
-        VisibleArchiveProofCopy.firstSaveTitle,
-        VisibleArchiveProofCopy.firstSaveBody,
-        VisibleArchiveProofCopy.firstSaveSecondary,
+        VisibleArchiveProofCopy.firstSavePostSaveTitle,
+        VisibleArchiveProofCopy.firstSavePostSaveBody,
+        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
       ]);
     });
   });

@@ -24,15 +24,15 @@ void main() {
     test('first save copy is cautious and does not claim a pattern', () {
       expect(
         FirstThreeSessionCopy.session1Title,
-        VisibleArchiveProofCopy.firstSaveTitle,
+        VisibleArchiveProofCopy.firstSavePostSaveTitle,
       );
       expect(
         FirstThreeSessionCopy.session1Body,
-        contains('first piece of evidence'),
+        contains('another real moment'),
       );
       expect(
         FirstThreeSessionCopy.session1EnoughForToday,
-        contains('compare what repeats'),
+        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
       );
       expect(
         FirstThreeSessionCopy.session1Title.toLowerCase(),
@@ -69,15 +69,16 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),
       );
 
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveTitle), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveBody), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveSecondary), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveBody), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveViewArchiveCta), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
@@ -110,7 +111,7 @@ void main() {
       expect(find.textContaining('pattern found'), findsNothing);
     });
 
-    testWidgets('patterns one-entry shows evidence line and add another CTA', (
+    testWidgets('patterns one-entry shows calm started copy and add another CTA', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -133,10 +134,11 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(VisibleArchiveProofCopy.patternsOneEntryEvidenceRow),
+        find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance),
         findsOneWidget,
       );
       expect(find.text(VisibleArchiveProofCopy.patternsOneEntryCta), findsOneWidget);
+      expect(find.text('Evidence'), findsNothing);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 

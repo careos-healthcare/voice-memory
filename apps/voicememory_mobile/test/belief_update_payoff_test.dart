@@ -414,21 +414,8 @@ void main() {
       );
 
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
-      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
-    });
-
-    testWidgets('four repeat entries prefer discovery over belief card', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: _fourRepeatCapacityEntries(),
-      );
-
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
+      expect(find.byKey(const Key('repeat_post_save_card')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
       expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
       expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
     });

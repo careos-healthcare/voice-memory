@@ -271,6 +271,7 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () => viewed = true,
               onRecordAnother: () => recorded = true,
+              onDoneForToday: () {},
             ),
           ),
         ),
@@ -308,6 +309,7 @@ void main() {
               body: FirstSaveEvidenceCard(
                 onViewArchive: () => context.go('/archive-belief'),
                 onRecordAnother: () {},
+                onDoneForToday: () {},
               ),
             ),
           ),

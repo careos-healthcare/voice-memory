@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -101,14 +102,14 @@ void main() {
     });
 
     test('first save evidence card copy is exact', () {
-      expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
+      expect(RecordReturnProCopy.evidenceTitle, 'Saved.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('first piece of evidence'),
+        VisibleArchiveProofCopy.firstSavePostSaveBody,
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('compare what repeats'),
+        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
@@ -327,15 +328,19 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(find.textContaining('first piece of evidence'), findsOneWidget);
-      expect(find.textContaining('compare what repeats'), findsOneWidget);
+      expect(find.text('Saved.'), findsOneWidget);
+      expect(find.textContaining('another real moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
+        findsOneWidget,
+      );
       expect(
         eventsNamed(ActivationFunnelAnalytics.firstSaveEvidenceSeen),
         isNotEmpty,
@@ -352,6 +357,7 @@ void main() {
               body: FirstSaveEvidenceCard(
                 onViewArchive: () => context.go('/archive-belief'),
                 onRecordAnother: () {},
+                onDoneForToday: () {},
               ),
             ),
           ),
@@ -385,6 +391,7 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),
@@ -550,6 +557,7 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),

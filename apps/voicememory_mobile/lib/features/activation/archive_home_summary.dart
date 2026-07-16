@@ -129,12 +129,7 @@ abstract final class ArchiveHomeSummaryEngine {
         stage: ArchiveHomeStage.one,
         title: ArchiveHomeSummaryCopy.oneTitle,
         body: VisibleArchiveProofCopy.archiveHomeOneBody,
-        footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-        currentBeliefLine: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
-        whatChangedLine: VisibleArchiveProofCopy.archiveHomeNotEnoughChanged,
-        evidenceRows: const [VisibleArchiveProofCopy.patternsOneEntryEvidenceRow],
-        nextActionLine: _nextActionLine(entries) ??
-            VisibleArchiveProofCopy.secondMomentWhyLine,
+        footnoteLine: VisibleArchiveProofCopy.patternsOneEntryReassurance,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryAction: ArchiveHomeAction.addMoment,
         suppressDuplicatePayoffCards: true,

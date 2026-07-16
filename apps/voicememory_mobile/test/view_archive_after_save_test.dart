@@ -93,6 +93,7 @@ void main() {
                 body: FirstSaveEvidenceCard(
                   onViewArchive: () => context.go('/archive-belief'),
                   onRecordAnother: () {},
+                  onDoneForToday: () {},
                 ),
               ),
             ),

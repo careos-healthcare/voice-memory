@@ -143,7 +143,7 @@ void main() {
         'This moment is saved, but ArchiveMe cannot compare it yet.',
       );
       expect(PendingTranscriptRecoveryCopy.primaryAction, 'Add what you said');
-      expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
+      expect(RecordReturnProCopy.evidenceTitle, 'Saved.');
     });
   });
 }

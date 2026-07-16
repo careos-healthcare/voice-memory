@@ -101,16 +101,17 @@ void main() {
       _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
     });
 
-    test('1 entry shows one-piece evidence without repeat claims', () {
+    test('1 entry shows calm started copy without proof preview rows', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
       expect(summary.stage, ArchiveHomeStage.one);
       expect(summary.title, VisibleArchiveProofCopy.archiveHomeOneTitle);
       expect(summary.body, VisibleArchiveProofCopy.archiveHomeOneBody);
-      expect(summary.body.toLowerCase(), isNot(contains('repeat')));
-      expect(summary.body.toLowerCase(), isNot(contains('pattern')));
-      expect(summary.footnoteLine, VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine);
-      expect(summary.evidenceRows, contains('1 saved moment'));
-      expect(summary.nextActionLine, VisibleArchiveProofCopy.secondMomentWhyLine);
+      expect(summary.body, contains('another real moment'));
+      expect(summary.footnoteLine, VisibleArchiveProofCopy.patternsOneEntryReassurance);
+      expect(summary.currentBeliefLine, isNull);
+      expect(summary.whatChangedLine, isNull);
+      expect(summary.evidenceRows, isEmpty);
+      expect(summary.nextActionLine, isNull);
       expect(summary.primaryAction, ArchiveHomeAction.addMoment);
       expect(summary.suppressDuplicatePayoffCards, isTrue);
     });
@@ -207,8 +208,8 @@ void main() {
         if (count == 1) {
           expect(
             visible,
-            anyElement(contains('first piece of evidence')),
-            reason: 'count $count should stay evidence-first',
+            anyElement(contains('another real moment')),
+            reason: 'count $count should explain the second-moment threshold',
           );
         }
         if (count == 2) {
@@ -290,6 +291,7 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () => viewedArchive = true,
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),

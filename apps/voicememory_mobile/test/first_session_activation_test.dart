@@ -768,19 +768,21 @@ void main() {
       }
     }
 
-    testWidgets('first save post-save shows focused archive started stack', (
+    testWidgets('first save post-save shows one calm saved card', (
       tester,
     ) async {
       await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
 
-      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
-      expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.doneCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsNothing);
       expect(tester.takeException(), isNull);
     });
 

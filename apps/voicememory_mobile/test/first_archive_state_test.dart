@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
+import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -68,14 +69,14 @@ void main() {
       );
     });
 
-    test('one-entry copy confirms heard receipt without pattern claim', () {
+    test('one-entry copy confirms archive started without pattern claim', () {
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedTitle,
-        EarlyFirstSignalCopy.oneEntryTitle,
+        VisibleArchiveProofCopy.patternsOneEntryTitle,
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        EarlyFirstSignalCopy.oneEntryBody,
+        VisibleArchiveProofCopy.patternsOneEntryBody,
       );
       expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add one more moment');
     });
@@ -171,11 +172,13 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(VisibleArchiveProofCopy.patternsOneEntryEvidenceRow),
+        find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance),
         findsOneWidget,
       );
-      expect(find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBadge), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBadge), findsNothing);
+      expect(find.text('Evidence'), findsNothing);
+      expect(find.text('Pattern your archive is watching'), findsNothing);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
@@ -458,6 +461,9 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance), findsOneWidget);
+      expect(find.text(ArchiveHomeSummaryCopy.beliefLabel), findsNothing);
+      expect(find.text(ArchiveHomeSummaryCopy.evidenceLabel), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
     });

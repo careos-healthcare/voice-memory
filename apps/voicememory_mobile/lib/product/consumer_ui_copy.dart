@@ -179,11 +179,11 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptyPageBody =
       VisibleArchiveProofCopy.patternsMindMapEmptyBody;
   static const String patternsFirstEntrySavedTitle =
-      EarlyFirstSignalCopy.oneEntryTitle;
+      VisibleArchiveProofCopy.patternsOneEntryTitle;
   static const String patternsFirstEntrySavedBody =
-      EarlyFirstSignalCopy.oneEntryBody;
+      VisibleArchiveProofCopy.patternsOneEntryBody;
   static const String patternsFirstEntrySavedHelper =
-      'Preview — not a conclusion yet';
+      VisibleArchiveProofCopy.patternsOneEntryReassurance;
   static const String patternsFirstEntrySavedCta = 'Add one more moment';
   static const String patternsFirstEntryViewSavedCta = 'View saved entry';
 

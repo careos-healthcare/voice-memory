@@ -79,14 +79,14 @@ void main() {
 
   group('FirstThreeSessionCopy', () {
     test('session 1 lines match product loop', () {
-      expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
+      expect(RecordReturnProCopy.evidenceTitle, 'Saved.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('first piece of evidence'),
+        contains('another real moment'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('compare what repeats'),
+        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
@@ -229,17 +229,22 @@ void main() {
             body: FirstSaveEvidenceCard(
               onViewArchive: () {},
               onRecordAnother: () {},
+              onDoneForToday: () {},
             ),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(find.textContaining('first piece of evidence'), findsOneWidget);
-      expect(find.textContaining('compare what repeats'), findsOneWidget);
+      expect(find.text('Saved.'), findsOneWidget);
+      expect(find.textContaining('another real moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
+        findsOneWidget,
+      );
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Done for today'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
       expect(find.text('ArchiveMe found a possible repeat'), findsNothing);
     });

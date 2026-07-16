@@ -929,44 +929,55 @@ void main() {
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
 
-    testWidgets('first-entry post-save shows focused receipt and archive card', (
+    testWidgets('first-entry post-save shows one calm saved card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.done);
 
-      expect(find.text(VoiceCaptureCopy.recordingSavedTitle), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.firstSaveReceiptNote), findsOneWidget);
-      expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
-      expect(find.text(RecordReturnProCopy.evidenceBody), findsOneWidget);
-      expect(find.text(RecordReturnProCopy.evidenceSecondLine), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveBody),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
+        findsOneWidget,
+      );
       expect(find.text(RecordReturnProCopy.evidenceViewArchive), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
       expect(find.text(EarlyArchiveReturnReminderCopy.title), findsNothing);
       expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
       expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(
         find.byKey(const Key('return_tomorrow_cue_card_after_first_moment')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(ReturnTomorrowCueCopy.afterFirstMomentTitle),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(ReturnTomorrowCueCopy.afterFirstMomentBody),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
         findsNothing,
       );
       expect(find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(find.text('Done'), findsNothing);
+      expect(find.text('Record another'), findsNothing);
     });
 
-    testWidgets('entry 1 post-save with phrase shows come back tomorrow v2 card', (
+    testWidgets('entry 1 post-save hides competing return cards on first save', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -1014,24 +1025,90 @@ void main() {
 
       expect(
         find.text(ComeBackTomorrowV2Copy.postSaveTitle),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(ComeBackTomorrowV2Copy.postSaveBody),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(ComeBackTomorrowV2Copy.postSaveFooter),
-        findsOneWidget,
+        findsNothing,
       );
-      expect(find.byKey(const Key('come_back_tomorrow_card')), findsOneWidget);
+      expect(find.byKey(const Key('come_back_tomorrow_card')), findsNothing);
       expect(
         find.text(PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback),
         findsNothing,
       );
     });
 
-    testWidgets('entry 2 related post-save shows come back tomorrow v2 card', (
+    testWidgets('repeat-detected post-save shows calm repeat proof card', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        for (final entry in _confirmedRepeatJournalEntries(4)) {
+          await AppServices.instance.journalStore.save(entry);
+        }
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: _confirmedRepeatJournalEntries(4),
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('repeat_post_save_card')), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.repeatPostSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.repeatPostSaveRepeatLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.repeatPostSaveBody),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('repeat_post_save_view_evidence_cta')), findsOneWidget);
+      expect(find.byKey(const Key('repeat_post_save_add_one_more_moment_cta')), findsOneWidget);
+      expect(find.byKey(const Key('repeat_post_save_done_for_today_cta')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsNothing);
+      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
+      expect(
+        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('come_back_tomorrow_card')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
+        findsNothing,
+      );
+      expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsNothing);
+    });
+
+    testWidgets('entry 2 related post-save still shows come back tomorrow v2', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -1088,20 +1165,12 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
+      expect(find.byKey(const Key('repeat_post_save_card')), findsNothing);
       expect(
         find.text(ComeBackTomorrowV2Copy.postSaveTitle),
         findsOneWidget,
       );
-      expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveBody),
-        findsOneWidget,
-      );
       expect(find.byKey(const Key('come_back_tomorrow_card')), findsOneWidget);
-      expect(
-        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
-        findsNothing,
-      );
-      expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsNothing);
     });
 
     testWidgets('entry 2 unrelated post-save does not claim repeat', (
@@ -1392,14 +1461,15 @@ void main() {
       expect(find.byKey(const Key('first_proof_payoff_card')), findsNothing);
     });
 
-    testWidgets('post-save success shows Done and Record another only', (
+    testWidgets('first-entry post-save keeps actions on the saved card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.done);
 
-      expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.doneCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsNothing);
       expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
       expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);

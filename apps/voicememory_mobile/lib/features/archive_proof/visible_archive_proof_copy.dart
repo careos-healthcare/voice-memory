@@ -42,7 +42,26 @@ abstract final class VisibleArchiveProofCopy {
   static const recordHeroChipSoftened = 'What softened';
   static const recordHeroChipChanged = 'What changed';
 
-  // First save on Record screen.
+  // First save on Record screen — one calm post-save card.
+  static const firstSavePostSaveTitle = 'Saved.';
+
+  static const firstSavePostSaveBody =
+      'Your archive has started. ArchiveMe needs another real moment before it can compare what repeats.';
+
+  static const firstSavePostSaveReassurance =
+      'You do not need to keep working on this now.';
+
+  static const firstSaveDoneForTodayCta = 'Done for today';
+
+  // Repeat-detected post-save — calm second-save proof card.
+  static const repeatPostSaveTitle = 'Saved.';
+
+  static const repeatPostSaveRepeatLabel = 'This may be a repeat:';
+
+  static const repeatPostSaveBody =
+      'ArchiveMe can now start comparing this pattern.';
+
+  // Archive Home / Patterns one-entry surfaces keep the started framing.
   static const firstSaveTitle = 'Your archive has started.';
 
   static const firstSaveBody = 'This is the first piece of evidence.';
@@ -101,17 +120,19 @@ abstract final class VisibleArchiveProofCopy {
 
   static const patternsEmptyPreviewCta = patternsMindMapEmptyPrimaryCta;
 
-  // Patterns one-entry state.
-  static const patternsOneEntryTitle = EarlyFirstSignalCopy.oneEntryTitle;
+  // Patterns one-entry state — calm framing aligned with first-save post-save.
+  static const patternsOneEntryTitle = firstSaveTitle;
 
-  static const patternsOneEntryBody = EarlyFirstSignalCopy.oneEntryBody;
+  static const patternsOneEntryBody = firstSavePostSaveBody;
+
+  static const patternsOneEntryReassurance = firstSavePostSaveReassurance;
 
   static const patternsOneEntryBeliefRow = 'Not enough evidence yet';
   static const patternsOneEntryEvidenceRow = '1 saved moment';
   static const patternsOneEntryChangedRow =
       'A second moment shows whether the same thread returns.';
 
-  static const patternsOneEntryCta = 'Add one more moment';
+  static const patternsOneEntryCta = firstSavePrimaryCta;
 
   // Early repeat / two-entry payoff (cautious).
   static const earlyRepeatTitle =
@@ -402,13 +423,13 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveHomeEmptyBody = recordHeroBody;
 
-  static const archiveHomeOneBody = firstSaveBody;
+  static const archiveHomeOneBody = firstSavePostSaveBody;
 
   static const archiveHomeRecordCta = 'Record a moment';
 
   static const archiveHomeTypeInsteadCta = typeInsteadCta;
 
-  static const archiveHomeOneTitle = EarlyFirstSignalCopy.oneEntryTitle;
+  static const archiveHomeOneTitle = firstSaveTitle;
 
   static const archiveHomeBeliefLabel = 'Pattern your archive is watching';
 

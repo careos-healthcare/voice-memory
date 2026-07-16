@@ -551,6 +551,8 @@ import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../features/post_save/post_save_archive_hierarchy.dart';
+import '../features/post_save/post_save_repeat_ui_gates.dart';
+import '../features/archive_thought_map/archive_thought_map_engine.dart';
 import '../features/post_save/post_save_completion_copy_gates.dart';
 import '../features/record/record_home_surface_policy.dart';
 import '../widgets/record/post_save_focused_actions_bar.dart';
@@ -637,6 +639,7 @@ import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
 import '../features/activation/capture_context_tags.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
+import '../widgets/onboarding/repeat_post_save_card.dart';
 import '../widgets/record/first_entry_saved_receipt_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
@@ -7337,6 +7340,7 @@ class _RecordScreenState extends State<RecordScreen> {
           )
         : null;
     var showComeBackTomorrowV2PostSave =
+        !suppressNoisyFirstSaveCards &&
         ComeBackTomorrowV2Gates.shouldShowPostSave(
       isPostSaveDone: ui == RecordUiState.done,
       isDegradedPostSave: postSaveDegradedForReturnCue,
@@ -7775,7 +7779,8 @@ class _RecordScreenState extends State<RecordScreen> {
             ),
           )
         : null;
-    final showReturnTomorrowCuePostSave = !showFirstProofPayoff &&
+    final showReturnTomorrowCuePostSave = !suppressNoisyFirstSaveCards &&
+        !showFirstProofPayoff &&
         !showComeBackTomorrowV2PostSave &&
         ReturnTomorrowCueGates.shouldShowPostSave(
       isPostSaveDone: ui == RecordUiState.done,
@@ -7795,7 +7800,8 @@ class _RecordScreenState extends State<RecordScreen> {
       progress: firstWeekProgressPostSave,
       showReturnTomorrowCue: showReturnTomorrowCuePostSave,
     );
-    final showPostSaveReturnHandoff = PostSaveReturnHandoffGates.shouldShow(
+    final showPostSaveReturnHandoff = !suppressNoisyFirstSaveCards &&
+        PostSaveReturnHandoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
       isDegradedPostSave: postSaveDegradedForReturnCue,
@@ -7846,6 +7852,19 @@ class _RecordScreenState extends State<RecordScreen> {
             firstProofUnlocked: showFirstProofMoment,
           )
         : null;
+    final suppressNoisyRepeatPostSaveCards =
+        PostSaveRepeatUiGates.suppressNoisyRepeatPostSaveCards(
+          suppressNoisyFirstSaveCards: suppressNoisyFirstSaveCards,
+          showFirstProofMoment: showFirstProofMoment,
+          postSaveArchiveKind: postSaveArchiveHierarchy?.kind,
+          mirror: postSaveDailyMirror,
+        );
+    final repeatPostSaveThoughtMapPreview = suppressNoisyRepeatPostSaveCards
+        ? const ArchiveThoughtMapEngine().build(entriesAfterSave)
+        : null;
+    if (suppressNoisyRepeatPostSaveCards) {
+      showComeBackTomorrowV2PostSave = false;
+    }
     final returningUserToday = ui == RecordUiState.ready &&
             _journalEntryCountReady
         ? ReturningUserTodayEngine.build(entries: _journalEntries)
@@ -9873,7 +9892,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                       if (ui == RecordUiState.done &&
                           entriesAfterSave.isNotEmpty) ...[
-                        if (!suppressNoisyFirstSaveCards) ...[
+                        if (!suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           if (!VoiceCaptureQuality.isDegradedVoiceCapture(
                             entriesAfterSave.first,
                           )) ...[
@@ -10448,6 +10468,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (postSaveArchiveHierarchy != null &&
                             postSaveArchiveHierarchy.showFocusedActionsBar &&
                             !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
                             !showReturnCheckPayoff &&
@@ -10461,7 +10482,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (returnLoopPayoff != null &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           DayTwoReturnLoopCard(
                             payoff: returnLoopPayoff,
@@ -10512,18 +10534,44 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         // Record → Return → Pro: evidence, return cue,
                         // Pro bridge — after the save succeeded, never blocking.
+                        if (suppressNoisyRepeatPostSaveCards &&
+                            postSaveDailyMirror != null &&
+                            entriesAfterSave.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          RepeatPostSaveCard(
+                            entry: entriesAfterSave.first,
+                            allEntries: entriesAfterSave,
+                            mirror: postSaveDailyMirror,
+                            onViewEvidence: () =>
+                                context.push(BeliefEvidenceNavigation.route),
+                            onAddOneMoreMoment: _goToRecordTab,
+                            onDoneForToday: _resetPostSaveToReady,
+                            onCorrectTranscript:
+                                _lastSavedEntry != null &&
+                                    !_lastSavedEntryIsDegraded &&
+                                    TranscriptCorrectionGate.entryAllowsCorrection(
+                                      _lastSavedEntry!,
+                                    )
+                                ? () => unawaited(
+                                      _openCorrectTranscriptForEntry(
+                                        _lastSavedEntry!,
+                                      ),
+                                    )
+                                : null,
+                            onViewThoughtMap:
+                                repeatPostSaveThoughtMapPreview?.shouldShow ==
+                                        true
+                                    ? () => context.go('/archive-belief')
+                                    : null,
+                          ),
+                        ],
                         if (justSavedFirstEntry && entriesAfterSave.isNotEmpty) ...[
-                          if (!VoiceCaptureQuality.isDegradedVoiceCapture(
-                            entriesAfterSave.first,
-                          )) ...[
-                            const SizedBox(height: 16),
-                            const FirstEntrySavedReceiptCard(),
-                          ],
                           const SizedBox(height: 16),
                           FirstSaveEvidenceCard(
                             onViewArchive: () => context.go('/archive-belief'),
                             onRecordAnother: () =>
                                 unawaited(_onRecordPressed(source: 'main')),
+                            onDoneForToday: _resetPostSaveToReady,
                           ),
                           if (_recordReturnCueVisible &&
                               _journalEntryCount != 1 &&
@@ -10555,7 +10603,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ],
                         ],
                         if (_saveReceipt != null &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           StartHereSaveReceiptCard(
                             receipt: _saveReceipt!,
@@ -10563,7 +10612,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                 setState(() => _saveReceipt = null),
                           ),
                         ] else if (_suggestionProNudgeSource != null &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           _SuggestionProNudgeCard(
                             onUnlock: () {
@@ -10584,7 +10634,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         if (_doneForTodayReceipt != null &&
                             _doneForTodayReceipt!.hasReceipt &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           DoneForTodayReceiptCard(
                             receipt: showFirstProofMoment
@@ -10640,7 +10691,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                   _doneForTodayReceipt != null &&
                                   _doneForTodayReceipt!.hasReceipt,
                               suppressNoisyFirstSaveCards:
-                                  suppressNoisyFirstSaveCards,
+                                  suppressNoisyFirstSaveCards ||
+                                  suppressNoisyRepeatPostSaveCards,
                             )) ...[
                           const SizedBox(height: 16),
                           ArchiveProofCounterCard(
@@ -10649,13 +10701,15 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         if (shareableProof != null &&
                             shareableProof.hasProof &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           ShareableArchiveProofCard(proof: shareableProof),
                         ],
                         if (_valueMomentBridge != null &&
                             _valueMomentBridge!.show &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           ValueMomentProBridge(
                             bridge: _valueMomentBridge!,
@@ -10677,7 +10731,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (_showEvidenceContextTag &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           CaptureContextTagCard(
                             onSaveTag: _saveEvidenceContextTag,
@@ -10686,7 +10741,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (stack.showInputQualityCoach &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           InputQualityCoachCard(
                             result: _inputQuality!,
@@ -10699,7 +10755,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (!stack.showInputQualityCoach &&
                             stack.showCompletedResult &&
                             _returnDayJustClosed &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           ReturnDayClosedCard(
                             resultHeadline:
@@ -10722,7 +10779,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ],
                         ] else if (!stack.showInputQualityCoach &&
                             stack.showCompletedResult &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards) ...[
                           const SizedBox(height: 16),
                           CheckInCompletedCard(
                             checkIn: _completedCheckInToday!,
@@ -10882,6 +10940,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             _tomorrowReturnLoop != null &&
                             !_returnDayJustClosed &&
                             !suppressNoisyFirstSaveCards &&
+                            !suppressNoisyRepeatPostSaveCards &&
                             !suppressEarlyPatternClaimCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
@@ -11196,6 +11255,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showComeBackTomorrowV2PostSave &&
+                        !suppressNoisyRepeatPostSaveCards &&
                         comeBackTomorrowV2PostSaveWatch != null) ...[
                       ComeBackTomorrowCard(
                         watch: comeBackTomorrowV2PostSaveWatch,
@@ -11204,6 +11264,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 16),
                     ],
                     if (showReturnTomorrowCuePostSave &&
+                        !suppressNoisyRepeatPostSaveCards &&
                         returnTomorrowCuePostSave != null) ...[
                       ReturnTomorrowCueCard(
                         cue: returnTomorrowCuePostSave,
@@ -11213,6 +11274,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 16),
                     ],
                     if (showPostSaveReturnHandoff &&
+                        !suppressNoisyRepeatPostSaveCards &&
                         postSaveReturnHandoffCandidate != null) ...[
                       PostSaveReturnHandoffCard(
                         handoff: postSaveReturnHandoffCandidate,
@@ -11227,7 +11289,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       localSaveTitle: localSaveTitle,
                       selectedPrompt: _selectedPromptLine,
                       suppressDuplicateRecordCtas:
-                          stack.suppressDuplicateRecordCtas,
+                          stack.suppressDuplicateRecordCtas ||
+                          suppressNoisyFirstSaveCards ||
+                          suppressNoisyRepeatPostSaveCards,
                       policyMicPhase: policyMic,
                       policyUserDenied: policyUserDenied,
                       recordHomeSurface: recordHomeSurface,
@@ -11755,7 +11819,9 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         );
       } else if (policy.state == RecordCtaPolicyState.postSaveSuccess) {
-        actions.addAll(_buildPolicyPrimarySecondaryButtons(policy));
+        if (!suppressDuplicateRecordCtas) {
+          actions.addAll(_buildPolicyPrimarySecondaryButtons(policy));
+        }
       }
     }
     if (ui == RecordUiState.error) {

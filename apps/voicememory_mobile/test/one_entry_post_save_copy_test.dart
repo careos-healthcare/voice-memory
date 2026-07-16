@@ -87,14 +87,14 @@ void main() {
       expect(proof.hasProof, isFalse);
     });
 
-    test('first-save evidence copy avoids premature pattern claims', () {
+    test('first-save evidence copy stays cautious without pattern claims', () {
       expect(
         RecordReturnProCopy.evidenceBody,
-        isNot(contains('what repeats')),
+        contains('compare what repeats'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('compare what repeats'),
+        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
       );
       _expectNoBannedOneEntryCopy([
         RecordReturnProCopy.evidenceBody,
@@ -149,8 +149,8 @@ void main() {
                   FirstSaveEvidenceCard(
                     onViewArchive: () {},
                     onRecordAnother: () {},
+                    onDoneForToday: () {},
                   ),
-                  DoneForTodayReceiptCard(receipt: doneReceipt),
                 ],
               ),
             ),
@@ -161,7 +161,7 @@ void main() {
 
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
       expect(
-        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
         findsOneWidget,
       );
       expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);

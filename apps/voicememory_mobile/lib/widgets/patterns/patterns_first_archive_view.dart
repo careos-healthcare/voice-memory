@@ -5,12 +5,14 @@ import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import '../../features/archive_proof/visible_archive_proof_copy.dart';
 import '../../models/journal_entry.dart';
+import '../../product/consumer_ui_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../../theme/voicememory_colors.dart';
 
-/// Patterns tab — exactly one saved entry. Confirms the archive started and
-/// nudges a second entry without zero-entry upload copy.
+/// Patterns tab — exactly one saved entry. One calm card: archive started,
+/// needs another moment, optional view of the saved entry.
 class PatternsFirstArchiveView extends StatelessWidget {
   const PatternsFirstArchiveView({
     super.key,
@@ -24,13 +26,12 @@ class PatternsFirstArchiveView extends StatelessWidget {
   /// When set, shows a secondary action to open the saved entry detail.
   final String? savedEntryId;
 
-  /// Retained for callers that pass journal entries; the one-entry preview
-  /// card is self-contained and does not duplicate the belief proof layer.
+  /// Retained for callers that pass journal entries; the one-entry card is
+  /// self-contained and does not duplicate the belief proof layer.
   final List<JournalEntry> entries;
 
   @override
   Widget build(BuildContext context) {
-    final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
 
     final content = Column(
@@ -41,69 +42,50 @@ class PatternsFirstArchiveView extends StatelessWidget {
           key: const Key('patterns_one_entry_archive_preview_card'),
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F9F4),
-            borderRadius: BorderRadius.circular(VoiceMemoryCards.radius),
-            border: Border.all(
-              color: AppColors.accentPrimary.withValues(alpha: 0.35),
-              width: 1.5,
-            ),
-            boxShadow: VoiceMemoryCards.standard().boxShadow,
+          decoration: VoiceMemoryCards.standard(
+            background: const Color(0xFFF0F7F2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                VisibleArchiveProofCopy.patternsEmptyPreviewBadge,
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(height: gap),
-              Text(
                 VisibleArchiveProofCopy.patternsOneEntryTitle,
-                style: ArchiveMobileTypography.responsivePageTitle(context),
+                key: const Key('patterns_one_entry_title'),
+                style: ArchiveMobileTypography.responsiveSectionTitle(context)
+                    .copyWith(color: VoiceMemoryColors.captureSuccess),
               ),
-              SizedBox(height: gap),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 VisibleArchiveProofCopy.patternsOneEntryBody,
-                style: ArchiveMobileTypography.explanationBody(context),
+                key: const Key('patterns_one_entry_body'),
+                style: ArchiveMobileTypography.body(
+                  context,
+                ).copyWith(color: AppColors.textPrimary),
               ),
-              SizedBox(height: gap),
-              _PreviewRow(
-                label: VisibleArchiveProofCopy.archiveHomeBeliefLabel,
-                value: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                VisibleArchiveProofCopy.patternsOneEntryReassurance,
+                key: const Key('patterns_one_entry_reassurance'),
+                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                  color: AppColors.textSecondary,
+                  height: 1.45,
+                ),
               ),
-              SizedBox(height: gap),
-              _PreviewRow(
-                label: 'Evidence',
-                value: VisibleArchiveProofCopy.patternsOneEntryEvidenceRow,
-              ),
-              SizedBox(height: gap),
-              _PreviewRow(
-                label: 'What changes next',
-                value: VisibleArchiveProofCopy.patternsOneEntryChangedRow,
-              ),
-              SizedBox(height: gap + 4),
+              const SizedBox(height: AppSpacing.sm),
               FilledButton(
                 key: const Key('patterns_first_archive_record_another'),
                 onPressed: () => context.go('/record'),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
                 child: Text(
                   VisibleArchiveProofCopy.patternsOneEntryCta,
                   style: ArchiveMobileTypography.responsiveCta(context),
                 ),
               ),
               if (entryId != null && entryId.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                TextButton(
+                const SizedBox(height: AppSpacing.xs),
+                OutlinedButton(
                   key: const Key('patterns_first_archive_view_saved_entry'),
                   onPressed: () => context.push('/entry/$entryId'),
-                  child: const Text('View saved entry'),
+                  child: const Text(ConsumerUiCopy.patternsFirstEntryViewSavedCta),
                 ),
               ],
             ],
@@ -123,31 +105,6 @@ class PatternsFirstArchiveView extends StatelessWidget {
           ? const AlwaysScrollableScrollPhysics()
           : const ClampingScrollPhysics(),
       child: padded,
-    );
-  }
-}
-
-class _PreviewRow extends StatelessWidget {
-  const _PreviewRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: ArchiveMobileTypography.cardLabel(context),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: ArchiveMobileTypography.body(context),
-        ),
-      ],
     );
   }
 }
