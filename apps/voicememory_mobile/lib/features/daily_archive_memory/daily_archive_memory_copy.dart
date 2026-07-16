@@ -2,7 +2,7 @@
 abstract final class DailyArchiveMemoryCopy {
   DailyArchiveMemoryCopy._();
 
-  static const watchTitle = 'ArchiveMe is watching this';
+  static const watchTitle = 'Did this come back?';
 
   static const watchBody = 'Last time, this was the thread to watch:';
 

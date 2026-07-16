@@ -151,6 +151,7 @@ import '../features/return_day/return_day_flow_engine.dart';
 import '../features/return_day/return_day_flow_store.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
+import '../features/come_back_tomorrow/come_back_tomorrow_v2_model.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../widgets/record/come_back_tomorrow_card.dart';
 import '../features/quiet_signal/quiet_signal_engine.dart';
@@ -572,6 +573,7 @@ import '../features/onboarding/archive_journey_explainer_gates.dart';
 import '../features/onboarding/first_session_onboarding_store.dart';
 import '../features/daily_archive_memory/daily_archive_memory_engine.dart';
 import '../features/daily_archive_memory/daily_archive_memory_model.dart';
+import '../features/record/returning_record_watch_target_ui_gates.dart';
 import '../features/first_use_wording/first_use_wording_model.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -2862,6 +2864,7 @@ class _RecordScreenState extends State<RecordScreen> {
     required BuildContext context,
     required String? selectedPrompt,
     required RecordCtaPolicyResolution policy,
+    bool suppressLogPressureMoment = false,
   }) {
     return CaptureEntryActions(
       onRecord: () => unawaited(_onRecordPressed(source: 'main')),
@@ -2870,13 +2873,30 @@ class _RecordScreenState extends State<RecordScreen> {
         fallback: selectedPrompt ?? '',
       ),
       onTextThoughtSaved: _finishSuccessfulCapture,
-      onLogPressureMoment: () => context.push('/pressure-check-in'),
+      onLogPressureMoment: suppressLogPressureMoment
+          ? null
+          : () => context.push('/pressure-check-in'),
+      pressureMomentPresentation: suppressLogPressureMoment
+          ? CapturePressureMomentPresentation.none
+          : CapturePressureMomentPresentation.button,
       recordButtonLabel: policy.primaryLabel,
       underRecordHelper: null,
       preferTypedFirst: BetaImprovementPackEngine.preferTypedCaptureFirst(
         entryCount: _journalEntryCount,
       ),
     );
+  }
+
+  Future<void> _dismissReturningWatchTargetPrompt() async {
+    if (ComeBackTomorrowV2Store.hasActive) {
+      await ComeBackTomorrowV2Store.instance().recordAnswer(
+        answer: ComeBackTomorrowAnswerType.notToday,
+      );
+    } else {
+      await LowFrictionReturnStore.instance().dismissForDay();
+    }
+    if (!mounted) return;
+    setState(() {});
   }
 
   void _trackRecordCtaPressed() {
@@ -4433,6 +4453,7 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     final showConfirmedRepeatBetaFeedback = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
+        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
         _journalEntryCount >= ConfirmedRepeatBetaFeedbackGates.minEntryCount &&
         viewingConfirmedRepeatOnRecord;
     final repeatReturnChangeProof = ui == RecordUiState.ready &&
@@ -7272,6 +7293,15 @@ class _RecordScreenState extends State<RecordScreen> {
       firstProofLoopActive: firstProofLoopActive,
       showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
     );
+    final showReturningWatchTargetFocusedUi =
+        ReturningRecordWatchTargetUiGates.showFocusedSurface(
+      showDailyArchiveMemory: showDailyArchiveMemory,
+      dailyArchiveMemory: dailyArchiveMemoryCandidate,
+    );
+    if (showReturningWatchTargetFocusedUi) {
+      showOpenCapturePromptChips = false;
+      showLowFrictionReturnCard = false;
+    }
     final betaTestScriptCardCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady
         ? BetaTestScriptEngine.buildCompactCard(entries: _journalEntries)
@@ -8093,6 +8123,28 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (showReturningWatchTargetFocusedUi &&
+                        dailyArchiveMemoryCandidate != null) ...[
+                      DailyArchiveMemoryCard(
+                        memory: dailyArchiveMemoryCandidate,
+                        entryCount: _journalEntryCount,
+                        source: 'record',
+                        showFocusedCaptureActions: true,
+                        onRecord: () => unawaited(
+                          _onRecordPressed(source: 'daily_archive_memory'),
+                        ),
+                        onTypeInstead: () => unawaited(
+                          navigateToTypeInsteadCapture(
+                            context,
+                            prompt: _selectedPromptLine,
+                            onSaved: _finishSuccessfulCapture,
+                          ),
+                        ),
+                        onNotToday: () =>
+                            unawaited(_dismissReturningWatchTargetPrompt()),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         _journalEntryCount == 0 &&
@@ -8101,7 +8153,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       const RecordFirstRunPrivacyReassurance(),
                       const SizedBox(height: 12),
                     ],
-                    if (showFraming && stack.showFramingTitle) ...[
+                    if (showFraming &&
+                        stack.showFramingTitle &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       Text(
                         RecordScreenFramingCopy.title,
                         style: ArchiveMobileTypography.recordPageTitle(context),
@@ -8119,7 +8173,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (recordHomeSurface.showReturningUserToday &&
-                        returningUserToday != null) ...[
+                        returningUserToday != null &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       ReturningUserTodayCard(
                         model: returningUserToday,
                         onPrimary: () => _handleReturningUserTodayAction(
@@ -8132,7 +8187,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (recordHomeSurface.showNextMomentPrompt &&
-                        nextMomentPrompt != null) ...[
+                        nextMomentPrompt != null &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       NextMomentPromptCard(
                         prompt: nextMomentPrompt,
                         onPrimary: () => _handleNextMomentPromptAction(
@@ -8147,7 +8203,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (recordHomeSurface.showTodaysOneQuestion &&
-                        todaysOneQuestion != null) ...[
+                        todaysOneQuestion != null &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       TodaysOneQuestionCard(
                         question: todaysOneQuestion,
                         onPrimary: () =>
@@ -8174,25 +8231,28 @@ class _RecordScreenState extends State<RecordScreen> {
                         const FirstProofJourneyStripCard(),
                         const SizedBox(height: 12),
                       ],
-                      Builder(
-                        builder: (context) {
-                          final readyPolicy = readyCapturePolicy;
-                          if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
-                            return const SizedBox.shrink();
-                          }
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _buildCaptureEntryActions(
-                                context: context,
-                                selectedPrompt: _selectedPromptLine,
-                                policy: readyPolicy,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                          );
-                        },
-                      ),
+                      if (!showReturningWatchTargetFocusedUi)
+                        Builder(
+                          builder: (context) {
+                            final readyPolicy = readyCapturePolicy;
+                            if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
+                              return const SizedBox.shrink();
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildCaptureEntryActions(
+                                  context: context,
+                                  selectedPrompt: _selectedPromptLine,
+                                  policy: readyPolicy,
+                                  suppressLogPressureMoment:
+                                      showReturningWatchTargetFocusedUi,
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            );
+                          },
+                        ),
                     ],
                     if (ui == RecordUiState.ready &&
                         RecordCaptureModeEngine.shouldShow(
@@ -8200,7 +8260,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           isReady: true,
                           isPostSave: _isPostSaveSurface,
                         ) &&
-                        !firstUseSimplifiedRecord) ...[
+                        !firstUseSimplifiedRecord &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       RecordCaptureModesCard(
                         onModeTap: (mode) =>
                             unawaited(_openCaptureMode(mode)),
@@ -8362,7 +8423,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showOpenCapturePromptChips && !firstUseSimplifiedRecord) ...[
+                    if (showOpenCapturePromptChips &&
+                        !firstUseSimplifiedRecord &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       OpenCapturePromptChips(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8403,7 +8466,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showLowFrictionReturnCard && !firstUseSimplifiedRecord) ...[
+                    if (showLowFrictionReturnCard &&
+                        !firstUseSimplifiedRecord &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       LowFrictionReturnCard(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8541,6 +8606,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showDailyArchiveMemory &&
+                        !showReturningWatchTargetFocusedUi &&
                         dailyArchiveMemoryCandidate != null) ...[
                       DailyArchiveMemoryCard(
                         memory: dailyArchiveMemoryCandidate,
@@ -8780,6 +8846,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showBetaFeedbackCaptureRecordReady &&
+                        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
+                        !showReturningWatchTargetFocusedUi &&
                         betaFeedbackCaptureRecordReadyResult != null) ...[
                       BetaFeedbackCaptureCard(
                         result: betaFeedbackCaptureRecordReadyResult!,
@@ -9193,6 +9261,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showConfirmedRepeatBetaFeedback &&
+                        !showReturningWatchTargetFocusedUi &&
                         !showArchiveSummaryOnRecord) ...[
                       ConfirmedRepeatBetaFeedbackCard(
                         entryCount: _journalEntryCount,
@@ -9285,7 +9354,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (betaFeedbackIntelligenceSurfaceOnRecordReady != null) ...[
+                    if (betaFeedbackIntelligenceSurfaceOnRecordReady != null &&
+                        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       BetaFeedbackIntelligenceCard(
                         surface: betaFeedbackIntelligenceSurfaceOnRecordReady,
                         entryCount: _journalEntryCount,
@@ -9624,7 +9695,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                     ] else ...[
                       if (ui == RecordUiState.ready &&
-                          _showReadyToRecordStatus) ...[
+                          _showReadyToRecordStatus &&
+                          !showReturningWatchTargetFocusedUi) ...[
                         Semantics(
                           label: 'Recording status',
                           child: Text(
@@ -11292,6 +11364,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           stack.suppressDuplicateRecordCtas ||
                           suppressNoisyFirstSaveCards ||
                           suppressNoisyRepeatPostSaveCards,
+                      showReturningWatchTargetFocusedUi:
+                          showReturningWatchTargetFocusedUi,
                       policyMicPhase: policyMic,
                       policyUserDenied: policyUserDenied,
                       recordHomeSurface: recordHomeSurface,
@@ -11390,6 +11464,7 @@ class _RecordScreenState extends State<RecordScreen> {
     required String? localSaveTitle,
     String? selectedPrompt,
     required bool suppressDuplicateRecordCtas,
+    required bool showReturningWatchTargetFocusedUi,
     RecordingPhase? policyMicPhase,
     bool? policyUserDenied,
     RecordHomeSurfacePolicy recordHomeSurface =
@@ -11583,7 +11658,8 @@ class _RecordScreenState extends State<RecordScreen> {
         if (PressureReturnTriggerReminder.shouldShow(
           accepted: _returnTriggerAccepted,
           entryCount: _journalEntryCount,
-        )) {
+        ) &&
+            !showReturningWatchTargetFocusedUi) {
           actions.add(
             PressureReturnTriggerReminder(
               onLogPressure: () => context.push('/pressure-check-in'),
@@ -11610,12 +11686,14 @@ class _RecordScreenState extends State<RecordScreen> {
         entryCount: _journalEntryCount,
       );
       if (!_shouldPromoteMicCaptureActions(readyPolicy) &&
-          !firstUseSimplifiedRecord) {
+          !firstUseSimplifiedRecord &&
+          !showReturningWatchTargetFocusedUi) {
         actions.add(
           _buildCaptureEntryActions(
             context: context,
             selectedPrompt: selectedPrompt,
             policy: readyPolicy,
+            suppressLogPressureMoment: showReturningWatchTargetFocusedUi,
           ),
         );
       }

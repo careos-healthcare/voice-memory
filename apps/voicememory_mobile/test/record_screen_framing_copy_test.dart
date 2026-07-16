@@ -2208,7 +2208,12 @@ void main() {
           .fold<int>(0, (total, count) => total + count);
 
       expect(proofCards, lessThanOrEqualTo(3));
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      if (find.byKey(const Key('daily_archive_memory_card')).evaluate().isNotEmpty) {
+        expect(find.text('Record what happened'), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+      } else {
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      }
     });
   });
 }

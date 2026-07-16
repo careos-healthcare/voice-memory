@@ -455,10 +455,14 @@ void main() {
     test('card sits under OpenCapturePromptChips on record screen', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final chipsIndex = source.indexOf(
-        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+        'if (showOpenCapturePromptChips &&\n'
+        '                        !firstUseSimplifiedRecord &&\n'
+        '                        !showReturningWatchTargetFocusedUi)',
       );
       final cardIndex = source.indexOf(
-        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+        'if (showLowFrictionReturnCard &&\n'
+        '                        !firstUseSimplifiedRecord &&\n'
+        '                        !showReturningWatchTargetFocusedUi)',
       );
       expect(chipsIndex, greaterThan(0));
       expect(cardIndex, greaterThan(chipsIndex));

@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_
     as weeklyReviewSurface;
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
@@ -128,7 +129,7 @@ void main() {
 
   group('DailyArchiveMemoryCopy', () {
     test('spec copy is stable', () {
-      expect(DailyArchiveMemoryCopy.watchTitle, 'ArchiveMe is watching this');
+      expect(DailyArchiveMemoryCopy.watchTitle, 'Did this come back?');
       expect(
         DailyArchiveMemoryCopy.watchBody,
         'Last time, this was the thread to watch:',
@@ -508,27 +509,27 @@ void main() {
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
     });
 
-    testWidgets('card keeps record CTA secondary to main recorder', (tester) async {
+    testWidgets('focused watch card is primary capture surface', (tester) async {
       await pumpRecord(tester);
 
       expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
+      expect(find.text('Did this come back?'), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_record_cta')), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(const Key('daily_archive_memory_card')),
-          matching: find.byType(ElevatedButton),
-        ),
-        findsNothing,
-      );
-      expect(find.text('Record moment'), findsWidgets);
+      expect(find.byKey(const Key('daily_archive_memory_type_instead_cta')), findsOneWidget);
+      expect(find.text('Record moment'), findsNothing);
+      expect(find.text('Log pressure moment'), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
     });
 
-    testWidgets('record CTA is wired', (tester) async {
+    testWidgets('record CTA uses existing capture flow without duplicate CTAs', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
+      expect(find.byKey(const Key('daily_archive_memory_record_cta')), findsOneWidget);
       await tester.tap(find.byKey(const Key('daily_archive_memory_record_cta')));
       await tester.pump();
-      expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
+      expect(find.byKey(const Key('capture_entry_record_cta')), findsNothing);
     });
 
     testWidgets('view pattern details opens sheet when available', (tester) async {

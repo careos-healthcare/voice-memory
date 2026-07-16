@@ -1,0 +1,111 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/design/empty_archive_experience.dart';
+import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
+import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
+import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
+import 'package:voicememory_mobile/features/record/returning_record_watch_target_ui_gates.dart';
+import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/widgets/record/daily_archive_memory_card.dart';
+
+void main() {
+  group('ReturningRecordWatchTargetUiGates', () {
+    test('focused surface only when daily memory has watch target', () {
+      const watch = DailyArchiveMemoryResult(
+        title: DailyArchiveMemoryCopy.watchTitle,
+        body: DailyArchiveMemoryCopy.watchBody,
+        watchPhrase: 'checking again',
+        footer: DailyArchiveMemoryCopy.footer,
+        hasWatchTarget: true,
+        canShowPatternDetail: false,
+      );
+
+      expect(
+        ReturningRecordWatchTargetUiGates.showFocusedSurface(
+          showDailyArchiveMemory: true,
+          dailyArchiveMemory: watch,
+        ),
+        isTrue,
+      );
+      expect(
+        ReturningRecordWatchTargetUiGates.showFocusedSurface(
+          showDailyArchiveMemory: true,
+          dailyArchiveMemory: const DailyArchiveMemoryResult(
+            title: DailyArchiveMemoryCopy.fallbackTitle,
+            body: DailyArchiveMemoryCopy.fallbackBody,
+            hasWatchTarget: false,
+            canShowPatternDetail: false,
+          ),
+        ),
+        isFalse,
+      );
+    });
+  });
+
+  group('DailyArchiveMemoryCard focused returning UI', () {
+    testWidgets('watch target shows focused copy and capture actions', (
+      tester,
+    ) async {
+      var recordTapped = false;
+      var typeTapped = false;
+      var notTodayTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: DailyArchiveMemoryCard(
+              memory: const DailyArchiveMemoryResult(
+                title: DailyArchiveMemoryCopy.watchTitle,
+                body: DailyArchiveMemoryCopy.watchBody,
+                watchPhrase: 'checking again',
+                footer: DailyArchiveMemoryCopy.footer,
+                hasWatchTarget: true,
+                canShowPatternDetail: false,
+              ),
+              entryCount: 3,
+              source: 'record',
+              showFocusedCaptureActions: true,
+              onRecord: () => recordTapped = true,
+              onTypeInstead: () => typeTapped = true,
+              onNotToday: () => notTodayTapped = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Did this come back?'), findsOneWidget);
+      expect(
+        find.text('Last time, this was the thread to watch:'),
+        findsOneWidget,
+      );
+      expect(find.text('"checking again"'), findsOneWidget);
+      expect(
+        find.text('Record if it came back, changed, or disappeared.'),
+        findsOneWidget,
+      );
+      expect(find.text('Record what happened'), findsOneWidget);
+      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
+      expect(find.text(ComeBackTomorrowV2Copy.notToday), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
+      expect(find.text(RecordCaptureModeCopy.somethingHappenedLabel), findsNothing);
+      expect(find.text('Log pressure moment'), findsNothing);
+
+      await tester.tap(find.text('Record what happened'));
+      await tester.pump();
+      expect(recordTapped, isTrue);
+
+      await tester.tap(find.text(EmptyArchiveCopy.typeInsteadCta));
+      await tester.pump();
+      expect(typeTapped, isTrue);
+
+      await tester.tap(find.text(ComeBackTomorrowV2Copy.notToday));
+      await tester.pump();
+      expect(notTodayTapped, isTrue);
+      expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
+    });
+  });
+}

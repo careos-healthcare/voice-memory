@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../design/empty_archive_experience.dart';
+import '../../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_analytics.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_copy.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_model.dart';
@@ -16,14 +18,22 @@ class DailyArchiveMemoryCard extends StatefulWidget {
     required this.entryCount,
     required this.source,
     this.onRecord,
+    this.onTypeInstead,
+    this.onNotToday,
     this.onViewPatternDetails,
+    this.showFocusedCaptureActions = false,
   });
 
   final DailyArchiveMemoryResult memory;
   final int entryCount;
   final String source;
   final VoidCallback? onRecord;
+  final VoidCallback? onTypeInstead;
+  final VoidCallback? onNotToday;
   final VoidCallback? onViewPatternDetails;
+
+  /// Primary voice/type/not-today actions on the card for watch-target returns.
+  final bool showFocusedCaptureActions;
 
   @override
   State<DailyArchiveMemoryCard> createState() => _DailyArchiveMemoryCardState();
@@ -31,6 +41,7 @@ class DailyArchiveMemoryCard extends StatefulWidget {
 
 class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   bool _seenTracked = false;
+  var _dismissedToday = false;
 
   @override
   void initState() {
@@ -57,6 +68,26 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
     widget.onRecord?.call();
   }
 
+  void _onTypeInstead() {
+    DailyArchiveMemoryAnalytics.ctaTapped(
+      source: widget.source,
+      entryCount: widget.entryCount,
+      actionType: 'type_instead',
+    );
+    widget.onTypeInstead?.call();
+  }
+
+  void _onNotToday() {
+    DailyArchiveMemoryAnalytics.ctaTapped(
+      source: widget.source,
+      entryCount: widget.entryCount,
+      actionType: 'not_today',
+    );
+    widget.onNotToday?.call();
+    if (!mounted) return;
+    setState(() => _dismissedToday = true);
+  }
+
   void _onViewPatternDetails() {
     DailyArchiveMemoryAnalytics.ctaTapped(
       source: widget.source,
@@ -68,6 +99,8 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (_dismissedToday) return const SizedBox.shrink();
+
     final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
       fontWeight: FontWeight.w600,
     );
@@ -76,12 +109,17 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
       height: 1.45,
     );
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
-    final phraseStyle = bodyStyle.copyWith(fontWeight: FontWeight.w600);
+    final phraseStyle = bodyStyle.copyWith(
+      fontWeight: FontWeight.w600,
+      fontStyle: FontStyle.italic,
+    );
     final actionStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.accentPrimary,
       fontWeight: FontWeight.w600,
       fontSize: 13,
     );
+
+    final focused = widget.showFocusedCaptureActions && widget.memory.hasWatchTarget;
 
     return Container(
       key: const Key('daily_archive_memory_card'),
@@ -120,7 +158,31 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
               style: secondaryStyle,
             ),
           ],
-          if (widget.onRecord != null) ...[
+          if (focused && widget.onRecord != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton(
+              key: const Key('daily_archive_memory_record_cta'),
+              onPressed: _onRecord,
+              child: Text(DailyArchiveMemoryCopy.recordCta),
+            ),
+          ],
+          if (focused && widget.onTypeInstead != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('daily_archive_memory_type_instead_cta'),
+              onPressed: _onTypeInstead,
+              child: Text(EmptyArchiveCopy.typeInsteadCta),
+            ),
+          ],
+          if (focused && widget.onNotToday != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            TextButton(
+              key: const Key('daily_archive_memory_not_today_cta'),
+              onPressed: _onNotToday,
+              child: Text(ComeBackTomorrowV2Copy.notToday),
+            ),
+          ],
+          if (!focused && widget.onRecord != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Align(
               alignment: Alignment.centerLeft,
@@ -141,7 +203,8 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
               ),
             ),
           ],
-          if (widget.memory.canShowPatternDetail &&
+          if (!focused &&
+              widget.memory.canShowPatternDetail &&
               widget.onViewPatternDetails != null) ...[
             Align(
               alignment: Alignment.centerLeft,
