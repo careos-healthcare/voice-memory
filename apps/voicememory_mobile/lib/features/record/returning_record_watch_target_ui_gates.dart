@@ -1,3 +1,4 @@
+import '../app_review/archive_app_review_access_gate.dart';
 import '../beta/archive_beta_mission_gate.dart';
 import '../come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../daily_archive_memory/daily_archive_memory_model.dart';
@@ -19,8 +20,25 @@ abstract final class ReturningRecordWatchTargetUiGates {
     return true;
   }
 
-  /// Beta feedback surfaces stay off unless an explicit beta/developer flag is on.
-  static bool showBetaFeedbackSurfaces() => ArchiveBetaMissionGate.isEnabled;
+  /// Beta Record surfaces only for explicit beta builds — never App Review.
+  static bool showBetaRecordSurfaces() =>
+      ArchiveBetaMissionGate.isEnabled &&
+      !ArchiveAppReviewAccessGate.isEnabled;
+
+  /// @deprecated Use [showBetaRecordSurfaces].
+  static bool showBetaFeedbackSurfaces() => showBetaRecordSurfaces();
+
+  /// Hide map prompt, reassurance helper, next-action line, and entry options.
+  static bool suppressCompetingReadyGuidance({
+    required bool showFocusedSurface,
+  }) =>
+      showFocusedSurface;
+
+  /// Hide the full archive education / proof stack below the watch card.
+  static bool suppressArchiveEducationStack({
+    required bool showFocusedSurface,
+  }) =>
+      showFocusedSurface;
 
   static bool _skippedWatchPromptToday() {
     if (LowFrictionReturnStore.isDismissedToday) return true;

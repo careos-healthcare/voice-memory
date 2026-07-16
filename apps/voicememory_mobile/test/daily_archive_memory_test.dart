@@ -8,6 +8,11 @@ import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_analytics.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
+import 'package:voicememory_mobile/features/daily_archive_exercise/daily_archive_exercise_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
+import 'package:voicememory_mobile/features/next_action/next_best_action_copy.dart';
+import 'package:voicememory_mobile/features/proof_specificity/proof_specificity_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_engine.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
@@ -488,6 +493,35 @@ void main() {
       await pumpRecord(tester, entryCount: 0);
 
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
+    });
+
+    testWidgets('focused watch surface hides competing guidance', (tester) async {
+      await pumpRecord(tester);
+
+      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
+      expect(find.text('Did this come back?'), findsOneWidget);
+      expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
+      expect(find.text(DailyArchiveExerciseCopy.openBetaFeedbackCta), findsNothing);
+      expect(
+        find.textContaining(
+          ProofSpecificityCopy.captureFreedomLineCompact.split('.').first,
+        ),
+        findsNothing,
+      );
+      for (final line in NextBestActionCopy.allVisibleStrings) {
+        if (line.startsWith('Next:')) {
+          expect(find.text(line), findsNothing);
+        }
+      }
+      expect(
+        find.textContaining(
+          EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper.split('.').first,
+        ),
+        findsNothing,
+      );
+      expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
+      expect(find.text(FirstWeekLoopCopy.title), findsNothing);
+      expect(find.text(FirstWeekLoopCopy.label), findsNothing);
     });
 
     testWidgets('shown for returning user with watch target', (tester) async {

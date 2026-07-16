@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
+import 'package:voicememory_mobile/features/app_review/archive_app_review_access_gate.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
 import 'package:voicememory_mobile/features/record/returning_record_watch_target_ui_gates.dart';
+import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
+import 'package:voicememory_mobile/features/next_action/next_best_action_copy.dart';
+import 'package:voicememory_mobile/features/proof_specificity/proof_specificity_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -41,6 +46,54 @@ void main() {
         ),
         isFalse,
       );
+    });
+
+    test('suppresses competing ready guidance when focused', () {
+      expect(
+        ReturningRecordWatchTargetUiGates.suppressCompetingReadyGuidance(
+          showFocusedSurface: true,
+        ),
+        isTrue,
+      );
+      expect(
+        ReturningRecordWatchTargetUiGates.suppressCompetingReadyGuidance(
+          showFocusedSurface: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('suppresses archive education stack when focused', () {
+      expect(
+        ReturningRecordWatchTargetUiGates.suppressArchiveEducationStack(
+          showFocusedSurface: true,
+        ),
+        isTrue,
+      );
+      expect(
+        ReturningRecordWatchTargetUiGates.suppressArchiveEducationStack(
+          showFocusedSurface: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('beta record surfaces require beta mission and exclude app review', () {
+      ArchiveBetaMissionGate.enabledOverride = true;
+      ArchiveAppReviewAccessGate.enabledOverride = false;
+      addTearDown(() {
+        ArchiveBetaMissionGate.resetForTest();
+        ArchiveAppReviewAccessGate.resetForTest();
+      });
+
+      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isTrue);
+
+      ArchiveBetaMissionGate.enabledOverride = false;
+      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
+
+      ArchiveBetaMissionGate.enabledOverride = true;
+      ArchiveAppReviewAccessGate.enabledOverride = true;
+      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
     });
   });
 

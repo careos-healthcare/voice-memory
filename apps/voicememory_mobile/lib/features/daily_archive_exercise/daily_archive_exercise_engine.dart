@@ -1,4 +1,6 @@
 import '../../models/journal_entry.dart';
+import '../app_review/archive_app_review_access_gate.dart';
+import '../beta/archive_beta_mission_gate.dart';
 import '../beta_feedback/beta_feedback_engine.dart';
 import '../demo/sample_archive_mode.dart';
 import 'daily_archive_exercise_copy.dart';
@@ -73,7 +75,10 @@ class DailyArchiveExerciseEngine {
     if (count <= 0) return DailyArchiveExerciseKind.firstMoment;
     if (count <= 2) return DailyArchiveExerciseKind.comparisonMaterial;
     if (input.hasWatchTheme) return DailyArchiveExerciseKind.watchTheme;
-    if (count >= 3 && !input.betaFeedbackCaptured) {
+    if (count >= 3 &&
+        !input.betaFeedbackCaptured &&
+        ArchiveBetaMissionGate.isEnabled &&
+        !ArchiveAppReviewAccessGate.isEnabled) {
       return DailyArchiveExerciseKind.betaFeedback;
     }
 

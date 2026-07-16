@@ -429,13 +429,19 @@ void main() {
     test('card sits below low-friction return and above capture freedom line', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final lowFrictionIndex = source.indexOf(
-        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord) ...[',
+        'if (showLowFrictionReturnCard &&\n'
+        '                        !firstUseSimplifiedRecord &&\n'
+        '                        !showReturningWatchTargetFocusedUi) ...[',
       );
       final summaryIndex = source.indexOf(
-        'if (showBetaTodaySummaryCard && !firstUseSimplifiedRecord) ...[',
+        'if (showBetaTodaySummaryCard &&\n'
+        '                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&\n'
+        '                        !firstUseSimplifiedRecord) ...[',
       );
       final freedomIndex = source.indexOf(
-        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord) ...[',
+        'if (showCaptureFreedomLine &&\n'
+        '                        !firstUseSimplifiedRecord &&\n'
+        '                        !showReturningWatchTargetFocusedUi) ...[',
       );
       expect(lowFrictionIndex, greaterThan(0));
       expect(summaryIndex, greaterThan(lowFrictionIndex));

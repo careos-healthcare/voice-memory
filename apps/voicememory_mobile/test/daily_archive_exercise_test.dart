@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_engine.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_models.dart';
@@ -120,7 +121,10 @@ void main() {
       expect(two.primaryRoute, '/record');
     });
 
-    test('3+ entries can point to beta feedback', () {
+    test('3+ entries can point to beta feedback when beta mission is on', () {
+      ArchiveBetaMissionGate.enabledOverride = true;
+      addTearDown(ArchiveBetaMissionGate.resetForTest);
+
       final result = engine.build(
         _input(
           realSavedMomentCount: 3,
@@ -130,6 +134,22 @@ void main() {
 
       expect(result.kind, DailyArchiveExerciseKind.betaFeedback);
       expect(result.primaryRoute, '/beta-feedback');
+    });
+
+    test('3+ entries without beta mission use rotating prompts', () {
+      ArchiveBetaMissionGate.enabledOverride = false;
+      addTearDown(ArchiveBetaMissionGate.resetForTest);
+
+      final result = engine.build(
+        _input(
+          realSavedMomentCount: 3,
+          betaFeedbackCaptured: false,
+          dayIndex: 1,
+        ),
+      );
+
+      expect(result.kind, isNot(DailyArchiveExerciseKind.betaFeedback));
+      expect(result.kind, DailyArchiveExerciseKind.feltDifferent);
     });
 
     test('watch theme present gives watch-theme exercise', () {

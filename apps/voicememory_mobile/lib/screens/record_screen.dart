@@ -4454,7 +4454,7 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     final showConfirmedRepeatBetaFeedback = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
-        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
+        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
         _journalEntryCount >= ConfirmedRepeatBetaFeedbackGates.minEntryCount &&
         viewingConfirmedRepeatOnRecord;
     final repeatReturnChangeProof = ui == RecordUiState.ready &&
@@ -7302,6 +7302,21 @@ class _RecordScreenState extends State<RecordScreen> {
     if (showReturningWatchTargetFocusedUi) {
       showOpenCapturePromptChips = false;
       showLowFrictionReturnCard = false;
+      showCaptureFreedomLine = false;
+    }
+    if (!ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) {
+      showBetaTodaySummaryCard = false;
+      showBetaActivationPathCard = false;
+      showBetaTesterReportOnRecord = false;
+      showBetaFeedbackCaptureRecordReady = false;
+      betaFeedbackCaptureRecordReadyResult = null;
+      showBetaProofLiftOnRecordReady = false;
+      showBetaRepairLabProPlacementOnRecord = false;
+      showBetaRepairLabPricingValueFramingOnRecord = false;
+      showBetaRepairLabPaywallValueOnRecord = false;
+      showBetaRepairLabPricingValidationOnRecord = false;
+      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+      showBetaRepairLabProofOnRecord = false;
     }
     final betaTestScriptCardCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady
@@ -7442,6 +7457,13 @@ class _RecordScreenState extends State<RecordScreen> {
         betaFeedbackCapturePostSavePreAudit.shouldShow
             ? betaFeedbackCapturePostSavePreAudit
             : null;
+    if (!ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) {
+      showBetaProofLiftOnFirstProofPayoff = false;
+      showBetaProofLiftUnderTimelineProofPostSave = false;
+      showBetaInviteLoopPostSave = false;
+      showBetaFeedbackCapturePostSave = false;
+      betaFeedbackCapturePostSaveResult = null;
+    }
     final postSaveProofFloorRescueInput = ProofFloorRescueEngine.inputFromStore(
       entryCount: postSaveEntryCount,
       source: 'record_post_save',
@@ -8125,7 +8147,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (recordHomeSurface.showDailyMapPrompt &&
-                        dailyArchiveExercise != null) ...[
+                        dailyArchiveExercise != null &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       DailyArchiveExerciseRecordCard(
                         exercise: dailyArchiveExercise,
                         onPrimary: () => _handleDailyArchiveExerciseAction(
@@ -8156,6 +8179,10 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (!ReturningRecordWatchTargetUiGates
+                        .suppressArchiveEducationStack(
+                      showFocusedSurface: showReturningWatchTargetFocusedUi,
+                    )) ...[
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         _journalEntryCount == 0 &&
@@ -8367,6 +8394,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 8),
                     ],
                     if (showBetaActivationPathCard &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                         betaActivationPathResult != null &&
                         !firstUseSimplifiedRecord) ...[
                       BetaActivationPathCard(
@@ -8496,7 +8524,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showBetaTodaySummaryCard && !firstUseSimplifiedRecord) ...[
+                    if (showBetaTodaySummaryCard &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                        !firstUseSimplifiedRecord) ...[
                       BetaTodaySummaryCard(
                         result: betaTodaySummaryCandidate,
                       ),
@@ -8511,7 +8541,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showCaptureFreedomLine && !firstUseSimplifiedRecord) ...[
+                    if (showCaptureFreedomLine &&
+                        !firstUseSimplifiedRecord &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       CaptureFreedomLine(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8539,7 +8571,8 @@ class _RecordScreenState extends State<RecordScreen> {
                     if (ui == RecordUiState.ready &&
                         showNextBestActionOnRecord &&
                         nextBestActionCandidate != null &&
-                        !firstUseSimplifiedRecord) ...[
+                        !firstUseSimplifiedRecord &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       NextBestActionLine(
                         action: nextBestActionCandidate,
                         surface: NextBestActionSurface.record,
@@ -8711,7 +8744,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         result: timelineProofMomentCandidate,
                         source: 'record',
                       ),
-                      if (showBetaProofLiftUnderTimelineProof) ...[
+                      if (showBetaProofLiftUnderTimelineProof &&
+                          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                         const SizedBox(height: 12),
                         BetaProofLiftCard(
                           result: betaProofLiftTimelineCandidate,
@@ -8720,6 +8754,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (showBetaRepairLabProofOnRecord &&
+                          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                           betaRepairLabProofResult.shouldShow) ...[
                         const SizedBox(height: 12),
                         BetaRepairLabProofCard(
@@ -8857,7 +8892,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showBetaFeedbackCaptureRecordReady &&
-                        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                         !showReturningWatchTargetFocusedUi &&
                         betaFeedbackCaptureRecordReadyResult != null) ...[
                       BetaFeedbackCaptureCard(
@@ -8908,7 +8943,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                       const SizedBox(height: 12),
                     ],
-                    if (showBetaTesterReportOnRecord) ...[
+                    if (showBetaTesterReportOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       BetaTesterReportCard(
                         result: betaTesterReportCandidate,
                       ),
@@ -8942,7 +8978,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord) ...[
+                    if (showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       EvidenceTrailClarityCard(
                         result: betaRepairLabEvidenceTrailClarityResult,
                         compact: proofSurfaceLayout.proBridgeCompact,
@@ -8952,7 +8989,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                    ] else if (showBetaRepairLabPricingValidationBelowProofOnRecord) ...[
+                    ] else if (showBetaRepairLabPricingValidationBelowProofOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       PricingValidationCard(
                         result: betaRepairLabPricingValidationResult,
                         compact: proofSurfaceLayout.proBridgeCompact,
@@ -8962,7 +9000,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                    ] else if (showBetaRepairLabPricingValueFramingBelowProofOnRecord) ...[
+                    ] else if (showBetaRepairLabPricingValueFramingBelowProofOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       PricingValueFramingCard(
                         result: betaRepairLabPricingValueFramingResult,
                         compact: proofSurfaceLayout.proBridgeCompact,
@@ -8972,7 +9011,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                    ] else if (showBetaRepairLabPaywallValueBelowProofOnRecord) ...[
+                    ] else if (showBetaRepairLabPaywallValueBelowProofOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       PaywallValueRepairCard(
                         result: betaRepairLabPaywallValueResult,
                         compact: proofSurfaceLayout.proBridgeCompact,
@@ -8981,7 +9021,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                    ] else if (showBetaRepairLabProPlacementBelowProofOnRecord) ...[
+                    ] else if (showBetaRepairLabProPlacementBelowProofOnRecord &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                       BetaRepairLabProPlacementCard(
                         result: betaRepairLabProPlacementResult,
                         compact: proofSurfaceLayout.proBridgeCompact,
@@ -9295,6 +9336,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showBetaTestScriptCard &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                        !showReturningWatchTargetFocusedUi &&
                         betaTestScriptCardCandidate != null) ...[
                       BetaTestScriptCard(
                         card: betaTestScriptCardCandidate,
@@ -9366,7 +9409,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (betaFeedbackIntelligenceSurfaceOnRecordReady != null &&
-                        ReturningRecordWatchTargetUiGates.showBetaFeedbackSurfaces() &&
+                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                         !showReturningWatchTargetFocusedUi) ...[
                       BetaFeedbackIntelligenceCard(
                         surface: betaFeedbackIntelligenceSurfaceOnRecordReady,
@@ -9670,6 +9713,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             unawaited(_onRecordPressed(source: 'main')),
                       ),
                       const SizedBox(height: 12),
+                    ],
                     ],
                     if (RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
                       ui: ui,
@@ -10075,7 +10119,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                       ? _openFirstProofPatternDetail
                                       : null,
                             ),
-                            if (showBetaProofLiftOnFirstProofPayoff) ...[
+                            if (showBetaProofLiftOnFirstProofPayoff &&
+                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                               const SizedBox(height: 12),
                               BetaProofLiftCard(
                                 result: betaProofLiftFirstProofCandidate,
@@ -10226,7 +10271,8 @@ class _RecordScreenState extends State<RecordScreen> {
                               result: timelineProofMomentPostSaveCandidate,
                               source: 'record_post_save_first_proof',
                             ),
-                            if (showBetaProofLiftUnderTimelineProofPostSave) ...[
+                            if (showBetaProofLiftUnderTimelineProofPostSave &&
+                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                               const SizedBox(height: 12),
                               BetaProofLiftCard(
                                 result: betaProofLiftTimelinePostSaveCandidate,
@@ -10302,6 +10348,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                             ],
                             if (showBetaInviteLoopPostSave &&
+                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                                 betaInviteLoopPostSaveResult != null) ...[
                               const SizedBox(height: 12),
                               BetaInviteCard(
@@ -10361,7 +10408,8 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                             ),
                           ],
-                          if (betaFeedbackIntelligenceSurfacePostSave != null) ...[
+                          if (betaFeedbackIntelligenceSurfacePostSave != null &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                             const SizedBox(height: 12),
                             BetaFeedbackIntelligenceCard(
                               surface: betaFeedbackIntelligenceSurfacePostSave,
@@ -10374,6 +10422,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             ),
                           ],
                           if (showBetaFeedbackCapturePostSave &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
                               betaFeedbackCapturePostSaveResult != null) ...[
                             const SizedBox(height: 12),
                             BetaFeedbackCaptureCard(
@@ -11776,7 +11825,9 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         );
       }
-      if (_journalEntryCountReady && _journalEntryCount > 0) {
+      if (_journalEntryCountReady &&
+          _journalEntryCount > 0 &&
+          !showReturningWatchTargetFocusedUi) {
         actions.add(CleanSlatePromptSection(entryCount: _journalEntryCount));
         actions.add(EntryOptionsSection(entryCount: _journalEntryCount));
       }

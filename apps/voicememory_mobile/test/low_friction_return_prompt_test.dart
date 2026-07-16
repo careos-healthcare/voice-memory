@@ -472,7 +472,9 @@ void main() {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('LowFrictionReturnCard(');
       final freedomIndex = source.indexOf(
-        'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+        'if (showCaptureFreedomLine &&\n'
+        '                        !firstUseSimplifiedRecord &&\n'
+        '                        !showReturningWatchTargetFocusedUi)',
       );
       final timelineIndex =
           source.indexOf('if (!suppressLegacyEducationCardsForSpineOnRecord &&');
@@ -486,7 +488,9 @@ void main() {
       final snippet = source.substring(
         source.indexOf('LowFrictionReturnCard('),
         source.indexOf(
-          'if (showCaptureFreedomLine && !firstUseSimplifiedRecord)',
+          'if (showCaptureFreedomLine &&\n'
+          '                        !firstUseSimplifiedRecord &&\n'
+          '                        !showReturningWatchTargetFocusedUi)',
         ),
       );
       expect(snippet, contains('_selectedPromptLine = prompt'));
