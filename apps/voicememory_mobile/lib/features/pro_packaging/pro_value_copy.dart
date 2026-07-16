@@ -26,7 +26,7 @@ abstract final class ProPackagingCopy {
   static const restorePurchases = 'Restore purchases';
 
   static const offeringsUnavailableBody =
-      'Plans are temporarily unavailable. You can still use ArchiveMe.';
+      'Monthly and yearly plans will appear when App Store products finish loading.';
 
   static const accountTileSubtitle = subtitle;
 

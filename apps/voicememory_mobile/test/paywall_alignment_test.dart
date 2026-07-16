@@ -33,10 +33,10 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 void main() {
   group('PaywallAlignmentCopy', () {
     test('defines canonical headline and body', () {
-      expect(PaywallAlignmentCopy.headline, 'Keep the longer proof trail');
+      expect(PaywallAlignmentCopy.headline, 'Keep the longer proof trail.');
       expect(
         PaywallAlignmentCopy.body,
-        contains('first useful proof'),
+        contains('returned, changed, faded, or corrected'),
       );
       expect(
         PaywallAlignmentCopy.secondaryReassurance,
@@ -102,7 +102,7 @@ void main() {
   });
 
   group('PaywallScreen alignment rendering', () {
-    testWidgets('renders headline, body, reassurance, and benefit bullets', (
+    testWidgets('renders compact headline and subscription details', (
       tester,
     ) async {
       await _pumpPaywall(
@@ -111,13 +111,14 @@ void main() {
       );
 
       expect(find.text(PaywallAlignmentCopy.headline), findsOneWidget);
-      expect(find.text(PaywallAlignmentCopy.body), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
+      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
       expect(
         find.text(PaywallAlignmentCopy.secondaryReassurance),
-        findsOneWidget,
+        findsNothing,
       );
       for (final bullet in PaywallAlignmentCopy.benefitBullets) {
-        expect(find.text(bullet), findsOneWidget);
+        expect(find.text(bullet), findsNothing);
       }
     });
 

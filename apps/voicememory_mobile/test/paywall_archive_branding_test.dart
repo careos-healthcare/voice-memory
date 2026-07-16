@@ -50,13 +50,23 @@ void main() {
       expect(find.textContaining('VoiceMemory Pro'), findsNothing);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       expect(
-        find.textContaining('Purchases are not available right now'),
+        find.byKey(const Key('paywall_unavailable_body')),
         findsOneWidget,
+      );
+      final unavailableBody = tester
+          .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+          .data!;
+      expect(
+        unavailableBody,
+        contains('Purchases are not available right now'),
       );
       expect(
-        find.text('Longer proof trail'),
-        findsOneWidget,
+        unavailableBody,
+        contains(
+          'Monthly and yearly plans will appear when App Store products finish loading',
+        ),
       );
+      expect(find.text('Longer proof trail'), findsNothing);
       expect(find.text('Private monthly reports'), findsNothing);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(

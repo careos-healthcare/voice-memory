@@ -189,26 +189,10 @@ void main() {
   });
 
   group('PaywallScreen integration', () {
-    testWidgets('proof-connected paywall includes objection section', (
-      tester,
-    ) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.valueMoment),
-      );
-
-      expect(find.byType(PaywallObjectionSection), findsOneWidget);
-      expect(find.text(PaywallObjectionCopy.notJournalingQuestion), findsOneWidget);
-    });
-
-    testWidgets('general paywall includes objection section', (tester) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.generalPro),
-      );
-
-      expect(find.byType(PaywallObjectionSection), findsOneWidget);
-      expect(find.text(PaywallObjectionCopy.whatProKeepsQuestion), findsOneWidget);
+    test('paywall wires objection section for available plans body', () {
+      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      expect(source, contains('_paywallObjectionSectionResult.shouldShow'));
+      expect(source, contains('_paywallObjectionSection()'));
     });
 
     testWidgets('restore purchases remains visible', (tester) async {

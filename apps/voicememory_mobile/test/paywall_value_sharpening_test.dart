@@ -53,7 +53,7 @@ void main() {
     test('generic source uses generic headline', () {
       expect(
         PaywallValueSharpeningCopy.headlineFor(PaywallSource.generalPro),
-        'Keep the longer proof trail',
+        'Keep the longer proof trail.',
       );
       expect(
         PaywallSourceCopy.forSource(PaywallSource.generalPro).headline,
@@ -64,7 +64,7 @@ void main() {
     test('defines proof-connected body and differentiation line', () {
       expect(
         PaywallValueSharpeningCopy.body,
-        contains('first useful proof'),
+        contains('returned, changed, faded, or corrected'),
       );
       expect(
         PaywallValueSharpeningCopy.proofConnectedLine,
@@ -138,14 +138,15 @@ void main() {
         find.text(PaywallValueSharpeningCopy.proofConnectedHeadline),
         findsOneWidget,
       );
-      expect(find.text(PaywallValueSharpeningCopy.body), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
+      expect(find.text(PaywallValueSharpeningCopy.body), findsNothing);
       expect(
         find.text(PaywallValueSharpeningCopy.proofConnectedLine),
-        findsOneWidget,
+        findsNothing,
       );
     });
 
-    testWidgets('generic source renders generic headline and aligned copy', (
+    testWidgets('generic source renders compact unavailable paywall copy', (
       tester,
     ) async {
       await _pumpPaywall(
@@ -154,17 +155,17 @@ void main() {
       );
 
       expect(find.text(PaywallAlignmentCopy.headline), findsOneWidget);
-      expect(find.text(PaywallAlignmentCopy.body), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       expect(
         find.text(PaywallAlignmentCopy.secondaryReassurance),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(PaywallValueSharpeningCopy.proofConnectedLine),
-        findsOneWidget,
+        findsNothing,
       );
       for (final bullet in PaywallAlignmentCopy.benefitBullets) {
-        expect(find.text(bullet), findsOneWidget);
+        expect(find.text(bullet), findsNothing);
       }
     });
 

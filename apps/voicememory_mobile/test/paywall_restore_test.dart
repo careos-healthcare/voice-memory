@@ -139,8 +139,14 @@ void main() {
       await pumpPaywall(tester);
 
       expect(
-        find.text(ConsumerUiCopy.paywallSetupUnavailableBody),
+        find.byKey(const Key('paywall_unavailable_body')),
         findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+            .data,
+        contains(ConsumerUiCopy.paywallSetupUnavailableBody),
       );
       expect(find.text('Continue with ArchiveMe Pro'), findsNothing);
     });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../billing/archive_paywall_copy.dart';
+import '../features/paywall/archive_loop_entitlements.dart';
 import '../product/consumer_ui_copy.dart';
 import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
@@ -63,24 +64,26 @@ class _SubscriptionReviewPreviewScreenState
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 22),
-                      ...ConsumerUiCopy.paywallBullets.map(
-                        (label) => _featureRow(
-                          _ReviewFeature(Icons.check_circle_outline, label),
-                        ),
+                      Text(
+                        ArchiveLoopPaywallCopy.subscriptionAutoRenewingSummary,
+                        style: VoiceMemoryTypography.metadataStyle(),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 26),
+                      const SizedBox(height: 18),
                       _planCard(
                         plan: _ReviewPlan.monthly,
-                        title: 'Monthly Plan',
+                        title: ArchiveLoopPaywallCopy.subscriptionMonthlyTitle,
                         price: '£4.99/month',
                         badge: null,
+                        helper: ArchiveLoopPaywallCopy.subscriptionMonthlyDuration,
                       ),
                       const SizedBox(height: 12),
                       _planCard(
                         plan: _ReviewPlan.yearly,
-                        title: 'Yearly Plan',
+                        title: ArchiveLoopPaywallCopy.subscriptionYearlyTitle,
                         price: '£39.99/year',
                         badge: 'Save 33%',
+                        helper: ArchiveLoopPaywallCopy.subscriptionYearlyDuration,
                       ),
                       const SizedBox(height: 24),
                       FilledButton(
@@ -104,13 +107,22 @@ class _SubscriptionReviewPreviewScreenState
                         ),
                       ),
                       const SizedBox(height: 14),
-                      Text(
-                        'Cancel anytime in Settings. Subscription renews automatically.',
-                        style: VoiceMemoryTypography.metadataStyle().copyWith(
-                          fontSize: 12,
-                          color: VoiceMemoryColors.textTertiary,
-                        ),
-                        textAlign: TextAlign.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 16,
+                        runSpacing: 8,
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(ArchiveLoopPaywallCopy.eulaLabel),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              ArchiveLoopPaywallCopy.privacyPolicyLabel,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -161,58 +173,11 @@ class _SubscriptionReviewPreviewScreenState
     );
   }
 
-  Widget _featureRow(_ReviewFeature feature) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: VoiceMemoryColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: VoiceMemoryColors.border),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                feature.icon,
-                size: 22,
-                color: VoiceMemoryColors.primaryIndigo,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                feature.label,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  height: 1.3,
-                  color: VoiceMemoryColors.textPrimary,
-                ),
-              ),
-            ),
-            const Icon(
-              Icons.check_circle,
-              size: 20,
-              color: VoiceMemoryColors.success,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _planCard({
     required _ReviewPlan plan,
     required String title,
     required String price,
+    required String helper,
     required String? badge,
   }) {
     final selected = _selected == plan;
@@ -278,6 +243,14 @@ class _SubscriptionReviewPreviewScreenState
                             : VoiceMemoryColors.textSecondary,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      helper,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: VoiceMemoryColors.textTertiary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -309,10 +282,4 @@ class _SubscriptionReviewPreviewScreenState
       ),
     );
   }
-}
-
-class _ReviewFeature {
-  const _ReviewFeature(this.icon, this.label);
-  final IconData icon;
-  final String label;
 }

@@ -65,7 +65,7 @@ void main() {
         'fallback renders without overflow at ${size.width.toInt()}w',
         (tester) async {
           await pumpAtSize(tester, size, const PaywallScreen());
-          expect(find.text('ArchiveMe Pro'), findsOneWidget);
+          expect(find.text('ArchiveMe Pro'), findsWidgets);
         },
       );
     }

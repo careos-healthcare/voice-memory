@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_event.dart';
+import 'package:voicememory_mobile/features/paywall/archive_loop_entitlements.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -104,22 +105,18 @@ void main() {
       );
 
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
-    });
-
-    testWidgets('renders primary value block and Pro bullets', (tester) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.generalPro),
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+            .data,
+        contains(ConsumerUiCopy.paywallSetupUnavailableBody),
       );
-
-      expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
-      expect(find.text('Longer proof trail'), findsOneWidget);
-      expect(find.text('Correction history'), findsOneWidget);
-      expect(find.text('What returned over time'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsNothing);
+      expect(find.text('Longer proof trail'), findsNothing);
     });
 
-    testWidgets('renders differentiation, trust, and backup honesty', (
+    testWidgets('keeps subscription details visible without benefit checklist', (
       tester,
     ) async {
       await _pumpPaywall(
@@ -127,12 +124,20 @@ void main() {
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
 
-      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
-      expect(find.byKey(const Key('purchase_confidence_card')), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsOneWidget);
-      expect(find.textContaining('sync is active'), findsNothing);
-      expect(find.textContaining('your archive is backed up'), findsNothing);
+      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
+      expect(
+        find.text(ArchiveLoopPaywallCopy.subscriptionAutoRenewingSummary),
+        findsOneWidget,
+      );
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
+      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsNothing);
+    });
+
+    test('source-specific paywall still wires differentiation blocks', () {
+      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      expect(source, contains('_paywallDifferentiationAndTrustSection'));
+      expect(source, contains('_purchaseConfidenceSection'));
+      expect(source, contains('showPackagingSection'));
     });
 
     testWidgets('restore purchases stays visible', (tester) async {

@@ -139,14 +139,14 @@ void main() {
       );
       expect(
         ProPackagingCopy.offeringsUnavailableBody,
-        'Plans are temporarily unavailable. You can still use ArchiveMe.',
+        'Monthly and yearly plans will appear when App Store products finish loading.',
       );
     });
   });
 
   group('ProEvidenceValueCopy', () {
     test('aligns longer proof trail Pro bridge with packaging', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail');
+      expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail.');
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
         contains('ChatGPT can suggest what to do'),
@@ -213,14 +213,16 @@ void main() {
   });
 
   group('PaywallScreen packaging', () {
-    testWidgets('opens with value sections when offerings empty', (tester) async {
+    testWidgets('opens compact unavailable paywall when offerings empty', (
+      tester,
+    ) async {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
-      expect(find.byKey(const Key('paywall_primary_value_block')), findsOneWidget);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
+      expect(find.byKey(const Key('paywall_primary_value_block')), findsNothing);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
       expect(find.text(ProPackagingCopy.continueWithoutProCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -239,10 +241,10 @@ void main() {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text('Longer proof trail'), findsOneWidget);
-      expect(find.text('What returned over time'), findsOneWidget);
+      expect(find.text('Longer proof trail'), findsNothing);
+      expect(find.text('What returned over time'), findsNothing);
       expect(find.textContaining(r'$'), findsNothing);
       expect(find.textContaining('0.00'), findsNothing);
     });

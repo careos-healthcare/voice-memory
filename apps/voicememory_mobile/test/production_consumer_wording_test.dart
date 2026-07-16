@@ -88,11 +88,11 @@ void main() {
     test('paywall headline uses continuity framing', () {
       expect(
         ConsumerUiCopy.paywallHeadline,
-        'Keep the longer proof trail',
+        'Keep the longer proof trail.',
       );
       expect(
         ConsumerUiCopy.paywallSubhead,
-        contains('what appeared, what returned'),
+        contains('returned, changed, faded, or corrected'),
       );
       expect(
         ConsumerUiCopy.paywallSetupUnavailableBody,

@@ -280,14 +280,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
       );
 
   String get _unavailableBodyText {
-    if (!_billingReady) return ConsumerUiCopy.paywallBillingNotConfigured;
+    if (!_billingReady) {
+      return '${ConsumerUiCopy.paywallSetupUnavailableBody}\n\n'
+          '${ConsumerUiCopy.paywallUnavailablePlansLoading}';
+    }
     final err = _error;
     if (err == SubscriptionCopy.paywallNoOfferings ||
         err == SubscriptionCopy.temporarilyUnavailable) {
-      return err!;
+      return '${ConsumerUiCopy.paywallSetupUnavailableBody}\n\n'
+          '${ConsumerUiCopy.paywallUnavailablePlansLoading}';
     }
     if (err != null) return err;
-    return ProPackagingCopy.offeringsUnavailableBody;
+    return '${ConsumerUiCopy.paywallSetupUnavailableBody}\n\n'
+        '${ProPackagingCopy.offeringsUnavailableBody}';
   }
 
   bool get _hasPackages {
@@ -920,7 +925,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
       children: [
         PaywallUnavailableFallback(
           headline: sourceCopy?.headline ?? ConsumerUiCopy.paywallHeadline,
-          subhead: sourceCopy?.subheadline ?? ConsumerUiCopy.paywallSubhead,
           body: _unavailableBodyText,
           busy: _busy,
           retrying: _offeringsReloading,
@@ -1303,19 +1307,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (!showPackagingSection) ...[
-            Text(
-              headline,
-              style: ArchiveMobileTypography.responsivePageTitle(context),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              subhead,
-              style: ArchiveMobileTypography.responsiveBody(context),
-              textAlign: TextAlign.center,
-            ),
-          ],
           if (showPackagingSection) ...[
             Text(
               ConsumerUiCopy.paywallHeadline,
@@ -1328,9 +1319,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
               style: ArchiveMobileTypography.responsiveBody(context),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 14),
-            _generalConversionClaritySection(includeBullets: true),
           ] else ...[
+            Text(
+              headline,
+              style: ArchiveMobileTypography.responsivePageTitle(context),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              subhead,
+              style: ArchiveMobileTypography.responsiveBody(context),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 14),
             if (_usesGeneralConversionClarity)
               _generalConversionClaritySection(includeBullets: true)
@@ -1343,12 +1343,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
             _objectionFollowUpSection(),
           ],
           SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
-          if (!_usesGeneralConversionClarity &&
-              !showPackagingSection &&
+          if (!showPackagingSection &&
+              !_usesGeneralConversionClarity &&
               benefitRows.isNotEmpty)
             ...benefitRows.map(_benefitRow),
-          if (!_usesGeneralConversionClarity &&
-              !showPackagingSection &&
+          if (!showPackagingSection &&
+              !_usesGeneralConversionClarity &&
               benefitRows.isNotEmpty) ...[
             const SizedBox(height: 14),
             _paywallDifferentiationAndTrustSection(
@@ -1379,6 +1379,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             final suggestionFraming = PaywallAnnualValueCopy.showFor(
               widget.triggerArgs?.source,
             );
+            final useCompactPlanLabels = showPackagingSection;
             return Padding(
               padding: EdgeInsets.only(
                 bottom: kind == PaywallPlanKind.annual && monthly != null
@@ -1389,29 +1390,39 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 context: context,
                 plan: plan,
                 title: kind == PaywallPlanKind.annual
-                    ? ArchivePaywallPlanCopy.annualLabel
-                    : ArchivePaywallPlanCopy.monthlyLabel,
+                    ? (useCompactPlanLabels
+                          ? ArchiveLoopPaywallCopy.subscriptionYearlyTitle
+                          : ArchivePaywallPlanCopy.annualLabel)
+                    : (useCompactPlanLabels
+                          ? ArchiveLoopPaywallCopy.subscriptionMonthlyTitle
+                          : ArchivePaywallPlanCopy.monthlyLabel),
                 helper: kind == PaywallPlanKind.annual
-                    ? (suggestionFraming
-                          ? PaywallAnnualValueCopy.yearlyHelper
-                          : ArchivePaywallPlanCopy.annualHelper)
-                    : (suggestionFraming
-                          ? PaywallAnnualValueCopy.monthlyHelper
-                          : ArchivePaywallPlanCopy.monthlyHelper),
+                    ? (useCompactPlanLabels
+                          ? ArchiveLoopPaywallCopy.subscriptionYearlyDuration
+                          : suggestionFraming
+                                ? PaywallAnnualValueCopy.yearlyHelper
+                                : ArchivePaywallPlanCopy.annualHelper)
+                    : (useCompactPlanLabels
+                          ? ArchiveLoopPaywallCopy.subscriptionMonthlyDuration
+                          : suggestionFraming
+                                ? PaywallAnnualValueCopy.monthlyHelper
+                                : ArchivePaywallPlanCopy.monthlyHelper),
                 price: package.storeProduct.priceString,
               ),
             );
           }),
-          // Plan-selection confidence: follows the selected plan, before the
-          // purchase CTA.
-          const SizedBox(height: 14),
-          PlanSelectionConfidenceBlock(
-            selectedPlanId: _planIdFor(_selected),
-            source: widget.triggerArgs?.source?.id,
-          ),
-          // Price confidence directly below the plan cards.
-          const SizedBox(height: 10),
-          _priceConfidenceLines(),
+          if (!showPackagingSection) ...[
+            // Plan-selection confidence: follows the selected plan, before the
+            // purchase CTA.
+            const SizedBox(height: 14),
+            PlanSelectionConfidenceBlock(
+              selectedPlanId: _planIdFor(_selected),
+              source: widget.triggerArgs?.source?.id,
+            ),
+            // Price confidence directly below the plan cards.
+            const SizedBox(height: 10),
+            _priceConfidenceLines(),
+          ],
           if (_error != null) ...[
             const SizedBox(height: 14),
             Text(
@@ -1423,17 +1434,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
               textAlign: TextAlign.center,
             ),
           ],
-          if (PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
+          if (!showPackagingSection && PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 18),
             _proofPreviewSection(),
           ],
-          if (_showsPurchaseConfidenceCard) ...[
+          if (!showPackagingSection && _showsPurchaseConfidenceCard) ...[
             const SizedBox(height: 18),
             _purchaseConfidenceSection(),
           ],
-          const SizedBox(height: 18),
-          _confidenceSection(),
-          if (paywallCtaLiftResult.shouldShow) ...[
+          if (!showPackagingSection) ...[
+            const SizedBox(height: 18),
+            _confidenceSection(),
+          ],
+          if (!showPackagingSection && paywallCtaLiftResult.shouldShow) ...[
             const SizedBox(height: 10),
             Text(
               paywallCtaLiftResult.purchaseCtaLine,
@@ -1442,9 +1455,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
               style: ArchiveMobileTypography.responsiveHelper(context),
             ),
           ],
-          // Final price-confidence line directly before the purchase CTA.
-          const SizedBox(height: 10),
-          _appStoreConfirmLine(),
+          if (!showPackagingSection) ...[
+            // Final price-confidence line directly before the purchase CTA.
+            const SizedBox(height: 10),
+            _appStoreConfirmLine(),
+          ],
+          if (showPackagingSection) ...[
+            const SizedBox(height: 16),
+            _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
+          ],
           const SizedBox(height: 14),
           FilledButton(
             onPressed: _busy ? null : _continue,
@@ -1528,8 +1547,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   : ConsumerUiCopy.restorePurchases,
             ),
           ),
-          const SizedBox(height: 16),
-          _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
+          if (!showPackagingSection) ...[
+            const SizedBox(height: 16),
+            _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
+          ],
         ],
       ),
     );

@@ -99,23 +99,29 @@ void main() {
       );
 
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsOneWidget);
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+            .data,
+        contains(ConsumerUiCopy.paywallSetupUnavailableBody),
+      );
+      expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsNothing);
+      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
+      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
 
-    testWidgets('default paywall still renders restore and packaging CTAs', (
+    testWidgets('default paywall still renders restore and unavailable dismiss', (
       tester,
     ) async {
       await _pumpPaywall(tester);
 
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
-      expect(find.text('Done'), findsAtLeast(1));
-      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsOneWidget);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
+      expect(find.text('Continue without Pro'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
     });
   });
 }

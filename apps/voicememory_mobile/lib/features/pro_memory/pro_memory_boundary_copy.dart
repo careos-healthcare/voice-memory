@@ -27,7 +27,7 @@ abstract final class ProMemoryBoundaryCopy {
       'Private reports are planned — coming after Pro proof. Not part of the V1 purchase promise.';
 
   static const offeringsUnavailableBody =
-      'Plans are temporarily unavailable. You can still use ArchiveMe.';
+      'Monthly and yearly plans will appear when App Store products finish loading.';
 
   static Iterable<String> allVisibleCopy() sync* {
     yield freeHistoryLine;

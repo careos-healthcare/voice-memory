@@ -175,7 +175,7 @@ void main() {
       expect(ProMemoryBoundaryCopy.seeProCta, 'See Pro');
       expect(
         ProMemoryBoundaryCopy.offeringsUnavailableBody,
-        'Plans are temporarily unavailable. You can still use ArchiveMe.',
+        'Monthly and yearly plans will appear when App Store products finish loading.',
       );
     });
   });
@@ -327,7 +327,7 @@ void main() {
         showPlanPrices: true,
       );
       expect(display.showPlanPrices, isFalse);
-      expect(display.unavailableBody, ProMemoryBoundaryCopy.offeringsUnavailableBody);
+      expect(display.unavailableBody, ProPackagingCopy.offeringsUnavailableBody);
     });
   });
 
@@ -504,8 +504,18 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(
-        find.text(ConsumerUiCopy.paywallBillingNotConfigured),
+        find.byKey(const Key('paywall_unavailable_body')),
         findsOneWidget,
+      );
+      final unavailableBody = tester.widget<Text>(
+        find.byKey(const Key('paywall_unavailable_body')),
+      );
+      expect(
+        unavailableBody.data,
+        allOf(
+          contains(ConsumerUiCopy.paywallBillingNotConfigured),
+          contains(ConsumerUiCopy.paywallUnavailablePlansLoading),
+        ),
       );
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.textContaining(r'$'), findsNothing);

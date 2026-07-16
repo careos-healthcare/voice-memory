@@ -82,7 +82,7 @@ void main() {
       expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
 
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer proof trail');
+      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer proof trail.');
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,

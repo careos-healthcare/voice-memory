@@ -603,8 +603,10 @@ abstract class ConsumerUiCopy {
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
   static const String paywallBillingNotConfigured =
-      'ArchiveMe keeps the longer proof trail over time. Purchases are not available right now.';
-  static const String plansUnavailable = 'Plans are not available yet.';
+      paywallSetupUnavailableBody;
+  static const String paywallUnavailablePlansLoading =
+      'Monthly and yearly plans will appear when App Store products finish loading.';
+  static const String plansUnavailable = paywallUnavailablePlansLoading;
 
   // ——— Pattern memory limits (Pro) ———
   static const String patternMemoryGrowingTitle =

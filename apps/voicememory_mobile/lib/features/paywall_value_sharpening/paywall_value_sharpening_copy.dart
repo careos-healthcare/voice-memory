@@ -6,11 +6,11 @@ abstract final class PaywallValueSharpeningCopy {
 
   static const proofConnectedHeadline = 'Keep the proof trail behind this repeat';
 
-  static const genericHeadline = 'Keep the longer proof trail';
+  static const genericHeadline = 'Keep the longer proof trail.';
 
   static const body =
-      'Free shows the first useful proof. Pro keeps what appeared, what returned, '
-      'what you corrected, and what still matters as the trail grows over time.';
+      'Free shows the first useful proof. Pro keeps what returned, changed, '
+      'faded, or corrected over time.';
 
   static const proofConnectedLine =
       'The value is not more chat. It is the longer evidence trail.';

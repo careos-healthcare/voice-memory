@@ -235,7 +235,7 @@ abstract class ArchiveLoopPaywallCopy {
   static const subscriptionPriceUnavailable =
       'Price shown by Apple at purchase.';
   static const subscriptionPlansUnavailable =
-      'Monthly and yearly plans available once App Store products load.';
+      'Monthly and yearly plans will appear when App Store products finish loading.';
   static const subscriptionAutoRenewal =
       'Subscription renews automatically unless cancelled at least 24 hours '
       'before the end of the current period.';

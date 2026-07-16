@@ -266,8 +266,19 @@ void main() {
         await pumpUnavailablePaywall(tester, billingReady: true);
 
         expect(
-          find.text(SubscriptionCopy.paywallNoOfferings),
+          find.byKey(const Key('paywall_unavailable_body')),
           findsOneWidget,
+        );
+        final unavailableBody = tester
+            .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+            .data!;
+        expect(
+          unavailableBody,
+          contains(SubscriptionCopy.paywallNoOfferings),
+        );
+        expect(
+          unavailableBody,
+          contains(ConsumerUiCopy.paywallUnavailablePlansLoading),
         );
         expect(
           find.text(PaywallUnavailableState.continueWithoutProLabel),
@@ -381,7 +392,21 @@ void main() {
     ) async {
       await pumpUnavailablePaywall(tester, billingReady: false);
 
-      expect(find.text(ConsumerUiCopy.paywallBillingNotConfigured), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_unavailable_body')),
+        findsOneWidget,
+      );
+      final unavailableBody = tester
+          .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
+          .data!;
+      expect(
+        unavailableBody,
+        contains(ConsumerUiCopy.paywallBillingNotConfigured),
+      );
+      expect(
+        unavailableBody,
+        contains(ConsumerUiCopy.paywallUnavailablePlansLoading),
+      );
       expect(
         find.text(PaywallUnavailableState.continueWithoutProLabel),
         findsOneWidget,
