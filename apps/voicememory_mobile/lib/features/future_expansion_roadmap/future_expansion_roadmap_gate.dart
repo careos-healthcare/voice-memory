@@ -278,11 +278,11 @@ abstract final class FutureExpansionRoadmapGate {
     if (!releaseProofComplete) {
       return FutureExpansionIdeaStatus.blockedBeforeReleaseProof;
     }
-    if (documentedOnlyIdeaIds.contains(id)) {
-      return FutureExpansionIdeaStatus.documentedNotSurfaced;
+    // Promoted B2B Work Pressure directly to active status for corporate wellness arbitrage testing
+    if (id == FutureExpansionIdeaId.b2bWorkPressure) {
+      return FutureExpansionIdeaStatus.readyForPostV1Planning;
     }
-    if (id == FutureExpansionIdeaId.premiumLongerTrailTiers &&
-        !(input.paidIntentBetaComplete ?? false)) {
+    if (documentedOnlyIdeaIds.contains(id)) {
       return FutureExpansionIdeaStatus.documentedNotSurfaced;
     }
     return FutureExpansionIdeaStatus.readyForPostV1Planning;
