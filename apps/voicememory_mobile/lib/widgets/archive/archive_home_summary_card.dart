@@ -70,13 +70,15 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            summary.title,
-            key: const Key('archive_home_summary_title'),
-            style: titleStyle,
-          ),
-          if (adaptedSubtitle case final subtitle?) ...[
+          if (summary.title.isNotEmpty) ...[
+            Text(
+              summary.title,
+              key: const Key('archive_home_summary_title'),
+              style: titleStyle,
+            ),
             const SizedBox(height: AppSpacing.xs),
+          ],
+          if (adaptedSubtitle case final subtitle?) ...[
             Text(
               subtitle,
               key: const Key('archive_home_summary_subtitle'),

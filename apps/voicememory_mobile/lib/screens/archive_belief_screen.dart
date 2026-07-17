@@ -403,6 +403,7 @@ import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
+import '../features/archive_tab/archive_tab_four_state_engine.dart';
 import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/evidence_attention_filters.dart';
 import '../features/activation/archive_workspace_layout.dart';
@@ -471,6 +472,7 @@ import '../widgets/archive/archive_health_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/archive/archive_first_comparison_card.dart';
 import '../widgets/archive/archive_home_summary_card.dart';
+import '../widgets/archive/archive_tab_entry_state_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1185,6 +1187,28 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool get _showFirstArchive =>
       !ScreenshotMode.enabled &&
       ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 1;
+
+  bool get _showArchiveTwoEntryFourState =>
+      !ScreenshotMode.enabled &&
+      !_showPendingTranscriptOnly &&
+      !_showWeakEvidenceOnly &&
+      ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 2;
+
+  ArchiveTabFourStateModel? get _archiveTabFourStateModel =>
+      ArchiveTabFourStateEngine.build(entries: _entries);
+
+  List<Widget> _archiveTabFourStateWidgets() {
+    final model = _archiveTabFourStateModel;
+    if (model == null) return const [];
+    return [
+      ArchiveTabEntryStateCard(
+        model: model,
+        onPrimary: model.showPrimaryCta
+            ? () => _handleArchiveHomeAction(model.primaryAction)
+            : null,
+      ),
+    ];
+  }
 
   LowEvidenceGuidance? get _patternsLowEvidenceGuidance =>
       LowEvidenceEngine.buildForPatternsTab(entries: _entries);
@@ -3960,14 +3984,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _load,
-            child: PatternsEmptyView(
-              fillViewport: true,
-              footer: [
-                const SizedBox(height: AppSpacing.lg),
-                ..._earlyEvidenceDemoWidgets(),
-                const SizedBox(height: AppSpacing.md),
-              ],
-            ),
+            child: PatternsEmptyView(fillViewport: true),
           ),
         ),
       );
@@ -4014,7 +4031,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     if (_showFirstArchive) {
-      final demoWidgets = _earlyEvidenceDemoWidgets();
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -4023,14 +4039,23 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: [
-                ..._patternsLowEvidenceWidgets(),
-                ..._archiveHomeCommandCenterWidgets(),
-                if (demoWidgets.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  ...demoWidgets,
-                ],
-              ],
+              children: _archiveTabFourStateWidgets(),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_showArchiveTwoEntryFourState) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: ArchiveMobileSpacing.pagePadding,
+              children: _archiveTabFourStateWidgets(),
             ),
           ),
         ),

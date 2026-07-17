@@ -42,7 +42,7 @@ void _expectNoMindMapBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
-  testWidgets('patterns empty state shows mind-map copy and one primary CTA', (
+  testWidgets('patterns empty state shows archive four-state copy and record CTA', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -53,22 +53,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
+      find.textContaining('Nothing saved yet'),
       findsOneWidget,
     );
+    expect(find.text('Record a moment'), findsOneWidget);
+    expect(find.text('Patterns'), findsNothing);
+    expect(find.text('Changes'), findsNothing);
+    expect(find.text('Next to watch'), findsNothing);
+    expect(find.text('Type instead'), findsNothing);
     expect(
-      find.textContaining('Record a few real moments'),
+      find.byKey(const Key('archive_tab_record_moment_cta')),
       findsOneWidget,
     );
-    expect(find.text('Patterns'), findsOneWidget);
-    expect(find.text('Changes'), findsOneWidget);
-    expect(find.text('Next to watch'), findsOneWidget);
-    expect(
-      find.byKey(const Key('patterns_mind_map_empty_primary_cta')),
-      findsOneWidget,
-    );
-    expect(find.text('Record moment'), findsOneWidget);
-    expect(find.text('Type instead'), findsOneWidget);
     expect(find.text('Current belief'), findsNothing);
     expect(find.text('Not enough evidence yet'), findsNothing);
     expect(find.text('Start your first week'), findsNothing);
@@ -93,10 +89,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(
-      find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Nothing saved yet'), findsOneWidget);
   });
 
   testWidgets('primary CTA routes to Record tab', (tester) async {
@@ -119,7 +112,7 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('patterns_mind_map_empty_primary_cta')));
+    await tester.tap(find.byKey(const Key('archive_tab_record_moment_cta')));
     await tester.pumpAndSettle();
 
     expect(find.text('RECORD_TAB'), findsOneWidget);
@@ -169,9 +162,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final title = tester.widget<Text>(
-      find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
+    final body = tester.widget<Text>(
+      find.textContaining('Nothing saved yet'),
     );
-    expect(title.style?.fontSize ?? 0, greaterThanOrEqualTo(26));
+    expect(body.style?.fontSize ?? 0, greaterThanOrEqualTo(14));
   });
 }

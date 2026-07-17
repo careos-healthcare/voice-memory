@@ -13,7 +13,7 @@ class PatternsEmptyView extends StatelessWidget {
     super.key,
     this.fillViewport = false,
     this.footer = const [],
-    this.showArchiveJourneyExplainer = true,
+    this.showArchiveJourneyExplainer = false,
   });
 
   final bool fillViewport;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/features/archive_tab/archive_tab_four_state_copy.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -91,28 +92,27 @@ void main() {
     test('0 entries shows archive start copy without belief claims', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: const []);
       expect(summary.stage, ArchiveHomeStage.empty);
-      expect(summary.title, VisibleArchiveProofCopy.archiveHomeEmptyTitle);
-      expect(summary.body, contains(VisibleArchiveProofCopy.firstRunBuildingLine));
-      expect(summary.footnoteLine, VisibleArchiveProofCopy.archiveHomeEmptySampleHint);
-      expect(summary.primaryCta, 'Record a moment');
-      expect(summary.secondaryCta, 'Type instead');
+      expect(summary.title, '');
+      expect(summary.body, ArchiveTabFourStateCopy.emptyBody);
+      expect(summary.primaryCta, ArchiveTabFourStateCopy.recordMomentCta);
+      expect(summary.secondaryCta, isNull);
       expect(summary.primaryAction, ArchiveHomeAction.record);
       expect(summary.suppressDuplicatePayoffCards, isFalse);
-      _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
+      _expectNoBannedCopy([summary.body]);
     });
 
     test('1 entry shows calm started copy without proof preview rows', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
       expect(summary.stage, ArchiveHomeStage.one);
-      expect(summary.title, VisibleArchiveProofCopy.archiveHomeOneTitle);
-      expect(summary.body, VisibleArchiveProofCopy.archiveHomeOneBody);
+      expect(summary.title, '');
+      expect(summary.body, ArchiveTabFourStateCopy.oneBody);
       expect(summary.body, contains('another real moment'));
-      expect(summary.footnoteLine, VisibleArchiveProofCopy.patternsOneEntryReassurance);
+      expect(summary.footnoteLine, isNull);
       expect(summary.currentBeliefLine, isNull);
       expect(summary.whatChangedLine, isNull);
       expect(summary.evidenceRows, isEmpty);
       expect(summary.nextActionLine, isNull);
-      expect(summary.primaryAction, ArchiveHomeAction.addMoment);
+      expect(summary.primaryCta, isNull);
       expect(summary.suppressDuplicatePayoffCards, isTrue);
     });
 
@@ -134,7 +134,8 @@ void main() {
         ],
       );
       expect(summary.stage, ArchiveHomeStage.two);
-      expect(summary.title, 'ArchiveMe has two moments to compare.');
+      expect(summary.title, '');
+      expect(summary.body, ArchiveTabFourStateCopy.twoUnrelatedBody);
       expect(summary.body, contains('No clear repeat yet'));
       expect(summary.suppressDuplicatePayoffCards, isTrue);
     });
@@ -158,7 +159,7 @@ void main() {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
       expect(summary.stage, ArchiveHomeStage.four);
       expect(summary.title, VisibleArchiveProofCopy.beliefUpdateTitle);
-      expect(summary.primaryCta, 'Add one more moment');
+      expect(summary.primaryCta, VisibleArchiveProofCopy.firstSavePrimaryCta);
       expect(summary.primaryAction, ArchiveHomeAction.addMoment);
       expect(summary.secondaryCta, 'View evidence');
       expect(summary.secondaryAction, ArchiveHomeAction.viewEvidence);
@@ -191,7 +192,24 @@ void main() {
     test('first-run framing lines appear through early ladder stages', () {
       for (final count in [0, 1, 2]) {
         final summary = ArchiveHomeSummaryEngine.build(
-          entries: count == 0 ? const [] : _entries(count),
+          entries: count == 0
+              ? const []
+              : count == 2
+                  ? [
+                      _voiceEntry(
+                        id: 'e1',
+                        transcript:
+                            'I felt pressure at work before saying yes again even when I was tired.',
+                        createdAt: DateTime(2026, 6, 9, 12),
+                      ),
+                      _voiceEntry(
+                        id: 'e2',
+                        transcript:
+                            'I spent the afternoon organizing photos from last summer at the beach.',
+                        createdAt: DateTime(2026, 6, 10, 12),
+                      ),
+                    ]
+                  : _entries(count),
         );
         final visible = [
           summary.title,
@@ -201,8 +219,8 @@ void main() {
         if (count == 0) {
           expect(
             visible,
-            anyElement(contains(VisibleArchiveProofCopy.firstRunBuildingLine)),
-            reason: 'count $count should mention saved words',
+            anyElement(contains('Nothing saved yet')),
+            reason: 'count $count should explain empty archive',
           );
         }
         if (count == 1) {
@@ -321,7 +339,7 @@ void main() {
       await tester.pump();
       expect(find.byKey(const Key('post_save_view_archive_cta')), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
-      expect(find.text(summary.title), findsOneWidget);
+      expect(find.text(summary.body), findsOneWidget);
     });
 
     testWidgets('four-entry summary Add one more moment routes to record', (
@@ -407,7 +425,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
       expect(find.text('View evidence'), findsNothing);
     });
   });

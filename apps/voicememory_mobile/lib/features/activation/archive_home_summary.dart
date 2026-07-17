@@ -1,12 +1,13 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_threshold.dart';
+import '../archive_tab/archive_tab_four_state_copy.dart';
+import '../archive_tab/archive_tab_four_state_engine.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'belief_update_payoff.dart';
 import 'context_aware_archive_copy.dart';
 import 'next_moment_prompt.dart';
-import 'second_session_payoff.dart';
 import 'third_entry_belief_payoff.dart';
 import 'weekly_archive_review.dart';
 
@@ -111,48 +112,34 @@ abstract final class ArchiveHomeSummaryEngine {
     if (eligibleCount == 0) {
       return const ArchiveHomeSummary(
         stage: ArchiveHomeStage.empty,
-        title: ArchiveHomeSummaryCopy.emptyTitle,
-        body: ArchiveHomeSummaryCopy.emptyBody,
-        footnoteLine: VisibleArchiveProofCopy.archiveHomeEmptySampleHint,
-        currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
-        whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
-        nextActionLine: ArchiveHomeSummaryCopy.recordCta,
-        primaryCta: ArchiveHomeSummaryCopy.recordCta,
-        secondaryCta: ArchiveHomeSummaryCopy.typeInsteadCta,
+        title: '',
+        body: ArchiveTabFourStateCopy.emptyBody,
+        primaryCta: ArchiveTabFourStateCopy.recordMomentCta,
         primaryAction: ArchiveHomeAction.record,
-        secondaryAction: ArchiveHomeAction.typeInstead,
       );
     }
 
     if (eligibleCount == 1) {
-      return ArchiveHomeSummary(
+      return const ArchiveHomeSummary(
         stage: ArchiveHomeStage.one,
-        title: ArchiveHomeSummaryCopy.oneTitle,
-        body: VisibleArchiveProofCopy.archiveHomeOneBody,
-        footnoteLine: VisibleArchiveProofCopy.patternsOneEntryReassurance,
-        primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
-        primaryAction: ArchiveHomeAction.addMoment,
+        title: '',
+        body: ArchiveTabFourStateCopy.oneBody,
         suppressDuplicatePayoffCards: true,
       );
     }
 
     if (eligibleCount == 2) {
-      final payoff = SecondSessionPayoffEngine.build(entries: entries);
-      return ArchiveHomeSummary(
-        stage: ArchiveHomeStage.two,
-        title: payoff?.title ?? VisibleArchiveProofCopy.twoEntryCompareTitle,
-        body: payoff?.body ?? VisibleArchiveProofCopy.twoEntryBodyUngrounded,
-        footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-        currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
-        whatChangedLine: payoff?.hasGroundedMatch == true
-            ? payoff!.body
-            : VisibleArchiveProofCopy.twoEntryBodyUngrounded,
-        nextActionLine: _nextActionLine(entries) ??
-            VisibleArchiveProofCopy.twoEntryNextAction,
-        primaryCta: VisibleArchiveProofCopy.twoEntryPrimaryCta,
-        primaryAction: ArchiveHomeAction.addMoment,
-        suppressDuplicatePayoffCards: true,
-      );
+      final fourState = ArchiveTabFourStateEngine.build(entries: entries);
+      if (fourState != null) {
+        return ArchiveHomeSummary(
+          stage: ArchiveHomeStage.two,
+          title: '',
+          body: fourState.body,
+          primaryCta: fourState.primaryCta,
+          primaryAction: fourState.primaryAction,
+          suppressDuplicatePayoffCards: true,
+        );
+      }
     }
 
     if (eligibleCount == 3) {
