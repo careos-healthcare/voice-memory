@@ -74,12 +74,35 @@ abstract class PrivacyCopyPolicy {
     caseSensitive: false,
   );
 
-  static const List<String> _bannedPhrases = [
+  static const List<String> globalBannedPhrases = [
+    'therapy',
+    'diagnosis',
+    'medical',
+    'treatment',
+    'mental health score',
+    'wellbeing score',
+    'clinical score',
+    'life score',
+    'archiveme knows',
+    'fake stats',
+    'testimonial',
+    'everything stays on device',
+    'fully encrypted archive',
     '100% secure',
+    'unhackable',
+    'voice memory',
+    'voicememory',
+    'ai',
+    'artificial intelligence',
+    'diagnose',
+    'disorder',
+    'therapist',
+  ];
+
+  static const List<String> _privacySuperlativePhrases = [
     '100% safe',
     'military grade',
     'military-grade',
-    'unhackable',
     'unbreakable',
     'impossible to access',
     'nothing ever leaves your device',
@@ -90,37 +113,67 @@ abstract class PrivacyCopyPolicy {
   ];
 
   /// Returns human-readable violation reasons for a user-visible string literal.
-  static List<String> violationsInLiteral(String value) {
-    if (value.isEmpty || value.contains(r'${')) return const [];
+  static List<String> violationsInLiteral(String line) {
+    if (line.isEmpty || line.contains(r'${')) return const [];
 
-    final lower = value.toLowerCase();
+    final lower = line.toLowerCase();
     final violations = <String>[];
 
-    if (_neverSentPattern.hasMatch(value) &&
+    if (_neverSentPattern.hasMatch(line) &&
         !lower.contains('unless you choose')) {
       violations.add(
         'overbroad "never sent/leaves" without "unless you choose"',
       );
     }
 
-    for (final phrase in _bannedPhrases) {
+    for (final phrase in globalBannedPhrases) {
+      if (_phraseMatches(lower, phrase) &&
+          !_isAllowedBannedPhraseContext(lower, phrase)) {
+        violations.add(phrase);
+      }
+    }
+
+    for (final phrase in _privacySuperlativePhrases) {
       if (lower.contains(phrase)) {
         violations.add('banned phrase "$phrase"');
       }
     }
 
-    if (_anonymousPattern.hasMatch(value)) {
+    if (_anonymousPattern.hasMatch(line)) {
       violations.add('anonymous claim (not a supported product promise)');
     }
 
-    if (_encryptPattern.hasMatch(value) &&
-        !_allowedEncryptedContexts.any((pattern) => pattern.hasMatch(value))) {
+    if (_encryptPattern.hasMatch(line) &&
+        !_allowedEncryptedContexts.any((pattern) => pattern.hasMatch(line))) {
       violations.add(
         'encryption claim without supported backup/sync context',
       );
     }
 
     return violations;
+  }
+
+  static bool _phraseMatches(String lower, String phrase) {
+    if (phrase == 'ai') {
+      return RegExp(r'\bai\b', caseSensitive: false).hasMatch(lower);
+    }
+    return lower.contains(phrase);
+  }
+
+  static bool _isAllowedBannedPhraseContext(String lower, String phrase) {
+    switch (phrase) {
+      case 'therapy':
+        return lower.contains('not therapy');
+      case 'medical':
+        return lower.contains('not medical') || lower.contains('medical advice');
+      case 'treatment':
+        return lower.contains('not treatment');
+      case 'diagnosis':
+      case 'diagnose':
+        return lower.contains('not diagnos');
+      default:
+        return false;
+    }
   }
 
   static bool _allowlistedLine(String path, String line) {
@@ -130,7 +183,8 @@ abstract class PrivacyCopyPolicy {
     if (line.contains('PrivacyCopyPolicy.')) return true;
     if (line.contains('bannedFirstImpressionPhrases') ||
         line.contains('bannedTerms') ||
-        line.contains('bannedInternalTerms')) {
+        line.contains('bannedInternalTerms') ||
+        line.contains('globalBannedPhrases')) {
       return true;
     }
     return false;
