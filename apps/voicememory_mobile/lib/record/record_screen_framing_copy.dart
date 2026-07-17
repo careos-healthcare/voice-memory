@@ -90,7 +90,7 @@ abstract final class RecordFirstUsePromptCopy {
 abstract final class RecordFirstRunPromiseCopy {
   RecordFirstRunPromiseCopy._();
 
-  static const title = 'When it repeats, save it';
+  static const title = 'When it repeats, save it.';
   static const body = 'Save one real moment. ArchiveMe compares it later.';
   static const supportingLine =
       'Not a diary. Not homework. One sentence is enough.';
