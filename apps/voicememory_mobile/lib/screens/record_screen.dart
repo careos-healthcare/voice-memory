@@ -8212,6 +8212,24 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (showReturningWatchTargetFocusedUi &&
+                        _journalEntryCountReady &&
+                        ReturningRecordWatchTargetUiGates
+                            .showProUpgradePromptOnReturn(
+                          entryCount: _journalEntryCount,
+                        ) &&
+                        showProBridgeBelowProofOnRecord &&
+                        proBridgeVisibilityRecordResult != null) ...[
+                      ProBridgeVisibilityCard(
+                        result: proBridgeVisibilityRecordResult,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_return_watch_pro_bridge',
+                        ),
+                        onDismiss: () =>
+                            unawaited(_dismissProEvidenceValueBridge()),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (RecordEmptyArchiveGates.showArchiveEducationStackOnRecord(
                           loaded: _journalEntryCountReady,
                           entryCount: _journalEntryCount,

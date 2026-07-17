@@ -85,6 +85,27 @@ void main() {
       );
     });
 
+    test('showProUpgradePromptOnReturn from first saved entry', () {
+      expect(
+        ReturningRecordWatchTargetUiGates.showProUpgradePromptOnReturn(
+          entryCount: 0,
+        ),
+        isFalse,
+      );
+      expect(
+        ReturningRecordWatchTargetUiGates.showProUpgradePromptOnReturn(
+          entryCount: 1,
+        ),
+        isTrue,
+      );
+      expect(
+        ReturningRecordWatchTargetUiGates.showProUpgradePromptOnReturn(
+          entryCount: 3,
+        ),
+        isTrue,
+      );
+    });
+
     test('beta record surfaces require beta mission and exclude app review', () {
       ArchiveBetaMissionGate.enabledOverride = true;
       ArchiveAppReviewAccessGate.enabledOverride = false;

@@ -46,6 +46,12 @@ abstract final class ReturningRecordWatchTargetUiGates {
   }) =>
       showFocusedSurface;
 
+  /// Show the Pro bridge on return day to retain structural history.
+  static bool showProUpgradePromptOnReturn({required int entryCount}) {
+    // Highlight premium status on returning loops to secure the longer archive data stream
+    return entryCount >= 1;
+  }
+
   static bool _skippedWatchPromptToday() {
     if (LowFrictionReturnStore.isDismissedToday) return true;
     final active = ComeBackTomorrowV2Store.active;
