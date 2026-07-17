@@ -4,7 +4,7 @@ abstract final class ReturnTomorrowCueCopy {
 
   static const afterFirstMomentTitle = 'Come back when it shows up again';
   static const afterFirstMomentBody =
-      'ArchiveMe needs another real moment before it can compare.';
+      'If it repeats, changes, fades, or disappears, save that moment too.';
 
   static const afterSecondRelatedTitle =
       'One more related moment unlocks first proof';

@@ -184,7 +184,8 @@ abstract class ConsumerUiCopy {
       VisibleArchiveProofCopy.patternsOneEntryBody;
   static const String patternsFirstEntrySavedHelper =
       VisibleArchiveProofCopy.patternsOneEntryReassurance;
-  static const String patternsFirstEntrySavedCta = 'Add one more moment';
+  static const String patternsFirstEntrySavedCta =
+      VisibleArchiveProofCopy.firstSavePrimaryCta;
   static const String patternsFirstEntryViewSavedCta = 'View saved entry';
 
   /// Legacy alias — prefer [patternsFirstEntrySavedTitle].

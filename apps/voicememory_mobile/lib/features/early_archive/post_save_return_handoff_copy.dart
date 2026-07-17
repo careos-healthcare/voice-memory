@@ -4,13 +4,12 @@ import '../trust/capture_recovery_copy.dart';
 abstract final class PostSaveReturnHandoffCopy {
   PostSaveReturnHandoffCopy._();
 
-  static const afterFirstSaveTitle = 'Come back when something similar happens';
+  static const afterFirstSaveTitle = 'Come back when this shows up again.';
 
   static const afterFirstSaveBodyFallback =
-      'No need to explain everything. Record a short moment when something similar happens.';
+      'If it repeats, changes, fades, or disappears, save that moment too.';
 
-  static const afterFirstSaveFooter =
-      '1 of 3 · Ten seconds is enough.';
+  static const afterFirstSaveFooter = 'Short is fine.';
 
   static const afterSecondSaveRelatedTitle = 'One more unlocks first proof';
 
@@ -27,7 +26,7 @@ abstract final class PostSaveReturnHandoffCopy {
   static const afterSecondSaveUnrelatedFooter = 'No need to force a pattern.';
 
   static String afterFirstSaveBodyWithPhrase(String phrase) =>
-      'Come back when something like “$phrase” happens and record it.';
+      'Come back when “$phrase” shows up again and record what happened.';
 
   static String afterSecondSaveRelatedBodyWithPhrase(String phrase) =>
       'Record one more moment like “$phrase”. That unlocks your first proof.';

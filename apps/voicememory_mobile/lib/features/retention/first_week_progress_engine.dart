@@ -131,7 +131,9 @@ abstract final class FirstWeekProgressEngine {
       );
     }
 
-    if (weekDay == 1 && eligible.length >= 1) {
+    // One entry on day 1 — skip "Day 1 of 7" program framing; first-save card
+    // already explains when to return.
+    if (weekDay == 1 && eligible.length > 1) {
       return const FirstWeekProgress(
         state: FirstWeekProgressState.day1,
         title: FirstWeekProgressCopy.day1Title,

@@ -90,7 +90,7 @@ void main() {
     test('first-save evidence copy stays cautious without pattern claims', () {
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('compare what repeats'),
+        VisibleArchiveProofCopy.firstSavePostSaveBody,
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,

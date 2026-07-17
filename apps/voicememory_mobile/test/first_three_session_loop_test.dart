@@ -82,7 +82,7 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Saved.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('another real moment'),
+        VisibleArchiveProofCopy.firstSavePostSaveBody,
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
@@ -90,7 +90,7 @@ void main() {
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
-        contains('No conclusion yet'),
+        contains('Come back when this shows up again'),
       );
     });
 
@@ -237,13 +237,16 @@ void main() {
       await tester.pump();
 
       expect(find.text('Saved.'), findsOneWidget);
-      expect(find.textContaining('another real moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveBody),
+        findsOneWidget,
+      );
       expect(
         find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
         findsOneWidget,
       );
       expect(find.text('View archive'), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('Done for today'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
       expect(find.text('ArchiveMe found a possible repeat'), findsNothing);
@@ -556,7 +559,7 @@ void main() {
       final one = EarlyRepeatProgressEngine.build(
         entries: [_entry('1', 'I felt pressure before saying yes again today.')],
       );
-      expect(one!.progressLabel, EarlyRepeatProgressCopy.oneMomentProgress);
+      expect(one!.progressLabel, isEmpty);
 
       final related = EarlyRepeatProgressEngine.build(
         entries: [

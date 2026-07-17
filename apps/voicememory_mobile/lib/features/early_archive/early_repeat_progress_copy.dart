@@ -6,8 +6,8 @@ abstract final class EarlyRepeatProgressCopy {
 
   static const oneMomentTitle = 'One moment saved';
   static const oneMomentBody =
-      'Come back when something similar happens. Short is fine.';
-  static const oneMomentProgress = '1 of 3';
+      'Come back when this shows up again. Short is fine.';
+  static const oneMomentProgress = '';
 
   static const twoRelatedTitle = 'Two similar moments';
   static const twoRelatedBody =
@@ -20,7 +20,7 @@ abstract final class EarlyRepeatProgressCopy {
 
   static const oneMomentCueLabel = 'Next step';
   static const oneMomentCueBodyFallback =
-      'Come back when something similar happens.';
+      'Come back when this shows up again.';
   static const oneMomentCueFooter = 'Ten seconds is enough.';
 
   static const twoRelatedCueLabel = 'One more unlocks first proof';
@@ -34,7 +34,7 @@ abstract final class EarlyRepeatProgressCopy {
   static const twoUnrelatedCueFooter = 'No need to force a pattern.';
 
   static String oneMomentCueBodyWithPhrase(String phrase) =>
-      'Come back when something like “$phrase” happens and record it.';
+      'Come back when “$phrase” shows up again and record what happened.';
 
   static String twoRelatedCueBodyWithPhrase(String phrase) =>
       'Record one more moment like “$phrase”. That unlocks your first proof.';

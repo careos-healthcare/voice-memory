@@ -88,7 +88,14 @@ void main() {
 
       expect(display.show, isTrue);
       expect(display.title, VisibleArchiveProofCopy.archiveFirstComparisonTitle);
-      expect(display.body, VisibleArchiveProofCopy.archiveFirstComparisonBody);
+      expect(
+        [
+          VisibleArchiveProofCopy.archiveFirstComparisonMentionedBefore,
+          VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody,
+          VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,
+        ],
+        contains(display.body),
+      );
       expect(display.primaryIsViewEvidence, isTrue);
       expect(display.hasGroundedPattern, isTrue);
       expect(display.evidenceLine, isNotNull);

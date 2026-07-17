@@ -22,7 +22,7 @@ void main() {
               display: const ArchiveFirstComparisonDisplay(
                 show: true,
                 title: VisibleArchiveProofCopy.archiveFirstComparisonTitle,
-                body: VisibleArchiveProofCopy.archiveFirstComparisonBody,
+                body: VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody,
                 evidenceLine:
                     'You mentioned checking again before feeling done more than once.',
                 whatChangedLine: 'The latest moment may be more about work.',

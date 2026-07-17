@@ -10821,7 +10821,9 @@ class _RecordScreenState extends State<RecordScreen> {
                           // safe labels only.
                           if (_dayTwoReturnPreview != null &&
                               _dayTwoReturnPreview!.show &&
-                              returnLoopPayoff == null)
+                              returnLoopPayoff == null &&
+                              !justSavedFirstEntry &&
+                              !suppressNoisyFirstSaveCards)
                             Padding(
                               padding: const EdgeInsets.only(top: 16),
                               child: DayTwoReturnPreviewCard(

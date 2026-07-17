@@ -137,7 +137,7 @@ void main() {
       );
       expect(find.text('"checking again"'), findsOneWidget);
       expect(
-        find.text('Record if it came back, changed, or disappeared.'),
+        find.text('Record if it came back, changed, faded, or disappeared.'),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);

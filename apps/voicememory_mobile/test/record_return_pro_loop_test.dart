@@ -113,17 +113,17 @@ void main() {
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
-        contains('No conclusion yet'),
+        contains('Come back when this shows up again'),
       );
       expect(RecordReturnProCopy.evidenceViewArchive, 'View archive');
-      expect(RecordReturnProCopy.evidenceRecordAnother, 'Add one more moment');
+      expect(RecordReturnProCopy.evidenceRecordAnother, 'Record if it happens again');
     });
 
     test('return cue copy is exact', () {
       expect(RecordReturnProCopy.returnTitle, 'Return tomorrow');
       expect(
         RecordReturnProCopy.returnBody,
-        contains('tomorrow'),
+        contains('Come back when this shows up again'),
       );
       expect(
         RecordReturnProCopy.returnLocalCta,
@@ -336,7 +336,10 @@ void main() {
       await tester.pump();
 
       expect(find.text('Saved.'), findsOneWidget);
-      expect(find.textContaining('another real moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveBody),
+        findsOneWidget,
+      );
       expect(
         find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
         findsOneWidget,

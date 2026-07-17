@@ -41,14 +41,16 @@ class EarlyRepeatProgressCard extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            progress.progressLabel,
-            key: const Key('early_repeat_progress_label'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textPrimary,
+          if (progress.progressLabel.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              progress.progressLabel,
+              key: const Key('early_repeat_progress_label'),
+              style: ArchiveMobileTypography.cardLabel(context).copyWith(
+                color: AppColors.textPrimary,
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           Text(
             progress.nextMomentCue.label,

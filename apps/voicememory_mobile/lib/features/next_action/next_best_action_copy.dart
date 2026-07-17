@@ -8,9 +8,9 @@ abstract final class NextBestActionCopy {
   static const noEntriesHelper = 'Short is fine. Ten seconds is enough.';
 
   static const oneEntryTitle =
-      'Next: come back when something similar happens.';
+      'Next: come back when this shows up again.';
   static const oneEntryHelper =
-      'ArchiveMe needs a second moment to compare.';
+      'You are done for now unless it happens again.';
 
   static const twoNoClearMatchTitle = 'Next: record the next real moment.';
   static const twoNoClearMatchHelper = 'No need to force a pattern.';

@@ -89,7 +89,7 @@ void main() {
         ConsumerUiCopy.patternsFirstEntrySavedBody,
         VisibleArchiveProofCopy.patternsOneEntryBody,
       );
-      expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add one more moment');
+      expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Record if it happens again');
     });
 
     test('one saved entry is not intentional empty archive', () {
@@ -186,7 +186,7 @@ void main() {
         find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance),
         findsOneWidget,
       );
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBadge), findsNothing);
       expect(find.text('Evidence'), findsNothing);
       expect(find.text('Pattern your archive is watching'), findsNothing);
@@ -471,7 +471,7 @@ void main() {
         find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
         findsOneWidget,
       );
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance), findsOneWidget);
       expect(find.text(ArchiveHomeSummaryCopy.beliefLabel), findsNothing);
       expect(find.text(ArchiveHomeSummaryCopy.evidenceLabel), findsNothing);
@@ -591,7 +591,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(VisibleArchiveProofCopy.archiveFirstComparisonBody),
+        find.text(VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody),
         findsOneWidget,
       );
       expect(find.byKey(const Key('archive_first_comparison_view_evidence_cta')), findsOneWidget);

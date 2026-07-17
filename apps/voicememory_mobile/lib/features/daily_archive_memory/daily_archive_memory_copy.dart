@@ -7,7 +7,7 @@ abstract final class DailyArchiveMemoryCopy {
   static const watchBody = 'Last time, this was the thread to watch:';
 
   static const footer =
-      'Record if it came back, changed, or disappeared.';
+      'Record if it came back, changed, faded, or disappeared.';
 
   static const recordCta = 'Record what happened';
 

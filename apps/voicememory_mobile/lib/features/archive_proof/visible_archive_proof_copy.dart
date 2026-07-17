@@ -45,10 +45,10 @@ abstract final class VisibleArchiveProofCopy {
   // First save on Record screen — one calm post-save card.
   static const firstSavePostSaveTitle = 'Saved.';
 
-  static const firstSavePostSaveBody =
-      'Your archive has started. ArchiveMe needs another real moment before it can compare what repeats.';
+  static const firstSavePostSaveBody = 'Come back when this shows up again.';
 
   static const firstSavePostSaveReassurance =
+      'If it repeats, changes, fades, or disappears, save that moment too. '
       'You do not need to keep working on this now.';
 
   static const firstSaveDoneForTodayCta = 'Done for today';
@@ -62,10 +62,16 @@ abstract final class VisibleArchiveProofCopy {
       'ArchiveMe can now start comparing this pattern.';
 
   // Archive tab — first comparison state (two eligible moments).
-  static const archiveFirstComparisonTitle = 'Something came back.';
+  static const archiveFirstComparisonTitle = 'This looks like it came back.';
 
-  static const archiveFirstComparisonBody =
-      'ArchiveMe found a pattern across your saved moments.';
+  static const archiveFirstComparisonMentionedBefore =
+      'You mentioned something similar before.';
+
+  static const archiveFirstComparisonMayConnectBody =
+      'This may be the same thread as an earlier saved moment.';
+
+  static const archiveFirstComparisonCautionThin =
+      'This looks like it came back, but ArchiveMe needs more moments to be sure.';
 
   static const archiveFirstComparisonWhatChangedLabel = 'What changed';
 
@@ -79,11 +85,10 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveBody = 'This is the first piece of evidence.';
 
   static const firstSaveSecondary =
-      'One more moment lets ArchiveMe compare what repeats.';
+      'If it repeats, changes, fades, or disappears, save that moment too.';
 
   static const firstSaveReturnTomorrowBody =
-      'Come back tomorrow to see whether this moment shows up again. '
-      'No conclusion yet — just one private save so far.';
+      'Come back when this shows up again. Just one private save so far.';
 
   static const archiveHomeEmptySampleHint =
       'Sample Archive below shows how comparison works — demo moments only, '
@@ -93,7 +98,7 @@ abstract final class VisibleArchiveProofCopy {
       'A second moment lets ArchiveMe compare your own words — cautiously, '
       'not as a conclusion.';
 
-  static const firstSavePrimaryCta = 'Add one more moment';
+  static const firstSavePrimaryCta = 'Record if it happens again';
   static const firstSaveViewArchiveCta = 'View archive';
 
   // Patterns zero-entry — mind map preview (Patterns tab).
@@ -400,10 +405,9 @@ abstract final class VisibleArchiveProofCopy {
   static const oneEntryAddedTodayLine = 'You added one piece today.';
   static const oneEntryArchiveLine =
       'ArchiveMe has one moment to compare later.';
-  static const oneEntryTomorrowLine =
-      'Tomorrow, check whether this shows up again.';
+  static const oneEntryTomorrowLine = 'Come back when this shows up again.';
   static const oneEntryAddMoreInvite =
-      'Add one more moment when it happens again.';
+      'Save that moment only if it happens again.';
   static const oneEntryShareableLine =
       'I recorded one moment for my archive.';
 

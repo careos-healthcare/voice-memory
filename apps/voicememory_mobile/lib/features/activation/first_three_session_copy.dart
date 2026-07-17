@@ -9,8 +9,9 @@ abstract class FirstThreeSessionCopy {
   static const String session0Title = 'Start your archive';
   static const String session1CardTitle = 'You recorded something real.';
   static const String session1CardBody =
-      'Add one more moment so ArchiveMe can compare what shows up again.';
-  static const String session1NextAction = 'Add one more moment';
+      VisibleArchiveProofCopy.firstSavePostSaveBody;
+  static const String session1NextAction =
+      VisibleArchiveProofCopy.firstSavePrimaryCta;
   static const String session1Title =
       VisibleArchiveProofCopy.firstSavePostSaveTitle;
   static const String session1Body =

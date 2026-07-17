@@ -3,7 +3,7 @@ abstract final class ArchiveStateActionCopy {
   ArchiveStateActionCopy._();
 
   static const noEntries = 'Record one real moment';
-  static const oneEntry = 'Come back when something similar happens';
+  static const oneEntry = 'Come back when this shows up again';
   static const twoUnrelated = 'Record the next real moment';
   static const twoRelated = 'Record one more related moment';
   static const firstProof = 'Record when it returns';

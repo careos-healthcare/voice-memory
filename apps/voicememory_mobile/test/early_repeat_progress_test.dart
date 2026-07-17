@@ -48,7 +48,7 @@ JournalEntry _entry(String id, String transcript) {
 
 void main() {
   group('EarlyRepeatProgressEngine', () {
-    test('entryCount 1 shows 1 of 3 repeat progress', () {
+    test('entryCount 1 shows return-when copy without program counter', () {
       final result = EarlyRepeatProgressEngine.build(
         entries: [
           _entry('1', 'I felt pressure before saying yes again today.'),
@@ -57,7 +57,7 @@ void main() {
 
       expect(result!.kind, EarlyRepeatProgressKind.oneMoment);
       expect(result.title, EarlyRepeatProgressCopy.oneMomentTitle);
-      expect(result.progressLabel, EarlyRepeatProgressCopy.oneMomentProgress);
+      expect(result.progressLabel, isEmpty);
       expect(result.claimsRepeatForming, isFalse);
       expect(
         result.nextMomentCue.label,
@@ -344,7 +344,7 @@ void main() {
       );
       expect(find.byKey(const Key('early_repeat_progress_title')), findsOneWidget);
       expect(find.byKey(const Key('early_repeat_progress_body')), findsOneWidget);
-      expect(find.byKey(const Key('early_repeat_progress_label')), findsOneWidget);
+      expect(find.byKey(const Key('early_repeat_progress_label')), findsNothing);
       expect(
         find.byKey(const Key('early_repeat_progress_next_moment_cue_label')),
         findsOneWidget,
@@ -790,11 +790,11 @@ void main() {
     test('post-save handoff after first save stays low-effort', () {
       expect(
         PostSaveReturnHandoffCopy.afterFirstSaveFooter,
-        contains('Ten seconds is enough'),
+        contains('Short is fine'),
       );
       expect(
         PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback.toLowerCase(),
-        contains('no need to explain'),
+        contains('if it repeats, changes, fades, or disappears'),
       );
     });
   });

@@ -80,9 +80,9 @@ class FirstSaveEvidenceCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
-            key: const Key('first_save_record_another_cta'),
-            onPressed: onRecordAnother,
-            child: const Text(RecordReturnProCopy.evidenceRecordAnother),
+            key: const Key('first_save_done_for_today_cta'),
+            onPressed: onDoneForToday,
+            child: const Text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
           ),
           const SizedBox(height: AppSpacing.xs),
           OutlinedButton(
@@ -102,14 +102,14 @@ class FirstSaveEvidenceCard extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: TextButton(
-              key: const Key('first_save_done_for_today_cta'),
-              onPressed: onDoneForToday,
+              key: const Key('first_save_record_another_cta'),
+              onPressed: onRecordAnother,
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.textSecondary,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 minimumSize: const Size(0, 36),
               ),
-              child: const Text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+              child: const Text(RecordReturnProCopy.evidenceRecordAnother),
             ),
           ),
         ],

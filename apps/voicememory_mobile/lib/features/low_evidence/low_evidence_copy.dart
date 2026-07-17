@@ -4,7 +4,7 @@ abstract final class LowEvidenceCopy {
 
   static const oneEntryTitle = 'Your archive has started';
   static const oneEntryBody =
-      'One real moment is enough to begin. ArchiveMe needs a few more moments before it can compare what repeats.';
+      'One real moment is enough to begin. Come back when this shows up again.';
 
   static const twoUnrelatedTitle = 'Nothing clear yet — that is normal';
   static const twoUnrelatedBody =

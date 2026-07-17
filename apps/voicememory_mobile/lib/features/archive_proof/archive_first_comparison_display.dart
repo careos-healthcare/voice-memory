@@ -44,10 +44,16 @@ class ArchiveFirstComparisonDisplay {
     if (grounded) {
       final evidence = _usableLine(comparison.whatRepeated);
       final changed = _usableLine(comparison.whatChanged);
+      final body = evidence == null
+          ? VisibleArchiveProofCopy.archiveFirstComparisonCautionThin
+          : (evidence.toLowerCase().contains('mentioned') ||
+                  evidence.toLowerCase().contains('similar'))
+              ? VisibleArchiveProofCopy.archiveFirstComparisonMentionedBefore
+              : VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody;
       return ArchiveFirstComparisonDisplay(
         show: true,
         title: VisibleArchiveProofCopy.archiveFirstComparisonTitle,
-        body: VisibleArchiveProofCopy.archiveFirstComparisonBody,
+        body: body,
         evidenceLine: evidence,
         whatChangedLine: changed,
         primaryIsViewEvidence: true,

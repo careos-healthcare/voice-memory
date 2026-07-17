@@ -83,18 +83,32 @@ void main() {
   tearDown(ActivationFunnelAnalytics.resetForTest);
 
   group('FirstWeekProgressEngine post-save', () {
-    test('shows day 1 after first real moment', () {
+    test('shows day 1 after first real moment only when more than one entry', () {
       final now = DateTime(2026, 6, 12, 14);
-      final progress = FirstWeekProgressEngine.buildPostSave(
+      final oneEntryProgress = FirstWeekProgressEngine.buildPostSave(
         entries: [_entry('1', _strongRepeat, createdAt: now)],
         firstProofUnlocked: false,
         now: now,
       );
+      expect(oneEntryProgress, isNull);
 
-      expect(progress, isNotNull);
-      expect(progress!.state, FirstWeekProgressState.day1);
-      expect(progress.title, FirstWeekProgressCopy.day1Title);
-      expect(progress.body, FirstWeekProgressCopy.day1Body);
+      final twoEntryProgress = FirstWeekProgressEngine.buildPostSave(
+        entries: [
+          _entry('1', _strongRepeat, createdAt: now),
+          _entry(
+            '2',
+            'Another saved moment with enough words for archive evidence.',
+            createdAt: now,
+          ),
+        ],
+        firstProofUnlocked: false,
+        now: now,
+      );
+
+      expect(twoEntryProgress, isNotNull);
+      expect(twoEntryProgress!.state, FirstWeekProgressState.day1);
+      expect(twoEntryProgress.title, FirstWeekProgressCopy.day1Title);
+      expect(twoEntryProgress.body, FirstWeekProgressCopy.day1Body);
     });
 
     test('first proof state replaces generic progress', () {
@@ -250,20 +264,13 @@ void main() {
     });
 
     test('does not show with Return Tomorrow Cue on post-save', () {
-      final now = DateTime(2026, 6, 12, 14);
-      final entries = [_entry('1', _strongRepeat, createdAt: now)];
-      final progress = FirstWeekProgressEngine.buildPostSave(
-        entries: entries,
-        firstProofUnlocked: false,
-        now: now,
-      );
-      final returnCue = ReturnTomorrowCueEngine.buildPostSave(
-        entries: entries,
-        firstProofUnlocked: false,
+      const progress = FirstWeekProgress(
+        state: FirstWeekProgressState.day2,
+        title: FirstWeekProgressCopy.day2Title,
+        body: FirstWeekProgressCopy.day2Body,
+        weekDay: 2,
       );
 
-      expect(progress, isNotNull);
-      expect(returnCue, isNotNull);
       expect(
         FirstWeekProgressGates.shouldShowPostSave(
           isPostSaveDone: true,
