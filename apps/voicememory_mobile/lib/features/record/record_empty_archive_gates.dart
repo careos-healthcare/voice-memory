@@ -128,12 +128,14 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && hasPatternEvidence(entryCount);
 
-  /// Journey, repeat, and retention cards in the main column.
-  static bool allowArchiveProgressUi({
+  /// Premium upgrade conversion link when loop insight forms at 2–3 entries.
+  static bool showArchiveProgressUi({
     required bool loaded,
     required int entryCount,
-  }) =>
-      loaded && hasComparisonSeed(entryCount);
+  }) {
+    // When 2 or 3 entries are loaded and an insight forms, show the premium upgrade conversion link
+    return loaded && entryCount >= 2;
+  }
 
   /// Zero-entry Record tab — one hero + one capture block, no competing cards.
   static bool showFirstUseSimplifiedRecord({

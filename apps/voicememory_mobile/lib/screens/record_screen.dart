@@ -3640,7 +3640,7 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   bool get _canShowArchiveProgressCards =>
-      RecordEmptyArchiveGates.allowArchiveProgressUi(
+      RecordEmptyArchiveGates.showArchiveProgressUi(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
       ) ||
