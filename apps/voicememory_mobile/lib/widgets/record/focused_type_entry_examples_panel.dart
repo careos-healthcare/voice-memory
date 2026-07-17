@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../features/first_use_wording/first_use_wording_model.dart';
 import '../../record/quick_text_capture_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -51,15 +50,18 @@ class FocusedTypeEntryExamplesPanel extends StatelessWidget {
         ),
         if (expanded) ...[
           const SizedBox(height: AppSpacing.xs),
-          for (final prompt in FirstUseWordingCatalog.prompts)
+          for (var i = 0; i < QuickTextCaptureCopy.examples.length; i++)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
               child: Align(
                 alignment: Alignment.center,
                 child: InkWell(
-                  key: Key('focused_type_entry_starter_${prompt.id}'),
-                  onTap: () => onStarterSelected(prompt.opening),
-                  child: Text(prompt.opening, style: starterStyle),
+                  key: Key('focused_type_entry_example_$i'),
+                  onTap: () => onStarterSelected(QuickTextCaptureCopy.examples[i]),
+                  child: Text(
+                    QuickTextCaptureCopy.examples[i],
+                    style: starterStyle,
+                  ),
                 ),
               ),
             ),

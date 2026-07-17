@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
+import '../features/voice_capture/microphone_permission_copy.dart';
 import '../features/pressure_retention/start_here_save_receipt_model.dart';
 import '../services/capture_pipeline_service.dart';
 import '../design/empty_archive_experience.dart';
@@ -30,6 +31,7 @@ class CaptureEntryActions extends StatelessWidget {
     this.pressureMomentPresentation = CapturePressureMomentPresentation.button,
     this.onHowItWorks,
     this.preferTypedFirst = false,
+    this.minimalFirstRun = false,
   });
 
   final VoidCallback onRecord;
@@ -55,19 +57,24 @@ class CaptureEntryActions extends StatelessWidget {
 
   final CapturePressureMomentPresentation pressureMomentPresentation;
   final VoidCallback? onHowItWorks;
+  final bool minimalFirstRun;
 
   static const logPressureMomentLabel = 'Log pressure moment';
 
   Future<void> _typeInstead(BuildContext context) async {
-    final prompt = typeCapturePrompt?.trim();
     final CapturePipelineResult? result;
-    if (prompt != null && prompt.isNotEmpty) {
-      result = await context.push<CapturePipelineResult>(
-        '/quick-capture',
-        extra: prompt,
-      );
-    } else {
+    if (minimalFirstRun) {
       result = await context.push<CapturePipelineResult>('/quick-capture');
+    } else {
+      final prompt = typeCapturePrompt?.trim();
+      if (prompt != null && prompt.isNotEmpty) {
+        result = await context.push<CapturePipelineResult>(
+          '/quick-capture',
+          extra: prompt,
+        );
+      } else {
+        result = await context.push<CapturePipelineResult>('/quick-capture');
+      }
     }
     if (result == null || !context.mounted) return;
     if (onTextThoughtSaved != null) {
@@ -124,6 +131,35 @@ class CaptureEntryActions extends StatelessWidget {
         ActivationFunnelAnalytics.firstSaveConfidenceSeen,
         entryCount: 0,
         oncePerSession: true,
+      );
+    }
+
+    if (minimalFirstRun) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: FilledButton(
+              key: recordButtonKey,
+              onPressed: onRecord,
+              child: Text(
+                recordButtonLabel ?? MicrophonePermissionCopy.requestMicrophoneCta,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: OutlinedButton(
+              key: const Key('capture_entry_type_instead_cta'),
+              onPressed: () => unawaited(_typeInstead(context)),
+              child: const Text(EmptyArchiveCopy.typeInsteadCta),
+            ),
+          ),
+        ],
       );
     }
 

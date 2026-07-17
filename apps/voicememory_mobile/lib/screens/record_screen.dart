@@ -8118,13 +8118,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         onRecord: () =>
                             unawaited(_onRecordPressed(source: 'main')),
                         recordButtonLabel: readyCapturePolicy.primaryLabel,
-                        typeCapturePrompt: _selectedPromptLine,
                         onTextThoughtSaved: _finishSuccessfulCapture,
-                        onViewSampleExample: () =>
-                            context.push('/sample-archive'),
                       ),
-                      const SizedBox(height: 6),
-                      const RecordFirstRunProLine(),
                     ] else if (showFirstSessionOnboarding) ...[
                       FirstSessionOnboardingCard(
                         onStartMoment: () =>

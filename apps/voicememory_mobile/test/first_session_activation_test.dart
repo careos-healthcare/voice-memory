@@ -702,7 +702,7 @@ void main() {
       expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
-      expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
+      expect(find.byKey(const Key('capture_how_it_works_link')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 

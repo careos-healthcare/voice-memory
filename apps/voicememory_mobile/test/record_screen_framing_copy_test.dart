@@ -384,7 +384,7 @@ void main() {
       expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
     });
 
-    testWidgets('entry count 0 shows How it works inside capture block', (
+    testWidgets('entry count 0 shows only the two capture actions', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
@@ -393,11 +393,10 @@ void main() {
         find.byKey(const Key('record_first_run_privacy_reassurance')),
         findsNothing,
       );
-      expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
-      expect(
-        find.text(RecordScreenFramingCopy.firstRunPrivacyLink),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('capture_how_it_works_link')), findsNothing);
+      expect(find.byKey(const Key('record_see_example_link')), findsNothing);
+      expect(find.text('Use voice to record'), findsOneWidget);
+      expect(find.text('Type instead'), findsOneWidget);
     });
 
     testWidgets('entry count 1 hides first-run privacy reassurance', (
@@ -850,8 +849,8 @@ void main() {
       expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
       expect(find.byKey(const Key('record_capture_modes_card')), findsNothing);
       expect(find.text('Start with one sentence'), findsNothing);
-      expect(find.text(RecordFirstRunPromiseCopy.proLine), findsOneWidget);
-      expect(find.byKey(const Key('record_see_example_link')), findsOneWidget);
+      expect(find.text(RecordFirstRunPromiseCopy.proLine), findsNothing);
+      expect(find.byKey(const Key('record_see_example_link')), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);

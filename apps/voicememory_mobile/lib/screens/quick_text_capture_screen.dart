@@ -311,22 +311,6 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  QuickTextCaptureCopy.focusedTitle,
-                  key: const Key('focused_type_entry_title'),
-                  style: ArchiveMobileTypography.pageTitle(context),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  QuickTextCaptureCopy.focusedBody,
-                  key: const Key('focused_type_entry_body'),
-                  style: const TextStyle(
-                    color: VoiceMemoryColors.textSecondary,
-                    height: 1.45,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 12),
                 TextField(
                   key: const Key('quick_text_capture_field'),
                   controller: _controller,
