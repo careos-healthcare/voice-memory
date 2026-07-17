@@ -116,12 +116,12 @@ void main() {
       );
     });
 
-    test('paid-intent beta incomplete blocks pricing experiments', () {
+    test('paid-intent beta incomplete still allows pricing experiments', () {
       final result = FutureExpansionRoadmapGate.build(
         _input(paidIntentBetaComplete: false),
       );
       expect(result.decision, FutureExpansionGateDecision.expansionFrozen);
-      expect(result.pricingExperimentsBlocked, isTrue);
+      expect(result.pricingExperimentsBlocked, isFalse);
     });
 
     test('cross-device continuity stays documented after release proof', () {

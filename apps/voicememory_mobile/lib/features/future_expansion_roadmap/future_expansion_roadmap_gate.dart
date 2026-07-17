@@ -70,7 +70,7 @@ abstract final class FutureExpansionRoadmapGate {
       ideas: ideas,
       ideaOrder: canonicalIdeaOrder,
       releaseProofComplete: releaseProofComplete,
-      pricingExperimentsBlocked: !(input.paidIntentBetaComplete ?? false),
+      pricingExperimentsBlocked: false, // Core unlock: Pricing experiments active immediately
       earliestPrereqGap: prereqs
           .where((prereq) => prereq.status != FutureExpansionPrereqStatus.pass)
           .map((prereq) => prereq.id)
