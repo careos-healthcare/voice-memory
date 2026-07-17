@@ -211,16 +211,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Did this come back?'), findsOneWidget);
       expect(
-        find.text('Last time, this was the thread to watch:'),
-        findsOneWidget,
-      );
-      expect(find.text('"checking again"'), findsOneWidget);
-      expect(
-        find.text(
-          'Record if it came back, changed, faded, or disappeared.',
-        ),
+        find.text(DailyArchiveMemoryCopy.watchPrompt('checking again')),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);

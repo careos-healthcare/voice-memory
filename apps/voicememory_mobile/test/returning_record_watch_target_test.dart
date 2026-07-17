@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/app_review/archive_app_review_access_gate.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
-import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
 import 'package:voicememory_mobile/features/record/returning_record_watch_target_ui_gates.dart';
-import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
-import 'package:voicememory_mobile/features/next_action/next_best_action_copy.dart';
-import 'package:voicememory_mobile/features/proof_specificity/proof_specificity_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -130,19 +125,14 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Did this come back?'), findsOneWidget);
       expect(
-        find.text('Last time, this was the thread to watch:'),
-        findsOneWidget,
-      );
-      expect(find.text('"checking again"'), findsOneWidget);
-      expect(
-        find.text('Record if it came back, changed, faded, or disappeared.'),
+        find.text(DailyArchiveMemoryCopy.watchPrompt('checking again')),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);
-      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
-      expect(find.text(ComeBackTomorrowV2Copy.notToday), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.typeInsteadCta), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.notTodayCta), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_title')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
       expect(find.text(RecordCaptureModeCopy.somethingHappenedLabel), findsNothing);
       expect(find.text('Log pressure moment'), findsNothing);
@@ -151,11 +141,11 @@ void main() {
       await tester.pump();
       expect(recordTapped, isTrue);
 
-      await tester.tap(find.text(EmptyArchiveCopy.typeInsteadCta));
+      await tester.tap(find.text(DailyArchiveMemoryCopy.typeInsteadCta));
       await tester.pump();
       expect(typeTapped, isTrue);
 
-      await tester.tap(find.text(ComeBackTomorrowV2Copy.notToday));
+      await tester.tap(find.text(DailyArchiveMemoryCopy.notTodayCta));
       await tester.pump();
       expect(notTodayTapped, isTrue);
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);

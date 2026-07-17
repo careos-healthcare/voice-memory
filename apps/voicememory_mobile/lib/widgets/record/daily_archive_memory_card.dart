@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../design/empty_archive_experience.dart';
-import '../../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_analytics.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_copy.dart';
 import '../../features/daily_archive_memory/daily_archive_memory_model.dart';
@@ -101,9 +99,6 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   Widget build(BuildContext context) {
     if (_dismissedToday) return const SizedBox.shrink();
 
-    final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      fontWeight: FontWeight.w600,
-    );
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textPrimary,
       height: 1.45,
@@ -120,66 +115,92 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
     );
 
     final focused = widget.showFocusedCaptureActions && widget.memory.hasWatchTarget;
+    final watchPhrase = widget.memory.watchPhrase;
 
     return Container(
       key: const Key('daily_archive_memory_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7F8FA)),
+      decoration: VoiceMemoryCards.standard(
+        background: focused ? const Color(0xFFF6F4FF) : const Color(0xFFF7F8FA),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.memory.title,
-            key: const Key('daily_archive_memory_title'),
-            style: titleStyle,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.memory.body,
-            key: const Key('daily_archive_memory_body'),
-            style: secondaryStyle,
-          ),
-          if (widget.memory.watchPhrase != null) ...[
-            const SizedBox(height: AppSpacing.xs),
+          if (focused && watchPhrase != null) ...[
             Text(
-              DailyArchiveMemoryCopy.quotedWatchPhrase(
-                widget.memory.watchPhrase!,
-              ),
-              key: const Key('daily_archive_memory_watch_phrase'),
-              style: phraseStyle,
+              DailyArchiveMemoryCopy.watchPrompt(watchPhrase),
+              key: const Key('daily_archive_memory_watch_prompt'),
+              style: bodyStyle,
             ),
-          ],
-          if (widget.memory.footer != null) ...[
+          ] else ...[
+            Text(
+              widget.memory.title,
+              key: const Key('daily_archive_memory_title'),
+              style: ArchiveMobileTypography.cardLabel(context).copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              widget.memory.footer!,
-              key: const Key('daily_archive_memory_footer'),
+              widget.memory.body,
+              key: const Key('daily_archive_memory_body'),
               style: secondaryStyle,
             ),
+            if (watchPhrase != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                DailyArchiveMemoryCopy.quotedWatchPhrase(watchPhrase),
+                key: const Key('daily_archive_memory_watch_phrase'),
+                style: phraseStyle,
+              ),
+            ],
+            if (widget.memory.footer != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                widget.memory.footer!,
+                key: const Key('daily_archive_memory_footer'),
+                style: secondaryStyle,
+              ),
+            ],
           ],
           if (focused && widget.onRecord != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            FilledButton(
-              key: const Key('daily_archive_memory_record_cta'),
-              onPressed: _onRecord,
-              child: Text(DailyArchiveMemoryCopy.recordCta),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              height: 48,
+              width: double.infinity,
+              child: FilledButton(
+                key: const Key('daily_archive_memory_record_cta'),
+                onPressed: _onRecord,
+                child: Text(DailyArchiveMemoryCopy.recordCta),
+              ),
             ),
           ],
           if (focused && widget.onTypeInstead != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            OutlinedButton(
-              key: const Key('daily_archive_memory_type_instead_cta'),
-              onPressed: _onTypeInstead,
-              child: Text(EmptyArchiveCopy.typeInsteadCta),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 48,
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('daily_archive_memory_type_instead_cta'),
+                onPressed: _onTypeInstead,
+                child: Text(DailyArchiveMemoryCopy.typeInsteadCta),
+              ),
             ),
           ],
           if (focused && widget.onNotToday != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            TextButton(
-              key: const Key('daily_archive_memory_not_today_cta'),
-              onPressed: _onNotToday,
-              child: Text(ComeBackTomorrowV2Copy.notToday),
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                key: const Key('daily_archive_memory_not_today_cta'),
+                onPressed: _onNotToday,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.textSecondary,
+                  minimumSize: const Size(48, 44),
+                ),
+                child: Text(DailyArchiveMemoryCopy.notTodayCta),
+              ),
             ),
           ],
           if (!focused && widget.onRecord != null) ...[

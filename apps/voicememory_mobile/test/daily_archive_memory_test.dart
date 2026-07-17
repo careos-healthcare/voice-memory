@@ -141,9 +141,11 @@ void main() {
       );
       expect(
         DailyArchiveMemoryCopy.footer,
-        'Record if it came back, changed, or disappeared.',
+        'Record if it came back, changed, faded, or disappeared.',
       );
       expect(DailyArchiveMemoryCopy.recordCta, 'Record what happened');
+      expect(DailyArchiveMemoryCopy.typeInsteadCta, 'Type instead');
+      expect(DailyArchiveMemoryCopy.notTodayCta, 'Not today');
       expect(
         DailyArchiveMemoryCopy.viewPatternDetailsCta,
         'View pattern details',
@@ -152,6 +154,18 @@ void main() {
       expect(
         DailyArchiveMemoryCopy.fallbackBody,
         'Record one real moment from today. ArchiveMe will compare it with what came before.',
+      );
+    });
+
+    test('watch prompt uses single-quoted watch target in one paragraph', () {
+      expect(
+        DailyArchiveMemoryCopy.watchPrompt('checking again'),
+        'Did this come back? Last time, this was the thread to watch: '
+        "'checking again'. Record if it came back, changed, faded, or disappeared.",
+      );
+      expect(
+        DailyArchiveMemoryCopy.quotedWatchPhrase('checking again'),
+        "'checking again'",
       );
     });
 
@@ -499,7 +513,8 @@ void main() {
       await pumpRecord(tester);
 
       expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.text('Did this come back?'), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(find.textContaining('Did this come back?'), findsOneWidget);
       expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
       expect(find.text(DailyArchiveExerciseCopy.openBetaFeedbackCta), findsNothing);
       expect(
@@ -528,7 +543,8 @@ void main() {
       await pumpRecord(tester);
 
       expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.text(DailyArchiveMemoryCopy.watchTitle), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(find.textContaining('Did this come back?'), findsOneWidget);
     });
 
     testWidgets('hidden when weekly review takes priority', (tester) async {
@@ -547,7 +563,8 @@ void main() {
       await pumpRecord(tester);
 
       expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.text('Did this come back?'), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(find.textContaining('Did this come back?'), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_record_cta')), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_type_instead_cta')), findsOneWidget);
       expect(find.text('Record moment'), findsNothing);

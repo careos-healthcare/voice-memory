@@ -7303,6 +7303,18 @@ class _RecordScreenState extends State<RecordScreen> {
       showOpenCapturePromptChips = false;
       showLowFrictionReturnCard = false;
       showCaptureFreedomLine = false;
+      showBetaTodaySummaryCard = false;
+      showBetaActivationPathCard = false;
+      showBetaTesterReportOnRecord = false;
+      showBetaFeedbackCaptureRecordReady = false;
+      betaFeedbackCaptureRecordReadyResult = null;
+      showBetaProofLiftOnRecordReady = false;
+      showBetaRepairLabProPlacementOnRecord = false;
+      showBetaRepairLabPricingValueFramingOnRecord = false;
+      showBetaRepairLabPaywallValueOnRecord = false;
+      showBetaRepairLabPricingValidationOnRecord = false;
+      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+      showBetaRepairLabProofOnRecord = false;
     }
     if (!ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) {
       showBetaTodaySummaryCard = false;
@@ -7995,7 +8007,8 @@ class _RecordScreenState extends State<RecordScreen> {
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
     ) &&
-        !firstUseSimplifiedRecord;
+        !firstUseSimplifiedRecord &&
+        !showReturningWatchTargetFocusedUi;
     final testerMissionCompact = showTesterMission &&
         TesterMissionGates.useCompactPresentation(
           entryCount: _journalEntryCount,
@@ -8134,7 +8147,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       const RecordTopArchivePromiseHero(),
                       const SizedBox(height: 16),
                     ],
-                    if (showTesterMissionFull && testerMission != null) ...[
+                    if (showTesterMissionFull &&
+                        testerMission != null &&
+                        !showReturningWatchTargetFocusedUi) ...[
                       TesterMissionCard(
                         mission: testerMission,
                         onDismissed: () => setState(() {}),
@@ -9763,6 +9778,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                       if (_selectedPromptLine != null &&
                           _showBottomRetentionCards &&
+                          !showReturningWatchTargetFocusedUi &&
                           (ui == RecordUiState.ready ||
                               ui == RecordUiState.recording)) ...[
                         const SizedBox(height: 12),
@@ -9785,6 +9801,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           recordHomeSurface.showNextEvidencePrompt &&
                           _nextEvidencePrompt != null) ...[
                         const SizedBox(height: 12),
@@ -9817,6 +9834,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           stack.showActivePatternThread &&
                           _activePatternThread != null) ...[
@@ -9832,6 +9850,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           stack.showFirstThreeJourney &&
                           _firstThreeJourney != null &&
@@ -9841,6 +9860,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         FirstThreeJourneyCard(model: _firstThreeJourney!),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           _postSavePattern == null &&
                           !stack.showReturnDayJourneyCard &&
@@ -9854,6 +9874,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           compact: true,
                         ),
                       ] else if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
@@ -9900,6 +9921,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           },
                         ),
                       ] else if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
@@ -9918,6 +9940,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           onViewPattern: () => context.go('/archive-belief'),
                         ),
                       ] else if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
@@ -9929,6 +9952,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           showArchiveProgressCards &&
                           stack.showPendingWatchFor &&
                           _pendingWatchForToday != null) ...[
@@ -9944,6 +9968,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          !showReturningWatchTargetFocusedUi &&
                           recordHomeSurface.showOneSmallRecordingCard &&
                           stack.showStarterPrompts &&
                           recordHomeSurface.showWorthCheckingToday) ...[
@@ -11563,6 +11588,9 @@ class _RecordScreenState extends State<RecordScreen> {
       return actions;
     }
     if (ui == RecordUiState.ready) {
+      if (showReturningWatchTargetFocusedUi) {
+        return actions;
+      }
       if (_showBottomRetentionCards) {
         // Invited User Welcome: replaces (never joins) the generic
         // first-session explainer for invited installs, so the pre-first-save
