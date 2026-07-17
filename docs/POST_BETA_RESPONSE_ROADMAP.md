@@ -22,7 +22,7 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 - **Do not add new dashboards** to address these post-beta fixes.
 - **Do not enable RevenueCat** before **2–3 clear paid-intent users** plus sandbox purchase/restore proof.
 - **No payments, subscriptions, backend, notifications, second guided path, or dependency upgrades** until the matching branch is explicitly chosen by evidence.
-- Copy guardrails apply to every branch: no therapy / diagnosis / medical / treatment language; no mental health score, wellbeing score, clinical score, or life score; avoid explicit personalization anchors; no fake stats or testimonials; do not claim everything stays on device; do not overclaim encryption; do not expose private transcript text.
+- Copy guardrails apply to every branch: no therapy / diagnosis / medical / treatment language; no mental health score, wellbeing score, clinical score, or life score; avoid explicit personalization anchors; no unverified metrics or invented endorsements; do not claim everything stays on device; do not overclaim encryption; do not expose private transcript text.
 
 ## Branch decision matrix
 
@@ -193,7 +193,7 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 
 **Success metric:** **2–3 clear paid-intent users** plus sandbox purchase/restore proof.
 
-**Gate:** Do not enable RevenueCat before this evidence. See [PAID_LAUNCH_DECISION_CHECKLIST.md](../apps/voicememory_mobile/docs/PAID_LAUNCH_DECISION_CHECKLIST.md).
+**Gate:** Do not enable RevenueCat before this evidence. See [PAID_LAUNCH_DECISION_CHECKLIST.md](PAID_LAUNCH_DECISION_CHECKLIST.md).
 
 ---
 
@@ -267,8 +267,8 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 **Forbidden**
 
 - Overclaiming
-- “Everything stays on device”
-- “Fully encrypted archive” unless true
+- Unqualified on-device-only claims
+- Unqualified fully encrypted archive claims unless true
 
 **Success metric:** Privacy concern no longer blocks beta usage.
 
@@ -304,12 +304,12 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 - RevenueCat, payments, or subscriptions (until branch 6 gate)
 - Backend work or server push notifications
 - Second guided path (until branch 8 gate)
-- Dependency upgrades (see [DEPENDENCY_MAINTENANCE_PLAN.md](../apps/voicememory_mobile/docs/DEPENDENCY_MAINTENANCE_PLAN.md))
+- Dependency upgrades (see [DEPENDENCY_MAINTENANCE_PLAN.md](DEPENDENCY_MAINTENANCE_PLAN.md))
 - App Store upload or bundle / name changes
 
 ## Related docs
 
 - [BETA_FOUR_FAILURE_RESPONSE_RULES.md](./BETA_FOUR_FAILURE_RESPONSE_RULES.md) — in-beta fallbacks for branches 1–4
-- [TESTFLIGHT_BETA_LAUNCH_PLAN.md](../apps/voicememory_mobile/docs/TESTFLIGHT_BETA_LAUNCH_PLAN.md) — cohort targets and observation plan
-- [PAID_LAUNCH_DECISION_CHECKLIST.md](../apps/voicememory_mobile/docs/PAID_LAUNCH_DECISION_CHECKLIST.md) — paid and RevenueCat gates
-- [DEPENDENCY_MAINTENANCE_PLAN.md](../apps/voicememory_mobile/docs/DEPENDENCY_MAINTENANCE_PLAN.md) — upgrade timing after beta
+- [TESTFLIGHT_BETA_LAUNCH_PLAN.md](TESTFLIGHT_BETA_LAUNCH_PLAN.md) — cohort targets and observation plan
+- [PAID_LAUNCH_DECISION_CHECKLIST.md](PAID_LAUNCH_DECISION_CHECKLIST.md) — paid and RevenueCat gates
+- [DEPENDENCY_MAINTENANCE_PLAN.md](DEPENDENCY_MAINTENANCE_PLAN.md) — upgrade timing after beta

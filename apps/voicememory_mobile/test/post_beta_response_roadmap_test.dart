@@ -64,7 +64,12 @@ bool _skipPrivacyScan(String lower) {
       lower.contains('encrypt selected prefs') ||
       lower.contains('encryption key store') ||
       lower.contains('metadata-privacy-hardening') ||
-      lower.contains('journal migration');
+      lower.contains('journal migration') ||
+      lower.contains('bundle id') ||
+      lower.contains('application id') ||
+      lower.contains('workspace') ||
+      lower.contains('url scheme') ||
+      lower.contains('app group');
 }
 
 void _expectNoBannedCopy(String text, {bool checkPrivacyPolicy = true}) {

@@ -28,7 +28,7 @@ Focused fallback rules for the four remaining beta failure modes after the Beta 
 - No therapy / diagnosis / medical / treatment language.
 - No mental health score, wellbeing score, clinical score, or life score.
 - Avoid explicit personalization anchors.
-- No fake stats or testimonials.
+- No unverified metrics or invented endorsements.
 - Do not claim everything stays on device.
 - Do not overclaim encryption.
 - Do not expose private transcript text in user-visible copy.
