@@ -218,6 +218,7 @@
     "validate:transcribe-route": "node --import tsx scripts/run-transcribe-route-tests.mjs",
     "validate:evidence-pipeline": "node --import tsx scripts/run-evidence-pipeline-tests.mjs",
     "validate:prompt-context-contract": "node --import tsx scripts/run-prompt-context-contract-tests.mjs",
+    "validate:comparison-engine-prompt": "node --import tsx scripts/run-comparison-engine-prompt-tests.mjs",
     "validate:journal": "node --import tsx scripts/validate-journal.mjs",
     "validate:email-mode": "node --import tsx scripts/validate-email-mode.mjs",
     "validate:internal-routes": "node scripts/validate-internal-routes.mjs",

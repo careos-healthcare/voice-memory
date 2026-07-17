@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../record/record_screen_framing_copy.dart';
+import '../../features/archive_proof/visible_archive_proof_copy.dart';
 import '../../services/capture_pipeline_service.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -47,19 +47,19 @@ class RecordFirstRunScreenCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            RecordFirstRunPromiseCopy.title,
+            VisibleArchiveProofCopy.firstRunRecordTitle,
             key: const Key('record_first_run_promise_title'),
             style: titleStyle,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            RecordFirstRunPromiseCopy.body,
+            VisibleArchiveProofCopy.firstRunRecordBody,
             key: const Key('record_first_run_promise_body'),
             style: bodyStyle,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            RecordFirstRunPromiseCopy.supportingLine,
+            VisibleArchiveProofCopy.firstRunRecordSupportingLine,
             key: const Key('record_first_run_promise_supporting'),
             style: supportingStyle,
           ),

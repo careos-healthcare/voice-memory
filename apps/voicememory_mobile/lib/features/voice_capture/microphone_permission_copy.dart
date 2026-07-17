@@ -27,6 +27,9 @@ abstract class MicrophonePermissionCopy {
 
   static const String statusBlocked = 'Microphone blocked';
 
+  /// Status while the system permission sheet is open — must not use Allow/OK.
+  static const String statusRequesting = 'Preparing voice capture';
+
   static const String simulatorHelper = CaptureRecoveryCopy.simulatorMicHelper;
 
   static const String typeInsteadBlockedHelper =

@@ -32,10 +32,10 @@ void main() {
       }
     });
 
-    test('pre-prompt title does not use Allow or OK', () {
-      final title = MicrophonePermissionCopy.neededTitle.toLowerCase();
-      expect(title, isNot(contains('allow')));
-      expect(title, isNot(startsWith('ok')));
+    test('requesting status avoids Allow/OK wording', () {
+      final status = MicrophonePermissionCopy.statusRequesting.toLowerCase();
+      expect(status, isNot(contains('allow')));
+      expect(status, isNot(startsWith('ok')));
     });
   });
 }

@@ -1216,7 +1216,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
               price: '\$9.99 / month',
               helper: ArchivePaywallPlanCopy.monthlyHelper,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            _subscriptionDetailsSection(plansAvailable: false),
+            const SizedBox(height: 14),
             FilledButton(
               onPressed: null,
               child: const Text(ConsumerUiCopy.paywallContinue),
@@ -1460,10 +1462,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             const SizedBox(height: 10),
             _appStoreConfirmLine(),
           ],
-          if (showPackagingSection) ...[
-            const SizedBox(height: 16),
-            _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
-          ],
+          const SizedBox(height: 16),
+          _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
           const SizedBox(height: 14),
           FilledButton(
             onPressed: _busy ? null : _continue,
@@ -1547,10 +1547,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   : ConsumerUiCopy.restorePurchases,
             ),
           ),
-          if (!showPackagingSection) ...[
-            const SizedBox(height: 16),
-            _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
-          ],
         ],
       ),
     );

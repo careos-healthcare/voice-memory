@@ -927,12 +927,13 @@ void main() {
           r'const SizedBox\(height: 10\),\s*'
           r'_appStoreConfirmLine\(\),\s*'
           r'\],\s*'
-          r'if \(showPackagingSection\) \.\.\.\[',
+          r'const SizedBox\(height: 16\),\s*'
+          r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),',
         ).hasMatch(source),
         isTrue,
         reason:
-            'packaging path uses subscription details instead of the '
-            'source-specific confidence stack',
+            'source-specific confidence stack stays above shared subscription '
+            'details before purchase',
       );
     });
 
@@ -1016,13 +1017,14 @@ void main() {
       );
       expect(
         RegExp(
-          r'if \(showPackagingSection\) \.\.\.\[\s*'
           r'const SizedBox\(height: 16\),\s*'
-          r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),',
+          r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),\s*'
+          r'const SizedBox\(height: 14\),\s*'
+          r'FilledButton\(',
         ).hasMatch(source),
         isTrue,
         reason:
-            'packaging path shows subscription details before the CTA instead',
+            'subscription details and legal links render before the purchase CTA',
       );
     });
 

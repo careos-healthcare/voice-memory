@@ -7,6 +7,7 @@ import '../first_session/first_session_pattern_model.dart';
 import '../interpretation/interpretation_quality_engine.dart';
 import '../interpretation/interpretation_read_model.dart';
 import '../archive_evidence/archive_evidence_heuristics.dart';
+import '../comparison_engine/comparison_engine_prompt.dart';
 import 'second_session_signal_model.dart';
 
 /// Deterministic second-recording comparison — no network AI.
@@ -97,7 +98,11 @@ class SecondSessionSignalEngine {
             .replaceAll('{latest}', latestLabel),
         whatRepeated: null,
         whatChanged:
-            'This moment may be about $latestLabel — earlier was about $previousLabel.',
+            _sanitizeComparisonLine(
+              'This moment may be about $latestLabel — earlier was about $previousLabel.',
+              fallback:
+                  'The latest moment may sit differently from the one before it.',
+            ),
         whatToTestNext: latestRead.reads.isNotEmpty
             ? latestRead.reads.first.nextEvidencePrompt
             : (latestPattern.watchForText.isNotEmpty
@@ -131,19 +136,29 @@ class SecondSessionSignalEngine {
                 .replaceAll('{previous}', previousLabel)
                 .replaceAll('{latest}', latestLabel),
       whatRepeated: possibleRepeat
-          ? (enrichedRepeated ??
-                (useFallbackCopy
-                    ? ConsumerUiCopy.secondSessionFallbackWhatRepeated
-                    : (groundedRead != null
-                          ? groundedRead.whyThisRead
-                          : 'Both moments may touch on $previousLabel.')))
-          : 'Something similar may be showing up across both moments.',
-      whatChanged: useFallbackCopy
-          ? ConsumerUiCopy.secondSessionFallbackWhatChanged
-          : (enrichedChanged ??
-                (previousLabel.toLowerCase() == latestLabel.toLowerCase()
-                    ? null
-                    : 'The latest moment may be more about $latestLabel.')),
+          ? _sanitizeComparisonLine(
+              enrichedRepeated ??
+                  (useFallbackCopy
+                      ? ConsumerUiCopy.secondSessionFallbackWhatRepeated
+                      : (groundedRead != null
+                            ? groundedRead.whyThisRead
+                            : 'Both moments may touch on $previousLabel.')),
+              fallback: 'Something similar may be showing up across both moments.',
+            )
+          : _sanitizeComparisonLine(
+              'Something similar may be showing up across both moments.',
+              fallback:
+                  'Something similar may be showing up across both moments.',
+            ),
+      whatChanged: _sanitizeComparisonLine(
+        useFallbackCopy
+            ? ConsumerUiCopy.secondSessionFallbackWhatChanged
+            : (enrichedChanged ??
+                  (previousLabel.toLowerCase() == latestLabel.toLowerCase()
+                      ? null
+                      : 'The latest moment may be more about $latestLabel.')),
+        fallback: 'The latest moment may sit differently from the one before it.',
+      ),
       whatToTestNext: useFallbackCopy
           ? ConsumerUiCopy.secondSessionFallbackWhatToTestNext
           : (latestRead.reads.isNotEmpty
@@ -219,5 +234,14 @@ class SecondSessionSignalEngine {
     final trimmed = title.trim();
     if (trimmed.length <= 48) return trimmed;
     return '${trimmed.substring(0, 45)}…';
+  }
+
+  String? _sanitizeComparisonLine(
+    String? line, {
+    required String fallback,
+  }) {
+    if (line == null) return null;
+    final sanitized = ComparisonEnginePrompt.sanitizeLine(line, fallback: fallback);
+    return sanitized;
   }
 }

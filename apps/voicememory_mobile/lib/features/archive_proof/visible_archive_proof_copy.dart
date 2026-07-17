@@ -3,20 +3,27 @@ import '../early_archive/early_first_signal_copy.dart';
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
-  static const firstRunPromiseStep1 = 'When it repeats, save one real moment';
-  static const firstRunPromiseStep2 = 'ArchiveMe compares saved moments later';
-  static const firstRunPromiseStep3 =
-      'After enough real moments, see the first useful proof';
+  static const firstRunRecordTitle = 'When it repeats, save it.';
+
+  static const firstRunRecordBody =
+      'Save one real moment. ArchiveMe compares it later.';
+
+  static const firstRunRecordSupportingLine =
+      'Not a diary. Not homework. One sentence is enough.';
+
+  static const firstRunPromiseStep1 = firstRunRecordTitle;
+  static const firstRunPromiseStep2 = firstRunRecordBody;
+  static const firstRunPromiseStep3 = firstRunRecordSupportingLine;
 
   static const firstRunPromiseSteps = [
-    firstRunPromiseStep1,
-    firstRunPromiseStep2,
-    firstRunPromiseStep3,
+    firstRunRecordTitle,
+    firstRunRecordBody,
+    firstRunRecordSupportingLine,
   ];
 
-  static const firstRunBuildingLine = 'When it repeats, save one real moment.';
+  static const firstRunBuildingLine = firstRunRecordTitle;
 
-  static const firstRunCompareLine = 'ArchiveMe compares saved moments later.';
+  static const firstRunCompareLine = firstRunRecordBody;
 
   static const firstRunEvidenceLine =
       'When something shows up again, your archive builds an evidence trail.';
@@ -36,7 +43,7 @@ abstract final class VisibleArchiveProofCopy {
   static const recordHeroTitle = 'How ArchiveMe works';
 
   static const recordHeroBody =
-      '$firstRunPromiseStep1. $firstRunPromiseStep2. $firstRunPromiseStep3.';
+      '$firstRunRecordTitle $firstRunRecordBody $firstRunRecordSupportingLine';
 
   static const recordHeroChipReturned = 'What returned';
   static const recordHeroChipSoftened = 'What softened';

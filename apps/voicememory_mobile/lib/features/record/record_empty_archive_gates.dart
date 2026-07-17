@@ -142,6 +142,13 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && hasNoEntries(entryCount);
 
+  /// Archive education, prompt chips, and dashboard chrome stay off Record at 0.
+  static bool showArchiveEducationStackOnRecord({
+    required bool loaded,
+    required int entryCount,
+  }) =>
+      loaded && !hasNoEntries(entryCount);
+
   /// Daily map prompt on Record — after first-three activation only.
   static bool showDailyArchiveExerciseOnRecord({
     required bool loaded,

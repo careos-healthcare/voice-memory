@@ -28,25 +28,17 @@ class PaywallSubscriptionDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priceLines = <String>[];
-    if (plansAvailable && monthlyPrice != null && yearlyPrice != null) {
-      priceLines.add(
-        '${ArchiveLoopPaywallCopy.subscriptionMonthlyTitle}: '
-        '$monthlyPrice · ${ArchiveLoopPaywallCopy.subscriptionMonthlyDuration}',
-      );
-      priceLines.add(
-        '${ArchiveLoopPaywallCopy.subscriptionYearlyTitle}: '
-        '$yearlyPrice · ${ArchiveLoopPaywallCopy.subscriptionYearlyDuration}',
-      );
-    } else if (plansAvailable && monthlyPrice != null) {
-      priceLines.add(
-        '${ArchiveLoopPaywallCopy.subscriptionMonthlyTitle}: $monthlyPrice',
-      );
-    } else if (plansAvailable && yearlyPrice != null) {
-      priceLines.add(
-        '${ArchiveLoopPaywallCopy.subscriptionYearlyTitle}: $yearlyPrice',
-      );
-    } else {
+    final monthlyPriceText =
+        monthlyPrice ?? ArchiveLoopPaywallCopy.subscriptionPriceUnavailable;
+    final yearlyPriceText =
+        yearlyPrice ?? ArchiveLoopPaywallCopy.subscriptionPriceUnavailable;
+    final priceLines = <String>[
+      '${ArchiveLoopPaywallCopy.subscriptionMonthlyTitle}: '
+      '$monthlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionMonthlyDuration}',
+      '${ArchiveLoopPaywallCopy.subscriptionYearlyTitle}: '
+      '$yearlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionYearlyDuration}',
+    ];
+    if (!plansAvailable) {
       priceLines.add(ArchiveLoopPaywallCopy.subscriptionPlansUnavailable);
     }
 

@@ -20,6 +20,14 @@ void main() {
 
       expect(find.text(ProPackagingCopy.title), findsOneWidget);
       expect(
+        find.textContaining(ArchiveLoopPaywallCopy.subscriptionMonthlyTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(ArchiveLoopPaywallCopy.subscriptionYearlyTitle),
+        findsOneWidget,
+      );
+      expect(
         find.text(ArchiveLoopPaywallCopy.subscriptionPlansUnavailable),
         findsOneWidget,
       );

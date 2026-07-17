@@ -8189,10 +8189,14 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (!ReturningRecordWatchTargetUiGates
-                        .suppressArchiveEducationStack(
-                      showFocusedSurface: showReturningWatchTargetFocusedUi,
-                    )) ...[
+                    if (RecordEmptyArchiveGates.showArchiveEducationStackOnRecord(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                        ) &&
+                        !ReturningRecordWatchTargetUiGates
+                            .suppressArchiveEducationStack(
+                          showFocusedSurface: showReturningWatchTargetFocusedUi,
+                        )) ...[
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         _journalEntryCount == 0 &&
@@ -12044,9 +12048,21 @@ class _RecordScreenState extends State<RecordScreen> {
         SizedBox(
           height: 48,
           width: double.infinity,
-          child: OutlinedButton(
+          child: FilledButton(
             onPressed: _requestMic,
-            child: const Text('Set up microphone'),
+            child: const Text(MicrophonePermissionCopy.requestMicrophoneCta),
+          ),
+        ),
+      );
+      actions.add(const SizedBox(height: 8));
+      actions.add(
+        SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: OutlinedButton(
+            key: const Key('record_idle_type_instead_cta'),
+            onPressed: () => unawaited(_typeInsteadFromPermission()),
+            child: const Text(MicrophonePermissionCopy.typeInsteadCta),
           ),
         ),
       );
@@ -12059,7 +12075,7 @@ class _RecordScreenState extends State<RecordScreen> {
       case RecordUiState.permissionBlocked:
         return MicrophonePermissionCopy.statusBlocked;
       case RecordUiState.requestingPermission:
-        return 'Allowing microphone access';
+        return MicrophonePermissionCopy.statusRequesting;
       case RecordUiState.ready:
         return 'Ready to record';
       case RecordUiState.recording:

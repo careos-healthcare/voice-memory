@@ -1,3 +1,4 @@
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/beta_improvement/beta_improvement_pack_engine.dart';
 import '../features/v1_interface/progressive_evidence_state_copy.dart';
 import '../product/consumer_ui_copy.dart';
@@ -90,10 +91,9 @@ abstract final class RecordFirstUsePromptCopy {
 abstract final class RecordFirstRunPromiseCopy {
   RecordFirstRunPromiseCopy._();
 
-  static const title = 'When it repeats, save it.';
-  static const body = 'Save one real moment. ArchiveMe compares it later.';
-  static const supportingLine =
-      'Not a diary. Not homework. One sentence is enough.';
+  static const title = VisibleArchiveProofCopy.firstRunRecordTitle;
+  static const body = VisibleArchiveProofCopy.firstRunRecordBody;
+  static const supportingLine = VisibleArchiveProofCopy.firstRunRecordSupportingLine;
   static const proLine =
       'Free shows the first useful proof. Pro keeps the longer trail.';
 }
