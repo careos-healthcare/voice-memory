@@ -45,6 +45,8 @@ class ProBridgeVisibilityInput {
     this.hasSafeAnchor = false,
     this.hasFreshReturnAfterCorrection = false,
     this.hasSolidStrongPatternWithSafeAnchors = false,
+    this.hasSeenFirstRepeat = false,
+    this.hasOpenedEvidenceTrail = false,
   });
 
   final ProBridgeVisibilitySurface surface;
@@ -74,6 +76,8 @@ class ProBridgeVisibilityInput {
   final bool hasSafeAnchor;
   final bool hasFreshReturnAfterCorrection;
   final bool hasSolidStrongPatternWithSafeAnchors;
+  final bool hasSeenFirstRepeat;
+  final bool hasOpenedEvidenceTrail;
 }
 
 class ProBridgeVisibilityResult {

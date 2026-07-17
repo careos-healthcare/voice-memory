@@ -29,7 +29,11 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 
 void main() {
   group('Paywall copy alignment v1', () {
-    test('headline uses Keep the longer proof trail', () {
+    test('headline uses proof-first trail promise', () {
+      expect(
+        ConsumerUiCopy.paywallHeadline,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
       expect(ArchivePaywallCopy.headline, ConsumerUiCopy.paywallHeadline);
       expect(
@@ -39,6 +43,10 @@ void main() {
     });
 
     test('subhead sells the proof trail value', () {
+      expect(
+        ConsumerUiCopy.paywallSubhead,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
       expect(
         PaywallSourceCopy.generalPro.subheadline,
@@ -46,22 +54,19 @@ void main() {
       );
     });
 
-    test('bullets cover proof trail, corrections, returns, and continuity', () {
+    test('bullets cover evidence history, weekly reviews, and timeline views', () {
       final bullets = ConsumerUiCopy.paywallBullets;
       expect(bullets, PaywallAlignmentCopy.benefitBullets);
-      expect(bullets, contains('Longer proof trail'));
-      expect(bullets, contains('Correction history'));
-      expect(bullets, contains('Current vs fading signals'));
-      expect(bullets, contains('Longer evidence trail'));
-      expect(bullets, contains('What returned over time'));
-      expect(bullets, contains('Trail continuity over weeks'));
+      expect(bullets, contains('Longer evidence history'));
+      expect(bullets, contains('Weekly archive reviews'));
+      expect(bullets, contains('Timeline views over time'));
       expect(PaywallSourceCopy.generalPro.bullets, bullets);
     });
 
-    test('differentiation says not more chat and trust avoids medical claims', () {
+    test('differentiation focuses on trail continuity and trust avoids medical claims', () {
       expect(
         ConsumerUiCopy.paywallDifferentiation,
-        'The value is not more chat. It is the longer evidence trail.',
+        'Pro keeps longer evidence history, weekly archive reviews, and timeline views.',
       );
       expect(
         ConsumerUiCopy.paywallTrust,
@@ -78,7 +83,6 @@ void main() {
         ConsumerUiCopy.paywallBackupLine,
       ].join(' ').toLowerCase();
 
-      expect(blob, contains('not more chat'));
       expect(blob, isNot(contains('more ai')));
       expect(blob, isNot(contains('better chat')));
       expect(blob, isNot(contains('sync is active')));

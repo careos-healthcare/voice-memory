@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../config/screenshot_mode.dart';
 import '../features/activation/activation_tracker.dart';
 import '../features/activation/first_loop_activation_coordinator.dart';
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'archive_entitlement_reader.dart';
 import 'archive_pro_feature_map.dart';
 import 'paywall_route_args.dart';
@@ -64,11 +66,25 @@ abstract class PaywallAccess {
     );
     if (trigger == null) return true;
     if (!context.mounted) return false;
-    openPaywall(context, trigger);
+    if (!await canOpenPaywall()) return false;
+    if (!context.mounted) return false;
+    await openPaywall(context, trigger);
     return false;
   }
 
-  static void openPaywall(BuildContext context, PaywallTriggerContext trigger) {
+  /// Paywall only after first repeat and evidence trail — same gate as Pro bridge.
+  static Future<bool> canOpenPaywall() async {
+    if (ScreenshotMode.enabled) return true;
+    await DelayedPaywallProofStore.ensureLoaded();
+    return DelayedPaywallProofStore.passesGate;
+  }
+
+  static Future<void> openPaywall(
+    BuildContext context,
+    PaywallTriggerContext trigger,
+  ) async {
+    if (!await canOpenPaywall()) return;
+    if (!context.mounted) return;
     ActivationTracker.trackPaywallTriggerShown();
     context.push('/subscription', extra: PaywallRouteArgs.fromContext(trigger));
   }

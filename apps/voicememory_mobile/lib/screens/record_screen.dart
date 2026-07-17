@@ -653,6 +653,7 @@ import '../features/pro_preview/pro_preview_model.dart';
 import '../features/beta_invite/beta_invite_engine.dart';
 import '../features/beta_invite/beta_invite_model.dart';
 import '../features/beta_invite/beta_invite_store.dart';
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
@@ -970,6 +971,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       LowFrictionReturnStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      DelayedPaywallProofStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -5760,6 +5766,9 @@ class _RecordScreenState extends State<RecordScreen> {
               whatChangedQuestionActive: showWhatChangedV2,
               patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
               compact: proofSurfaceLayout.proBridgeCompact,
+              hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+              hasOpenedEvidenceTrail:
+                  DelayedPaywallProofStore.hasOpenedEvidenceTrail,
             ),
             entries: _journalEntries,
             beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -6646,6 +6655,9 @@ class _RecordScreenState extends State<RecordScreen> {
                   surface: ProofQualityResponseSurface.timelineProofMoment,
                 ),
                 compact: proofSurfaceLayout.proBridgeCompact,
+                hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+                hasOpenedEvidenceTrail:
+                    DelayedPaywallProofStore.hasOpenedEvidenceTrail,
               ),
               entries: _journalEntries,
               beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -7113,6 +7125,9 @@ class _RecordScreenState extends State<RecordScreen> {
               ),
               whatChangedQuestionActive: showWhatChangedV2,
               patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+              hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+              hasOpenedEvidenceTrail:
+                  DelayedPaywallProofStore.hasOpenedEvidenceTrail,
             ),
             entries: entriesAfterSave,
             beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -7299,6 +7314,12 @@ class _RecordScreenState extends State<RecordScreen> {
       showDailyArchiveMemory: showDailyArchiveMemory,
       dailyArchiveMemory: dailyArchiveMemoryCandidate,
     );
+    final recordReadyShowsWatchTargetOnly = showReturningWatchTargetFocusedUi &&
+        ui == RecordUiState.ready &&
+        !_isPostSaveSurface;
+    final recordReadySuppressStreakPressure =
+        recordReadyShowsWatchTargetOnly ||
+        ReturningRecordWatchTargetUiGates.suppressDailyStreakPressureToday();
     if (showReturningWatchTargetFocusedUi) {
       showOpenCapturePromptChips = false;
       showLowFrictionReturnCard = false;
@@ -7832,6 +7853,9 @@ class _RecordScreenState extends State<RecordScreen> {
                 whatChangedQuestionActive: showWhatChangedV2,
                 patternReviewInboxHasActiveItems:
                     patternReviewInboxActivePostSave,
+                hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+                hasOpenedEvidenceTrail:
+                    DelayedPaywallProofStore.hasOpenedEvidenceTrail,
               ),
               entries: entriesAfterSave,
               beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -8180,7 +8204,6 @@ class _RecordScreenState extends State<RecordScreen> {
                         onTypeInstead: () => unawaited(
                           navigateToTypeInsteadCapture(
                             context,
-                            prompt: _selectedPromptLine,
                             onSaved: _finishSuccessfulCapture,
                           ),
                         ),
@@ -8207,7 +8230,9 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (showFraming &&
                         stack.showFramingTitle &&
-                        !showReturningWatchTargetFocusedUi) ...[
+                        !showReturningWatchTargetFocusedUi &&
+                        !ReturningRecordWatchTargetUiGates
+                            .suppressDailyStreakPressureToday()) ...[
                       Text(
                         RecordScreenFramingCopy.title,
                         style: ArchiveMobileTypography.recordPageTitle(context),
@@ -8279,7 +8304,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         entryCount: _journalEntryCount,
                         isPostSave: _isPostSaveSurface,
                         entries: _journalEntries,
-                      )) ...[
+                      ) &&
+                          !recordReadySuppressStreakPressure) ...[
                         const FirstProofJourneyStripCard(),
                         const SizedBox(height: 12),
                       ],
@@ -8521,7 +8547,9 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (showLowFrictionReturnCard &&
                         !firstUseSimplifiedRecord &&
-                        !showReturningWatchTargetFocusedUi) ...[
+                        !showReturningWatchTargetFocusedUi &&
+                        !ReturningRecordWatchTargetUiGates
+                            .watchPromptSkippedToday()) ...[
                       LowFrictionReturnCard(
                         source: 'record',
                         entryCount: _journalEntryCount,
@@ -8546,7 +8574,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (showWhatToNoticeNextCard && !firstUseSimplifiedRecord) ...[
+                    if (showWhatToNoticeNextCard &&
+                        !firstUseSimplifiedRecord &&
+                        !recordReadySuppressStreakPressure) ...[
                       WhatToNoticeNextCard(
                         result: whatToNoticeNextCandidate,
                         onPromptSelected: (prompt) {
@@ -8576,7 +8606,8 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (showThreeDayChallengeOnRecord &&
                         threeDayChallengeCandidate != null &&
-                        !firstUseSimplifiedRecord) ...[
+                        !firstUseSimplifiedRecord &&
+                        !recordReadySuppressStreakPressure) ...[
                       ThreeDayChallengeCard(
                         challenge: threeDayChallengeCandidate,
                       ),
@@ -8595,7 +8626,8 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (ui == RecordUiState.ready &&
                         recordHomeSurface.showStartHereTodayPrompt &&
-                        _dailyReturnSuggestions.hasSuggestions) ...[
+                        _dailyReturnSuggestions.hasSuggestions &&
+                        !recordReadySuppressStreakPressure) ...[
                       DailyReturnSuggestionsCard(
                         startHereOnly: true,
                         suggestionSet: _dailyReturnSuggestions,
@@ -8608,11 +8640,14 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showReturnedAfterDelayRecovery) ...[
+                    if (showReturnedAfterDelayRecovery &&
+                        !recordReadySuppressStreakPressure) ...[
                       const CaptureRecoveryHintStrip.returnedAfterDelay(),
                       const SizedBox(height: 12),
                     ],
-                    if (showReturnDayFlow && returnDayFlowCandidate != null) ...[
+                    if (showReturnDayFlow &&
+                        returnDayFlowCandidate != null &&
+                        !recordReadySuppressStreakPressure) ...[
                       ReturnDayFlowCard(
                         flow: returnDayFlowCandidate,
                         entryCount: _journalEntryCount,
@@ -8630,7 +8665,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showQuietSignalOnRecord && quietSignalCandidate != null) ...[
+                    if (showQuietSignalOnRecord &&
+                        quietSignalCandidate != null &&
+                        !recordReadySuppressStreakPressure) ...[
                       QuietSignalRecordCard(
                         signal: quietSignalCandidate,
                         entryCount: _journalEntryCount,
@@ -8641,7 +8678,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showReturnTomorrowCueReady &&
-                        returnTomorrowCueReady != null) ...[
+                        returnTomorrowCueReady != null &&
+                        !recordReadySuppressStreakPressure) ...[
                       ReturnTomorrowCueCard(
                         cue: returnTomorrowCueReady,
                         entryCount: _journalEntryCount,
@@ -8650,7 +8688,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showFirstWeekProgressReady &&
-                        firstWeekProgressReady != null) ...[
+                        firstWeekProgressReady != null &&
+                        !recordReadySuppressStreakPressure) ...[
                       FirstWeekProgressLine(
                         progress: firstWeekProgressReady,
                         entryCount: _journalEntryCount,
@@ -8659,7 +8698,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 8),
                     ],
                     if (showLowEvidenceGuidanceOnRecord &&
-                        lowEvidenceGuidance != null) ...[
+                        lowEvidenceGuidance != null &&
+                        !recordReadyShowsWatchTargetOnly) ...[
                       LowEvidenceGuidanceCard(guidance: lowEvidenceGuidance),
                       const SizedBox(height: 12),
                     ],
@@ -9339,7 +9379,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ],
                     if (showFirstWeekLoopOnRecord &&
-                        firstWeekLoopCandidate != null) ...[
+                        firstWeekLoopCandidate != null &&
+                        !recordReadySuppressStreakPressure) ...[
                       FirstWeekLoopCard(
                         loop: firstWeekLoopCandidate,
                         entryCount: _journalEntryCount,

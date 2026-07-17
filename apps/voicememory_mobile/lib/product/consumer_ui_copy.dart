@@ -582,7 +582,7 @@ abstract class ConsumerUiCopy {
   static const String paywallHeadline = PaywallAlignmentCopy.headline;
   static const String paywallSubhead = PaywallAlignmentCopy.body;
   static const String paywallPrimaryValueBlock =
-      PaywallAlignmentCopy.secondaryReassurance;
+      PaywallValueSharpeningCopy.proofConnectedLine;
   static const String paywallTitle = paywallHeadline;
   static const List<String> paywallFallbackBullets =
       PaywallAlignmentCopy.benefitBullets;

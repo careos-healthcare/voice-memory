@@ -57,9 +57,11 @@ import '../widgets/pushed_screen_shell.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/pro_packaging/pro_value_model.dart';
+import '../features/pro_value/pro_value_copy.dart';
 import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
 import '../widgets/billing/paywall_subscription_details_section.dart';
 import '../features/paywall/archive_loop_entitlements.dart';
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 
 /// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
@@ -73,6 +75,7 @@ class PaywallScreen extends StatefulWidget {
     this.restoreFlow,
     this.billingConfiguredForRestore,
     this.billingReadyOverride,
+    this.delayedPaywallProofGateOverride,
   });
 
   /// Trigger-specific preview copy when opened from a memory limit gate.
@@ -98,6 +101,9 @@ class PaywallScreen extends StatefulWidget {
 
   /// Override billing configured for purchase UI tests (offerings still load live).
   final bool Function()? billingReadyOverride;
+
+  /// Injectable delayed paywall gate for tests; defaults to live proof milestones.
+  final bool Function()? delayedPaywallProofGateOverride;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -132,6 +138,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   bool _showBetaFeedbackCaptureNoCta = false;
   bool _showBetaFeedbackCapturePurchaseFail = false;
   bool _purchaseAttemptedThisSession = false;
+  bool _delayedPaywallGateResolved = false;
 
   bool get _usesGeneralConversionClarity {
     final source = widget.triggerArgs?.source;
@@ -337,9 +344,37 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
+  bool _passesDelayedPaywallProofGate() {
+    final override = widget.delayedPaywallProofGateOverride;
+    if (override != null) return override();
+    if (ScreenshotMode.enabled) return true;
+    return DelayedPaywallProofStore.passesGate;
+  }
+
+  Future<void> _resolveDelayedPaywallGate() async {
+    if (widget.delayedPaywallProofGateOverride == null &&
+        !ScreenshotMode.enabled &&
+        !DelayedPaywallProofStore.bypassGateForTest) {
+      await DelayedPaywallProofStore.ensureLoaded();
+    }
+    if (!mounted) return;
+    if (!_passesDelayedPaywallProofGate()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final router = GoRouter.of(context);
+        if (router.canPop()) {
+          router.pop();
+        } else {
+          router.go('/record');
+        }
+      });
+      return;
+    }
+    setState(() => _delayedPaywallGateResolved = true);
+    _startPaywallSession();
+  }
+
+  void _startPaywallSession() {
     _recordAttribution(
       PaywallAttributionEventType.paywallSeen,
       suggestionStage: SuggestionAttributionEventType.suggestionToPaywallSeen,
@@ -351,6 +386,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }),
     );
     _load();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_resolveDelayedPaywallGate());
   }
 
   BetaFeedbackCaptureResult _betaFeedbackCapturePaywallResult({
@@ -850,6 +891,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_delayedPaywallGateResolved) {
+      return const SizedBox.shrink();
+    }
     return PushedScreenShell(
       title: _entitlementLabel,
       onBack: () => unawaited(_dismissWithCapture()),
@@ -1311,13 +1355,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
         children: [
           if (showPackagingSection) ...[
             Text(
-              ConsumerUiCopy.paywallHeadline,
+              ProValueCopy.headline,
               style: ArchiveMobileTypography.responsivePageTitle(context),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
-              ConsumerUiCopy.paywallSubhead,
+              ProValueCopy.subheadline,
               style: ArchiveMobileTypography.responsiveBody(context),
               textAlign: TextAlign.center,
             ),

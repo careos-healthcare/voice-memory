@@ -16,9 +16,15 @@ abstract final class ReturningRecordWatchTargetUiGates {
     if (!showDailyArchiveMemory) return false;
     final memory = dailyArchiveMemory;
     if (memory == null || !memory.hasWatchTarget) return false;
-    if (_skippedWatchPromptToday()) return false;
+    if (watchPromptSkippedToday()) return false;
     return true;
   }
+
+  /// True after the user taps Not today on the watch-target card (today only).
+  static bool watchPromptSkippedToday() => _skippedWatchPromptToday();
+
+  /// Hide daily streak, homework, and program framing after Not today.
+  static bool suppressDailyStreakPressureToday() => watchPromptSkippedToday();
 
   /// Beta Record surfaces only for explicit beta builds — never App Review.
   static bool showBetaRecordSurfaces() =>

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import '../../services/activation_funnel_analytics.dart';
 import '../beta/beta_activation_loop_tracker.dart';
+import '../pro_bridge_visibility/delayed_paywall_proof_store.dart';
 
 /// Lightweight analytics for the early archive proof loop — counts and
 /// stable surface ids only; never journal text.
@@ -145,6 +146,7 @@ abstract final class EarlyArchiveProofAnalytics {
       sessionStage: 'three_entry_confirmed_repeat',
     );
     unawaited(BetaActivationLoopTracker.trackConfirmedRepeatSeen());
+    unawaited(DelayedPaywallProofStore.markFirstRepeatSeen());
   }
 
   static void triggerPromptTapped({

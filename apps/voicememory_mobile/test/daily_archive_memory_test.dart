@@ -537,6 +537,10 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
       expect(find.text(FirstWeekLoopCopy.title), findsNothing);
       expect(find.text(FirstWeekLoopCopy.label), findsNothing);
+      expect(find.text('Day 1 of 7'), findsNothing);
+      expect(find.textContaining('What is on your mind'), findsNothing);
+      expect(find.byKey(const Key('capture_context_tag_card')), findsNothing);
+      expect(find.byKey(const Key('entry_options_section')), findsNothing);
     });
 
     testWidgets('shown for returning user with watch target', (tester) async {
@@ -581,6 +585,34 @@ void main() {
       await tester.tap(find.byKey(const Key('daily_archive_memory_record_cta')));
       await tester.pump();
       expect(find.byKey(const Key('capture_entry_record_cta')), findsNothing);
+    });
+
+    testWidgets('Not today dismisses watch card without streak pressure', (
+      tester,
+    ) async {
+      await pumpRecord(tester);
+
+      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_not_today_cta')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('daily_archive_memory_not_today_cta')));
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
+      expect(find.text('Day 1 of 7'), findsNothing);
+      expect(find.text(FirstWeekLoopCopy.label), findsNothing);
+      expect(find.textContaining('What is on your mind'), findsNothing);
+      expect(find.textContaining('streak'), findsNothing);
+      expect(find.textContaining('missed'), findsNothing);
+      expect(find.textContaining('homework'), findsNothing);
+      expect(find.byKey(const Key('capture_context_tag_card')), findsNothing);
+      expect(find.byKey(const Key('entry_options_section')), findsNothing);
     });
 
     testWidgets('view pattern details opens sheet when available', (tester) async {

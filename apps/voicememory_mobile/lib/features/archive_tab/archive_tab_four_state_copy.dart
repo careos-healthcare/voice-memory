@@ -28,5 +28,5 @@ abstract final class ArchiveTabFourStateCopy {
     required String thread,
     required String change,
   }) =>
-      "$twoRelatedLead This may connect to: '$thread'. What changed: $change.";
+      'This may connect to: $thread. What changed: $change.';
 }

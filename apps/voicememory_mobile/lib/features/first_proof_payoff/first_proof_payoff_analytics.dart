@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import '../../features/revenue_metrics/revenue_funnel_analytics.dart';
 import '../../services/activation_funnel_analytics.dart';
+import '../pro_bridge_visibility/delayed_paywall_proof_store.dart';
 
 /// Safe metadata analytics for first proof payoff — no journal text.
 abstract final class FirstProofPayoffAnalytics {
@@ -27,6 +30,7 @@ abstract final class FirstProofPayoffAnalytics {
       entryCount: entryCount,
       source: source,
     );
+    unawaited(DelayedPaywallProofStore.markFirstRepeatSeen());
   }
 
   static void ctaTapped({

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../models/journal_entry.dart';
@@ -6,6 +8,7 @@ import '../archive_explanations/archive_explanation_navigation.dart';
 import '../archive_explanations/explanation_models.dart';
 import '../archive_state_object/archive_state_object.dart';
 import '../first25/first25_user_metrics.dart';
+import '../pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../retention/retention_analytics.dart';
 import '../../widgets/evidence_trail/evidence_trail_sheet.dart';
 import 'evidence_trail_builder.dart';
@@ -25,6 +28,7 @@ Future<void> showEvidenceTrailSheet(
 }) async {
   RetentionAnalytics.evidenceOpened(context: surface);
   First25UserMetrics.trackEvidenceOpened(surface: surface);
+  unawaited(DelayedPaywallProofStore.markEvidenceTrailOpened());
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,

@@ -221,7 +221,7 @@ void main() {
   });
 
   group('comparison copy', () {
-    test('grounded comparison uses cautious language', () {
+    test('grounded comparison uses cautious connect format', () {
       final display = ArchiveFirstComparisonDisplay.resolve([
         _entry(
           id: 'a',
@@ -242,15 +242,9 @@ void main() {
         VisibleArchiveProofCopy.archiveFirstComparisonTitle,
       );
       expect(display.hasGroundedPattern, isTrue);
-      expect(display.evidenceLine, isNotNull);
-      expect(
-        [
-          VisibleArchiveProofCopy.archiveFirstComparisonMentionedBefore,
-          VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody,
-          VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,
-        ],
-        contains(display.body),
-      );
+      expect(display.body, startsWith('This may connect to:'));
+      expect(display.body, contains('What changed:'));
+      expect(display.evidenceLine, isNull);
     });
 
     test('weak comparison fallback does not claim a repeat', () {

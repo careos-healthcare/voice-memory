@@ -9,6 +9,7 @@ import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 
@@ -33,7 +34,10 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 void main() {
   group('PaywallAlignmentCopy', () {
     test('defines canonical headline and body', () {
-      expect(PaywallAlignmentCopy.headline, 'Keep the longer proof trail.');
+      expect(
+        PaywallAlignmentCopy.headline,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(
         PaywallAlignmentCopy.body,
         'Free shows the first useful proof. Pro keeps the longer trail.',
@@ -44,25 +48,19 @@ void main() {
       );
     });
 
-    test('defines six benefit bullets', () {
-      expect(PaywallAlignmentCopy.benefitBullets, hasLength(6));
-      expect(PaywallAlignmentCopy.benefitBullets, contains('Longer proof trail'));
-      expect(PaywallAlignmentCopy.benefitBullets, contains('Correction history'));
+    test('defines trail benefit bullets', () {
+      expect(PaywallAlignmentCopy.benefitBullets, hasLength(3));
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('Current vs fading signals'),
+        contains('Longer evidence history'),
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('Longer evidence trail'),
+        contains('Weekly archive reviews'),
       );
       expect(
         PaywallAlignmentCopy.benefitBullets,
-        contains('What returned over time'),
-      );
-      expect(
-        PaywallAlignmentCopy.benefitBullets,
-        contains('Trail continuity over weeks'),
+        contains('Timeline views over time'),
       );
     });
   });
@@ -73,7 +71,7 @@ void main() {
       expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
-        PaywallAlignmentCopy.secondaryReassurance,
+        PaywallValueSharpeningCopy.proofConnectedLine,
       );
       expect(ConsumerUiCopy.paywallBullets, PaywallAlignmentCopy.benefitBullets);
       expect(

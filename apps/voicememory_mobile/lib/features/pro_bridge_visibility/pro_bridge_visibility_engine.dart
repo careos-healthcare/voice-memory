@@ -87,6 +87,8 @@ abstract final class ProBridgeVisibilityEngine {
       return false;
     }
 
+    if (!passesDelayedPaywallProofGate(input)) return false;
+
     return ProBridgeTimingLoosenEngine.evaluate(
       input: ProBridgeTimingLoosenEngine.fromVisibilityInput(input),
     ).allowed;
@@ -123,6 +125,10 @@ abstract final class ProBridgeVisibilityEngine {
           input.hasSolidStrongPatternWithSafeAnchors,
     );
   }
+
+  /// Pro bridge only after the user has seen a repeat and opened evidence trail.
+  static bool passesDelayedPaywallProofGate(ProBridgeVisibilityInput input) =>
+      input.hasSeenFirstRepeat && input.hasOpenedEvidenceTrail;
 
   static Future<void> dismiss() => ProEvidenceValueDismissStore.dismiss();
 

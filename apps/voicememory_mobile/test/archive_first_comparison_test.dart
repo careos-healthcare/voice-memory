@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_first_comparison_display.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_first_comparison_ui_gates.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/comparison_engine/comparison_engine_prompt.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -51,7 +52,7 @@ void main() {
   });
 
   group('ArchiveFirstComparisonDisplay', () {
-    test('ungrounded two entries use compare framing without evidence line', () {
+    test('ungrounded two entries use weak fallback without faking a repeat', () {
       final display = ArchiveFirstComparisonDisplay.resolve([
         _entry(
           id: 'a',
@@ -68,10 +69,12 @@ void main() {
       expect(display.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
       expect(display.body, VisibleArchiveProofCopy.twoEntryBodyUngrounded);
       expect(display.evidenceLine, isNull);
+      expect(display.whatChangedLine, isNull);
       expect(display.primaryIsViewEvidence, isFalse);
+      expect(display.hasGroundedPattern, isFalse);
     });
 
-    test('grounded two entries use came-back framing with evidence', () {
+    test('grounded two entries use connect format with view evidence', () {
       final display = ArchiveFirstComparisonDisplay.resolve([
         _entry(
           id: 'a',
@@ -88,18 +91,40 @@ void main() {
 
       expect(display.show, isTrue);
       expect(display.title, VisibleArchiveProofCopy.archiveFirstComparisonTitle);
-      expect(
-        [
-          VisibleArchiveProofCopy.archiveFirstComparisonMentionedBefore,
-          VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody,
-          VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,
-        ],
-        contains(display.body),
-      );
+      expect(display.body, startsWith('This may connect to:'));
+      expect(display.body, contains('What changed:'));
       expect(display.primaryIsViewEvidence, isTrue);
       expect(display.hasGroundedPattern, isTrue);
-      expect(display.evidenceLine, isNotNull);
-      expect(display.evidenceLine, isNotEmpty);
+      expect(display.evidenceLine, isNull);
+      expect(
+        ComparisonEnginePrompt.violatesBannedPhrase(display.body),
+        isFalse,
+      );
+    });
+
+    test('thin possible repeat uses cautious fallback copy', () {
+      final display = ArchiveFirstComparisonDisplay.resolve([
+        _entry(
+          id: '1',
+          transcript:
+              'Something at work felt familiar today but I could not name it clearly.',
+        ),
+        _entry(
+          id: '2',
+          transcript:
+              'Another work moment felt familiar again but still hard to explain.',
+          createdAt: DateTime(2026, 6, 13, 12),
+        ),
+      ]);
+
+      expect(display.show, isTrue);
+      expect(display.title, VisibleArchiveProofCopy.archiveFirstComparisonTitle);
+      expect(
+        display.body,
+        VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,
+      );
+      expect(display.primaryIsViewEvidence, isTrue);
+      expect(display.hasGroundedPattern, isFalse);
     });
   });
 }

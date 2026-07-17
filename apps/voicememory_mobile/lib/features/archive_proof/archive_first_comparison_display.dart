@@ -33,42 +33,56 @@ class ArchiveFirstComparisonDisplay {
   final bool primaryIsViewEvidence;
   final bool hasGroundedPattern;
 
+  static const _signalEngine = SecondSessionSignalEngine();
+
   static ArchiveFirstComparisonDisplay resolve(List<JournalEntry> entries) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length != 2) return const ArchiveFirstComparisonDisplay.hidden();
 
-    const signalEngine = SecondSessionSignalEngine();
-    final comparison = signalEngine.build(entries);
-    final grounded = signalEngine.hasGroundedRepeatMatch(entries);
+    final comparison = _signalEngine.build(entries);
+    if (!comparison.hasEnoughData) {
+      return const ArchiveFirstComparisonDisplay.hidden();
+    }
 
-    if (grounded) {
-      final evidence = _usableLine(comparison.whatRepeated);
-      final changed = _usableLine(comparison.whatChanged);
-      final body = evidence == null
-          ? VisibleArchiveProofCopy.archiveFirstComparisonCautionThin
-          : (evidence.toLowerCase().contains('mentioned') ||
-                  evidence.toLowerCase().contains('similar'))
-              ? VisibleArchiveProofCopy.archiveFirstComparisonMentionedBefore
-              : VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody;
+    if (!comparison.possibleRepeat) {
       return ArchiveFirstComparisonDisplay(
         show: true,
-        title: VisibleArchiveProofCopy.archiveFirstComparisonTitle,
-        body: body,
-        evidenceLine: evidence,
-        whatChangedLine: changed,
-        primaryIsViewEvidence: true,
-        hasGroundedPattern: true,
+        title: VisibleArchiveProofCopy.twoEntryCompareTitle,
+        body: VisibleArchiveProofCopy.twoEntryBodyUngrounded,
+        evidenceLine: null,
+        whatChangedLine: null,
+        primaryIsViewEvidence: false,
+        hasGroundedPattern: false,
       );
     }
 
+    final thread = _usableLine(comparison.whatRepeated);
+    if (thread == null) {
+      return ArchiveFirstComparisonDisplay(
+        show: true,
+        title: VisibleArchiveProofCopy.archiveFirstComparisonTitle,
+        body: VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,
+        evidenceLine: null,
+        whatChangedLine: null,
+        primaryIsViewEvidence: true,
+        hasGroundedPattern: false,
+      );
+    }
+
+    final change = _usableLine(comparison.whatChanged) ??
+        'ArchiveMe is still comparing your saved words.';
+
     return ArchiveFirstComparisonDisplay(
       show: true,
-      title: VisibleArchiveProofCopy.twoEntryCompareTitle,
-      body: VisibleArchiveProofCopy.twoEntryBodyUngrounded,
+      title: VisibleArchiveProofCopy.archiveFirstComparisonTitle,
+      body: VisibleArchiveProofCopy.archiveFirstComparisonConnectBody(
+        thread: thread,
+        change: change,
+      ),
       evidenceLine: null,
       whatChangedLine: null,
-      primaryIsViewEvidence: false,
-      hasGroundedPattern: false,
+      primaryIsViewEvidence: true,
+      hasGroundedPattern: true,
     );
   }
 

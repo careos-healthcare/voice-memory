@@ -61,6 +61,8 @@ ProBridgeVisibilityInput _allowedInput({
   bool isDegradedTranscriptState = false,
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
+  bool hasSeenFirstRepeat = true,
+  bool hasOpenedEvidenceTrail = true,
 }) =>
     ProBridgeVisibilityInput(
       surface: surface,
@@ -89,6 +91,8 @@ ProBridgeVisibilityInput _allowedInput({
       isDegradedTranscriptState: isDegradedTranscriptState,
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+      hasSeenFirstRepeat: hasSeenFirstRepeat,
+      hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
     );
 
 ProBridgeVisibilityResult _result({
@@ -132,6 +136,24 @@ void main() {
       );
     });
 
+    test('hidden before first repeat seen', () {
+      expect(
+        ProBridgeVisibilityEngine.shouldShow(
+          input: _allowedInput(hasSeenFirstRepeat: false),
+        ),
+        isFalse,
+      );
+    });
+
+    test('hidden before evidence trail opened', () {
+      expect(
+        ProBridgeVisibilityEngine.shouldShow(
+          input: _allowedInput(hasOpenedEvidenceTrail: false),
+        ),
+        isFalse,
+      );
+    });
+
     test('hidden zero-entry', () {
       expect(
         ProBridgeVisibilityEngine.shouldShow(
@@ -155,7 +177,7 @@ void main() {
       );
     });
 
-    test('visible after FirstProofPayoff', () {
+    test('standalone bridge hidden on post-save first proof payoff surface', () {
       expect(
         ProBridgeVisibilityEngine.shouldShow(
           input: _allowedInput(
@@ -164,7 +186,7 @@ void main() {
             hasFirstProofPayoffVisible: true,
           ),
         ),
-        isTrue,
+        isFalse,
       );
     });
 

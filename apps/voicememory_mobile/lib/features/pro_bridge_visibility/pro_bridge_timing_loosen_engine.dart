@@ -235,6 +235,8 @@ abstract final class ProBridgeTimingLoosenEngine {
       hasFreshReturnAfterCorrection: signals.hasFreshReturnAfterCorrection,
       hasSolidStrongPatternWithSafeAnchors:
           signals.hasSolidStrongPatternWithSafeAnchors,
+      hasSeenFirstRepeat: base.hasSeenFirstRepeat,
+      hasOpenedEvidenceTrail: base.hasOpenedEvidenceTrail,
     );
   }
 

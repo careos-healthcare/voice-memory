@@ -4,15 +4,16 @@ import '../../billing/paywall_source.dart';
 abstract final class PaywallValueSharpeningCopy {
   PaywallValueSharpeningCopy._();
 
-  static const proofConnectedHeadline = 'Keep the proof trail behind this repeat';
+  static const proofConnectedHeadline =
+      'Free shows the first useful proof. Pro keeps the longer trail.';
 
-  static const genericHeadline = 'Keep the longer proof trail.';
+  static const genericHeadline = proofConnectedHeadline;
 
   static const body =
       'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const proofConnectedLine =
-      'The value is not more chat. It is the longer evidence trail.';
+      'Pro keeps longer evidence history, weekly archive reviews, and timeline views.';
 
   static const cta = 'Keep the longer trail';
 
@@ -20,12 +21,9 @@ abstract final class PaywallValueSharpeningCopy {
       'You stay in control. You can delete entries and correct what you saved.';
 
   static const benefitBullets = <String>[
-    'Longer proof trail',
-    'Correction history',
-    'Current vs fading signals',
-    'Longer evidence trail',
-    'What returned over time',
-    'Trail continuity over weeks',
+    'Longer evidence history',
+    'Weekly archive reviews',
+    'Timeline views over time',
   ];
 
   static const corePaidReason = 'Keep the longer proof trail.';

@@ -328,6 +328,7 @@ import '../features/beta_invite/beta_invite_store.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_engine.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_model.dart';
 import '../features/beta_feedback_capture/beta_feedback_capture_store.dart';
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import '../features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
 import '../features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart';
@@ -4944,6 +4945,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               ),
               patternReviewInboxHasActiveItems: patternReviewInboxActiveOnPatterns,
               compact: proofSurfaceLayout.proBridgeCompact,
+              hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+              hasOpenedEvidenceTrail:
+                  DelayedPaywallProofStore.hasOpenedEvidenceTrail,
             ),
           );
       final patternsArchiveIntelligenceProBridgeVisible =
@@ -5335,6 +5339,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     patternReviewInboxHasActiveItems:
                         patternReviewInboxActiveOnPatterns,
                     compact: proofSurfaceLayout.proBridgeCompact,
+                    hasSeenFirstRepeat:
+                        DelayedPaywallProofStore.hasSeenFirstRepeat,
+                    hasOpenedEvidenceTrail:
+                        DelayedPaywallProofStore.hasOpenedEvidenceTrail,
                   ),
                 )
               : null;

@@ -100,6 +100,7 @@ Future<void> _pumpPaywall(
     ),
   );
   await tester.pump();
+  await tester.pump();
   await tester.pump(const Duration(milliseconds: 400));
 }
 
@@ -126,9 +127,19 @@ void main() {
         'Start your archive and unlock your first proof.',
       );
       expect(ProPackagingCopy.proSectionTitle, 'Pro');
-      expect(ProPackagingCopy.proBullets, hasLength(6));
-      expect(ProPackagingCopy.proBullets, contains('Longer proof trail'));
-      expect(ProPackagingCopy.proBullets, contains('What returned over time'));
+      expect(ProPackagingCopy.proBullets, hasLength(3));
+      expect(
+        ProPackagingCopy.proBullets,
+        contains('Longer evidence history'),
+      );
+      expect(
+        ProPackagingCopy.proBullets,
+        contains('Weekly archive reviews'),
+      );
+      expect(
+        ProPackagingCopy.proBullets,
+        contains('Timeline views over time'),
+      );
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
         PaywallAlignmentCopy.secondaryReassurance,
@@ -146,7 +157,7 @@ void main() {
 
   group('ProEvidenceValueCopy', () {
     test('aligns longer proof trail Pro bridge with packaging', () {
-      expect(ProEvidenceValueCopy.title, 'Keep the longer proof trail.');
+      expect(ProEvidenceValueCopy.title, PaywallAlignmentCopy.headline);
       expect(
         ProEvidenceValueCopy.chatGptDifferentiationLine,
         contains('ChatGPT can suggest what to do'),
@@ -157,7 +168,7 @@ void main() {
       );
       expect(
         ProEvidenceValueCopy.proBulletsForDisplay(exportReportsLive: true),
-        contains('Longer proof trail'),
+        contains('Longer evidence history'),
       );
     });
   });
@@ -207,8 +218,8 @@ void main() {
         find.text('Start your archive and unlock your first proof.'),
         findsOneWidget,
       );
-      expect(find.text('Longer proof trail'), findsOneWidget);
-      expect(find.text('What returned over time'), findsOneWidget);
+      expect(find.text('Longer evidence history'), findsOneWidget);
+      expect(find.text('Weekly archive reviews'), findsOneWidget);
     });
   });
 
@@ -243,8 +254,8 @@ void main() {
 
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text('Longer proof trail'), findsNothing);
-      expect(find.text('What returned over time'), findsNothing);
+      expect(find.text('Longer evidence history'), findsNothing);
+      expect(find.text('Weekly archive reviews'), findsNothing);
       expect(find.textContaining(r'$'), findsNothing);
       expect(find.textContaining('0.00'), findsNothing);
     });

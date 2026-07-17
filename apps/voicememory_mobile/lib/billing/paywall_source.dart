@@ -167,13 +167,12 @@ class PaywallProofPreview {
 abstract class PaywallAboveFoldClarity {
   PaywallAboveFoldClarity._();
 
-  static const String title = 'What Pro continues';
+  static const String title = 'What Pro keeps';
 
   static const List<String> lines = [
-    'What returned',
-    'What faded',
-    'What changed',
-    'The exact evidence behind it',
+    'Longer evidence history',
+    'Weekly archive reviews',
+    'Timeline views over time',
   ];
 
   /// Free reassurance shown with the block — never lockout framing.

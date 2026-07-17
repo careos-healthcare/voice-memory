@@ -62,17 +62,18 @@ void main() {
     test('headline is deeper long-term evidence history', () {
       final plan = const ProValueEngine().build(_defaultInput());
       expect(plan.headline, ProValueCopy.headline);
-      expect(plan.headline, contains('Deeper long-term evidence history'));
+      expect(
+        plan.headline,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
     });
 
     test('value bullets cover long-term Pro surfaces', () {
       final bullets = const ProValueEngine().build(_defaultInput()).valueBullets;
-      expect(bullets, contains('Longer archive history'));
-      expect(bullets, contains('Deeper belief change timeline'));
-      expect(bullets, contains('More watch themes'));
-      expect(bullets, contains('Richer weekly and monthly reviews'));
-      expect(bullets, contains('Advanced export report packs'));
-      expect(bullets, contains('Deeper context and evidence map views'));
+      expect(bullets, ProValueCopy.valueBullets);
+      expect(bullets, contains('Longer evidence history'));
+      expect(bullets, contains('Weekly archive reviews'));
+      expect(bullets, contains('Timeline views over time'));
     });
 
     test('purchase unavailable copy keeps free archive usable', () {
@@ -90,7 +91,7 @@ void main() {
     });
 
     test('card pro line is consistent across touchpoints', () {
-      expect(ProValueCopy.cardProLine, contains('Deeper long-term evidence history'));
+      expect(ProValueCopy.cardProLine, ProValueCopy.headline);
     });
 
     test('copy avoids banned language and purchase CTAs', () {

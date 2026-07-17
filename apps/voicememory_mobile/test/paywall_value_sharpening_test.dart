@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_g
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_analytics.dart';
 import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 
@@ -39,10 +40,10 @@ void main() {
   });
 
   group('PaywallValueSharpeningCopy', () {
-    test('proof source uses proof-connected headline', () {
+    test('proof source uses proof-first trail headline', () {
       expect(
         PaywallValueSharpeningCopy.headlineFor(PaywallSource.valueMoment),
-        'Keep the proof trail behind this repeat',
+        ProValueCopy.headline,
       );
       expect(
         PaywallSourceCopy.forSource(PaywallSource.valueMoment).headline,
@@ -50,10 +51,10 @@ void main() {
       );
     });
 
-    test('generic source uses generic headline', () {
+    test('generic source uses proof-first trail headline', () {
       expect(
         PaywallValueSharpeningCopy.headlineFor(PaywallSource.generalPro),
-        'Keep the longer proof trail.',
+        ProValueCopy.headline,
       );
       expect(
         PaywallSourceCopy.forSource(PaywallSource.generalPro).headline,
@@ -61,27 +62,35 @@ void main() {
       );
     });
 
-    test('defines proof-connected body and differentiation line', () {
+    test('defines trail-focused body and differentiation line', () {
       expect(
         PaywallValueSharpeningCopy.body,
-        contains('returned, changed, faded, or corrected'),
+        ProValueCopy.headline,
       );
       expect(
         PaywallValueSharpeningCopy.proofConnectedLine,
-        contains('not more chat'),
+        ProValueCopy.subheadline,
+      );
+      expect(
+        PaywallValueSharpeningCopy.proofConnectedLine,
+        isNot(contains('more chat')),
       );
       expect(PaywallValueSharpeningCopy.cta, 'Keep the longer trail');
     });
 
-    test('defines full timeline benefit bullets', () {
-      expect(PaywallValueSharpeningCopy.benefitBullets, hasLength(6));
+    test('defines trail benefit bullets only', () {
+      expect(PaywallValueSharpeningCopy.benefitBullets, hasLength(3));
       expect(
         PaywallValueSharpeningCopy.benefitBullets,
-        contains('Current vs fading signals'),
+        contains('Longer evidence history'),
       );
       expect(
         PaywallValueSharpeningCopy.benefitBullets,
-        contains('Longer proof trail'),
+        contains('Weekly archive reviews'),
+      );
+      expect(
+        PaywallValueSharpeningCopy.benefitBullets,
+        contains('Timeline views over time'),
       );
     });
 
@@ -97,6 +106,7 @@ void main() {
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));
+      expect(blob, isNot(contains('more ai')));
     });
   });
 
@@ -126,7 +136,7 @@ void main() {
   });
 
   group('PaywallScreen sharpening rendering', () {
-    testWidgets('proof source renders proof-connected headline and copy', (
+    testWidgets('proof source renders proof-first headline and copy', (
       tester,
     ) async {
       await _pumpPaywall(
@@ -139,7 +149,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.text(PaywallValueSharpeningCopy.body), findsNothing);
+      expect(find.text(PaywallValueSharpeningCopy.body), findsOneWidget);
       expect(
         find.text(PaywallValueSharpeningCopy.proofConnectedLine),
         findsNothing,

@@ -80,6 +80,15 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveFirstComparisonCautionThin =
       'This looks like it came back, but ArchiveMe needs more moments to be sure.';
 
+  static const archiveFirstComparisonWeakFallback =
+      '$twoEntryCompareTitle $twoEntryBodyUngrounded';
+
+  static String archiveFirstComparisonConnectBody({
+    required String thread,
+    required String change,
+  }) =>
+      'This may connect to: $thread. What changed: $change.';
+
   static const archiveFirstComparisonWhatChangedLabel = 'What changed';
 
   static const archiveFirstComparisonWhyMattersLabel = 'Why this matters';

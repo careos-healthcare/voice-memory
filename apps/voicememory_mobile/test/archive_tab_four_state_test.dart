@@ -93,8 +93,7 @@ void main() {
       )!;
 
       expect(model.state, ArchiveTabFourState.twoRelated);
-      expect(model.body, startsWith(ArchiveTabFourStateCopy.twoRelatedLead));
-      expect(model.body, contains("This may connect to:"));
+      expect(model.body, startsWith('This may connect to:'));
       expect(model.body, contains('What changed:'));
       expect(model.primaryCta, ArchiveTabFourStateCopy.viewEvidenceCta);
       expect(model.primaryAction.name, 'viewEvidence');

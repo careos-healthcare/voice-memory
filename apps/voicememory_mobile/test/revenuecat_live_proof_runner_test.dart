@@ -321,7 +321,10 @@ void main() {
         ProValueCopy.purchaseUnavailableNote,
         'Purchases are not available yet. The free archive flow remains usable.',
       );
-      expect(ProValueCopy.headline, 'Deeper long-term evidence history');
+      expect(
+        ProValueCopy.headline,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
 
       final proValueSource =
           File('lib/features/pro_value/pro_value_copy.dart').readAsStringSync();

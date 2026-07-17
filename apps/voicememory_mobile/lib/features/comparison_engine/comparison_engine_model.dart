@@ -71,15 +71,7 @@ class ComparisonEngineOutput {
     final changeLine = (change != null && change.isNotEmpty)
         ? change
         : 'ArchiveMe is still comparing your saved words.';
-    final buffer = StringBuffer(
-      "Something came back. ArchiveMe found a pattern across your saved moments. "
-      "This may connect to: '$thread'. What changed: $changeLine.",
-    );
-    final caution = thinEvidencePhrase?.trim();
-    if (caution != null && caution.isNotEmpty) {
-      buffer.write(' $caution');
-    }
-    return buffer.toString();
+    return 'This may connect to: $thread. What changed: $changeLine.';
   }
 }
 
