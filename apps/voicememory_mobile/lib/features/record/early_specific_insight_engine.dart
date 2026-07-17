@@ -281,8 +281,10 @@ class EarlySpecificInsightEngine {
     final trimmed = term.trim().toLowerCase();
     if (trimmed.isEmpty) return false;
     if (trimmed == 'ai') {
-      return RegExp(r'\bai\b').hasMatch(blob);
+      return RegExp(r'\bai\b', caseSensitive: false).hasMatch(blob);
     }
-    return blob.contains(trimmed);
+    // Escape special chars and evaluate word boundaries safely
+    final escaped = RegExp.escape(trimmed);
+    return RegExp('\\b$escaped\\b', caseSensitive: false).hasMatch(blob);
   }
 }

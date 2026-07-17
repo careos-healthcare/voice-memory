@@ -214,15 +214,9 @@ class EarlyBehaviorLoopEngine {
 
   String _entryText(JournalEntry entry) {
     final parts = <String>[
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.concreteObservation,
-          )
-          case final observation?)
+      if (ConsumerCopyGuard.userFacingObservation(entry.reflection.concreteObservation) case final observation?)
         observation,
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.exactLanguagePattern,
-          )
-          case final pattern?)
+      if (ConsumerCopyGuard.userFacingObservation(entry.reflection.exactLanguagePattern) case final pattern?)
         pattern,
       if (_cleanTranscript(entry.transcript) case final transcript?)
         transcript,
