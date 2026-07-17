@@ -946,10 +946,12 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(RecordReturnProCopy.evidenceViewArchive), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
-      expect(find.text(EarlyArchiveReturnReminderCopy.title), findsNothing);
-      expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
+      expect(
+        find.byKey(const Key('early_archive_return_reminder_card_record')),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
@@ -960,10 +962,6 @@ void main() {
       );
       expect(
         find.text(ReturnTomorrowCueCopy.afterFirstMomentTitle),
-        findsNothing,
-      );
-      expect(
-        find.text(ReturnTomorrowCueCopy.afterFirstMomentBody),
         findsNothing,
       );
       expect(
@@ -1467,9 +1465,8 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.doneCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsNothing);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
-      expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
