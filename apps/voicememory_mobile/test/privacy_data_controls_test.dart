@@ -141,13 +141,12 @@ void main() {
       expect(find.byKey(const Key('privacy_data_controls_section_title')), findsOneWidget);
       expect(find.text(PrivacyDataControlsCopy.sectionTitle), findsOneWidget);
       expect(find.byKey(const Key('privacy_data_stays_on_device_tile')), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_export_archive_tile')), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_clear_local_archive_tile')), findsOneWidget);
       expect(find.byKey(const Key('privacy_data_reset_dismissed_tips_tile')), findsOneWidget);
     });
 
-    test('settings screen includes privacy data controls section', () {
+    test('settings screen includes standard archive controls', () {
       final src = File('lib/screens/settings_screen.dart').readAsStringSync();
+      expect(src, contains('AccountPrivacyControlsSection'));
       expect(src, contains('PrivacyDataControlsSection'));
     });
   });

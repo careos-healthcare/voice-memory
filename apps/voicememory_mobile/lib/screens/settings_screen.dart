@@ -25,7 +25,6 @@ import '../models/journal_entry.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
-import '../features/support/support_feedback_copy.dart';
 import '../features/support/testflight_feedback_copy.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
@@ -41,6 +40,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
+import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/settings/privacy_data_controls_section.dart';
 import '../widgets/settings/app_review_access_settings_section.dart';
 import '../features/paywall/archive_loop_entitlements.dart';
@@ -210,6 +210,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            const AccountPrivacyControlsSection(),
+            const SizedBox(height: AppSpacing.md),
             ListTile(
               key: const Key('settings_privacy_trust_centre_tile'),
               contentPadding: EdgeInsets.zero,
@@ -219,10 +221,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/privacy-trust-centre'),
-            ),
-            _tile(
-              ConsumerUiCopy.privacy,
-              onTap: () => context.push('/privacy'),
             ),
             _tile(
               ConsumerUiCopy.termsOfUse,
@@ -241,20 +239,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/help-reviewer-guide'),
-            ),
-            ListTile(
-              key: const Key('settings_support_feedback_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                SupportFeedbackCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: Text(
-                SupportFeedbackCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/support-feedback'),
             ),
             if (ArchiveBetaMissionGate.isEnabled)
               ListTile(

@@ -10,11 +10,12 @@ import 'package:voicememory_mobile/features/share/archive_share_text.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
+import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_section.dart';
+import 'package:voicememory_mobile/widgets/account/account_privacy_controls_section.dart';
 
 JournalEntry _entry({
   required String id,
@@ -117,18 +118,17 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('Settings export entry point', () {
-    testWidgets('shows Export archive row under Privacy & data', (tester) async {
+    testWidgets('shows Export button in standard archive controls', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const Scaffold(body: PrivacyDataControlsSection()),
+          home: const Scaffold(body: AccountPrivacyControlsSection()),
         ),
       );
       await tester.pump();
 
-      expect(find.text(PrivacyDataControlsCopy.exportArchiveTitle), findsOneWidget);
-      expect(find.text(PrivacyDataControlsCopy.exportArchiveSubtitle), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_export_archive_tile')), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.export), findsOneWidget);
+      expect(find.byKey(const Key('account_control_export_button')), findsOneWidget);
     });
   });
 
@@ -252,9 +252,9 @@ void main() {
       expect(SensitiveRoutes.isSensitiveRoute('/archive-export'), isTrue);
     });
 
-    test('settings privacy section routes to archive export screen', () {
+    test('standard archive controls route to archive export screen', () {
       final section =
-          File('lib/widgets/settings/privacy_data_controls_section.dart')
+          File('lib/widgets/account/account_privacy_controls_section.dart')
               .readAsStringSync();
       expect(section, contains("context.push('/archive-export')"));
     });

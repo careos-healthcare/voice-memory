@@ -93,7 +93,7 @@ void main() {
   });
 
   group('Support feedback UI', () {
-    testWidgets('Settings shows Support & feedback row', (tester) async {
+    testWidgets('Settings shows Support button', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -103,11 +103,10 @@ void main() {
       await tester.pump();
 
       expect(
-        find.byKey(const Key('settings_support_feedback_tile')),
+        find.byKey(const Key('account_control_support_button')),
         findsOneWidget,
       );
-      expect(find.text(SupportFeedbackCopy.settingsTitle), findsOneWidget);
-      expect(find.text(SupportFeedbackCopy.settingsSubtitle), findsOneWidget);
+      expect(find.text('Support'), findsOneWidget);
     });
 
     testWidgets('support route opens with required sections', (tester) async {
@@ -151,7 +150,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('settings_support_feedback_tile')));
+      await tester.tap(find.byKey(const Key('account_control_support_button')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 

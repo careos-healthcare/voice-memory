@@ -4,30 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/archive_history/archive_history_engine.dart';
 import '../../security/account_privacy_controls_copy.dart';
-import '../../security/app_lock_service.dart';
+import '../../security/local_privacy_data_controls.dart';
+import '../../security/privacy_data_controls_copy.dart';
+import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../security/wipe_local_archive_dialog.dart';
+import '../archive_history/archive_history_sheet.dart';
+import '../settings/privacy_data_controls_dialogs.dart';
 
-/// Compact privacy shortcuts on the Account screen — lock, export, delete, security.
+/// Standard archive controls on Account and Settings — delete, correct, export, clear.
 class AccountPrivacyControlsSection extends StatefulWidget {
   const AccountPrivacyControlsSection({
     super.key,
-    this.appLock,
-    this.onLockTap,
+    this.controls,
+    this.onDeleteEntryTap,
+    this.onCorrectEntryTap,
     this.onExportTap,
-    this.onDeleteTap,
-    this.onSecurityTap,
-    this.deleteBusy = false,
+    this.onClearArchiveTap,
+    this.onPrivacyPolicyTap,
+    this.onSupportTap,
+    this.clearArchiveBusy = false,
   });
 
-  final AppLockService? appLock;
-  final VoidCallback? onLockTap;
+  final LocalPrivacyDataControls? controls;
+  final VoidCallback? onDeleteEntryTap;
+  final VoidCallback? onCorrectEntryTap;
   final VoidCallback? onExportTap;
-  final VoidCallback? onDeleteTap;
-  final VoidCallback? onSecurityTap;
-  final bool deleteBusy;
+  final VoidCallback? onClearArchiveTap;
+  final VoidCallback? onPrivacyPolicyTap;
+  final VoidCallback? onSupportTap;
+  final bool clearArchiveBusy;
 
   @override
   State<AccountPrivacyControlsSection> createState() =>
@@ -36,32 +44,46 @@ class AccountPrivacyControlsSection extends StatefulWidget {
 
 class _AccountPrivacyControlsSectionState
     extends State<AccountPrivacyControlsSection> {
-  AppLockService get _appLock => widget.appLock ?? AppLockService.instance;
+  bool _clearBusy = false;
 
-  bool _lockEnabled = false;
-  bool _loaded = false;
+  LocalPrivacyDataControls get _controls =>
+      widget.controls ?? LocalPrivacyDataControls.instance();
 
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_refreshLockStatus());
+  bool get _clearArchiveBusy => widget.clearArchiveBusy || _clearBusy;
+
+  Future<void> _openArchiveHistory() async {
+    if (!AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    final content = ArchiveHistoryEngine.build(entries: entries);
+    if (!mounted) return;
+    await ArchiveHistorySheet.show(
+      context,
+      content: content,
+      entryCount: entries.length,
+    );
   }
 
-  Future<void> _refreshLockStatus() async {
-    final enabled = await _appLock.isEnabled();
-    if (!mounted) return;
-    setState(() {
-      _lockEnabled = enabled;
-      _loaded = true;
-    });
+  Future<void> _clearLocalArchive() async {
+    if (_clearArchiveBusy) return;
+    final confirmed = await showClearLocalArchiveDialog(context);
+    if (!confirmed || !mounted) return;
+
+    setState(() => _clearBusy = true);
+    try {
+      await _controls.clearLocalArchive();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(PrivacyDataControlsCopy.clearArchiveDone),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _clearBusy = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final lockTitle = _loaded
-        ? AccountPrivacyControlsCopy.lockLabel(enabled: _lockEnabled)
-        : AccountPrivacyControlsCopy.lockBase;
-
     return Column(
       key: const Key('account_privacy_controls_section'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -72,61 +94,84 @@ class _AccountPrivacyControlsSectionState
           style: ArchiveMobileTypography.responsiveSectionTitle(context),
         ),
         const SizedBox(height: AppSpacing.sm),
-        _row(
-          key: const Key('account_privacy_lock_row'),
-          title: lockTitle,
-          onTap: widget.onLockTap ?? () => context.push('/security'),
+        _button(
+          key: const Key('account_control_delete_entry_button'),
+          label: AccountPrivacyControlsCopy.deleteEntry,
+          onPressed: widget.onDeleteEntryTap ?? () => unawaited(_openArchiveHistory()),
         ),
-        _row(
-          key: const Key('account_privacy_export_row'),
-          title: AccountPrivacyControlsCopy.exportTitle,
-          onTap: widget.onExportTap ?? () => context.push('/export'),
+        _button(
+          key: const Key('account_control_correct_entry_button'),
+          label: AccountPrivacyControlsCopy.correctEntry,
+          onPressed: widget.onCorrectEntryTap ?? () => unawaited(_openArchiveHistory()),
         ),
-        _row(
-          key: const Key('account_privacy_delete_row'),
-          title: AccountPrivacyControlsCopy.deleteTitle,
+        _button(
+          key: const Key('account_control_export_button'),
+          label: AccountPrivacyControlsCopy.export,
+          onPressed: widget.onExportTap ?? () => context.push('/archive-export'),
+        ),
+        _button(
+          key: const Key('account_control_clear_archive_button'),
+          label: AccountPrivacyControlsCopy.clearArchive,
           destructive: true,
-          onTap: widget.deleteBusy
+          busy: _clearArchiveBusy,
+          onPressed: _clearArchiveBusy
               ? null
-              : widget.onDeleteTap ??
-                    () async {
-                      await showWipeLocalArchiveDialog(context);
-                    },
+              : widget.onClearArchiveTap ?? () => unawaited(_clearLocalArchive()),
         ),
-        _row(
-          key: const Key('account_privacy_security_row'),
-          title: AccountPrivacyControlsCopy.securitySettingsTitle,
-          onTap: widget.onSecurityTap ?? () => context.push('/security'),
+        _button(
+          key: const Key('account_control_privacy_policy_button'),
+          label: AccountPrivacyControlsCopy.privacyPolicy,
+          onPressed: widget.onPrivacyPolicyTap ?? () => context.push('/privacy'),
+        ),
+        _button(
+          key: const Key('account_control_support_button'),
+          label: AccountPrivacyControlsCopy.support,
+          onPressed: widget.onSupportTap ?? () => context.push('/support-feedback'),
         ),
       ],
     );
   }
 
-  Widget _row({
+  Widget _button({
     required Key key,
-    required String title,
-    required VoidCallback? onTap,
+    required String label,
+    required VoidCallback? onPressed,
     bool destructive = false,
+    bool busy = false,
   }) {
+    final color = destructive ? AppColors.error : AppColors.textPrimary;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Material(
-        color: AppColors.backgroundSecondary,
-        borderRadius: BorderRadius.circular(16),
-        child: ListTile(
+      child: SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: OutlinedButton(
           key: key,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: AppColors.borderSubtle),
-          ),
-          title: Text(
-            title,
-            style: ArchiveMobileTypography.listTitle(context).copyWith(
-              color: destructive ? AppColors.error : AppColors.textPrimary,
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: color,
+            side: BorderSide(
+              color: destructive ? AppColors.error : AppColors.borderSubtle,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onTap,
+          child: busy
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: color,
+                  ),
+                )
+              : Text(
+                  label,
+                  style: ArchiveMobileTypography.listTitle(context).copyWith(
+                    color: color,
+                  ),
+                ),
         ),
       ),
     );

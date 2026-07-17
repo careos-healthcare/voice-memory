@@ -256,8 +256,6 @@ void main() {
 
       expect(find.text(PrivacyDataControlsCopy.sectionTitle), findsOneWidget);
       expect(find.byKey(const Key('privacy_data_stays_on_device_tile')), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_export_archive_tile')), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_clear_local_archive_tile')), findsOneWidget);
     });
   });
 

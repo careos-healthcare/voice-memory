@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../product/consumer_ui_copy.dart';
 import '../theme/app_colors.dart';
 
 void _recordLog(String message) {
@@ -43,7 +42,7 @@ class MainShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.auto_awesome_outlined),
             selectedIcon: Icon(Icons.auto_awesome),
-            label: ConsumerUiCopy.patternsTabLabel,
+            label: 'Archive',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),

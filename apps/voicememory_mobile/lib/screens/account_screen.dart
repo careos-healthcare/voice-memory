@@ -158,10 +158,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 onTap: () => context.push('/privacy-trust-centre'),
               ),
               _sectionTile(
-                title: ConsumerUiCopy.privacy,
-                onTap: () => context.push('/privacy'),
-              ),
-              _sectionTile(
                 title: ConsumerUiCopy.deleteAccount,
                 onTap: () => context.push('/delete-account'),
                 destructive: true,

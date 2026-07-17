@@ -1,19 +1,13 @@
-/// Account-screen copy for the compact privacy and control shortcuts.
-import 'privacy_copy_policy.dart';
-
+/// Account-screen copy for standard archive controls.
 abstract class AccountPrivacyControlsCopy {
   AccountPrivacyControlsCopy._();
 
-  static const String sectionTitle = 'Privacy and control';
+  static const String sectionTitle = 'Your archive';
 
-  static const String lockBase = PrivacyCopyPolicy.lockArchiveMe;
-  static const String lockOn = '$lockBase — On';
-  static const String lockOff = '$lockBase — Off';
-
-  static const String exportTitle = 'Export my archive';
-  static const String deleteTitle = 'Delete my archive';
-  static const String securitySettingsTitle = 'Security settings';
-
-  static String lockLabel({required bool enabled}) =>
-      enabled ? lockOn : lockOff;
+  static const String deleteEntry = 'Delete entry';
+  static const String correctEntry = 'Correct entry';
+  static const String export = 'Export';
+  static const String clearArchive = 'Clear archive';
+  static const String privacyPolicy = 'Privacy policy';
+  static const String support = 'Support';
 }

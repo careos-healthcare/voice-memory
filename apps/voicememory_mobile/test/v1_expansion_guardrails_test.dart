@@ -144,7 +144,7 @@ void main() {
         3,
       );
       expect(mainShell, contains("label: 'Record'"));
-      expect(mainShell, contains('ConsumerUiCopy.patternsTabLabel'));
+      expect(mainShell, contains("label: 'Archive'"));
       expect(mainShell, contains("label: 'Account'"));
       expect(mainShell.toLowerCase(), isNot(contains("label: 'discover'")));
       expect(mainShell.toLowerCase(), isNot(contains("label: 'timeline'")));

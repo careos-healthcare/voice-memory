@@ -6,66 +6,46 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/account_screen.dart';
-import 'package:voicememory_mobile/screens/export_screen.dart';
+import 'package:voicememory_mobile/screens/archive_export_screen.dart';
+import 'package:voicememory_mobile/screens/privacy_screen.dart';
+import 'package:voicememory_mobile/screens/support_feedback_screen.dart';
 import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
-import 'package:voicememory_mobile/security/app_lock_service.dart';
-import 'package:voicememory_mobile/security/app_lock_store.dart';
-import 'package:voicememory_mobile/security/private_data_service.dart';
-import 'package:voicememory_mobile/security/security_settings_copy.dart';
+import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-
-class _NoBiometrics implements BiometricAuthenticator {
-  @override
-  Future<bool> available() async => false;
-
-  @override
-  Future<bool> authenticate(String reason) async => false;
-}
+import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 
 JournalEntry _entry({required String id}) => JournalEntry(
-  id: id,
-  createdAt: DateTime(2026, 6, 1, 12),
-  transcript: 'A long enough transcript to count as a saved reflection.',
-  durationSeconds: 30,
-  reflection: const Reflection(
-    mood: 'neutral',
-    emotionalIntensity: 2,
-    recurringThemes: ['work'],
-    exactLanguagePattern: '',
-    concreteObservation: 'You mentioned pressure in this moment.',
-    repeatedSignal: '',
-  ),
-);
+      id: id,
+      createdAt: DateTime(2026, 6, 1, 12),
+      transcript: 'A long enough transcript to count as a saved reflection.',
+      durationSeconds: 30,
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: '',
+        concreteObservation: 'You mentioned pressure in this moment.',
+        repeatedSignal: '',
+      ),
+    );
 
 void main() {
   late Directory tempDir;
-  late MemoryAppLockStore lockStore;
-  late AppLockService appLock;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_account_privacy_');
+    tempDir = Directory.systemTemp.createTempSync('vm_account_controls_');
     await AppServices.resetForTest(
       journalPath: '${tempDir.path}/journal.json',
       skipRevenueCat: true,
     );
-    lockStore = MemoryAppLockStore();
-    appLock = AppLockService(
-      store: AppLockStore(store: lockStore),
-      biometrics: _NoBiometrics(),
-    );
-    AppLockService.instanceForTest = appLock;
-  });
-
-  tearDown(() {
-    AppLockService.instanceForTest = null;
   });
 
   Future<void> pumpAccount(
     WidgetTester tester, {
-    List<GoRoute>? extraRoutes,
+    List<RouteBase>? extraRoutes,
   }) async {
-    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.physicalSize = const Size(800, 2200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
@@ -75,13 +55,16 @@ void main() {
         builder: (context, state) => const AccountScreen(),
       ),
       GoRoute(
-        path: '/export',
-        builder: (context, state) => const ExportScreen(),
+        path: '/archive-export',
+        builder: (context, state) => const ArchiveExportScreen(),
       ),
       GoRoute(
-        path: '/security',
-        builder: (context, state) =>
-            const Scaffold(body: Text('SECURITY_SETTINGS_MARKER')),
+        path: '/privacy',
+        builder: (context, state) => const PrivacyScreen(),
+      ),
+      GoRoute(
+        path: '/support-feedback',
+        builder: (context, state) => const SupportFeedbackScreen(),
       ),
       if (extraRoutes != null) ...extraRoutes,
     ];
@@ -99,8 +82,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
   }
 
-  group('Account privacy controls section', () {
-    testWidgets('shows Privacy and control section title', (tester) async {
+  group('Account standard controls section', () {
+    testWidgets('shows the six standard control buttons', (tester) async {
       await pumpAccount(tester);
 
       expect(
@@ -111,136 +94,86 @@ void main() {
         find.byKey(const Key('account_privacy_controls_section')),
         findsOneWidget,
       );
+      expect(find.text(AccountPrivacyControlsCopy.deleteEntry), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.correctEntry), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.export), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.clearArchive), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.privacyPolicy), findsOneWidget);
+      expect(find.text(AccountPrivacyControlsCopy.support), findsOneWidget);
     });
 
-    testWidgets('shows Protect this archive with Off when app lock disabled', (
-      tester,
-    ) async {
-      await pumpAccount(tester);
-
-      expect(find.text(AccountPrivacyControlsCopy.lockOff), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.lockOn), findsNothing);
-    });
-
-    testWidgets('shows Protect this archive with On when app lock enabled', (
-      tester,
-    ) async {
-      await appLock.enableWithPin('1234');
-      await pumpAccount(tester);
-
-      expect(find.text(AccountPrivacyControlsCopy.lockOn), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.lockOff), findsNothing);
-    });
-
-    testWidgets('shows Export my archive row', (tester) async {
-      await pumpAccount(tester);
-
-      expect(find.text(AccountPrivacyControlsCopy.exportTitle), findsOneWidget);
-      expect(
-        find.byKey(const Key('account_privacy_export_row')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('shows Delete my archive row', (tester) async {
-      await pumpAccount(tester);
-
-      expect(find.text(AccountPrivacyControlsCopy.deleteTitle), findsOneWidget);
-      expect(
-        find.byKey(const Key('account_privacy_delete_row')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('delete opens confirmation and does not wipe on first tap', (
-      tester,
-    ) async {
+    testWidgets('clear archive opens confirmation dialog', (tester) async {
       await tester.runAsync(() async {
         await AppServices.instance.journalStore.save(_entry(id: 'keep-me'));
       });
 
       await pumpAccount(tester);
 
-      await tester.tap(find.byKey(const Key('account_privacy_delete_row')));
+      await tester.tap(
+        find.byKey(const Key('account_control_clear_archive_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(
-        find.text(SecuritySettingsCopy.wipeConfirmTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('wipe_archive_confirm_field')),
+        find.text(PrivacyDataControlsCopy.clearLocalArchiveConfirmTitle),
         findsOneWidget,
       );
 
-      await tester.tap(find.byKey(const Key('wipe_archive_cancel')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.tap(find.text(PrivacyDataControlsCopy.cancel));
+      await settleUi(tester);
 
       await tester.runAsync(() async {
         final entries = await AppServices.instance.journalStore.loadAll();
         expect(entries, hasLength(1));
-        expect(entries.first.id, 'keep-me');
       });
     });
 
-    testWidgets('export route is reachable from Account', (tester) async {
+    testWidgets('export opens archive export screen', (tester) async {
       await pumpAccount(tester);
 
-      await tester.tap(find.byKey(const Key('account_privacy_export_row')));
+      await tester.tap(find.byKey(const Key('account_control_export_button')));
       await settleUi(tester);
 
-      expect(find.text('Export'), findsOneWidget);
-      expect(
-        find.text('Export and share JSON'),
-        findsOneWidget,
+      expect(find.byType(ArchiveExportScreen), findsOneWidget);
+    });
+
+    testWidgets('privacy policy opens privacy screen', (tester) async {
+      await pumpAccount(tester);
+
+      await tester.tap(
+        find.byKey(const Key('account_control_privacy_policy_button')),
       );
-    });
-
-    testWidgets('lock row opens security settings', (tester) async {
-      await pumpAccount(tester);
-
-      await tester.tap(find.byKey(const Key('account_privacy_lock_row')));
       await settleUi(tester);
 
-      expect(find.text('SECURITY_SETTINGS_MARKER'), findsOneWidget);
+      expect(find.byType(PrivacyScreen), findsOneWidget);
     });
 
-    testWidgets('security settings row opens security settings', (tester) async {
+    testWidgets('support opens support screen', (tester) async {
       await pumpAccount(tester);
 
-      await tester.tap(find.byKey(const Key('account_privacy_security_row')));
+      await tester.tap(find.byKey(const Key('account_control_support_button')));
       await settleUi(tester);
 
-      expect(find.text('SECURITY_SETTINGS_MARKER'), findsOneWidget);
+      expect(find.byType(SupportFeedbackScreen), findsOneWidget);
     });
 
-    testWidgets('wipe confirm button alone does not delete without phrase', (
+    testWidgets('delete entry opens saved moments sheet when entries exist', (
       tester,
     ) async {
       await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(_entry(id: 'still-here'));
+        await AppServices.instance.journalStore.save(_entry(id: 'entry-1'));
       });
 
       await pumpAccount(tester);
 
-      await tester.tap(find.byKey(const Key('account_privacy_delete_row')));
+      await tester.tap(
+        find.byKey(const Key('account_control_delete_entry_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
-      await tester.tap(find.byKey(const Key('wipe_archive_confirm')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-
-      await tester.runAsync(() async {
-        final entries = await AppServices.instance.journalStore.loadAll();
-        expect(entries, hasLength(1));
-        expect(
-          PrivateDataService.wipeConfirmationPhrase,
-          'DELETE MY ARCHIVE',
-        );
-      });
+      expect(find.text('Saved moments'), findsOneWidget);
     });
   });
 }

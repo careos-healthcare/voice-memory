@@ -36,7 +36,7 @@ void main() {
       expect(PaywallAlignmentCopy.headline, 'Keep the longer proof trail.');
       expect(
         PaywallAlignmentCopy.body,
-        contains('returned, changed, faded, or corrected'),
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
       expect(
         PaywallAlignmentCopy.secondaryReassurance,
