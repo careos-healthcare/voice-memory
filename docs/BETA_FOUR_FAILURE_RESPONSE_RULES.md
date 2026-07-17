@@ -27,7 +27,7 @@ Focused fallback rules for the four remaining beta failure modes after the Beta 
 
 - No therapy / diagnosis / medical / treatment language.
 - No mental health score, wellbeing score, clinical score, or life score.
-- No “ArchiveMe knows.”
+- Avoid explicit personalization anchors.
 - No fake stats or testimonials.
 - Do not claim everything stays on device.
 - Do not overclaim encryption.

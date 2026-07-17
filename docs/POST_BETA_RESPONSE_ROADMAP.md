@@ -22,7 +22,7 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 - **Do not add new dashboards** to address these post-beta fixes.
 - **Do not enable RevenueCat** before **2–3 clear paid-intent users** plus sandbox purchase/restore proof.
 - **No payments, subscriptions, backend, notifications, second guided path, or dependency upgrades** until the matching branch is explicitly chosen by evidence.
-- Copy guardrails apply to every branch: no therapy / diagnosis / medical / treatment language; no mental health score, wellbeing score, clinical score, or life score; no “ArchiveMe knows.”; no fake stats or testimonials; do not claim everything stays on device; do not overclaim encryption; do not expose private transcript text.
+- Copy guardrails apply to every branch: no therapy / diagnosis / medical / treatment language; no mental health score, wellbeing score, clinical score, or life score; avoid explicit personalization anchors; no fake stats or testimonials; do not claim everything stays on device; do not overclaim encryption; do not expose private transcript text.
 
 ## Branch decision matrix
 
@@ -108,7 +108,7 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 **Forbidden**
 
 - New storage unless necessary
-- Broad AI generation
+- Broad intelligent generation
 - Private transcript exposure
 - New screens
 
