@@ -73,6 +73,32 @@ void main() {
       expect(model.body, ArchiveTabFourStateCopy.twoUnrelatedBody);
       expect(model.showPrimaryCta, isFalse);
     });
+
+    test('state 4 two related entries includes thread, change, and view evidence', () {
+      final model = ArchiveTabFourStateEngine.build(
+        entries: [
+          _entry(
+            id: 'a',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          _entry(
+            id: 'b',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+        ],
+      )!;
+
+      expect(model.state, ArchiveTabFourState.twoRelated);
+      expect(model.body, startsWith(ArchiveTabFourStateCopy.twoRelatedLead));
+      expect(model.body, contains("This may connect to:"));
+      expect(model.body, contains('What changed:'));
+      expect(model.primaryCta, ArchiveTabFourStateCopy.viewEvidenceCta);
+      expect(model.primaryAction.name, 'viewEvidence');
+    });
   });
 
   group('ArchiveTabEntryStateCard', () {

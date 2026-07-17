@@ -1184,15 +1184,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     return ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(_entries);
   }
 
-  bool get _showFirstArchive =>
-      !ScreenshotMode.enabled &&
-      ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 1;
-
-  bool get _showArchiveTwoEntryFourState =>
-      !ScreenshotMode.enabled &&
-      !_showPendingTranscriptOnly &&
-      !_showWeakEvidenceOnly &&
-      ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 2;
+  /// Strict four-state Archive tab (0–2 eligible moments) — no charts or pattern clutter.
+  bool get _showArchiveTabFourStateScaffold {
+    if (ScreenshotMode.patternsFirstSessionPreview) return false;
+    if (ScreenshotMode.enabled) return false;
+    if (_showPendingTranscriptOnly || _showWeakEvidenceOnly) return false;
+    return ArchiveTabFourStateEngine.build(entries: _entries) != null;
+  }
 
   ArchiveTabFourStateModel? get _archiveTabFourStateModel =>
       ArchiveTabFourStateEngine.build(entries: _entries);
@@ -3978,13 +3976,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
     }
 
-    if (_showEmpty) {
+    if (_showArchiveTabFourStateScaffold) {
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _load,
-            child: PatternsEmptyView(fillViewport: true),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: ArchiveMobileSpacing.pagePadding,
+              children: _archiveTabFourStateWidgets(),
+            ),
           ),
         ),
       );
@@ -4024,38 +4026,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 _entries,
               ),
               lowEvidence: lowEvidence,
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (_showFirstArchive) {
-      return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: _load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: ArchiveMobileSpacing.pagePadding,
-              children: _archiveTabFourStateWidgets(),
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (_showArchiveTwoEntryFourState) {
-      return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: _load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: ArchiveMobileSpacing.pagePadding,
-              children: _archiveTabFourStateWidgets(),
             ),
           ),
         ),

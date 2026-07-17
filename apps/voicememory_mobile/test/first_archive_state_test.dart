@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
-import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
-import 'package:voicememory_mobile/features/archive_home/archive_home_priority_copy.dart';
+import 'package:voicememory_mobile/features/archive_tab/archive_tab_four_state_copy.dart';
+import 'package:voicememory_mobile/features/archive_tab/archive_tab_four_state_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
@@ -99,7 +99,7 @@ void main() {
   });
 
   group('PatternsEmptyView — zero entries only', () {
-    testWidgets('shows mind-map empty title, preview rows, and CTAs', (
+    testWidgets('shows four-state empty copy and record CTA only', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -109,31 +109,21 @@ void main() {
       );
       await tester.pump();
 
-      expect(
-        find.text('Record a few real moments'),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining('what repeats'),
-        findsOneWidget,
-      );
-      expect(find.text('Patterns'), findsOneWidget);
-      expect(find.text('Changes'), findsOneWidget);
-      expect(find.text('Next to watch'), findsOneWidget);
-      expect(find.text('Record moment'), findsOneWidget);
-      expect(find.text('Type instead'), findsOneWidget);
+      expect(find.text(ArchiveTabFourStateCopy.emptyBody), findsOneWidget);
+      expect(find.text('Record a moment'), findsOneWidget);
+      expect(find.text('Patterns'), findsNothing);
+      expect(find.text('Changes'), findsNothing);
+      expect(find.text('Next to watch'), findsNothing);
+      expect(find.text('Type instead'), findsNothing);
       expect(find.text('Current belief'), findsNothing);
       expect(find.text('Not enough evidence yet'), findsNothing);
-      expect(find.text('Start your first week'), findsNothing);
-      expect(find.textContaining('Step 0 of 7'), findsNothing);
-      expect(find.textContaining('Save seven moments'), findsNothing);
       expect(
         find.text(ConsumerUiCopy.patternsFirstEntrySavedTitle),
         findsNothing,
       );
     });
 
-    testWidgets('shows exactly one primary save CTA', (tester) async {
+    testWidgets('shows exactly one record moment CTA', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(body: PatternsEmptyView(fillViewport: false)),
@@ -142,12 +132,11 @@ void main() {
       await tester.pump();
 
       expect(
-        find.byKey(const Key('patterns_mind_map_empty_primary_cta')),
+        find.byKey(const Key('archive_tab_record_moment_cta')),
         findsOneWidget,
       );
-      expect(find.text('Record moment'), findsOneWidget);
-      expect(find.text('Record one moment'), findsNothing);
-      expect(find.text('Record first moment'), findsNothing);
+      expect(find.text('Record a moment'), findsOneWidget);
+      expect(find.text('Record moment'), findsNothing);
     });
 
     testWidgets('does not show one-entry saved copy', (tester) async {
@@ -254,7 +243,7 @@ void main() {
   });
 
   group('ArchiveBeliefScreen — zero entries', () {
-    testWidgets('shows mind-map empty state without archive home clutter', (
+    testWidgets('shows four-state empty copy without archive clutter', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(390, 1800));
@@ -269,21 +258,15 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(
-        find.text('Record a few real moments'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('what repeats'), findsOneWidget);
-      expect(find.text('Record moment'), findsOneWidget);
-      expect(find.text('Type instead'), findsOneWidget);
+      expect(find.text(ArchiveTabFourStateCopy.emptyBody), findsOneWidget);
+      expect(find.text('Record a moment'), findsOneWidget);
+      expect(find.text('Patterns'), findsNothing);
+      expect(find.text('Changes'), findsNothing);
+      expect(find.text('Type instead'), findsNothing);
       expect(find.text('Current belief'), findsNothing);
       expect(find.text('Not enough evidence yet'), findsNothing);
-      expect(find.text('Start your first week'), findsNothing);
-      expect(find.textContaining('Step 0 of 7'), findsNothing);
-      expect(find.textContaining('Save seven moments'), findsNothing);
       expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
-      expect(find.textContaining('archive exercise'), findsNothing);
-      expect(find.text("Today's exercise"), findsNothing);
+      expect(find.byKey(const Key('archive_tab_entry_state_empty')), findsOneWidget);
       for (final text in tester.widgetList<Text>(find.byType(Text)).map((w) => w.data ?? '')) {
         final lower = text.toLowerCase();
         for (final phrase in const [
@@ -447,7 +430,7 @@ void main() {
   });
 
   group('ArchiveBeliefScreen — one entry after first save', () {
-    testWidgets('shows first-saved state not zero-entry copy', (tester) async {
+    testWidgets('shows one-entry four-state copy without CTAs', (tester) async {
       await tester.runAsync(() async {
         await AppServices.instance.journalStore.save(_entry());
       });
@@ -463,23 +446,15 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
-        findsOneWidget,
-      );
-      expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.patternsOneEntryReassurance), findsOneWidget);
-      expect(find.text(ArchiveHomeSummaryCopy.beliefLabel), findsNothing);
-      expect(find.text(ArchiveHomeSummaryCopy.evidenceLabel), findsNothing);
+      expect(find.text(ArchiveTabFourStateCopy.oneBody), findsOneWidget);
+      expect(find.byKey(const Key('archive_tab_entry_state_one')), findsOneWidget);
+      expect(find.text('Record a moment'), findsNothing);
+      expect(find.text('View evidence'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
-      expect(find.text('Record one moment'), findsNothing);
+      expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
     });
 
-    testWidgets('short transcript still shows first-saved state', (
+    testWidgets('short transcript still shows one-entry four-state copy', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -497,61 +472,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
-        findsOneWidget,
-      );
+      expect(find.text(ArchiveTabFourStateCopy.oneBody), findsOneWidget);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
-    });
-
-    testWidgets('More archive tools expands on Patterns tab', (tester) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(_entry());
-      });
-
-      await tester.binding.setSurfaceSize(const Size(402, 1800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: ArchiveBeliefScreen(key: UniqueKey()),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-
-      expect(
-        find.text(ArchiveHomePriorityCopy.moreArchiveToolsTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('more_archive_tools_expanded_content')),
-        findsNothing,
-      );
-
-      await tester.tap(find.text(ArchiveHomePriorityCopy.moreArchiveToolsTitle));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 250));
-
-      expect(
-        find.byKey(const Key('more_archive_tools_expanded_content')),
-        findsOneWidget,
-      );
-
-      await tester.tap(find.byKey(const Key('more_archive_tools_toggle')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 250));
-
-      expect(
-        find.byKey(const Key('more_archive_tools_expanded_content')),
-        findsNothing,
-      );
     });
   });
 
-  group('ArchiveBeliefScreen — two entries first comparison', () {
-    testWidgets('grounded repeat shows calm first-comparison card', (
+  group('ArchiveBeliefScreen — two entries four-state', () {
+    testWidgets('grounded repeat shows related pattern copy and view evidence', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -582,27 +509,24 @@ void main() {
       await tester.pump();
       await _pumpUntil(
         tester,
-        find.byKey(const Key('archive_first_comparison_card')),
+        find.byKey(const Key('archive_tab_entry_state_twoRelated')),
       );
 
-      expect(find.byKey(const Key('archive_first_comparison_card')), findsOneWidget);
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveFirstComparisonTitle),
-        findsOneWidget,
+      final model = ArchiveTabFourStateEngine.build(
+        entries: await AppServices.instance.journal.loadAll(),
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveFirstComparisonMayConnectBody),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('archive_first_comparison_view_evidence_cta')), findsOneWidget);
-      expect(find.byKey(const Key('archive_first_comparison_add_moment_cta')), findsOneWidget);
+      expect(model!.state, ArchiveTabFourState.twoRelated);
+      expect(find.text(model.body), findsOneWidget);
+      expect(find.textContaining('Something came back.'), findsOneWidget);
+      expect(find.textContaining('What changed:'), findsOneWidget);
+      expect(find.byKey(const Key('archive_tab_view_evidence_cta')), findsOneWidget);
+      expect(find.text('View evidence'), findsOneWidget);
+      expect(find.byKey(const Key('archive_first_comparison_card')), findsNothing);
       expect(find.byKey(const Key('early_first_signal_card_twoEntryFirstSignal')), findsNothing);
-      expect(find.byKey(const Key('early_first_signal_card_twoEntryNoPattern')), findsNothing);
-      expect(find.text(ArchiveHomeSummaryCopy.beliefLabel), findsNothing);
-      expect(find.text('Add a reflection'), findsNothing);
+      expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
     });
 
-    testWidgets('unrelated two entries keep compare framing without early signal clutter', (
+    testWidgets('unrelated two entries show no-pattern copy without CTAs', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -631,18 +555,15 @@ void main() {
       await tester.pump();
       await _pumpUntil(
         tester,
-        find.byKey(const Key('archive_first_comparison_card')),
+        find.byKey(const Key('archive_tab_entry_state_twoUnrelated')),
       );
 
-      expect(find.byKey(const Key('archive_first_comparison_card')), findsOneWidget);
       expect(
-        find.text(VisibleArchiveProofCopy.twoEntryCompareTitle),
+        find.text(ArchiveTabFourStateCopy.twoUnrelatedBody),
         findsOneWidget,
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.twoEntryBodyUngrounded),
-        findsOneWidget,
-      );
+      expect(find.text('View evidence'), findsNothing);
+      expect(find.text('Record a moment'), findsNothing);
       expect(find.text(EarlyFirstSignalCopy.twoEntryNoPatternTitle), findsNothing);
       expect(find.byKey(const Key('archive_home_summary_card')), findsNothing);
     });
