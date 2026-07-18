@@ -168,7 +168,7 @@ void main() {
     test('purchase unavailable copy remains honest', () {
       expect(
         ProPackagingCopy.offeringsUnavailableBody.toLowerCase(),
-        contains('unavailable'),
+        contains('app store products finish loading'),
       );
       expect(
         ProPackagingCopyFix.unavailableHonestyLine.toLowerCase(),

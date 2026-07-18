@@ -11532,7 +11532,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       suppressDuplicateRecordCtas:
                           stack.suppressDuplicateRecordCtas ||
                           suppressNoisyFirstSaveCards ||
-                          suppressNoisyRepeatPostSaveCards ||
+                          (suppressNoisyRepeatPostSaveCards &&
+                              !showWhatChangedV2 &&
+                              !showWhatChangedV2Display) ||
                           showDegradedTranscriptFocusedPostSave,
                       showReturningWatchTargetFocusedUi:
                           showReturningWatchTargetFocusedUi,

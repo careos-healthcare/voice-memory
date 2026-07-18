@@ -7,7 +7,7 @@ abstract final class PostSaveReturnHandoffCopy {
   static const afterFirstSaveTitle = 'Come back when this shows up again.';
 
   static const afterFirstSaveBodyFallback =
-      'If it repeats, changes, fades, or disappears, save that moment too.';
+      'If it returns, changes, fades, or disappears, save that moment too.';
 
   static const afterFirstSaveFooter = 'Short is fine.';
 

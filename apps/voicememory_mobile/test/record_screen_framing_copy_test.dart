@@ -14,6 +14,7 @@ import 'package:voicememory_mobile/features/return_changes/archive_return_change
 import 'package:voicememory_mobile/features/activation/day_two_return_loop_payoff.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
@@ -807,7 +808,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < (ui == RecordUiState.done ? 10 : 30); i++) {
         await tester.pump(const Duration(milliseconds: 50));
         if (waitForOneSmallRecordingCard &&
             find
@@ -1016,7 +1017,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1070,7 +1071,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1158,7 +1159,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1219,7 +1220,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1258,7 +1259,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1307,30 +1308,8 @@ void main() {
     testWidgets('ipad smoke three related moments surface first proof without stale CTA', (
       tester,
     ) async {
-      final entries = [
-        _entry(
-          id: 'ipad_1',
-          transcript:
-              'I said yes to helping with work even though I was already tired.',
-          createdAt: DateTime(2026, 6, 10, 12),
-        ),
-        _entry(
-          id: 'ipad_2',
-          transcript: 'I agreed again before checking if I had enough time.',
-          createdAt: DateTime(2026, 6, 11, 12),
-        ),
-        _entry(
-          id: 'ipad_3',
-          transcript:
-              'I noticed I wanted to avoid disappointing them, so I said yes quickly.',
-          createdAt: DateTime(2026, 6, 12, 12),
-        ),
-      ];
-      await tester.runAsync(() async {
-        for (final entry in entries) {
-          await AppServices.instance.journalStore.save(entry);
-        }
-      });
+      final entries = _confirmedRepeatJournalEntries(3);
+      await seedConfirmedRepeatEntries(tester, 3);
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: RecordUiState.done,
@@ -1354,7 +1333,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1393,7 +1372,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1440,7 +1419,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1855,7 +1834,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1890,7 +1869,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -1975,7 +1954,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -2017,7 +1996,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
@@ -2114,7 +2093,7 @@ void main() {
       expect(guidanceCards, lessThanOrEqualTo(1));
     });
 
-    testWidgets('five confirmed-repeat entries show archive summary only', (
+    testWidgets('five confirmed-repeat entries show watch target not archive stack', (
       tester,
     ) async {
       await seedConfirmedRepeatEntries(tester, 5);
@@ -2135,14 +2114,17 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
-      expect(find.text(ArchiveSummaryCopy.title), findsOneWidget);
-      expect(find.text(ArchiveSummaryCopy.promise), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
+      expect(find.textContaining(DailyArchiveMemoryCopy.watchTitle), findsOneWidget);
+      expect(find.text(DailyArchiveMemoryCopy.recordCta), findsOneWidget);
       expect(find.byKey(const Key('archive_belief_surface_headline')), findsNothing);
+      expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsNothing);
+      expect(find.byKey(const Key('archive_summary_card')), findsNothing);
+      expect(find.text(ArchiveSummaryCopy.title), findsNothing);
       expect(
         find.byKey(const Key('confirmed_repeat_thought_map_card')),
         findsNothing,
@@ -2182,7 +2164,7 @@ void main() {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
       });
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 

@@ -93,35 +93,38 @@ class _EntryOptionsSectionState extends State<EntryOptionsSection> {
         decoration: VoiceMemoryCards.flat(),
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            key: const Key('entry_options_expansion'),
-            initiallyExpanded: false,
-            onExpansionChanged: (value) => setState(() => _expanded = value),
-            title: Text(
-              EntryMemoryModeCopy.advancedSaveOptionsTitle,
-              key: const Key('advanced_save_options_title'),
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            subtitle: _expanded
-                ? null
-                : Text(
-                    EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper,
-                    key: const Key('advanced_save_options_helper'),
-                    style: helperStyle,
-                  ),
-            children: _expanded
-                ? [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.sm,
-                        0,
-                        AppSpacing.sm,
-                        AppSpacing.sm,
-                      ),
-                      child: _content(),
+          child: Material(
+            type: MaterialType.transparency,
+            child: ExpansionTile(
+              key: const Key('entry_options_expansion'),
+              initiallyExpanded: false,
+              onExpansionChanged: (value) => setState(() => _expanded = value),
+              title: Text(
+                EntryMemoryModeCopy.advancedSaveOptionsTitle,
+                key: const Key('advanced_save_options_title'),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              subtitle: _expanded
+                  ? null
+                  : Text(
+                      EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper,
+                      key: const Key('advanced_save_options_helper'),
+                      style: helperStyle,
                     ),
-                  ]
-                : const [],
+              children: _expanded
+                  ? [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.sm,
+                          0,
+                          AppSpacing.sm,
+                          AppSpacing.sm,
+                        ),
+                        child: _content(),
+                      ),
+                    ]
+                  : const [],
+            ),
           ),
         ),
       ),

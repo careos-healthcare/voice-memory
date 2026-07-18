@@ -55,7 +55,7 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSavePostSaveBody = 'Come back when this shows up again.';
 
   static const firstSavePostSaveReassurance =
-      'If it repeats, changes, fades, or disappears, save that moment too. '
+      'If it returns, changes, fades, or disappears, save that moment too. '
       'You do not need to keep working on this now.';
 
   static const firstSaveDoneForTodayCta = 'Done for today';
@@ -101,7 +101,7 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveBody = 'This is the first piece of evidence.';
 
   static const firstSaveSecondary =
-      'If it repeats, changes, fades, or disappears, save that moment too.';
+      'If it returns, changes, fades, or disappears, save that moment too.';
 
   static const firstSaveReturnTomorrowBody =
       'Come back when this shows up again. Just one private save so far.';
