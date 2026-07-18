@@ -80,15 +80,15 @@ void main() {
     }
 
     test('Pro bridge titles use continuity framing', () {
-      expect(ProTrustCopy.proTitle, 'Keep the longer proof trail');
-      expect(First60Copy.proTitle, 'Keep the longer proof trail');
-      expect(RecordReturnProCopy.proTitle, 'Keep the longer proof trail.');
+      expect(ProTrustCopy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(First60Copy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(RecordReturnProCopy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
     });
 
     test('paywall headline uses continuity framing', () {
       expect(
         ConsumerUiCopy.paywallHeadline,
-        'Keep the longer proof trail.',
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
       expect(
         ConsumerUiCopy.paywallSubhead,

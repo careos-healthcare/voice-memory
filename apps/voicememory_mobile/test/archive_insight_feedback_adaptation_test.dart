@@ -331,7 +331,7 @@ void main() {
         whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeNewContext,
         beliefChanged: true,
         evidenceWeak: false,
-        primaryCta: 'Add one more moment',
+        primaryCta: 'Record if it happens again',
         secondaryCta: 'View evidence',
       );
 

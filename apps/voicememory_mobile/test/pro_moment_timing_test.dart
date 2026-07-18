@@ -73,7 +73,7 @@ void main() {
 
   group('ProMomentTimingCopy', () {
     test('uses longer proof trail language', () {
-      expect(ProMomentTimingCopy.headline, 'Keep the longer proof trail');
+      expect(ProMomentTimingCopy.headline, 'Free shows the first useful proof. Pro keeps the longer trail.');
       expect(
         ProMomentTimingCopy.body,
         PaywallAlignmentCopy.body,

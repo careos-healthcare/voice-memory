@@ -373,7 +373,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Your archive is starting to show a thread.'),
+        find.text('ArchiveMe found a possible repeat'),
         findsOneWidget,
       );
       expect(find.text("Here's what keeps coming back."), findsOneWidget);
@@ -415,7 +415,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Keep the longer proof trail.'),
+        find.text('Free shows the first useful proof. Pro keeps the longer trail.'),
         findsOneWidget,
       );
       expect(

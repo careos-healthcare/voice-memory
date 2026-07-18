@@ -138,7 +138,7 @@ void main() {
       final prompt = NextMomentPromptEngine.build(entries: _entries(4));
       expect(prompt!.stage, NextMomentPromptStage.four);
       expect(prompt.title, contains('change the evidence'));
-      expect(prompt.primaryCta, 'Add one more moment');
+      expect(prompt.primaryCta, 'Record if it happens again');
       expect(prompt.secondaryCta, 'View evidence');
       expect(prompt.secondaryAction, NextMomentPromptAction.viewEvidence);
       _expectNoBannedCopy([prompt.title, prompt.body]);

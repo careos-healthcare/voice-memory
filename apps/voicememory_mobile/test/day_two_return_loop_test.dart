@@ -91,7 +91,7 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.body, DayTwoReturnLoopPayoffCopy.oneEntryBody);
-      expect(payoff.primaryCta, 'Add one more moment');
+      expect(payoff.primaryCta, 'Record if it happens again');
       expect(payoff.offerReminder, isTrue);
       _expectNoBannedCopy([payoff.body], _bannedOneEntryWords);
     });
@@ -170,7 +170,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text(DayTwoReminder.acceptLabel), findsOneWidget);
       expect(find.text(DayTwoReminder.declineLabel), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester), _bannedPressureWords);
@@ -240,7 +240,7 @@ void main() {
 
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
       expect(find.textContaining('Come back when this shows up again'), findsOneWidget);
-      expect(find.text('Add one more moment'), findsWidgets);
+      expect(find.text('Record if it happens again'), findsWidgets);
       expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
       expect(find.byKey(const Key('day_two_reminder_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedOneEntryWords);
@@ -305,7 +305,7 @@ void main() {
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
     });
   });

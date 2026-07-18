@@ -93,7 +93,7 @@ void main() {
       expect(TesterMissionCopy.mission, 'Reach first proof.');
       expect(TesterMissionCopy.steps, [
         'Record one real moment.',
-        'Come back when something similar happens.',
+        'Come back when this shows up again.',
         'Record a third related moment.',
         'Check whether first proof feels specific to your own words.',
       ]);

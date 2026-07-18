@@ -324,7 +324,7 @@ void main() {
   });
 
   group('Weekly archive review navigation', () {
-    testWidgets('Add one more moment routes to record', (tester) async {
+    testWidgets('Record if it happens again routes to record', (tester) async {
       final review = WeeklyArchiveReviewEngine.build(
         entries: _fiveDistinctWorkEntries(),
       );

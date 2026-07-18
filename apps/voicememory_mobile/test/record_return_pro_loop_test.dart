@@ -144,7 +144,7 @@ void main() {
     test('Pro bridge copy is exact', () {
       expect(
         RecordReturnProCopy.proTitle,
-        'Keep the longer proof trail.',
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
       expect(
         RecordReturnProCopy.proBody,
@@ -502,7 +502,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Keep the longer proof trail.'), findsOneWidget);
+      expect(find.text('Free shows the first useful proof. Pro keeps the longer trail.'), findsOneWidget);
       expect(
         find.text(
           'Free shows the first useful proof. Pro keeps older evidence and longer archive history.',

@@ -147,7 +147,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Add one more moment'), findsNothing);
+      expect(find.text('Record if it happens again'), findsNothing);
       expect(find.text('Your archive has one piece of evidence.'), findsNothing);
     });
   });

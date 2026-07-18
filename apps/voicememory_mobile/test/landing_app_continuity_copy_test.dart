@@ -72,7 +72,7 @@ void main() {
           'Come back when it repeats',
           'See what appeared and returned',
           'Correct what is not relevant',
-          'Keep the longer proof trail with Pro',
+          'Free shows the first useful proof. Pro keeps the longer trail. with Pro',
         ],
       );
 
@@ -82,7 +82,7 @@ void main() {
       expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
 
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
-      expect(ConsumerUiCopy.paywallHeadline, 'Keep the longer proof trail.');
+      expect(ConsumerUiCopy.paywallHeadline, 'Free shows the first useful proof. Pro keeps the longer trail.');
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
@@ -122,14 +122,14 @@ void main() {
       expect(doc, contains('Come back when it repeats'));
       expect(doc, contains('See what appeared and returned'));
       expect(doc, contains('Correct what is not relevant'));
-      expect(doc, contains('Keep the longer proof trail with Pro'));
+      expect(doc, contains('Free shows the first useful proof. Pro keeps the longer trail. with Pro'));
       expect(
         doc,
         contains(
           'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
         ),
       );
-      expect(doc, contains('Keep the longer proof trail'));
+      expect(doc, contains('Free shows the first useful proof. Pro keeps the longer trail.'));
       expect(
         doc,
         contains('Free shows the first useful proof. Pro keeps the longer proof trail.'),

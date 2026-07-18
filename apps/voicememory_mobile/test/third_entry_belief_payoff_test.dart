@@ -228,7 +228,7 @@ void main() {
       expect(payoff, isNotNull);
       expect(payoff!.evidenceThin, isTrue);
       expect(payoff.thinEvidenceNote, contains('distinct moment'));
-      expect(payoff.thinEvidenceAction, contains('Add one more moment'));
+      expect(payoff.thinEvidenceAction, contains('Record if it happens again'));
     });
 
     test('analysis unavailable still allows local third-entry payoff', () {
@@ -287,7 +287,7 @@ void main() {
       );
       expect(find.textContaining('saved words suggest so far'), findsOneWidget);
       expect(find.text(ThirdEntryBeliefPayoffCopy.bodySource), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.byKey(const Key('third_entry_belief_payoff_evidence_0')), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);

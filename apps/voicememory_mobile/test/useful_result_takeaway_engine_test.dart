@@ -78,7 +78,7 @@ void main() {
       expect(t.confidenceLabel, 'Early read');
       expect(
         t.whyUseful,
-        contains('Add one more moment to make this clearer.'),
+        contains('Record if it happens again to make this clearer.'),
       );
     });
 
@@ -90,7 +90,7 @@ void main() {
     test('null reflection is not flagged as early', () {
       final t = build('same');
       expect(t.confidenceLabel, isNull);
-      expect(t.whyUseful, isNot(contains('Add one more moment')));
+      expect(t.whyUseful, isNot(contains('Record if it happens again')));
     });
 
     test('long enough reflection is not flagged', () {

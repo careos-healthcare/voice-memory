@@ -537,7 +537,7 @@ void main() {
       );
       expect(progress, isNotNull);
       expect(mission.body, TesterMissionCopy.entry1Body);
-      expect(progress!.body, contains('Come back when something similar happens'));
+      expect(progress!.body, contains('Come back when this shows up again.'));
       expect(mission.title, isNot(equals(progress.title)));
       expect(
         ArchiveProofCopyDedup.countPhrase(

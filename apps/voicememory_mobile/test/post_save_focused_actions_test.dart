@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/widgets/record/post_save_focused_actions_bar.
 
 void main() {
   group('PostSaveFocusedActionsBar', () {
-    testWidgets('Add one more moment routes to /record', (tester) async {
+    testWidgets('Record if it happens again routes to /record', (tester) async {
       var recordOpened = false;
       final router = GoRouter(
         initialLocation: '/start',

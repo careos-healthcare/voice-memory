@@ -216,7 +216,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('No clear repeat yet'), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });

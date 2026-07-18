@@ -147,7 +147,7 @@ void main() {
         find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
         findsOneWidget,
       );
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
@@ -205,7 +205,7 @@ void main() {
         find.text(ConsumerUiCopy.patternsFirstEntrySavedHelper),
         findsOneWidget,
       );
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);

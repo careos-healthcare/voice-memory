@@ -130,10 +130,10 @@ void main() {
   });
 
   group('ProSinglePromiseCopy', () {
-    test('headline says Keep the longer proof trail', () {
+    test('headline says Free shows the first useful proof. Pro keeps the longer trail.', () {
       expect(
         ProSinglePromiseCopy.headline,
-        'Keep the longer proof trail',
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
     });
 

@@ -214,7 +214,7 @@ void main() {
       expect(payoff, isNotNull);
       expect(payoff!.title, VisibleArchiveProofCopy.beliefUpdateTitle);
       expect(payoff.evidenceRows.length, greaterThanOrEqualTo(2));
-      expect(payoff.primaryCta, 'Add one more moment');
+      expect(payoff.primaryCta, 'Record if it happens again');
       expect(payoff.secondaryCta, 'View evidence');
       _expectNoBannedCopy(
         [
@@ -329,7 +329,7 @@ void main() {
       expect(find.text(BeliefUpdatePayoffCopy.currentBeliefLabel), findsOneWidget);
       expect(find.text('Evidence'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('View evidence'), findsOneWidget);
       expect(find.byKey(const Key('belief_update_payoff_evidence_0')), findsOneWidget);
       expect(find.byKey(const Key('belief_update_payoff_evidence_1')), findsOneWidget);

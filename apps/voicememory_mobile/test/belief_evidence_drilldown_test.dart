@@ -139,7 +139,7 @@ void main() {
       expect(trail.currentBelief, isNotEmpty);
       expect(trail.whatChangedLine, isNotEmpty);
       expect(trail.evidenceRows.length, greaterThanOrEqualTo(2));
-      expect(trail.primaryCta, 'Add one more moment');
+      expect(trail.primaryCta, 'Record if it happens again');
       _expectNoBannedCopy([
         trail.title,
         trail.notConclusionLine!,
@@ -288,7 +288,7 @@ void main() {
   });
 
   group('View evidence navigation', () {
-    testWidgets('Add one more moment routes to record not evidence', (
+    testWidgets('Record if it happens again routes to record not evidence', (
       tester,
     ) async {
       const payoff = BeliefUpdatePayoff(
@@ -299,7 +299,7 @@ void main() {
         whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeNewContext,
         beliefChanged: true,
         evidenceWeak: false,
-        primaryCta: 'Add one more moment',
+        primaryCta: 'Record if it happens again',
         secondaryCta: 'View evidence',
       );
 
@@ -369,7 +369,7 @@ void main() {
         whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeNewContext,
         beliefChanged: true,
         evidenceWeak: false,
-        primaryCta: 'Add one more moment',
+        primaryCta: 'Record if it happens again',
         secondaryCta: 'View evidence',
       );
 
@@ -418,7 +418,7 @@ void main() {
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
     });
 
-    testWidgets('Add one more moment and View evidence use different routes', (
+    testWidgets('Record if it happens again and View evidence use different routes', (
       tester,
     ) async {
       const payoff = BeliefUpdatePayoff(
@@ -429,7 +429,7 @@ void main() {
         whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeEasierCompare,
         beliefChanged: false,
         evidenceWeak: true,
-        primaryCta: 'Add one more moment',
+        primaryCta: 'Record if it happens again',
         secondaryCta: 'View evidence',
       );
 

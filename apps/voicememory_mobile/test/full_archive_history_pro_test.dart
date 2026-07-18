@@ -305,7 +305,7 @@ void main() {
     test('uses exact boundary copy', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
-        'Keep the longer proof trail',
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,

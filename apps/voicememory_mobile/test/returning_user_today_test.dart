@@ -107,7 +107,7 @@ void main() {
       final model = ReturningUserTodayEngine.build(entries: _entries(1));
       expect(model, isNotNull);
       expect(model!.stage, ReturningUserTodayStage.one);
-      expect(model.title, 'Add one more moment.');
+      expect(model.title, 'Record if it happens again.');
       expect(model.body, contains('one piece'));
       expect(model.primaryAction, ReturningUserTodayAction.addMoment);
       expect(model.secondaryAction, ReturningUserTodayAction.viewArchive);
@@ -138,7 +138,7 @@ void main() {
       final model = ReturningUserTodayEngine.build(entries: _entries(4));
       expect(model!.stage, ReturningUserTodayStage.four);
       expect(model.title, VisibleArchiveProofCopy.returningUserFourTitle);
-      expect(model.primaryCta, 'Add one more moment');
+      expect(model.primaryCta, 'Record if it happens again');
       expect(model.primaryAction, ReturningUserTodayAction.addMoment);
       expect(model.secondaryCta, 'View evidence');
       expect(model.secondaryAction, ReturningUserTodayAction.viewEvidence);

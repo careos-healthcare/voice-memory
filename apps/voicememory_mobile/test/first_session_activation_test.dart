@@ -776,7 +776,7 @@ void main() {
       expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
-      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);

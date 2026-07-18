@@ -342,7 +342,7 @@ void main() {
       expect(find.text(summary.body), findsOneWidget);
     });
 
-    testWidgets('four-entry summary Add one more moment routes to record', (
+    testWidgets('four-entry summary Record if it happens again routes to record', (
       tester,
     ) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));

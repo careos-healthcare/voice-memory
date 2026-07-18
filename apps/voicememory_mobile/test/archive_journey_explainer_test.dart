@@ -184,7 +184,7 @@ void main() {
       );
       expect(
         ArchiveJourneyCopy.step5Title,
-        'Keep the longer proof trail',
+        'Free shows the first useful proof. Pro keeps the longer trail.',
       );
     });
 
@@ -376,7 +376,7 @@ void main() {
     test('post-save handoff tells user to return when similar happens', () {
       expect(
         PostSaveReturnHandoffCopy.afterFirstSaveTitle,
-        'Come back when something similar happens',
+        'Come back when this shows up again.',
       );
       expect(
         EarlyRepeatProgressCopy.twoRelatedBody,
