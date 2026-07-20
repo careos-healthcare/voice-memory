@@ -19,6 +19,7 @@
 		A1B2C3D51E000001004F5970 /* ObjectiveWidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D41E000001004F5970 /* ObjectiveWidgetStorage.swift */; };
 		B2C3D4E51E000001004F5970 /* IosCaptureAudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E41E000001004F5970 /* IosCaptureAudioSession.swift */; };
 		C3D4E5F61E000001004F5970 /* IosNativeVoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F51E000001004F5970 /* IosNativeVoiceRecorder.swift */; };
+		D4E5F6A81E000001004F5970 /* LiveAudioLifecycleBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A71E000001004F5970 /* LiveAudioLifecycleBridge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		A1B2C3D41E000001004F5970 /* ObjectiveWidgetStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectiveWidgetStorage.swift; sourceTree = "<group>"; };
 		B2C3D4E41E000001004F5970 /* IosCaptureAudioSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IosCaptureAudioSession.swift; sourceTree = "<group>"; };
 		C3D4E5F51E000001004F5970 /* IosNativeVoiceRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IosNativeVoiceRecorder.swift; sourceTree = "<group>"; };
+		D4E5F6A71E000001004F5970 /* LiveAudioLifecycleBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveAudioLifecycleBridge.swift; sourceTree = "<group>"; };
 		A1B2C3D61E000001004F5970 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		AC003AE4A790ADA04B8F54BA /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0D1D572C411F0B5C8032BEC /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				A1B2C3D41E000001004F5970 /* ObjectiveWidgetStorage.swift */,
 				B2C3D4E41E000001004F5970 /* IosCaptureAudioSession.swift */,
 				C3D4E5F51E000001004F5970 /* IosNativeVoiceRecorder.swift */,
+				D4E5F6A71E000001004F5970 /* LiveAudioLifecycleBridge.swift */,
 				A1B2C3D61E000001004F5970 /* Runner.entitlements */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 			);
@@ -425,6 +428,7 @@
 				A1B2C3D51E000001004F5970 /* ObjectiveWidgetStorage.swift in Sources */,
 				B2C3D4E51E000001004F5970 /* IosCaptureAudioSession.swift in Sources */,
 				C3D4E5F61E000001004F5970 /* IosNativeVoiceRecorder.swift in Sources */,
+				D4E5F6A81E000001004F5970 /* LiveAudioLifecycleBridge.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

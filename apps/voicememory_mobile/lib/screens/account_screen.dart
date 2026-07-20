@@ -12,6 +12,7 @@ import '../services/app_services.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
+import '../features/curiosity_loop/presentation/widgets/weekly_growth_preview_card.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
 import '../widgets/account/pro_utility_expansion_section.dart';
@@ -23,7 +24,13 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  const AccountScreen({
+    super.key,
+    this.weeklyGrowthPreviewCard,
+  });
+
+  /// Test hook to inject a fixed weekly growth preview card.
+  final Widget? weeklyGrowthPreviewCard;
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -126,6 +133,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 hasMeaningfulProof: _entryCount >= 3,
                 compact: true,
               ),
+              const SizedBox(height: AppSpacing.md),
+              widget.weeklyGrowthPreviewCard ?? const WeeklyGrowthPreviewCard(),
               const SizedBox(height: AppSpacing.md),
               _sectionTile(
                 title: ProPackagingCopy.title,

@@ -82,10 +82,25 @@ export async function resolveApiGuardContext(
 
   const headerToken = request.headers.get("x-vm-capture-token");
   if (headerToken) {
-    return verifyCaptureFromRequest(request, headerToken);
+    const ctx = await verifyCaptureFromRequest(request, headerToken);
+    if (ctx) return ctx;
+  }
+
+  const bearerToken = readBearerCaptureToken(request);
+  if (bearerToken) {
+    return verifyCaptureFromRequest(request, bearerToken);
   }
 
   return null;
+}
+
+export function readBearerCaptureToken(request: Request): string | null {
+  const authorization = request.headers.get("authorization")?.trim();
+  if (!authorization?.toLowerCase().startsWith("bearer ")) {
+    return null;
+  }
+  const token = authorization.slice("bearer ".length).trim();
+  return token || null;
 }
 
 export function apiUnauthorized(

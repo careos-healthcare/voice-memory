@@ -806,6 +806,196 @@ class CapturePipelineService {
     }
   }
 
+  /// Live voice capture — transcript already assembled from Gemini Live events.
+  Future<CapturePipelineResult> saveLiveVoiceTranscript({
+    required String transcript,
+    required int durationSeconds,
+    void Function(PipelineStage stage)? onStage,
+  }) async {
+    final trimmed = transcript.trim();
+    if (trimmed.isEmpty) {
+      throw CapturePipelineFailure('No live transcript was captured.');
+    }
+
+    final scopeKey = _textScopeKey(trimmed);
+    try {
+      onStage?.call(PipelineStage.attesting);
+      var token = await _attest.ensureCaptureToken();
+
+      onStage?.call(PipelineStage.analyzing);
+      final analyzeCheck = _usageGuard.checkAttempt(
+        scopeKey: scopeKey,
+        operation: ApiUsageOperation.analyze,
+      );
+      if (!analyzeCheck.allowed) {
+        return _saveLiveVoiceLocalOnly(
+          transcript: trimmed,
+          durationSeconds: durationSeconds,
+          syncNote:
+              analyzeCheck.reason ?? VoiceCaptureCopy.transcriptionFailedDegraded,
+          onStage: onStage,
+        );
+      }
+
+      Reflection reflection;
+      final analyzeIdempotency = _usageGuard.idempotencyKey(
+        scopeKey: scopeKey,
+        operation: ApiUsageOperation.analyze,
+      );
+      try {
+        reflection = await _api.postAnalyze(
+          transcript: trimmed,
+          captureToken: token,
+          idempotencyKey: analyzeIdempotency,
+        );
+        _usageGuard.recordAttempt(
+          scopeKey: scopeKey,
+          operation: ApiUsageOperation.analyze,
+          success: true,
+        );
+      } on AuthRequiredException {
+        token = await _attest.ensureCaptureToken(forceRefresh: true);
+        reflection = await _api.postAnalyze(
+          transcript: trimmed,
+          captureToken: token,
+          idempotencyKey: analyzeIdempotency,
+        );
+        _usageGuard.recordAttempt(
+          scopeKey: scopeKey,
+          operation: ApiUsageOperation.analyze,
+          success: true,
+        );
+      } catch (e) {
+        _usageGuard.recordAttempt(
+          scopeKey: scopeKey,
+          operation: ApiUsageOperation.analyze,
+          success: false,
+        );
+        rethrow;
+      }
+
+      onStage?.call(PipelineStage.saving);
+      final entry = JournalEntry(
+        id: _uuid.v4(),
+        createdAt: DateTime.now().toUtc(),
+        transcript: trimmed,
+        durationSeconds: durationSeconds.clamp(1, 999999),
+        reflection: reflection,
+        syncStatus: SyncStatus.pendingUpload,
+        captureContextTag: 'live_voice_capture',
+      );
+      await _journalStore.save(entry, first25Source: 'live_voice_capture');
+      _attest.clearToken();
+
+      onStage?.call(PipelineStage.done);
+      return CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: true,
+        analysisSucceeded: true,
+      );
+    } on SocketException catch (e) {
+      return _saveLiveVoiceLocalOnly(
+        transcript: trimmed,
+        durationSeconds: durationSeconds,
+        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        onStage: onStage,
+      );
+    } on ApiException catch (e) {
+      return _saveLiveVoiceLocalOnly(
+        transcript: trimmed,
+        durationSeconds: durationSeconds,
+        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        onStage: onStage,
+      );
+    } on FormatException catch (e) {
+      RecordPipelineLog.apiGuardBlocked(
+        operation: 'response',
+        reason: e.message,
+      );
+      return _saveLiveVoiceLocalOnly(
+        transcript: trimmed,
+        durationSeconds: durationSeconds,
+        syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
+        onStage: onStage,
+      );
+    } catch (e) {
+      return _saveLiveVoiceLocalOnly(
+        transcript: trimmed,
+        durationSeconds: durationSeconds,
+        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        onStage: onStage,
+      );
+    }
+  }
+
+  /// Saves a journal entry from a server-recovered offline live-audio vault.
+  Future<CapturePipelineResult> saveRecoveredVaultEntry({
+    required String transcript,
+    required Reflection reflection,
+    required int durationSeconds,
+    void Function(PipelineStage stage)? onStage,
+  }) async {
+    final trimmed = transcript.trim();
+    if (trimmed.isEmpty) {
+      throw CapturePipelineFailure('Recovered vault transcript was empty.');
+    }
+
+    onStage?.call(PipelineStage.saving);
+    final entry = JournalEntry(
+      id: _uuid.v4(),
+      createdAt: DateTime.now().toUtc(),
+      transcript: trimmed,
+      durationSeconds: durationSeconds.clamp(1, 999999),
+      reflection: reflection,
+      syncStatus: SyncStatus.pendingUpload,
+      captureContextTag: 'live_voice_vault_recovery',
+    );
+    await _journalStore.save(entry, first25Source: 'live_voice_vault_recovery');
+    _attest.clearToken();
+    onStage?.call(PipelineStage.done);
+    return CapturePipelineResult(
+      entry: entry,
+      localSaved: true,
+      syncSucceeded: true,
+      analysisSucceeded: true,
+    );
+  }
+
+  Future<CapturePipelineResult> _saveLiveVoiceLocalOnly({
+    required String transcript,
+    required int durationSeconds,
+    required String syncNote,
+    void Function(PipelineStage stage)? onStage,
+  }) async {
+    onStage?.call(PipelineStage.saving);
+    final entry = JournalEntry(
+      id: _uuid.v4(),
+      createdAt: DateTime.now().toUtc(),
+      transcript: transcript,
+      durationSeconds: durationSeconds.clamp(1, 999999),
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+      syncStatus: SyncStatus.localOnly,
+      captureContextTag: 'live_voice_capture',
+    );
+    await _journalStore.save(entry, first25Source: 'live_voice_capture');
+    _attest.clearToken();
+    onStage?.call(PipelineStage.done);
+    return CapturePipelineResult(
+      entry: entry,
+      localSaved: true,
+      syncSucceeded: false,
+      syncNote: syncNote,
+    );
+  }
+
   int _estimatedDurationSeconds(String transcript) {
     final chars = transcript.trim().length;
     return (chars / 15).ceil().clamp(1, 120);

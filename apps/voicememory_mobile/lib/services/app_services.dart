@@ -10,6 +10,15 @@ import '../storage/capture_token_cache.dart';
 import '../storage/device_id.dart';
 import '../storage/entitlement_cache.dart';
 import '../storage/journal_store.dart';
+import '../features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
+import '../features/curiosity_loop/application/curiosity_hook_journal_store.dart';
+import '../features/curiosity_loop/infrastructure/clinical_telemetry_encrypted_storage.dart';
+import '../features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
+import '../features/curiosity_loop/domain/models/curiosity_hook.dart';
+import '../features/curiosity_loop/repositories/clinical_trajectory_history_store.dart';
+import '../features/curiosity_loop/repositories/cognitive_baseline_store.dart';
+import '../features/curiosity_loop/repositories/curiosity_hook_repository.dart';
+import '../storage/encrypted_json_storage.dart';
 import '../storage/mobile_prefs_store.dart';
 import '../storage/secure_storage.dart';
 import '../storage/session_cookie_store.dart';
@@ -47,6 +56,15 @@ import '../push/fcm_service.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/trial_mode.dart';
+import '../features/live_audio/application/live_audio_session_coordinator.dart';
+import '../features/live_audio/application/live_voice_capture_service.dart';
+import '../features/live_audio/application/offline_vault_recovery_service.dart';
+import '../features/live_audio/application/live_voice_recovery_gateway.dart';
+import '../features/live_audio/infrastructure/live_audio_session_api_client.dart';
+import '../features/live_audio/infrastructure/local_audio_vault.dart';
+import '../features/live_audio/infrastructure/network_connectivity_source.dart';
+import '../features/live_audio/infrastructure/offline_vault_recovery_store.dart';
+import '../features/live_audio/presentation/controllers/live_audio_session_controller.dart';
 import 'auth_service.dart';
 import '../billing/billing_service.dart';
 import '../billing/revenuecat_service.dart';
@@ -74,6 +92,11 @@ class AppServices {
   late final CapturePipelineService pipeline;
   late final RecordingService recording;
   late final JournalService journal;
+  LiveVoiceCaptureService? _liveVoiceCapture;
+  late final OfflineVaultRecoveryStore offlineVaultRecoveryStore;
+  late final OfflineVaultRecoveryService offlineVaultRecovery;
+  late final LifecycleNetworkConnectivitySource liveVoiceConnectivity;
+  late final LiveVoiceRecoveryGateway liveVoiceRecoveryGateway;
   late final AuthService auth;
   late final BillingService billing;
   late final SyncService sync;
@@ -85,8 +108,44 @@ class AppServices {
   late final MemoryResurfacingService memoryResurfacing;
   late final BeliefEvolutionService beliefEvolution;
   late final ArchiveAgreementService archiveAgreement;
+  late EncryptedJsonStorage clinicalTelemetryEncryptedStorage;
 
   String get nativePushPlatform => Platform.isIOS ? 'ios' : 'android';
+
+  LiveVoiceCaptureService get liveVoiceCapture {
+    final existing = _liveVoiceCapture;
+    if (existing != null) return existing;
+    final created = LiveVoiceCaptureService(
+      controller: LiveAudioSessionController(
+        LiveAudioSessionCoordinator(
+          sessionApi: ApiLiveAudioSessionClient(api),
+          attest: attest,
+        ),
+      ),
+      pipeline: pipeline,
+      recoveryStore: offlineVaultRecoveryStore,
+    );
+    _liveVoiceCapture = created;
+    return created;
+  }
+
+  /// Encrypted EWMA baseline store for curiosity loop telemetry.
+  CognitiveBaselineStore getBaselineStore() =>
+      LocalCognitiveBaselineStore.instance();
+
+  /// Encrypted trajectory history store for hook-response telemetry.
+  ClinicalTrajectoryHistoryStore getTrajectoryStore() =>
+      LocalClinicalTrajectoryHistoryStore.instance();
+
+  /// Resolves current biomarkers for a hook from its source journal entry.
+  Future<CognitiveBiomarkers?> getCurrentMetrics(CuriosityHook hook) async {
+    final sourceEntryId = hook.sourceEntryId?.trim();
+    final targetEntryId = sourceEntryId != null && sourceEntryId.isNotEmpty
+        ? sourceEntryId
+        : hook.entryId;
+    final entry = await journal.getEntry(targetEntryId);
+    return entry?.biomarkers;
+  }
 
   static bool get isInitialized => _initialized;
 
@@ -133,6 +192,21 @@ class AppServices {
       attest: s.attest,
       journalStore: s.journalStore,
     );
+    s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
+    s.offlineVaultRecovery = OfflineVaultRecoveryService(
+      store: s.offlineVaultRecoveryStore,
+      api: s.api,
+      attest: s.attest,
+      pipeline: s.pipeline,
+    );
+    s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
+    s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
+      vault: LocalAudioVault(),
+      apiClient: s.api,
+      connectivity: s.liveVoiceConnectivity,
+      recoveryStore: s.offlineVaultRecoveryStore,
+      recoveryService: s.offlineVaultRecovery,
+    );
     s.recording = RecordingService();
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
@@ -175,6 +249,10 @@ class AppServices {
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
     s.sync = SyncService(s.api, s.journalStore, s.prefs);
     s.paywall = ValueMomentPaywallLogic(s.prefs);
+    s.clinicalTelemetryEncryptedStorage =
+        await ClinicalTelemetryEncryptedStorage.forSecureStorage(
+      s.secureStorage,
+    );
 
     Future<void> resetEntitlementsForAuthChange() async {
       await s.billing.resetCachedEntitlementsForAuthChange();
@@ -193,6 +271,7 @@ class AppServices {
 
     _instance = s;
     _initialized = true;
+    _configureJournalSaveInterceptors(s);
   }
 
   /// Trial participants: local journal + prefs only; no push, analytics, or billing.
@@ -221,6 +300,21 @@ class AppServices {
       attest: s.attest,
       journalStore: s.journalStore,
     );
+    s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
+    s.offlineVaultRecovery = OfflineVaultRecoveryService(
+      store: s.offlineVaultRecoveryStore,
+      api: s.api,
+      attest: s.attest,
+      pipeline: s.pipeline,
+    );
+    s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
+    s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
+      vault: LocalAudioVault(),
+      apiClient: s.api,
+      connectivity: s.liveVoiceConnectivity,
+      recoveryStore: s.offlineVaultRecoveryStore,
+      recoveryService: s.offlineVaultRecovery,
+    );
     s.recording = RecordingService(testMode: true);
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
@@ -243,11 +337,14 @@ class AppServices {
     s.memoryResurfacing = MemoryResurfacingService.fromPrefs(s.prefs);
     s.beliefEvolution = BeliefEvolutionService.fromPrefs(s.prefs);
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
+    s.clinicalTelemetryEncryptedStorage =
+        ClinicalTelemetryEncryptedStorage.forTest();
     s.sync = SyncService(s.api, s.journalStore, s.prefs);
     s.paywall = ValueMomentPaywallLogic(s.prefs);
     await s.prefs.setOnboardingCompleted(true);
     _instance = s;
     _initialized = true;
+    _configureJournalSaveInterceptors(s);
   }
 
   static Future<String> _resolveDocumentsBasePath() async {
@@ -346,8 +443,11 @@ class AppServices {
     s.memoryResurfacing = MemoryResurfacingService.fromPrefs(s.prefs);
     s.beliefEvolution = BeliefEvolutionService.fromPrefs(s.prefs);
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
+    s.clinicalTelemetryEncryptedStorage =
+        ClinicalTelemetryEncryptedStorage.forTest();
     _instance = s;
     _initialized = true;
+    _configureJournalSaveInterceptors(s);
     await BetaFeedbackStore.resetForTest();
     await ConfirmedRepeatBetaFeedbackStore.resetForTest();
     await CoreValueFeedbackStore.resetForTest();
@@ -371,5 +471,19 @@ class AppServices {
     await MonthlyPrivateReportDismissStore.resetForTest();
     await ArchiveBackupBridgeDismissStore.resetForTest();
     await BetaFeedbackIntelligenceStore.resetForTest();
+  }
+
+  static void _configureJournalSaveInterceptors(AppServices services) {
+    final hookRepository = LocalCuriosityHookRepository.instance();
+    final baselineStore = LocalCognitiveBaselineStore.instance();
+    final trajectoryHistoryStore = LocalClinicalTrajectoryHistoryStore.instance();
+    services.journalStore.configureSaveInterceptorPipeline(
+      JournalSaveInterceptorPipeline.clinicalDefaults(
+        hookRepository: hookRepository,
+        journalStore: JournalStoreCuriosityHookJournalStore(services.journalStore),
+        baselineStore: baselineStore,
+        trajectoryHistoryStore: trajectoryHistoryStore,
+      ),
+    );
   }
 }

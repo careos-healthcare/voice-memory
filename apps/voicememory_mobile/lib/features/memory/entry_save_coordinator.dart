@@ -169,5 +169,6 @@ abstract class EntrySaveCoordinator {
     memorySurfacing: memorySurfacing ?? entry.memorySurfacing,
     preserveOriginal: preserveOriginal ?? entry.preserveOriginal,
     captureContextTag: entry.captureContextTag,
+    biomarkers: entry.biomarkers,
   );
 }

@@ -243,4 +243,10 @@ class AppConfig {
     'ENABLE_GPT5_ARCHIVE_SYNTHESIS',
     defaultValue: false,
   );
+
+  /// Gemini Live voice on Record — requires self-hosted backend with `server.mjs`.
+  static const bool enableLiveVoiceCapture = bool.fromEnvironment(
+    'ENABLE_LIVE_VOICE_CAPTURE',
+    defaultValue: false,
+  );
 }

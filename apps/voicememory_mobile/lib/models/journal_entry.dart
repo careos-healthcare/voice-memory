@@ -1,3 +1,4 @@
+import '../features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'reflection.dart';
 import 'sync_status.dart';
 
@@ -24,6 +25,9 @@ class JournalEntry {
     this.memorySurfacing = 'normal',
     this.preserveOriginal = false,
     this.captureContextTag,
+    this.biomarkers,
+    this.parentHookId,
+    this.wasGrounded = false,
   });
 
   final String id;
@@ -87,6 +91,15 @@ class JournalEntry {
   /// Optional local context tag — stable id only, never shared externally.
   final String? captureContextTag;
 
+  /// Optional clinical cognitive biomarkers for Phase 2 care tracking.
+  final CognitiveBiomarkers? biomarkers;
+
+  /// Links a saved response entry back to the curiosity hook it answered.
+  final String? parentHookId;
+
+  /// True when the user completed a grounding cycle before submitting a hook response.
+  final bool wasGrounded;
+
   String get reflectionSummary => reflection.concreteObservation.isNotEmpty
       ? reflection.concreteObservation
       : reflection.exactLanguagePattern;
@@ -123,6 +136,11 @@ class JournalEntry {
       captureContextTag: json['captureContextTag'] is String
           ? json['captureContextTag'] as String
           : null,
+      biomarkers: CognitiveBiomarkers.fromJson(json['biomarkers']),
+      parentHookId: json['parentHookId'] is String
+          ? json['parentHookId'] as String
+          : null,
+      wasGrounded: json['wasGrounded'] == true,
     );
   }
 
@@ -148,9 +166,17 @@ class JournalEntry {
     if (memorySurfacing != 'normal') 'memorySurfacing': memorySurfacing,
     if (preserveOriginal) 'preserveOriginal': true,
     if (captureContextTag != null) 'captureContextTag': captureContextTag,
+    if (biomarkers != null) 'biomarkers': biomarkers!.toJson(),
+    if (parentHookId != null) 'parentHookId': parentHookId,
+    if (wasGrounded) 'wasGrounded': true,
   };
 
-  JournalEntry copyWith({String? captureContextTag}) => JournalEntry(
+  JournalEntry copyWith({
+    String? captureContextTag,
+    CognitiveBiomarkers? biomarkers,
+    String? parentHookId,
+    bool? wasGrounded,
+  }) => JournalEntry(
         id: id,
         createdAt: createdAt,
         transcript: transcript,
@@ -172,6 +198,9 @@ class JournalEntry {
         memorySurfacing: memorySurfacing,
         preserveOriginal: preserveOriginal,
         captureContextTag: captureContextTag ?? this.captureContextTag,
+        biomarkers: biomarkers ?? this.biomarkers,
+        parentHookId: parentHookId ?? this.parentHookId,
+        wasGrounded: wasGrounded ?? this.wasGrounded,
       );
 
   static SyncStatus _parseSync(String? raw) {

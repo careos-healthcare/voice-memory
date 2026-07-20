@@ -44,6 +44,11 @@ import '../screens/low_effort_yes_capture_screen.dart';
 import '../screens/capacity_beta_mission_screen.dart';
 import '../screens/archive_calendar_screen.dart';
 import '../screens/review_ritual_screen.dart';
+import '../features/curiosity_loop/models/curiosity_hook.dart';
+import '../features/curiosity_loop/presentation/yesterdays_snapshot_screen.dart';
+import '../features/curiosity_loop/presentation/weekly_productivity_report_screen.dart';
+import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
+import '../features/curiosity_loop/yesterdays_snapshot_copy.dart';
 import '../screens/milestone_share_cards_screen.dart';
 import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
@@ -103,6 +108,8 @@ import '../screens/signal_evidence_screen.dart';
 import '../screens/signal_journey_screen.dart';
 import '../screens/signal_review_screen.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../features/live_audio/application/live_voice_capture_service.dart';
+import '../screens/live_voice_session_screen.dart';
 import '../screens/record_screen.dart';
 import '../screens/quick_text_capture_screen.dart';
 import '../record/quick_text_capture_presentation.dart';
@@ -133,7 +140,11 @@ import 'onboarding_gate.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Root navigator for app-wide prompts (offline vault recovery, etc.).
+GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
+
 bool _widgetLaunchRouteConsumed = false;
+bool _curiosityNotificationLaunchConsumed = false;
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -149,6 +160,14 @@ final GoRouter appRouter = GoRouter(
       if (pending != null && pending.isNotEmpty && path != pending) {
         await ObjectiveWidgetPendingRouteStore.instance().clear();
         return pending;
+      }
+    }
+
+    if (!_curiosityNotificationLaunchConsumed) {
+      _curiosityNotificationLaunchConsumed = true;
+      if (CuriosityNotificationLaunchController.hasPendingHook &&
+          path != YesterdaysSnapshotCopy.route) {
+        return YesterdaysSnapshotCopy.route;
       }
     }
 
@@ -217,6 +236,7 @@ final GoRouter appRouter = GoRouter(
         path != '/capacity-beta-mission' &&
         path != '/archive-calendar' &&
         path != '/review-ritual' &&
+        path != '/yesterdays-snapshot' &&
         path != '/milestone-share-cards' &&
         path != '/beta-outcomes' &&
         path != '/beta-invite-pack' &&
@@ -521,6 +541,17 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) =>
           ArchiveToolScreen(tool: state.pathParameters['tool'] ?? ''),
+    ),
+    GoRoute(
+      path: '/live-voice',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final extra = state.extra;
+        return LiveVoiceSessionScreen(
+          liveVoiceCapture:
+              extra is LiveVoiceCaptureService ? extra : null,
+        );
+      },
     ),
     GoRoute(
       path: '/quick-capture',
@@ -841,6 +872,29 @@ final GoRouter appRouter = GoRouter(
       path: '/review-ritual',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ReviewRitualScreen(),
+    ),
+    GoRoute(
+      path: '/yesterdays-snapshot',
+      parentNavigatorKey: _rootNavigatorKey,
+      redirect: (context, state) {
+        if (state.extra is CuriosityHook) return null;
+        if (CuriosityNotificationLaunchController.hasPendingHook) return null;
+        return '/record';
+      },
+      builder: (context, state) {
+        final hook = state.extra is CuriosityHook
+            ? state.extra! as CuriosityHook
+            : CuriosityNotificationLaunchController.takePendingHook();
+        if (hook == null) {
+          return const SizedBox.shrink();
+        }
+        return YesterdaysSnapshotScreen(hook: hook);
+      },
+    ),
+    GoRoute(
+      path: '/weekly-report',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const WeeklyProductivityReportScreen(),
     ),
     GoRoute(
       path: '/milestone-share-cards',

@@ -10,6 +10,8 @@ import '../features/activation/activation_tracker.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/objective/current_objective_widget_refresh_service.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
+import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
+import '../features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
 import '../router/onboarding_gate.dart';
 import '../security/private_storage_audit.dart';
 import '../services/app_services.dart';
@@ -20,9 +22,12 @@ import '../theme/app_colors.dart';
 Future<void> completeArchiveMeStartup() async {
   await AppStoragePaths.configureFromDeviceInfo();
   await AppServices.initialize();
+  await OfflineVaultRecoveryLaunchController.prepareScan();
+  unawaited(AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery());
   PrivateStorageAudit.logAuditReport();
   await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
   await CheckInReminderService.ensureInitialized();
+  await CuriosityNotificationLaunchController.ensureInitialized();
   unawaited(BetaActivationLoopTracker.trackAppOpened());
   if (TrialMode.enabled) {
     onboardingGate.markComplete();

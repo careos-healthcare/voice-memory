@@ -124,4 +124,8 @@ abstract class RecordPipelineLog {
   }) {
     log('analysis_fallback reason=$reason audio_path=$audioPath');
   }
+
+  static void postSaveComparisonSkipped({required String reason}) {
+    log('post_save_comparison skipped reason=$reason');
+  }
 }

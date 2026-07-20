@@ -5,6 +5,8 @@ import '../config/archive_me_demo_state.dart';
 import '../features/demo/archive_me_demo_archive.dart';
 import '../config/creator_demo_mode.dart';
 import '../features/activation/capture_context_tags.dart';
+import '../features/curiosity_loop/domain/services/cognitive_analyzer.dart';
+import '../features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import '../features/first25/first25_journal_hooks.dart';
 import '../features/memory/entry_memory_mode.dart';
 import '../features/memory/entry_save_coordinator.dart';
@@ -27,9 +29,14 @@ class JournalStore {
     EncryptedJsonFileStore? encryptedStore,
     File? plaintextLegacyFile,
     bool encryptAtRest = false,
+    CognitiveAnalyzer? cognitiveAnalyzer,
+    JournalSaveInterceptorPipeline? saveInterceptorPipeline,
   }) : _encrypted = encryptedStore,
        _plaintextLegacy = plaintextLegacyFile,
-       _encryptAtRest = encryptAtRest;
+       _encryptAtRest = encryptAtRest,
+       _cognitiveAnalyzer = cognitiveAnalyzer ?? const CognitiveAnalyzer(),
+       _saveInterceptorPipeline =
+           saveInterceptorPipeline ?? JournalSaveInterceptorPipeline.empty();
 
   /// Primary on-disk file — encrypted envelope when [encryptAtRest] is true.
   final File file;
@@ -37,8 +44,16 @@ class JournalStore {
   final EncryptedJsonFileStore? _encrypted;
   final File? _plaintextLegacy;
   final bool _encryptAtRest;
+  final CognitiveAnalyzer _cognitiveAnalyzer;
+  JournalSaveInterceptorPipeline _saveInterceptorPipeline;
 
   List<JournalEntry>? _cache;
+
+  void configureSaveInterceptorPipeline(
+    JournalSaveInterceptorPipeline pipeline,
+  ) {
+    _saveInterceptorPipeline = pipeline;
+  }
 
   static String encryptedPathFor(String legacyJsonPath) {
     if (legacyJsonPath.endsWith('.json')) {
@@ -52,6 +67,8 @@ class JournalStore {
     PrivateDataEncryptionKeyStore? keyStore,
     bool encryptAtRest = true,
     SecureStorageService? secureStorage,
+    CognitiveAnalyzer? cognitiveAnalyzer,
+    JournalSaveInterceptorPipeline? saveInterceptorPipeline,
   }) async {
     final legacyFile = File(filePath);
     if (!await legacyFile.parent.exists()) {
@@ -62,7 +79,12 @@ class JournalStore {
       if (!await legacyFile.exists()) {
         await legacyFile.writeAsString('[]');
       }
-      final store = JournalStore(file: legacyFile, encryptAtRest: false);
+      final store = JournalStore(
+        file: legacyFile,
+        encryptAtRest: false,
+        cognitiveAnalyzer: cognitiveAnalyzer,
+        saveInterceptorPipeline: saveInterceptorPipeline,
+      );
       store._cache = store._decodeEntries(await legacyFile.readAsString());
       return store;
     }
@@ -86,6 +108,8 @@ class JournalStore {
       encryptedStore: encryptedStore,
       plaintextLegacyFile: legacyFile,
       encryptAtRest: true,
+      cognitiveAnalyzer: cognitiveAnalyzer,
+      saveInterceptorPipeline: saveInterceptorPipeline,
     );
     store._cache = await store._loadEntriesFromEncrypted();
     return store;
@@ -147,6 +171,7 @@ class JournalStore {
         entryCount: all.length + 1,
       );
     }
+    toPersist = _cognitiveAnalyzer.enrichEntry(toPersist);
     final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
     if (isNew && next.length == 1) {
@@ -187,6 +212,7 @@ class JournalStore {
       isNew: isNew,
       source: first25Source,
     );
+    await _saveInterceptorPipeline.execute(toPersist);
   }
 
   Future<void> update(JournalEntry entry) async => save(entry);
@@ -227,6 +253,7 @@ class JournalStore {
     memorySurfacing: entry.memorySurfacing,
     preserveOriginal: entry.preserveOriginal,
     captureContextTag: captureContextTag ?? entry.captureContextTag,
+    biomarkers: entry.biomarkers,
   );
 
   Future<List<JournalEntry>> loadEligible() async {
@@ -279,6 +306,7 @@ class JournalStore {
         memorySurfacing: entry.memorySurfacing,
         preserveOriginal: entry.preserveOriginal,
         captureContextTag: entry.captureContextTag,
+        biomarkers: entry.biomarkers,
       ),
     );
   }
@@ -314,10 +342,13 @@ class JournalStore {
           preserveOriginal:
               r.preserveOriginal || (existing?.preserveOriginal ?? false),
           captureContextTag: r.captureContextTag ?? existing?.captureContextTag,
+          biomarkers: r.biomarkers ?? existing?.biomarkers,
         );
       }
     }
-    final merged = byId.values.toList()
+    final merged = byId.values
+        .map(_cognitiveAnalyzer.enrichEntry)
+        .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     await _writeAll(merged);
   }

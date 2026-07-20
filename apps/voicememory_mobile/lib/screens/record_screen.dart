@@ -5,7 +5,11 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
+import '../config/app_config.dart';
+import '../features/live_audio/application/live_voice_capture_service.dart';
+import '../features/live_audio/presentation/live_voice_session_copy.dart';
 import '../audio/recording_service.dart';
 import '../services/app_services.dart';
 import '../services/capture_pipeline_service.dart';
@@ -153,7 +157,13 @@ import '../features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_model.dart';
 import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
+import '../features/curiosity_loop/curiosity_hook_gates.dart';
+import '../features/curiosity_loop/models/curiosity_hook.dart';
+import '../features/curiosity_loop/services/curiosity_hook_coordinator.dart';
+import '../features/curiosity_loop/services/yesterdays_snapshot_coordinator.dart';
+import '../features/curiosity_loop/yesterdays_snapshot_copy.dart';
 import '../widgets/record/come_back_tomorrow_card.dart';
+import '../widgets/record/curiosity_hook_card.dart';
 import '../features/quiet_signal/quiet_signal_engine.dart';
 import '../features/beta_test_script/beta_test_script_engine.dart';
 import '../features/beta_test_script/beta_test_script_store.dart';
@@ -163,6 +173,12 @@ import '../widgets/record/quiet_signal_record_card.dart';
 import '../widgets/account/beta_feedback_sheet.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
+import '../features/comparison_engine/domain/mappers/archive_moment_record_mapper.dart';
+import '../features/comparison_engine/infrastructure/comparison_preference_store.dart';
+import '../features/comparison_engine/infrastructure/journal_comparison_model_api_client.dart';
+import '../features/comparison_engine/presentation/controllers/post_save_comparison_controller.dart';
+import '../features/comparison_engine/presentation/widgets/post_save_comparison_section.dart';
+import '../features/monetization/presentation/services/revenuecat_paywall_presenter.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
 import '../features/retention/pattern_hypothesis_model.dart';
 import '../features/post_save_insight/selected_signal_coordinator.dart';
@@ -483,6 +499,8 @@ import '../widgets/trial/trial_first_moment_card.dart';
 import '../dev/visual_audit_overrides.dart';
 import '../features/archive_state_object/archive_state_object.dart';
 import '../models/journal_entry.dart';
+import '../models/reflection.dart';
+import '../models/sync_status.dart';
 import '../features/archive_evolution/archive_evolution_coordinator.dart';
 import '../features/archive_evolution/archive_evolution_models.dart';
 import '../features/instant_reflection/instant_reflection_response.dart';
@@ -519,6 +537,7 @@ import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
+import '../billing/revenuecat_service.dart';
 import '../billing/suggestion_attribution_event.dart';
 import '../billing/suggestion_attribution_store.dart';
 import '../features/pressure_retention/archive_proof_counter_engine.dart';
@@ -696,6 +715,14 @@ void _recordCtaLog(String message) {
   debugPrint('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
 }
 
+final class _RecordScreenLogger {
+  const _RecordScreenLogger();
+
+  void info(String message) {
+    RecordPipelineLog.log(message);
+  }
+}
+
 class RecordScreen extends StatefulWidget {
   const RecordScreen({
     super.key,
@@ -706,6 +733,8 @@ class RecordScreen extends StatefulWidget {
     this.entitlementReader,
     this.purchaseIntentStore,
     this.inviteAttributionStore,
+    this.paywallPresenter,
+    this.liveVoiceCapture,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -728,6 +757,12 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live prefs-backed store.
   final InviteAttributionStore? inviteAttributionStore;
+
+  /// Injectable for tests; defaults to the live RevenueCat UI presenter.
+  final RevenueCatPaywallPresenter? paywallPresenter;
+
+  /// Injectable live voice service; defaults from [AppServices] when enabled.
+  final LiveVoiceCaptureService? liveVoiceCapture;
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -762,6 +797,7 @@ class _RecordScreenState extends State<RecordScreen> {
   List<DateTime> _entryDates = const [];
   bool _firstArchiveMilestoneCompleted = false;
   bool _autostartWithPromptAttempted = false;
+  bool _yesterdaysSnapshotPresentAttempted = false;
   String _stageLabel = '';
   PipelineStage? _pipelineStage;
   String? _selectedPromptLine;
@@ -827,10 +863,14 @@ class _RecordScreenState extends State<RecordScreen> {
   bool _retentionNextCheckJustChosen = false;
   bool _retentionDismissed = false;
   SecondSessionComparison? _secondSessionComparison;
+  PostSaveComparisonController? _postSaveComparisonController;
+  final _logger = const _RecordScreenLogger();
+  late final RevenueCatPaywallPresenter _paywallPresenter;
   PatternHypothesis? _patternHypothesis;
   bool _patternHypothesisDismissed = false;
   String? _nextEvidencePrompt;
   FirstSessionPattern? _postSavePattern;
+  CuriosityHook? _postSaveCuriosityHook;
   List<PostSaveSignalFeedback> _postSaveInsightFeedback = const [];
   SelectedSignalRecord? _postSaveSelectedSignal;
   SignalArchiveSnapshot? _signalArchiveSnapshot;
@@ -857,14 +897,20 @@ class _RecordScreenState extends State<RecordScreen> {
 
   late final RecordingService _recording;
   late final CapturePipelineService _pipeline;
+  LiveVoiceCaptureService? _liveVoice;
 
   @override
   void initState() {
     super.initState();
+    _paywallPresenter =
+        widget.paywallPresenter ?? const RevenueCatPaywallPresenter();
     CleanSlatePromptStore.noteSessionStart();
     final s = AppServices.instance;
     _recording = s.recording;
     _pipeline = s.pipeline;
+    if (AppConfig.enableLiveVoiceCapture) {
+      _liveVoice = widget.liveVoiceCapture ?? s.liveVoiceCapture;
+    }
     _recording.durationSeconds.listen((s) {
       if (mounted) setState(() => _seconds = s);
     });
@@ -1180,7 +1226,88 @@ class _RecordScreenState extends State<RecordScreen> {
     unawaited(
       ReturnDayFrictionCoordinator.trackAbandonedAfterAnswerIfPending(),
     );
+    _disposePostSaveComparisonController();
     super.dispose();
+  }
+
+  void _onPostSaveComparisonChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _disposePostSaveComparisonController() {
+    _postSaveComparisonController?.removeListener(_onPostSaveComparisonChanged);
+    _postSaveComparisonController?.dispose();
+    _postSaveComparisonController = null;
+  }
+
+  /// Text-first post-save comparison — no clinical SignalEngine or health gates.
+  /// Only requires at least one prior saved moment; parser assigns evidence state.
+  Future<void> _handlePostSavePatternComparison(List<JournalEntry> all) async {
+    final moments = ArchiveMomentRecordMapper.fromJournalEntries(all);
+    if (moments.length < 2) {
+      RecordPipelineLog.postSaveComparisonSkipped(
+        reason: 'no historical text context exists yet',
+      );
+      return;
+    }
+
+    final currentMoment = moments.last;
+    final historicalMoments = moments.sublist(0, moments.length - 1);
+    if (historicalMoments.isEmpty) {
+      RecordPipelineLog.postSaveComparisonSkipped(
+        reason: 'no historical text context exists yet',
+      );
+      return;
+    }
+
+    _disposePostSaveComparisonController();
+
+    final prefs = ComparisonPreferenceStore(AppServices.instance.prefs);
+    await prefs.ensureLoaded();
+    if (!mounted) return;
+
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    if (!mounted) return;
+
+    final controller = PostSaveComparisonController(
+      apiClient: JournalComparisonModelApiClient(entries: all),
+      prefs: prefs,
+    );
+    controller.addListener(_onPostSaveComparisonChanged);
+    setState(() => _postSaveComparisonController = controller);
+
+    await controller.processMomentComparison(
+      currentMoment: currentMoment,
+      historicalMoments: historicalMoments,
+      isProUser: isPro,
+    );
+  }
+
+  Widget _buildPostSaveSection() {
+    final controller = _postSaveComparisonController;
+    if (controller == null) {
+      return const SizedBox.shrink();
+    }
+
+    final uiState = controller.uiState;
+    if (uiState is! ComparisonLoading && uiState is! ComparisonSuccess) {
+      return const SizedBox.shrink();
+    }
+
+    return PostSaveComparisonSection(
+      key: const Key('post_save_pattern_comparison_section'),
+      controller: controller,
+      onProUpgradeTapped: () async {
+        _logger.info(
+          'User tapped paywall CTA within the value moment evidence card.',
+        );
+        await _paywallPresenter.triggerNativePaywallSheet(
+          requiredEntitlementId: RevenueCatService.proEntitlementId,
+        );
+      },
+    );
   }
 
   Future<void> _loadActivePatternThread() async {
@@ -1688,6 +1815,7 @@ class _RecordScreenState extends State<RecordScreen> {
     unawaited(_refreshArchiveReturnChanges(all));
     _logRecordEmptyGate('journal_loaded');
     unawaited(BetaActivationLoopTracker.trackRecordScreenSeen());
+    unawaited(_maybePresentYesterdaysSnapshot());
   }
 
   Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
@@ -2440,8 +2568,6 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  /// Stores the single optional context tag on the journal entry that was
-  /// just saved, then retires the prompt. Skipping never stores anything.
   Future<void> _saveEvidenceContextTag(String tagId) async {
     setState(() => _showEvidenceContextTag = false);
     final entry = _lastSavedEntry;
@@ -2461,6 +2587,47 @@ class _RecordScreenState extends State<RecordScreen> {
           ..._entriesAfterSave.skip(1),
         ];
       }
+    });
+  }
+
+  Future<void> _saveCuriosityHookResponse({
+    required CuriosityHook hook,
+    required String responseText,
+    required bool wasGrounded,
+  }) async {
+    final trimmed = responseText.trim();
+    if (trimmed.isEmpty || !AppServices.isInitialized) return;
+
+    const uuid = Uuid();
+    final entry = JournalEntry(
+      id: uuid.v4(),
+      createdAt: DateTime.now().toUtc(),
+      transcript: trimmed,
+      durationSeconds: (trimmed.length / 15).ceil().clamp(1, 120),
+      reflection: Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: const [],
+        exactLanguagePattern: trimmed,
+        concreteObservation: trimmed,
+        repeatedSignal: '',
+      ),
+      syncStatus: SyncStatus.localOnly,
+      parentHookId: hook.id,
+      wasGrounded: wasGrounded,
+    );
+
+    await AppServices.instance.journalStore.save(
+      entry,
+      first25Source: 'curiosity_hook_response',
+    );
+    unawaited(CuriosityHookCoordinator.instance().markConsumed(hook.id));
+
+    if (!mounted) return;
+    setState(() {
+      _postSaveCuriosityHook = null;
+      _entriesAfterSave = [entry, ..._entriesAfterSave];
+      _journalEntryCount += 1;
     });
   }
 
@@ -2722,15 +2889,15 @@ class _RecordScreenState extends State<RecordScreen> {
   JournalEntry? get _lastSavedEntry =>
       _entriesAfterSave.isNotEmpty ? _entriesAfterSave.first : null;
 
-  bool get _lastSavedEntryIsDegraded =>
-      _auditDegradedVoicePostSave ||
-      VoiceCapturePostSave.showTypedFallbackPrimary(_lastSavedEntry);
-
   bool get _auditDegradedVoicePostSave {
     if (!VisualAuditOverrides.active) return false;
     return VisualAuditOverrides.peekRecordPresentation()?.degradedVoicePostSave ==
         true;
   }
+
+  bool get _lastSavedEntryIsDegraded =>
+      _auditDegradedVoicePostSave ||
+      VoiceCapturePostSave.showTypedFallbackPrimary(_lastSavedEntry);
 
   RecordCtaPolicyResolution _recordCtaPolicy(
     RecordUiState ui, {
@@ -2760,6 +2927,14 @@ class _RecordScreenState extends State<RecordScreen> {
       userDeniedThisSession: userDenied,
       sessionRequiresOpenSettings: _micSessionRequiresOpenSettings,
     );
+  }
+
+  String? _recordEntryCtaLabel(RecordCtaPolicyResolution policy) {
+    if (AppConfig.enableLiveVoiceCapture &&
+        policy.action == RecordCtaAction.startRecording) {
+      return LiveVoiceSessionCopy.recordEntryCta;
+    }
+    return policy.primaryLabel;
   }
 
   String? _lastCtaPolicyLogLine;
@@ -2838,6 +3013,32 @@ class _RecordScreenState extends State<RecordScreen> {
     });
     _recordLog('state ui=$_ui mic=$cap (refresh)');
     _maybeAutostartWithPrompt();
+    unawaited(_maybePresentYesterdaysSnapshot());
+  }
+
+  Future<void> _maybePresentYesterdaysSnapshot() async {
+    if (_yesterdaysSnapshotPresentAttempted) return;
+    if (!mounted) return;
+    if (ScreenshotMode.enabled) return;
+    if (_isFlutterWidgetTest) return;
+    if (!_journalEntryCountLoaded) return;
+    if (_ui != RecordUiState.ready) return;
+    if (_mic != RecordingPhase.ready) return;
+    if (_isPostSaveSurface) return;
+
+    final hook = await YesterdaysSnapshotCoordinator.resolveReturnDayHook(
+      entries: _journalEntries,
+    );
+    if (!mounted || hook == null) return;
+
+    _yesterdaysSnapshotPresentAttempted = true;
+    await YesterdaysSnapshotCoordinator.markPresented(hook);
+    if (!mounted) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.push(YesterdaysSnapshotCopy.route, extra: hook);
+    });
   }
 
   void _maybeAutostartWithPrompt() {
@@ -2886,7 +3087,7 @@ class _RecordScreenState extends State<RecordScreen> {
       pressureMomentPresentation: suppressLogPressureMoment
           ? CapturePressureMomentPresentation.none
           : CapturePressureMomentPresentation.button,
-      recordButtonLabel: policy.primaryLabel,
+      recordButtonLabel: _recordEntryCtaLabel(policy),
       underRecordHelper: null,
       preferTypedFirst: BetaImprovementPackEngine.preferTypedCaptureFirst(
         entryCount: _journalEntryCount,
@@ -3136,7 +3337,21 @@ class _RecordScreenState extends State<RecordScreen> {
     await _routeToPermissionPanel();
   }
 
+  Future<void> _openLiveVoiceSession() async {
+    _recordLog('live voice session requested');
+    final result = await context.push<CapturePipelineResult?>(
+      '/live-voice',
+      extra: widget.liveVoiceCapture ?? _liveVoice,
+    );
+    if (!mounted || result == null) return;
+    await _finishSuccessfulCapture(result);
+  }
+
   Future<void> _beginRecording() async {
+    if (AppConfig.enableLiveVoiceCapture && _liveVoice != null) {
+      await _openLiveVoiceSession();
+      return;
+    }
     _recordLog('start requested');
     try {
       await _recording.startRecording(permissionVerified: true);
@@ -3403,6 +3618,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _lastCaptureAnalysisSucceeded = pipelineResult.analysisSucceeded;
       _lastCaptureLowQualityTranscript = pipelineResult.lowQualityTranscript;
       _postSaveFollowUp = null;
+      _postSaveCuriosityHook = null;
       _savedFromConfirmedRepeatTrigger =
           EarlyFirstSignalEngine.buildTriggerCapturePayoff(
                 entries: all,
@@ -3561,6 +3777,12 @@ class _RecordScreenState extends State<RecordScreen> {
     }
 
     if (!mounted) return;
+    final postSaveCuriosityHook =
+        await CuriosityHookCoordinator.instance().persistAfterVoiceSave(
+      savedEntry: savedEntry,
+      allEntries: all,
+    );
+    if (!mounted) return;
     setState(() {
       _immediateDiscovery = discovery;
       _immediateDiscoveryLoading = false;
@@ -3593,6 +3815,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (returnLoop != null) {
         _postSaveFollowUp = returnLoop.watchForNextTime;
       }
+      _postSaveCuriosityHook = postSaveCuriosityHook;
       if (evolution != null) {
         _localSaveTitle = null;
         _stageLabel = '';
@@ -3608,6 +3831,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
     await _loadFirstThreeJourney();
     unawaited(_loadSignalArchive());
+    unawaited(_handlePostSavePatternComparison(all));
   }
 
   void _trackInstantReflectionSurfaced(InstantReflectionResponse? response) {
@@ -4080,7 +4304,9 @@ class _RecordScreenState extends State<RecordScreen> {
       _isFirstSessionPostSave = false;
       _firstSessionPattern = null;
       _postSavePattern = null;
+      _postSaveCuriosityHook = null;
       _secondSessionComparison = null;
+      _disposePostSaveComparisonController();
       _patternHypothesis = null;
       _patternHypothesisDismissed = false;
       _firstSessionAlternativeIndex = 0;
@@ -7430,6 +7656,11 @@ class _RecordScreenState extends State<RecordScreen> {
       showWhatChangedV2Display: showWhatChangedV2Display,
       showHelpedTracking: showHelpedTracking,
     );
+    final showPostSaveCuriosityHook = CuriosityHookGates.shouldShowPostSaveCard(
+      isPostSaveDone: ui == RecordUiState.done,
+      hook: _postSaveCuriosityHook,
+      isDegradedPostSave: postSaveDegradedForReturnCue,
+    );
     final betaFeedbackCapturePostSavePreAudit = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? BetaFeedbackCaptureEngine.build(
@@ -8154,7 +8385,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       RecordFirstRunScreenCard(
                         onRecord: () =>
                             unawaited(_onRecordPressed(source: 'main')),
-                        recordButtonLabel: readyCapturePolicy.primaryLabel,
+                        recordButtonLabel:
+                            _recordEntryCtaLabel(readyCapturePolicy),
                         onTextThoughtSaved: _finishSuccessfulCapture,
                       ),
                     ] else if (showFirstSessionOnboarding) ...[
@@ -11185,7 +11417,9 @@ class _RecordScreenState extends State<RecordScreen> {
                             !showReturnCheckPayoff &&
                             !showWhatChangedV2) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
-                              secondSessionPayoff == null) ...[
+                              secondSessionPayoff == null &&
+                              _postSaveComparisonController?.uiState
+                                  is! ComparisonSuccess) ...[
                             const SizedBox(height: 12),
                             SecondSessionComparisonCard(
                               comparison: _secondSessionComparison!,
@@ -11491,6 +11725,29 @@ class _RecordScreenState extends State<RecordScreen> {
                         surface: 'record_post_save',
                       ),
                       const SizedBox(height: 12),
+                    ],
+                    if (showPostSaveCuriosityHook &&
+                        _postSaveCuriosityHook != null) ...[
+                      ConnectedCuriosityHookCard.fromDomain(
+                        hook: _postSaveCuriosityHook!,
+                        sourceEntry: _lastSavedEntry,
+                        onSubmit: (responseText, {required wasGrounded}) =>
+                            _saveCuriosityHookResponse(
+                          hook: _postSaveCuriosityHook!,
+                          responseText: responseText,
+                          wasGrounded: wasGrounded,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (!stack.showInputQualityCoach &&
+                        _postSaveComparisonController != null &&
+                        (_postSaveComparisonController!.uiState
+                                is ComparisonLoading ||
+                            _postSaveComparisonController!.uiState
+                                is ComparisonSuccess)) ...[
+                      _buildPostSaveSection(),
+                      const SizedBox(height: 16),
                     ],
                     if (showComeBackTomorrowV2PostSave &&
                         !suppressNoisyRepeatPostSaveCards &&

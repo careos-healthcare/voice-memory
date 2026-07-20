@@ -92,4 +92,11 @@ abstract final class RevenueCatDiagnosticsLog {
       'paywallFallback reason=$reason isRetry=$isRetry error=${error ?? 'none'}',
     );
   }
+
+  static void paywallCriticalFailure({
+    required String context,
+    required Object error,
+  }) {
+    _log('paywallCriticalFailure context=$context error=$error');
+  }
 }

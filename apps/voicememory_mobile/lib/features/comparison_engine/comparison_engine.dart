@@ -34,8 +34,33 @@ class ComparisonEngine {
       return ComparisonEngineResult.unrelated;
     }
 
-    final previous = eligible[eligible.length - 2];
-    final latest = eligible.last;
+    return _buildRelatedResult(entries: entries, signal: signal);
+  }
+
+  /// Text-first comparison for post-save pipeline — no clinical quality or
+  /// grounded-repeat gates. Caller enforces only baseline history sanity.
+  ComparisonEngineResult buildFromRawTextHistory(List<JournalEntry> entries) {
+    if (entries.length < 2) {
+      return ComparisonEngineResult.insufficient;
+    }
+
+    final signal = _signalEngine.build(entries);
+    if (!signal.hasEnoughData || !signal.possibleRepeat) {
+      return ComparisonEngineResult.unrelated;
+    }
+
+    return _buildRelatedResult(entries: entries, signal: signal);
+  }
+
+  ComparisonEngineResult _buildRelatedResult({
+    required List<JournalEntry> entries,
+    required SecondSessionComparison signal,
+  }) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final previous = eligible.length >= 2
+        ? eligible[eligible.length - 2]
+        : entries[entries.length - 2];
+    final latest = eligible.isNotEmpty ? eligible.last : entries.last;
 
     final rawRepeated = _usableLine(signal.whatRepeated) ??
         'something similar across your last two moments';

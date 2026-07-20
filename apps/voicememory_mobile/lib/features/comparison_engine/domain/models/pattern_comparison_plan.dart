@@ -1,0 +1,20 @@
+import 'archive_moment_record.dart';
+
+/// Service-layer output for a gated pattern comparison request.
+class PatternComparisonPlan {
+  const PatternComparisonPlan({
+    required this.systemPrompt,
+    required this.userPrompt,
+    required this.visibleHistoricalMoments,
+    required this.totalMomentCount,
+    required this.isPro,
+    required this.hasDismissedProTrailPrompt,
+  });
+
+  final String systemPrompt;
+  final String userPrompt;
+  final List<ArchiveMomentRecord> visibleHistoricalMoments;
+  final int totalMomentCount;
+  final bool isPro;
+  final bool hasDismissedProTrailPrompt;
+}

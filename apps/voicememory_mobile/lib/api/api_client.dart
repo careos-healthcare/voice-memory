@@ -15,6 +15,8 @@ import '../models/journal_entry.dart';
 import '../models/reflection.dart';
 import '../models/session.dart';
 import '../features/archive_synthesis/archive_synthesis_models.dart';
+import '../features/live_audio/domain/models/live_audio_session_config.dart';
+import '../features/live_audio/domain/models/offline_vault_manifest.dart';
 import '../security/ai_prompt_boundary.dart';
 import '../security/api_response_safety.dart';
 import '../security/private_log.dart';
@@ -161,6 +163,106 @@ class ApiClient {
       token: token,
       expiresInSeconds: (body['expiresInSeconds'] as num?)?.toInt() ?? 3600,
     );
+  }
+
+  /// Mint a short-lived backend live-audio proxy session (never returns Gemini keys).
+  Future<LiveAudioSessionConfig> postLiveAudioSession({
+    required String captureToken,
+    String? idempotencyKey,
+  }) async {
+    final response = await _http.post(
+      _uri('/api/live-audio/session'),
+      headers: _headersWithIdempotency(
+        base: {..._jsonHeaders, captureTokenHeader: captureToken},
+        idempotencyKey: idempotencyKey,
+      ),
+      body: jsonEncode({}),
+    );
+    ApiResponseSafety.ensureJsonResponse(response);
+    if (!response.statusCode.toString().startsWith('2')) {
+      throw ApiErrorMapper.fromResponse(response);
+    }
+    final body = _decodeJson(response);
+    if (body['ok'] != true) {
+      throw ApiException(
+        body['error'] as String? ?? 'Live audio session mint failed',
+        statusCode: response.statusCode,
+        code: body['code'] as String?,
+      );
+    }
+    return LiveAudioSessionConfig.fromJson(body);
+  }
+
+  /// Uploads an encrypted offline live-audio vault for server-side recovery.
+  Future<VaultRecoveryServerResult> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+  }) async {
+    final uri = _uri('/api/live-audio/recover');
+    final request = http.MultipartRequest('POST', uri);
+    request.headers['Accept'] = 'application/json';
+    request.headers['Authorization'] = 'Bearer $captureToken';
+    request.headers[captureTokenHeader] = captureToken;
+    request.headers[idempotencyHeader] = idempotencyKey;
+    if (_sessionCookie != null) request.headers['Cookie'] = _sessionCookie!;
+    request.fields['session_id'] = sessionId;
+    if (recoverySecretKeyBytes != null &&
+        recoverySecretKeyBytes.length == 32) {
+      request.fields['recovery_secret'] =
+          base64Url.encode(recoverySecretKeyBytes);
+    }
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'vault',
+        vaultFile.path,
+        filename: vaultFile.uri.pathSegments.last,
+        contentType: MediaType('application', 'octet-stream'),
+      ),
+    );
+
+    final streamed = await _http.send(request);
+    final response = await http.Response.fromStream(streamed);
+    ApiResponseSafety.ensureJsonResponse(response);
+    if (!response.statusCode.toString().startsWith('2')) {
+      throw ApiErrorMapper.fromResponse(response);
+    }
+    final body = _decodeJson(response);
+    if (body['ok'] != true) {
+      throw ApiException(
+        body['error'] as String? ?? 'Vault recovery upload failed',
+        statusCode: response.statusCode,
+        code: body['code'] as String?,
+      );
+    }
+    return VaultRecoveryServerResult.fromJson(body);
+  }
+
+  /// Uploads an encrypted vault blob; returns true only on affirmative server ACK.
+  Future<bool> uploadEncryptedVault({
+    required String sessionId,
+    required File file,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+  }) async {
+    try {
+      final result = await postVaultRecovery(
+        vaultFile: file,
+        sessionId: sessionId,
+        durationSeconds: durationSeconds,
+        captureToken: captureToken,
+        idempotencyKey: idempotencyKey,
+        recoverySecretKeyBytes: recoverySecretKeyBytes,
+      );
+      return result.recoveryAckId.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<String> transcribeAudio({

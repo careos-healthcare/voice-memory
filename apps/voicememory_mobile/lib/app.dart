@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'config/app_config.dart';
+import 'features/live_audio/presentation/widgets/offline_vault_recovery_host.dart';
 import 'router/app_router.dart';
 import 'security/app_lock_gate.dart';
 import 'security/app_privacy_shell.dart';
@@ -21,7 +22,11 @@ class ArchiveMeApp extends StatelessWidget {
       // App lock sits above every route: when enabled and locked, only the
       // lock screen renders — no archive content, previews, or share cards.
       builder: (context, child) => AppLockGate(
-        child: AppPrivacyShell(child: child ?? const SizedBox.shrink()),
+        child: AppPrivacyShell(
+          child: OfflineVaultRecoveryHost(
+            child: child ?? const SizedBox.shrink(),
+          ),
+        ),
       ),
     );
   }

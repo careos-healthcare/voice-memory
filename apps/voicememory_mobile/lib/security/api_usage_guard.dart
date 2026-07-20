@@ -122,7 +122,7 @@ class ApiUsageGuard {
   }
 }
 
-enum ApiUsageOperation { transcribe, analyze, archiveSynthesis }
+enum ApiUsageOperation { transcribe, analyze, archiveSynthesis, liveAudioSession }
 
 class ApiUsageCheckResult {
   const ApiUsageCheckResult._({

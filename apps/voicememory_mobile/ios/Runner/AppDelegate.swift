@@ -10,6 +10,7 @@ import UserNotifications
   private var pendingWidgetRoute: String?
   private let captureAudioSessionHandler = IosCaptureAudioSessionHandler()
   private let nativeVoiceRecorderHandler = IosNativeVoiceRecorderHandler()
+  private let liveAudioLifecycleBridge = LiveAudioLifecycleBridge()
 
   override func application(
     _ application: UIApplication,
@@ -30,6 +31,7 @@ import UserNotifications
       setupWidgetChannel(controller: controller)
       setupCaptureAudioChannel(controller: controller)
       setupNativeRecorderChannel(controller: controller)
+      liveAudioLifecycleBridge.attach(to: controller)
     }
     return didFinish
   }

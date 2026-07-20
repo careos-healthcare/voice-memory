@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
 import 'package:voicememory_mobile/router/onboarding_gate.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -48,11 +49,17 @@ void main() {
         concreteObservation: 'You sound finished for today.',
         repeatedSignal: 'Nothing repeated clearly.',
       ),
+      biomarkers: const CognitiveBiomarkers(
+        lexicalDiversity: 0.55,
+        cohesionDrift: 0.12,
+        emotionalVolatility: 0.33,
+      ),
     );
     final parsed = JournalEntry.fromJson(entry.toJson());
     expect(parsed.id, 'e1');
     expect(parsed.transcript, 'Hello');
     expect(parsed.reflection.concreteObservation, contains('finished'));
+    expect(parsed.biomarkers, entry.biomarkers);
   });
 
   test('SecureStorage rejects sensitive keys', () {

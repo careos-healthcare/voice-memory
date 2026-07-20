@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
@@ -15,11 +16,29 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
 
   final FlutterLocalNotificationsPlugin _plugin;
 
+  static FlutterLocalNotificationsPlugin? sharedPlugin;
+  static final List<void Function(NotificationResponse)> _responseHandlers =
+      [];
+
   bool _initialized = false;
   bool _available = false;
 
   /// Called when the user taps a scheduled reminder (payload = checkInId).
   void Function(String payload)? onTapPayload;
+
+  /// Additional tap handlers — e.g. curiosity loop notifications.
+  static void addResponseHandler(
+    void Function(NotificationResponse response) handler,
+  ) {
+    if (_responseHandlers.contains(handler)) return;
+    _responseHandlers.add(handler);
+  }
+
+  @visibleForTesting
+  static void resetResponseHandlersForTest() {
+    _responseHandlers.clear();
+    sharedPlugin = null;
+  }
 
   static const String channelId = 'check_in_reminders';
   static const String channelName = 'Check reminders';
@@ -52,6 +71,8 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
         settings: settings,
         onDidReceiveNotificationResponse: _handleResponse,
       );
+
+      sharedPlugin = _plugin;
 
       final android0 = _plugin
           .resolvePlatformSpecificImplementation<
@@ -164,10 +185,14 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
   }
 
   void _handleResponse(NotificationResponse response) {
-    final payload = response.payload;
-    if (payload != null && payload.isNotEmpty) {
-      onTapPayload?.call(payload);
+    for (final handler in _responseHandlers) {
+      handler(response);
     }
+
+    final payload = response.payload;
+    if (payload == null || payload.isEmpty) return;
+    if (payload.startsWith('curiosity_hook_v1:')) return;
+    onTapPayload?.call(payload);
   }
 
   /// Stable, positive notification id derived from the check-in id.
