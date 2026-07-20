@@ -1,0 +1,117 @@
+version: "3.8"
+
+services:
+  telemetry-backend:
+    image: archiveme/telemetry-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      HOSTNAME: 0.0.0.0
+      REDIS_URL: redis://redis-cluster:6379/0
+      LOG_LEVEL: info
+    # Enforce strict resource constraints to prevent a single runaway stream from crashing the node
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4G
+        reservations:
+          cpus: "0.5"
+          memory: 1G
+    # Raise per-process descriptor caps for concurrent live-audio WebSocket pools
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      nproc:
+        soft: 65536
+        hard: 65536
+    sysctls:
+      # Listen backlog for burst connection storms (requires Docker sysctl allow-list on host)
+      net.core.somaxconn: 32768
+      # Recycle TIME_WAIT sockets faster under high churn
+      net.ipv4.tcp_tw_reuse: 1
+      # Widen ephemeral port range for outbound Gemini upstream sockets
+      net.ipv4.ip_local_port_range: 1024 65535
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8080/api/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      redis-cluster:
+        condition: service_healthy
+    networks:
+      - telemetry-mesh
+
+  redis-cluster:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --maxmemory
+      - 512mb
+      - --maxmemory-policy
+      - allkeys-lru
+      - --tcp-backlog
+      - "32768"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    sysctls:
+      net.core.somaxconn: 32768
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - telemetry-mesh
+
+  # Reverse proxy layer configured for HTTP + live-audio WebSocket upgrades
+  gateway:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      telemetry-backend:
+        condition: service_healthy
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    sysctls:
+      net.core.somaxconn: 32768
+      net.ipv4.tcp_tw_reuse: 1
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - telemetry-mesh
+
+networks:
+  telemetry-mesh:
+    driver: bridge

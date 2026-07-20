@@ -10,6 +10,7 @@ import { logServerEvent } from "@/lib/server/structured-log";
 
 export const runtime = "nodejs";
 
+/** Deep readiness — checks DB migrations and billing config. Use `/api/healthz` for liveness. */
 export async function GET() {
   const snapshot = getProductionReadinessSnapshot();
   let databaseReachable = false;

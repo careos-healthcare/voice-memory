@@ -1,0 +1,27 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+
+# Mobile / native — not part of the web server image
+apps/
+android/
+ios/
+capacitor.config.ts
+
+# Docs, audits, and local artifacts
+*.md
+docs/
+coverage/
+test-results/
+playwright-report/
+exports/
+
+# Dev / CI only
+e2e/
+.husky
+.cursor
+.vscode
