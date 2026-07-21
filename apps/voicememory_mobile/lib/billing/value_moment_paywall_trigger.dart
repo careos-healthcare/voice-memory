@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../features/memory/memory_scope_policy.dart';
 import '../features/pressure_retention/archive_proof_counter_engine.dart';
 import '../features/pressure_retention/belief_distance_engine.dart';
@@ -87,6 +88,11 @@ class ValueMomentPaywallTrigger {
     DateTime? now,
   }) {
     if (isPro || dismissedThisSession || records.isEmpty) {
+      return ValueMomentBridge.none();
+    }
+    if (records.length < DelayedPaywallProofStore.minSavedMoments ||
+        !DelayedPaywallProofStore.hasSeenFirstRepeat ||
+        !DelayedPaywallProofStore.hasOpenedEvidenceTrail) {
       return ValueMomentBridge.none();
     }
     // Memory off: every value moment here is a memory-based connection

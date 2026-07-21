@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
 import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
+import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise_copy.dart';
 import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_copy.dart';
 import 'package:voicememory_mobile/features/three_day_challenge/three_day_challenge_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -72,7 +74,7 @@ void main() {
           'Come back when it repeats',
           'See what appeared and returned',
           'Correct what is not relevant',
-          'Free shows the first useful proof. Pro keeps the longer trail. with Pro',
+          LandingAppContinuityCopy.step5Title,
         ],
       );
 
@@ -82,11 +84,11 @@ void main() {
       expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
 
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
-      expect(ConsumerUiCopy.paywallHeadline, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(ConsumerUiCopy.paywallHeadline, 'You saw the first useful repeat.');
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
-        PaywallAlignmentCopy.secondaryReassurance,
+        PaywallValueSharpeningCopy.proofConnectedLine,
       );
       expect(
         ArchivePaywallCopy.proActiveConfirmation,
@@ -122,18 +124,18 @@ void main() {
       expect(doc, contains('Come back when it repeats'));
       expect(doc, contains('See what appeared and returned'));
       expect(doc, contains('Correct what is not relevant'));
-      expect(doc, contains('Free shows the first useful proof. Pro keeps the longer trail. with Pro'));
+      expect(doc, contains(LandingAppContinuityCopy.step5Title));
       expect(
         doc,
         contains(
           'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
         ),
       );
-      expect(doc, contains('Free shows the first useful proof. Pro keeps the longer trail.'));
       expect(
         doc,
-        contains('Free shows the first useful proof. Pro keeps the longer proof trail.'),
+        contains('Headline: `${ProSinglePromiseCopy.headline}`'),
       );
+      expect(doc, contains(LandingAppContinuityCopy.freePositioning));
       expect(doc.toLowerCase(), contains('not therapy'));
       expect(doc.toLowerCase(), contains('cloud backup'));
       expect(doc, contains('No **more AI** positioning'));

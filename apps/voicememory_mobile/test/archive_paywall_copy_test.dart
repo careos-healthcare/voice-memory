@@ -37,13 +37,13 @@ void main() {
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Longer proof trail'),
+      contains('Longer evidence history'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('What returned over time'),
+      contains('Weekly archive reviews'),
     );
-    expect(ConsumerUiCopy.paywallBullets.length, 6);
+    expect(ConsumerUiCopy.paywallBullets.length, 3);
     expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });
 

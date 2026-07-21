@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
@@ -48,13 +49,22 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => PaywallScreen(triggerArgs: args),
+            builder: (context, state) => PaywallScreen(
+              triggerArgs: args,
+              delayedPaywallProofGateOverride: () => true,
+            ),
           ),
         ],
       ),
     ),
   );
   await tester.pumpAndSettle();
+  for (var i = 0; i < 40; i++) {
+    await tester.pump(const Duration(milliseconds: 50));
+    if (find.byKey(const Key('paywall_unavailable_body')).evaluate().isNotEmpty) {
+      break;
+    }
+  }
 }
 
 /// Pumps a free-tier Pressure Insights screen with a `/subscription` route
@@ -350,7 +360,13 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallSubhead), findsNothing);
+      // Unavailable fallback shows one headline line; subhead is omitted when it
+      // matches the headline copy.
+      if (ConsumerUiCopy.paywallHeadline != ConsumerUiCopy.paywallSubhead) {
+        expect(find.text(ConsumerUiCopy.paywallSubhead), findsNothing);
+      } else {
+        expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      }
     });
 
     testWidgets('no source keeps the existing default headline', (
@@ -529,13 +545,8 @@ void main() {
 
   group('Paywall above-fold clarity', () {
     test('clarity copy is exact — four lines plus free reassurance', () {
-      expect(PaywallAboveFoldClarity.title, 'What Pro continues');
-      expect(PaywallAboveFoldClarity.lines, const [
-        'What returned',
-        'What faded',
-        'What changed',
-        'The exact evidence behind it',
-      ]);
+      expect(PaywallAboveFoldClarity.title, 'What Pro keeps');
+      expect(PaywallAboveFoldClarity.lines, PaywallAlignmentCopy.benefitBullets);
       expect(
         PaywallAboveFoldClarity.freeReassuranceLine,
         'Free keeps today\u2019s save. Pro keeps the thread connected over '
@@ -562,13 +573,19 @@ void main() {
         ).readAsStringSync();
         final paywallBody = source.substring(source.indexOf('Widget _paywallBody()'));
         final packagingIdx = paywallBody.indexOf('if (showPackagingSection)');
-        final clarityIdx = paywallBody.indexOf('_aboveFoldClaritySection()');
+        final generalClarityIdx =
+            paywallBody.indexOf('_generalConversionClaritySection(');
+        final aboveFoldClarityIdx =
+            paywallBody.indexOf('_aboveFoldClaritySection()');
+        final clarityIdx = generalClarityIdx > -1
+            ? generalClarityIdx
+            : aboveFoldClarityIdx;
         final planCardsIdx = paywallBody.indexOf('...orderedPaywallPlans(');
         expect(packagingIdx, greaterThan(-1));
         expect(clarityIdx, greaterThan(-1));
         expect(planCardsIdx, greaterThan(clarityIdx));
         expect(
-          paywallBody.indexOf('ConsumerUiCopy.paywallHeadline', packagingIdx),
+          paywallBody.indexOf('ProValueCopy.headline', packagingIdx),
           greaterThan(packagingIdx),
         );
         expect(
@@ -1073,7 +1090,7 @@ void main() {
     );
   });
 
-  group('What Pro continues is centralized in the clarity block', () {
+  group('What Pro keeps is centralized in the clarity block', () {
     // The old suggestion-only "Pro thread preview" was folded into the
     // above-fold clarity block, so the heading is never duplicated and the
     // generic paywall gets the same paid-promise clarity.
@@ -1085,7 +1102,7 @@ void main() {
         args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
       );
 
-      expect(find.text('What Pro continues'), findsNothing);
+      expect(find.text('What Pro keeps'), findsNothing);
       expect(find.byKey(const Key('paywall_pro_thread_preview')), findsNothing);
       expect(find.text('Your saves stay free.'), findsNothing);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);

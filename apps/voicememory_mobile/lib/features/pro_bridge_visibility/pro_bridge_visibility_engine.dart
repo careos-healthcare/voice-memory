@@ -3,6 +3,7 @@ import '../beta_improvement/proof_to_pro_path_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../pro_moment_timing/pro_moment_timing_model.dart';
 import 'pro_bridge_timing_loosen_engine.dart';
+import 'delayed_paywall_proof_store.dart';
 import 'pro_bridge_visibility_copy.dart';
 import 'pro_bridge_visibility_model.dart';
 
@@ -10,7 +11,7 @@ import 'pro_bridge_visibility_model.dart';
 abstract final class ProBridgeVisibilityEngine {
   ProBridgeVisibilityEngine._();
 
-  static const minEntryCount = 3;
+  static const minEntryCount = DelayedPaywallProofStore.minSavedMoments;
 
   static ProBridgeVisibilityResult build({
     required ProBridgeVisibilityInput input,
@@ -126,9 +127,11 @@ abstract final class ProBridgeVisibilityEngine {
     );
   }
 
-  /// Pro bridge only after the user has seen a repeat and opened evidence trail.
+  /// Pro bridge only after proof-first milestones (same gate as paywall).
   static bool passesDelayedPaywallProofGate(ProBridgeVisibilityInput input) =>
-      input.hasSeenFirstRepeat && input.hasOpenedEvidenceTrail;
+      input.entryCount >= DelayedPaywallProofStore.minSavedMoments &&
+      input.hasSeenFirstRepeat &&
+      input.hasOpenedEvidenceTrail;
 
   static Future<void> dismiss() => ProEvidenceValueDismissStore.dismiss();
 

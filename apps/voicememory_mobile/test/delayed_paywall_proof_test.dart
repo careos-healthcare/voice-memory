@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/paywall_access.dart';
-import 'package:voicememory_mobile/billing/paywall_route_args.dart';
-import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
+import 'package:voicememory_mobile/models/journal_entry.dart';
+import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -28,14 +28,35 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
+JournalEntry _entry(String id) => JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 12, 10),
+      transcript: 'Saved moment $id with enough words to count.',
+      durationSeconds: 20,
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: '',
+        concreteObservation: 'Work pressure showed up.',
+        repeatedSignal: '',
+      ),
+    );
+
+Future<void> _seedTwoMoments() async {
+  await AppServices.instance.journalStore.save(_entry('e1'));
+  await AppServices.instance.journalStore.save(_entry('e2'));
+}
+
 ProBridgeVisibilityInput _allowedInput({
   bool hasSeenFirstRepeat = true,
   bool hasOpenedEvidenceTrail = true,
+  int entryCount = 2,
 }) =>
     ProBridgeVisibilityInput(
       surface: ProBridgeVisibilitySurface.recordReady,
       source: 'test',
-      entryCount: 3,
+      entryCount: entryCount,
       isPro: false,
       postProofProBridgeEnabled: true,
       hasFirstProof: true,
@@ -56,16 +77,19 @@ void main() {
   });
 
   group('DelayedPaywallProofStore', () {
-    test('starts false until milestones are recorded', () async {
+    test('starts false until all proof milestones are recorded', () async {
       expect(DelayedPaywallProofStore.hasSeenFirstRepeat, isFalse);
       expect(DelayedPaywallProofStore.hasOpenedEvidenceTrail, isFalse);
+      expect(DelayedPaywallProofStore.passesGate, isFalse);
 
       await DelayedPaywallProofStore.markFirstRepeatSeen();
-      expect(DelayedPaywallProofStore.hasSeenFirstRepeat, isTrue);
-      expect(DelayedPaywallProofStore.hasOpenedEvidenceTrail, isFalse);
+      expect(DelayedPaywallProofStore.passesGate, isFalse);
 
       await DelayedPaywallProofStore.markEvidenceTrailOpened();
-      expect(DelayedPaywallProofStore.hasOpenedEvidenceTrail, isTrue);
+      expect(DelayedPaywallProofStore.passesGate, isFalse);
+
+      await _seedTwoMoments();
+      expect(DelayedPaywallProofStore.passesGate, isTrue);
     });
 
     test('persists to prefs', () async {
@@ -78,10 +102,18 @@ void main() {
       expect(raw?['hasSeenFirstRepeat'], isTrue);
       expect(raw?['hasOpenedEvidenceTrail'], isTrue);
     });
+
+    test('requires at least two saved moments', () async {
+      await DelayedPaywallProofStore.markFirstRepeatSeen();
+      await DelayedPaywallProofStore.markEvidenceTrailOpened();
+      await AppServices.instance.journalStore.save(_entry('only-one'));
+
+      expect(DelayedPaywallProofStore.passesGate, isFalse);
+    });
   });
 
   group('ProBridgeVisibilityEngine delayed paywall gate', () {
-    test('passesDelayedPaywallProofGate requires both milestones', () {
+    test('passesDelayedPaywallProofGate requires all three milestones', () {
       expect(
         ProBridgeVisibilityEngine.passesDelayedPaywallProofGate(
           _allowedInput(),
@@ -100,17 +132,26 @@ void main() {
         ),
         isFalse,
       );
+      expect(
+        ProBridgeVisibilityEngine.passesDelayedPaywallProofGate(
+          _allowedInput(entryCount: 1),
+        ),
+        isFalse,
+      );
     });
   });
 
   group('PaywallAccess delayed paywall gate', () {
-    test('canOpenPaywall is false until both milestones', () async {
+    test('canOpenPaywall is false until all proof milestones', () async {
       expect(await PaywallAccess.canOpenPaywall(), isFalse);
 
       await DelayedPaywallProofStore.markFirstRepeatSeen();
       expect(await PaywallAccess.canOpenPaywall(), isFalse);
 
       await DelayedPaywallProofStore.markEvidenceTrailOpened();
+      expect(await PaywallAccess.canOpenPaywall(), isFalse);
+
+      await _seedTwoMoments();
       expect(await PaywallAccess.canOpenPaywall(), isTrue);
     });
   });
@@ -151,10 +192,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(
-        find.text('Free shows the first useful proof. Pro keeps the longer trail.'),
-        findsNothing,
-      );
+      expect(find.text('You saw the first useful repeat.'), findsNothing);
       expect(find.byKey(const Key('paywall_unavailable_body')), findsNothing);
       expect(DelayedPaywallProofStore.passesGate, isFalse);
     });

@@ -30,13 +30,22 @@ Future<void> _pumpPaywall(
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => PaywallScreen(triggerArgs: args),
+            builder: (context, state) => PaywallScreen(
+              triggerArgs: args,
+              delayedPaywallProofGateOverride: () => true,
+            ),
           ),
         ],
       ),
     ),
   );
   await tester.pumpAndSettle();
+  for (var i = 0; i < 40; i++) {
+    await tester.pump(const Duration(milliseconds: 50));
+    if (find.byKey(const Key('paywall_unavailable_body')).evaluate().isNotEmpty) {
+      break;
+    }
+  }
 }
 
 void main() {

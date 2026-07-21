@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
 import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
+import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/onboarding/first_60_second_state.dart';
 import 'package:voicememory_mobile/features/onboarding/first_save_loop_state.dart';
@@ -419,7 +420,7 @@ void main() {
     test('boundary ties Pro to continuity without blocking free proof', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
-        'Free shows the first useful proof. Pro keeps the longer trail.',
+        ProSinglePromiseCopy.headline,
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,

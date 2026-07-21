@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
+import '../features/app_review/archive_app_review_session.dart';
 import '../billing/archive_paywall_copy.dart';
 import '../billing/archive_paywall_plans.dart';
 import '../billing/paywall_attribution_event.dart';
@@ -348,6 +349,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final override = widget.delayedPaywallProofGateOverride;
     if (override != null) return override();
     if (ScreenshotMode.enabled) return true;
+    if (ArchiveAppReviewSession.isActive) return true;
     return DelayedPaywallProofStore.passesGate;
   }
 
@@ -969,6 +971,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       children: [
         PaywallUnavailableFallback(
           headline: sourceCopy?.headline ?? ConsumerUiCopy.paywallHeadline,
+          subhead: sourceCopy?.subheadline ?? ConsumerUiCopy.paywallSubhead,
           body: _unavailableBodyText,
           busy: _busy,
           retrying: _offeringsReloading,
@@ -979,6 +982,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
           primaryDismissLabel: packaging.continueCta,
           hideBenefits: true,
         ),
+        if (_objectionFollowUpReason != null) ...[
+          const SizedBox(height: 14),
+          _aboveFoldClaritySection(),
+          const SizedBox(height: 14),
+          _objectionFollowUpSection(),
+        ],
+        if (_paywallObjectionSectionResult.shouldShow) ...[
+          const SizedBox(height: 14),
+          _paywallObjectionSection(),
+        ],
+        if (_showsPurchaseConfidenceCard) ...[
+          const SizedBox(height: 14),
+          _purchaseConfidenceSection(),
+        ],
         const SizedBox(height: 16),
         _subscriptionDetailsSection(plansAvailable: false),
       ],

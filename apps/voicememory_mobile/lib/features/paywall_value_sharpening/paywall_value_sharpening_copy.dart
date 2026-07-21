@@ -5,7 +5,7 @@ abstract final class PaywallValueSharpeningCopy {
   PaywallValueSharpeningCopy._();
 
   static const proofConnectedHeadline =
-      'Free shows the first useful proof. Pro keeps the longer trail.';
+      'You saw the first useful repeat.';
 
   static const genericHeadline = proofConnectedHeadline;
 

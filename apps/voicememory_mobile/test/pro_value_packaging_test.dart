@@ -64,7 +64,7 @@ void main() {
       expect(plan.headline, ProValueCopy.headline);
       expect(
         plan.headline,
-        'Free shows the first useful proof. Pro keeps the longer trail.',
+        'You saw the first useful repeat.',
       );
     });
 
@@ -91,7 +91,7 @@ void main() {
     });
 
     test('card pro line is consistent across touchpoints', () {
-      expect(ProValueCopy.cardProLine, ProValueCopy.headline);
+      expect(ProValueCopy.cardProLine, ProValueCopy.subheadline);
     });
 
     test('copy avoids banned language and purchase CTAs', () {

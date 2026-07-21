@@ -32,7 +32,7 @@ void main() {
     test('headline uses proof-first trail promise', () {
       expect(
         ConsumerUiCopy.paywallHeadline,
-        'Free shows the first useful proof. Pro keeps the longer trail.',
+        'You saw the first useful repeat.',
       );
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
       expect(ArchivePaywallCopy.headline, ConsumerUiCopy.paywallHeadline);
@@ -110,9 +110,10 @@ void main() {
             .data,
         contains(ConsumerUiCopy.paywallSetupUnavailableBody),
       );
+      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsNothing);
       expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
       expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
@@ -122,10 +123,12 @@ void main() {
     ) async {
       await _pumpPaywall(tester);
 
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.text('Continue without Pro'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
+      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
     });
   });
 }

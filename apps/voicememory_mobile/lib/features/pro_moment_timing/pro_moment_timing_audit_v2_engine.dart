@@ -408,6 +408,8 @@ abstract final class ProMomentTimingAuditV2Engine {
     bool whatChangedQuestionActive = false,
     bool patternReviewInboxHasActiveItems = false,
     bool proSlotAvailable = true,
+    bool hasSeenFirstRepeat = true,
+    bool hasOpenedEvidenceTrail = true,
   }) =>
       ProBridgeVisibilityInput(
         surface: surface,
@@ -437,6 +439,8 @@ abstract final class ProMomentTimingAuditV2Engine {
         whatChangedQuestionActive: whatChangedQuestionActive,
         patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
         proSlotAvailable: proSlotAvailable,
+        hasSeenFirstRepeat: hasSeenFirstRepeat,
+        hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
       );
 
   static SurfacePriorityCandidates _recordReadyWithGuidanceAndPro() =>

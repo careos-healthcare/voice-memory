@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
+import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -58,6 +59,7 @@ void main() {
 
   setUp(() {
     captured = [];
+    DelayedPaywallProofStore.bypassGateForTest = true;
     ActivationFunnelAnalytics.resetForTest();
     ActivationFunnelAnalytics.captureForTest(
       (event, properties) =>
@@ -68,6 +70,7 @@ void main() {
   });
 
   tearDown(() {
+    DelayedPaywallProofStore.bypassGateForTest = false;
     ActivationFunnelAnalytics.resetForTest();
     PaywallRejectionCapture.resetSessionForTest();
     PaywallObjectionFollowUp.resetSessionForTest();
@@ -92,6 +95,8 @@ void main() {
                 attributionStore: _MemoryAttributionStore(),
                 suggestionAttributionStore: MemorySuggestionAttributionStore(),
                 objectionStore: store,
+                delayedPaywallProofGateOverride: () => true,
+                billingReadyOverride: () => false,
               ),
             ),
             GoRoute(
@@ -103,7 +108,13 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    for (var i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+      if (find.byKey(const Key('paywall_objection_follow_up')).evaluate().isNotEmpty) {
+        break;
+      }
+    }
   }
 
   group('Objection follow-up copy', () {

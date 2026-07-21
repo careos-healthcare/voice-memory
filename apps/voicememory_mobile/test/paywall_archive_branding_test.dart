@@ -66,7 +66,7 @@ void main() {
           'Monthly and yearly plans will appear when App Store products finish loading',
         ),
       );
-      expect(find.text('Longer proof trail'), findsNothing);
+      expect(find.text('Longer evidence history'), findsNothing);
       expect(find.text('Private monthly reports'), findsNothing);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(

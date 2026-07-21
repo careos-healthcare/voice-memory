@@ -3,10 +3,10 @@ abstract final class ProValueCopy {
   ProValueCopy._();
 
   static const headline =
-      'Free shows the first useful proof. Pro keeps the longer trail.';
+      'You saw the first useful repeat.';
 
   static const subheadline =
-      'Pro keeps longer evidence history, weekly archive reviews, and timeline views.';
+      'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const body =
       'ArchiveMe Pro is designed for people who want a longer view of what '

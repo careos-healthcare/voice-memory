@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../billing/paywall_access.dart';
+import '../billing/paywall_route_args.dart';
+import '../billing/paywall_source.dart';
 import '../billing/value_moment_paywall.dart';
 import '../features/first25/first25_user_metrics.dart';
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../models/entitlement.dart';
 import '../product/consumer_ui_copy.dart';
 import '../services/app_services.dart';
@@ -69,12 +73,27 @@ class _ValueMomentPaywallCardState extends State<ValueMomentPaywallCard> {
     if (mounted) setState(() {});
   }
 
-  void _openSubscription() {
+  Future<void> _openSubscription() async {
     First25UserMetrics.trackPaywallStarted(
       surface: 'value_moment_${widget.surface.name}',
     );
-    context.push('/subscription');
-    _markSeen();
+    if (!await PaywallAccess.canOpenPaywall()) return;
+    if (!mounted) return;
+    final sourceRoute = switch (widget.surface) {
+      PaywallSurface.blindSpot => '/blind-spots',
+      PaywallSurface.discover => '/discover',
+      PaywallSurface.archiveContinuity => '/discover',
+    };
+    context.push(
+      '/subscription',
+      extra: PaywallRouteArgs(
+        previewTitle: ValueMomentPaywallLogic.copyHeadline,
+        previewBody: ValueMomentPaywallLogic.copyBody,
+        sourceRoute: sourceRoute,
+        source: PaywallSource.generalPro,
+      ),
+    );
+    await _markSeen();
   }
 
   Future<void> _dismissPaywall() async {
@@ -88,6 +107,7 @@ class _ValueMomentPaywallCardState extends State<ValueMomentPaywallCard> {
   Widget build(BuildContext context) {
     if (!widget.shouldShow) return const SizedBox.shrink();
     if (widget.entitlements?.isPro == true) return const SizedBox.shrink();
+    if (!DelayedPaywallProofStore.passesGate) return const SizedBox.shrink();
 
     return Container(
       margin: const EdgeInsets.only(top: 16),

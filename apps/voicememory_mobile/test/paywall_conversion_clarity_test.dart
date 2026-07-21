@@ -113,7 +113,7 @@ void main() {
         contains(ConsumerUiCopy.paywallSetupUnavailableBody),
       );
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsNothing);
-      expect(find.text('Longer proof trail'), findsNothing);
+      expect(find.text('Longer evidence history'), findsNothing);
     });
 
     testWidgets('keeps subscription details visible without benefit checklist', (

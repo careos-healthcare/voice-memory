@@ -5,12 +5,15 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/value_moment_paywall_trigger.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/memory/current_intent_signal.dart';
 import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
 import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart';
 import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
+import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/billing/value_moment_pro_bridge.dart';
@@ -107,9 +110,24 @@ void main() {
     MemoryPriorityGovernance.resetForTest();
     CurrentIntentSignal.resetSessionForTest();
     EntryMemoryModeSession.selectedMode = EntryMemoryMode.useArchiveContext;
+    DelayedPaywallProofStore.seedForTest(
+      hasSeenFirstRepeat: true,
+      hasOpenedEvidenceTrail: true,
+    );
   });
 
   group('Value moment trigger — eligibility', () {
+    test('no bridge before proof-first milestones are met', () {
+      DelayedPaywallProofStore.seedForTest(
+        hasSeenFirstRepeat: false,
+        hasOpenedEvidenceTrail: false,
+      );
+      expect(
+        trigger.build(_workThread3(), isPro: false, now: _base).show,
+        isFalse,
+      );
+    });
+
     test('no bridge before the first save', () {
       expect(trigger.build(const [], isPro: false, now: _base).show, isFalse);
     });
@@ -226,11 +244,11 @@ void main() {
   group('Value moment paywall copy', () {
     test('value moment routes to the continuity paywall copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.valueMoment);
-      expect(copy.headline, 'Keep the proof trail behind this repeat');
+      expect(copy.headline, 'You saw the first useful repeat.');
+      expect(copy.subheadline, ConsumerUiCopy.paywallSubhead);
       final all = '${copy.subheadline} ${copy.bullets.join(' ')}'.toLowerCase();
-      expect(all, contains('returned'));
-      expect(all, contains('fad')); // fades / fading
-      expect(all, contains('corrected'));
+      expect(all, contains('proof'));
+      expect(all, contains('trail'));
     });
 
     test('free users keep today\u2019s save', () {
@@ -240,7 +258,7 @@ void main() {
     });
 
     test('continuity previews render for the value-moment source', () {
-      // "What Pro continues" is now the above-fold clarity block, which
+      // "What Pro keeps" is now the above-fold clarity block, which
       // renders for every source including value moment.
       expect(PaywallProofPreview.showFor(PaywallSource.valueMoment), isTrue);
       expect(PaywallAnnualValueCopy.showFor(PaywallSource.valueMoment), isTrue);

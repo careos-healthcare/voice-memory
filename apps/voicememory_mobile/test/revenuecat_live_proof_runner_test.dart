@@ -323,7 +323,7 @@ void main() {
       );
       expect(
         ProValueCopy.headline,
-        'Free shows the first useful proof. Pro keeps the longer trail.',
+        'You saw the first useful repeat.',
       );
 
       final proValueSource =

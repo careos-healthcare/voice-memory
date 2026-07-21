@@ -1,3 +1,4 @@
+import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../product/consumer_ui_copy.dart';
 import '../config/app_config.dart';
 import '../models/entitlement.dart';
@@ -61,11 +62,17 @@ class ValueMomentPaywallLogic {
     return entitlements?.isPro == true;
   }
 
+  Future<bool> _passesProofFirstGate() async {
+    await DelayedPaywallProofStore.ensureLoaded();
+    return DelayedPaywallProofStore.passesGate;
+  }
+
   Future<bool> shouldShowPostBlindSpot({
     required int reflectionCount,
     required PremiumEntitlements? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
+    if (!await _passesProofFirstGate()) return false;
     if (reflectionCount < AppConfig.patternReviewReflectionTarget) return false;
     final s = await _state();
     if (s['hasSeenFirstBlindSpot'] != true) return false;
@@ -78,6 +85,7 @@ class ValueMomentPaywallLogic {
     required PremiumEntitlements? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
+    if (!await _passesProofFirstGate()) return false;
     final s = await _state();
     if (s['hasSeenFirstDiscover'] != true) return false;
     if (s['postDiscoverPaywallSeen'] == true) return false;
@@ -89,6 +97,7 @@ class ValueMomentPaywallLogic {
     required PremiumEntitlements? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
+    if (!await _passesProofFirstGate()) return false;
     final s = await _state();
     return s['hasSeenFirstBlindSpot'] == true &&
         s['hasSeenFirstDiscover'] == true &&

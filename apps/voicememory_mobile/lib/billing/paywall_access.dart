@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/screenshot_mode.dart';
+import '../features/app_review/archive_app_review_session.dart';
 import '../features/activation/activation_tracker.dart';
 import '../features/activation/first_loop_activation_coordinator.dart';
 import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
@@ -75,6 +76,7 @@ abstract class PaywallAccess {
   /// Paywall only after first repeat and evidence trail — same gate as Pro bridge.
   static Future<bool> canOpenPaywall() async {
     if (ScreenshotMode.enabled) return true;
+    if (ArchiveAppReviewSession.isActive) return true;
     await DelayedPaywallProofStore.ensureLoaded();
     return DelayedPaywallProofStore.passesGate;
   }
