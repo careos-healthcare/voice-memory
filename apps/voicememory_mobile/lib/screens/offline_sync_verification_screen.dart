@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -69,7 +68,7 @@ class _OfflineSyncVerificationScreenState
         if (_airplaneOn && !locked) {
           final added = eligible.length - atAirplane;
           _message =
-              'Offline: $added new eligible reflection(s) since airplane mode (need $_targetOffline)';
+              'Offline: $added new eligible moment(s) since airplane mode (need $_targetOffline)';
         }
         if (locked) {
           _message =
@@ -88,7 +87,7 @@ class _OfflineSyncVerificationScreenState
       _restartVerified = false;
       _networkBack = false;
       _message =
-          'Airplane mode noted. Record $_targetOffline reflections on /record while offline.';
+          'Airplane mode noted. Record $_targetOffline moments on /record while offline.';
     });
     await _refresh();
   }
@@ -103,7 +102,7 @@ class _OfflineSyncVerificationScreenState
     if (added < _targetOffline) {
       setState(
         () => _message =
-            'Need $_targetOffline new eligible reflections (have $added)',
+            'Need $_targetOffline new eligible moments (have $added)',
       );
       return;
     }
@@ -150,7 +149,7 @@ class _OfflineSyncVerificationScreenState
       _busy = false;
       _restartVerified = ok;
       _message = ok
-          ? 'Restart verified — reflections, timestamps, belief, and evidence match baseline'
+          ? 'Restart verified — moments, timestamps, belief, and evidence match baseline'
           : 'Restart check failed — counts or archive state changed';
     });
     await _refresh();
@@ -241,11 +240,11 @@ class _OfflineSyncVerificationScreenState
         children: [
           const Text(
             'Physical device only — not simulator or emulator.\n'
-            'Airplane mode → record $_targetOffline reflections → restart → sync → export evidence.',
+            'Airplane mode → record $_targetOffline moments → restart → sync → export evidence.',
             style: TextStyle(color: AppTheme.muted, height: 1.45),
           ),
           const SizedBox(height: 16),
-          _stat('Eligible reflections', '$_eligible'),
+          _stat('Eligible moments', '$_eligible'),
           _stat('Pending sync', '$_pending'),
           _stat('Last sync', _lastSync),
           _stat('Sync state', _syncState ?? '—'),
@@ -265,12 +264,12 @@ class _OfflineSyncVerificationScreenState
             ),
           ),
           _step(
-            '2. Record $_targetOffline reflections',
+            '2. Record $_targetOffline moments',
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 OutlinedButton(
-                  onPressed: () => context.push('/record'),
+                  onPressed: () => context.go('/record'),
                   child: const Text('Open Record'),
                 ),
                 const SizedBox(height: 8),

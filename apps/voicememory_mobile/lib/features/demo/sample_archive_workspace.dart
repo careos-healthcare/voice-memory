@@ -55,12 +55,12 @@ abstract final class SampleArchiveWorkspace {
     final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
     final beliefHistory =
         ArchiveEvidenceGuard.eligibleReflectionCount(entries) >= 5
-            ? BeliefHistoryTimelineEngine.build(entries: entries)
-            : null;
+        ? BeliefHistoryTimelineEngine.build(entries: entries)
+        : null;
     final weeklyReview =
         ArchiveEvidenceGuard.eligibleReflectionCount(entries) >= 5
-            ? WeeklyArchiveReviewEngine.build(entries: entries)
-            : null;
+        ? WeeklyArchiveReviewEngine.build(entries: entries)
+        : null;
     final quickActions = ArchiveWorkspaceQuickActionsEngine.build(
       entries: entries,
       archiveHome: summary,
@@ -73,7 +73,8 @@ abstract final class SampleArchiveWorkspace {
     final widgets = <Widget>[
       ArchiveHomeSummaryCard(
         summary: summary,
-        onPrimary: () => _handleArchiveHomeAction(context, summary.primaryAction),
+        onPrimary: () =>
+            _handleArchiveHomeAction(context, summary.primaryAction),
         onSecondary: summary.secondaryAction != ArchiveHomeAction.none
             ? () => _handleArchiveHomeAction(context, summary.secondaryAction)
             : null,
@@ -117,8 +118,9 @@ abstract final class SampleArchiveWorkspace {
         widgets.add(
           ArchiveHealthActionPlanCard(
             plan: actionPlan,
-            onPrimary: () => context.push('/record'),
-            onSecondary: actionPlan.secondaryAction ==
+            onPrimary: () => context.go('/record'),
+            onSecondary:
+                actionPlan.secondaryAction ==
                     ArchiveHealthActionPlanCta.viewEvidence
                 ? () => _showExampleOnly(context)
                 : null,
@@ -187,7 +189,7 @@ abstract final class SampleArchiveWorkspace {
             review: weeklyReview,
             compact: true,
             onViewFullReview: () => _showExampleOnly(context),
-            onAddAnother: () => context.push('/record'),
+            onAddAnother: () => context.go('/record'),
           ),
         );
       }
@@ -197,10 +199,7 @@ abstract final class SampleArchiveWorkspace {
       widgets.addAll(_sectionSpacer());
       if (layout.controls.heading case final heading?) {
         widgets.add(
-          ArchiveWorkspaceSectionHeading(
-            sectionId: 'controls',
-            title: heading,
-          ),
+          ArchiveWorkspaceSectionHeading(sectionId: 'controls', title: heading),
         );
       }
       widgets.add(
@@ -225,12 +224,12 @@ abstract final class SampleArchiveWorkspace {
   ) {
     final beliefHistory =
         ArchiveEvidenceGuard.eligibleReflectionCount(entries) >= 5
-            ? BeliefHistoryTimelineEngine.build(entries: entries)
-            : null;
+        ? BeliefHistoryTimelineEngine.build(entries: entries)
+        : null;
     final weeklyReview =
         ArchiveEvidenceGuard.eligibleReflectionCount(entries) >= 5
-            ? WeeklyArchiveReviewEngine.build(entries: entries)
-            : null;
+        ? WeeklyArchiveReviewEngine.build(entries: entries)
+        : null;
 
     return ArchiveWorkspaceLayoutEngine.build(
       entries: entries,
@@ -250,8 +249,8 @@ abstract final class SampleArchiveWorkspace {
   }
 
   static List<Widget> _sectionSpacer() => const [
-        SizedBox(height: AppSpacing.lg),
-      ];
+    SizedBox(height: AppSpacing.lg),
+  ];
 
   static void _handleArchiveHomeAction(
     BuildContext context,
@@ -260,7 +259,7 @@ abstract final class SampleArchiveWorkspace {
     switch (action) {
       case ArchiveHomeAction.record:
       case ArchiveHomeAction.addMoment:
-        context.push('/record');
+        context.go('/record');
       case ArchiveHomeAction.typeInstead:
         context.push('/quick-capture');
       case ArchiveHomeAction.viewArchive:
@@ -278,7 +277,7 @@ abstract final class SampleArchiveWorkspace {
   ) {
     switch (action.destination) {
       case ArchiveWorkspaceQuickActionDestination.record:
-        context.push('/record');
+        context.go('/record');
       case ArchiveWorkspaceQuickActionDestination.shareProof:
       case ArchiveWorkspaceQuickActionDestination.untaggedDrilldown:
       case ArchiveWorkspaceQuickActionDestination.insightQuality:

@@ -11,31 +11,24 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/personal_return_prompt_model.dart';
 import 'package:voicememory_mobile/features/return_changes/archive_return_changes_copy.dart';
-import 'package:voicememory_mobile/features/activation/day_two_return_loop_payoff.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
-import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/low_evidence/low_evidence_copy.dart';
-import 'package:voicememory_mobile/features/archive_history/archive_history_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
 import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/first_save_lift/first_save_lift_copy.dart';
 import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:voicememory_mobile/features/low_friction_return/low_friction_return_engine.dart';
 import 'package:voicememory_mobile/features/next_action/next_best_action_copy.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
-import 'package:voicememory_mobile/features/first_run_positioning/first_run_positioning_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
@@ -43,18 +36,13 @@ import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_copy.d
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
-import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/first_proof_journey_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
-import 'package:voicememory_mobile/features/release_candidate/v1_revenue_focus_policy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
@@ -64,9 +52,6 @@ import 'package:voicememory_mobile/features/voice_capture/microphone_permission_
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
-import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -74,19 +59,19 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/first_run_positioning_card.dart';
-import 'package:voicememory_mobile/widgets/record/record_screen_close_button.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'helpers/mock_audioplayers.dart';
 
 JournalEntry _entry({
   required String id,
   DateTime? createdAt,
   String? transcript,
-}) =>
-    JournalEntry(
+}) => JournalEntry(
   id: id,
   createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-  transcript: transcript ??
+  transcript:
+      transcript ??
       'A long enough transcript to count as a saved reflection for tests.',
   durationSeconds: 30,
   reflection: const Reflection(
@@ -117,33 +102,29 @@ List<JournalEntry> _confirmedRepeatJournalEntries(int count) {
   );
 }
 
-Future<void> seedConfirmedRepeatEntries(
-  WidgetTester tester,
-  int count,
-) async {
+Future<void> seedConfirmedRepeatEntries(WidgetTester tester, int count) async {
   await tester.runAsync(() async {
-    for (final entry in _confirmedRepeatJournalEntries(count)) {
-      await AppServices.instance.journalStore.save(entry);
-    }
+    await AppServices.instance.journalStore.replaceAll(
+      _confirmedRepeatJournalEntries(count),
+    );
   });
 }
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] Recording saved locally — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: '[draft] Recording saved locally — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<PressureCheckInRecord> _workThread3() => [
   PressureCheckInRecord(
@@ -210,12 +191,21 @@ void _expectNoBannedFirstImpressionCopy(WidgetTester tester) {
 }
 
 void main() {
+  setUpAll(installMockAudioplayers);
+  tearDownAll(() async {
+    await AppServices.disposeForTest();
+    uninstallMockAudioplayers();
+  });
+
   group('RecordScreenFramingCopy', () {
     test('uses concrete first-recording guidance', () {
-      expect(RecordScreenFramingCopy.title, 'What is on your mind?');
+      expect(
+        RecordScreenFramingCopy.title,
+        'Your voice becomes your life story.',
+      );
       expect(
         RecordScreenFramingCopy.guidance,
-        'Say one small thing from today.',
+        'Speak one honest thought to begin.',
       );
     });
 
@@ -225,7 +215,10 @@ void main() {
         RecordFirstUsePromptCopy.body,
         contains('returned, changed, faded, or corrected'),
       );
-      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
+      expect(
+        RecordFirstUsePromptCopy.footer,
+        contains('Ten seconds is enough'),
+      );
       expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
       expect(RecordFirstUsePromptCopy.examples, hasLength(3));
       for (final copy in [
@@ -242,17 +235,22 @@ void main() {
       }
     });
 
-    test('first-use prompt avoids chatbot and journaling friction language', () {
-      for (final line in [
-        RecordFirstUsePromptCopy.title,
-        RecordFirstUsePromptCopy.body,
-        RecordFirstUsePromptCopy.footer,
-      ]) {
-        for (final violation in LowEffortCaptureCopyGuard.violationsIn(line)) {
-          fail('"$line" contains banned friction phrase "$violation"');
+    test(
+      'first-use prompt avoids chatbot and journaling friction language',
+      () {
+        for (final line in [
+          RecordFirstUsePromptCopy.title,
+          RecordFirstUsePromptCopy.body,
+          RecordFirstUsePromptCopy.footer,
+        ]) {
+          for (final violation in LowEffortCaptureCopyGuard.violationsIn(
+            line,
+          )) {
+            fail('"$line" contains banned friction phrase "$violation"');
+          }
         }
-      }
-    });
+      },
+    );
 
     test('empty and started copy match the clean first-load spec', () {
       expect(
@@ -299,6 +297,7 @@ void main() {
         journalPath: '${tempDir.path}/journal.json',
         skipRevenueCat: true,
       );
+      await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -312,11 +311,12 @@ void main() {
     Future<void> seedEntries(WidgetTester tester, int count) async {
       if (count == 0) return;
       await tester.runAsync(() async {
-        for (var i = 0; i < count; i++) {
-          await AppServices.instance.journalStore.save(
-            _entry(id: 'e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
-          );
-        }
+        await AppServices.instance.journalStore.replaceAll(
+          List.generate(
+            count,
+            (i) => _entry(id: 'e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
+          ),
+        );
       });
     }
 
@@ -369,21 +369,40 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows simplified promise card not generic framing', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
+    testWidgets(
+      'entry count 0 shows simplified promise card not generic framing',
+      (tester) async {
+        await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
-      expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
-      expect(find.text(RecordFirstRunPromiseCopy.body), findsOneWidget);
-      expect(find.text(RecordFirstRunPromiseCopy.supportingLine), findsOneWidget);
-      expect(find.byKey(const Key('first_session_onboarding_card')), findsNothing);
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.title), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('record_first_run_screen_card')),
+          findsOneWidget,
+        );
+        expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
+        expect(find.text(RecordFirstRunPromiseCopy.body), findsOneWidget);
+        expect(
+          find.text(RecordFirstRunPromiseCopy.supportingLine),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('first_session_onboarding_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_top_archive_promise_hero')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_screen_framing_title')),
+          findsNothing,
+        );
+        expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
+        expect(
+          find.text(RecordScreenFramingCopy.emptyArchiveTitle),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('entry count 0 shows only the two capture actions', (
       tester,
@@ -415,31 +434,33 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 hides daily map so capture stays the only primary path', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
+    testWidgets(
+      'entry count 0 hides daily map so capture stays the only primary path',
+      (tester) async {
+        await pumpRecordScreen(tester);
 
-      expect(
-        find.byKey(const Key('daily_archive_exercise_record_card')),
-        findsNothing,
-      );
-      expect(find.text("Today's map prompt"), findsNothing);
-      expect(find.text("Today's exercise"), findsNothing);
-      expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
-      expect(find.text("Today's one question"), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('daily_archive_exercise_record_card')),
+          findsNothing,
+        );
+        expect(find.text("Today's map prompt"), findsNothing);
+        expect(find.text("Today's exercise"), findsNothing);
+        expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
+        expect(find.text("Today's one question"), findsNothing);
+      },
+    );
 
-    testWidgets('entry count 0 exposes record_empty_gate debug marker when loaded', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
+    testWidgets(
+      'entry count 0 exposes record_empty_gate debug marker when loaded',
+      (tester) async {
+        await pumpRecordScreen(tester);
 
-      expect(
-        find.byKey(const ValueKey('record_empty_gate_0_true')),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.byKey(const ValueKey('record_empty_gate_0_true')),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('entry count 0 hides banned first-impression copy', (
       tester,
@@ -449,26 +470,27 @@ void main() {
       _expectNoBannedFirstImpressionCopy(tester);
     });
 
-    testWidgets('does not show progress cards before entry count load completes', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    testWidgets(
+      'does not show progress cards before entry count load completes',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      _expectNoBannedFirstImpressionCopy(tester);
-    });
+        _expectNoBannedFirstImpressionCopy(tester);
+      },
+    );
 
     testWidgets('entry count 0 does not show One small recording', (
       tester,
@@ -489,7 +511,10 @@ void main() {
 
       expect(find.text(DailyMirrorCopy.heardHeroTitle), findsNothing);
       expect(find.text(DailyMirrorCopy.heardHeroBody), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+      expect(
+        find.byKey(const Key('record_screen_framing_title')),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
@@ -518,22 +543,32 @@ void main() {
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
     });
 
-    testWidgets('entry count 2 stays capture-first without daily mirror cards', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, entryCount: 2);
+    testWidgets(
+      'entry count 2 stays capture-first without daily mirror cards',
+      (tester) async {
+        await pumpRecordScreen(tester, entryCount: 2);
 
-      expect(
-        find.text(FirstThreeSessionCopy.session2StartingToNoticeTitle),
-        findsNothing,
-      );
-      expect(find.text(FirstThreeSessionCopy.journeyStep2), findsNothing);
-      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
-      expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
-      expect(find.byKey(const Key('record_archive_weak_compare_card')), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
-      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
-    });
+        expect(
+          find.text(FirstThreeSessionCopy.session2StartingToNoticeTitle),
+          findsNothing,
+        );
+        expect(find.text(FirstThreeSessionCopy.journeyStep2), findsNothing);
+        expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+        expect(
+          find.byKey(const Key('early_specific_insight_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_archive_weak_compare_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_screen_framing_title')),
+          findsNothing,
+        );
+        expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
+      },
+    );
 
     testWidgets('entry count 2 with shared words hides mirror cards on Record', (
       tester,
@@ -585,48 +620,64 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
-      expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_specific_insight_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_screen_framing_title')),
+        findsNothing,
+      );
     });
 
-    testWidgets('entry count 2 with unrelated entries hides weak compare on Record', (
-      tester,
-    ) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          _entry(
-            id: 'a',
-            transcript:
-                'Today I went for a long walk in the park near home after lunch.',
-          ),
-        );
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'b',
-            createdAt: DateTime(2026, 6, 2, 12),
-            transcript:
-                'I cooked pasta for dinner and watched a film alone tonight.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'neutral',
-              emotionalIntensity: 2,
-              recurringThemes: [],
-              exactLanguagePattern: '',
-              concreteObservation: '',
-              repeatedSignal: '',
+    testWidgets(
+      'entry count 2 with unrelated entries hides weak compare on Record',
+      (tester) async {
+        await tester.runAsync(() async {
+          await AppServices.instance.journalStore.save(
+            _entry(
+              id: 'a',
+              transcript:
+                  'Today I went for a long walk in the park near home after lunch.',
             ),
-          ),
-        );
-      });
-      await pumpRecordScreen(tester);
+          );
+          await AppServices.instance.journalStore.save(
+            JournalEntry(
+              id: 'b',
+              createdAt: DateTime(2026, 6, 2, 12),
+              transcript:
+                  'I cooked pasta for dinner and watched a film alone tonight.',
+              durationSeconds: 30,
+              reflection: const Reflection(
+                mood: 'neutral',
+                emotionalIntensity: 2,
+                recurringThemes: [],
+                exactLanguagePattern: '',
+                concreteObservation: '',
+                repeatedSignal: '',
+              ),
+            ),
+          );
+        });
+        await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_archive_weak_compare_card')), findsNothing);
-      expect(find.text(DailyMirrorCopy.weakStartedHeroBody), findsNothing);
-      expect(find.text(DailyMirrorCopy.weakStartedFootnote), findsNothing);
-      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
-      expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
-    });
+        expect(
+          find.byKey(const Key('record_archive_weak_compare_card')),
+          findsNothing,
+        );
+        expect(find.text(DailyMirrorCopy.weakStartedHeroBody), findsNothing);
+        expect(find.text(DailyMirrorCopy.weakStartedFootnote), findsNothing);
+        expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+        expect(
+          find.byKey(const Key('early_specific_insight_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_screen_framing_title')),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets(
       'entry count 3 hides One small recording on Record ready state',
@@ -640,33 +691,38 @@ void main() {
 
         expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
         expect(find.text('One small recording'), findsNothing);
-        expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+        expect(
+          find.byKey(const Key('record_screen_framing_title')),
+          findsNothing,
+        );
       },
     );
 
-    testWidgets('iPad width shows top-right Close on Record screen', (
+    testWidgets('iPad width does not show Close at the Record tab root', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(1024, 1366));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_screen_close')), findsOneWidget);
-      expect(find.byTooltip('Close'), findsOneWidget);
+      expect(find.byKey(const Key('record_screen_close')), findsNothing);
+      expect(find.byTooltip('Close'), findsNothing);
     });
-
   });
 
   group('Record CTA permission policy', () {
-    test('main record CTA uses request path before first microphone denial', () {
-      expect(
-        RecordMicrophonePermissionUi.recordCtaAction(
-          micPhase: RecordingPhase.permissionDenied,
-          userDeniedThisSession: false,
-        ),
-        RecordCtaAction.requestPermission,
-      );
-    });
+    test(
+      'main record CTA uses request path before first microphone denial',
+      () {
+        expect(
+          RecordMicrophonePermissionUi.recordCtaAction(
+            micPhase: RecordingPhase.permissionDenied,
+            userDeniedThisSession: false,
+          ),
+          RecordCtaAction.requestPermission,
+        );
+      },
+    );
 
     test('loop record CTA uses open settings path when permanently denied', () {
       expect(
@@ -696,35 +752,41 @@ void main() {
       );
     });
 
-    test('blocked state keeps Type Instead path via permission panel policy', () {
-      expect(
-        RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
-          ui: RecordUiState.permissionBlocked,
-          micPhase: RecordingPhase.permissionPermanentlyDenied,
-          userDeniedThisSession: true,
-        ),
-        isTrue,
-      );
-      expect(
-        RecordMicrophonePermissionUi.blockedPanelKind(
-          micPhase: RecordingPhase.permissionPermanentlyDenied,
-          userDeniedThisSession: true,
-        ),
-        MicrophoneBlockedPanelKind.openSettings,
-      );
-    });
+    test(
+      'blocked state keeps Type Instead path via permission panel policy',
+      () {
+        expect(
+          RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
+            ui: RecordUiState.permissionBlocked,
+            micPhase: RecordingPhase.permissionPermanentlyDenied,
+            userDeniedThisSession: true,
+          ),
+          isTrue,
+        );
+        expect(
+          RecordMicrophonePermissionUi.blockedPanelKind(
+            micPhase: RecordingPhase.permissionPermanentlyDenied,
+            userDeniedThisSession: true,
+          ),
+          MicrophoneBlockedPanelKind.openSettings,
+        );
+      },
+    );
 
-    test('ready UI keeps primary record copy available before blocked state', () {
-      expect(
-        RecordMicrophonePermissionUi.shouldHideCompetingRecordCtas(
-          ui: RecordUiState.ready,
-          micPhase: RecordingPhase.permissionDenied,
-          userDeniedThisSession: false,
-        ),
-        isFalse,
-      );
-      expect(ConsumerUiCopy.recordOneMomentCta, 'Record one moment');
-    });
+    test(
+      'ready UI keeps primary record copy available before blocked state',
+      () {
+        expect(
+          RecordMicrophonePermissionUi.shouldHideCompetingRecordCtas(
+            ui: RecordUiState.ready,
+            micPhase: RecordingPhase.permissionDenied,
+            userDeniedThisSession: false,
+          ),
+          isFalse,
+        );
+        expect(ConsumerUiCopy.recordOneMomentCta, 'Record one moment');
+      },
+    );
   });
 
   group('Record screen unified CTA policy', () {
@@ -735,6 +797,7 @@ void main() {
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
+      await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -757,26 +820,27 @@ void main() {
     }) async {
       if (entryCount > 0) {
         await tester.runAsync(() async {
-          for (var i = 0; i < entryCount; i++) {
-            await AppServices.instance.journalStore.save(
-              degradedVoicePostSave
+          await AppServices.instance.journalStore.replaceAll(
+            List.generate(
+              entryCount,
+              (i) => degradedVoicePostSave
                   ? _degradedVoiceEntry(id: 'v$i')
                   : _entry(id: 'e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
-            );
-          }
+            ),
+          );
         });
       }
       final auditEntriesAfterSave = degradedVoicePostSave && entryCount > 0
           ? List.generate(entryCount, (i) => _degradedVoiceEntry(id: 'v$i'))
           : (ui == RecordUiState.done && entryCount > 0
-              ? List.generate(
-                  entryCount,
-                  (i) => _entry(
-                    id: 'e$i',
-                    createdAt: DateTime(2026, 6, 1 + i, 12),
-                  ),
-                )
-              : null);
+                ? List.generate(
+                    entryCount,
+                    (i) => _entry(
+                      id: 'e$i',
+                      createdAt: DateTime(2026, 6, 1 + i, 12),
+                    ),
+                  )
+                : null);
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: ui,
@@ -825,16 +889,31 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
-      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
+      expect(
+        find.byKey(const Key('record_first_run_screen_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('record_first_use_capture_section')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+      expect(
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+        findsOneWidget,
+      );
       expect(find.text('Allow microphone'), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsNothing);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_primary_button')),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
-      expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
+      expect(
+        find.text(CaptureEntryActions.logPressureMomentLabel),
+        findsNothing,
+      );
     });
 
     testWidgets('first-use simplified layout hides duplicate education cards', (
@@ -842,21 +921,39 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_first_use_prompt_block')), findsNothing);
-      expect(find.byKey(const Key('first_proof_journey_strip_card')), findsNothing);
+      expect(
+        find.byKey(const Key('record_first_use_prompt_block')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('first_proof_journey_strip_card')),
+        findsNothing,
+      );
       expect(find.text(RecordFirstUsePromptCopy.footer), findsNothing);
       expect(find.textContaining('1 of 3'), findsNothing);
       expect(find.byType(FirstRunPositioningCard), findsNothing);
-      expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_use_wording_helper_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('record_capture_modes_card')), findsNothing);
       expect(find.text('Start with one sentence'), findsNothing);
       expect(find.text(RecordFirstRunPromiseCopy.proLine), findsNothing);
       expect(find.byKey(const Key('record_see_example_link')), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
       expect(find.text(FirstSaveLiftCopy.title), findsNothing);
-      expect(find.byKey(const Key('surface_priority_debug_badge')), findsNothing);
+      expect(
+        find.byKey(const Key('surface_priority_debug_badge')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('three_day_challenge_card')), findsNothing);
       expect(find.text(LandingAppContinuityCopy.step1Title), findsNothing);
       expect(find.text(LandingAppContinuityCopy.step1Body), findsNothing);
@@ -867,8 +964,14 @@ void main() {
     testWidgets('first-use prompt hides after first entry', (tester) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.byKey(const Key('record_first_use_prompt_block')), findsNothing);
-      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
+      expect(
+        find.byKey(const Key('record_first_use_prompt_block')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_first_use_capture_section')),
+        findsNothing,
+      );
       expect(find.text(RecordFirstUsePromptCopy.title), findsNothing);
     });
 
@@ -877,7 +980,10 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+      expect(
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
@@ -887,25 +993,32 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.text(RecordScreenFramingCopy.title), findsNothing);
+      expect(
+        find.byKey(const Key('record_screen_framing_title')),
+        findsNothing,
+      );
       expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
       _expectNoBannedFirstImpressionCopy(tester);
     });
 
-    testWidgets('simulator deniedCanAskAgain with recorder access shows Record moment', (
-      tester,
-    ) async {
-      await pumpRecordScreen(
-        tester,
-        entryCount: 2,
-        micPhase: RecordingPhase.permissionDenied,
-        userDeniedThisSession: false,
-      );
+    testWidgets(
+      'simulator deniedCanAskAgain with recorder access shows Record moment',
+      (tester) async {
+        await pumpRecordScreen(
+          tester,
+          entryCount: 2,
+          micPhase: RecordingPhase.permissionDenied,
+          userDeniedThisSession: false,
+        );
 
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
-    });
+        expect(
+          find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
+      },
+    );
 
     testWidgets('returning user shows one voice-start CTA: Record moment', (
       tester,
@@ -921,7 +1034,11 @@ void main() {
     testWidgets('recording shows only Stop recording as voice action', (
       tester,
     ) async {
-      await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.recording);
+      await pumpRecordScreen(
+        tester,
+        entryCount: 1,
+        ui: RecordUiState.recording,
+      );
 
       expect(find.text(ConsumerUiCopy.stopRecordingCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
@@ -946,17 +1063,32 @@ void main() {
         find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
         findsOneWidget,
       );
-      expect(find.text(RecordReturnProCopy.evidenceViewArchive), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
+      expect(
+        find.text(RecordReturnProCopy.evidenceViewArchive),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePrimaryCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('early_archive_return_reminder_card_record')),
         findsNothing,
       );
       expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
-      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_entry_saved_receipt_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('first_save_archive_started_card')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('return_tomorrow_cue_card_after_first_moment')),
         findsNothing,
@@ -969,8 +1101,14 @@ void main() {
         find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
         findsNothing,
       );
-      expect(find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(
+        find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsNothing,
+      );
       expect(find.text('Done'), findsNothing);
       expect(find.text('Record another'), findsNothing);
     });
@@ -1021,18 +1159,9 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
-        findsNothing,
-      );
-      expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveBody),
-        findsNothing,
-      );
-      expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveFooter),
-        findsNothing,
-      );
+      expect(find.text(ComeBackTomorrowV2Copy.postSaveTitle), findsNothing);
+      expect(find.text(ComeBackTomorrowV2Copy.postSaveBody), findsNothing);
+      expect(find.text(ComeBackTomorrowV2Copy.postSaveFooter), findsNothing);
       expect(find.byKey(const Key('come_back_tomorrow_card')), findsNothing);
       expect(
         find.text(PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback),
@@ -1088,19 +1217,36 @@ void main() {
         find.text(VisibleArchiveProofCopy.repeatPostSaveBody),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('repeat_post_save_view_evidence_cta')), findsOneWidget);
-      expect(find.byKey(const Key('repeat_post_save_add_one_more_moment_cta')), findsOneWidget);
-      expect(find.byKey(const Key('repeat_post_save_done_for_today_cta')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsNothing);
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
       expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
+        find.byKey(const Key('repeat_post_save_view_evidence_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('repeat_post_save_add_one_more_moment_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('repeat_post_save_done_for_today_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
         findsNothing,
       );
+      expect(
+        find.byKey(const Key('post_save_recorded_summary_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('done_for_today_receipt_card')),
+        findsNothing,
+      );
+      expect(find.text(ComeBackTomorrowV2Copy.postSaveTitle), findsNothing);
       expect(find.byKey(const Key('come_back_tomorrow_card')), findsNothing);
       expect(
-        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
+        find.byKey(
+          const Key('post_save_return_handoff_card_afterSecondSaveRelated'),
+        ),
         findsNothing,
       );
       expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsNothing);
@@ -1164,10 +1310,7 @@ void main() {
       }
 
       expect(find.byKey(const Key('repeat_post_save_card')), findsNothing);
-      expect(
-        find.text(ComeBackTomorrowV2Copy.postSaveTitle),
-        findsOneWidget,
-      );
+      expect(find.text(ComeBackTomorrowV2Copy.postSaveTitle), findsOneWidget);
       expect(find.byKey(const Key('come_back_tomorrow_card')), findsOneWidget);
     });
 
@@ -1198,7 +1341,8 @@ void main() {
             ),
             _entry(
               id: 'b',
-              transcript: 'Another unrelated note about errands this afternoon.',
+              transcript:
+                  'Another unrelated note about errands this afternoon.',
             ),
           ],
         ),
@@ -1263,13 +1407,20 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);
       expect(
-        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
+        find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
         findsNothing,
       );
       expect(
-        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveUnrelated')),
+        find.byKey(
+          const Key('post_save_return_handoff_card_afterSecondSaveRelated'),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(
+          const Key('post_save_return_handoff_card_afterSecondSaveUnrelated'),
+        ),
         findsNothing,
       );
       expect(
@@ -1282,7 +1433,10 @@ void main() {
       expect(find.text(ChatDifferentiationCopy.firstProofLine), findsOneWidget);
       expect(
         find.text(FirstProofPayoffCopy.truthLine).evaluate().isNotEmpty ||
-            find.text(ProofConfidenceCalibrationCopy.strong).evaluate().isNotEmpty,
+            find
+                .text(ProofConfidenceCalibrationCopy.strong)
+                .evaluate()
+                .isNotEmpty,
         isTrue,
       );
       expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
@@ -1290,62 +1444,73 @@ void main() {
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsNothing,
       );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
+      expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
       expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
-      expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
       expect(
-        find.text('Pressure shows up, then you say yes before checking your capacity.'),
+        find.text(PostSaveFocusedActionsCopy.addOneMoreMoment),
+        findsNothing,
+      );
+      expect(
+        find.text(
+          'Pressure shows up, then you say yes before checking your capacity.',
+        ),
         findsNothing,
       );
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
     });
 
-    testWidgets('ipad smoke three related moments surface first proof without stale CTA', (
-      tester,
-    ) async {
-      final entries = _confirmedRepeatJournalEntries(3);
-      await seedConfirmedRepeatEntries(tester, 3);
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: entries,
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    testWidgets(
+      'ipad smoke three related moments surface first proof without stale CTA',
+      (tester) async {
+        final entries = _confirmedRepeatJournalEntries(3);
+        await seedConfirmedRepeatEntries(tester, 3);
+        VisualAuditOverrides.setRecordPresentation(
+          RecordAuditPresentation(
+            ui: RecordUiState.done,
+            entriesAfterSave: entries,
+          ),
+        );
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
-      expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
-      expect(
-        find.text('Pressure shows up, then you say yes before checking your capacity.'),
-        findsNothing,
-      );
-      expect(find.textContaining('said yes'), findsWidgets);
-    });
+        expect(
+          find.byKey(const Key('first_proof_payoff_card')),
+          findsOneWidget,
+        );
+        expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
+        expect(
+          find.text(PostSaveFocusedActionsCopy.addOneMoreMoment),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            'Pressure shows up, then you say yes before checking your capacity.',
+          ),
+          findsNothing,
+        );
+        expect(find.textContaining('said yes'), findsWidgets);
+      },
+    );
 
     testWidgets('third related post-save shows evidence chips', (tester) async {
       await seedConfirmedRepeatEntries(tester, 3);
@@ -1376,29 +1541,53 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_payoff_your_words_label')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_proof_payoff_your_words_label')),
+        findsOneWidget,
+      );
       expect(find.textContaining('said yes'), findsWidgets);
     });
 
-    testWidgets('third unrelated post-save hides first proof moment', (tester) async {
+    testWidgets('third unrelated post-save hides first proof moment', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await AppServices.instance.journalStore.save(
-          _entry(id: 'a', transcript: 'A quiet moment about lunch with a friend today.'),
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
         );
         await AppServices.instance.journalStore.save(
-          _entry(id: 'b', transcript: 'Another unrelated note about errands this afternoon.'),
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
         );
         await AppServices.instance.journalStore.save(
-          _entry(id: 'c', transcript: 'A calm evening walk before bed tonight.'),
+          _entry(
+            id: 'c',
+            transcript: 'A calm evening walk before bed tonight.',
+          ),
         );
       });
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: RecordUiState.done,
           entriesAfterSave: [
-            _entry(id: 'a', transcript: 'A quiet moment about lunch with a friend today.'),
-            _entry(id: 'b', transcript: 'Another unrelated note about errands this afternoon.'),
-            _entry(id: 'c', transcript: 'A calm evening walk before bed tonight.'),
+            _entry(
+              id: 'a',
+              transcript: 'A quiet moment about lunch with a friend today.',
+            ),
+            _entry(
+              id: 'b',
+              transcript:
+                  'Another unrelated note about errands this afternoon.',
+            ),
+            _entry(
+              id: 'c',
+              transcript: 'A calm evening walk before bed tonight.',
+            ),
           ],
         ),
       );
@@ -1444,8 +1633,14 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.doneCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsNothing);
-      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePrimaryCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
@@ -1465,7 +1660,10 @@ void main() {
 
         expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
         expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
-        expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsNothing);
+        expect(
+          find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+          findsNothing,
+        );
         expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
         expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       },
@@ -1487,7 +1685,10 @@ void main() {
         ),
       );
 
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+      expect(
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('capture_entry_record_cta')));
       expect(tapped, isTrue);
     });
@@ -1502,47 +1703,67 @@ void main() {
         micPhase: RecordingPhase.permissionDenied,
         micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
       );
-      expect(policy.primaryLabel, MicrophonePermissionCopy.requestMicrophoneCta);
+      expect(
+        policy.primaryLabel,
+        MicrophonePermissionCopy.requestMicrophoneCta,
+      );
       expect(policy.action, RecordCtaAction.requestPermission);
     });
 
-    testWidgets('simulator permanently denied with recorder access shows Record moment', (
-      tester,
-    ) async {
-      await pumpRecordScreen(
-        tester,
-        entryCount: 2,
-        micPhase: RecordingPhase.permissionPermanentlyDenied,
-        userDeniedThisSession: false,
-      );
+    testWidgets(
+      'simulator permanently denied with recorder access shows Record moment',
+      (tester) async {
+        await pumpRecordScreen(
+          tester,
+          entryCount: 2,
+          micPhase: RecordingPhase.permissionPermanentlyDenied,
+          userDeniedThisSession: false,
+        );
 
-      expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsNothing);
-      expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
-    });
+        expect(
+          find.text(MicrophonePermissionCopy.openSettingsCta),
+          findsNothing,
+        );
+        expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+        expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
+      },
+    );
 
-    testWidgets('degraded post-save shows typed fallback without duplicate record CTAs', (
-      tester,
-    ) async {
-      await pumpRecordScreen(
-        tester,
-        entryCount: 1,
-        ui: RecordUiState.done,
-        degradedVoicePostSave: true,
-      );
+    testWidgets(
+      'degraded post-save shows typed fallback without duplicate record CTAs',
+      (tester) async {
+        await pumpRecordScreen(
+          tester,
+          entryCount: 1,
+          ui: RecordUiState.done,
+          degradedVoicePostSave: true,
+        );
 
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
-      expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);
-      expect(find.text(RecordReturnProCopy.evidenceTitle), findsNothing);
-      expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
-    });
+        expect(
+          find.text(PendingTranscriptRecoveryCopy.postSaveTitle),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PendingTranscriptRecoveryCopy.postSaveBody),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PendingTranscriptRecoveryCopy.primaryAction),
+          findsOneWidget,
+        );
+        expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+        expect(
+          find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
+          findsNothing,
+        );
+        expect(find.text(RecordReturnProCopy.evidenceTitle), findsNothing);
+        expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+        expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
+      },
+    );
 
     testWidgets('degraded first save does not show archive started payoff', (
       tester,
@@ -1554,7 +1775,10 @@ void main() {
         degradedVoicePostSave: true,
       );
 
-      expect(find.byKey(const Key('first_save_archive_started_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_save_archive_started_card')),
+        findsNothing,
+      );
       expect(
         VoiceCaptureQuality.isDegradedVoiceCapture(_degradedVoiceEntry()),
         isTrue,
@@ -1566,35 +1790,47 @@ void main() {
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
-    });
-
-    testWidgets('one entry ready shows low-evidence guidance without map clutter', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, entryCount: 1);
-
-      expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(
-        find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
         findsOneWidget,
       );
-      expect(find.text(LowEvidenceCopy.oneEntryTitle), findsOneWidget);
-      expect(find.text(LowEvidenceCopy.oneEntryBody), findsOneWidget);
-      expect(
-        find.byKey(const Key('early_first_signal_card_oneEntryReceipt')),
-        findsNothing,
-      );
-      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
-      expect(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
-        findsNothing,
-      );
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
+
+    testWidgets(
+      'one entry ready shows low-evidence guidance without map clutter',
+      (tester) async {
+        await pumpRecordScreen(tester, entryCount: 1);
+
+        expect(
+          find.byKey(const Key('returning_user_today_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('daily_archive_exercise_record_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+          findsOneWidget,
+        );
+        expect(find.text(LowEvidenceCopy.oneEntryTitle), findsOneWidget);
+        expect(find.text(LowEvidenceCopy.oneEntryBody), findsOneWidget);
+        expect(
+          find.byKey(const Key('early_first_signal_card_oneEntryReceipt')),
+          findsNothing,
+        );
+        expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+        expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
+        expect(
+          find.byKey(
+            const Key('early_repeat_progress_view_saved_moments_button'),
+          ),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('post-save done state hides returning-user Today card', (
       tester,
@@ -1616,7 +1852,10 @@ void main() {
       await pumpRecordScreen(tester, entryCount: 1);
 
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsNothing,
+      );
       expect(
         find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
         findsOneWidget,
@@ -1628,38 +1867,41 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('two related entries show low-evidence guidance without extra CTA', (
-      tester,
-    ) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          _entry(
-            id: 'a',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'I had no capacity but I said yes again to the extra meeting today.',
-          ),
-        );
-        await AppServices.instance.journalStore.save(
-          _entry(
-            id: 'b',
-            createdAt: DateTime(2026, 6, 2, 12),
-            transcript:
-                'Same thing — said yes when I had no capacity for one more thing.',
-          ),
-        );
-      });
-      await pumpRecordScreen(tester);
+    testWidgets(
+      'two related entries show low-evidence guidance without extra CTA',
+      (tester) async {
+        await tester.runAsync(() async {
+          await AppServices.instance.journalStore.save(
+            _entry(
+              id: 'a',
+              createdAt: DateTime(2026, 6, 1, 12),
+              transcript:
+                  'I had no capacity but I said yes again to the extra meeting today.',
+            ),
+          );
+          await AppServices.instance.journalStore.save(
+            _entry(
+              id: 'b',
+              createdAt: DateTime(2026, 6, 2, 12),
+              transcript:
+                  'Same thing — said yes when I had no capacity for one more thing.',
+            ),
+          );
+        });
+        await pumpRecordScreen(tester);
 
-      expect(
-        find.byKey(const Key('low_evidence_guidance_card_twoRelatedNotEnough')),
-        findsOneWidget,
-      );
-      expect(find.text(LowEvidenceCopy.twoRelatedTitle), findsOneWidget);
-      expect(find.text(LowEvidenceCopy.twoRelatedBody), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
+        expect(
+          find.byKey(
+            const Key('low_evidence_guidance_card_twoRelatedNotEnough'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(LowEvidenceCopy.twoRelatedTitle), findsOneWidget);
+        expect(find.text(LowEvidenceCopy.twoRelatedBody), findsOneWidget);
+        expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('two unrelated entries do not claim repeat forming', (
       tester,
@@ -1686,14 +1928,8 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(
-        find.text(LowEvidenceCopy.twoUnrelatedTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(LowEvidenceCopy.twoRelatedTitle),
-        findsNothing,
-      );
+      expect(find.text(LowEvidenceCopy.twoUnrelatedTitle), findsOneWidget);
+      expect(find.text(LowEvidenceCopy.twoRelatedTitle), findsNothing);
       expect(
         find.byKey(const Key('todays_one_question_card_helper')),
         findsOneWidget,
@@ -1703,84 +1939,104 @@ void main() {
         isNot(contains('repeat may be forming')),
       );
       expect(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
-        findsNothing,
-      );
-    });
-
-    testWidgets('two entry ready keeps mic primary without saved moments button', (
-      tester,
-    ) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          _entry(
-            id: 'a',
-            transcript: 'A quiet moment about lunch with a friend today.',
-          ),
-        );
-        await AppServices.instance.journalStore.save(
-          _entry(
-            id: 'b',
-            transcript: 'Another unrelated note about errands this afternoon.',
-          ),
-        );
-      });
-      await pumpRecordScreen(tester);
-
-      expect(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
-        findsNothing,
-      );
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
-
-    testWidgets('three confirmed-repeat entries hide low-evidence guidance card', (
-      tester,
-    ) async {
-      await seedConfirmedRepeatEntries(tester, 3);
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 30; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-
-      expect(find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')), findsNothing);
-      expect(
-        find.byKey(const Key('low_evidence_guidance_card_twoRelatedNotEnough')),
-        findsNothing,
-      );
-      expect(
         find.byKey(
-          const Key('low_evidence_guidance_card_twoUnrelatedRealEntries'),
+          const Key('early_repeat_progress_view_saved_moments_button'),
         ),
         findsNothing,
       );
-      expect(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('archive_belief_surface_headline')), findsOneWidget);
-      expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
     });
 
-    testWidgets('three confirmed-repeat ready state shows first week loop', (
+    testWidgets(
+      'two entry ready keeps mic primary without saved moments button',
+      (tester) async {
+        await tester.runAsync(() async {
+          await AppServices.instance.journalStore.save(
+            _entry(
+              id: 'a',
+              transcript: 'A quiet moment about lunch with a friend today.',
+            ),
+          );
+          await AppServices.instance.journalStore.save(
+            _entry(
+              id: 'b',
+              transcript:
+                  'Another unrelated note about errands this afternoon.',
+            ),
+          );
+        });
+        await pumpRecordScreen(tester);
+
+        expect(
+          find.byKey(
+            const Key('early_repeat_progress_view_saved_moments_button'),
+          ),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'three confirmed-repeat entries hide low-evidence guidance card',
+      (tester) async {
+        await seedConfirmedRepeatEntries(tester, 3);
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 30; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+
+        expect(
+          find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(
+            const Key('low_evidence_guidance_card_twoRelatedNotEnough'),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.byKey(
+            const Key('low_evidence_guidance_card_twoUnrelatedRealEntries'),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.byKey(
+            const Key('early_repeat_progress_view_saved_moments_button'),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('archive_belief_surface_headline')),
+          findsOneWidget,
+        );
+        expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
+      },
+    );
+
+    testWidgets('three confirmed-repeat ready state prioritizes watch target', (
       tester,
     ) async {
+      await tester.runAsync(
+        () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
+      );
       await seedConfirmedRepeatEntries(tester, 3);
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -1803,8 +2059,12 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_week_loop_card')), findsOneWidget);
-      expect(find.text(FirstWeekLoopCopy.title), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('first_week_loop_card')), findsNothing);
+      expect(find.text(FirstWeekLoopCopy.title), findsNothing);
     });
 
     testWidgets('first proof post-save does not show first week loop card', (
@@ -1873,15 +2133,12 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
+      expect(find.byKey(const Key('what_changed_v2_card')), findsOneWidget);
+      expect(find.text(WhatChangedV2Copy.question), findsOneWidget);
       expect(
-        find.byKey(const Key('what_changed_v2_card')),
-        findsOneWidget,
+        find.byKey(const Key('return_check_payoff_card_unknown')),
+        findsNothing,
       );
-      expect(
-        find.text(WhatChangedV2Copy.question),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('return_check_payoff_card_unknown')), findsNothing);
       expect(find.byKey(const Key('repeat_return_check_card')), findsNothing);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
@@ -1890,84 +2147,82 @@ void main() {
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsNothing,
       );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
+      expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
       expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
     });
 
-    testWidgets('fourth changed related post-save shows What changed without duplicate completion copy', (
-      tester,
-    ) async {
-      final entries = [
-        _entry(
-          id: 'repeat_0',
-          transcript:
-              'I had no capacity but I said yes again to the extra meeting today.',
-          createdAt: DateTime(2026, 6, 10, 12),
-        ),
-        _entry(
-          id: 'repeat_1',
-          transcript:
-              'Same thing — said yes when I had no capacity for one more thing.',
-          createdAt: DateTime(2026, 6, 11, 12),
-        ),
-        _entry(
-          id: 'repeat_2',
-          transcript:
-              'I said yes again even though I had no capacity for one more ask.',
-          createdAt: DateTime(2026, 6, 12, 12),
-        ),
-        _entry(
-          id: 'repeat_3',
-          transcript:
-              'I paused before saying yes when they asked me to take on more work.',
-          createdAt: DateTime(2026, 6, 13, 12),
-        ),
-      ];
-      await tester.runAsync(() async {
-        for (final entry in entries) {
-          await AppServices.instance.journalStore.save(entry);
-        }
-      });
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: entries,
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    testWidgets(
+      'fourth changed related post-save shows What changed without duplicate completion copy',
+      (tester) async {
+        final entries = [
+          _entry(
+            id: 'repeat_0',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          _entry(
+            id: 'repeat_1',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          _entry(
+            id: 'repeat_2',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+          _entry(
+            id: 'repeat_3',
+            transcript:
+                'I paused before saying yes when they asked me to take on more work.',
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+        ];
+        await tester.runAsync(() async {
+          for (final entry in entries) {
+            await AppServices.instance.journalStore.save(entry);
+          }
+        });
+        VisualAuditOverrides.setRecordPresentation(
+          RecordAuditPresentation(
+            ui: RecordUiState.done,
+            entriesAfterSave: entries,
+          ),
+        );
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      expect(
-        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
-    });
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+          findsOneWidget,
+        );
+        expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
+        expect(
+          find.byKey(const Key('archive_proof_counter_card')),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('tapping softer on What changed v2 shows softer payoff', (
       tester,
@@ -2000,9 +2255,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      await tester.tap(
-        find.byKey(const Key('what_changed_v2_option_softer')),
-      );
+      await tester.tap(find.byKey(const Key('what_changed_v2_option_softer')));
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -2012,10 +2265,16 @@ void main() {
       }
 
       expect(find.byKey(const Key('what_changed_v2_card')), findsNothing);
-      expect(find.byKey(const Key('what_changed_v2_payoff_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('what_changed_v2_payoff_card')),
+        findsOneWidget,
+      );
       expect(find.text(WhatChangedV2Copy.payoffSofter), findsOneWidget);
       expect(find.byKey(const Key('helped_tracking_card')), findsNothing);
-      expect(find.byKey(const Key('return_check_payoff_card_softer')), findsOneWidget);
+      expect(
+        find.byKey(const Key('return_check_payoff_card_softer')),
+        findsOneWidget,
+      );
       expect(find.text(ReturnCheckPayoffCopy.softerTitle), findsOneWidget);
     });
 
@@ -2032,166 +2291,224 @@ void main() {
     ) async {
       await pumpRecordScreen(tester, entryCount: 5);
 
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsOneWidget,
+      );
       expect(find.text("Today's map prompt"), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.returningUserFivePlusTitle), findsNothing);
+      expect(
+        find.text(VisibleArchiveProofCopy.returningUserFivePlusTitle),
+        findsNothing,
+      );
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
-      expect(find.text(VisibleArchiveProofCopy.nextMomentPromptSectionLabel), findsNothing);
+      expect(
+        find.text(VisibleArchiveProofCopy.nextMomentPromptSectionLabel),
+        findsNothing,
+      );
       expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
       expect(find.text("Today's one question"), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('ready state never stacks archive review with todays question', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, entryCount: 5);
+    testWidgets(
+      'ready state never stacks archive review with todays question',
+      (tester) async {
+        await pumpRecordScreen(tester, entryCount: 5);
 
-      final hasArchiveReview =
-          find.text(VisibleArchiveProofCopy.returningUserFivePlusTitle).evaluate().isNotEmpty;
-      final hasTodaysQuestion = find.byKey(const Key('todays_one_question_card')).evaluate().isNotEmpty;
+        final hasArchiveReview = find
+            .text(VisibleArchiveProofCopy.returningUserFivePlusTitle)
+            .evaluate()
+            .isNotEmpty;
+        final hasTodaysQuestion = find
+            .byKey(const Key('todays_one_question_card'))
+            .evaluate()
+            .isNotEmpty;
 
-      expect(hasArchiveReview && hasTodaysQuestion, isFalse);
-    });
+        expect(hasArchiveReview && hasTodaysQuestion, isFalse);
+      },
+    );
 
-    testWidgets('ten plus entries stay capture-first with at most one guidance card', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, entryCount: 12);
+    testWidgets(
+      'ten plus entries stay capture-first with at most one guidance card',
+      (tester) async {
+        await pumpRecordScreen(tester, entryCount: 12);
 
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
-      expect(find.text('Type instead'), findsOneWidget);
+        expect(
+          find.byKey(const Key('record_screen_framing_title')),
+          findsNothing,
+        );
+        expect(find.text('Type instead'), findsOneWidget);
 
-      expect(find.text(DailyReturnSuggestionSet.heading), findsNothing);
-      expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsNothing);
-      expect(
-        find.text(PersonalReturnPromptSet.personalizedLabel),
-        findsNothing,
-      );
-      expect(
-        find.text(ArchiveReturnChangesCopy.weeklyReviewTitle),
-        findsNothing,
-      );
-      expect(find.text(ArchiveDepthCopy.cardTitle), findsNothing);
-      expect(find.text(ArchiveReturnChangesCopy.reviewChangesButton), findsNothing);
-      expect(find.text(ArchiveReturnChangesCopy.viewEvidenceMapButton), findsNothing);
-      expect(find.text(ArchiveReturnChangesCopy.markSeenButton), findsNothing);
-      expect(
-        find.text(ArchiveReturnChangesCopy.proPreviewLink),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+        expect(find.text(DailyReturnSuggestionSet.heading), findsNothing);
+        expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsNothing);
+        expect(
+          find.text(PersonalReturnPromptSet.personalizedLabel),
+          findsNothing,
+        );
+        expect(
+          find.text(ArchiveReturnChangesCopy.weeklyReviewTitle),
+          findsNothing,
+        );
+        expect(find.text(ArchiveDepthCopy.cardTitle), findsNothing);
+        expect(
+          find.text(ArchiveReturnChangesCopy.reviewChangesButton),
+          findsNothing,
+        );
+        expect(
+          find.text(ArchiveReturnChangesCopy.viewEvidenceMapButton),
+          findsNothing,
+        );
+        expect(
+          find.text(ArchiveReturnChangesCopy.markSeenButton),
+          findsNothing,
+        );
+        expect(
+          find.text(ArchiveReturnChangesCopy.proPreviewLink),
+          findsNothing,
+        );
+        expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
 
-      final guidanceCards = [
-        find.byKey(const Key('daily_archive_exercise_record_card')),
-        find.byKey(const Key('returning_user_today_card')),
-        find.byKey(const Key('todays_one_question_card')),
-        find.byKey(const Key('start_here_today_card')),
-      ].map((f) => f.evaluate().length).fold<int>(0, (a, b) => a + b);
+        final guidanceCards = [
+          find.byKey(const Key('daily_archive_exercise_record_card')),
+          find.byKey(const Key('returning_user_today_card')),
+          find.byKey(const Key('todays_one_question_card')),
+          find.byKey(const Key('start_here_today_card')),
+        ].map((f) => f.evaluate().length).fold<int>(0, (a, b) => a + b);
 
-      expect(guidanceCards, lessThanOrEqualTo(1));
-    });
+        expect(guidanceCards, lessThanOrEqualTo(1));
+      },
+    );
 
-    testWidgets('five confirmed-repeat entries show watch target not archive stack', (
-      tester,
-    ) async {
-      await seedConfirmedRepeatEntries(tester, 5);
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    testWidgets(
+      'five confirmed-repeat entries show watch target not archive stack',
+      (tester) async {
+        await tester.runAsync(
+          () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
+        );
+        await seedConfirmedRepeatEntries(tester, 5);
+        await tester.binding.setSurfaceSize(const Size(390, 3200));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.textContaining(DailyArchiveMemoryCopy.watchTitle), findsOneWidget);
-      expect(find.text(DailyArchiveMemoryCopy.recordCta), findsOneWidget);
-      expect(find.byKey(const Key('archive_belief_surface_headline')), findsNothing);
-      expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsNothing);
-      expect(find.byKey(const Key('archive_summary_card')), findsNothing);
-      expect(find.text(ArchiveSummaryCopy.title), findsNothing);
-      expect(
-        find.byKey(const Key('confirmed_repeat_thought_map_card')),
-        findsNothing,
-      );
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsNothing);
-      expect(
-        find.byKey(const Key('weekly_archive_review_card')),
-        findsNothing,
-      );
-      expect(find.text(WeeklyArchiveWeekReviewCopy.title), findsNothing);
-      expect(find.byKey(const Key('private_archive_report_card')), findsNothing);
-      expect(find.text(PrivateArchiveReportCopy.title), findsNothing);
-      expect(
-        find.text(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
-        findsNothing,
-      );
-    });
+        expect(
+          find.byKey(const Key('daily_archive_memory_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(DailyArchiveMemoryCopy.watchTitle),
+          findsOneWidget,
+        );
+        expect(find.text(DailyArchiveMemoryCopy.recordCta), findsOneWidget);
+        expect(
+          find.byKey(const Key('archive_belief_surface_headline')),
+          findsNothing,
+        );
+        expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsNothing);
+        expect(find.byKey(const Key('archive_summary_card')), findsNothing);
+        expect(find.text(ArchiveSummaryCopy.title), findsNothing);
+        expect(
+          find.byKey(const Key('confirmed_repeat_thought_map_card')),
+          findsNothing,
+        );
+        expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsNothing);
+        expect(
+          find.byKey(const Key('weekly_archive_review_card')),
+          findsNothing,
+        );
+        expect(find.text(WeeklyArchiveWeekReviewCopy.title), findsNothing);
+        expect(
+          find.byKey(const Key('private_archive_report_card')),
+          findsNothing,
+        );
+        expect(find.text(PrivateArchiveReportCopy.title), findsNothing);
+        expect(
+          find.text(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+          findsNothing,
+        );
+      },
+    );
 
-    testWidgets('five confirmed-repeat entries cap proof cards below recorder', (
-      tester,
-    ) async {
-      await seedConfirmedRepeatEntries(tester, 5);
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    testWidgets(
+      'five confirmed-repeat entries cap proof cards below recorder',
+      (tester) async {
+        await tester.runAsync(
+          () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
+        );
+        await seedConfirmedRepeatEntries(tester, 5);
+        await tester.binding.setSurfaceSize(const Size(390, 3200));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      final proofCards = [
-        find.byKey(const Key('archive_belief_surface_headline')),
-        find.byKey(const Key('archive_summary_card')),
-        find.byKey(const Key('daily_return_reason_card')),
-        find.byKey(const Key('pattern_changed_card')),
-        find.byKey(const Key('repeat_return_check_change_proof_card')),
-        find.byKey(const Key('confirmed_repeat_thought_map_card')),
-        find.byKey(const Key('positive_reinforcement_card')),
-        find.byKey(const Key('weekly_archive_review_card')),
-        find.byKey(const Key('private_archive_report_card')),
-        find.byKey(const Key('archive_change_timeline_card')),
-        find.byKey(const Key('early_evidence_timeline_card')),
-        find.byKey(const Key('early_first_signal_card_threeEntryConfirmedRepeat')),
-      ]
-          .map((finder) => finder.evaluate().length)
-          .fold<int>(0, (total, count) => total + count);
+        final proofCards =
+            [
+                  find.byKey(const Key('archive_belief_surface_headline')),
+                  find.byKey(const Key('archive_summary_card')),
+                  find.byKey(const Key('daily_return_reason_card')),
+                  find.byKey(const Key('pattern_changed_card')),
+                  find.byKey(
+                    const Key('repeat_return_check_change_proof_card'),
+                  ),
+                  find.byKey(const Key('confirmed_repeat_thought_map_card')),
+                  find.byKey(const Key('positive_reinforcement_card')),
+                  find.byKey(const Key('weekly_archive_review_card')),
+                  find.byKey(const Key('private_archive_report_card')),
+                  find.byKey(const Key('archive_change_timeline_card')),
+                  find.byKey(const Key('early_evidence_timeline_card')),
+                  find.byKey(
+                    const Key(
+                      'early_first_signal_card_threeEntryConfirmedRepeat',
+                    ),
+                  ),
+                ]
+                .map((finder) => finder.evaluate().length)
+                .fold<int>(0, (total, count) => total + count);
 
-      expect(proofCards, lessThanOrEqualTo(3));
-      if (find.byKey(const Key('daily_archive_memory_card')).evaluate().isNotEmpty) {
-        expect(find.text('Record what happened'), findsOneWidget);
-        expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
-      } else {
-        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-      }
-    });
+        expect(proofCards, lessThanOrEqualTo(3));
+        if (find
+            .byKey(const Key('daily_archive_memory_card'))
+            .evaluate()
+            .isNotEmpty) {
+          expect(find.text('Record what happened'), findsOneWidget);
+          expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+        } else {
+          expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+        }
+      },
+    );
   });
 }

@@ -7,9 +7,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../billing/archive_entitlement_reader.dart';
-import '../billing/revenuecat_service.dart';
+import '../billing/revenuecat_configuration.dart';
 import '../billing/subscription_copy.dart';
 import '../config/developer_settings_gate.dart';
+import '../config/experimental_features.dart';
+import '../config/production_navigation.dart';
+import '../core/config/v1_capability_registry.dart';
+import '../core/config/v1_feature_flags.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
@@ -25,7 +29,6 @@ import '../models/journal_entry.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
-import '../features/support/testflight_feedback_copy.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
 import '../features/fact_ledger/archive_fact.dart';
@@ -34,9 +37,18 @@ import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/pins/pinned_evidence_store.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/tomorrow_return/tomorrow_check_in_coordinator.dart';
+import '../features/theme_system/ui/theme_studio_sheet.dart';
+import '../features/persona_forge/ui/persona_studio_sheet.dart';
+import '../features/neural_sculptor/lora_adapter_trainer.dart';
+import '../features/neural_sculptor/ui/neural_studio_sheet.dart';
+import '../features/browser_extension_bridge/ui/browser_bridge_settings_sheet.dart';
+import '../features/cloud_relay_sync/ui/cloud_sync_settings_sheet.dart';
 import '../product/consumer_ui_copy.dart';
+import '../router/route_catalog.dart';
 import '../security/security_settings_copy.dart';
 import '../services/app_services.dart';
+import '../storage/app_storage_paths.dart';
+import '../subscriptions/domain/subscription_models.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
@@ -78,9 +90,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     PackageInfo.fromPlatform().then((info) {
       if (mounted) setState(() => _packageInfo = info);
     });
-    CheckInReminderService.remindersEnabled().then((value) {
-      if (mounted) setState(() => _remindersEnabled = value);
-    });
+    if (V1CapabilityRegistry.notifications) {
+      CheckInReminderService.remindersEnabled().then((value) {
+        if (mounted) setState(() => _remindersEnabled = value);
+      });
+    }
   }
 
   String get _reminderStateLabel {
@@ -147,6 +161,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _loadIsPro();
   }
 
+  Future<void> _openNeuralStudio() async {
+    final services = AppServices.instance;
+    final builder = services.neuralDatasetBuilder;
+    final trainer = services.loraAdapterTrainer;
+    final adapters = services.sovereignAdapterManager;
+    if (builder == null || trainer == null || adapters == null) return;
+    final clusters = await services.semanticClusterStore.list();
+    if (!mounted) return;
+    await NeuralStudioSheet.show(
+      context,
+      datasetBuilder: builder,
+      trainer: trainer,
+      adapterManager: adapters,
+      clusters: clusters,
+      trainingConfiguration: () async {
+        final state = services.llamaModelManager?.state;
+        final path = state?.installedPath;
+        final sha = state?.verifiedSha256;
+        if (path == null || sha == null) return null;
+        final temporary = await AppStoragePaths.temporaryDirectory();
+        return LoRATrainingConfiguration(
+          baseModelPath: path,
+          baseModelSha256: sha,
+          outputDirectory: await temporary.createTemp('neural_output_'),
+        );
+      },
+    );
+  }
+
   Future<void> _dismissArchiveBackupBridge() async {
     await ArchiveBackupBridgeDismissStore.dismiss();
     if (mounted) setState(() {});
@@ -154,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _restorePurchases() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
-      billing: AppServices.instance.billing,
+      repository: AppServices.instance.subscriptionRepository,
     );
     if (flow.isBusy || _restoreBusy) return;
 
@@ -172,10 +215,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final versionLabel = _packageInfo == null
+    final packageInfo = _packageInfo;
+    final versionLabel = packageInfo == null
         ? '…'
-        : '${_packageInfo!.version} (${_packageInfo!.buildNumber})';
-    final showSettingsBetaFeedbackCard = ArchiveBetaMissionGate.isEnabled &&
+        : '${packageInfo.version} (${packageInfo.buildNumber})';
+    final initializedServices = AppServices.isInitialized
+        ? AppServices.instance
+        : null;
+    final syncIdentity = initializedServices?.syncIdentity;
+    final cloudRelaySyncEngine = initializedServices?.cloudRelaySyncEngine;
+    final showSettingsBetaFeedbackCard =
+        ArchiveBetaMissionGate.isEnabled &&
         BetaFeedbackIntelligenceEngine.shouldShowCard(
           BetaFeedbackIntelligenceEngine.buildContext(
             surface: BetaFeedbackIntelligenceSurface.settingsBeta,
@@ -188,11 +238,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
     final settingsFirstProofReached =
         BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof ||
-            ProEvidenceValueEngine.firstProofPayoffSeenForEntries(
-              _journalEntries,
-            );
-    final archiveBackupBridgeContext =
-        ArchiveBackupBridgeEngine.buildContext(
+        ProEvidenceValueEngine.firstProofPayoffSeenForEntries(_journalEntries);
+    final archiveBackupBridgeContext = ArchiveBackupBridgeEngine.buildContext(
       surface: ArchiveBackupBridgeSurface.settings,
       entryCount: _journalEntries.length,
       isPro: _isPro,
@@ -205,6 +252,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return PushedScreenShell(
       title: ConsumerUiCopy.settings,
+      fallbackRoute: RouteCatalog.accountHome,
       body: ArchiveResponsiveLayout.page(
         context: context,
         child: ListView(
@@ -212,6 +260,115 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
+            ListTile(
+              key: const Key('settings_starting_context_tile'),
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.person_add_alt_1_outlined),
+              title: const Text('Starting context'),
+              subtitle: const Text(
+                'Optionally add important people, a focus, or a goal.',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/cold-start/seed'),
+            ),
+            ListTile(
+              key: const Key('settings_theme_studio_tile'),
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.palette_outlined),
+              title: Text(
+                'Theme Studio',
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'Presets, accent, glass and Memory Graph appearance',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showThemeStudioSheet(context),
+            ),
+            if (enableExperimentalFeatures)
+              ListTile(
+                key: const Key('settings_persona_studio_tile'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.theater_comedy_outlined),
+                title: Text(
+                  'Persona Forge',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Build private, cluster-scoped Cognitive Council personas',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  final services = AppServices.instance;
+                  final clusters = await services.semanticClusterStore.list();
+                  if (!context.mounted) return;
+                  await PersonaStudioSheet.show(
+                    context,
+                    service: services.personaForgeService,
+                    knowledgeRouter: services.personaKnowledgeRouter,
+                    clusters: clusters,
+                    onOpenNeuralStudio: _openNeuralStudio,
+                  );
+                },
+              ),
+            if (enableExperimentalFeatures)
+              ListTile(
+                key: const Key('settings_neural_studio_tile'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.hub_outlined),
+                title: Text(
+                  'Neural Sculptor',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Private local datasets, LoRA training, and adapter control',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _openNeuralStudio,
+              ),
+            if (enableExperimentalFeatures)
+              ListTile(
+                key: const Key('settings_browser_bridge_tile'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.webhook_outlined),
+                title: Text(
+                  'Encrypted Web Clipper',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Pair and manage local browser extensions',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => BrowserBridgeSettingsSheet.show(
+                  context,
+                  server: AppServices.instance.vaultBridgeServer,
+                  prefs: AppServices.instance.prefs,
+                ),
+              ),
+            if (syncIdentity != null && cloudRelaySyncEngine != null)
+              ListTile(
+                key: const Key('settings_cloud_sync_tile'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.cloud_done_outlined),
+                title: Text(
+                  'Encrypted Cloud Relay',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  'Zero-knowledge multi-device synchronization',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => CloudSyncSettingsSheet.show(
+                  context,
+                  identity: syncIdentity,
+                  engine: cloudRelaySyncEngine,
+                ),
+              ),
             ListTile(
               key: const Key('settings_privacy_trust_centre_tile'),
               contentPadding: EdgeInsets.zero,
@@ -269,25 +426,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
             if (ArchiveBetaMissionGate.isEnabled) ...[
               const SizedBox(height: AppSpacing.sm),
-              RevenueReadinessCard(
-                dashboard: RevenueReadinessEngine.build(),
-              ),
+              RevenueReadinessCard(dashboard: RevenueReadinessEngine.build()),
               const SizedBox(height: AppSpacing.sm),
               const TestFlightMetricsDashboardCard(
                 source: 'settings',
                 surface: 'settings',
               ),
               const SizedBox(height: AppSpacing.sm),
-              const BetaConversionDiagnosisCard(
-                source: 'settings',
-              ),
+              const BetaConversionDiagnosisCard(source: 'settings'),
               const SizedBox(height: AppSpacing.sm),
-              const PurchaseSmokeTestCard(
-                source: 'settings',
-                compact: true,
-              ),
+              const PurchaseSmokeTestCard(source: 'settings', compact: true),
             ],
-            if (showArchiveBackupBridgeOnSettings) ...[
+            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime &&
+                showArchiveBackupBridgeOnSettings) ...[
               const SizedBox(height: AppSpacing.sm),
               ArchiveBackupBridgeCard(
                 contextData: archiveBackupBridgeContext,
@@ -296,72 +447,82 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onDismiss: () => unawaited(_dismissArchiveBackupBridge()),
               ),
             ],
-            ListTile(
-              key: const Key('settings_pro_value_preview_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ProValuePreviewCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime) ...[
+              ListTile(
+                key: const Key('settings_pro_value_preview_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ProValuePreviewCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ProValuePreviewCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/pro-preview'),
               ),
-              subtitle: Text(
-                ProValuePreviewCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ConsumerUiCopy.restorePurchases,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle:
+                    !AppServices.isInitialized ||
+                        AppServices
+                                .instance
+                                .subscriptionRepository
+                                .availability ==
+                            SubscriptionAvailability.available
+                    ? null
+                    : Text(
+                        SubscriptionCopy.temporarilyUnavailable,
+                        style: ArchiveMobileTypography.listSubtitle(context),
+                      ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _restoreBusy ? null : _restorePurchases,
               ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/pro-preview'),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ConsumerUiCopy.restorePurchases,
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: RevenueCatService.instance.isConfigured
-                  ? null
-                  : Text(
-                      SubscriptionCopy.temporarilyUnavailable,
-                      style: ArchiveMobileTypography.listSubtitle(context),
-                    ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _restoreBusy ? null : _restorePurchases,
-            ),
+            ],
             const PrivacyDataControlsSection(),
             AppReviewAccessSettingsSection(
               onUnlocked: _onAppReviewAccessUnlocked,
             ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ConsumerUiCopy.reminderSettingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (V1CapabilityRegistry.notifications)
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ConsumerUiCopy.reminderSettingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  '$_reminderStateLabel · $_reminderBody',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                value: _remindersEnabled,
+                onChanged: _remindersBusy ? null : _toggleReminders,
               ),
-              subtitle: Text(
-                '$_reminderStateLabel · $_reminderBody',
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              value: _remindersEnabled,
-              onChanged: _remindersBusy ? null : _toggleReminders,
-            ),
             // Memory: when ArchiveMe may connect entries. Persistent and
             // user-only — "Memory off" stays off until changed here.
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: MemoryScopeSettingsSection(),
             ),
-            ListTile(
-              key: const Key('settings_insight_quality_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                VisibleArchiveProofCopy.insightQualitySettingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (V1FeatureFlags.enableCustomReports)
+              ListTile(
+                key: const Key('settings_insight_quality_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  VisibleArchiveProofCopy.insightQualitySettingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  VisibleArchiveProofCopy.insightQualitySettingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/insight-quality'),
               ),
-              subtitle: Text(
-                VisibleArchiveProofCopy.insightQualitySettingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/insight-quality'),
-            ),
             ListTile(
               key: const Key('settings_security_tile'),
               contentPadding: EdgeInsets.zero,
@@ -376,76 +537,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/security'),
             ),
-            ListTile(
-              key: const Key('settings_pinned_evidence_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                PinnedEvidenceCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (ProductionNavigation.isNavRouteVisible('/pinned-evidence'))
+              ListTile(
+                key: const Key('settings_pinned_evidence_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  PinnedEvidenceCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  PinnedEvidenceCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/pinned-evidence'),
               ),
-              subtitle: Text(
-                PinnedEvidenceCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
+            if (ProductionNavigation.isNavRouteVisible('/archive-packs'))
+              ListTile(
+                key: const Key('settings_archive_packs_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ArchivePacksCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ArchivePacksCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/archive-packs'),
               ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/pinned-evidence'),
-            ),
-            ListTile(
-              key: const Key('settings_archive_packs_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ArchivePacksCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (ProductionNavigation.isNavRouteVisible('/details'))
+              ListTile(
+                key: const Key('settings_details_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  FactLedgerCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  FactLedgerCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/details'),
               ),
-              subtitle: Text(
-                ArchivePacksCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
+            if (V1FeatureFlags.enableActionItems)
+              ListTile(
+                key: const Key('settings_action_items_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ActionItemsCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ActionItemsCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/action-items'),
               ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/archive-packs'),
-            ),
-            ListTile(
-              key: const Key('settings_details_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                FactLedgerCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
+            if (ProductionNavigation.isNavRouteVisible('/collections'))
+              ListTile(
+                key: const Key('settings_collections_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ArchiveCollectionsCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ArchiveCollectionsCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/collections'),
               ),
-              subtitle: Text(
-                FactLedgerCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/details'),
-            ),
-            ListTile(
-              key: const Key('settings_action_items_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ActionItemsCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: Text(
-                ActionItemsCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/action-items'),
-            ),
-            ListTile(
-              key: const Key('settings_collections_tile'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                ArchiveCollectionsCopy.settingsTitle,
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: Text(
-                ArchiveCollectionsCopy.settingsSubtitle,
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/collections'),
-            ),
             _tile(
               ConsumerUiCopy.deleteAccount,
               onTap: () => context.push('/delete-account'),

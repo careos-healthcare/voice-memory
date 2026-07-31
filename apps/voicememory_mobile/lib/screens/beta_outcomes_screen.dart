@@ -54,9 +54,11 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
 
   Future<void> _load() async {
     final journal = widget.journalService ?? AppServices.instance.journal;
-    final watchlist = widget.watchlistStore ??
+    final watchlist =
+        widget.watchlistStore ??
         ArchiveWatchlistStore(AppServices.instance.prefs);
-    final returnRitual = widget.returnRitualStore ??
+    final returnRitual =
+        widget.returnRitualStore ??
         ReturnRitualStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
@@ -86,7 +88,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
       text: BetaOutcomesCopy.buildSafeSummary(snapshot),
       showConfirmation: false,
     );
-    if (!context.mounted) return;
+    if (!mounted) return;
     if (outcome == ArchiveShareOutcome.copied ||
         outcome == ArchiveShareOutcome.fallbackCopied) {
       ArchiveShareActions.showFeedback(context, BetaOutcomesCopy.summaryCopied);
@@ -341,7 +343,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
               width: double.infinity,
               child: OutlinedButton(
                 key: const Key('beta_outcomes_add_moment'),
-                onPressed: () => context.push('/record'),
+                onPressed: () => context.go('/record'),
                 child: const Text(BetaOutcomesCopy.addMomentButton),
               ),
             ),

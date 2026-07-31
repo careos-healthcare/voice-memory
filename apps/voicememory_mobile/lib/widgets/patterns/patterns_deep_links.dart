@@ -14,12 +14,12 @@ class PatternsDeepLinks extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         OutlinedButton(
-          onPressed: () => context.push('/discover-yourself'),
+          onPressed: () => context.go('/archive-belief'),
           child: const Text(ConsumerUiCopy.viewAllPatterns),
         ),
         const SizedBox(height: AppSpacing.sm),
         OutlinedButton(
-          onPressed: () => context.push('/belief-changes'),
+          onPressed: () => context.go('/belief-changes'),
           child: const Text(ConsumerUiCopy.seeWhatChanged),
         ),
       ],

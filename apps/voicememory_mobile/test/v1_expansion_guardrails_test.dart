@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/v1_interface/v1_expansion_gate_copy.
 import 'package:voicememory_mobile/features/v1_interface/v1_scope_guard_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
+import 'package:voicememory_mobile/router/primary_destination.dart';
 
 bool _isNegatedClaim(String value, String phrase) {
   final lower = value.toLowerCase();
@@ -21,7 +22,8 @@ bool _isNegatedClaim(String value, String phrase) {
     if (idx < 0) return found;
     found = true;
     final before = lower.substring(0, idx).trimRight();
-    final negated = before.endsWith('not') ||
+    final negated =
+        before.endsWith('not') ||
         before.endsWith('not a') ||
         before.endsWith('not an') ||
         before.endsWith('no');
@@ -79,7 +81,8 @@ bool _mentionsLiveFocusPhrase(String blob, String phrase) {
   final lower = blob.toLowerCase();
   switch (phrase) {
     case 'first proof':
-      return lower.contains('first proof') || lower.contains('first useful proof');
+      return lower.contains('first proof') ||
+          lower.contains('first useful proof');
     case 'longer trail':
       return lower.contains('longer trail') ||
           lower.contains('longer proof trail');
@@ -92,31 +95,40 @@ bool _mentionsLiveFocusPhrase(String blob, String phrase) {
 
 void main() {
   group('V1 scope guard', () {
-    test('launch copy does not position ArchiveMe as broad journal or assistant', () {
-      for (final relativePath in V1ScopeGuardCopy.launchCopyFilePaths) {
-        final file = File(relativePath);
-        expect(file.existsSync(), isTrue, reason: 'missing $relativePath');
-        final source = file.readAsStringSync();
-        final literals = relativePath.endsWith('.md')
-            ? _consumerLinesFromMarkdown(source).toList()
-            : _stringLiteralsFromDartSource(source).toList();
-        for (final literal in literals) {
-          final content = literal.toLowerCase();
-          for (final claim in V1ScopeGuardCopy.bannedPositioningClaims) {
-            if (!content.contains(claim)) continue;
-            expect(
-              _isNegatedClaim(literal, claim),
-              isTrue,
-              reason: '$relativePath positions as "$claim" in "$literal"',
-            );
+    test(
+      'launch copy does not position ArchiveMe as broad journal or assistant',
+      () {
+        for (final relativePath in V1ScopeGuardCopy.launchCopyFilePaths) {
+          final file = File(relativePath);
+          expect(file.existsSync(), isTrue, reason: 'missing $relativePath');
+          final source = file.readAsStringSync();
+          final literals = relativePath.endsWith('.md')
+              ? _consumerLinesFromMarkdown(source).toList()
+              : _stringLiteralsFromDartSource(source).toList();
+          for (final literal in literals) {
+            final content = literal.toLowerCase();
+            for (final claim in V1ScopeGuardCopy.bannedPositioningClaims) {
+              if (!content.contains(claim)) continue;
+              expect(
+                _isNegatedClaim(literal, claim),
+                isTrue,
+                reason: '$relativePath positions as "$claim" in "$literal"',
+              );
+            }
           }
         }
-      }
-    });
+      },
+    );
 
     test('banned positioning list matches V1 guardrail spec', () {
-      expect(V1ScopeGuardCopy.bannedPositioningClaims, contains('generic journal'));
-      expect(V1ScopeGuardCopy.bannedPositioningClaims, contains('diary dashboard'));
+      expect(
+        V1ScopeGuardCopy.bannedPositioningClaims,
+        contains('generic journal'),
+      );
+      expect(
+        V1ScopeGuardCopy.bannedPositioningClaims,
+        contains('diary dashboard'),
+      );
       expect(V1ScopeGuardCopy.bannedPositioningClaims, contains('therapy'));
       expect(V1ScopeGuardCopy.bannedPositioningClaims, contains('coach'));
       expect(V1ScopeGuardCopy.bannedPositioningClaims, contains('treatment'));
@@ -137,27 +149,29 @@ void main() {
   });
 
   group('Navigation simplicity', () {
-    test('primary bottom nav is Record, Archive, Account only', () {
+    test('primary bottom nav exposes four direct V1 destinations', () {
       final mainShell = File('lib/widgets/main_shell.dart').readAsStringSync();
       expect(
-        RegExp(r'NavigationDestination\s*\(').allMatches(mainShell).length,
-        3,
+        PrimaryDestination.values.map((destination) => destination.label),
+        ['Record', 'Archive', 'Changes', 'Account'],
       );
-      expect(mainShell, contains("label: 'Record'"));
-      expect(mainShell, contains("label: 'Archive'"));
-      expect(mainShell, contains("label: 'Account'"));
+      expect(mainShell, contains('NavigationDestination('));
+      expect(mainShell, contains('NavigationRailDestination('));
+      expect(mainShell, isNot(contains('showCanvasFeaturePanel')));
+      expect(mainShell, isNot(contains('Timer(')));
+      expect(mainShell, isNot(contains('RadialActionMenu')));
       expect(mainShell.toLowerCase(), isNot(contains("label: 'discover'")));
       expect(mainShell.toLowerCase(), isNot(contains("label: 'timeline'")));
       expect(mainShell.toLowerCase(), isNot(contains("label: 'search'")));
       expect(ConsumerUiCopy.patternsTabLabel, 'Archive');
     });
 
-    test('router shell has three primary branches not six equal tabs', () {
+    test('router shell has exactly four primary branches', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
       final shellSection = router.split('StatefulShellRoute').skip(1).first;
       expect(
         RegExp(r'StatefulShellBranch\s*\(').allMatches(shellSection).length,
-        3,
+        4,
       );
     });
   });
@@ -168,7 +182,10 @@ void main() {
       expect(FirstProofJourneyCopy.strip, contains('1 Save'));
       expect(FirstProofJourneyCopy.strip, contains('2 Compare'));
       expect(FirstProofJourneyCopy.strip, contains('3 First thread'));
-      expect(V1CoreProductSentence.line, contains('Pro keeps the longer trail'));
+      expect(
+        V1CoreProductSentence.line,
+        contains('Pro keeps the longer trail'),
+      );
 
       final proBlob = [
         PaywallAlignmentCopy.headline,
@@ -196,8 +213,9 @@ void main() {
 
   group('V1 expansion gates doc', () {
     test('doc blocks expansion until proof and lists gated future ideas', () {
-      final doc =
-          File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      final doc = File(
+        V1ExpansionGateCopy.expansionGatesDocPath,
+      ).readAsStringSync();
       expect(doc, contains(V1ExpansionGateCopy.expansionBlockedLine));
       expect(doc, contains(V1ExpansionGateCopy.sharperV1MoveLine));
       expect(doc, contains(V1CoreProductSentence.line));
@@ -208,7 +226,10 @@ void main() {
 
     test('beta decision system is measurement-only not product expansion', () {
       final doc = File('docs/BETA_DECISION_SYSTEM.md').readAsStringSync();
-      expect(doc.toLowerCase(), contains('not a user-facing product expansion'));
+      expect(
+        doc.toLowerCase(),
+        contains('not a user-facing product expansion'),
+      );
       expect(doc, contains('docs/V1_EXPANSION_GATES.md'));
       expect(doc.toLowerCase(), contains('do not build ask archive'));
     });
@@ -221,8 +242,9 @@ void main() {
         greaterThanOrEqualTo(13),
       );
       for (final idea in V1ExpansionGateCopy.blockedExpansionIdeas) {
-        final doc =
-            File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+        final doc = File(
+          V1ExpansionGateCopy.expansionGatesDocPath,
+        ).readAsStringSync();
         expect(doc.toLowerCase(), contains(idea.toLowerCase()));
       }
     });
@@ -250,7 +272,8 @@ void main() {
       expect(
         focusHits,
         greaterThanOrEqualTo(2),
-        reason: 'live V1 copy should mention first proof / longer trail / evidence',
+        reason:
+            'live V1 copy should mention first proof / longer trail / evidence',
       );
 
       expect(

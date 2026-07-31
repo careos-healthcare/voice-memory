@@ -4,15 +4,15 @@ import 'package:go_router/go_router.dart';
 import '../screens/account_auth_screen.dart';
 import '../screens/account_screen.dart';
 import '../screens/security_settings_screen.dart';
-import '../screens/blind_spots_screen.dart';
 import '../screens/delete_account_screen.dart';
 import '../screens/belief_changes_screen.dart';
 import '../screens/belief_evidence_screen.dart';
 import '../screens/weekly_archive_review_screen.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
+import '../features/onboarding_future_value/future_preview_screen.dart';
+import '../features/onboarding_future_value/onboarding_future_value_copy.dart';
 import '../screens/beliefs_screen.dart';
 import '../screens/belief_detail_screen.dart';
-import '../screens/discover_chapter_detail_screen.dart';
 import '../screens/weekly_story_screen.dart';
 import '../screens/archive_explanation_screen.dart';
 import '../features/archive_explanations/archive_explanation_navigation.dart';
@@ -68,12 +68,12 @@ import '../screens/key_moment_detail_screen.dart';
 import '../screens/archive_compression_screen.dart';
 import '../screens/pattern_profile_screen.dart';
 import '../screens/pattern_map_screen.dart';
+import '../screens/pattern_recognition_dashboard_screen.dart';
 import '../screens/archive_evolution_timeline_screen.dart';
 import '../screens/archive_range_review_screen.dart';
 import '../screens/ask_archive_screen.dart';
+import '../screens/archive_semantic_search_screen.dart';
 import '../features/moments/key_moment_model.dart';
-import '../features/objective/current_objective_snapshot_store.dart';
-import '../features/objective/current_objective_widget_refresh_service.dart';
 import '../features/objective/objective_widget_pending_route_store.dart';
 import '../screens/archive_belief_screen.dart';
 import '../screens/archive_journey_screen.dart';
@@ -87,9 +87,10 @@ import '../features/archive_change_feed/archive_change_feed_models.dart';
 import '../features/archive_surprises/archive_surprises_models.dart';
 import '../features/belief_lifecycle/belief_lifecycle_models.dart';
 import '../screens/archive_tool_screen.dart';
+import '../screens/archive_tools_screen.dart';
+import '../screens/life_os_screen.dart';
+import '../ui/screens/life_os/life_os_graph_screen.dart';
 import '../screens/onboarding_screen.dart';
-import '../screens/onboarding_intent_screen.dart';
-import '../screens/onboarding_loop_screen.dart';
 import '../screens/loop_start_screen.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
@@ -98,6 +99,7 @@ import '../screens/loop_mode_screen.dart';
 import '../screens/prove_enough_evidence_trail_screen.dart';
 import '../screens/monthly_ambition_pressure_review_screen.dart';
 import '../billing/paywall_route_args.dart';
+import '../billing/revenuecat_configuration.dart';
 import '../screens/paywall_screen.dart';
 import '../screens/subscription_review_preview.dart';
 import '../screens/pricing_screen.dart';
@@ -108,6 +110,7 @@ import '../screens/signal_evidence_screen.dart';
 import '../screens/signal_journey_screen.dart';
 import '../screens/signal_review_screen.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../features/cold_start/cold_start_seed_survey.dart';
 import '../features/live_audio/application/live_voice_capture_service.dart';
 import '../screens/live_voice_session_screen.dart';
 import '../screens/record_screen.dart';
@@ -116,8 +119,7 @@ import '../record/quick_text_capture_presentation.dart';
 import '../screens/pressure_check_in_screen.dart';
 import '../screens/pressure_insights_screen.dart';
 // Timeline/Search screens unreachable — global redirect to Patterns.
-import '../screens/identity_screen.dart';
-import '../screens/life_chapters_screen.dart';
+import '../screens/self_discovery_center_screen.dart';
 import '../screens/native_push_verification_screen.dart';
 import '../screens/revenuecat_verification_screen.dart';
 import '../screens/offline_sync_verification_screen.dart';
@@ -134,7 +136,13 @@ import '../config/developer_settings_gate.dart';
 import '../config/screenshot_mode.dart';
 import '../config/trial_mode.dart';
 import '../config/production_navigation.dart';
+import '../core/config/v1_capability_registry.dart';
+import '../core/config/v1_navigation_guard.dart';
 import '../router/developer_route_guard.dart';
+import '../router/primary_destination.dart';
+import '../router/primary_navigation_controller.dart';
+import '../router/record_navigation_activity_controller.dart';
+import '../router/route_catalog.dart';
 import '../widgets/main_shell.dart';
 import 'onboarding_gate.dart';
 
@@ -146,11 +154,39 @@ GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
 bool _widgetLaunchRouteConsumed = false;
 bool _curiosityNotificationLaunchConsumed = false;
 
+const instantCapturePaths = {'/quick-yes-capture', '/live-voice'};
+
+/// Converts custom-scheme widget and wearable launches into internal routes.
+///
+/// A two-slash URI such as `archiveme://quick-capture` stores the action in
+/// [Uri.host], while a three-slash URI stores it in [Uri.path]. Both forms are
+/// accepted so native launchers do not need platform-specific URL formatting.
+String? resolveInstantCaptureDeepLink(Uri uri) {
+  if (uri.scheme.toLowerCase() != 'archiveme') return null;
+  final action = uri.host.isNotEmpty
+      ? uri.host.toLowerCase()
+      : uri.path.replaceFirst(RegExp(r'^/+'), '').toLowerCase();
+  final path = switch (action) {
+    'quick-capture' => '/quick-yes-capture',
+    'voice-session' =>
+      V1CapabilityRegistry.liveVoice ? '/live-voice' : RouteCatalog.recordHome,
+    _ => null,
+  };
+  if (path == null) return null;
+  return Uri(
+    path: path,
+    queryParameters: {...uri.queryParameters, 'instant': '1'},
+  ).toString();
+}
+
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/record',
+  initialLocation: RouteCatalog.recordHome,
   refreshListenable: onboardingGate,
   redirect: (context, state) async {
+    final instantCaptureTarget = resolveInstantCaptureDeepLink(state.uri);
+    if (instantCaptureTarget != null) return instantCaptureTarget;
+
     final path = state.uri.path;
 
     if (!_widgetLaunchRouteConsumed) {
@@ -166,10 +202,14 @@ final GoRouter appRouter = GoRouter(
     if (!_curiosityNotificationLaunchConsumed) {
       _curiosityNotificationLaunchConsumed = true;
       if (CuriosityNotificationLaunchController.hasPendingHook &&
-          path != YesterdaysSnapshotCopy.route) {
+          path != YesterdaysSnapshotCopy.route &&
+          V1NavigationGuard.isAllowed(YesterdaysSnapshotCopy.route)) {
         return YesterdaysSnapshotCopy.route;
       }
     }
+
+    final v1Redirect = V1NavigationGuard.redirectFor(path);
+    if (v1Redirect != null) return v1Redirect;
 
     final guarded = DeveloperRouteGuard.redirectFor(path);
     if (guarded != null) return guarded;
@@ -207,12 +247,14 @@ final GoRouter appRouter = GoRouter(
         !TrialMode.enabled &&
         !onboardingGate.complete &&
         !onboardingPaths.contains(path) &&
-        !startPaths.contains(path)) {
+        !startPaths.contains(path) &&
+        !instantCapturePaths.contains(path)) {
       return '/onboarding';
     }
     if (TrialMode.hideDeveloperSurfaces &&
         path != '/record' &&
         path != '/archive-belief' &&
+        path != '/belief-changes' &&
         path != '/account' &&
         path != '/settings' &&
         path != '/about' &&
@@ -233,6 +275,7 @@ final GoRouter appRouter = GoRouter(
         path != '/capacity-boundary-response' &&
         path != '/capacity-beta-signals' &&
         path != '/quick-yes-capture' &&
+        path != '/live-voice' &&
         path != '/capacity-beta-mission' &&
         path != '/archive-calendar' &&
         path != '/review-ritual' &&
@@ -242,6 +285,7 @@ final GoRouter appRouter = GoRouter(
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
         path != '/pro-preview' &&
+        path != OnboardingFutureValueCopy.route &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -249,25 +293,44 @@ final GoRouter appRouter = GoRouter(
         return '/record';
       }
     }
-    if (path == '/') return '/record';
+    if (path == '/') return RouteCatalog.recordHome;
     return null;
   },
   routes: [
-    GoRoute(path: '/', redirect: (context, state) => '/record'),
+    GoRoute(path: '/', redirect: (context, state) => RouteCatalog.recordHome),
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const OnboardingScreen(),
     ),
     GoRoute(
+      path: '/cold-start/seed',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ColdStartSeedSurvey(),
+    ),
+    GoRoute(
       path: '/onboarding-intent',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingIntentScreen(),
+      redirect: (context, state) => '/onboarding',
     ),
     GoRoute(
       path: '/onboarding-loop',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingLoopScreen(),
+      redirect: (context, state) => '/onboarding',
+    ),
+    GoRoute(
+      path: OnboardingFutureValueCopy.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => FuturePreviewScreen(
+        onExit: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go(onboardingGate.complete ? '/record' : '/onboarding');
+          }
+        },
+        onStart: () => context.go('/record'),
+      ),
     ),
     GoRoute(
       path: '/start',
@@ -317,43 +380,57 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const MonthlyAmbitionPressureReviewScreen(),
     ),
     StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) =>
-          MainShell(navigationShell: navigationShell),
+      builder: (context, state, navigationShell) => MainShell(
+        navigationShell: navigationShell,
+        primaryNavigationController: primaryNavigationController,
+        recordNavigationActivityController: recordNavigationActivityController,
+      ),
       branches: [
         StatefulShellBranch(
+          navigatorKey: recordBranchNavigatorKey,
           routes: [
             GoRoute(
-              path: '/record',
+              path: RouteCatalog.recordHome,
               builder: (context, state) {
                 final prompt = state.uri.queryParameters['prompt'];
                 final guidedNode =
                     state.uri.queryParameters['guidedPromptNodeKey'];
                 final autostart = state.uri.queryParameters['autostart'] == '1';
                 return RecordScreen(
-                  initialPrompt: prompt ??
+                  initialPrompt:
+                      prompt ??
                       ArchiveProofRecordRoutes.promptForGuidedNode(guidedNode),
                   autostartWithPrompt: autostart,
+                  navigationActivityController:
+                      recordNavigationActivityController,
                 );
               },
             ),
           ],
         ),
         StatefulShellBranch(
+          navigatorKey: archiveBranchNavigatorKey,
           routes: [
             GoRoute(
-              path: '/archive-belief',
+              path: RouteCatalog.archiveHome,
               builder: (context, state) => const ArchiveBeliefScreen(),
-            ),
-            GoRoute(
-              path: '/memory',
-              redirect: (context, state) => '/archive-belief',
             ),
           ],
         ),
         StatefulShellBranch(
+          navigatorKey: changesBranchNavigatorKey,
           routes: [
             GoRoute(
-              path: '/account',
+              path: RouteCatalog.changesHome,
+              builder: (context, state) => const BeliefChangesScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: accountBranchNavigatorKey,
+          routes: [
+            GoRoute(
+              path: RouteCatalog.accountHome,
               builder: (context, state) => const AccountScreen(),
             ),
           ],
@@ -361,9 +438,27 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
     GoRoute(
+      path: RouteCatalog.graphHome,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => LifeOsGraphScreen(
+        view: state.uri.queryParameters['view'],
+        nodeId: state.uri.queryParameters['nodeId'],
+      ),
+    ),
+    GoRoute(
       path: '/security',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SecuritySettingsScreen(),
+    ),
+    GoRoute(
+      path: ArchiveToolsScreen.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchiveToolsScreen(),
+    ),
+    GoRoute(
+      path: LifeOsScreen.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const LifeOsScreen(),
     ),
     GoRoute(
       path: '/account/create',
@@ -377,22 +472,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) =>
           const AccountAuthScreen(intent: AccountAuthIntent.signIn),
     ),
-    GoRoute(path: '/discover', redirect: (context, state) => '/archive-belief'),
     GoRoute(
       path: '/archive-debug',
       redirect: (context, state) => DeveloperSettingsGate.isUnlocked
           ? '/developer-diagnostics'
           : '/archive-belief',
-    ),
-    GoRoute(
-      path: '/discover-yourself',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const BeliefsScreen(),
-    ),
-    GoRoute(
-      path: '/belief-changes',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const BeliefChangesScreen(),
     ),
     GoRoute(
       path: BeliefEvidenceNavigation.route,
@@ -416,12 +500,6 @@ final GoRouter appRouter = GoRouter(
         contextTagId: state.pathParameters['tagId'] ?? '',
       ),
     ),
-    GoRoute(path: '/timeline', redirect: (context, state) => '/archive-belief'),
-    GoRoute(
-      path: '/discover-changes',
-      redirect: (context, state) => '/archive-belief',
-    ),
-    GoRoute(path: '/search', redirect: (context, state) => '/archive-belief'),
     // Legacy aliases — global redirect handles locked developer paths.
     GoRoute(
       path: '/weekly-story',
@@ -438,18 +516,6 @@ final GoRouter appRouter = GoRouter(
           routeArgs: args is ArchiveExplanationRouteArgs ? args : null,
         );
       },
-    ),
-    GoRoute(
-      path: '/discover-yourself/chapter/:id',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => DiscoverChapterDetailScreen(
-        chapterId: state.pathParameters['id'] ?? '',
-      ),
-    ),
-    GoRoute(
-      path: '/archive-detail',
-      parentNavigatorKey: _rootNavigatorKey,
-      redirect: (context, state) => '/archive-belief',
     ),
     GoRoute(
       path: '/archive-journey',
@@ -529,12 +595,21 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/archive-identity',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const IdentityScreen(),
+      redirect: (context, state) => '/self-discovery?tab=identity',
     ),
     GoRoute(
       path: '/archive-life-chapters',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LifeChaptersScreen(),
+      redirect: (context, state) => '/self-discovery?tab=life-chapters',
+    ),
+    GoRoute(
+      path: SelfDiscoveryCenterScreen.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => SelfDiscoveryCenterScreen(
+        initialTab: SelfDiscoveryCenterScreen.tabIndexFor(
+          state.uri.queryParameters['tab'],
+        ),
+      ),
     ),
     GoRoute(
       path: '/archive-tool/:tool',
@@ -542,17 +617,17 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) =>
           ArchiveToolScreen(tool: state.pathParameters['tool'] ?? ''),
     ),
-    GoRoute(
-      path: '/live-voice',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) {
-        final extra = state.extra;
-        return LiveVoiceSessionScreen(
-          liveVoiceCapture:
-              extra is LiveVoiceCaptureService ? extra : null,
-        );
-      },
-    ),
+    if (V1CapabilityRegistry.liveVoice)
+      GoRoute(
+        path: '/live-voice',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final extra = state.extra;
+          return LiveVoiceSessionScreen(
+            liveVoiceCapture: extra is LiveVoiceCaptureService ? extra : null,
+          );
+        },
+      ),
     GoRoute(
       path: '/quick-capture',
       parentNavigatorKey: _rootNavigatorKey,
@@ -560,6 +635,7 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra;
         String? initialText;
         String? entryId;
+        String? queueJobId;
         String? promptHint;
         String? helperText;
         String? captureModeId;
@@ -571,17 +647,19 @@ final GoRouter appRouter = GoRouter(
         } else if (extra is Map) {
           initialText = extra['initialText'] as String?;
           entryId = extra['entryId'] as String?;
+          queueJobId = extra['queueJobId'] as String?;
           promptHint = extra['prompt'] as String?;
           helperText = extra['helper'] as String?;
           captureModeId = extra['captureModeId'] as String?;
           allowQuietDaySave = extra['allowQuietDaySave'] == true;
           showFirstUseWordingHelper =
               extra['showFirstUseWordingHelper'] == true ||
-                  extra['showGuidedExamples'] == true;
+              extra['showGuidedExamples'] == true;
         }
         return QuickTextCaptureScreen(
           initialText: initialText,
           entryId: entryId,
+          queueJobId: queueJobId,
           promptHint: promptHint,
           helperText: helperText,
           captureModeId: captureModeId,
@@ -665,6 +743,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const PatternMapScreen(),
     ),
     GoRoute(
+      path: '/pattern-recognition',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PatternRecognitionDashboard(),
+    ),
+    GoRoute(
       path: '/archive-timeline',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ArchiveEvolutionTimelineScreen(),
@@ -673,6 +756,11 @@ final GoRouter appRouter = GoRouter(
       path: '/archive-review',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ArchiveRangeReviewScreen(),
+    ),
+    GoRoute(
+      path: '/archive-search',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchiveSemanticSearchScreen(),
     ),
     GoRoute(
       path: '/ask-archive',
@@ -693,7 +781,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/blind-spots',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const BlindSpotsScreen(),
+      redirect: (context, state) => '/self-discovery?tab=blind-spots',
     ),
     GoRoute(
       path: '/updates',
@@ -706,25 +794,28 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) =>
           EntryDetailScreen(entryId: state.pathParameters['id'] ?? ''),
     ),
-    GoRoute(
-      path: '/pricing',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const PricingScreen(),
-    ),
-    GoRoute(
-      path: '/subscription',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) {
-        final extra = state.extra;
-        final args = extra is PaywallRouteArgs ? extra : null;
-        return PaywallScreen(triggerArgs: args);
-      },
-    ),
-    GoRoute(
-      path: '/subscription-review-preview',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const SubscriptionReviewPreviewScreen(),
-    ),
+    if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+      GoRoute(
+        path: '/pricing',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const PricingScreen(),
+      ),
+    if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+      GoRoute(
+        path: '/subscription',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final extra = state.extra;
+          final args = extra is PaywallRouteArgs ? extra : null;
+          return PaywallScreen(triggerArgs: args);
+        },
+      ),
+    if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+      GoRoute(
+        path: '/subscription-review-preview',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SubscriptionReviewPreviewScreen(),
+      ),
     GoRoute(
       path: '/belief-detail',
       parentNavigatorKey: _rootNavigatorKey,
@@ -756,11 +847,12 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SignalReviewScreen(),
     ),
-    GoRoute(
-      path: '/restore-purchases',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const RestorePurchasesScreen(),
-    ),
+    if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+      GoRoute(
+        path: '/restore-purchases',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RestorePurchasesScreen(),
+      ),
     GoRoute(
       path: '/restore-production-verify',
       parentNavigatorKey: _rootNavigatorKey,
@@ -851,7 +943,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/quick-yes-capture',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LowEffortYesCaptureScreen(),
+      builder: (context, state) => LowEffortYesCaptureScreen(
+        instantMode: state.uri.queryParameters['instant'] == '1',
+      ),
     ),
     GoRoute(
       path: '/capacity-beta-mission',
@@ -921,11 +1015,12 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const TestingArchiveMeScreen(),
     ),
-    GoRoute(
-      path: '/pro-preview',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ProValuePreviewScreen(),
-    ),
+    if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+      GoRoute(
+        path: '/pro-preview',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ProValuePreviewScreen(),
+      ),
     GoRoute(
       path: '/pro-interest',
       parentNavigatorKey: _rootNavigatorKey,

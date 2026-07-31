@@ -10,15 +10,17 @@ import '../models/journal_entry.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../product/consumer_ui_copy.dart';
+import '../router/primary_destination.dart';
+import '../router/primary_navigation_controller.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/archive_beliefs_dashboard.dart';
 import '../widgets/belief_empty_state.dart';
-import '../widgets/consumer/consumer_screen_back_header.dart';
+import '../widgets/accessibility/accessible_primary_surface.dart';
 
-/// What is changing — pushed from the Patterns tab.
+/// What is changing — the third primary destination.
 class BeliefChangesScreen extends StatefulWidget {
   const BeliefChangesScreen({super.key, this.previewTimeline});
 
@@ -42,6 +44,24 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
     if (preview != null) {
       _timeline = preview;
       _loading = false;
+      return;
+    }
+    primaryNavigationController.addListener(_handlePrimaryActivation);
+    _load();
+  }
+
+  @override
+  void dispose() {
+    primaryNavigationController.removeListener(_handlePrimaryActivation);
+    super.dispose();
+  }
+
+  void _handlePrimaryActivation() {
+    if (!mounted ||
+        _loading ||
+        widget.previewTimeline != null ||
+        primaryNavigationController.activeDestination !=
+            PrimaryDestination.changes) {
       return;
     }
     _load();
@@ -91,8 +111,6 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
 
   List<Widget> _pageHeader() {
     return [
-      const ConsumerScreenBackHeader(),
-      const SizedBox(height: AppSpacing.sm),
       Text(
         ConsumerUiCopy.changesScreenTitle,
         style: VoiceMemoryTypography.headlineStyle(),
@@ -111,18 +129,16 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SafeArea(
-          child: Padding(
-            padding: ArchiveMobileSpacing.pagePadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const ConsumerScreenBackHeader(),
-                const SizedBox(height: AppSpacing.lg),
-                const Center(child: CircularProgressIndicator()),
-              ],
+      return _primarySurface(
+        Scaffold(
+          backgroundColor: AppColors.backgroundPrimary,
+          body: SafeArea(
+            child: Padding(
+              padding: ArchiveMobileSpacing.pagePadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [const Center(child: CircularProgressIndicator())],
+              ),
             ),
           ),
         ),
@@ -130,46 +146,53 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
     }
 
     if (_showEmpty && isIntentionalEmptyArchive(_entries)) {
-      return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: _load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: ArchiveMobileSpacing.pagePadding,
-              children: [
-                ..._pageHeader(),
-                const BeliefEmptyState(fillViewport: false),
-              ],
+      return _primarySurface(
+        Scaffold(
+          backgroundColor: AppColors.backgroundPrimary,
+          body: SafeArea(
+            child: RefreshIndicator(
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: ArchiveMobileSpacing.pagePadding,
+                children: [
+                  ..._pageHeader(),
+                  const BeliefEmptyState(fillViewport: false),
+                ],
+              ),
             ),
           ),
         ),
       );
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _load,
-          child: ListView(
-            padding: ArchiveMobileSpacing.pagePadding,
-            children: [
-              ..._pageHeader(),
-              BeliefChangeStories(items: _timeline),
-              if (_timeline.isEmpty) ...[
-                Text(
-                  ConsumerUiCopy.changesEmptyLead,
-                  style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.textSecondary,
+    return _primarySurface(
+      Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: ListView(
+              padding: ArchiveMobileSpacing.pagePadding,
+              children: [
+                ..._pageHeader(),
+                BeliefChangeStories(items: _timeline),
+                if (_timeline.isEmpty) ...[
+                  Text(
+                    ConsumerUiCopy.changesEmptyLead,
+                    style: VoiceMemoryTypography.bodyStyle(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  Widget _primarySurface(Widget child) =>
+      AccessiblePrimarySurface(label: 'Changes screen', child: child);
 }

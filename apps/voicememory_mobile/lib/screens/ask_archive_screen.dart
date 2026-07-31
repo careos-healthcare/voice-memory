@@ -301,10 +301,7 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
           if (result.tags.isNotEmpty || resultLabel != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
-              [
-                if (resultLabel != null) resultLabel,
-                ...result.tags,
-              ].join(' · '),
+              [?resultLabel, ...result.tags].join(' · '),
               style: VoiceMemoryTypography.metadataStyle(
                 color: AppColors.textSecondary,
               ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
@@ -358,7 +355,7 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
   void _useCheck(ArchiveSearchResult result) {
     ActivationTracker.trackAskArchiveUseCheckTapped();
     if (result.nextCheck case final check?) {
-      context.push('/record', extra: {'prefillCheck': check});
+      context.go('/record', extra: {'prefillCheck': check});
     }
   }
 
