@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
-import '../features/voice_capture/microphone_permission_copy.dart';
-import '../features/pressure_retention/start_here_save_receipt_model.dart';
-import '../services/capture_pipeline_service.dart';
 import '../design/empty_archive_experience.dart';
+import '../features/voice_capture/microphone_permission_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../record/record_screen_framing_copy.dart';
+import '../router/route_catalog.dart';
 import '../services/activation_funnel_analytics.dart';
-import '../theme/app_colors.dart';
+import '../services/capture_pipeline_service.dart';
 import '../theme/app_spacing.dart';
+import '../theme/archive_semantic_colors.dart';
 
 /// Primary voice capture + secondary typed capture — same labels everywhere.
 enum CapturePressureMomentPresentation { button, textLink, none }
@@ -81,13 +81,12 @@ class CaptureEntryActions extends StatelessWidget {
       await onTextThoughtSaved!(result);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)),
-    );
+    context.go(RouteCatalog.recordHome, extra: result);
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = ArchiveSemanticColors.of(context);
     if (onGradient) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -145,7 +144,8 @@ class CaptureEntryActions extends StatelessWidget {
               key: recordButtonKey,
               onPressed: onRecord,
               child: Text(
-                recordButtonLabel ?? MicrophonePermissionCopy.requestMicrophoneCta,
+                recordButtonLabel ??
+                    MicrophonePermissionCopy.requestMicrophoneCta,
               ),
             ),
           ),
@@ -197,7 +197,7 @@ class CaptureEntryActions extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: ArchiveMobileTypography.responsiveHelper(
                   context,
-                ).copyWith(color: AppColors.textSecondary),
+                ).copyWith(color: colors.secondaryText),
               ),
             ),
         ],
@@ -226,7 +226,7 @@ class CaptureEntryActions extends StatelessWidget {
               textAlign: TextAlign.center,
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: colors.secondaryText),
             ),
           ),
         const SizedBox(height: 8),
@@ -249,7 +249,7 @@ class CaptureEntryActions extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: AppColors.textSecondary,
+                foregroundColor: colors.secondaryText,
               ),
               onPressed: onHowItWorks,
               child: Text(
@@ -274,7 +274,7 @@ class CaptureEntryActions extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: AppColors.textSecondary,
+                foregroundColor: colors.secondaryText,
               ),
               onPressed: onLogPressureMoment,
               child: Text(

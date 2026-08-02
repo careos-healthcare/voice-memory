@@ -1,160 +1,137 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/loop_mode/loop_mode_coordinator.dart';
-import '../features/loop_mode/loop_mode_model.dart';
 import '../onboarding/onboarding_pages.dart';
 import '../onboarding/onboarding_visuals.dart';
-import '../product/consumer_ui_copy.dart';
 import '../features/retention/retention_metrics_tracker.dart';
 import '../router/onboarding_gate.dart';
+import '../router/route_catalog.dart';
 import '../services/app_services.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../theme/archive_semantic_colors.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({
+    super.key,
+    this.persistCompletion,
+    this.onCaptureSelected,
+  });
+
+  final Future<void> Function()? persistCompletion;
+  final ValueChanged<String>? onCaptureSelected;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final _controller = PageController();
-  int _index = 0;
   bool _completing = false;
 
-  bool get _isLast => _index >= OnboardingPages.pageCount - 1;
-
-  @override
-  void initState() {
-    super.initState();
-    RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted);
-  }
-
-  Future<void> _complete() async {
+  Future<void> _complete(String destination, {Object? extra}) async {
     if (_completing) return;
     setState(() => _completing = true);
     try {
-      await RetentionMetricsTracker.track(
-        RetentionMetricsTracker.onboardingCompleted,
-      );
-      await LoopModeCoordinator.activate(LoopModeIds.proveEnough);
-      await AppServices.instance.prefs.setOnboardingCompleted(true);
+      if (widget.persistCompletion case final persist?) {
+        await persist();
+      } else {
+        await AppServices.instance.prefs.setOnboardingCompleted(true);
+      }
       onboardingGate.markComplete();
+      if (widget.persistCompletion == null) {
+        unawaited(
+          RetentionMetricsTracker.track(
+            RetentionMetricsTracker.onboardingCompleted,
+          ),
+        );
+      }
       if (!mounted) return;
-      context.go('/record');
+      if (widget.onCaptureSelected case final onCaptureSelected?) {
+        onCaptureSelected(destination);
+      } else {
+        context.go(destination, extra: extra);
+      }
     } finally {
       if (mounted) setState(() => _completing = false);
     }
   }
 
-  void _advance() {
-    if (_isLast || _completing) return;
-    _controller.nextPage(
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutCubic,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            const Positioned.fill(child: OnboardingAmbientGlow()),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.sm,
-                    AppSpacing.xs,
-                    AppSpacing.xs,
-                    0,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        'ArchiveMe',
-                        style: OnboardingTypography.label(
-                          color: AppColors.accentPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: PageView.builder(
-                    key: const Key('onboarding_page_view'),
-                    controller: _controller,
-                    itemCount: OnboardingPages.pageCount,
-                    onPageChanged: (i) => setState(() => _index = i),
-                    itemBuilder: (context, i) {
-                      final page = OnboardingPages.pages[i];
-                      return KeyedSubtree(
-                        key: Key('onboarding_page_$i'),
-                        child: _OnboardingPage(page: page),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                  ),
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < OnboardingPages.pageCount; i++)
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              right: i < OnboardingPages.pageCount - 1 ? 6 : 0,
-                            ),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: i <= _index
-                                  ? AppColors.accentPrimary.withValues(
-                                      alpha: 0.9,
-                                    )
-                                  : AppColors.borderSubtle,
-                            ),
+    final colors = ArchiveSemanticColors.of(context);
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: colors.background,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              const Positioned.fill(child: OnboardingAmbientGlow()),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.sm,
+                      AppSpacing.xs,
+                      AppSpacing.xs,
+                      0,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'ArchiveMe',
+                          style: OnboardingTypography.label(
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.sm,
-                    AppSpacing.md,
-                    AppSpacing.md,
-                  ),
-                  child: FilledButton(
-                    key: const Key('onboarding_primary_cta'),
-                    onPressed: _completing
-                        ? null
-                        : (_isLast ? _complete : _advance),
-                    child: Text(
-                      _isLast
-                          ? ConsumerUiCopy.onboardingFinalCta
-                          : ConsumerUiCopy.onboardingContinueCta,
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  Expanded(
+                    child: KeyedSubtree(
+                      key: const Key('onboarding_promise_screen'),
+                      child: _OnboardingPage(page: OnboardingPages.pages.first),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                      AppSpacing.md,
+                      AppSpacing.md,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FilledButton(
+                          key: const Key('onboarding_primary_cta'),
+                          onPressed: _completing
+                              ? null
+                              : () => _complete(RouteCatalog.recordHome),
+                          child: const Text(OnboardingPages.primaryAction),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        OutlinedButton(
+                          key: const Key('onboarding_type_instead_cta'),
+                          onPressed: _completing
+                              ? null
+                              : () => _complete(
+                                  RouteCatalog.quickTextCapture,
+                                  extra: const {
+                                    'returnToRecordAfterSave': true,
+                                  },
+                                ),
+                          child: const Text(OnboardingPages.secondaryAction),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
