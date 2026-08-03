@@ -39,6 +39,18 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   `ALTER TABLE sync_blobs ADD COLUMN IF NOT EXISTS key_epoch integer NOT NULL DEFAULT 1`,
   `CREATE INDEX IF NOT EXISTS sync_blobs_user_updated_idx ON sync_blobs (user_id, updated_at DESC)`,
   `CREATE INDEX IF NOT EXISTS sync_blobs_device_idx ON sync_blobs (user_id, device_id, updated_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS sync_recovery_envelopes (
+  user_id text PRIMARY KEY,
+  owner_archive_id text NOT NULL,
+  key_epoch integer NOT NULL CHECK (key_epoch > 0),
+  envelope_revision integer NOT NULL CHECK (envelope_revision > 0),
+  envelope jsonb NOT NULL,
+  envelope_digest text NOT NULL,
+  created_at timestamptz NOT NULL,
+  updated_at timestamptz NOT NULL
+)`,
+  `CREATE INDEX IF NOT EXISTS sync_recovery_envelopes_updated_idx
+   ON sync_recovery_envelopes (updated_at DESC)`,
   `CREATE TABLE IF NOT EXISTS api_usage (
   subject_key text NOT NULL,
   day_key text NOT NULL,
@@ -416,6 +428,7 @@ const ACCOUNT_DELETION_WRITE_GUARD_TARGETS = [
   ["sessions", "user_id", "user_id"],
   ["user_profiles", "user_id", "user_id"],
   ["sync_blobs", "user_id", "user_id"],
+  ["sync_recovery_envelopes", "user_id", "user_id"],
   ["api_usage", "subject_key", "subject_key"],
   ["api_minute_usage", "subject_key", "subject_key"],
   ["openai_daily_spend", "subject_key", "subject_key"],

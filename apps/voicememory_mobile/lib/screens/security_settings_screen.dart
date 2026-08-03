@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/sync_recovery/sync_recovery_screen.dart';
 import '../security/app_lock_service.dart';
 import '../security/sensitive_screen_guard.dart';
 import '../services/app_services.dart';
@@ -148,6 +149,18 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
                 icon: Icons.download_outlined,
                 title: 'Export archive',
                 route: '/export',
+              ),
+              ListTile(
+                key: const Key('security_sync_recovery'),
+                leading: const Icon(Icons.key_outlined),
+                title: const Text('Encrypted sync recovery'),
+                subtitle: const Text(
+                  'Optional code for restoring your sync key on a new device',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(builder: (_) => const SyncRecoveryScreen()),
+                ),
               ),
               _RouteTile(
                 icon: Icons.restore,

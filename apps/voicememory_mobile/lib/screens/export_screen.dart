@@ -278,6 +278,13 @@ class _ExportScreenState extends State<ExportScreen> {
               ArchiveExportManifest.accessNote,
               style: TextStyle(color: AppTheme.muted, height: 1.4),
             ),
+            const SizedBox(height: 12),
+            const Text(
+              'Your encrypted sync recovery code is never included in an '
+              'archive export. Keep it separately if recovery is enabled.',
+              key: Key('export_recovery_code_reminder'),
+              style: TextStyle(color: AppTheme.muted, height: 1.4),
+            ),
             const SizedBox(height: 24),
             FilledButton.icon(
               key: const Key('export_readable_archive'),

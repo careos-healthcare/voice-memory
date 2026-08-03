@@ -174,6 +174,30 @@ class JournalSyncApiClient {
     return SyncManifestSnapshot.fromEnvelope(transport.decodeJson(response));
   }
 
+  Future<Map<String, dynamic>> syncRecoveryStatus() async =>
+      transport.decodeJson(await transport.get('/api/sync/recovery?status=1'));
+
+  Future<Map<String, dynamic>> syncRecoveryFetch() async =>
+      transport.decodeJson(await transport.get('/api/sync/recovery'));
+
+  Future<Map<String, dynamic>> syncRecoveryUpsert(
+    Map<String, dynamic> envelope,
+  ) async => transport.decodeJson(
+    await transport.postJson(
+      '/api/sync/recovery',
+      body: {'envelope': envelope},
+      headers: transport.headersWithIdempotency(
+        base: transport.jsonHeaders,
+        idempotencyKey:
+            'recovery-${envelope['ownerArchiveId']}-${envelope['envelopeRevision']}',
+      ),
+    ),
+  );
+
+  Future<void> syncRecoveryDelete() async {
+    await transport.delete('/api/sync/recovery');
+  }
+
   Future<Map<String, dynamic>> getHealth() => health();
 
   Future<Map<String, dynamic>> health() async =>

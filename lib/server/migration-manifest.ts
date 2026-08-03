@@ -7,6 +7,7 @@ export const REQUIRED_TABLES = [
   "sessions",
   "user_profiles",
   "sync_blobs",
+  "sync_recovery_envelopes",
   "api_usage",
   "openai_daily_spend",
   "api_minute_usage",
@@ -36,6 +37,10 @@ export const REQUIRED_INDEXES = [
   { table: "sessions", index: "sessions_expires_at_idx" },
   { table: "sync_blobs", index: "sync_blobs_user_updated_idx" },
   { table: "sync_blobs", index: "sync_blobs_device_idx" },
+  {
+    table: "sync_recovery_envelopes",
+    index: "sync_recovery_envelopes_updated_idx",
+  },
   { table: "journal_entries", index: "journal_entries_user_updated_idx" },
   { table: "resurfacing_events", index: "resurfacing_events_subject_created_idx" },
   { table: "resurfacing_feedback", index: "resurfacing_feedback_user_created_idx" },

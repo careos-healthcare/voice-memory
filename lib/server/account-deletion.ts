@@ -29,6 +29,10 @@ import {
 } from "@/lib/server/resurfacing-metrics-store";
 import { deleteLocalSyncStore, localSyncStoreExists } from "@/lib/server/sync-store";
 import {
+  deleteSyncRecovery,
+  syncRecoveryExists,
+} from "@/lib/server/sync-recovery-store";
+import {
   deleteMobilePushDevicesForUser,
   localMobilePushDevicesExist,
 } from "@/lib/push/mobile-push-devices";
@@ -117,6 +121,8 @@ function deletionContext(userId: string, email: string): UserDeletionContext {
       case "auth-codes":
       case "profiles": return deleteLocalAuthUser(userId, normalizedEmail);
       case "sync-blobs": return deleteLocalSyncStore(userId);
+      case "sync-recovery-envelope":
+        await deleteSyncRecovery(userId); return 0;
       case "api-usage": return deleteApiUsageForSubject(subjectKey);
       case "api-minute-usage": return deleteApiUsageForSubject(subjectKey);
       case "openai-daily-spend": return deleteOpenAiSpendForSubject(subjectKey);
@@ -141,6 +147,7 @@ function deletionContext(userId: string, email: string): UserDeletionContext {
       case "auth-codes":
       case "profiles": return !localAuthUserExists(userId, normalizedEmail);
       case "sync-blobs": return !localSyncStoreExists(userId);
+      case "sync-recovery-envelope": return !(await syncRecoveryExists(userId));
       case "api-usage":
       case "api-minute-usage": return !localApiUsageExists(subjectKey);
       case "openai-daily-spend": return !localOpenAiSpendExists(subjectKey);

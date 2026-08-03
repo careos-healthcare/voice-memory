@@ -78,8 +78,8 @@ final class LocalArchiveIdentity {
 }
 
 final class LocalArchiveIdentityStore {
-  LocalArchiveIdentityStore(this._secure, {Uuid uuid = const Uuid()})
-    : _uuid = uuid;
+  LocalArchiveIdentityStore(this._secure, {Uuid? uuid})
+    : _uuid = uuid ?? const Uuid();
 
   static const _guestKey = 'local_archive_identity_guest_v1';
   static const _legacyKey = 'local_archive_identity_legacy_v1';
@@ -125,6 +125,29 @@ final class LocalArchiveIdentityStore {
       }
     }
     return List.unmodifiable(found);
+  }
+
+  Future<LocalArchiveIdentity> adoptAuthenticatedArchive({
+    required String authenticatedSubjectId,
+    required String archiveId,
+  }) async {
+    final subject = authenticatedSubjectId.trim();
+    final archive = archiveId.trim();
+    if (subject.isEmpty ||
+        archive.length < 8 ||
+        archive.length > 200 ||
+        !archive.startsWith('account_')) {
+      throw StateError('Recovered archive identity is invalid.');
+    }
+    final identity = LocalArchiveIdentity(
+      archiveId: archive,
+      ownerKind: LocalArchiveOwnerKind.authenticated,
+      authenticatedSubjectId: subject,
+      ownershipState: LocalArchiveOwnershipState.active,
+    );
+    final subjectHash = sha256.convert(utf8.encode(subject)).toString();
+    await _write('local_archive_identity_account_$subjectHash', identity);
+    return identity;
   }
 
   Future<LocalArchiveIdentity> _authenticated(String subject) async {

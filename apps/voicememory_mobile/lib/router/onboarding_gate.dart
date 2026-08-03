@@ -16,6 +16,12 @@ class OnboardingGate extends ChangeNotifier {
   }
 
   /// Test-only reset for widget/integration tests.
+  void resetForTest({bool complete = false}) {
+    _complete = complete;
+    _archiveHomeRedirectApplied = false;
+    notifyListeners();
+  }
+
   void resetSessionRedirectsForTest() {
     _archiveHomeRedirectApplied = false;
   }

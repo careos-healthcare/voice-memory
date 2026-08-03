@@ -12,9 +12,9 @@ document explains that manifest; it is not a second policy.
   preferences.
 - Sync payloads are **encrypted client-side** before upload, and the server
   stores ciphertext.
-- This is **not end-to-end encryption**. The key is device-held with no escrow
-  and no recovery path, so it protects the payload from the server but does not
-  give a second device access.
+- This is **not end-to-end encryption**. The sync key is device-held. Users may
+  opt into recovery by creating a separate code on-device; the server receives
+  only an authenticated encrypted wrapping of that key.
 - Transcription can use the on-device Whisper engine when its local model is
   available. Choosing online transcription uploads audio. Interpretation is
   remote and uploads saved text plus eligible prior evidence.
@@ -109,18 +109,31 @@ plaintext archive fields.
 The key is generated with `Random.secure()` on the device and stored per archive
 in secure storage by `SavedMomentSyncKeyStore`
 (`apps/voicememory_mobile/lib/features/journal/sync/saved_moment_sync_key_store.dart:10`).
-The server never receives it.
+The server never receives it in plaintext.
 
 Being honest about the limits of that design:
 
-- There is no key escrow, so the operator cannot read synced content.
-- There is also no user-controlled recovery-key exchange. Losing the device-held
-  sync key (including through reinstall or secure-storage loss) makes that
-  encrypted cloud copy unrecoverable; another device cannot decrypt it.
+- There is no operator-held key escrow, so the operator cannot read synced
+  content.
+- Recovery is opt-in. The client generates a 256-bit recovery secret, derives a
+  wrapping key with PBKDF2-HMAC-SHA256 (310,000 iterations), and wraps the
+  existing random 256-bit sync key with AES-256-GCM. Account, archive, key
+  epoch, envelope revision, algorithms, and timestamps are authenticated
+  metadata. The recovery secret is shown once and is never sent, logged,
+  analyzed, crash-reported, stored by the app, or automatically exported.
+- `/api/sync/recovery` stores only the versioned encrypted envelope, scoped to
+  the authenticated account. It rate-limits requests, rejects stale or
+  conflicting revisions, and deletes the envelope with account deletion.
+- A new device can unwrap only while signed into the bound account and with the
+  complete recovery code; after authentication it adopts the archive id bound
+  into the envelope. Wrong, truncated, modified,
+  cross-account, cross-archive, wrong-schema, wrong-epoch, and stale envelopes
+  fail closed. Losing both every device-held key and the recovery code still
+  makes the encrypted cloud copy unrecoverable.
 - Because there is no cross-device key agreement and no verified recipient
-  identity, this is not end-to-end encryption. Calling it end-to-end encrypted
-  would overstate it. Describe it as client-side encrypted sync with a
-  device-held key.
+identity, this remains not end-to-end encryption. Calling it end-to-end
+encrypted would overstate it. Describe it as client-side encrypted sync with a
+device-held key and optional user-controlled recovery wrapping.
 - A legacy plaintext server journal store still exists behind `/api/journal`,
   classified `MIGRATION_ONLY` in
   `config/release/archive_me_v1_backend_allowlist.json`. The shipping client does
@@ -142,15 +155,16 @@ Billing receives store identifiers and entitlement state through the canonical
 RevenueCat adapter. Export is an explicit user action into a temporary
 app-private file handed to the share sheet and then cleaned up on a best-effort
 basis. The exported file is readable content and its protection after handoff
-depends on the destination the user chooses.
+depends on the destination the user chooses. Recovery codes are explicitly
+excluded from export.
 
 Account switching closes or pauses account-scoped work and opens the separately
 partitioned archive; processing preferences and disclosure acceptances are
 keyed by archive and are not inherited by the next account. Account deletion
 clears the server account, local journal and vault, derived conclusions and
 corrections, queued work, credentials, and analytics identity as listed in the
-manifest, and is idempotent. It cannot recover a lost sync key or retract data
-already exported to another app.
+manifest, including any server recovery envelope, and is idempotent. It cannot
+recover a lost sync key or retract data already exported to another app.
 
 ## Not verified here
 

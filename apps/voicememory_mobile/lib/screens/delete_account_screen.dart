@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api/api_error_message.dart';
+import '../features/journal/sync/saved_moment_sync_key_store.dart';
 import '../security/local_privacy_data_controls.dart';
 import '../services/app_services.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -20,8 +21,13 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     setState(() => _busy = true);
     try {
       final services = AppServices.instance;
+      final archiveId =
+          services.composition.account.activeArchiveIdentity.archiveId;
       await services.authApi.deleteAccount();
       try {
+        await SavedMomentSyncKeyStore(
+          services.secureStorage,
+        ).deleteKey(archiveId);
         await LocalPrivacyDataControls.instance().clearLocalArchive();
         await services.destroySanctuaryKeysAfterWipe();
       } finally {

@@ -131,6 +131,12 @@ export const USER_DATA_DELETION_REGISTRY: readonly DeletionResource[] = [
   }),
   byUserId("profiles", "user_profiles", "profile", 20),
   byUserId("sync-blobs", "sync_blobs", "encrypted-content", 30),
+  byUserId(
+    "sync-recovery-envelope",
+    "sync_recovery_envelopes",
+    "encrypted-content",
+    31,
+  ),
   bySubjectKey("api-usage", "api_usage", 40),
   bySubjectKey("api-minute-usage", "api_minute_usage", 41),
   bySubjectKey("openai-daily-spend", "openai_daily_spend", 42),

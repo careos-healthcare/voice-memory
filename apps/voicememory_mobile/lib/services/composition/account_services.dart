@@ -72,6 +72,36 @@ final class AccountServices {
     auth.onSignedOut = () => resetAccountScope(null);
   }
 
+  Future<void> adoptRecoveredArchive(String accountId, String archiveId) async {
+    if (_switching ||
+        !_activeIdentity.maySync ||
+        _activeIdentity.authenticatedSubjectId != accountId) {
+      throw StateError('Account changed during archive recovery.');
+    }
+    if (_activeIdentity.archiveId == archiveId) return;
+    _switching = true;
+    final previous = _activeIdentity;
+    try {
+      final recovered = await _identityStore.adoptAuthenticatedArchive(
+        authenticatedSubjectId: accountId,
+        archiveId: archiveId,
+      );
+      _activeIdentity = recovered;
+      for (final resetter in _resetters) {
+        await resetter(recovered);
+      }
+    } on Object {
+      _activeIdentity = previous;
+      await _identityStore.adoptAuthenticatedArchive(
+        authenticatedSubjectId: accountId,
+        archiveId: previous.archiveId,
+      );
+      rethrow;
+    } finally {
+      _switching = false;
+    }
+  }
+
   /// Account switch order: the new identity becomes authoritative *before*
   /// any module re-opens a store, so no resetter can briefly read the previous
   /// owner's scope while it rebuilds.

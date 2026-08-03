@@ -1,3 +1,6 @@
+// Public named parameters intentionally stay free of private field names.
+// ignore_for_file: prefer_initializing_formals
+
 import 'dart:async';
 import 'dart:math';
 
