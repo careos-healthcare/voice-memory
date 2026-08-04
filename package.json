@@ -161,6 +161,7 @@
     "validate:install-prompt-restraint": "node scripts/validate-install-prompt-restraint.mjs",
     "validate:offline-recording-copy": "node scripts/validate-offline-recording-copy.mjs",
     "validate:synthetic-labels": "node scripts/validate-synthetic-labels.mjs",
+    "test:research-evidence": "node --import tsx --test scripts/research_evidence_evaluation.test.ts",
     "validate:return-threads": "node scripts/validate-return-threads.mjs",
     "validate:continuity-language": "node scripts/validate-continuity-language.mjs",
     "validate:no-emotion-taxonomy-primary-ui": "node scripts/validate-no-emotion-taxonomy-primary-ui.mjs",
