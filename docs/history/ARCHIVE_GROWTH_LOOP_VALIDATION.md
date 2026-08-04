@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Growth Loop V1 — Validation
 
 ## 1. What happens after recording #1?
@@ -55,3 +57,4 @@ curl -X POST https://<host>/api/internal/archive-monthly-review \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com","archiveUrl":"https://archiveme.app/archive","dryRun":true,"review":{...}}'
 ```
+

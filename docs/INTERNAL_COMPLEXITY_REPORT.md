@@ -2,23 +2,23 @@
 
 Internal Complexity Reduction v1 — founder tooling vs customer product.
 
-_Generated 2026-05-30T18:11:41.983Z_
+_Generated 2026-08-02T02:54:11.606Z_
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Public routes | 50 |
-| Internal routes | 42 |
-| Internal : public ratio | 0.84 |
-| **Internal Complexity Score** | **21** |
-| Active KEEP panels | 21 |
+| Public routes | 18 |
+| Internal routes | 0 |
+| Internal : public ratio | 0 |
+| **Internal Complexity Score** | **6** |
+| Active KEEP panels | 6 |
 | Target | < 25 active internal panels |
 | Meets target | yes |
 
 ## Stale panel disposition
 
-- **KEEP:** 21
+- **KEEP:** 22
 - **MERGE:** 21
 - **DELETE:** 21
 
@@ -72,6 +72,7 @@ _Generated 2026-05-30T18:11:41.983Z_
 | ArchiveBeliefAdoptionPanel | founder_panel | /internal/archive-belief | KEEP | no | yes | yes |  |
 | TheoryCuriosityEnginePanel | experiment_panel | /internal/theory-curiosity | MERGE | yes | no | no | Fold into theory-discovery hub |
 | EvolvingUnderstandingPanel | experiment_panel | /internal/theory-discovery | MERGE | yes | yes | no | Duplicate on retention-discovery and theory-discovery |
+| DistributionReportPanel | dashboard | /internal/distribution | KEEP | yes | yes | yes |  |
 | OrganicReferralPanel | dashboard | /internal/organic-referral | MERGE | yes | yes | no | Merged into retention-discovery hub |
 | PaywallAttributionPanel | dashboard | /internal/paywall-attribution | MERGE | yes | yes | no | Merged into retention-discovery hub |
 | ReturnTriggerPanel | dashboard | /internal/return-trigger-attribution | MERGE | yes | yes | no | Merged into retention-discovery hub |

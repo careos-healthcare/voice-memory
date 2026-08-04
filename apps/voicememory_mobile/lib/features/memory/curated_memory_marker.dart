@@ -91,6 +91,7 @@ abstract class PreserveOriginalSession {
     reflection: entry.reflection,
     syncStatus: entry.syncStatus,
     localAudioPath: entry.localAudioPath,
+    localAudioVaultRef: entry.localAudioVaultRef,
     treatAsNew: entry.treatAsNew,
     connectionApproved: entry.connectionApproved,
     keepExactDetails: entry.keepExactDetails,

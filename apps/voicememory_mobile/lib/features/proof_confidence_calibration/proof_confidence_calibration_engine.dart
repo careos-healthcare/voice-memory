@@ -45,14 +45,13 @@ abstract final class ProofConfidenceCalibrationEngine {
       );
     }
 
-    final correctionSnapshot = correction ??
+    final correctionSnapshot =
+        correction ??
         (entries.length >= 3
-            ? CorrectionMemoryEngine.snapshotFor(
-                entries: entries,
-                now: now,
-              )
+            ? CorrectionMemoryEngine.snapshotFor(entries: entries, now: now)
             : null);
-    final matchQuality = patternMatchQuality ??
+    final matchQuality =
+        patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -62,7 +61,8 @@ abstract final class ProofConfidenceCalibrationEngine {
           evidenceWeighting: evidenceWeighting,
           correction: correctionSnapshot,
         );
-    final resolvedAnchorExtraction = anchorExtraction ??
+    final resolvedAnchorExtraction =
+        anchorExtraction ??
         (entries.length >= 3
             ? EvidenceAnchorEngine.build(
                 entries: entries,
@@ -91,7 +91,8 @@ abstract final class ProofConfidenceCalibrationEngine {
           );
     final resolvedAnchors =
         anchorCalibration?.extraction ?? resolvedAnchorExtraction;
-    final resolvedHasSafeAnchor = resolvedAnchors?.hasSafeAnchor ?? hasSafeAnchor;
+    final resolvedHasSafeAnchor =
+        resolvedAnchors?.hasSafeAnchor ?? hasSafeAnchor;
     final hasCorrection = correctionSnapshot != null;
     final hasFreshReturn = correctionSnapshot?.returnedAfterFaded == true;
     final userMarkedNotRelevant = _userMarkedNotRelevant(
@@ -157,8 +158,9 @@ abstract final class ProofConfidenceCalibrationEngine {
       calibration: result,
       matchQuality: matchQuality,
       hasSafeAnchor: resolvedHasSafeAnchor,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
       isDegraded: ProofCautionGuardEngine.entriesAreDegraded(entries),
       userMarkedNotRelevant: userMarkedNotRelevant,
       correction: correctionSnapshot,
@@ -184,7 +186,8 @@ abstract final class ProofConfidenceCalibrationEngine {
     required BetaProofFeedbackType? calibrationFeedback,
     required bool hasFreshReturn,
   }) {
-    if (calibrationFeedback == BetaProofFeedbackType.tooVague && !hasFreshReturn) {
+    if (calibrationFeedback == BetaProofFeedbackType.tooVague &&
+        !hasFreshReturn) {
       return ProofConfidenceCalibrationResult(
         shouldCalibrate: calibration.shouldCalibrate,
         entryCount: calibration.entryCount,
@@ -250,10 +253,12 @@ abstract final class ProofConfidenceCalibrationEngine {
     };
 
     if (!hasSafeAnchor) {
-      if (matchQuality.weakReasons
-              .contains(PatternMatchWeakReason.noSafeAnchorAvailable) ||
-          matchQuality.weakReasons
-              .contains(PatternMatchWeakReason.onlyGenericWordingOverlaps)) {
+      if (matchQuality.weakReasons.contains(
+            PatternMatchWeakReason.noSafeAnchorAvailable,
+          ) ||
+          matchQuality.weakReasons.contains(
+            PatternMatchWeakReason.onlyGenericWordingOverlaps,
+          )) {
         return ProofConfidenceLevel.watchOnly;
       }
       if (bandLevel == ProofConfidenceLevel.strong ||
@@ -269,8 +274,7 @@ abstract final class ProofConfidenceCalibrationEngine {
   static bool shouldShowUsefulProofSurface({
     required ProofConfidenceCalibrationResult calibration,
     required bool hasSafeAnchor,
-  }) =>
-      hasSafeAnchor && calibration.isProofLevel && !calibration.isWatchOnly;
+  }) => hasSafeAnchor && calibration.isProofLevel && !calibration.isWatchOnly;
 
   static String? _resolveLeadCopy({
     required bool hasChangeDelta,
@@ -290,22 +294,13 @@ abstract final class ProofConfidenceCalibrationEngine {
     return null;
   }
 
-  static String _composeDisplayCopy({
-    required String? leadCopy,
-    required String primaryCopy,
-  }) {
-    if (leadCopy == null || leadCopy.trim().isEmpty) {
-      return primaryCopy;
-    }
-    return '$leadCopy $primaryCopy';
-  }
-
   static bool _userMarkedNotRelevant({
     required List<JournalEntry> entries,
     required PatternMatchQualityResult matchQuality,
   }) {
-    if (matchQuality.weakReasons
-        .contains(PatternMatchWeakReason.userMarkedNotRelevant)) {
+    if (matchQuality.weakReasons.contains(
+      PatternMatchWeakReason.userMarkedNotRelevant,
+    )) {
       return true;
     }
     final proofKey = CurrentRelevanceStore.proofKeyFor(entries);
@@ -334,8 +329,9 @@ abstract final class ProofConfidenceCalibrationEngine {
     required EvidenceWeightingResult? evidenceWeighting,
   }) {
     if (evidenceWeighting?.hasSofteningSignal == true) return true;
-    if (matchQuality.matchedDimensions
-        .contains(PatternMatchDimension.sameHelpfulAction)) {
+    if (matchQuality.matchedDimensions.contains(
+      PatternMatchDimension.sameHelpfulAction,
+    )) {
       return true;
     }
     if (anchorExtraction?.anchors.any(

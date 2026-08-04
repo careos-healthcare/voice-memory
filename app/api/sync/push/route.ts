@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { getServerSession } from "@/lib/server/session";
 import {
   syncApiFailure,
@@ -12,18 +14,26 @@ import {
   readRequestBodyText,
   summarizeBlobs,
 } from "@/lib/server/sync-route-log";
+import { checkOwnerScope, readOwnerScopeClaim } from "@/lib/server/owner-scope";
 import { upsertEncryptedBlobs } from "@/lib/server/sync-store";
 import type { EncryptedPayload, SyncBlobType } from "@/types/sync";
+import { meterBestEffort } from "@/lib/server/unit-economics-meter";
+import { parseE2EERelayBlob } from "@/lib/sync/e2ee-relay-contract";
 
 export const runtime = "nodejs";
 
 interface PushBody {
+  expectedAccountId?: string;
+  expectedArchiveId?: string;
   blobs?: Array<{
     id: string;
     type: SyncBlobType;
     encrypted: EncryptedPayload;
     updatedAt: string;
     byteLength: number;
+    deviceId?: string;
+    vectorClock?: Record<string, number>;
+    keyEpoch?: number;
   }>;
 }
 
@@ -58,6 +68,26 @@ export async function POST(request: Request) {
     return syncApiFailure("Request body must be valid JSON.", "INVALID_REMOTE_JSON", 400);
   }
 
+  // Owner binding is checked before a single blob is read, so a request
+  // prepared under a previous account can never insert a row.
+  const scopeRejection = checkOwnerScope(
+    readOwnerScopeClaim(request, body),
+    session.userId,
+  );
+  if (scopeRejection) {
+    log({
+      ok: false,
+      errorCode: scopeRejection.code,
+      responseShape: "owner_scope_mismatch",
+      ...scopeRejection.log,
+    });
+    return syncApiFailure(
+      scopeRejection.message,
+      scopeRejection.code,
+      scopeRejection.status,
+    );
+  }
+
   const blobs = body.blobs ?? [];
   if (blobs.length === 0) {
     log({
@@ -73,6 +103,18 @@ export async function POST(request: Request) {
   log(summary);
 
   for (const blob of blobs) {
+    if (blob.type === "crdt_operations") {
+      try {
+        parseE2EERelayBlob(blob);
+      } catch {
+        return syncApiFailure(
+          "Invalid E2EE CRDT relay envelope.",
+          "INVALID_ENCRYPTED_ENVELOPE",
+          400,
+        );
+      }
+      continue;
+    }
     if (!blob.id || !blob.type || !blob.encrypted?.ciphertext || !blob.encrypted?.iv) {
       log({
         ok: false,
@@ -98,19 +140,37 @@ export async function POST(request: Request) {
   try {
     const manifest = await upsertEncryptedBlobs(
       session.userId,
-      blobs.map((blob) => ({
-        id: blob.id,
-        type: blob.type,
-        encrypted: blob.encrypted,
-        updatedAt: blob.updatedAt,
-        byteLength: blob.byteLength,
-      })),
+      blobs.map((blob) =>
+        blob.type === "crdt_operations"
+          ? parseE2EERelayBlob(blob)
+          : {
+              id: blob.id,
+              type: blob.type,
+              encrypted: blob.encrypted,
+              updatedAt: blob.updatedAt,
+              byteLength: blob.byteLength,
+            },
+      ),
     );
 
     log({
       ok: true,
       responseShape: "manifest",
       blobCount: manifest.blobs.length,
+    });
+
+    const requestBytes = Buffer.byteLength(rawBody, "utf8");
+    const idempotencyKey =
+      request.headers.get("x-vm-idempotency-key")?.trim() ||
+      createHash("sha256").update(rawBody).digest("base64url");
+    await meterBestEffort({
+      operation: "sync.push.ingress",
+      subject: { kind: "user", id: session.userId },
+      idempotencyKey,
+      metric: "ingress_bytes",
+      resource: "network.ingress",
+      quantity: requestBytes,
+      measurementBasis: "exact",
     });
 
     return syncApiSuccess({ manifest });

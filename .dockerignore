@@ -6,6 +6,9 @@ node_modules
 .env.*
 !.env.example
 
+# Non-release surfaces held out of the production build
+experiments/
+
 # Mobile / native — not part of the web server image
 apps/
 android/

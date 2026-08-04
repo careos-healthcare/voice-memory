@@ -1,4 +1,6 @@
 import '../../models/journal_entry.dart';
+import '../../product/consumer_copy_guard.dart';
+import '../record/early_specific_insight_engine.dart';
 import '../theme_tracking/theme_tracker_service.dart';
 import 'instant_reflection_response.dart';
 
@@ -15,6 +17,13 @@ class InstantReflectionResponseEngine {
   }) {
     final transcript = entry.transcript.trim();
     if (transcript.length < minTranscriptChars) return null;
+    if (entry.reflection.explainableConclusion?.provenance.generatedBy ==
+        'model') {
+      return const InstantReflectionResponse(
+        bodyLine: "I'm listening — this moment is in your archive now.",
+        signal: InstantReflectionSignal.listening,
+      );
+    }
 
     final blob = _entryBlob(entry).toLowerCase();
     final themes = ThemeTrackerService.themesForEntry(entry);
@@ -24,12 +33,39 @@ class InstantReflectionResponseEngine {
 
     final candidates = <_Candidate>[];
 
-    if (_hasUncertainty(blob)) {
+    final sharedPhrase = const EarlySpecificInsightEngine().exactSharedPhrase(
+      current: entry,
+      priorEntries: prior,
+    );
+    if (sharedPhrase != null) {
       candidates.add(
         _Candidate(
           priority: 0,
+          signal: InstantReflectionSignal.repeatedPhrase,
+          line:
+              'Early signal from ${prior.length + 1} moments: '
+              '“$sharedPhrase” appears in this moment and an earlier one.',
+        ),
+      );
+    }
+
+    final groundedLine = _groundedSpecificLine(entry);
+    if (groundedLine != null) {
+      candidates.add(
+        _Candidate(
+          priority: 1,
+          signal: InstantReflectionSignal.specificObservation,
+          line: groundedLine,
+        ),
+      );
+    }
+
+    if (_hasUncertainty(blob)) {
+      candidates.add(
+        _Candidate(
+          priority: 10,
           signal: InstantReflectionSignal.uncertainty,
-          line: 'I noticed you sounded uncertain about this.',
+          line: 'From this moment, your words include uncertainty.',
         ),
       );
     }
@@ -37,7 +73,7 @@ class InstantReflectionResponseEngine {
     if (_feelsImportant(blob, entry)) {
       candidates.add(
         _Candidate(
-          priority: 1,
+          priority: 11,
           signal: InstantReflectionSignal.importance,
           line: 'This feels important to you.',
         ),
@@ -47,7 +83,7 @@ class InstantReflectionResponseEngine {
     if (_seemsToCare(blob, entry)) {
       candidates.add(
         _Candidate(
-          priority: 2,
+          priority: 12,
           signal: InstantReflectionSignal.care,
           line: 'You seem to care about this more than you realize.',
         ),
@@ -58,7 +94,7 @@ class InstantReflectionResponseEngine {
     if (repeatTheme != null) {
       candidates.add(
         _Candidate(
-          priority: 3,
+          priority: 13,
           signal: InstantReflectionSignal.repeatedTopic,
           line: 'This topic appears repeatedly.',
         ),
@@ -68,7 +104,7 @@ class InstantReflectionResponseEngine {
     if (_returnedToFamiliar(themes, prior, entry)) {
       candidates.add(
         _Candidate(
-          priority: 4,
+          priority: 14,
           signal: InstantReflectionSignal.familiarConcern,
           line: 'You returned to a familiar concern.',
         ),
@@ -77,7 +113,7 @@ class InstantReflectionResponseEngine {
 
     if (candidates.isEmpty) {
       return const InstantReflectionResponse(
-        bodyLine: "I'm listening — this reflection is in your archive now.",
+        bodyLine: "I'm listening — this moment is in your archive now.",
         signal: InstantReflectionSignal.listening,
       );
     }
@@ -101,6 +137,75 @@ class InstantReflectionResponseEngine {
       'i wonder if',
     ];
     return markers.any(blob.contains);
+  }
+
+  static String? _groundedSpecificLine(JournalEntry entry) {
+    final quote = _safeSpecific(entry.reflection.exactLanguagePattern);
+    final observation = _safeSpecific(entry.reflection.concreteObservation);
+    if (quote != null && observation != null) {
+      final clippedQuote = _clip(quote, 90);
+      final clippedObservation = _clip(observation, 150);
+      if (!clippedObservation.toLowerCase().contains(
+        clippedQuote.toLowerCase(),
+      )) {
+        return 'From this moment: “$clippedQuote” — $clippedObservation';
+      }
+      return 'From this moment: $clippedObservation';
+    }
+    final triggerAction = _triggerAction(entry.transcript);
+    if (quote != null && triggerAction != null) {
+      return 'From this moment: “${_clip(quote, 90)}” — $triggerAction';
+    }
+    if (observation != null && _hasObservableDetail(observation)) {
+      return 'From this moment: ${_clip(observation, 170)}';
+    }
+    if (quote != null) {
+      return 'From this moment: “${_clip(quote, 110)}”.';
+    }
+    return triggerAction;
+  }
+
+  static String? _safeSpecific(String raw) {
+    final value = ConsumerCopyGuard.userFacingObservation(raw)?.trim();
+    if (value == null || value.isEmpty) return null;
+    final lower = value.toLowerCase();
+    const generic = [
+      'entry language',
+      'recorded reflection',
+      'you mentioned ',
+      'this seems important',
+      'you sounded uncertain',
+    ];
+    return generic.any(lower.contains) ? null : value;
+  }
+
+  static String? _triggerAction(String transcript) {
+    final match = RegExp(
+      r'\b(when|after|before|whenever|every time|because)\s+([^,.!?;]{2,80})[,;]\s*([^.!?;]{2,100})',
+      caseSensitive: false,
+    ).firstMatch(transcript);
+    if (match == null) return null;
+    final marker = match.group(1)!.toLowerCase();
+    final trigger = match.group(2)!.trim();
+    var action = match.group(3)!.trim();
+    action = action.replaceFirst(RegExp(r'^I\b', caseSensitive: false), 'you');
+    final lead = marker == 'every time'
+        ? 'Every time'
+        : '${marker[0].toUpperCase()}${marker.substring(1)}';
+    return '$lead ${_clip(trigger, 70)}, ${_clip(action, 100)}.';
+  }
+
+  static bool _hasObservableDetail(String text) => RegExp(
+    r'\b(when|after|before|because|said|opened|checked|reopened|avoided|waited|left|agreed|declined)\b',
+    caseSensitive: false,
+  ).hasMatch(text);
+
+  static String _clip(String text, int maxChars) {
+    final clean = text.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (clean.length <= maxChars) return clean;
+    final slice = clean.substring(0, maxChars);
+    final boundary = slice.lastIndexOf(' ');
+    return '${slice.substring(0, boundary > maxChars ~/ 2 ? boundary : maxChars).trim()}…';
   }
 
   static bool _feelsImportant(String blob, JournalEntry entry) {

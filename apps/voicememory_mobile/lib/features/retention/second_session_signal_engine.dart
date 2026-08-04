@@ -101,8 +101,9 @@ class SecondSessionSignalEngine {
       );
     }
 
-    final groundedRead =
-        latestRead.reads.isNotEmpty ? latestRead.reads.first : null;
+    final groundedRead = latestRead.reads.isNotEmpty
+        ? latestRead.reads.first
+        : null;
     final analysis = _heuristics.analyze(eligible);
     final userThread = _userThread(
       previous: previous,
@@ -268,7 +269,8 @@ class SecondSessionSignalEngine {
     }
 
     final sharedPhrase = _longestSharedPhrase(previousText, latestText);
-    if (sharedPhrase != null && latestText.toLowerCase() != previousText.toLowerCase()) {
+    if (sharedPhrase != null &&
+        latestText.toLowerCase() != previousText.toLowerCase()) {
       final sanitized = _sanitizeUserPhrase(
         'The latest moment still uses "$sharedPhrase".',
       );
@@ -301,7 +303,9 @@ class SecondSessionSignalEngine {
     if (aWords.length < 3 || bWords.length < 3) return null;
 
     String? best;
-    final maxLen = aWords.length < bWords.length ? aWords.length : bWords.length;
+    final maxLen = aWords.length < bWords.length
+        ? aWords.length
+        : bWords.length;
     for (var len = maxLen; len >= 3; len--) {
       for (var i = 0; i <= aWords.length - len; i++) {
         final slice = aWords.sublist(i, i + len);
@@ -335,17 +339,19 @@ class SecondSessionSignalEngine {
   String? _repeatedWordAcross(String a, String b) {
     final aWords = _normalizeWords(a);
     final bWords = _normalizeWords(b).toSet();
-    final shared = aWords
-        .where((word) => word.length > 4 && bWords.contains(word))
-        .toList()
-      ..sort((left, right) => right.length.compareTo(left.length));
+    final shared =
+        aWords
+            .where((word) => word.length > 4 && bWords.contains(word))
+            .toList()
+          ..sort((left, right) => right.length.compareTo(left.length));
     return shared.isEmpty ? null : shared.first;
   }
 
   List<String> _meaningfulSharedTokens(String a, String b) {
-    return _sharedSignificantTokens(a, b)
-        .where((token) => !_threadStopwords.contains(token))
-        .toList();
+    return _sharedSignificantTokens(
+      a,
+      b,
+    ).where((token) => !_threadStopwords.contains(token)).toList();
   }
 
   List<String> _sharedSignificantTokens(String a, String b) {
@@ -362,7 +368,9 @@ class SecondSessionSignalEngine {
   }) {
     final latestWords = _normalizeWords(latestText);
     final previousWords = _normalizeWords(previousText).toSet();
-    final novel = latestWords.where((word) => !previousWords.contains(word)).toList();
+    final novel = latestWords
+        .where((word) => !previousWords.contains(word))
+        .toList();
     if (novel.length < 3) return null;
 
     final start = latestWords.indexOf(novel.first);

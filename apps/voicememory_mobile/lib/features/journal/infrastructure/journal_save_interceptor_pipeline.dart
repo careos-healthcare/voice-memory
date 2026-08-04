@@ -1,41 +1,26 @@
 import '../../../models/journal_entry.dart';
 import '../domain/interceptors/journal_save_interceptor.dart';
-import '../../curiosity_loop/infrastructure/interceptors/cognitive_baseline_interceptor.dart';
-import '../../curiosity_loop/infrastructure/interceptors/cognitive_alert_interceptor.dart';
-import '../../curiosity_loop/infrastructure/interceptors/cognitive_trajectory_interceptor.dart';
-import '../../curiosity_loop/infrastructure/interceptors/curiosity_loop_trigger_interceptor.dart';
-import '../../curiosity_loop/application/curiosity_hook_journal_store.dart';
-import '../../curiosity_loop/repositories/clinical_trajectory_history_store.dart';
-import '../../curiosity_loop/repositories/cognitive_baseline_store.dart';
-import '../../curiosity_loop/repositories/curiosity_hook_repository.dart';
-import '../../curiosity_loop/repositories/curiosity_loop_repository.dart';
 
-/// Runs registered journal save interceptors after persistence completes.
+/// Runs narrowly registered journal save interceptors after persistence.
+///
+/// Commercial V1 does not start clinical telemetry, curiosity loops, or
+/// notification scheduling as side effects of saving user-owned content.
 class JournalSaveInterceptorPipeline {
   JournalSaveInterceptorPipeline(this._interceptors);
 
+  @Deprecated('Clinical and notification interceptors are not in V1')
   factory JournalSaveInterceptorPipeline.clinicalDefaults({
-    CuriosityHookRepository? hookRepository,
-    CuriosityHookJournalStore? journalStore,
-    CuriosityLoopRepository? curiosityLoopRepository,
-    CognitiveBaselineStore? baselineStore,
-    ClinicalTrajectoryHistoryStore? trajectoryHistoryStore,
-  }) {
-    return JournalSaveInterceptorPipeline([
-      CognitiveAlertInterceptor(),
-      CognitiveBaselineInterceptor(baselineStore: baselineStore),
-      CuriosityLoopTriggerInterceptor(repository: curiosityLoopRepository),
-      CognitiveTrajectoryInterceptor(
-        hookRepository: hookRepository,
-        journalStore: journalStore,
-        trajectoryHistoryStore: trajectoryHistoryStore,
-      ),
-    ]);
-  }
+    Object? hookRepository,
+    Object? journalStore,
+    Object? curiosityLoopRepository,
+    Object? baselineStore,
+    Object? trajectoryHistoryStore,
+    Object? acousticSessionBridge,
+    Object? metricsHistoryStore,
+  }) => JournalSaveInterceptorPipeline.empty();
 
-  factory JournalSaveInterceptorPipeline.empty() {
-    return JournalSaveInterceptorPipeline(const []);
-  }
+  factory JournalSaveInterceptorPipeline.empty() =>
+      JournalSaveInterceptorPipeline(const []);
 
   final List<JournalSaveInterceptor> _interceptors;
 

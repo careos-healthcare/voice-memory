@@ -56,7 +56,7 @@ class MemoryAppLockStore implements AppLockSecureStore {
 /// the biometrics opt-in. Only the hash and salt are ever written — there
 /// is no API that accepts or returns a raw PIN.
 class AppLockStore {
-  AppLockStore({required AppLockSecureStore store}) : _store = store;
+  AppLockStore({required this._store});
 
   final AppLockSecureStore _store;
 

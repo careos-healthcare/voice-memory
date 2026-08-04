@@ -22,7 +22,7 @@ function outcomeLabel(status: string): string {
     case "aligned":
       return "May have aligned";
     case "pending":
-      return "Awaiting later reflection";
+      return "Awaiting a later moment";
     default:
       return "Unclear";
   }
@@ -100,7 +100,7 @@ export function PredictionReviewSection({
                   href={`/entry/${item.candidate.entryId}`}
                   className="mt-2 inline-block text-xs text-zinc-500 hover:text-violet-300"
                 >
-                  Open prediction reflection
+                  Open prediction moment
                 </Link>
               </div>
               {item.laterEvidence ? (
@@ -114,7 +114,7 @@ export function PredictionReviewSection({
                     href={`/entry/${item.laterEvidence.entryId}`}
                     className="mt-2 inline-block text-xs text-zinc-500 hover:text-violet-300"
                   >
-                    Open later reflection
+                    Open later moment
                   </Link>
                 </div>
               ) : null}

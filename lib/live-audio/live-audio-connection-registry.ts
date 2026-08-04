@@ -55,12 +55,8 @@ export function broadcastCoordinatorDisconnect(): number {
       connection.client.send(payload);
       connection.client.close(1001, LIVE_AUDIO_COORDINATOR_DISCONNECT);
       notified++;
-    } catch (error) {
-      logLiveAudio(
-        `drain notify failed sessionId=${connection.sessionId} error=${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+    } catch {
+      logLiveAudio("drain notify failed reason=send_failed");
       try {
         connection.ws.terminate();
       } catch {

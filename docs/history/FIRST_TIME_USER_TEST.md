@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # First-Time User Test — ArchiveMe (Flutter)
 
 **Date:** 2026-05-25  
@@ -511,3 +513,4 @@ Issues that risk **App Store rejection**, **brand confusion**, or **first-time u
 ---
 
 *End of first-time user test procedure.*
+

@@ -8,7 +8,9 @@ abstract final class RepeatReturnCheckTrendEngine {
   static bool hasAnsweredCheck(List<RepeatReturnCheckRecord> records) =>
       records.any((record) => record.choice != null);
 
-  static RepeatReturnCheckChoice? latestChoice(List<RepeatReturnCheckRecord> records) {
+  static RepeatReturnCheckChoice? latestChoice(
+    List<RepeatReturnCheckRecord> records,
+  ) {
     for (final record in records) {
       if (record.choice != null) return record.choice;
     }
@@ -17,8 +19,10 @@ abstract final class RepeatReturnCheckTrendEngine {
 
   static String bodyForChoice(RepeatReturnCheckChoice choice) =>
       switch (choice) {
-        RepeatReturnCheckChoice.stronger => RepeatReturnCheckCopy.trendGettingLouder,
-        RepeatReturnCheckChoice.softer => RepeatReturnCheckCopy.trendSofterThanBefore,
+        RepeatReturnCheckChoice.stronger =>
+          RepeatReturnCheckCopy.trendGettingLouder,
+        RepeatReturnCheckChoice.softer =>
+          RepeatReturnCheckCopy.trendSofterThanBefore,
         RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
         RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.trendSteady,
       };

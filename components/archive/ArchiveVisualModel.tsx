@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Reflections", "Evidence", "Beliefs", "Belief Changes"] as const;
+const STEPS = ["Moments", "Evidence", "Beliefs", "Belief Changes"] as const;
 
 type ArchiveVisualModelProps = {
   className?: string;

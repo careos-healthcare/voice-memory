@@ -31,7 +31,7 @@ const DETAIL_LINKS = [
   { href: "/archive-belief#belief-dossier", label: DISCLOSURE_ADVANCED_CONTRADICTIONS },
   { href: "/archive-belief#belief-dossier", label: DISCLOSURE_ADVANCED_YOUR_ARCHIVE },
   { href: "/blind-spots", label: BELIEF_DOMINANCE_EVIDENCE_FOR_BELIEF },
-  { href: "/memory", label: "Reflection log" },
+  { href: "/memory", label: "Saved words" },
   { href: "/search", label: "Search" },
   { href: "/discover", label: BELIEF_DOMINANCE_ARCHIVE_CHANGE },
   { href: "/timeline", label: DISCLOSURE_TIMELINE_SECTION },

@@ -26,7 +26,7 @@ export const ENCRYPTED_SYNC_SUMMARY =
   "If you sign in, your archive is encrypted on this device before backup. Our servers store ciphertext only — not raw transcripts, audio, or reflection text. Sync is optional.";
 
 export const DATA_EXPORT_SUMMARY =
-  "You can export your data anytime from Export, Archive, or Settings: full JSON archive, readable Markdown, and (on Pro) printable reports. Exports are generated on your device from local storage.";
+  "You can export your data anytime from Export, Archive, or Settings: full JSON archive, readable Markdown, and printable reports. Exports are generated on your device from local storage.";
 
 export const DATA_DELETION_SUMMARY =
   "Delete individual reflections from each entry page, or delete all local data from Settings. Deletion removes journal entries, audio, and preferences on this device. Server-side transcription requests are not stored as a permanent journal.";
@@ -138,7 +138,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Subscriptions",
-    body: "Pro features may be offered via subscription when billing launches. Free tier limits (such as the last 7 visible entries) may change with notice on the pricing page.",
+    body: "Your original recordings, entries, transcripts, and exports remain accessible without Pro. A subscription may unlock new ongoing comparisons, deeper archive analysis, and configured remote processing.",
   },
   {
     title: "Limitation of liability",

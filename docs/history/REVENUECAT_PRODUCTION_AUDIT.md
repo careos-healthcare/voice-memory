@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # RevenueCat production readiness audit
 
 **Scope:** Flutter mobile (`apps/voicememory_mobile`) — native IAP via RevenueCat (`purchases_flutter: ^8.1.0`).  
@@ -492,3 +494,4 @@ flutter test
 ---
 
 *Audit: static analysis only. Store SKU strings and live offering shapes must be confirmed in RevenueCat, App Store Connect, and Google Play Console.*
+

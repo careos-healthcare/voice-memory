@@ -38,25 +38,23 @@ class QuickCaptureFrictionRecord {
   final DateTime updatedAt;
 
   bool get isAnswered =>
-      status == QuickCaptureFrictionStatus.answered &&
-      responseId.isNotEmpty;
+      status == QuickCaptureFrictionStatus.answered && responseId.isNotEmpty;
 
   bool get isSkipped => status == QuickCaptureFrictionStatus.skipped;
 
   bool get isComplete => isAnswered || isSkipped;
 
   bool get isStillWork =>
-      isAnswered &&
-      responseId == QuickCaptureFrictionResponseIds.stillWork;
+      isAnswered && responseId == QuickCaptureFrictionResponseIds.stillWork;
 
   Map<String, dynamic> toJson() => {
-        'responseId': responseId,
-        'source': source,
-        'relatedEntryId': relatedEntryId,
-        'status': status.name,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+    'responseId': responseId,
+    'source': source,
+    'relatedEntryId': relatedEntryId,
+    'status': status.name,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
 
   static QuickCaptureFrictionRecord? fromJson(Map<String, dynamic> json) {
     final source = json['source'];

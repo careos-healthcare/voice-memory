@@ -16,9 +16,9 @@ Last reviewed: keep this date current at submission time.
 | Pattern / check-in metadata | Yes | Local; trial metrics local only | Drive the daily loop |
 | Activation / trial metrics | Yes | Local-only in trial mode | Internal product diagnostics |
 | Analytics events (Firebase Analytics) | Yes (non-trial builds) | Yes — Firebase | Product usage analytics |
-| Push token (Firebase Messaging) | Yes (non-trial builds) | Yes — Firebase | Remote messaging (separate from local reminders) |
+| Push token (Firebase Messaging) | No in focused V1 | No | Remote push is compiled out of V1 startup |
 | Purchase status (RevenueCat) | Yes (if billing enabled) | Yes — RevenueCat / App Store | Subscription entitlement |
-| Notification permission + reminders | Yes (if enabled) | Local only (local notifications) | Remind you of tomorrow's check |
+| Notification permission + reminders | No in focused V1 | No | Not included in the V1 permission envelope |
 
 ## 2. Local storage
 - Reflections, pattern memory, progress, next action, habit proof, weekly recap,
@@ -28,7 +28,9 @@ Last reviewed: keep this date current at submission time.
   `flutter_secure_storage`.
 - **Mobile prefs** (`mobile_prefs.json`): plaintext JSON — archive metadata and
   cached insights.
-- **Temp voice recordings** (`vm_rec_*`): plaintext files under system temp.
+- **Retained voice recordings**: AES-GCM encrypted audio vault objects. Plaintext
+  exists only during active capture or a short-lived playback/transcription
+  lease and is deleted after use.
 - In **trial / local-only mode** there is no cloud sync, billing, push, or login.
 
 ## 3. Account / auth status
@@ -42,14 +44,27 @@ Last reviewed: keep this date current at submission time.
 
 ## 5. Analytics & trial metrics
 - Firebase Analytics is used in non-trial builds.
+- Provider payloads pass through one content-free catalog immediately before
+  dispatch. Only known event ids, known property keys, fixed metadata tokens,
+  flags, and coarse count buckets are accepted. Recording/saved text, prompts,
+  inferred themes/topics, generated titles/categories, raw ids, email,
+  customer/product ids, timestamps, tokens, hashes, nested values, and nulls
+  are rejected.
+- Invalid payloads fail loudly in debug/test. Release builds drop them and
+  increment a local diagnostic counter. Account deletion and local archive
+  wipe clear queued events and reset Firebase's installation analytics data.
 - Trial activation metrics are stored **locally only** and surfaced in the
   developer/trial control screen for diagnostics; they are not a separate ad/analytics SDK.
 
-## 6. Reminders
-- Local notifications only (`flutter_local_notifications`), scheduled on-device.
-- Permission is requested **only after** the user chooses tomorrow's check, never
-  on launch. Reminders fire only when the user enables them in Settings.
-- No reminder content is sent off device.
+## 6. Permissions and reminders
+- Focused V1 declares microphone and optional device-authentication access only.
+- Microphone access is requested only after the user deliberately starts voice
+  recording.
+- Device authentication is requested only when enabling or unlocking the
+  optional private archive lock.
+- Notifications, background scheduling, health, Bluetooth, local network,
+  nearby Wi-Fi, location, calendar, activity recognition, camera/photos and
+  speech recognition are absent from the focused V1 Release artifact.
 
 ## 7. Purchases / subscriptions
 - RevenueCat (`purchases_flutter`) handles subscription entitlement when billing
@@ -70,13 +85,13 @@ Likely declarations (confirm against final build):
   account is used.
 - **Usage Data** — analytics (Firebase) in non-trial builds.
 - **Purchases** — if billing enabled.
-- **Identifiers** — push token / analytics identifiers in non-trial builds.
+- **Identifiers** — analytics identifiers in non-trial builds.
 - **Diagnostics** — local trial metrics (not exported by an SDK).
 
 Do NOT declare "Data Not Collected" globally — audio and analytics leave the device
 in production builds.
 
 ## 11. Third parties / SDKs that may receive data
-- Firebase (Analytics, Messaging, Core)
+- Firebase (Analytics and Core; Messaging is not initialized in focused V1)
 - RevenueCat (if billing enabled)
 - Backend host (Vercel-hosted API) for transcription/analysis

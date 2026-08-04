@@ -34,14 +34,17 @@ export async function POST(request: NextRequest) {
   const review = body.review;
 
   if (!email || !email.includes("@")) {
-    return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Valid email required" },
+      { status: 400 },
+    );
   }
   if (!archiveUrl) {
     return NextResponse.json({ error: "archiveUrl required" }, { status: 400 });
   }
-  if (!review?.monthKey || review.reviewVersion !== 2) {
+  if (!review?.monthKey || review.reviewVersion !== 4) {
     return NextResponse.json(
-      { error: "review must be ArchiveMonthlyReview v2 from synthesis cache" },
+      { error: "review must be ArchiveMonthlyReview v4 from synthesis cache" },
       { status: 400 },
     );
   }

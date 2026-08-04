@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import 'api_exceptions.dart';
 
+export 'api_exceptions.dart' show RateLimitedException;
+
 class ApiErrorMapper {
   static ApiException fromResponse(http.Response response) {
     String message = 'Request failed (${response.statusCode})';
@@ -16,25 +18,29 @@ class ApiErrorMapper {
 
     switch (response.statusCode) {
       case 401:
-        return AuthRequiredException(message);
+        return AuthRequiredException();
       case 413:
-        return ApiException(
-          message,
-          statusCode: 413,
-          code: code ?? 'PAYLOAD_TOO_LARGE',
-        );
+        return PayloadTooLargeException();
       case 429:
-        return RateLimitedException(message, code: code);
+        return RateLimitedException(
+          'Too many requests. Please wait a moment.',
+          code: code,
+        );
       case 503:
         if (code == 'BILLING_DISABLED') {
           return BillingUnavailableException();
         }
-        return ApiException(message, statusCode: 503, code: code);
+        return ServiceUnavailableException();
       case 422:
+        if (code == null ||
+            code == 'NO_SPEECH' ||
+            code == 'NO_SPEECH_DETECTED') {
+          return NoSpeechException();
+        }
         return ApiException(
           message,
-          statusCode: 422,
-          code: code ?? 'NO_SPEECH',
+          statusCode: response.statusCode,
+          code: code,
         );
       default:
         return ApiException(
@@ -44,9 +50,4 @@ class ApiErrorMapper {
         );
     }
   }
-}
-
-class RateLimitedException extends ApiException {
-  RateLimitedException(super.message, {String? code})
-    : super(statusCode: 429, code: code ?? 'RATE_LIMIT');
 }

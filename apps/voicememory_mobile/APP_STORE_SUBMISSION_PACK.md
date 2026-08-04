@@ -11,24 +11,24 @@ Run from `apps/voicememory_mobile` unless noted.
 | **iOS bundle ID** | `com.voicememory.mobile` |
 | **Android application ID** | `com.voicememory.mobile` (Play is separate) |
 | **Marketing version** | `0.2.0` (from `pubspec.yaml`) |
-| **Build number** | `38` (`pubspec.yaml` → `version: 0.2.0+38`) |
+| **Build number** | `49` (`pubspec.yaml` → `version: 0.2.0+49`) |
 | **Support URL** | https://careosapp.co.uk/archiveme-support |
 | **Privacy policy (web)** | https://careosapp.co.uk/archiveme-privacy |
 | **Privacy policy (in-app)** | Settings → Privacy (`/privacy`) |
 | **Terms (in-app)** | `/terms` |
 | **Primary URL scheme** | `archiveme://` |
-| **Legacy URL scheme** | `voicememory://` |
-| **App Group (widget prep)** | `group.com.voicememory.mobile` |
+| **V1 embedded extensions** | None |
+| **V1 explicit entitlements** | None |
 
 Open **`ios/Runner.xcworkspace`** for archive/upload — not `Runner.xcodeproj`.
 
-## Purchases / RevenueCat (paused)
+## Purchases / RevenueCat
 
-- Native billing code exists, but **purchases are unavailable** until App Store Connect banking and RevenueCat product setup are complete.
-- **RevenueCat is paused** on this branch — do not claim users can buy Pro yet.
-- Do **not** use subscribe-or-buy purchase CTAs in release notes while billing is incomplete.
-- **Restore purchases** is reachable from Settings; it should show honest unavailable/inert copy until RevenueCat is configured.
-- **Pro preview** (`/pro-preview`) explains future Pro value only — no purchase CTA.
+- The production UI supports monthly and annual auto-renewing packages loaded through RevenueCat.
+- Prices and introductory terms appear only when the matching store products load.
+- If RevenueCat or store products are unavailable, the paywall shows a retry state and no fabricated price.
+- Do not claim purchases are live until the submitted build has completed monthly, annual, restore, expiry, and revocation sandbox checks.
+- **Restore Purchases** remains reachable from Account and the paywall.
 - No Stripe checkout in the mobile app.
 
 ## Reviewer demo path (under 2 minutes)
@@ -40,15 +40,15 @@ Open **`ios/Runner.xcworkspace`** for archive/upload — not `Runner.xcodeproj`.
 5. Open **Sample Archive** (`/sample-archive`) — example data only, never writes to the real journal.
 6. Settings → **Help & reviewer guide** (`/help-reviewer-guide`).
 7. Settings → **Support & feedback** (`/support-feedback`).
-8. Settings → **See Pro preview** (`/pro-preview`) — interest-only, no purchase.
-9. Settings → **Restore purchases** — confirm unavailable/honest copy until billing is ready.
+8. Account → **Subscription** (`/subscription`) — inspect only the packages returned by the store.
+9. Account → **Restore purchases** — verify the current sandbox account result.
 
 Reviewer notes block (paste into App Store Connect if helpful):
 
 ```
 • ArchiveMe can be tested without microphone access by using Type instead.
 • Sample Archive uses example data only and does not write to the real journal.
-• RevenueCat purchases are unavailable until banking setup is complete; the free archive flow remains usable.
+• Monthly and annual packages appear only when returned by the App Store through RevenueCat; no fallback price is shown.
 • Privacy & data controls are available in Settings.
 • Share-safe proof does not include raw private entries.
 • Support URL: https://careosapp.co.uk/archiveme-support
@@ -56,7 +56,9 @@ Reviewer notes block (paste into App Store Connect if helpful):
 
 ## Microphone & privacy (reviewer copy)
 
-- **Microphone:** used only to record the user's own voice reflections. Permission string: “ArchiveMe needs the microphone to record private voice reflections.”
+- **Microphone:** used only after the user chooses voice recording. Release
+  permission string: “ArchiveMe uses the microphone when you choose to record
+  a private journal moment.”
 - **Local archive:** journal entries stay on device unless the user explicitly exports or shares share-safe proof (no raw entries in demo/sample routes).
 - **Sample Archive / reviewer routes:** must not display the user's private journal text.
 
@@ -69,14 +71,14 @@ Capture on device or simulator with production API configured:
 3. Sample Archive — clearly labeled example data
 4. Patterns / evidence touchpoint (if visible in build)
 5. Settings — Privacy & data controls (no developer diagnostics)
-6. Pro preview — value explanation, no purchase button claiming checkout works
+6. Subscription — store-derived monthly/annual options or the honest unavailable state
 
 Use ArchiveMe branding only in screenshots.
 
 ## TestFlight internal test checklist
 
 - [ ] Build uploaded from Xcode Organizer after `flutter build ios --release`
-- [ ] Build number `38` (or incremented) visible in TestFlight
+- [ ] Build number `49` (or a later value explicitly written back to `pubspec.yaml`) visible in TestFlight
 - [ ] Internal tester invited and build installed on physical device
 - [ ] Fresh install completes without crash
 - [ ] Typed moment saves locally

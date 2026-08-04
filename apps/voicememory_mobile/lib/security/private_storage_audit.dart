@@ -35,10 +35,10 @@ abstract class PrivateStorageAudit {
     ),
     PrivateStorageAuditReport(
       store: 'MobilePrefsStore',
-      backend: 'json_file',
+      backend: 'flutter_secure_storage',
       sensitive: true,
-      encrypted: false,
-      notes: 'mobile_prefs.json — archive metadata and cached insights',
+      encrypted: true,
+      notes: 'archive metadata and cached insights; plaintext file migrated',
     ),
     PrivateStorageAuditReport(
       store: 'EntitlementCache',
@@ -70,25 +70,69 @@ abstract class PrivateStorageAudit {
     ),
     PrivateStorageAuditReport(
       store: 'VoiceRecordings',
-      backend: 'temp_file',
+      backend: 'authenticated_encrypted_audio_vault',
+      sensitive: true,
+      encrypted: true,
+      notes:
+          'Retained audio uses chunked AES-256-GCM with opaque references; '
+          'keys remain in platform secure storage',
+    ),
+    PrivateStorageAuditReport(
+      store: 'ActiveCaptureWorkingFiles',
+      backend: 'private_temporary_file',
       sensitive: true,
       encrypted: false,
       notes:
-          'vm_rec_*.m4a under system temp; released after successful save; stale orphans purged on startup; retained for offline draft retry',
+          'Plaintext exists only during active capture or a scoped decrypt lease; '
+          'it is never referenced by new journal metadata',
     ),
     PrivateStorageAuditReport(
       store: 'OfflineDrafts',
       backend: 'encrypted_json_file',
       sensitive: true,
       encrypted: true,
-      notes: '[draft] entries in encrypted journal + localAudioPath (audio plaintext)',
+      notes:
+          '[draft] entries in encrypted journal + AES-256-GCM encrypted audio vault references',
+    ),
+    PrivateStorageAuditReport(
+      store: 'TranscriptionLedger',
+      backend: 'encrypted_audio_file_store',
+      sensitive: true,
+      encrypted: true,
+      notes:
+          'queued audio is authenticated ciphertext; scoped .working files are securely deleted',
+    ),
+    PrivateStorageAuditReport(
+      store: 'CaptureApiRetryQueue',
+      backend: 'encrypted_json_file',
+      sensitive: true,
+      encrypted: true,
+      notes:
+          'new transcription retries retain opaque journal audio vault references only',
+    ),
+    PrivateStorageAuditReport(
+      store: 'EmergencyVaultStorage',
+      backend: 'private_application_support_staging',
+      sensitive: true,
+      encrypted: false,
+      notes:
+          'short-lived crash-recovery PCM chunks; acknowledged chunks and privacy wipes delete them',
     ),
     PrivateStorageAuditReport(
       store: 'ArchiveFeatureStores',
-      backend: 'json_file',
+      backend: 'flutter_secure_storage',
       sensitive: true,
-      encrypted: false,
+      encrypted: true,
       notes: 'archive collections, packs, synthesis cache in MobilePrefsStore',
+    ),
+    PrivateStorageAuditReport(
+      store: 'OnDeviceModelWeights',
+      backend: 'application_support_file',
+      sensitive: false,
+      encrypted: false,
+      notes:
+          'llm_models/*/model.gguf — plaintext third-party model weights; '
+          'excluded from backup; contains no user or archive data',
     ),
   ];
 

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "surfaceAllowlist": "config/release/archive_me_v1_backend_allowlist.json",
+  "backend": {
+    "buildCommand": "npm run build:backend",
+    "runtimeCommand": "npm start",
+    "artifactDirectory": ".backend-release",
+    "deploymentArtifact": "Dockerfile"
+  },
+  "capabilityGroups": {
+    "identity-and-privacy": [
+      "/api/account/delete",
+      "/api/auth/send-code",
+      "/api/auth/session",
+      "/api/auth/signout",
+      "/api/auth/verify"
+    ],
+    "capture-and-transcription": [
+      "/api/analyze",
+      "/api/capture/attest",
+      "/api/transcribe"
+    ],
+    "journal-and-sync": [
+      "/api/journal",
+      "/api/journal/[id]",
+      "/api/journal/export",
+      "/api/sync/manifest",
+      "/api/sync/pull",
+      "/api/sync/push"
+    ],
+    "billing-and-usage": [
+      "/api/billing/checkout",
+      "/api/billing/config",
+      "/api/billing/entitlements",
+      "/api/billing/revenuecat/link",
+      "/api/billing/revenuecat/webhook",
+      "/api/billing/webhook",
+      "/api/user/subscription-status"
+    ],
+    "feedback-and-push": [
+      "/api/analytics/funnel",
+      "/api/metrics/resurfacing",
+      "/api/push/register",
+      "/api/resurfacing/feedback",
+      "/api/resurfacing/feedback/summary"
+    ],
+    "operations": [
+      "/api/health",
+      "/api/healthz",
+      "/api/internal/auth-env",
+      "/api/internal/send-test-push",
+      "/api/internal/unit-economics/pricing",
+      "/api/internal/unit-economics/reconcile",
+      "/api/internal/unit-economics/report",
+      "/api/internal/unit-economics/revenue"
+    ]
+  },
+  "releaseInputs": [
+    "app/api",
+    "backend",
+    "config",
+    "lib",
+    "types",
+    "middleware.ts",
+    "next.config.ts",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json"
+  ],
+  "excludedClientShells": [
+    "app customer pages",
+    "components",
+    "public",
+    "apps",
+    "experiments",
+    "android",
+    "ios",
+    "capacitor.config.ts"
+  ]
+}

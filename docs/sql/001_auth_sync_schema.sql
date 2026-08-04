@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE INDEX IF NOT EXISTS sessions_user_id_idx ON sessions (user_id);
 CREATE INDEX IF NOT EXISTS sessions_expires_at_idx ON sessions (expires_at);
 
+CREATE TABLE IF NOT EXISTS user_profiles (
+  user_id text PRIMARY KEY,
+  focus_area text NOT NULL DEFAULT 'General',
+  onboarding_completed boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS sync_blobs (
   user_id text NOT NULL,
   blob_type text NOT NULL,

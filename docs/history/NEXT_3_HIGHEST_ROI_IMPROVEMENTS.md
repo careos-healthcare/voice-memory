@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Next 3 Highest-ROI Archive Improvements
 
 Derived from [ARCHIVE_PRODUCT_MARKET_FIT_AUDIT.md](./ARCHIVE_PRODUCT_MARKET_FIT_AUDIT.md) (full validation pass, 2026-05-25).
@@ -113,3 +115,4 @@ After these three changes — still no new Archive surfaces — ArchiveMe should
 - **Pay:** Burned-out, fitness, founder, and relationship personas approach the same bar burned-out hits today.
 
 That is the minimum bar for asking “worth paying for?” again without GPT-5.
+

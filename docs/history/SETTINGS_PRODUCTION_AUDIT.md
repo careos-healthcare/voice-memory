@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Settings production readiness audit
 
 **App:** `apps/voicememory_mobile`  
@@ -132,3 +134,4 @@ flutter test test/settings_screen_test.dart test/settings_screen_widget_test.dar
 ```
 
 All settings-related tests pass.
+

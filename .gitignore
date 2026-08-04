@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.backend-release/
 /out/
 
 # production

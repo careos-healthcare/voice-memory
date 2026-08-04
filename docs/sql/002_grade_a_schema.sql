@@ -1,5 +1,13 @@
 -- VoiceMemory Grade A schema (idempotent) — mirrors lib/server/db.ts AUTH_SYNC_SCHEMA_STATEMENTS
 
+CREATE TABLE IF NOT EXISTS user_profiles (
+  user_id text PRIMARY KEY,
+  focus_area text NOT NULL DEFAULT 'General',
+  onboarding_completed boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS api_usage (
   subject_key text NOT NULL,
   day_key text NOT NULL,
@@ -34,6 +42,16 @@ CREATE TABLE IF NOT EXISTS billing_entitlements (
   stripe_subscription_id text,
   status text NOT NULL DEFAULT 'canceled',
   tier text NOT NULL DEFAULT 'free',
+  subscription_end_date timestamptz,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE billing_entitlements
+  ADD COLUMN IF NOT EXISTS subscription_end_date timestamptz;
+
+CREATE TABLE IF NOT EXISTS revenuecat_user_mappings (
+  user_id text PRIMARY KEY,
+  app_user_id text NOT NULL UNIQUE,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 

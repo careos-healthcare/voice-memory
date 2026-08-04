@@ -14,21 +14,18 @@ enum AnchorCalibrationAction {
 
 extension AnchorCalibrationActionAnalytics on AnchorCalibrationAction {
   String get analyticsValue => switch (this) {
-        AnchorCalibrationAction.preferSpecificAnchors =>
-          'prefer_specific_anchors',
-        AnchorCalibrationAction.downgradeFallbackOnly =>
-          'downgrade_fallback_only',
-        AnchorCalibrationAction.requireChangeDelta => 'require_change_delta',
-        AnchorCalibrationAction.useChangeTrackingCopy =>
-          'use_change_tracking_copy',
-        AnchorCalibrationAction.downgradeCurrentRelevance =>
-          'downgrade_current_relevance',
-        AnchorCalibrationAction.requireFreshReturnForStrong =>
-          'require_fresh_return_for_strong',
-        AnchorCalibrationAction.strengthenSimilarAnchors =>
-          'strengthen_similar_anchors',
-        AnchorCalibrationAction.rerankAnchors => 'rerank_anchors',
-      };
+    AnchorCalibrationAction.preferSpecificAnchors => 'prefer_specific_anchors',
+    AnchorCalibrationAction.downgradeFallbackOnly => 'downgrade_fallback_only',
+    AnchorCalibrationAction.requireChangeDelta => 'require_change_delta',
+    AnchorCalibrationAction.useChangeTrackingCopy => 'use_change_tracking_copy',
+    AnchorCalibrationAction.downgradeCurrentRelevance =>
+      'downgrade_current_relevance',
+    AnchorCalibrationAction.requireFreshReturnForStrong =>
+      'require_fresh_return_for_strong',
+    AnchorCalibrationAction.strengthenSimilarAnchors =>
+      'strengthen_similar_anchors',
+    AnchorCalibrationAction.rerankAnchors => 'rerank_anchors',
+  };
 }
 
 class AnchorCalibrationResult {

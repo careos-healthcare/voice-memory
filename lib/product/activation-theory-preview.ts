@@ -12,7 +12,7 @@ export const FORBIDDEN_THEORY_PREVIEW =
   /\b(diagnos|disorder|patholog|clinical|trauma|therapy|counsel|coach|treatment|mental health|you are|you're always|always |root cause|guaranteed|certainly)\b/i;
 
 const NEXT_REFLECTION_COPY =
-  "Your next reflection helps ArchiveMe check whether this is real or just noise.";
+  "Your next moment helps ArchiveMe check whether this is real or just noise.";
 
 const FALLBACK_THEORY =
   "You may be circling the same concern before there is enough history to name it.";
@@ -23,9 +23,9 @@ function eligibleEntries(entries: JournalEntry[]): JournalEntry[] {
 
 function unlockCopyFor(remaining: number): string {
   if (remaining === 1) {
-    return "1 more reflection before ArchiveMe can weigh this with confidence.";
+    return "1 more moment before ArchiveMe can weigh this with confidence.";
   }
-  return "2 more reflections before ArchiveMe can weigh this with confidence.";
+  return "2 more moments before ArchiveMe can weigh this with confidence.";
 }
 
 function sanitizeTheory(text: string): string {

@@ -34,6 +34,7 @@ void main() {
     tempDir = Directory.systemTemp.createTempSync('vm_temp_rec_cleanup_');
     journal = await JournalStore.open(
       '${tempDir.path}/journal.json',
+      ownerArchiveId: 'local',
       encryptAtRest: false,
     );
   });
@@ -147,13 +148,15 @@ void main() {
   });
 
   group('capture pipeline integration', () {
-    test('offline draft save keeps vm_rec audio for retry', () async {
+    test('offline draft retains only encrypted audio for retry', () async {
       final dir = Directory.systemTemp.createTempSync('vm_pipeline_draft_');
       await AppServices.resetForTest(
         journalPath: '${dir.path}/journal.json',
-        api: _FailingTranscribeApi(),
+        voiceCaptureApi: _FailingTranscribeApi(),
       );
-      final audioDir = Directory.systemTemp.createTempSync('vm_pipeline_audio_');
+      final audioDir = Directory.systemTemp.createTempSync(
+        'vm_pipeline_audio_',
+      );
       final audio = File('${audioDir.path}/vm_rec_capture.m4a')
         ..writeAsBytesSync(List.filled(1200, 1));
 
@@ -164,8 +167,15 @@ void main() {
 
       expect(result.syncSucceeded, isFalse);
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isTrue);
-      expect(result.entry.localAudioPath, audio.path);
-      expect(audio.existsSync(), isTrue);
+      expect(result.entry.localAudioPath, isNull);
+      expect(result.entry.localAudioVaultRef, startsWith('av1:'));
+      expect(audio.existsSync(), isFalse);
+      expect(
+        await AppServices.instance.journalAudioVault.exists(
+          result.entry.localAudioVaultRef!,
+        ),
+        isTrue,
+      );
 
       dir.deleteSync(recursive: true);
       audioDir.deleteSync(recursive: true);
@@ -173,8 +183,8 @@ void main() {
   });
 }
 
-class _FailingTranscribeApi extends ApiClient {
-  _FailingTranscribeApi() : super(baseUrl: 'http://test.invalid');
+class _FailingTranscribeApi extends VoiceCaptureApiClient {
+  _FailingTranscribeApi() : super(ApiTransport(baseUrl: 'http://test.invalid'));
 
   @override
   Future<AttestResult> postCaptureAttest(String deviceId) async {

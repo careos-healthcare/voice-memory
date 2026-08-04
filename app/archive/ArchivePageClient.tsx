@@ -117,7 +117,7 @@ export function ArchivePageClient() {
 
     if (restoreMode === "replace") {
       const typed = window.prompt(
-        `Replace will delete all ${entryCount} reflection${entryCount === 1 ? "" : "s"} on this device.\n\nType DELETE to confirm.`,
+        `Replace will delete all ${entryCount} moment${entryCount === 1 ? "" : "s"} on this device.\n\nType DELETE to confirm.`,
       );
       if (typed !== "DELETE") return;
     }
@@ -133,7 +133,7 @@ export function ArchivePageClient() {
       refreshCount();
       setPreview(null);
       showMessage(
-        `Restored ${result.entries} reflection${result.entries === 1 ? "" : "s"}${result.audio ? ` and ${result.audio} audio file${result.audio === 1 ? "" : "s"}` : ""}${result.photos ? ` and ${result.photos} photo${result.photos === 1 ? "" : "s"}` : ""}.`,
+        `Restored ${result.entries} moment${result.entries === 1 ? "" : "s"}${result.audio ? ` and ${result.audio} audio file${result.audio === 1 ? "" : "s"}` : ""}${result.photos ? ` and ${result.photos} photo${result.photos === 1 ? "" : "s"}` : ""}.`,
       );
     } catch (error) {
       showMessage(error instanceof Error ? error.message : "Restore failed.");
@@ -145,7 +145,7 @@ export function ArchivePageClient() {
   const handleDeleteArchive = async () => {
     if (
       !window.confirm(
-        `Delete all ${entryCount} reflection${entryCount === 1 ? "" : "s"} and audio on this device? This cannot be undone.`,
+        `Delete all ${entryCount} moment${entryCount === 1 ? "" : "s"} and audio on this device? This cannot be undone.`,
       )
     ) {
       return;
@@ -158,7 +158,7 @@ export function ArchivePageClient() {
       const removed = await deleteLocalArchive();
       refreshCount();
       setPreview(null);
-      showMessage(`Deleted ${removed} reflection${removed === 1 ? "" : "s"}.`);
+      showMessage(`Deleted ${removed} moment${removed === 1 ? "" : "s"}.`);
     } finally {
       setBusy(false);
     }
@@ -191,8 +191,8 @@ export function ArchivePageClient() {
 
       {entryCount === 0 ? (
         <EmptyState
-          title="No reflections yet"
-          description="Record a reflection first. Your archive grows on this device as you speak."
+          title="No moments yet"
+          description="Record a moment first. Your archive grows on this device as you speak."
           action={
             <Link
               href="/record"
@@ -214,7 +214,7 @@ export function ArchivePageClient() {
           ) : null}
 
           <p className="text-xs text-zinc-500">
-            {entryCount} reflection{entryCount === 1 ? "" : "s"} on this device
+            {entryCount} moment{entryCount === 1 ? "" : "s"} on this device
           </p>
 
           <details className="rounded-xl border border-white/10 bg-black/20">
@@ -227,7 +227,7 @@ export function ArchivePageClient() {
           </details>
 
           <ArchiveSectionCard
-            title="Keep your reflections for years"
+            title="Keep your moments for years"
             icon={<Archive className="h-4 w-4 text-violet-300/80" />}
           >
             <p className="line-clamp-2">{ARCHIVE_PERMANENCE_COPY.neverTrapped}</p>

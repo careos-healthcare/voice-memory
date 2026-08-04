@@ -584,8 +584,8 @@ export function Recorder({
 
         setStage("analyzing");
 
-        // Prompt Context Contract: prior entries travel as references
-        // only — the server builds a structured evidence packet.
+        // Prompt Context Contract: prior entries travel only as ids,
+        // timestamps, and bounded safe reflection snippets — never transcripts.
         const priorEvidence = buildPriorEvidenceRefs(getAllEntries());
 
         const analyzeResponse = await fetch("/api/analyze", {

@@ -683,9 +683,9 @@ abstract class MemoryGovernancePolicy {
 
   @visibleForTesting
   static void resetForTest() {
-    CurrentIntentSignal.resetSessionForTest();
-    EntryAboutnessSession.resetSessionForTest();
-    MemorySurfacingSession.resetSessionForTest();
-    TopicShiftGuard.resetForTest();
+    CurrentIntentSignal.resetSession();
+    EntryAboutnessSession.resetSession();
+    MemorySurfacingSession.resetSession();
+    TopicShiftGuard.resetSession();
   }
 }

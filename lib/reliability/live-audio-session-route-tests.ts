@@ -16,7 +16,7 @@ import {
 } from "@/lib/live-audio/session-store";
 import { resetLiveAudioUsageForTest } from "@/lib/live-audio/usage-limits";
 
-const ROUTE_PATH = path.join(process.cwd(), "app/api/live-audio/session/route.ts");
+const ROUTE_PATH = path.join(process.cwd(), "experiments/backend/app/api/live-audio/session/route.ts");
 
 function readRouteSource(): string {
   return fs.readFileSync(ROUTE_PATH, "utf8");

@@ -1,168 +1,168 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-import '../features/activation/belief_evidence_trail.dart';
-import '../features/activation/weekly_archive_review.dart';
-import '../features/archive_beliefs/archive_belief_providers.dart';
-import '../features/archive_home/archive_intelligence_home.dart';
-import '../features/archive_home/archive_intelligence_presentation.dart';
-import '../features/first25/first25_user_metrics.dart';
-import '../features/retention/retention_analytics.dart';
-import '../router/primary_destination.dart';
-import '../router/primary_navigation_controller.dart';
-import '../router/route_catalog.dart';
-import '../theme/app_colors.dart';
-import '../widgets/accessibility/accessible_primary_surface.dart';
+import '../models/journal_entry.dart';
+import '../services/app_services.dart';
 
-/// Archive Intelligence home: coordinates archive state and delegates rendering.
-class ArchiveBeliefScreen extends StatelessWidget {
+/// V1 Archive: the user's original saved moments, without interpretation.
+class ArchiveBeliefScreen extends StatefulWidget {
   const ArchiveBeliefScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const ProviderScope(child: _ArchiveBeliefView());
-  }
+  State<ArchiveBeliefScreen> createState() => _ArchiveBeliefScreenState();
 }
 
-class _ArchiveBeliefView extends ConsumerStatefulWidget {
-  const _ArchiveBeliefView();
+class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
+  List<JournalEntry>? _entries;
+  String? _error;
 
-  @override
-  ConsumerState<_ArchiveBeliefView> createState() => _ArchiveBeliefViewState();
-}
-
-class _ArchiveBeliefViewState extends ConsumerState<_ArchiveBeliefView> {
   @override
   void initState() {
     super.initState();
-    primaryNavigationController.addListener(_handlePrimaryActivation);
-    First25UserMetrics.trackArchiveOpened(surface: 'archive_intelligence_home');
+    unawaited(_reload());
   }
 
-  @override
-  void dispose() {
-    primaryNavigationController.removeListener(_handlePrimaryActivation);
-    super.dispose();
-  }
-
-  void _handlePrimaryActivation() {
-    if (!mounted ||
-        primaryNavigationController.activeDestination !=
-            PrimaryDestination.archive) {
-      return;
+  Future<void> _reload() async {
+    try {
+      final entries = (await AppServices.instance.journalStore.loadAll())
+          .toList();
+      entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      if (!mounted) return;
+      setState(() {
+        _entries = entries;
+        _error = null;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() => _error = 'Your archive could not be opened right now.');
     }
-    ref.read(archiveBootstrapProvider.notifier).refresh();
+  }
+
+  Future<void> _open(JournalEntry entry) async {
+    await context.push('/entry/${entry.id}');
+    await _reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    final archive = ref.watch(archiveBootstrapProvider);
-    return AccessiblePrimarySurface(
-      label: 'Archive Intelligence screen',
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        appBar: AppBar(
-          title: const Text('Archive'),
-          actions: [
-            TextButton.icon(
-              key: const Key('archive_open_memory_graph'),
-              onPressed: () => context.push(RouteCatalog.graphHome),
-              icon: const Icon(Icons.hub_outlined),
-              label: const Text('Memory graph'),
-            ),
-          ],
-        ),
-        body: archive.when(
-          loading: () => const _ArchiveLoadingState(),
-          error: (error, _) => _ArchiveErrorState(
-            onRetry: () =>
-                ref.read(archiveBootstrapProvider.notifier).refresh(),
+    final theme = Theme.of(context);
+    final entries = _entries;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Archive'),
+        actions: [
+          IconButton(
+            tooltip: 'Search archive',
+            onPressed: () => context.push('/archive-search'),
+            icon: const Icon(Icons.search),
           ),
-          data: (snapshot) {
-            final presentation = ArchiveIntelligencePresentation.build(
-              entries: snapshot.entries,
-              beliefs: snapshot.beliefs,
-            );
-            return ArchiveIntelligenceHome(
-              presentation: presentation,
-              onRefresh: () =>
-                  ref.read(archiveBootstrapProvider.notifier).refresh(),
-              onOpenMoment: (entryId) => _openMoment(context, entryId),
-              onAction: (action) => _handleAction(context, action),
-            );
-          },
+        ],
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: _reload,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+            children: [
+              Text(
+                'Your original recordings, typed moments and transcripts.',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              if (_error case final error?) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    error,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+              if (entries == null)
+                const Center(child: CircularProgressIndicator())
+              else if (entries.isEmpty)
+                _EmptyArchive(onCapture: () => context.go('/record'))
+              else
+                for (final entry in entries) _entryCard(context, entry),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _openMoment(BuildContext context, String entryId) {
-    RetentionAnalytics.evidenceRecordOpened(
-      surface: 'archive_intelligence_home',
-    );
-    context.push('/entry/$entryId');
-  }
-
-  void _handleAction(BuildContext context, ArchiveIntelligenceAction action) {
-    switch (action) {
-      case ArchiveIntelligenceAction.recordMoment:
-        context.go('/record');
-      case ArchiveIntelligenceAction.viewEvidence:
-        context.push(BeliefEvidenceNavigation.route);
-      case ArchiveIntelligenceAction.viewReview:
-        context.push(WeeklyArchiveReviewNavigation.route);
-      case ArchiveIntelligenceAction.none:
-        break;
-    }
-  }
-}
-
-class _ArchiveLoadingState extends StatelessWidget {
-  const _ArchiveLoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      key: Key('archive_intelligence_loading'),
-      child: CircularProgressIndicator(),
-    );
-  }
-}
-
-class _ArchiveErrorState extends StatelessWidget {
-  const _ArchiveErrorState({required this.onRetry});
-
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      key: const Key('archive_intelligence_error'),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Archive Intelligence could not load.',
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
+  Widget _entryCard(BuildContext context, JournalEntry entry) {
+    final theme = Theme.of(context);
+    final text = entry.transcript.trim();
+    final source = entry.durationSeconds > 0 ? 'Voice' : 'Text';
+    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
+    return Semantics(
+      button: true,
+      label: '$source saved moment from $date',
+      hint: 'Opens the original saved moment',
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _open(entry),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(date, style: theme.textTheme.labelLarge),
+                const SizedBox(height: 4),
+                Text(
+                  source,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  text.isEmpty ? 'Transcript processing…' : text,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Your saved moments are still on this device. Try again.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            FilledButton(
-              key: const Key('archive_intelligence_retry'),
-              onPressed: onRetry,
-              child: const Text('Try again'),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _EmptyArchive extends StatelessWidget {
+  const _EmptyArchive({required this.onCapture});
+
+  final VoidCallback onCapture;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Your first saved moment will appear here.',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          const Text('Record or type something real. You can edit it later.'),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: onCapture, child: const Text('Go to Record')),
+        ],
+      ),
+    ),
+  );
 }

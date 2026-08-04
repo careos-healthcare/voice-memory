@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "archive-me-v1-backend-surface-2026-08-02",
+  "description": "Authoritative list of backend routes permitted to be addressable in the commercial ArchiveMe V1 production deployment. Any route file under app/api that is absent from `routes` fails `npm run check:backend-allowlist`.",
+  "guard": {
+    "script": "scripts/check-backend-allowlist.mjs",
+    "npmScript": "check:backend-allowlist",
+    "routeRoot": "app/api",
+    "experimentsRoot": "experiments/backend"
+  },
+  "capabilityGroups": {
+    "authentication": "Email code issuance and verification for account sign-in.",
+    "session-and-signout": "Server session read and explicit sign-out.",
+    "account-deletion": "User-initiated account and data deletion.",
+    "encrypted-journal-sync": "Canonical end-to-end encrypted journal envelope sync (manifest/pull/push) and the legacy server journal store retained only for migration and export.",
+    "journal-export": "User data export of their own journal.",
+    "remote-transcription": "Remote speech-to-text plus the capture attestation that gates it.",
+    "minimal-validated-interpretation": "The single validated interpretation pass over a transcript.",
+    "revenuecat-and-billing": "RevenueCat linking, entitlement resolution, subscription status, checkout, and billing webhooks.",
+    "usage-enforcement": "Server-side metered usage, pricing, revenue reconciliation and reporting used to enforce plan limits.",
+    "strict-metadata-analytics": "Hashed, content-free metadata counters only. These endpoints reject raw journal content.",
+    "push": "Device push token registration and the internal push delivery self-test the shipping client uses to verify delivery.",
+    "health-and-readiness": "Service liveness/readiness and auth-environment configuration readiness. Not a health-data feature."
+  },
+  "routes": [
+    {
+      "path": "/api/auth/send-code",
+      "capabilityGroup": "authentication",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/auth/verify",
+      "capabilityGroup": "authentication",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/auth/session",
+      "capabilityGroup": "session-and-signout",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/auth/signout",
+      "capabilityGroup": "session-and-signout",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/account/delete",
+      "capabilityGroup": "account-deletion",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/sync/manifest",
+      "capabilityGroup": "encrypted-journal-sync",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/sync/pull",
+      "capabilityGroup": "encrypted-journal-sync",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/sync/push",
+      "capabilityGroup": "encrypted-journal-sync",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/journal",
+      "capabilityGroup": "encrypted-journal-sync",
+      "classification": "MIGRATION_ONLY",
+      "calledByShippingFlutterApp": false,
+      "note": "Legacy plaintext server journal store. Not the canonical encrypted sync path and not called by the shipping Flutter app. Retained because /api/journal/export reads the same store via lib/server/journal-store, so pre-E2EE data must stay reachable for export and migration."
+    },
+    {
+      "path": "/api/journal/[id]",
+      "capabilityGroup": "encrypted-journal-sync",
+      "classification": "MIGRATION_ONLY",
+      "calledByShippingFlutterApp": false,
+      "note": "Single-entry access to the same legacy server journal store as /api/journal."
+    },
+    {
+      "path": "/api/journal/export",
+      "capabilityGroup": "journal-export",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": false,
+      "note": "Required for the user data-export commitment. Not yet wired in the Flutter client."
+    },
+    {
+      "path": "/api/transcribe",
+      "capabilityGroup": "remote-transcription",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/capture/attest",
+      "capabilityGroup": "remote-transcription",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/analyze",
+      "capabilityGroup": "minimal-validated-interpretation",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/billing/entitlements",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/billing/revenuecat/link",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/billing/revenuecat/webhook",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": false,
+      "note": "Server-to-server RevenueCat webhook."
+    },
+    {
+      "path": "/api/billing/checkout",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/billing/webhook",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": false,
+      "note": "Server-to-server Stripe webhook for the web billing path."
+    },
+    {
+      "path": "/api/billing/config",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": false,
+      "note": "Public, non-secret billing display configuration consumed by lib/billing/use-billing-public-config.ts."
+    },
+    {
+      "path": "/api/user/subscription-status",
+      "capabilityGroup": "revenuecat-and-billing",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/internal/unit-economics/pricing",
+      "capabilityGroup": "usage-enforcement",
+      "classification": "INTERNAL_REQUIRED"
+    },
+    {
+      "path": "/api/internal/unit-economics/reconcile",
+      "capabilityGroup": "usage-enforcement",
+      "classification": "INTERNAL_REQUIRED",
+      "note": "Invoked by the vercel.json cron at 15 2 * * *."
+    },
+    {
+      "path": "/api/internal/unit-economics/report",
+      "capabilityGroup": "usage-enforcement",
+      "classification": "INTERNAL_REQUIRED"
+    },
+    {
+      "path": "/api/internal/unit-economics/revenue",
+      "capabilityGroup": "usage-enforcement",
+      "classification": "INTERNAL_REQUIRED"
+    },
+    {
+      "path": "/api/analytics/funnel",
+      "capabilityGroup": "strict-metadata-analytics",
+      "classification": "INTERNAL_REQUIRED",
+      "calledByShippingFlutterApp": false
+    },
+    {
+      "path": "/api/metrics/resurfacing",
+      "capabilityGroup": "strict-metadata-analytics",
+      "classification": "INTERNAL_REQUIRED",
+      "calledByShippingFlutterApp": false
+    },
+    {
+      "path": "/api/resurfacing/feedback",
+      "capabilityGroup": "strict-metadata-analytics",
+      "classification": "INTERNAL_REQUIRED",
+      "calledByShippingFlutterApp": false,
+      "note": "Verified content-free: the handler rejects quote/transcript/reflection/journal/text/raw/entry body keys and stores only salted hashes."
+    },
+    {
+      "path": "/api/resurfacing/feedback/summary",
+      "capabilityGroup": "strict-metadata-analytics",
+      "classification": "INTERNAL_REQUIRED",
+      "calledByShippingFlutterApp": false
+    },
+    {
+      "path": "/api/push/register",
+      "capabilityGroup": "push",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/internal/send-test-push",
+      "capabilityGroup": "push",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true,
+      "note": "Under /api/internal but called directly by apps/voicememory_mobile/lib/api/auth_api_client.dart, so it is a hard-retained client dependency."
+    },
+    {
+      "path": "/api/health",
+      "capabilityGroup": "health-and-readiness",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": true
+    },
+    {
+      "path": "/api/healthz",
+      "capabilityGroup": "health-and-readiness",
+      "classification": "RETAIN_V1",
+      "calledByShippingFlutterApp": false,
+      "note": "Container/nginx readiness probe referenced by docker-compose.yml and nginx.prod.conf. Service health, not a health-data feature."
+    },
+    {
+      "path": "/api/internal/auth-env",
+      "capabilityGroup": "health-and-readiness",
+      "classification": "INTERNAL_REQUIRED",
+      "note": "Auth environment configuration readiness check. Guarded as an internal surface by scripts/validate-debug-guard.mjs and scripts/validate-debug-surface.mjs."
+    }
+  ],
+  "removed": [
+    {
+      "path": "/api/life-simulator",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Life simulation system. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/horizon-simulation",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Horizon simulation system. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/life-story-replay",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Life-story replay system. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/archive-synthesis",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Broad archive synthesis. Explicitly excluded from the commercial V1. No HTTP call site exists in apps/voicememory_mobile/lib; the app only holds an unexercised deepArchiveSynthesis monetization capability id."
+    },
+    {
+      "path": "/api/dashboard-synthesis",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Dashboard synthesis. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/document-ingestion",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Document ingestion. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/relationship-synthesis",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Relationship synthesis / graph system. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/vision-extraction",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Vision extraction. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/cluster-synthesis",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Unused cluster synthesis. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/weekly-intelligence-synthesis",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Broad synthesis surface outside every allowed V1 capability group. Not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/morning-briefing",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Generative briefing surface outside every allowed V1 capability group. Not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/weekly-reflection",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Generative reflection surface outside every allowed V1 capability group. Only referenced by the retired web component components/weekly/WeeklyAiReflection.tsx."
+    },
+    {
+      "path": "/api/atmosphere",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Ambient atmosphere generation. Outside every allowed V1 capability group and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/ai-feedback",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "AI accuracy feedback store. Outside every allowed V1 capability group; the shipping app's insight_feedback feature is local-only and makes no call to it."
+    },
+    {
+      "path": "/api/action-plan-generator",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Generic generative analyst surface. Outside every allowed V1 capability group and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/search-translator",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Generic generative analyst/query translation surface. Outside every allowed V1 capability group and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/voice-session",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation session. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/live-audio/session",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/live-audio/ws",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation WebSocket route handler. Explicitly excluded from the commercial V1. See residualSurfaces below: the WebSocket upgrade is still attached by server.entry.ts."
+    },
+    {
+      "path": "/api/live-audio/recover",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation recovery. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/live-audio/vault-chunk",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation vault chunk upload. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/live-audio/vault-recovery",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Live AI audio conversation vault recovery. Explicitly excluded from the commercial V1 and not called by the shipping Flutter app."
+    },
+    {
+      "path": "/api/sync-relay",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Non-canonical second sync relay. The canonical encrypted journal sync is /api/sync/manifest, /api/sync/pull and /api/sync/push, which is what the shipping Flutter app uses."
+    },
+    {
+      "path": "/api/sync-relay/ws",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Non-canonical second sync relay WebSocket route handler. See residualSurfaces below: the WebSocket upgrade is still attached by server.entry.ts."
+    },
+    {
+      "path": "/api/internal/archive-monthly-review",
+      "classification": "MOVE_TO_EXPERIMENTS",
+      "reason": "Broad archive synthesis delivered as a monthly review email. Explicitly excluded from the commercial V1 and not scheduled by vercel.json."
+    }
+  ],
+  "residualSurfaces": [
+    {
+      "path": "/api/live-audio/ws",
+      "status": "CLOSED",
+      "detail": "The HTTP route handler was moved out of app/api, and server.entry.ts no longer calls attachLiveAudioWebSocketUpgrade, so the raw upgrade listener is not attached under `next start` or the custom server. check-backend-allowlist.mjs fails if the call returns to server.entry.ts, and scripts/build-server.mjs rejects a bundle containing the symbol."
+    },
+    {
+      "path": "/api/sync-relay/ws",
+      "status": "CLOSED",
+      "detail": "attachCloudRelayWebSocketUpgrade (CLOUD_RELAY_WS_PATH = \"/api/sync-relay/ws\") is detached from server.entry.ts and guarded the same way as /api/live-audio/ws."
+    }
+  ],
+  "clientCalledRoutesWithNoHandler": [
+    {
+      "path": "/api/billing/restore",
+      "calledFrom": "apps/voicememory_mobile/lib/api/billing_api_client.dart:42",
+      "detail": "The shipping Flutter app POSTs to /api/billing/restore but no handler exists anywhere under app/api, before or after this change. This is a pre-existing gap, not something this change introduced. No handler was invented here; it is recorded so the release owner can decide whether to implement the route or remove the client call."
+    }
+  ],
+  "unwiredValidators": {
+    "reason": "The Next.js web client no longer ships: zero page.tsx files remain under app/. These validators assert copy and structure of deleted web pages and internal panels, so they can never pass again and made the top-level `validate` gate permanently red. They were removed from the `validate` chain only. Every script definition and file is left in place, so any one can be run directly or rewired if the surface returns.",
+    "removedFromChain": [
+      "validate:synthetic-labels",
+      "validate:return-threads",
+      "validate:no-emotion-taxonomy-primary-ui",
+      "validate:single-line-before-mic",
+      "validate:record-loading-shell",
+      "validate:anticipatory-memory",
+      "validate:first-return-moment",
+      "validate:homepage-mobile-compression",
+      "validate:reflection-friction",
+      "validate:resurfacing-variety",
+      "validate:capture-transition",
+      "validate:vulnerability-timing",
+      "validate:homepage-dependency",
+      "validate:fast-capture",
+      "validate:direct-record-path",
+      "validate:mobile-first-run",
+      "validate:clarity-restraint",
+      "validate:reflex-loop",
+      "validate:mic-centrality",
+      "validate:mobile-readiness",
+      "validate:pwa-restraint",
+      "validate:behavior-truth",
+      "validate:individuality",
+      "validate:sacredness",
+      "validate:personalization",
+      "validate:territories",
+      "validate:open-loops",
+      "validate:open-loop-render",
+      "validate:runtime-boundaries",
+      "validate:silence-intelligence",
+      "validate:auth-storage",
+      "validate:homepage-clarity",
+      "validate:resurfacing-confidence",
+      "validate:resurfacing-timing",
+      "validate:callback-learning",
+      "validate:retention",
+      "validate:homepage-cta",
+      "validate:presentation-side-effects",
+      "validate:entry-route",
+      "validate:account-route",
+      "validate:transcript-cleanup",
+      "validate:performance"
+    ]
+  }
+}

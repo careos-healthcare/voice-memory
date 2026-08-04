@@ -4,7 +4,7 @@ export const ARCHIVE_PROGRESS_HEADLINE =
   "Your archive is becoming harder to fool.";
 
 export const ARCHIVE_PROGRESS_MILESTONES: { percent: number; label: string }[] = [
-  { percent: 20, label: "Enough reflections to compare" },
+  { percent: 20, label: "Enough moments to compare" },
   { percent: 40, label: "First beliefs under review" },
   { percent: 60, label: "Beliefs shifting with new evidence" },
   { percent: 80, label: "Archive reputation strengthening" },

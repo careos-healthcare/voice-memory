@@ -1,4 +1,5 @@
 import '../product/consumer_ui_copy.dart';
+import '../features/monetization/domain/generated/monetization_policy.g.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 
 /// Where the paywall was opened from, so the copy can speak to the value the
@@ -10,6 +11,8 @@ enum PaywallSource {
   dailySuggestion(id: 'daily_suggestion'),
   startHereToday(id: 'start_here_today'),
   valueMoment(id: 'value_moment'),
+  archiveHeader(id: 'archive_header'),
+  settings(id: 'settings'),
   generalPro(id: 'general_pro');
 
   const PaywallSource({required this.id});
@@ -122,6 +125,8 @@ class PaywallSourceCopy {
         return dailySuggestions;
       case PaywallSource.valueMoment:
         return PaywallValueSharpeningCopy.proofConnected;
+      case PaywallSource.archiveHeader:
+      case PaywallSource.settings:
       case PaywallSource.generalPro:
         return generalPro;
     }
@@ -170,15 +175,14 @@ abstract class PaywallAboveFoldClarity {
   static const String title = 'What Pro keeps';
 
   static const List<String> lines = [
-    'Longer evidence history',
-    'Weekly archive reviews',
-    'Timeline views over time',
+    MonetizationPolicy.ongoingComparisons,
+    MonetizationPolicy.deeperArchiveAnalysis,
+    MonetizationPolicy.remoteTranscriptionAllowance,
   ];
 
   /// Free reassurance shown with the block — never lockout framing.
   static const String freeReassuranceLine =
-      'Free keeps today\u2019s save. Pro keeps the thread connected over '
-      'time.';
+      MonetizationPolicy.paywallSupportingLine;
 }
 
 /// Plan-selection confidence near the plan selector — reduces hesitation at

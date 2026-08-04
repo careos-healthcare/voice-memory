@@ -1,6 +1,7 @@
 import "server-only";
 
 import { dbQuery, shouldUsePostgresStorage } from "@/lib/server/db";
+import { assertAccountDeletionNotPending } from "@/lib/server/privacy/account-deletion-state";
 import type { MobilePushPlatform } from "@/types/mobile-push";
 
 const STALE_DAYS = 90;
@@ -30,6 +31,9 @@ export async function upsertMobilePushDevice(params: {
   platform: MobilePushPlatform;
   fcmToken: string;
 }): Promise<void> {
+  if (!params.userId.startsWith("guest:")) {
+    await assertAccountDeletionNotPending(params.userId);
+  }
   if (shouldUsePostgresStorage()) {
     await dbQuery(
       `INSERT INTO mobile_push_devices (user_id, device_id, platform, fcm_token, created_at, updated_at)
@@ -50,6 +54,25 @@ export async function upsertMobilePushDevice(params: {
     fcmToken: params.fcmToken,
     updatedAt: new Date().toISOString(),
   });
+}
+
+export async function deleteMobilePushDevicesForUser(userId: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery(`DELETE FROM mobile_push_devices WHERE user_id = $1`, [userId]);
+    return result.rowCount ?? 0;
+  }
+  let removed = 0;
+  for (const [deviceId, row] of memoryMap()) {
+    if (row.userId === userId) {
+      memoryMap().delete(deviceId);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
+export function localMobilePushDevicesExist(userId: string): boolean {
+  return [...memoryMap().values()].some((row) => row.userId === userId);
 }
 
 export async function getFcmTokenForDevice(deviceId: string): Promise<string | null> {

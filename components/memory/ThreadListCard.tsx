@@ -34,7 +34,7 @@ export function ThreadListCard({
           <div className="min-w-0 flex-1">
             <p className="text-base font-medium leading-snug text-zinc-100">{thread.title}</p>
             <p className="mt-2 text-xs text-zinc-500">
-              {thread.mentionCount} reflection{thread.mentionCount === 1 ? "" : "s"} ·{" "}
+              {thread.mentionCount} moment{thread.mentionCount === 1 ? "" : "s"} ·{" "}
               {formatThreadDateRange(thread)} · {threadRecencyLabel(thread)}
             </p>
           </div>

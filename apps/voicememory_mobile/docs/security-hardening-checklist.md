@@ -72,7 +72,7 @@ Use this checklist when adding features that touch user journal text, AI calls, 
 | Session cookie / device id | Yes (secure storage) |
 | Journal file (`journal_entries.enc`) | Yes (AES-256-GCM) |
 | Mobile prefs / archive metadata | No (plaintext JSON) |
-| Temp voice recordings (`vm_rec_*`) | No |
+| Bounded voice recovery files (protected no-backup directory, ≤24h) | No — plaintext while pending recovery |
 | Entitlements cache | No (billing tier only) |
 
 ### Consumer privacy copy rules

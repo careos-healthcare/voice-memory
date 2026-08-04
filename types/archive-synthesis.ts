@@ -1,4 +1,8 @@
-/** GPT-5 synthesis V2 — narrative layer on deterministic archive engines. */
+/** Narrative synthesis on the unified deterministic Archive Intelligence engine. */
+import type {
+  ExplainableConclusionV4,
+  TranscriptEvidenceCitation,
+} from "@/types/explainability";
 
 export type ArchiveSynthesisType =
   | "monthly"
@@ -6,19 +10,10 @@ export type ArchiveSynthesisType =
   | "deep_dive"
   | "historian";
 
-export interface ArchiveSynthesisEvidenceRef {
-  entryId: string;
-  excerpt?: string;
-  role?: "support" | "counter" | "context";
-}
+/** @deprecated Use TranscriptEvidenceCitation. */
+export type ArchiveSynthesisEvidenceRef = TranscriptEvidenceCitation;
 
-export interface ArchiveSynthesisConclusion {
-  id: string;
-  statement: string;
-  confidencePercent: number;
-  uncertaintyNote: string;
-  evidence: ArchiveSynthesisEvidenceRef[];
-}
+export interface ArchiveSynthesisConclusion extends ExplainableConclusionV4 {}
 
 export interface ArchiveSynthesisTheoryRef {
   candidateId: string;
@@ -38,7 +33,9 @@ export interface ArchiveSynthesisDeepDiveContext {
 }
 
 export interface ArchiveSynthesisPack {
-  packVersion: 1 | 2;
+  packVersion: 1 | 2 | 3;
+  /** Present in V3 packs; older packs are normalized as Archive Intelligence. */
+  engine?: "archive_intelligence";
   monthKey: string;
   eligibleCount: number;
   /** Unified primary from TheoryRankingEngine (V2). */
@@ -104,6 +101,8 @@ export interface ArchiveSynthesisPack {
   };
   reflectionIndex: Array<{
     id: string;
+    /** Required for strict synthesis; excerpts elsewhere in the pack are not canonical. */
+    canonicalTranscript?: string;
     createdAt: string;
     mood: string;
     emotionalIntensity: number;
@@ -113,12 +112,29 @@ export interface ArchiveSynthesisPack {
     tensionOrContradiction?: string;
   }>;
   milestonesReached: number[];
+  /**
+   * V3 canonical feature grouping. Legacy top-level fields remain during the
+   * compatibility window so cached V1/V2 packs and prompts continue to work.
+   */
+  slices?: {
+    theory: {
+      primary: ArchiveSynthesisTheoryRef | null;
+      secondary: ArchiveSynthesisTheoryRef[];
+      lifecycle: ArchiveSynthesisPack["lifecycle"];
+    };
+    change: ArchiveSynthesisPack["changeFeed"];
+    patterns: {
+      contradictions: ArchiveSynthesisPack["contradictions"];
+      blindSpots: ArchiveSynthesisPack["blindSpots"];
+      surprises: ArchiveSynthesisPack["surprises"];
+    };
+  };
   /** Optional — deep_dive synthesis only. */
   deepDiveContext?: ArchiveSynthesisDeepDiveContext;
 }
 
 export interface ArchiveMonthlyReview {
-  reviewVersion: 2;
+  reviewVersion: 4;
   monthKey: string;
   archiveHash: string;
   eligibleCount: number;
@@ -135,7 +151,7 @@ export interface ArchiveMonthlyReview {
 }
 
 export interface ArchiveMilestoneReview {
-  reviewVersion: 2;
+  reviewVersion: 4;
   milestoneThreshold: number;
   eligibleCount: number;
   archiveHash: string;
@@ -149,7 +165,7 @@ export interface ArchiveMilestoneReview {
 }
 
 export interface ArchiveDeepDiveNarrative {
-  reviewVersion: 2;
+  reviewVersion: 4;
   beliefStatement: string;
   archiveHash: string;
   generatedAt: string;
@@ -161,7 +177,7 @@ export interface ArchiveDeepDiveNarrative {
 }
 
 export interface ArchiveHistorianReport {
-  reviewVersion: 2;
+  reviewVersion: 4;
   monthKey: string;
   archiveHash: string;
   eligibleCount: number;

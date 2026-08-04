@@ -8,7 +8,7 @@ export const ARCHIVE_VOICE_PREFERRED = [
   "Your archive is still evaluating this.",
   "New evidence may support this theory.",
   "This theory may be changing.",
-  "Recent reflections point in a different direction.",
+  "Recent saved moments point in a different direction.",
 ] as const;
 
 export const ARCHIVE_VOICE_AVOID_EXAMPLES = [

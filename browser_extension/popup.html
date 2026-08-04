@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Encrypted Web Clipper</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Encrypted Web Clipper</h1>
+      <p id="status" role="status">Checking local bridge…</p>
+      <label for="pairing-code">QR pairing payload</label>
+      <textarea
+        id="pairing-code"
+        rows="4"
+        placeholder='{"endpoint":"ws://127.0.0.1:…"}'
+      ></textarea>
+      <button id="pair" type="button">Pair extension</button>
+      <label class="toggle">
+        <input id="include-screenshot" type="checkbox" />
+        Include visible screenshot
+      </label>
+      <button id="clip-page" class="primary" type="button">
+        Clip current page
+      </button>
+      <p class="privacy">Sent only to the authenticated loopback vault.</p>
+    </main>
+    <script type="module" src="dist/popup.js"></script>
+  </body>
+</html>

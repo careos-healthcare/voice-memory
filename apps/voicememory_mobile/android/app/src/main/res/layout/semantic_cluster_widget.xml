@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/semantic_cluster_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/semantic_cluster_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/semantic_cluster_pulse"
+        android:textColor="#1A1A1A"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/semantic_cluster_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="2"
+        android:text="@string/semantic_cluster_default"
+        android:textColor="#444444"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/semantic_cluster_pulse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#E0E7FF"
+        android:padding="6dp"
+        android:text="@string/pulse_action"
+        android:textColor="#3730A3"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -7,7 +7,7 @@ export const NAV_ACCOUNT = "Account";
 
 export const NAV_ARCHIVE_INSIGHT = "Evidence for belief";
 export const NAV_ARCHIVE_BELIEFS = "Archive Beliefs";
-export const NAV_REFLECTION_LOG = "Reflection Log";
+export const NAV_REFLECTION_LOG = "Saved Moments";
 export const NAV_CHANGES = "Changes";
 
 export const PAGE_TITLE_ARCHIVE = "The Archive";

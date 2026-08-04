@@ -116,18 +116,21 @@ void main() {
     expect(title, isNot(ConsumerUiCopy.savedPrivatelyOnDevice));
   });
 
-  test('skips draft placeholder transcript and uses date title when pending', () {
-    const observation = 'You sounded tired when talking about work.';
-    final title = timelineEntryTitle(
-      _entry(
-        transcript:
-            '[draft] Recording saved locally — transcribe when connected',
-        observation: observation,
-      ),
-    );
-    expect(title, startsWith('Recording ·'));
-    expect(title, isNot(observation));
-  });
+  test(
+    'skips draft placeholder transcript and uses date title when pending',
+    () {
+      const observation = 'You sounded tired when talking about work.';
+      final title = timelineEntryTitle(
+        _entry(
+          transcript:
+              '[draft] Recording saved locally — transcribe when connected',
+          observation: observation,
+        ),
+      );
+      expect(title, startsWith('Recording ·'));
+      expect(title, isNot(observation));
+    },
+  );
 
   test('skips draft placeholder reflection', () {
     final title = timelineEntryTitle(

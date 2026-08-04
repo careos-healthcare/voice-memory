@@ -14,7 +14,9 @@ class AppColors {
   static const Color surfaceAlt = Color(0xFFF3F0EA);
 
   static const Color textPrimary = Color(0xFF172033);
-  static const Color textSecondary = Color(0xFF667085);
+
+  /// Secondary copy with WCAG AA contrast on both app backgrounds.
+  static const Color textSecondary = Color(0xFF475467);
 
   static const Color borderSubtle = Color(0xFFE5E0D8);
 

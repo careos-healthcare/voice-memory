@@ -1,0 +1,179 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "money_001_avoided_to_checked",
+      "entryA": {
+        "id": "money_001_a",
+        "transcript": "I avoided the bank balance all evening and felt anxious about money.",
+        "capturedAt": "2026-01-12T22:00:00Z"
+      },
+      "entryB": {
+        "id": "money_001_b",
+        "transcript": "I checked the bank balance this evening and felt calm about money.",
+        "capturedAt": "2026-02-23T22:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "behaviouralResponse:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "Balance — how you felt looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are bad with money by personality trait.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "The balance is calm because you checked it.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "money",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "money_002_overchecking_frequency",
+      "entryA": {
+        "id": "money_002_a",
+        "transcript": "I checked my bank balance sometimes and felt worried.",
+        "capturedAt": "2026-01-13T08:00:00Z"
+      },
+      "entryB": {
+        "id": "money_002_b",
+        "transcript": "I checked my bank balance constantly and felt worried.",
+        "capturedAt": "2026-02-24T08:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["frequency:increased"],
+      "supportedConclusion": "Balance — how often it happened looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How often it happened looks rarely across these saved moments.",
+          "violation": "unsupportedDirection"
+        },
+        {
+          "statement": "This might mean you have a compulsion.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "money",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "money_003_repeat_worry",
+      "entryA": {
+        "id": "money_003_a",
+        "transcript": "I worried about the rent and checked my bank balance.",
+        "capturedAt": "2026-01-14T07:00:00Z"
+      },
+      "entryB": {
+        "id": "money_003_b",
+        "transcript": "I worried about the rent again and checked my bank balance.",
+        "capturedAt": "2026-02-25T07:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated what you did with the bank balance.",
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the bank balance changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "money",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "money_004_certainty_budget",
+      "entryA": {
+        "id": "money_004_a",
+        "transcript": "I was unsure whether the budget would hold this month.",
+        "capturedAt": "2026-01-15T20:00:00Z"
+      },
+      "entryB": {
+        "id": "money_004_b",
+        "transcript": "I was certain the budget would hold this month.",
+        "capturedAt": "2026-02-26T20:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["certainty:increased"],
+      "supportedConclusion": "Budget — how certain you sounded looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The budget will hold because you are certain.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "money",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "money_005_short_entries_above_floor",
+      "entryA": {
+        "id": "money_005_a",
+        "transcript": "I spent too much on food.",
+        "capturedAt": "2026-01-16T12:00:00Z"
+      },
+      "entryB": {
+        "id": "money_005_b",
+        "transcript": "I spent less on food.",
+        "capturedAt": "2026-02-27T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with food changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "changeWithoutMovedDimension",
+      "sourceDomain": "money",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "money_006_below_length_floor",
+      "entryA": {
+        "id": "money_006_a",
+        "transcript": "I spent.",
+        "capturedAt": "2026-01-17T12:00:00Z"
+      },
+      "entryB": {
+        "id": "money_006_b",
+        "transcript": "I saved.",
+        "capturedAt": "2026-02-28T12:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with money changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "money",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

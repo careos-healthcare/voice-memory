@@ -110,7 +110,7 @@ export function ArchiveReputationCard({
             compact ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3",
           )}
         >
-          <Metric label="Supporting reflections" value={String(view.supportingReflections)} />
+          <Metric label="Supporting moments" value={String(view.supportingReflections)} />
           <Metric label="Life areas" value={String(view.lifeAreas)} />
           <Metric label="Days tracked" value={String(view.daysTracked)} />
           <Metric label="Contradictions survived" value={String(view.contradictionsSurvived)} />

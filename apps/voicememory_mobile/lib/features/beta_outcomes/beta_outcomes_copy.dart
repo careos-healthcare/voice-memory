@@ -24,10 +24,12 @@ abstract final class BetaOutcomesCopy {
   static const testimonialCopiedLabel = 'Testimonial helper copied';
   static const shareProofReadyLabel = 'Share-safe proof ready';
 
-  static const proInterestCapturedLabel = ProInterestCopy.betaOutcomesCapturedLabel;
+  static const proInterestCapturedLabel =
+      ProInterestCopy.betaOutcomesCapturedLabel;
   static const proInterestValueCountLabel =
       ProInterestCopy.betaOutcomesValueCountLabel;
-  static const proInterestPricingLabel = ProInterestCopy.betaOutcomesPricingLabel;
+  static const proInterestPricingLabel =
+      ProInterestCopy.betaOutcomesPricingLabel;
   static const proInterestNotePresentLabel =
       ProInterestCopy.betaOutcomesNotePresentLabel;
 
@@ -50,7 +52,7 @@ abstract final class BetaOutcomesCopy {
   static const interpretationReadyForFeedback = 'Ready for beta feedback.';
   static const interpretationEarlyValue = 'Early value signal present.';
   static const interpretationClarityRisk =
-      'Clarity risk. Review first-session copy and sample archive path.';
+      'Clarity risk. Review first-moment copy and sample archive path.';
   static const interpretationArchiveLoop = 'Archive loop is testable.';
   static const interpretationLongTerm =
       'Long-term archive value can be tested.';
@@ -111,49 +113,49 @@ abstract final class BetaOutcomesCopy {
   }
 
   static List<String> allVisibleCopy() => [
-        screenTitle,
-        subtitle,
-        metricsSectionTitle,
-        interpretationSectionTitle,
-        savedMomentsLabel,
-        usableEvidenceLabel,
-        depthLevelLabel,
-        watchThemesLabel,
-        returnRitualLabel,
-        feedbackStatusLabel,
-        optionalNoteLabel,
-        testimonialCopiedLabel,
-        shareProofReadyLabel,
-        proInterestCapturedLabel,
-        proInterestValueCountLabel,
-        proInterestPricingLabel,
-        proInterestNotePresentLabel,
-        betaInviteCopiedLabel,
-        betaInviteLastVariantLabel,
-        betaInviteTaskCopiedLabel,
-        openBetaInvitePackButton,
-        yesLabel,
-        noLabel,
-        interpretationNotEnoughEvidence,
-        interpretationReadyForFeedback,
-        interpretationEarlyValue,
-        interpretationClarityRisk,
-        interpretationArchiveLoop,
-        interpretationLongTerm,
-        openBetaFeedbackButton,
-        copySummaryButton,
-        openSampleArchiveButton,
-        addMomentButton,
-        summaryCopied,
-        supportSectionTitle,
-        supportSectionBody,
-        openBetaOutcomesButton,
-        helpSectionTitle,
-        helpSectionBody,
-        feedbackNoResponse,
-        feedbackUseful,
-        feedbackNotYet,
-        feedbackUnderstood,
-        feedbackConfused,
-      ];
+    screenTitle,
+    subtitle,
+    metricsSectionTitle,
+    interpretationSectionTitle,
+    savedMomentsLabel,
+    usableEvidenceLabel,
+    depthLevelLabel,
+    watchThemesLabel,
+    returnRitualLabel,
+    feedbackStatusLabel,
+    optionalNoteLabel,
+    testimonialCopiedLabel,
+    shareProofReadyLabel,
+    proInterestCapturedLabel,
+    proInterestValueCountLabel,
+    proInterestPricingLabel,
+    proInterestNotePresentLabel,
+    betaInviteCopiedLabel,
+    betaInviteLastVariantLabel,
+    betaInviteTaskCopiedLabel,
+    openBetaInvitePackButton,
+    yesLabel,
+    noLabel,
+    interpretationNotEnoughEvidence,
+    interpretationReadyForFeedback,
+    interpretationEarlyValue,
+    interpretationClarityRisk,
+    interpretationArchiveLoop,
+    interpretationLongTerm,
+    openBetaFeedbackButton,
+    copySummaryButton,
+    openSampleArchiveButton,
+    addMomentButton,
+    summaryCopied,
+    supportSectionTitle,
+    supportSectionBody,
+    openBetaOutcomesButton,
+    helpSectionTitle,
+    helpSectionBody,
+    feedbackNoResponse,
+    feedbackUseful,
+    feedbackNotYet,
+    feedbackUnderstood,
+    feedbackConfused,
+  ];
 }

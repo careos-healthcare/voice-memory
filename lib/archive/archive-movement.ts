@@ -104,7 +104,7 @@ export function buildArchiveMovementUpdate(
       afterSupport >= 3
         ? ARCHIVE_MOVEMENT_COPY.evidenceHarderToFool
         : ARCHIVE_MOVEMENT_COPY.confidenceReasonSupport,
-      `${beforeSupport} → ${afterSupport} supporting reflections`,
+      `${beforeSupport} → ${afterSupport} supporting moments`,
     );
   }
 
@@ -175,8 +175,8 @@ export function buildArchiveMovementUpdate(
         ? ARCHIVE_MOVEMENT_COPY.evidenceHarderToFool
         : ladderLabelForStage(valueAfter.stage),
       valueAfter.reflectionCount === 1
-        ? "1 supporting reflection"
-        : `${valueBefore.reflectionCount} → ${valueAfter.reflectionCount} reflections in archive`,
+        ? "1 supporting moment"
+        : `${valueBefore.reflectionCount} → ${valueAfter.reflectionCount} saved moments in archive`,
     );
   }
 
@@ -196,7 +196,7 @@ export function buildArchiveMovementFromArchive(
     return baseUpdate(
       "under_review",
       ARCHIVE_MOVEMENT_COPY.underReviewHeadline,
-      "Your archive is waiting for a first reflection.",
+      "Your archive is waiting for a first moment.",
     );
   }
   const last = entries[entries.length - 1]!;

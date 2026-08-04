@@ -1,17 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 import '../archive_packs/archive_pack_scope_policy.dart';
-import '../archive_packs/cross_pack_confirmation.dart';
 import '../pressure_retention/pressure_check_in_record.dart';
 import 'archive_retrieval_policy.dart';
-import 'memory_authority_frame.dart';
-import 'memory_authority_framing_engine.dart';
 import 'memory_connection_rules.dart';
 import 'memory_control_model.dart';
-import 'memory_control_store.dart';
-import 'memory_governance_decision.dart';
 import 'memory_priority_decision.dart';
-import 'memory_reliability_check.dart';
 import 'not_important_feedback.dart';
 import 'wrong_thread_feedback.dart';
 
@@ -134,6 +128,8 @@ abstract class MemoryPriorityDecisionLog {
   static MemoryPriorityDecision? lastFor(MemoryCardType cardType) =>
       _lastByCard[cardType.id];
 
+  static void clear() => _lastByCard.clear();
+
   @visibleForTesting
-  static void resetForTest() => _lastByCard.clear();
+  static void resetForTest() => clear();
 }

@@ -58,7 +58,7 @@ function classifyOutcome(
   if (!later) {
     return {
       status: "pending",
-      summary: "This may still be open — no later reflection in range to compare yet.",
+      summary: "This may still be open — no later saved moment in range to compare yet.",
     };
   }
 
@@ -106,7 +106,7 @@ function classifyOutcome(
 
   return {
     status: "unclear",
-    summary: "This may or may not have diverged — the later reflection does not name it clearly.",
+    summary: "This may or may not have diverged — the later saved moment does not name it clearly.",
   };
 }
 
@@ -153,7 +153,7 @@ export function buildPredictionAccuracySummary(
     );
     if (negativeDidNotHappen > 0) {
       summaryLines.push(
-        `${negativeDidNotHappen} may not have happened the way you expected — based on later reflections, not certainty.`,
+        `${negativeDidNotHappen} may not have happened the way you expected — based on later saved moments, not certainty.`,
       );
     }
   }
@@ -171,7 +171,7 @@ export function buildPredictionAccuracySummary(
 
   if (summaryLines.length === 0 && withLater.length > 0) {
     summaryLines.push(
-      `${withLater.length} prediction${withLater.length === 1 ? "" : "s"} with later reflections — outcomes still mixed or unclear.`,
+      `${withLater.length} prediction${withLater.length === 1 ? "" : "s"} with later saved moments — outcomes still mixed or unclear.`,
     );
   }
 

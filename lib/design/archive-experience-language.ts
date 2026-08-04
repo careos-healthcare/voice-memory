@@ -7,7 +7,7 @@ export const ARCHIVE_LANGUAGE = {
   belief: "Belief",
   evidence: "Evidence",
   change: "Change",
-  reflection: "Reflection",
+  reflection: "Moment",
 } as const;
 
 /** User-facing terms to prefer over legacy labels on archive surfaces. */
@@ -16,7 +16,7 @@ export const ARCHIVE_LANGUAGE_PREFERRED: Record<string, string> = {
   theory: "belief",
   insight: "evidence",
   finding: "evidence",
-  observation: "reflection",
+  observation: "moment",
 };
 
 /**

@@ -1,64 +1,75 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/billing/billing_service.dart';
-import 'package:voicememory_mobile/billing/store_billing_port.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/storage/entitlement_cache.dart';
-
-class _FreeStoreBilling implements StoreBillingPort {
-  @override
-  bool get isConfigured => false;
-
-  @override
-  Stream<PremiumEntitlements> get entitlementStream =>
-      const Stream.empty();
-
-  @override
-  Future<PremiumEntitlements> refreshEntitlements() async =>
-      PremiumEntitlements.free();
-
-  @override
-  Future<PremiumEntitlements> restorePurchases() async =>
-      PremiumEntitlements.free();
-
-  @override
-  Future<PremiumEntitlements> purchasePackage(Package package) async =>
-      PremiumEntitlements.free();
-}
+import 'package:voicememory_mobile/subscriptions/data/default_subscription_repository.dart';
+import 'package:voicememory_mobile/subscriptions/data/subscription_data_sources.dart';
+import 'package:voicememory_mobile/subscriptions/domain/subscription_models.dart';
 
 void main() {
-  test('resetCachedEntitlementsForAuthChange clears memory and disk cache',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch;
-    final cache = await EntitlementCache.open('/tmp/vm_ent_auth_$stamp.json');
-    await cache.save(
-      const PremiumEntitlements(
-        tier: BillingTier.pro,
-        entitlementIds: ['pro'],
+  test('auth reset clears cached subscription state', () async {
+    final cache = _Cache(
+      const SubscriptionState(
+        tier: SubscriptionTier.pro,
+        entitlementIds: [SubscriptionEntitlements.pro],
         billingConnected: true,
-        source: 'test',
+        origin: SubscriptionStateOrigin.cache,
       ),
     );
-
-    final billing = BillingService(
-      ApiClient(),
+    final repository = DefaultSubscriptionRepository(
+      _Store(),
+      _Remote(),
       cache,
-      _FreeStoreBilling(),
     );
+    await repository.hydrateFromCache();
+    expect(repository.currentState?.isPro, isTrue);
 
-    billing.startListening();
-    final loaded = await billing.loadEntitlements(forceRefresh: true);
-    expect(loaded.isPro, isFalse);
+    await repository.resetForAuthChange();
 
-    await billing.resetCachedEntitlementsForAuthChange();
-    expect(await cache.load(), isNull);
-    expect(await billing.loadCachedEntitlements(), isNull);
-
-    if (await File('/tmp/vm_ent_auth_$stamp.json').exists()) {
-      await File('/tmp/vm_ent_auth_$stamp.json').delete();
-    }
+    expect(cache.value, isNull);
+    expect(repository.currentState?.isPro, isFalse);
   });
+}
+
+class _Cache implements SubscriptionCacheDataSource {
+  _Cache(this.value);
+  SubscriptionState? value;
+
+  @override
+  Future<void> clear() async => value = null;
+  @override
+  Future<SubscriptionState?> load() async => value;
+  @override
+  Future<void> save(SubscriptionState state) async => value = state;
+}
+
+class _Store implements SubscriptionStoreDataSource {
+  @override
+  SubscriptionAvailability get availability =>
+      SubscriptionAvailability.notConfigured;
+  @override
+  Future<SubscriptionDiagnostics> loadDiagnostics() async =>
+      const SubscriptionDiagnostics(
+        availability: SubscriptionAvailability.notConfigured,
+      );
+  @override
+  Future<List<SubscriptionOffer>> loadOffers() async => const [];
+  @override
+  Future<SubscriptionState> purchase(String offerId) =>
+      throw UnimplementedError();
+  @override
+  Future<SubscriptionState> refresh() async => SubscriptionState.free();
+  @override
+  Future<SubscriptionState> restore() => throw UnimplementedError();
+  @override
+  Stream<SubscriptionState> get stateChanges => const Stream.empty();
+  @override
+  Future<String?> updateIdentity(String? identity) async => identity;
+}
+
+class _Remote implements SubscriptionRemoteDataSource {
+  @override
+  Future<SubscriptionCheckout> createCheckout() async =>
+      const SubscriptionCheckout(url: 'https://example.test');
+  @override
+  Future<SubscriptionState> fetchState() async => SubscriptionState.free();
+  @override
+  Future<void> linkStoreIdentity(String storeIdentity) async {}
 }

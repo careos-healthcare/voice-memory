@@ -20,7 +20,7 @@ export function PrintReportDocument({ report }: PrintReportDocumentProps) {
           ArchiveMe
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
-          Reflection report
+          Moment report
         </h1>
         <p className="mt-2 text-sm text-zinc-600">
           Generated {formatGeneratedAt(report.generatedAt)} · {report.dateRangeLabel}

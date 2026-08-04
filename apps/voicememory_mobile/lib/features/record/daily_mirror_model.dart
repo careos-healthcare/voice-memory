@@ -1,4 +1,5 @@
 import 'daily_mirror_stage.dart';
+import '../impossible_insight/impossible_insight_models.dart';
 
 /// Deterministic Daily Mirror output for the Record page.
 class DailyMirrorResult {
@@ -13,6 +14,7 @@ class DailyMirrorResult {
     required this.evidenceEntryIds,
     this.evidenceLine,
     this.nextQuestion,
+    this.impossibleInsight,
   });
 
   final DailyMirrorStage stage;
@@ -20,6 +22,7 @@ class DailyMirrorResult {
   final String heroBody;
   final String? evidenceLine;
   final String? nextQuestion;
+  final ImpossibleInsight? impossibleInsight;
   final String primaryCta;
   final bool hasGroundedEvidence;
   final bool hasChange;

@@ -1,9 +1,9 @@
 import SwiftUI
 import WidgetKit
 
-// Keys mirror Runner/ObjectiveWidgetStorage.swift and buildWidgetPayload() in Dart.
+// Legacy widget view retained for project history. Its payload is isolated
+// from the active ArchiveMeWidgets memory-graph snapshot.
 private enum WidgetPayloadKeys {
-  static let appGroupId = "group.com.voicememory.mobile"
   static let title = "title"
   static let body = "body"
   static let checkQuestion = "checkQuestion"
@@ -21,12 +21,17 @@ private struct TodayCheckEntry: TimelineEntry {
 }
 
 private enum TodayCheckPayload {
+  static let appGroupId = "group.com.voicememory.mobile"
+
   static func read() -> TodayCheckEntry {
-    let defaults = UserDefaults(suiteName: WidgetPayloadKeys.appGroupId)
-    let title = defaults?.string(forKey: WidgetPayloadKeys.title)?.trimmingCharacters(
+    let payload = (try? SecureAppGroupStore.shared.readJSONObject(
+      category: "objective-widget",
+      identifier: "current"
+    )) ?? [:]
+    let title = (payload[WidgetPayloadKeys.title] as? String)?.trimmingCharacters(
       in: .whitespacesAndNewlines
     ) ?? ""
-    let body = defaults?.string(forKey: WidgetPayloadKeys.body)?.trimmingCharacters(
+    let body = (payload[WidgetPayloadKeys.body] as? String)?.trimmingCharacters(
       in: .whitespacesAndNewlines
     ) ?? ""
 
@@ -38,13 +43,13 @@ private enum TodayCheckPayload {
       date: Date(),
       title: title.isEmpty ? defaultTitle : title,
       body: body.isEmpty ? defaultBody : body,
-      checkQuestion: defaults?.string(forKey: WidgetPayloadKeys.checkQuestion)?
+      checkQuestion: (payload[WidgetPayloadKeys.checkQuestion] as? String)?
         .trimmingCharacters(in: .whitespacesAndNewlines) ?? "",
       actionLabel: nonEmpty(
-        defaults?.string(forKey: WidgetPayloadKeys.primaryActionLabel),
+        payload[WidgetPayloadKeys.primaryActionLabel] as? String,
         fallback: defaultAction
       ),
-      route: nonEmpty(defaults?.string(forKey: WidgetPayloadKeys.route), fallback: "/record")
+      route: nonEmpty(payload[WidgetPayloadKeys.route] as? String, fallback: "/record")
     )
   }
 

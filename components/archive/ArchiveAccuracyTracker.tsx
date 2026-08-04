@@ -53,7 +53,7 @@ export function ArchiveAccuracyTracker({
       >
         <p className={ARCHIVE_TYPO.eyebrow}>{titleOverride ?? ARCHIVE_ACCURACY_TITLE}</p>
         <p className={`${ARCHIVE_TYPO.caption} mt-1`}>
-          Measured against later reflections, follow-ups, and outcomes — not proof.
+          Measured against later moments, follow-ups, and outcomes — not proof.
         </p>
 
         <ul className="mt-4 space-y-3">

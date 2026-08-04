@@ -33,7 +33,7 @@ void main() {
       expect(StartHereCatalog.prompts.first, 'What happened today?');
       expect(
         StartHereCatalog.continueBuildingArchive,
-        'Keep adding reflections to sharpen your patterns.',
+        'Keep adding moments to sharpen what repeats.',
       );
     });
   });

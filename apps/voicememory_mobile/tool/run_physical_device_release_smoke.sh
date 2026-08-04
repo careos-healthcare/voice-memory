@@ -16,8 +16,13 @@ flutter test \
   test/physical_device_smoke_proof_test.dart
 
 echo ""
+echo "==> Deterministic iOS responsive layout matrix"
+flutter test test/ios_device_layout_matrix_test.dart
+
+echo ""
 echo "==> RevenueCat missing-key no-crash guard"
 flutter test test/revenuecat_sandbox_proof_test.dart --name "missing RevenueCat key does not crash initialize"
 
 echo ""
-echo "Physical device release smoke validation passed."
+echo "Automated physical-device smoke prerequisites passed."
+echo "Manual on-device smoke evidence is still required."

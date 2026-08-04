@@ -174,3 +174,7 @@ export async function deleteResurfacingFeedbackForUser(userId: string): Promise<
     );
   }
 }
+
+export function localResurfacingFeedbackExists(userId: string): boolean {
+  return (memoryRows.__vmResurfacingFeedback ?? []).some((row) => row.userId === userId);
+}

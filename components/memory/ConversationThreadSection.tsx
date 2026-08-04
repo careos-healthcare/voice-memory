@@ -37,7 +37,7 @@ export function ThreadMentionsSection({
                 {thread.title}
               </p>
               <p className="text-xs text-zinc-600">
-                {thread.mentionCount} reflection{thread.mentionCount === 1 ? "" : "s"} ·{" "}
+                {thread.mentionCount} moment{thread.mentionCount === 1 ? "" : "s"} ·{" "}
                 {formatThreadDateRange(thread)} · {threadRecencyLabel(thread)}
               </p>
             </Link>
@@ -89,7 +89,7 @@ export function ThreadDetail({
           {thread.title}
         </h1>
         <p className="text-sm text-muted">
-          {thread.mentionCount} related reflection
+          {thread.mentionCount} related moment
           {thread.mentionCount === 1 ? "" : "s"}
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted">
@@ -136,7 +136,7 @@ export function ThreadDetail({
                   </p>
                 ) : (
                   <p className="text-sm text-zinc-600 transition-colors group-hover:text-zinc-400">
-                    View reflection
+                    View moment
                   </p>
                 )}
               </RevisitEntryLink>
@@ -146,7 +146,7 @@ export function ThreadDetail({
         {thread.entryIds.length > thread.relatedEntries.length ? (
           <p className="px-1 text-xs text-zinc-600">
             +{thread.entryIds.length - thread.relatedEntries.length} earlier
-            reflection
+            moment
             {thread.entryIds.length - thread.relatedEntries.length === 1 ? "" : "s"}
           </p>
         ) : null}

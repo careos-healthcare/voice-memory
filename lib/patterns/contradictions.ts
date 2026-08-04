@@ -305,7 +305,7 @@ function detectWantVsKeepDoing(sorted: JournalEntry[]): Contradiction[] {
             id: `want-keep-${entry.id}-${want.slice(0, 8)}`,
             kind: "want_vs_keep_doing",
             title: `Same entry: you want "${want.slice(0, 40)}" and keep "${keep.slice(0, 40)}".`,
-            explanation: `Both framings sit in one reflection — wanting "${want.slice(0, 50)}" while describing that you keep "${keep.slice(0, 50)}".`,
+            explanation: `Both framings sit in one saved moment — wanting "${want.slice(0, 50)}" while describing that you keep "${keep.slice(0, 50)}".`,
             evidence,
             confidence: scoreConfidence(evidence, { phraseOverlap: 2 }),
             entryIds: [entry.id],

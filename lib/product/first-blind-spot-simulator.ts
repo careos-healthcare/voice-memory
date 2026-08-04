@@ -62,7 +62,7 @@ export function buildFirstBlindSpotExampleReview(): FirstBlindSpotExampleReview 
     disclaimer: FIRST_BLIND_SPOT_SIMULATOR.modalDisclaimer,
     patternHeadline: "One possible pattern: the same concern keeps returning",
     observation:
-      "Across several dated reflections, you may keep circling a decision without naming the fork — example only.",
+      "Across several dated moments, you may keep circling a decision without naming the fork — example only.",
     possibleBelief:
       "Your words might suggest waiting feels safer than choosing — this is illustrative, not about you.",
     evidenceQuotes: [
@@ -86,7 +86,7 @@ export function buildFirstBlindSpotExampleReview(): FirstBlindSpotExampleReview 
     experimentTryNextTime:
       "Try this next time you feel the stall: say the decision out loud once, then stop.",
     whatChanged: [
-      "New reflections may be sharpening this thread.",
+      "New moments may be sharpening this thread.",
       "Evidence strength may have moved toward medium.",
     ],
   };

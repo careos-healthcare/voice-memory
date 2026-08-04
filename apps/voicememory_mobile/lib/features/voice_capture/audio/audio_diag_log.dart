@@ -27,13 +27,11 @@ abstract class AudioDiagLog {
     required String mimeGuess,
     required String firstBytesHex,
   }) {
-    debugPrint('ARCHIVEME_AUDIO_DIAG path=$path');
+    debugPrint('ARCHIVEME_AUDIO_DIAG pathProvided=${path.trim().isNotEmpty}');
     debugPrint('ARCHIVEME_AUDIO_DIAG exists=$exists');
     debugPrint('ARCHIVEME_AUDIO_DIAG bytes=$bytes');
     debugPrint('ARCHIVEME_AUDIO_DIAG extension=$extension');
-    debugPrint(
-      'ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}',
-    );
+    debugPrint('ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}');
     debugPrint('ARCHIVEME_AUDIO_DIAG mimeGuess=$mimeGuess');
     debugPrint('ARCHIVEME_AUDIO_DIAG firstBytes=$firstBytesHex');
   }
@@ -46,6 +44,22 @@ abstract class AudioDiagLog {
     debugPrint(
       'ARCHIVEME_TRANSCRIPTION_UPLOAD fileName=$fileName '
       'contentType=$contentType bytes=$bytes',
+    );
+  }
+
+  static void failed({
+    required String operation,
+    required String failureType,
+    required Object error,
+    required StackTrace stackTrace,
+  }) {
+    debugPrint(
+      'ARCHIVEME_AUDIO_OPERATION_FAILED operation=$operation '
+      'failureType=$failureType error=$error',
+    );
+    debugPrintStack(
+      label: 'ARCHIVEME_AUDIO_OPERATION_FAILED stackTrace',
+      stackTrace: stackTrace,
     );
   }
 
@@ -76,22 +90,15 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void iosAudioRoute({
-    required String inputs,
-    required String outputs,
-  }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs',
-    );
+  static void iosAudioRoute({required String inputs, required String outputs}) {
+    debugPrint('ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs');
   }
 
   static void iosAudioInput({
     required String portName,
     required String portType,
   }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType',
-    );
+    debugPrint('ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType');
   }
 
   static void iosAudioAvailableInputs({
@@ -128,10 +135,7 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void silenceRetry({
-    required String reason,
-    required double oldMaxDb,
-  }) {
+  static void silenceRetry({required String reason, required double oldMaxDb}) {
     debugPrint(
       'ARCHIVEME_AUDIO_SILENCE_RETRY reason=$reason oldMaxDb=$oldMaxDb',
     );
@@ -146,7 +150,10 @@ abstract class AudioDiagLog {
     required bool exists,
     required int bytes,
   }) {
-    debugPrint('ARCHIVEME_AUDIO_SHARE path=$path exists=$exists bytes=$bytes');
+    debugPrint(
+      'ARCHIVEME_AUDIO_SHARE pathProvided=${path.trim().isNotEmpty} '
+      'exists=$exists bytes=$bytes',
+    );
   }
 
   static void nativeRecorderFailed({
@@ -158,5 +165,9 @@ abstract class AudioDiagLog {
       'ARCHIVEME_NATIVE_RECORDER_FAILED step=$step reason=$reason'
       '${format == null ? '' : ' format=$format'}',
     );
+  }
+
+  static void nativeProcessing(Object processing) {
+    debugPrint('ARCHIVEME_NATIVE_AUDIO_PROCESSING $processing');
   }
 }

@@ -1,34 +1,19 @@
-import '../product/consumer_ui_copy.dart';
+import '../product/auditable_change_positioning.dart';
+import '../product/core_product_vision.dart';
 
 /// Consumer onboarding copy and structured page data.
 abstract class OnboardingPages {
   OnboardingPages._();
 
-  static const int pageCount = 4;
+  static const int pageCount = 1;
+  static const primaryAction = 'Record a moment';
+  static const secondaryAction = 'Type instead';
 
   static const List<OnboardingPageData> pages = [
     OnboardingPageData(
-      title: ConsumerUiCopy.onboardingPositioningHeadline,
-      body: ConsumerUiCopy.onboardingPositioningBody,
+      title: AuditableChangePositioning.primaryPromise,
+      body: CoreProductVision.valueProposition,
       visual: OnboardingVisualKind.patternNetwork,
-    ),
-    OnboardingPageData(
-      title: ConsumerUiCopy.onboardingStep1Title,
-      body: ConsumerUiCopy.onboardingStep1Body,
-      visual: OnboardingVisualKind.stepBadge,
-      stepNumber: 1,
-    ),
-    OnboardingPageData(
-      title: ConsumerUiCopy.onboardingStep2Title,
-      body: ConsumerUiCopy.onboardingStep2Body,
-      visual: OnboardingVisualKind.stepBadge,
-      stepNumber: 2,
-    ),
-    OnboardingPageData(
-      title: ConsumerUiCopy.onboardingStep3Title,
-      body: ConsumerUiCopy.onboardingStep3Body,
-      visual: OnboardingVisualKind.stepBadge,
-      stepNumber: 3,
     ),
   ];
 }

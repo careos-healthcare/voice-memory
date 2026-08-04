@@ -13,7 +13,8 @@ export type SyncBlobType =
   | "settings"
   | "memory_review_labels"
   | "audio_backup"
-  | "debug_events";
+  | "debug_events"
+  | "crdt_operations";
 
 export interface SyncBlobRecord {
   id: string;
@@ -21,6 +22,9 @@ export interface SyncBlobRecord {
   encrypted: EncryptedPayload;
   updatedAt: string;
   byteLength: number;
+  deviceId?: string;
+  vectorClock?: Record<string, number>;
+  keyEpoch?: number;
 }
 
 export interface SyncManifest {

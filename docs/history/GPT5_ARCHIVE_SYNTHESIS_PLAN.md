@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # GPT-5 Archive Synthesis — design plan
 
 **Status:** Design only — **do not implement** until trust/ranking gates in [NEXT_HIGHEST_ROI_IMPROVEMENTS.md](./NEXT_HIGHEST_ROI_IMPROVEMENTS.md) pass re-validation ([ARCHIVE_V2_VALIDATION.md](./ARCHIVE_V2_VALIDATION.md)).
@@ -385,3 +387,4 @@ dart run tool/analyze_archive_v2_validation.dart
 ## 15. Summary
 
 GPT-5 Archive Synthesis is a **monthly, server-side, evidence-locked narrative** over deterministic archive engines. It delivers nine structured sections with **mandatory citations and uncertainty**, while **Change Feed + Analyst** remain the live, on-device truth for day-to-day visits. Expected cost is **~$0.30–0.45 per archive-active user per month** at Batch pricing for typical archives; implementation is **~6–9 weeks** after ranking/trust fixes land.
+

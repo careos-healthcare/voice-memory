@@ -3,6 +3,10 @@ import '../../product/consumer_copy_guard.dart';
 import '../archive_evidence/archive_entry_signal_guard.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_threshold.dart';
+import '../instant_reflection/instant_reflection_response.dart';
+import '../instant_reflection/instant_reflection_response_engine.dart';
+import '../impossible_insight/impossible_insight_engine.dart';
+import '../impossible_insight/impossible_insight_models.dart';
 import 'daily_mirror_copy.dart';
 import 'daily_mirror_model.dart';
 import 'daily_mirror_stage.dart';
@@ -16,8 +20,10 @@ class DailyMirrorEngine {
   const DailyMirrorEngine({
     EarlyBehaviorLoopEngine? behaviorLoopEngine,
     EarlySpecificInsightEngine? phraseInsightEngine,
-  })  : _behaviorLoopEngine = behaviorLoopEngine ?? const EarlyBehaviorLoopEngine(),
-        _phraseInsightEngine = phraseInsightEngine ?? const EarlySpecificInsightEngine();
+  }) : _behaviorLoopEngine =
+           behaviorLoopEngine ?? const EarlyBehaviorLoopEngine(),
+       _phraseInsightEngine =
+           phraseInsightEngine ?? const EarlySpecificInsightEngine();
 
   final EarlyBehaviorLoopEngine _behaviorLoopEngine;
   final EarlySpecificInsightEngine _phraseInsightEngine;
@@ -60,12 +66,16 @@ class DailyMirrorEngine {
     final count = eligible.length;
 
     if (count == 0) return _emptyArchive();
-    if (count == 1) return _heardFirstMoment(eligible);
 
     if (count >= 4) {
       final change = _detectChange(eligible);
       if (change != null) return change;
     }
+    if (count <= 5) {
+      final impossible = const ImpossibleInsightEngine().build(eligible);
+      if (impossible != null) return _fromImpossible(impossible);
+    }
+    if (count == 1) return _heardFirstMoment(eligible);
 
     final loop = _groundedLoop(eligible);
     if (loop != null) {
@@ -104,13 +114,38 @@ class DailyMirrorEngine {
     );
   }
 
+  DailyMirrorResult _fromImpossible(ImpossibleInsight insight) {
+    final value = insight.value;
+    return DailyMirrorResult(
+      stage: DailyMirrorStage.possibleLoop,
+      heroTitle: 'A specific pattern in your words',
+      heroBody: value.statement,
+      evidenceLine: value.evidence.map((item) => '“${item.quote}”').join(' · '),
+      nextQuestion: insight.nextEvidenceQuestion,
+      primaryCta: DailyMirrorCopy.possibleLoopPrimaryCta,
+      hasGroundedEvidence: true,
+      hasChange: insight.kind == ImpossibleInsightKind.reversal,
+      evidenceTerms: value.evidence.map((item) => item.quote).toList(),
+      evidenceEntryIds: value.evidence
+          .map((item) => item.entryId)
+          .toSet()
+          .toList(),
+      impossibleInsight: insight,
+    );
+  }
+
   DailyMirrorResult _heardFirstMoment(List<JournalEntry> eligible) {
+    final response = const InstantReflectionResponseEngine().respond(
+      entry: eligible.last,
+    );
+    final specific =
+        response?.signal == InstantReflectionSignal.specificObservation;
     return DailyMirrorResult(
       stage: DailyMirrorStage.heardFirstMoment,
       heroTitle: DailyMirrorCopy.heardHeroTitle,
-      heroBody: DailyMirrorCopy.heardHeroBody,
+      heroBody: specific ? response!.bodyLine : DailyMirrorCopy.heardHeroBody,
       primaryCta: DailyMirrorCopy.heardPrimaryCta,
-      hasGroundedEvidence: false,
+      hasGroundedEvidence: specific,
       hasChange: false,
       evidenceTerms: const [],
       evidenceEntryIds: [eligible.last.id],
@@ -131,12 +166,23 @@ class DailyMirrorEngine {
   }
 
   DailyMirrorResult _weakStarted(List<JournalEntry> eligible) {
+    final current = eligible.last;
+    final prior = eligible.sublist(0, eligible.length - 1);
+    final response = const InstantReflectionResponseEngine().respond(
+      entry: current,
+      priorEntries: prior,
+    );
+    final grounded =
+        response?.signal == InstantReflectionSignal.specificObservation ||
+        response?.signal == InstantReflectionSignal.repeatedPhrase;
     return DailyMirrorResult(
       stage: DailyMirrorStage.heardFirstMoment,
       heroTitle: DailyMirrorCopy.weakStartedHeroTitle,
-      heroBody: DailyMirrorCopy.weakStartedHeroBody,
+      heroBody: grounded
+          ? response!.bodyLine
+          : DailyMirrorCopy.weakStartedHeroBody,
       primaryCta: DailyMirrorCopy.heardPrimaryCta,
-      hasGroundedEvidence: false,
+      hasGroundedEvidence: grounded,
       hasChange: false,
       evidenceTerms: const [],
       evidenceEntryIds: eligible.map((e) => e.id).toList(),
@@ -244,12 +290,14 @@ class DailyMirrorEngine {
     if (overlapping.isEmpty) return null;
 
     final overlapSeed = overlapping.firstWhere(
-      (term) => latestText.contains(term) || _termOverlapsLatest(term, latestText),
+      (term) =>
+          latestText.contains(term) || _termOverlapsLatest(term, latestText),
       orElse: () => overlapping.first,
     );
     final olderPhrase = _shortPhraseFromEntry(olderHalf.last, overlapSeed);
     final latestPhrase = _shortPhraseFromEntry(latest, overlapSeed);
-    final caughtEarly = latestText.contains('paused') ||
+    final caughtEarly =
+        latestText.contains('paused') ||
         latestText.contains('caught') ||
         latestText.contains('before');
 
@@ -289,18 +337,13 @@ class DailyMirrorEngine {
 
   String _entryText(JournalEntry entry) {
     final parts = <String>[
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.concreteObservation,
-          )
-          case final observation?)
-        observation,
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.exactLanguagePattern,
-          )
-          case final pattern?)
-        pattern,
-      if (_cleanTranscript(entry.transcript) case final transcript?)
-        transcript,
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.concreteObservation,
+      ),
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.exactLanguagePattern,
+      ),
+      ?_cleanTranscript(entry.transcript),
     ];
     return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
@@ -314,7 +357,10 @@ class DailyMirrorEngine {
 
   List<String> _termsFromEvidenceLine(String line) {
     final matches = RegExp(r"'([^']+)'").allMatches(line);
-    return matches.map((m) => m.group(1)!.trim()).where((t) => t.isNotEmpty).toList();
+    return matches
+        .map((m) => m.group(1)!.trim())
+        .where((t) => t.isNotEmpty)
+        .toList();
   }
 
   String? _formatYourWordsLine(List<String> terms) {

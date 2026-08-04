@@ -1,8 +1,7 @@
-import 'package:voicememory_mobile/features/voice_capture/audio/ios_native_recorder.dart';
-import 'package:voicememory_mobile/features/voice_capture/audio/ios_native_recorder_config.dart';
+import 'package:voicememory_mobile/features/voice_capture/audio/native_audio_recorder.dart';
 
 class ConfigurableFakeNativeMicPermissionPlatform
-    implements IosNativeRecorderPlatform {
+    implements NativeAudioRecorderPlatform {
   ConfigurableFakeNativeMicPermissionPlatform({
     this.statusValue = const NativeMicrophonePermission(
       status: 'granted',
@@ -19,15 +18,15 @@ class ConfigurableFakeNativeMicPermissionPlatform
   int requestCallCount = 0;
 
   @override
-  Future<bool> isNativeRecorderAvailable() async => available;
+  Future<bool> isAvailable() async => available;
 
   @override
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+  Future<NativeMicrophonePermission> microphonePermission() async {
     return statusValue;
   }
 
   @override
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+  Future<NativeMicrophonePermission> requestMicrophonePermission() async {
     requestCallCount += 1;
     final next = requestResult ?? statusValue;
     statusValue = next;
@@ -35,15 +34,13 @@ class ConfigurableFakeNativeMicPermissionPlatform
   }
 
   @override
-  Future<String> startNativeRecording(
-    String path, {
-    required IosRecordingFormat format,
-  }) async {
-    return path;
-  }
+  Future<NativeAudioStartResult> start(
+    String path,
+    NativeAudioCaptureConfig config,
+  ) async => NativeAudioStartResult(path: path);
 
   @override
-  Future<NativeRecordingStopResult> stopNativeRecording() async {
+  Future<NativeRecordingStopResult> stop() async {
     return const NativeRecordingStopResult(
       path: '/tmp/vm_native_test.wav',
       bytes: 2048,
@@ -56,7 +53,7 @@ class ConfigurableFakeNativeMicPermissionPlatform
   }
 
   @override
-  Future<NativeRecordingLevel> currentNativeLevel() async {
+  Future<NativeRecordingLevel> currentLevel() async {
     return const NativeRecordingLevel(
       currentDb: -30,
       peakDb: -22,
@@ -64,10 +61,13 @@ class ConfigurableFakeNativeMicPermissionPlatform
       avgDb: -30,
     );
   }
+
+  @override
+  Future<void> dispose() async {}
 }
 
 mixin FakeNativeMicPermissionPlatform {
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+  Future<NativeMicrophonePermission> microphonePermission() async {
     return const NativeMicrophonePermission(
       status: 'granted',
       granted: true,
@@ -75,7 +75,7 @@ mixin FakeNativeMicPermissionPlatform {
     );
   }
 
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+  Future<NativeMicrophonePermission> requestMicrophonePermission() async {
     return const NativeMicrophonePermission(
       status: 'granted',
       granted: true,

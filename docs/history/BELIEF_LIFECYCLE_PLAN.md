@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Belief Lifecycle V1 — plan
 
 ## Goal
@@ -86,3 +88,4 @@ Last detected:
 cd apps/voicememory_mobile
 flutter test test/belief_lifecycle_engine_test.dart
 ```
+

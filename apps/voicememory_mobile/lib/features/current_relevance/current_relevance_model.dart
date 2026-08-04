@@ -1,18 +1,13 @@
 /// User correction for whether a past pattern still affects current thinking.
-enum CurrentRelevanceAnswer {
-  yes,
-  little,
-  notReally,
-  notSure,
-}
+enum CurrentRelevanceAnswer { yes, little, notReally, notSure }
 
 extension CurrentRelevanceAnswerLabels on CurrentRelevanceAnswer {
   String get analyticsValue => switch (this) {
-        CurrentRelevanceAnswer.yes => 'yes',
-        CurrentRelevanceAnswer.little => 'little',
-        CurrentRelevanceAnswer.notReally => 'not_really',
-        CurrentRelevanceAnswer.notSure => 'not_sure',
-      };
+    CurrentRelevanceAnswer.yes => 'yes',
+    CurrentRelevanceAnswer.little => 'little',
+    CurrentRelevanceAnswer.notReally => 'not_really',
+    CurrentRelevanceAnswer.notSure => 'not_sure',
+  };
 }
 
 /// Local answer record — proof key only, never transcript or pattern text.
@@ -30,11 +25,11 @@ class CurrentRelevanceRecord {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
-        'proofKey': proofKey,
-        'answer': answer.analyticsValue,
-        'entryCountAtCapture': entryCountAtCapture,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'proofKey': proofKey,
+    'answer': answer.analyticsValue,
+    'entryCountAtCapture': entryCountAtCapture,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory CurrentRelevanceRecord.fromJson(Map<String, dynamic> json) {
     final answerRaw = json['answer']?.toString() ?? '';
@@ -45,7 +40,8 @@ class CurrentRelevanceRecord {
         orElse: () => CurrentRelevanceAnswer.notSure,
       ),
       entryCountAtCapture: json['entryCountAtCapture'] as int? ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
           DateTime.now().toUtc(),
     );
   }

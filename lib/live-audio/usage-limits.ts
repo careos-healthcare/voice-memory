@@ -1,9 +1,17 @@
-const LIVE_AUDIO_DAILY_LIMIT = Number(
-  process.env.VOICEMEMORY_DAILY_LIVE_AUDIO_LIMIT ?? "10",
-);
-const LIVE_AUDIO_MINUTE_LIMIT = Number(
-  process.env.VOICEMEMORY_MINUTE_LIVE_AUDIO_LIMIT ?? "3",
-);
+function configuredLimit(name: string, developmentDefault: number): number {
+  const raw = process.env[name]?.trim();
+  if (!raw) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(`USAGE_RATE_LIMIT_CONFIG_INVALID:${name}`);
+    }
+    return developmentDefault;
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`USAGE_RATE_LIMIT_CONFIG_INVALID:${name}`);
+  }
+  return value;
+}
 
 const globalLimits = globalThis as typeof globalThis & {
   __vmLiveAudioMinute?: Map<string, number>;
@@ -39,28 +47,30 @@ export function checkAndRecordLiveAudioUsage(subject: string): {
   dailyCount?: number;
   dailyLimit?: number;
 } {
+  const minuteLimit = configuredLimit("VOICEMEMORY_MINUTE_LIVE_AUDIO_LIMIT", 3);
+  const dailyLimit = configuredLimit("VOICEMEMORY_DAILY_LIVE_AUDIO_LIMIT", 10);
   const minuteCounterKey = `${subject}:${minuteKey()}`;
   const minuteCount = minuteMap().get(minuteCounterKey) ?? 0;
-  if (minuteCount >= LIVE_AUDIO_MINUTE_LIMIT) {
+  if (minuteCount >= minuteLimit) {
     return { allowed: false, reason: "minute_burst" };
   }
   minuteMap().set(minuteCounterKey, minuteCount + 1);
 
   const dayCounterKey = `${subject}:${dayKey()}`;
   const dayCount = dayMap().get(dayCounterKey) ?? 0;
-  if (dayCount >= LIVE_AUDIO_DAILY_LIMIT) {
+  if (dayCount >= dailyLimit) {
     return {
       allowed: false,
       reason: "daily_cap",
       dailyCount: dayCount,
-      dailyLimit: LIVE_AUDIO_DAILY_LIMIT,
+      dailyLimit,
     };
   }
   dayMap().set(dayCounterKey, dayCount + 1);
   return {
     allowed: true,
     dailyCount: dayCount + 1,
-    dailyLimit: LIVE_AUDIO_DAILY_LIMIT,
+    dailyLimit,
   };
 }
 

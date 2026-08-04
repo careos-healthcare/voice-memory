@@ -135,6 +135,7 @@ abstract class EntryMemoryModeSession {
     reflection: entry.reflection,
     syncStatus: entry.syncStatus,
     localAudioPath: entry.localAudioPath,
+    localAudioVaultRef: entry.localAudioVaultRef,
     treatAsNew: treatAsNew ?? entry.treatAsNew,
     connectionApproved: connectionApproved ?? entry.connectionApproved,
     keepExactDetails: entry.keepExactDetails,
@@ -151,10 +152,12 @@ abstract class EntryMemoryModeSession {
     captureContextTag: entry.captureContextTag,
   );
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSession() {
     selectedMode = EntryMemoryMode.useArchiveContext;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSession();
 }
 
 abstract class EntryMemoryModeCopy {

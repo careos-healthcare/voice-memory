@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/config/release_identity.dart';
 
-/// Files that may mention the legacy application id for store SKU docs only.
+/// Files that may mention the immutable legacy-prefix RevenueCat product SKUs.
 const _legacyIdAllowlist = {
   'docs/REVENUECAT_RELEASE_CHECKLIST.md',
+  'REVENUECAT_LAUNCH_BLOCKERS.md',
+  'lib/billing/revenuecat_configuration.dart',
+  'tool/validate_revenuecat_configuration.sh',
 };
 
 const _activeConfigPaths = [
@@ -26,8 +30,8 @@ const _activeConfigPaths = [
   'docs/ANDROID_RELEASE_CHECKLIST.md',
 ];
 
-const _canonicalBundleId = 'com.voicememory.mobile';
-const _canonicalAppGroup = 'group.com.voicememory.mobile';
+const _canonicalBundleId = ReleaseIdentity.applicationId;
+const _canonicalAppGroup = ReleaseIdentity.appGroupId;
 const _legacyBundleId = 'com.voicememory.app';
 
 void main() {
@@ -57,9 +61,13 @@ void main() {
 
   group('iOS release identity', () {
     test('Runner PRODUCT_BUNDLE_IDENTIFIER is canonical', () {
-      final pbxproj =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
-      expect(pbxproj, contains('PRODUCT_BUNDLE_IDENTIFIER = $_canonicalBundleId;'));
+      final pbxproj = File(
+        'ios/Runner.xcodeproj/project.pbxproj',
+      ).readAsStringSync();
+      expect(
+        pbxproj,
+        contains('PRODUCT_BUNDLE_IDENTIFIER = $_canonicalBundleId;'),
+      );
       expect(
         pbxproj,
         contains(
@@ -108,8 +116,9 @@ void main() {
 
     test('release checklists document canonical ids', () {
       final ios = File('docs/IOS_RELEASE_CHECKLIST.md').readAsStringSync();
-      final android =
-          File('docs/ANDROID_RELEASE_CHECKLIST.md').readAsStringSync();
+      final android = File(
+        'docs/ANDROID_RELEASE_CHECKLIST.md',
+      ).readAsStringSync();
       expect(ios, contains(_canonicalBundleId));
       expect(ios, contains('archiveme://'));
       expect(android, contains(_canonicalBundleId));

@@ -113,17 +113,15 @@ abstract final class CurrentRelevanceEngine {
   static bool isQuestionActive({
     required CurrentRelevanceState? state,
     required bool visible,
-  }) =>
-      visible && state != null && state.isQuestionActive;
+  }) => visible && state != null && state.isQuestionActive;
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static bool _passesEvidenceQuality(List<JournalEntry> entries) {
     if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {

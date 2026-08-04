@@ -110,7 +110,7 @@ function hasStoredReversal(theoryId: string): boolean {
 
 function buildArchiveExplanation(point: BeliefTimelinePoint | null): string {
   if (!point) {
-    return "Contradicting reflections shifted how strongly the archive holds this belief.";
+    return "Contradicting moments shifted how strongly the archive holds this belief.";
   }
 
   const raw = (point.whatChanged || point.note).trim();

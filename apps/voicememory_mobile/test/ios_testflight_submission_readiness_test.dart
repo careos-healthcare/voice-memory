@@ -11,11 +11,7 @@ const _supportUrl = 'https://careosapp.co.uk/archiveme-support';
 const _bundleId = 'com.voicememory.mobile';
 const _legacyBundleId = 'com.voicememory.app';
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 void main() {
   late String pack;
@@ -38,29 +34,24 @@ void main() {
       expect(pack, contains(_supportUrl));
       expect(pack, contains('ios/Runner.xcworkspace'));
       expect(pack, contains('0.2.0'));
-      expect(pack, contains('38'));
+      expect(pack, contains('49'));
     });
 
     test('documents reviewer and support paths', () {
       expect(pack, contains('Sample Archive'));
       expect(pack, contains('Support & feedback'));
-      expect(pack, contains('Pro preview'));
+      expect(pack, contains('Subscription'));
       expect(pack, contains('Restore purchases'));
       expect(pack, contains('/sample-archive'));
       expect(pack, contains('/support-feedback'));
-      expect(pack, contains('/pro-preview'));
+      expect(pack, contains('/subscription'));
     });
 
-    test('states purchases unavailable and RevenueCat paused', () {
-      expect(
-        pack.toLowerCase(),
-        anyOf(
-          contains('purchases are unavailable'),
-          contains('billing is unavailable'),
-          contains('revenuecat is paused'),
-        ),
-      );
+    test('states conditional store pricing without claiming sandbox proof', () {
       expect(pack.toLowerCase(), contains('revenuecat'));
+      expect(pack, contains('monthly and annual'));
+      expect(pack, contains('no fabricated price'));
+      expect(pack, contains('Do not claim purchases are live'));
     });
 
     test('does not overclaim purchases or use forbidden CTAs', () {
@@ -83,15 +74,18 @@ void main() {
       expect(storeCopy, isNot(contains('VoiceMemory')));
     });
 
-    test('APP_REVIEW_NOTES contains reviewer path, review code, and support URL', () {
-      expect(reviewNotes, contains('ArchiveMe'));
-      expect(reviewNotes, contains(_bundleId));
-      expect(reviewNotes, contains(_supportUrl));
-      expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));
-      expect(reviewNotes, contains('App Review Access'));
-      expect(reviewNotes, contains('Sample Archive'));
-      expect(reviewNotes, contains('Support'));
-    });
+    test(
+      'APP_REVIEW_NOTES contains reviewer path, review code, and support URL',
+      () {
+        expect(reviewNotes, contains('ArchiveMe'));
+        expect(reviewNotes, contains(_bundleId));
+        expect(reviewNotes, contains(_supportUrl));
+        expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));
+        expect(reviewNotes, contains('App Review Access'));
+        expect(reviewNotes, contains('Sample Archive'));
+        expect(reviewNotes, contains('Support'));
+      },
+    );
 
     test('IOS_RELEASE_CHECKLIST contains bundle ID and workspace', () {
       expect(iosChecklist, contains(_bundleId));

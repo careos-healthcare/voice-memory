@@ -1,6 +1,6 @@
 # Surface complexity report
 
-Generated: 2026-05-30T15:15:32.933Z
+Generated: 2026-08-02T02:53:57.403Z
 
 Automated recommendations only — no routes or engines removed.
 
@@ -10,34 +10,34 @@ Verdict: **HIDE**
 
 KEEP command center + archive-belief; MERGE card into home; HIDE redundant banners on archive-belief
 
-Files (41):
+Files (57):
 
-- app/archive-belief/page.tsx
-- app/blind-spots/page.tsx
-- app/entry/[id]/page.tsx
-- app/internal/archive-belief/page.tsx
-- app/page.tsx
-- components/Recorder.tsx
 - components/archive/ArchiveBeliefCard.tsx
 - components/archive/ArchiveCommandCenter.tsx
 - components/archive/EvidenceArchiveHome.tsx
 - components/product/ArchiveValueBanner.tsx
+- experiments/archive_me_legacy_web/app/archive-belief/page.tsx
+- experiments/archive_me_legacy_web/app/blind-spots/page.tsx
+- experiments/archive_me_legacy_web/app/entry/[id]/page.tsx
+- experiments/archive_me_legacy_web/app/internal/archive-belief/page.tsx
+- lib/archive/archive-progress-copy.ts
 - lib/archive/archive-voice-scopes.ts
+- lib/design/archive-empty-state-audit.ts
+- lib/design/archive-page-grammar.ts
 - lib/internal/archive-experience-report.ts
+- lib/internal/archive-taste-file-audit.ts
 - lib/product/archive-surface-ownership.ts
 - lib/product/archive-value-metrics.ts
 - lib/product/archive-value-progress.ts
+- lib/product/belief-dominance-copy.ts
+- scripts/export-app20.mjs
+- scripts/export-app21.mjs
 - scripts/export-project-10-textedit.mjs
 - scripts/validate-archive-accuracy.mjs
 - scripts/validate-archive-as-product.mjs
+- scripts/validate-archive-attachment.mjs
 - scripts/validate-archive-belief-centrality.mjs
-- scripts/validate-archive-belief-system.mjs
-- scripts/validate-archive-clarity-momentum.mjs
-- scripts/validate-archive-emotional-elegance.mjs
-- scripts/validate-archive-experience.mjs
-- scripts/validate-archive-language.mjs
-- scripts/validate-archive-os.mjs
-- … and 16 more
+- … and 32 more
 
 ## Theory / belief surfaces
 
@@ -45,13 +45,10 @@ Verdict: **HIDE**
 
 KEEP dossier on archive + discover feed; HIDE theories list behind Account > More
 
-Files (69):
+Files (68):
 
-- app/discover/page.tsx
-- app/theories/page.tsx
 - components/archive/BeliefDossier.tsx
 - components/archive/BeliefDossierCompactLink.tsx
-- components/archive/EvidenceArchiveHome.tsx
 - components/discover/TheoryChangeFeed.tsx
 - components/theories/EvidenceBuildingCard.tsx
 - components/theories/EvolvingViewCard.tsx
@@ -62,6 +59,7 @@ Files (69):
 - components/theories/TheoryNotificationCard.tsx
 - components/theories/TheoryUnderReviewPanel.tsx
 - components/theories/TheoryUpdatesNav.tsx
+- experiments/archive_me_legacy_web/app/theories/page.tsx
 - lib/archive/archive-export-attachment.ts
 - lib/archive/archive-export-preview.ts
 - lib/archive/belief-dossier.ts
@@ -72,7 +70,9 @@ Files (69):
 - lib/theories/evolving-view-snapshot.ts
 - lib/theories/notification-effectiveness.ts
 - lib/theories/personal-theory-copy.ts
-- … and 44 more
+- lib/theories/personal-theory-map.ts
+- lib/theories/personal-theory-status.ts
+- … and 43 more
 
 ## Reflection surfaces
 
@@ -80,34 +80,34 @@ Verdict: **HIDE**
 
 KEEP Reflection Log (/memory); HIDE journal behind Account > More
 
-Files (103):
+Files (109):
 
 - app/api/journal/[id]/route.ts
 - app/api/journal/export/route.ts
 - app/api/journal/route.ts
-- app/bookmarks/page.tsx
-- app/entry/[id]/page.tsx
-- app/insights/page.tsx
-- app/journal/page.tsx
-- app/memory/page.tsx
-- app/monthly/page.tsx
-- app/open-loops/page.tsx
-- app/page.tsx
-- app/reminders/page.tsx
-- app/search/page.tsx
-- app/seasons/page.tsx
-- app/territories/page.tsx
-- app/threads/[slug]/page.tsx
-- app/threads/page.tsx
-- app/timeline/page.tsx
-- app/weekly/page.tsx
 - components/archive/ReflectionLogPanel.tsx
 - components/continuity/ReturnThreadCard.tsx
 - components/homepage/MobileReturningHome.tsx
 - components/journal/JournalArchiveRow.tsx
 - components/journal/JournalSyncStatus.tsx
 - components/memory/AnticipatoryEmptyState.tsx
-- … and 78 more
+- components/memory/ArchiveGravityNote.tsx
+- components/memory/ArchiveLandmarkNote.tsx
+- components/memory/ContinuityDepthNote.tsx
+- components/memory/ConversationThreadSection.tsx
+- components/memory/CopyMemoryMomentButton.tsx
+- components/memory/EmotionalChapterNote.tsx
+- components/memory/EntityMemorySection.tsx
+- components/memory/EntryListRowMeta.tsx
+- components/memory/LivingResurfacingNote.tsx
+- components/memory/MemoryContinuitySection.tsx
+- components/memory/MemoryReminderNote.tsx
+- components/memory/MemorySeasonSection.tsx
+- components/memory/MilestoneNotes.tsx
+- components/memory/PrimaryCallbackNote.tsx
+- components/memory/ReflectionBookmarkList.tsx
+- components/memory/ReflectionBookmarkMark.tsx
+- … and 84 more
 
 ## Insight / blind spot surfaces
 
@@ -115,14 +115,8 @@ Verdict: **HIDE**
 
 KEEP Archive Insight (/blind-spots); HIDE legacy /insights behind More
 
-Files (99):
+Files (102):
 
-- app/blind-spots/page.tsx
-- app/insights/page.tsx
-- app/internal/blind-spot-discovery/page.tsx
-- app/theories/page.tsx
-- app/updates/page.tsx
-- components/archive/EvidenceArchiveHome.tsx
 - components/blind-spots/BlindSpotAccelerationView.tsx
 - components/blind-spots/BlindSpotExperimentFollowUpPrompt.tsx
 - components/blind-spots/BlindSpotExperimentFollowUpStack.tsx
@@ -142,4 +136,10 @@ Files (99):
 - components/insights/InsightOutcomePromptStack.tsx
 - components/insights/InsightScorecardPanel.tsx
 - components/insights/IntensityTrendChart.tsx
-- … and 74 more
+- components/insights/MemoryTimelineDashboard.tsx
+- components/insights/PatternsDetectedSection.tsx
+- components/internal/InsightOutcomePanel.tsx
+- components/theories/TheoryCard.tsx
+- experiments/archive_me_legacy_web/app/blind-spots/page.tsx
+- experiments/archive_me_legacy_web/app/insights/page.tsx
+- … and 77 more

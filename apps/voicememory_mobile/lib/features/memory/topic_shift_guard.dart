@@ -5,7 +5,6 @@ import '../archive_packs/archive_pack_scope_policy.dart';
 import '../archive_packs/entry_pack_scope.dart';
 import '../pressure_retention/pressure_check_in_record.dart';
 import 'archive_retrieval_policy.dart';
-import 'archive_retrieval_score.dart';
 import 'clean_slate_prompt_state.dart';
 import 'clean_slate_prompt_store.dart';
 import 'current_relevance_gate.dart';
@@ -235,7 +234,7 @@ abstract class TopicShiftGuard {
               r.archivePackId == recentPack,
         );
 
-    if (sameThreadBound && recentThread != null) {
+    if (sameThreadBound) {
       return const TopicShiftDecision(
         shouldPrompt: false,
         decisionId: TopicShiftDecisionId.noShift,
@@ -244,7 +243,7 @@ abstract class TopicShiftGuard {
       );
     }
 
-    if (samePackBound && recentPack != null) {
+    if (samePackBound) {
       return const TopicShiftDecision(
         shouldPrompt: false,
         decisionId: TopicShiftDecisionId.noShift,
@@ -302,11 +301,13 @@ abstract class TopicShiftGuard {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
-  @visibleForTesting
-  static void resetForTest() {
-    CleanSlatePromptStore.resetSessionForTest();
-    EntryMemoryModeSession.resetSessionForTest();
-    EntryThreadScopeSession.resetSessionForTest();
-    EntryPackScopeSession.resetSessionForTest();
+  static void resetSession() {
+    CleanSlatePromptStore.resetSession();
+    EntryMemoryModeSession.resetSession();
+    EntryThreadScopeSession.resetAfterSave();
+    EntryPackScopeSession.resetAfterSave();
   }
+
+  @visibleForTesting
+  static void resetForTest() => resetSession();
 }

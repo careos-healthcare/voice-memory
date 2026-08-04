@@ -19,7 +19,7 @@ export type ShareMemoryCardKind =
   | "entry_observation";
 
 export const SHARE_CARD_DISCLAIMER =
-  "This is a private reflection, not a diagnosis.";
+  "This is a private moment, not a diagnosis.";
 
 const CARD_PREFIX = "ArchiveMe noticed:";
 
@@ -63,7 +63,7 @@ export function buildWeeklySummaryShareCard(options: ShareCardOptions = {}): str
   const report = analyzeWeeklyIntelligence();
   if (!report.hasData) {
     return wrapCard([
-      "Your weekly summary will appear after a few voice reflections this week.",
+      "Your weekly summary will appear after you save a few moments this week.",
     ]);
   }
 
@@ -83,7 +83,7 @@ export function buildWeeklySummaryShareCard(options: ShareCardOptions = {}): str
 export function buildTimelineCompressionShareCard(options: ShareCardOptions = {}): string {
   const report = analyzeWeeklyIntelligence();
   if (!report.hasData) {
-    return wrapCard(["Not enough reflections yet to compress your week into a timeline."]);
+    return wrapCard(["Not enough moments yet to compress your week into a timeline."]);
   }
 
   const lines = compressWeekTimeline(report);
@@ -97,7 +97,7 @@ function compressWeekTimeline(report: WeeklyIntelligenceReport): string[] {
   const { thisWeek, emotionalShift } = report;
   const activeDays = thisWeek.intensityByDay.filter((d) => d.entryCount > 0);
   const lines: string[] = [
-    `${thisWeek.entryCount} reflection${thisWeek.entryCount === 1 ? "" : "s"} across ${activeDays.length} day${activeDays.length === 1 ? "" : "s"} this week.`,
+    `${thisWeek.entryCount} moment${thisWeek.entryCount === 1 ? "" : "s"} across ${activeDays.length} day${activeDays.length === 1 ? "" : "s"} this week.`,
   ];
 
   if (activeDays.length >= 2) {
@@ -136,7 +136,7 @@ export function buildMemoryContinuityShareCard(options: ShareCardOptions = {}): 
   const highlight = entity.mentionHighlights[0];
   if (highlight && highlight.mentionCount >= 2) {
     lines.push(
-      `I mentioned ${highlight.name} ${highlight.mentionCount} times in my recent reflections.`,
+      `I mentioned ${highlight.name} ${highlight.mentionCount} times in my recent moments.`,
     );
   }
 
@@ -191,7 +191,7 @@ export function buildDominantThemeShareCard(options: ShareCardOptions = {}): str
     0;
 
   if (!theme) {
-    return wrapCard(["Dominant themes will surface as you add more voice reflections."]);
+    return wrapCard(["Dominant themes will surface as you save more moments."]);
   }
 
   const lines = [

@@ -1,3 +1,4 @@
+import '../../product/auditable_change_positioning.dart';
 import '../paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 
 /// Canonical ArchiveMe Pro paywall alignment copy — display only, no billing logic.
@@ -5,6 +6,12 @@ abstract final class PaywallAlignmentCopy {
   PaywallAlignmentCopy._();
 
   static const headline = PaywallValueSharpeningCopy.genericHeadline;
+
+  /// The category the paywall is selling more of — shown above [headline].
+  static const positioningCategory = AuditableChangePositioning.category;
+
+  /// The promise the paywall extends — shown under [headline].
+  static const positioningLine = AuditableChangePositioning.primaryPromise;
 
   static const body = PaywallValueSharpeningCopy.body;
 
@@ -17,22 +24,24 @@ abstract final class PaywallAlignmentCopy {
 
   /// Compact bridge line — avoids repeating the full paywall body on lock cards.
   static const lockMomentPaidReason =
-      'Pro keeps the longer proof trail — what returns, changes, fades, or gets corrected over time.';
+      'Pro generates new comparisons as more moments are added.';
 
   static const monthlyReportProReason =
-      'Pro keeps the longer proof trail over time.';
+      'Pro generates new periodic reviews from supporting evidence.';
 
   static const backupBridgeBody =
-      'You are building evidence over time. Pro keeps the longer proof trail as moments return, change, or fade.';
+      'Your recordings stay yours. Pro generates new comparisons and deeper archive analysis.';
 
   static const backupProPreservation =
-      'Pro is built around keeping the longer proof trail.';
+      'Pro is built around ongoing analysis, not access to your recordings.';
 
   static List<String> allPaywallStrings() => [
-        headline,
-        body,
-        secondaryReassurance,
-        PaywallValueSharpeningCopy.proofConnectedLine,
-        ...benefitBullets,
-      ];
+    positioningCategory,
+    headline,
+    positioningLine,
+    body,
+    secondaryReassurance,
+    PaywallValueSharpeningCopy.proofConnectedLine,
+    ...benefitBullets,
+  ];
 }

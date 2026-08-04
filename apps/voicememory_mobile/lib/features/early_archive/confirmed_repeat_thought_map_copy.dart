@@ -6,8 +6,7 @@ abstract final class ConfirmedRepeatThoughtMapCopy {
 
   static const triggerLabel = 'Trigger';
   static const triggerQuestion = 'What happened before it?';
-  static const triggerUnknown =
-      'Record what happened right before it came up.';
+  static const triggerUnknown = 'Record what happened right before it came up.';
 
   static const thoughtLabel = 'Thought';
   static const thoughtQuestion = 'What did your mind say?';
@@ -25,13 +24,10 @@ abstract final class ConfirmedRepeatThoughtMapCopy {
 
   static const recordMissingPieceCta = 'Record the missing piece';
 
-  static const triggerGuidedPrompt =
-      'What happened right before this came up?';
-  static const thoughtGuidedPrompt =
-      'What was your mind saying in the moment?';
+  static const triggerGuidedPrompt = 'What happened right before this came up?';
+  static const thoughtGuidedPrompt = 'What was your mind saying in the moment?';
   static const actionGuidedPrompt = 'What did you do next?';
-  static const resultGuidedPrompt =
-      'Did it help, cost you, or change?';
+  static const resultGuidedPrompt = 'Did it help, cost you, or change?';
 
   static const proFutureLine =
       'Pro keeps your full thought maps and tracks how they change.';

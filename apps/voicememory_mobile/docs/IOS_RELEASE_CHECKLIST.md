@@ -4,17 +4,18 @@ See also: **`APP_STORE_SUBMISSION_PACK.md`** (TestFlight + App Store Connect one
 
 ## Identity
 
-- **Display name:** ArchiveMe (`CFBundleDisplayName` in Info.plist)
+- **Display name:** ArchiveMe (`CFBundleDisplayName` in `Info-Release.plist`)
 - **Bundle ID:** `com.voicememory.mobile` (Runner target in Xcode → Signing)
-- **Widget extension ID (when enabled):** `com.voicememory.mobile.TodayCheckWidget`
-- **App Group:** `group.com.voicememory.mobile`
-- **URL schemes:** `archiveme://` (primary widget/deep link), `voicememory://` (legacy compatibility)
+- **V1 URL scheme:** `archiveme://`
+- **Embedded extensions:** none
+- **Explicit Release entitlements:** none
 
 ## Capabilities
 
-- Microphone: `NSMicrophoneUsageDescription` in Info.plist
+- Microphone: `NSMicrophoneUsageDescription` in `Info-Release.plist`
+- Face ID: `NSFaceIDUsageDescription` only for the optional private lock
 - App Transport Security: HTTPS only (`NSAllowsArbitraryLoads` = false)
-- No push entitlement for v1
+- No push, app-group, iCloud, HealthKit or background entitlement for V1
 
 ## Signing
 
@@ -27,7 +28,8 @@ See also: **`APP_STORE_SUBMISSION_PACK.md`** (TestFlight + App Store Connect one
 
 - Privacy nutrition labels: voice audio, email (if signed in), device identifiers for capture attest
 - No health/diagnosis claims
-- Screenshots: Record, Archive (Patterns), Account, Sample Archive
+- Screenshots: Record post-save receipt, Archive originals, chronological
+  Changes, and Account
 
 ## Purchases (RevenueCat — not ready until setup complete)
 
@@ -45,8 +47,12 @@ Access protection audit: [ACCESS_PROTECTION_AUDIT.md](./ACCESS_PROTECTION_AUDIT.
 
 - [ ] Mic permission prompt on first record
 - [ ] Record → transcribe → analyze on production API
-- [ ] First save → Archive Home shows cautious next step
-- [ ] Sample Archive reachable from Archive Home
+- [ ] First save shows Saved → editable transcript → at most one validated
+  observation → exact evidence → correction controls → one next action
+- [ ] Second related save can show a distinct Then/Now comparison in Changes
+- [ ] Changes evidence opens both exact source moments
+- [ ] No graph, analyst, blind-spot, reminder, streak, or paywall card appears
+  in the post-save stack
 - [ ] Restore purchases path reachable (returns unavailable until RC configured)
 
 ## Build
@@ -54,6 +60,9 @@ Access protection audit: [ACCESS_PROTECTION_AUDIT.md](./ACCESS_PROTECTION_AUDIT.
 ```bash
 flutter build ios --release \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app
+bash tool/audit_v1_permissions.sh --ios-only \
+  --ios-app build/ios/iphoneos/Runner.app \
+  --ios-entitlements ios/Runner/Runner-Release.entitlements
 ```
 
 Add RevenueCat dart-define when billing setup is complete.

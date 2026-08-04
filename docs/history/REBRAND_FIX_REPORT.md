@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Rebrand Fix Report — VoiceMemory → ArchiveMe
 
 **Date:** 2026-05-25  
@@ -177,3 +179,4 @@ rg 'VoiceMemory|Voice Memory|VOICEMEMORY' \
 - Migrate `voicememory_*` storage keys with dual-read window.
 - Store listing / ASO / domain cutover (`archiveme.app`).
 - Regenerate `.next` and screenshot audit baselines.
+

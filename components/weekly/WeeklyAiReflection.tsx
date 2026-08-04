@@ -60,7 +60,7 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
         };
 
         if (!response.ok || !data.summary) {
-          throw new Error(data.error ?? "Could not generate weekly reflection");
+          throw new Error(data.error ?? "Could not generate weekly pattern summary");
         }
 
         setCachedWeeklySummary(report.weekEndingKey, data.summary);

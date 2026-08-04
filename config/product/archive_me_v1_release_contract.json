@@ -1,0 +1,329 @@
+{
+  "$schema": "./archive_me_v1_release_contract.schema.json",
+  "schemaVersion": 1,
+  "policyVersion": "2026-08-01",
+  "contractId": "archive-me-v1-release",
+  "product": {
+    "name": "ArchiveMe",
+    "platform": "flutter",
+    "entryPoints": [
+      "apps/voicememory_mobile/lib/main.dart"
+    ],
+    "router": "apps/voicememory_mobile/lib/router/app_router.dart",
+    "productContract": "apps/voicememory_mobile/lib/product/archive_me_v1_product_contract.dart",
+    "routeCatalog": "apps/voicememory_mobile/lib/router/route_catalog.dart"
+  },
+  "routes": {
+    "primary": [
+      "/record",
+      "/archive-belief",
+      "/belief-changes",
+      "/account"
+    ],
+    "secondary": [
+      "/settings",
+      "/archive-search",
+      "/security",
+      "/privacy-trust-centre",
+      "/privacy",
+      "/terms",
+      "/about",
+      "/support-feedback",
+      "/subscription",
+      "/pricing",
+      "/restore-purchases",
+      "/delete-account",
+      "/export",
+      "/quick-capture",
+      "/recording-recovery"
+    ],
+    "flows": [
+      "/",
+      "/onboarding"
+    ],
+    "allowedPrefixes": [
+      "/entry/",
+      "/account/"
+    ],
+    "explicitlyExcluded": [
+      "/archive-tools",
+      "/life-os",
+      "/life-os/graph",
+      "/self-discovery",
+      "/blind-spots",
+      "/archive-identity",
+      "/archive-life-chapters",
+      "/weekly-report",
+      "/capacity-loop",
+      "/details",
+      "/archive-analyst",
+      "/pattern-map",
+      "/pattern-profile",
+      "/pattern-recognition",
+      "/action-items",
+      "/archive-review",
+      "/weekly-archive-review",
+      "/prove-enough/monthly-review",
+      "/insight-quality",
+      "/archive-timeline",
+      "/ask-archive",
+      "/archive-cleanup",
+      "/moments",
+      "/journal",
+      "/archive-journey",
+      "/archive-share",
+      "/archive-deep-dive",
+      "/weekly-story",
+      "/updates",
+      "/archive-packs",
+      "/collections",
+      "/pinned-evidence",
+      "/yesterdays-snapshot",
+      "/review-ritual",
+      "/archive-calendar",
+      "/live-voice",
+      "/cold-start/seed"
+    ]
+  },
+  "services": {
+    "startupRetained": [
+      "AppStoragePaths",
+      "SensitiveTemporaryAudioStore",
+      "AppServices",
+      "TranscriptionWorkScheduler",
+      "RevenueCatService"
+    ],
+    "runtimeRetained": [
+      "RecordingService",
+      "CapturePipelineService",
+      "JournalService",
+      "AudioVaultService",
+      "SecureStorageService",
+      "BiometricVaultService",
+      "AuthService",
+      "SyncService",
+      "SubscriptionService",
+      "CaptureAttestService"
+    ],
+    "startupExcluded": [
+      "CheckInReminderService",
+      "SundayDigestService",
+      "ThreadReturnNotificationService",
+      "OfflineVaultRecoveryLaunchController",
+      "CurrentObjectiveWidgetRefreshService",
+      "MorningBriefingService"
+    ]
+  },
+  "backendApis": {
+    "required": [
+      "/api/health",
+      "/api/capture/attest",
+      "/api/transcribe",
+      "/api/analyze",
+      "/api/auth/send-code",
+      "/api/auth/verify",
+      "/api/auth/session",
+      "/api/auth/signout",
+      "/api/account/delete",
+      "/api/sync/manifest",
+      "/api/sync/pull",
+      "/api/sync/push",
+      "/api/billing/entitlements",
+      "/api/billing/revenuecat/link",
+      "/api/user/subscription-status"
+    ],
+    "backendOnlyPrefixes": [
+      "/api/internal/",
+      "/api/analytics/",
+      "/api/metrics/",
+      "/api/resurfacing/"
+    ]
+  },
+  "plugins": {
+    "retained": [
+      "flutter_localizations",
+      "go_router",
+      "http",
+      "flutter_secure_storage",
+      "permission_handler",
+      "path_provider",
+      "record",
+      "share_plus",
+      "url_launcher",
+      "uuid",
+      "crypto",
+      "cryptography",
+      "firebase_core",
+      "firebase_analytics",
+      "device_info_plus",
+      "package_info_plus",
+      "purchases_flutter",
+      "local_auth",
+      "connectivity_plus",
+      "flutter_riverpod",
+      "sqlite3",
+      "path",
+      "whisper_flutter_coreml",
+      "secure_application",
+      "pointycastle",
+      "http_parser",
+      "intl",
+      "just_audio"
+    ],
+    "legacyCompatibility": [],
+    "experimentalIsolated": []
+  },
+  "permissions": {
+    "android": [
+      "android.permission.INTERNET",
+      "android.permission.RECORD_AUDIO",
+      "android.permission.USE_BIOMETRIC",
+      "com.android.vending.BILLING"
+    ],
+    "iosUsageDescriptions": [
+      "NSFaceIDUsageDescription",
+      "NSMicrophoneUsageDescription"
+    ],
+    "iosEntitlements": []
+  },
+  "identities": {
+    "displayName": "ArchiveMe",
+    "androidApplicationId": "com.voicememory.mobile",
+    "iosBundleId": "com.voicememory.mobile",
+    "urlSchemes": [
+      "archiveme"
+    ]
+  },
+  "canonicalSystems": {
+    "journalModel": "apps/voicememory_mobile/lib/models/journal_entry.dart",
+    "syncClient": "apps/voicememory_mobile/lib/features/journal/sync/saved_moment_sync.dart",
+    "syncBackendRoutes": [
+      "/api/sync/manifest",
+      "/api/sync/pull",
+      "/api/sync/push"
+    ],
+    "conclusionModel": "apps/voicememory_mobile/lib/features/explainable_conclusion/explainable_conclusion.dart",
+    "conclusionValidator": "apps/voicememory_mobile/lib/features/explainable_conclusion/explainable_conclusion_validator.dart",
+    "correctionStore": "apps/voicememory_mobile/lib/features/insight_feedback/insight_feedback_store.dart",
+    "entitlementPolicy": "apps/voicememory_mobile/lib/features/monetization/domain/access_policy_engine.dart"
+  },
+  "analytics": {
+    "facade": "apps/voicememory_mobile/lib/services/product_analytics.dart",
+    "catalog": "config/product/archive_me_v1_analytics_events.json",
+    "allowedV1Events": [
+      "start_here_shown",
+      "start_here_selected",
+      "account_signup_started",
+      "account_signup_completed",
+      "account_signin_started",
+      "account_signin_completed",
+      "account_signout",
+      "auth_error_shown",
+      "app_lock_enabled",
+      "app_lock_disabled",
+      "app_lock_unlocked",
+      "app_lock_failed",
+      "biometric_unlock_attempted",
+      "biometric_unlock_succeeded",
+      "biometric_unlock_failed",
+      "post_save_observation_shown",
+      "post_save_no_conclusion",
+      "auditable_conclusion_shown",
+      "evidence_receipt_opened",
+      "exact_source_opened",
+      "interpretation_feedback_submitted",
+      "interpretation_corrected",
+      "conclusion_suppressed",
+      "early_comparison_shown",
+      "reliable_change_displayed",
+      "changes_viewed",
+      "archive_search_used",
+      "insight_not_displayed_low_evidence",
+      "purchase_started",
+      "purchase_completed",
+      "playback_started",
+      "playback_completed"
+    ]
+  },
+  "capabilityContract": "config/product/archive_me_v1_capabilities.json",
+  "dataFlowManifest": "config/privacy/archive_me_data_flow.json",
+  "moduleClassifications": [
+    {
+      "classification": "RETAIN",
+      "modules": [
+        "apps/voicememory_mobile/lib/api",
+        "apps/voicememory_mobile/lib/auth",
+        "apps/voicememory_mobile/lib/billing",
+        "apps/voicememory_mobile/lib/router",
+        "apps/voicememory_mobile/lib/security",
+        "apps/voicememory_mobile/lib/storage",
+        "apps/voicememory_mobile/lib/features/recording",
+        "apps/voicememory_mobile/lib/features/voice_capture",
+        "apps/voicememory_mobile/lib/features/changes",
+        "apps/voicememory_mobile/lib/features/explainable_conclusion",
+        "apps/voicememory_mobile/lib/features/insight_feedback",
+        "apps/voicememory_mobile/lib/features/journal",
+        "apps/voicememory_mobile/lib/features/remote_transcription",
+        "apps/voicememory_mobile/lib/features/monetization"
+      ]
+    },
+    {
+      "classification": "CONSOLIDATE",
+      "modules": [
+        "apps/voicememory_mobile/lib/services/app_services.dart",
+        "apps/voicememory_mobile/lib/router/app_router.dart",
+        "apps/voicememory_mobile/lib/features/recording/recording_state_controller.dart"
+      ]
+    },
+    {
+      "classification": "REMOVE",
+      "modules": [
+        "apps/voicememory_mobile/lib/features/life_simulator",
+        "apps/voicememory_mobile/lib/features/persona_forge",
+        "apps/voicememory_mobile/lib/features/autonomous_muse",
+        "apps/voicememory_mobile/lib/features/horizon_lab",
+        "apps/voicememory_mobile/lib/features/spatial_nexus",
+        "apps/voicememory_mobile/lib/features/memory_graph",
+        "apps/voicememory_mobile/lib/features/neural_sculptor",
+        "apps/voicememory_mobile/lib/features/sandbox_enclave",
+        "apps/voicememory_mobile/lib/features/apex_profiler"
+      ]
+    },
+    {
+      "classification": "BACKEND_ONLY",
+      "modules": [
+        "app/api/internal",
+        "app/api/analytics",
+        "app/api/metrics",
+        "app/api/resurfacing"
+      ]
+    },
+    {
+      "classification": "MIGRATION_ONLY",
+      "modules": [
+        "apps/voicememory_mobile/lib/features/monetization/data/monetization_local_migration.dart",
+        "apps/voicememory_mobile/lib/subscriptions/data/legacy_subscription_mapper.dart",
+        "scripts/activate-monetized-usage-schema.mjs",
+        "scripts/activate-unit-economics-schema.mjs"
+      ]
+    },
+    {
+      "classification": "LEGACY_COMPATIBILITY",
+      "modules": []
+    },
+    {
+      "classification": "EXPERIMENTAL_ISOLATED",
+      "modules": [
+        "experiments/archive_me_legacy_flutter",
+        "experiments/archive_me_legacy_web"
+      ]
+    }
+  ],
+  "architectureGuardTests": [
+    "scripts/archive-me-v1-release-architecture.test.mjs",
+    "apps/voicememory_mobile/test/v1_navigation_guard_test.dart",
+    "apps/voicememory_mobile/test/v1_permission_envelope_test.dart",
+    "apps/voicememory_mobile/test/v1_scope_cut_test.dart",
+    "apps/voicememory_mobile/test/navigation/primary_navigation_shell_test.dart"
+  ]
+}

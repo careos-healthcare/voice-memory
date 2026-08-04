@@ -7,7 +7,7 @@ export const EVIDENCE_ARCHIVE_NOT_VERDICT = "Current view your archive can suppo
 
 /** @deprecated Combined into archive lead when belief is building. */
 export const EVIDENCE_ARCHIVE_NEW_REFLECTIONS =
-  "Reflections strengthen, weaken, or contradict this belief.";
+  "Moments strengthen, weaken, or contradict this belief.";
 
 export const EVIDENCE_ARCHIVE_VALUE_FRAMING =
   "Current belief and how it is moving.";
@@ -25,5 +25,5 @@ export const EVIDENCE_ARCHIVE_OWNERSHIP_HEADLINE =
 export const EVIDENCE_ARCHIVE_CHECK_NEXT = [
   { href: "/discover", label: "See what changed" },
   { href: "/#recorder", label: "Record more evidence" },
-  { href: "/memory", label: "Reflection log" },
+  { href: "/memory", label: "Saved moments" },
 ] as const;

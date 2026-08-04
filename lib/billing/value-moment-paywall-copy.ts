@@ -42,8 +42,6 @@ export const VALUE_MOMENT_PRICING_COPY = {
     "Monthly private report when eligible",
     "Backup and continuity when you sign in",
   ],
-  /** Kept in sync with Pro tier — £9.99/month */
+  /** Displayed only when resolved from live billing metadata. */
   priceLabel: PRO_TIER.priceLabel,
 } as const;
-
-export const VALUE_MOMENT_PRO_PRICE_LABEL = "£9.99/month";

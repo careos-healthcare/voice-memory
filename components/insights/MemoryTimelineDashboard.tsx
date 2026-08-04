@@ -29,7 +29,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <StatTile label="Reflections saved" value={insights.totalEntries} />
+        <StatTile label="Moments saved" value={insights.totalEntries} />
         <StatTile
           label="Words that returned"
           value={insights.mostRepeatedPattern ? "Yes" : "—"}
@@ -108,7 +108,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
           </CardHeader>
           <CardContent>
             <p className="text-sm leading-relaxed text-zinc-400">
-              {topTheme.theme} — {topTheme.count} reflections
+              {topTheme.theme} — {topTheme.count} moments
             </p>
           </CardContent>
         </Card>
@@ -133,7 +133,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
         href="/search"
         className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm text-zinc-400 transition-colors hover:border-violet-400/30 hover:text-violet-200"
       >
-        Search across your reflections
+        Search across your saved words
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
     </div>

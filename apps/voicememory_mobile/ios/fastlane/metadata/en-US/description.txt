@@ -1,0 +1,17 @@
+A private change ledger that shows exactly what repeated, what changed, the words proving it, and lets you correct the record.
+
+See what repeated. See what changed. Verify it in your own words.
+
+Save one real moment in your own words. When something like it happens again, ArchiveMe compares the two and shows the exact saved words and dates behind the comparison.
+
+With ArchiveMe you can:
+• Save one real moment by voice or by typing
+• Read and edit the saved transcript, and replay your own audio
+• See what repeated and what changed across your saved moments
+• Open the exact source words and dates proving any comparison
+• Correct the record with Accurate, Wrong angle, Too generic, or Hide
+• Export your saved moments whenever you choose
+
+ArchiveMe uses AI for transcription and for drafting each observation. That is a processing detail, not the product: nothing is shown without the exact saved words and dates behind it.
+
+ArchiveMe is not therapy, medical advice, or a diagnosis. Some transcription and analysis features may process audio or text when you use them.

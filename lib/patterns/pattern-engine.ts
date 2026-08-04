@@ -366,7 +366,7 @@ function collectEntityInsights(entries: JournalEntry[]): PatternInsight[] {
         `entity:${entity.id}`,
         "entity_trigger",
         `${entity.name} — ${entity.mentionCount} mentions${moodHint}`,
-        `${capitalize(formatEntityTypeLabel(entity.type))} threaded through ${entity.entryIds.length} reflections.`,
+        `${capitalize(formatEntityTypeLabel(entity.type))} threaded through ${entity.entryIds.length} saved moments.`,
         entity.sampleEntryIds.map((id) => {
           const entry = entries.find((e) => e.id === id);
           return {
@@ -448,7 +448,7 @@ function collectWeeklyInsights(entries: JournalEntry[]): PatternInsight[] {
         `weekly-theme:${theme.label}`,
         "recurring_pattern",
         `"${theme.label}" surfaced ${theme.count} time${theme.count === 1 ? "" : "s"} this week`,
-        `Dominant theme in the last 7 days — tagged in ${theme.count} reflection${theme.count === 1 ? "" : "s"}.`,
+        `Dominant theme in the last 7 days — tagged in ${theme.count} saved moment${theme.count === 1 ? "" : "s"}.`,
         [],
         weekEntryIds,
         theme.count,

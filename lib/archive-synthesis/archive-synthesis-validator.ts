@@ -7,7 +7,7 @@ import type {
   ArchiveSynthesisPack,
 } from "@/types/archive-synthesis";
 import {
-  collectPackEntryIds,
+  buildPackCanonicalSourceMap,
   findBannedInText,
   validateConclusion,
   validateConclusionSection,
@@ -18,36 +18,37 @@ export function validateArchiveMonthlyReview(
   review: ArchiveMonthlyReview,
   pack: ArchiveSynthesisPack,
 ): { ok: true } | { ok: false; errors: string[] } {
-  const allowedIds = collectPackEntryIds(pack);
+  const sources = buildPackCanonicalSourceMap(pack);
   const errors: string[] = [];
+  if (review.reviewVersion !== 4) errors.push("reviewVersion: V4 required");
 
   errors.push(
-    ...validateConclusionSection(review.whatChanged, allowedIds, "whatChanged"),
+    ...validateConclusionSection(review.whatChanged, sources, "whatChanged"),
     ...validateConclusionSection(
       review.emergingTheories,
-      allowedIds,
+      sources,
       "emergingTheories",
     ),
     ...validateConclusionSection(
       review.fadingTheories,
-      allowedIds,
+      sources,
       "fadingTheories",
     ),
-    ...validateConclusionSection(review.surprises, allowedIds, "surprises"),
-    ...validateConclusionSection(review.evidenceFor, allowedIds, "evidenceFor"),
+    ...validateConclusionSection(review.surprises, sources, "surprises"),
+    ...validateConclusionSection(review.evidenceFor, sources, "evidenceFor"),
     ...validateConclusionSection(
       review.evidenceAgainst,
-      allowedIds,
+      sources,
       "evidenceAgainst",
     ),
     ...validateOptionalConclusion(
       review.biggestSurprise,
-      allowedIds,
+      sources,
       "biggestSurprise",
     ),
     ...validateOptionalConclusion(
       review.strongestContradiction,
-      allowedIds,
+      sources,
       "strongestContradiction",
     ),
   );
@@ -60,8 +61,9 @@ export function validateArchiveMilestoneReview(
   review: ArchiveMilestoneReview,
   pack: ArchiveSynthesisPack,
 ): { ok: true } | { ok: false; errors: string[] } {
-  const allowedIds = collectPackEntryIds(pack);
+  const sources = buildPackCanonicalSourceMap(pack);
   const errors: string[] = [];
+  if (review.reviewVersion !== 4) errors.push("reviewVersion: V4 required");
 
   errors.push(...findBannedInText(review.headline, "headline"));
   errors.push(...findBannedInText(review.narrative, "narrative"));
@@ -69,12 +71,12 @@ export function validateArchiveMilestoneReview(
   errors.push(
     ...validateConclusion(
       review.primaryTheorySummary,
-      allowedIds,
+      sources,
       "primaryTheorySummary",
     ),
     ...validateConclusionSection(
       review.changeHighlights,
-      allowedIds,
+      sources,
       "changeHighlights",
     ),
   );
@@ -87,20 +89,21 @@ export function validateArchiveDeepDiveNarrative(
   review: ArchiveDeepDiveNarrative,
   pack: ArchiveSynthesisPack,
 ): { ok: true } | { ok: false; errors: string[] } {
-  const allowedIds = collectPackEntryIds(pack);
+  const sources = buildPackCanonicalSourceMap(pack);
   const errors: string[] = [];
+  if (review.reviewVersion !== 4) errors.push("reviewVersion: V4 required");
 
   errors.push(...findBannedInText(review.narrativeExplanation, "narrative"));
   errors.push(...findBannedInText(review.uncertaintyNote, "uncertaintyNote"));
   errors.push(
     ...validateConclusion(
       review.beliefEvolutionSummary,
-      allowedIds,
+      sources,
       "beliefEvolutionSummary",
     ),
     ...validateConclusionSection(
       review.evidenceSynthesis,
-      allowedIds,
+      sources,
       "evidenceSynthesis",
     ),
   );
@@ -113,20 +116,24 @@ export function validateArchiveHistorianReport(
   review: ArchiveHistorianReport,
   pack: ArchiveSynthesisPack,
 ): { ok: true } | { ok: false; errors: string[] } {
-  const allowedIds = collectPackEntryIds(pack);
+  const sources = buildPackCanonicalSourceMap(pack);
   const errors: string[] = [];
+  if (review.reviewVersion !== 4) errors.push("reviewVersion: V4 required");
 
   errors.push(...findBannedInText(review.title, "title"));
   errors.push(...findBannedInText(review.uncertaintyNote, "uncertaintyNote"));
   errors.push(
-    ...validateConclusionSection(review.timeline, allowedIds, "timeline"),
+    ...validateConclusionSection(review.timeline, sources, "timeline"),
   );
 
   if (errors.length > 0) return { ok: false, errors };
   return { ok: true };
 }
 
-function parseConclusions(raw: unknown, key: string): ArchiveSynthesisConclusion[] {
+function parseConclusions(
+  raw: unknown,
+  key: string,
+): ArchiveSynthesisConclusion[] {
   const section = (raw as Record<string, unknown>)[key];
   if (!Array.isArray(section)) {
     throw new Error(`Invalid synthesis JSON: ${key} must be array`);
@@ -159,7 +166,9 @@ export function parseArchiveMonthlyReview(raw: string): ArchiveMonthlyReview {
   for (const key of sections) {
     parseConclusions(parsed, key);
   }
-  parsed.reviewVersion = 2;
+  if (parsed.reviewVersion !== 4) {
+    throw new Error("Invalid synthesis JSON: reviewVersion must be 4");
+  }
   parsed.biggestSurprise = parseOptionalConclusion(parsed, "biggestSurprise");
   parsed.strongestContradiction = parseOptionalConclusion(
     parsed,
@@ -168,12 +177,16 @@ export function parseArchiveMonthlyReview(raw: string): ArchiveMonthlyReview {
   return parsed;
 }
 
-export function parseArchiveMilestoneReview(raw: string): ArchiveMilestoneReview {
+export function parseArchiveMilestoneReview(
+  raw: string,
+): ArchiveMilestoneReview {
   const parsed = JSON.parse(raw) as ArchiveMilestoneReview;
   if (!parsed.milestoneThreshold || !parsed.archiveHash) {
     throw new Error("Invalid milestone JSON");
   }
-  parsed.reviewVersion = 2;
+  if (parsed.reviewVersion !== 4) {
+    throw new Error("Invalid milestone JSON: reviewVersion must be 4");
+  }
   return parsed;
 }
 
@@ -184,15 +197,21 @@ export function parseArchiveDeepDiveNarrative(
   if (!parsed.beliefStatement || !parsed.archiveHash) {
     throw new Error("Invalid deep dive narrative JSON");
   }
-  parsed.reviewVersion = 2;
+  if (parsed.reviewVersion !== 4) {
+    throw new Error("Invalid deep dive JSON: reviewVersion must be 4");
+  }
   return parsed;
 }
 
-export function parseArchiveHistorianReport(raw: string): ArchiveHistorianReport {
+export function parseArchiveHistorianReport(
+  raw: string,
+): ArchiveHistorianReport {
   const parsed = JSON.parse(raw) as ArchiveHistorianReport;
   if (!parsed.monthKey || !parsed.archiveHash) {
     throw new Error("Invalid historian JSON");
   }
-  parsed.reviewVersion = 2;
+  if (parsed.reviewVersion !== 4) {
+    throw new Error("Invalid historian JSON: reviewVersion must be 4");
+  }
   return parsed;
 }

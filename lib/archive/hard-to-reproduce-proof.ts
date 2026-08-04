@@ -71,7 +71,7 @@ export function buildHardToReproduceProofView(
 
   lines.push({
     id: newId("htrp"),
-    text: `This belief is based on ${reflectionCount} reflection${reflectionCount === 1 ? "" : "s"} across ${spanDays} day${spanDays === 1 ? "" : "s"}.`,
+    text: `This belief is based on ${reflectionCount} saved moment${reflectionCount === 1 ? "" : "s"} across ${spanDays} day${spanDays === 1 ? "" : "s"}.`,
   });
 
   if (areas.length >= 2) {

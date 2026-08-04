@@ -42,7 +42,8 @@ flutter test \
 
 ### Version and build number
 
-- [ ] Open `pubspec.yaml` — format `version: x.y.z+NN` (e.g. `0.2.0+46`)
+- [ ] Open `pubspec.yaml` — authoritative format `version: x.y.z+NN`
+  (currently `0.2.0+49`)
 - [ ] **Marketing version** (`x.y.z`) matches App Store Connect if updating an existing version
 - [ ] **Build number** (`+NN`) is **strictly higher** than the last uploaded build for that version
 - [ ] Settings → App version on device will show `x.y.z (NN)` after install

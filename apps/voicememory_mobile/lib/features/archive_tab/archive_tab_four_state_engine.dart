@@ -6,12 +6,7 @@ import '../retention/second_session_signal_engine.dart';
 import 'archive_tab_four_state_copy.dart';
 
 /// Archive tab UI state for 0–2 eligible saved moments.
-enum ArchiveTabFourState {
-  empty,
-  one,
-  twoUnrelated,
-  twoRelated,
-}
+enum ArchiveTabFourState { empty, one, twoUnrelated, twoRelated }
 
 /// Resolved Archive tab surface for early entry counts.
 class ArchiveTabFourStateModel {

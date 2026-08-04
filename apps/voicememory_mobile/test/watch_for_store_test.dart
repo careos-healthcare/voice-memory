@@ -68,4 +68,39 @@ void main() {
     expect(read?.text, contains('responsibility'));
     expect(read?.chips, isNotEmpty);
   });
+
+  test('free users cannot add a second active watch target', () async {
+    final dir = await Directory.systemTemp.createTemp('vm_watch_for_free_gate');
+    final store = WatchForStore(
+      await MobilePrefsStore.open('${dir.path}/prefs.json'),
+    );
+    final first = _item(id: 'first', target: DateTime(2026, 6, 1));
+    final second = _item(id: 'second', target: DateTime(2026, 6, 2));
+
+    expect(await store.addActive(first, isPro: false), WatchForAddResult.added);
+    expect(
+      await store.addActive(second, isPro: false),
+      WatchForAddResult.requiresPro,
+    );
+    expect((await store.readActive()).map((item) => item.id), ['first']);
+  });
+
+  test('Pro users can keep multiple active watch targets', () async {
+    final dir = await Directory.systemTemp.createTemp('vm_watch_for_pro_gate');
+    final store = WatchForStore(
+      await MobilePrefsStore.open('${dir.path}/prefs.json'),
+    );
+    final first = _item(id: 'first', target: DateTime(2026, 6, 1));
+    final second = _item(id: 'second', target: DateTime(2026, 6, 2));
+
+    await store.addActive(first, isPro: true);
+    expect(await store.addActive(second, isPro: true), WatchForAddResult.added);
+    expect((await store.readActive()).map((item) => item.id), [
+      'first',
+      'second',
+    ]);
+
+    await store.removeActive('first');
+    expect((await store.readPending())?.id, 'second');
+  });
 }

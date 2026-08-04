@@ -79,7 +79,7 @@ export function searchArchiveEvidence(
     hits.push({
       id: key,
       quote: snippet.length > 200 ? `${snippet.slice(0, 200)}…` : snippet,
-      beliefText: belief?.belief ?? "Archive reflection",
+      beliefText: belief?.belief ?? "Saved moment",
       entryId: entry.id,
       dateLabel: formatDateLabel(entry.createdAt),
       lifeAreas: entry.reflection.recurringThemes?.slice(0, 3) ?? [],

@@ -1,7 +1,8 @@
+import { randomUUID } from "node:crypto";
+
 import { getServerSession } from "@/lib/server/session";
 import {
   syncApiFailure,
-  syncApiSuccess,
   syncApiUnauthorized,
 } from "@/lib/server/sync-api-response";
 import { hashEmailForLog } from "@/lib/server/auth-route-log";
@@ -11,6 +12,11 @@ import {
   summarizeBlobs,
 } from "@/lib/server/sync-route-log";
 import { readEncryptedBlobs } from "@/lib/server/sync-store";
+import {
+  serializeJsonBody,
+  serializedJsonResponse,
+} from "@/lib/server/serialized-json-response";
+import { meterBestEffort } from "@/lib/server/unit-economics-meter";
 
 export const runtime = "nodejs";
 
@@ -36,6 +42,9 @@ export async function GET(request: Request) {
       encrypted: blob.encrypted,
       updatedAt: blob.updatedAt,
       byteLength: blob.byteLength,
+      ...(blob.deviceId ? { deviceId: blob.deviceId } : {}),
+      ...(blob.vectorClock ? { vectorClock: blob.vectorClock } : {}),
+      ...(blob.keyEpoch ? { keyEpoch: blob.keyEpoch } : {}),
     }));
 
     const summary = summarizeBlobs(blobs);
@@ -46,7 +55,29 @@ export async function GET(request: Request) {
       ...summary,
     });
 
-    return syncApiSuccess({ blobs });
+    const serialized = serializeJsonBody({ ok: true, blobs });
+    const operationNonce = randomUUID();
+    await Promise.all([
+      meterBestEffort({
+        operation: "sync.pull.egress",
+        subject: { kind: "user", id: session.userId },
+        idempotencyKey: operationNonce,
+        metric: "egress_bytes",
+        resource: "network.egress",
+        quantity: serialized.bytes,
+        measurementBasis: "exact",
+      }),
+      meterBestEffort({
+        operation: "sync.pull.retrieval",
+        subject: { kind: "user", id: session.userId },
+        idempotencyKey: operationNonce,
+        metric: "retrieval_bytes",
+        resource: "network.retrieval",
+        quantity: serialized.bytes,
+        measurementBasis: "exact",
+      }),
+    ]);
+    return serializedJsonResponse(serialized);
   } catch (error) {
     log({
       ok: false,

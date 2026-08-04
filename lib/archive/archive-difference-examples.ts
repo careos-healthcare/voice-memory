@@ -10,7 +10,7 @@ export const ARCHIVE_DIFFERENCE_EXAMPLES: readonly ArchiveDifferenceExample[] = 
   },
   {
     withoutArchive: "I'm stressed about work again.",
-    withArchive: "Work pressure has shown up in six reflections since January.",
+    withArchive: "Work pressure has shown up in six saved moments since January.",
   },
   {
     withoutArchive: "I don't know why I keep snapping at home.",

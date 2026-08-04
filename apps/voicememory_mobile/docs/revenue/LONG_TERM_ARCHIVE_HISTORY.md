@@ -1,6 +1,7 @@
 # ArchiveMe — Long-term archive history
 
-**Purpose:** Define what “longer memory” means for paid conversion without overpromising sync or cloud backup.
+**Purpose:** Historical product note, updated to defer commercial policy to
+`../../MONETIZATION_CONTRACT.md` and the canonical entitlement matrix.
 
 ---
 
@@ -21,10 +22,11 @@ ChatGPT does not preserve your real moments this way. A generic journal does not
 
 | Tier | History framing | Status |
 | --- | --- | --- |
-| **Free** | Short archive history — enough to prove the loop (e.g. last 7 key moments in product map) | Live (positioning) |
-| **Pro** | Longer archive memory — full pattern history, older evidence, cross-week views | Live (positioning) |
+| **Free** | Every original moment remains accessible; the first valid observation and first valid comparison are included | Canonical |
+| **Pro** | New ongoing comparisons, full Changes history generation, and deeper archive synthesis | Canonical |
 
-**Honesty:** If a build only soft-gates history, say “Pro keeps more” in copy — do not claim “unlimited cloud backup” or “never lose data.”
+**Honesty:** Pro may gate new costly generation, never original history,
+playback, editing, search, export, or deletion.
 
 ---
 

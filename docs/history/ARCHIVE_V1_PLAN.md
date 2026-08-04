@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive V1 — Technical Plan
 
 **Date:** 2026-06-03  
@@ -121,3 +123,4 @@ No new persistence schema. Belief evolution store unchanged.
 ---
 
 *End of plan.*
+

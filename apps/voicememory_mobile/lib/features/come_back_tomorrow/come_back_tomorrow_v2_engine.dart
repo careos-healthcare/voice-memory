@@ -183,7 +183,8 @@ abstract final class ComeBackTomorrowV2Engine {
         FirstProofMomentEngine.build(entries: entries) != null) {
       return 'after_first_proof';
     }
-    if (eligible.length >= 2 && _signalEngine.hasGroundedRepeatMatch(eligible)) {
+    if (eligible.length >= 2 &&
+        _signalEngine.hasGroundedRepeatMatch(eligible)) {
       return 'second_related_save';
     }
     if (eligible.length == 1) {
@@ -206,39 +207,6 @@ abstract final class ComeBackTomorrowV2Engine {
       return false;
     }
     return true;
-  }
-
-  static List<JournalEntry> _savesAfterDateKey({
-    required List<JournalEntry> entries,
-    required String dateKey,
-  }) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    return eligible.where((entry) {
-      final key = _dateKeyForEntry(entry.createdAt);
-      return key.compareTo(dateKey) > 0;
-    }).toList();
-  }
-
-  static bool _entryMatchesWatchTarget(
-    JournalEntry entry,
-    ActiveWatchTarget target,
-  ) {
-    final haystack = ComparableEvidenceText.userText(entry).toLowerCase();
-    if (haystack.trim().isEmpty) return false;
-    final phrase = target.groundedPhrase.trim().toLowerCase();
-    if (phrase.length >= 8 && haystack.contains(phrase)) return true;
-
-    final tokens = phrase
-        .replaceAll(RegExp(r'[^\w\s]'), ' ')
-        .split(RegExp(r'\s+'))
-        .where((token) => token.length >= 4)
-        .toList();
-    if (tokens.isEmpty) return false;
-    var hits = 0;
-    for (final token in tokens) {
-      if (haystack.contains(token)) hits++;
-    }
-    return hits >= 2 || (tokens.length == 1 && hits == 1);
   }
 
   static String _dateKeyForEntry(DateTime when) {

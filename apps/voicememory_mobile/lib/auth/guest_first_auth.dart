@@ -1,12 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+
+import '../api/api_exceptions.dart';
 import '../services/capture_attest_service.dart';
 import '../services/sync_service.dart';
+import '../services/sync_diagnostic_log.dart';
 import '../storage/mobile_prefs_store.dart';
 
 /// Guest-first local mode — record via device attest without email at launch.
 class GuestFirstAuth {
-  GuestFirstAuth(this._prefs, {CaptureAttestService? attest, SyncService? sync})
-    : _attest = attest,
-      _sync = sync;
+  GuestFirstAuth(this._prefs, {this._attest, this._sync});
 
   final MobilePrefsStore _prefs;
   final CaptureAttestService? _attest;
@@ -41,6 +44,42 @@ class GuestFirstAuth {
     await attest.ensureCaptureToken(forceRefresh: true);
     try {
       await sync.syncNow();
-    } catch (_) {}
+    } on NetworkOfflineException catch (error, stackTrace) {
+      _logSyncFailure('transient_network', error, stackTrace);
+    } on AuthRequiredException catch (error, stackTrace) {
+      _logSyncFailure('authentication', error, stackTrace);
+    } on ApiException catch (error, stackTrace) {
+      _logSyncFailure(_apiFailureType(error), error, stackTrace);
+    } on SocketException catch (error, stackTrace) {
+      _logSyncFailure('transient_network', error, stackTrace);
+    } on TimeoutException catch (error, stackTrace) {
+      _logSyncFailure('transient_network', error, stackTrace);
+    } on Object catch (error, stackTrace) {
+      _logSyncFailure('unexpected', error, stackTrace);
+    }
+  }
+
+  static String _apiFailureType(ApiException error) {
+    if (error.statusCode == 401 || error.code == 'AUTH_REQUIRED') {
+      return 'authentication';
+    }
+    final status = error.statusCode ?? 0;
+    if (status == 408 || status == 429 || status >= 500) {
+      return 'transient_api';
+    }
+    return 'permanent_api';
+  }
+
+  static void _logSyncFailure(
+    String failureType,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    SyncDiagnosticLog.failed(
+      operation: 'register_device_after_sign_in',
+      failureType: failureType,
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 }

@@ -5,11 +5,7 @@ import 'archive_insight_feedback_adaptation.dart';
 import 'next_moment_prompt.dart';
 
 /// Which visible insight target is driving a correction-aware next prompt.
-enum CorrectionInformedPromptTarget {
-  weeklyReview,
-  belief,
-  archiveHome,
-}
+enum CorrectionInformedPromptTarget { weeklyReview, belief, archiveHome }
 
 /// Resolved local correction context for next-moment prompts.
 class CorrectionInformedNextPromptContext {
@@ -52,7 +48,10 @@ abstract final class CorrectionInformedNextPrompt {
     if (context == null) return base;
 
     final copy = _copyFor(context: context, eligibleCount: eligibleCount);
-    final secondary = _secondaryFor(context: context, eligibleCount: eligibleCount);
+    final secondary = _secondaryFor(
+      context: context,
+      eligibleCount: eligibleCount,
+    );
 
     return NextMomentPrompt(
       stage: base.stage,
@@ -69,12 +68,11 @@ abstract final class CorrectionInformedNextPrompt {
     required ArchiveInsightTarget feedbackTarget,
     required CorrectionInformedPromptTarget promptTarget,
     ArchiveHomeStage? archiveHomeStage,
-  }) =>
-      _CandidateTarget(
-        feedbackTarget: feedbackTarget,
-        promptTarget: promptTarget,
-        archiveHomeStage: archiveHomeStage,
-      );
+  }) => _CandidateTarget(
+    feedbackTarget: feedbackTarget,
+    promptTarget: promptTarget,
+    archiveHomeStage: archiveHomeStage,
+  );
 
   static List<_CandidateTarget> _candidateTargets(int eligibleCount) {
     final candidates = <_CandidateTarget>[];

@@ -37,6 +37,7 @@ export function normalizeReflection(
           .filter(Boolean)
           .slice(0, 6)
       : undefined,
+    explainableConclusion: raw.explainableConclusion,
   };
 
   if (normalized.patternObservations && normalized.patternObservations.length > 0) {

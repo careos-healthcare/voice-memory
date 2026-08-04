@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Monthly Review Email Plan (Growth Loop V1)
 
 ## Goal
@@ -45,3 +47,4 @@ Re-engage users inactive ~30 days with a **monthly archive review** email built 
 
 - Marketing drip sequences
 - Unsubscribe management beyond existing product email practices (add when broadcast scale requires)
+

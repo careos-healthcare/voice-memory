@@ -18,14 +18,14 @@ import type { ReflectionBookmark } from "@/types/reflection-bookmark";
 export const ARCHIVE_OWNERSHIP_COPY = {
   belongsToYou: "This belongs to you.",
   takeWithYou: "You can take this with you.",
-  oldestStillHere: "Your oldest reflection is still here.",
+  oldestStillHere: "Your oldest saved moment is still here.",
   firstRecordingStillHere: "Your first recording is still here.",
   earlyBookmarkStillHere: "An early bookmark is still here.",
   markedWhereChanged: "You marked where something changed.",
   backupRecoverable: "Your backup keeps this recoverable.",
   exportPortable: "You can export your archive anytime — it stays portable.",
   signInForBackup: "Sign in on Account if you want encrypted backup across devices.",
-  sparseHome: "Your reflections stay here until you choose to take them with you.",
+  sparseHome: "Your saved moments stay here until you choose to take them with you.",
 } as const;
 
 const SPARSE_ENTRY_MAX = 2;
@@ -241,6 +241,6 @@ export function buildOldestEntryLink(
   if (!report.oldestReflection) return null;
   return {
     href: `/entry/${report.oldestReflection.entryId}`,
-    label: "Oldest reflection",
+    label: "Oldest saved moment",
   };
 }

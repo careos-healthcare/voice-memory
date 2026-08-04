@@ -10,8 +10,6 @@ import { PaywallInterestPrompt } from "@/components/billing/PaywallInterestPromp
 import { PaywallRejectionPrompt } from "@/components/billing/PaywallRejectionPrompt";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { startStripeCheckout } from "@/lib/billing/start-checkout";
-import { useBillingPublicConfig } from "@/lib/billing/use-billing-public-config";
 import { VALUE_MOMENT_PAYWALL_COPY } from "@/lib/billing/value-moment-paywall-copy";
 import {
   markPostBlindSpotPaywallSeen,
@@ -23,7 +21,6 @@ import {
   trackValueMomentPaywallDismissed,
   trackValueMomentPaywallShown,
 } from "@/lib/billing/value-moment-paywall-metrics";
-import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 import { trackUpgradeClick } from "@/lib/subscription";
 import type { JournalEntry } from "@/types/journal";
 import type { ValueMomentPaywallSurface } from "@/types/value-moment-paywall";
@@ -53,14 +50,8 @@ export function ValueMomentPaywall({
   onDismiss,
 }: ValueMomentPaywallProps) {
   const shownRef = useRef(false);
-  const { requestAuth } = useAuthPrompt();
-  const { billingLive, proPriceLabel } = useBillingPublicConfig();
   const show = shouldShowValueMomentPaywall(surface, entriesOverride);
   const [phase, setPhase] = useState<PaywallPhase>("paywall");
-
-  useEffect(() => {
-    if (show) setPhase("paywall");
-  }, [show]);
 
   useEffect(() => {
     if (!show || shownRef.current) return;
@@ -69,7 +60,11 @@ export function ValueMomentPaywall({
   }, [show, surface]);
 
   const pricingFrom =
-    surface === "blind_spot" ? "blind_spots" : surface === "discover" ? "discover" : "memory";
+    surface === "blind_spot"
+      ? "blind_spots"
+      : surface === "discover"
+        ? "discover"
+        : "memory";
 
   const finishDismiss = () => {
     markSurfaceSeen(surface);
@@ -82,26 +77,11 @@ export function ValueMomentPaywall({
     setPhase("rejection");
   };
 
-  const runCheckout = async () => {
-    if (billingLive) {
-      const result = await startStripeCheckout();
-      if (result.ok) {
-        window.location.href = result.url;
-        return;
-      }
-    }
-    window.location.href = `/pricing?from=${pricingFrom}&feature=value_moment_${surface}`;
-  };
-
-  const continueToCheckout = async () => {
+  const continueToDetails = () => {
     trackValueMomentPaywallCtaClicked(surface);
     trackUpgradeClick(pricingFrom, `value_moment_${surface}`);
     markSurfaceSeen(surface);
-
-    if (!requestAuth("pro_paywall", () => void runCheckout())) {
-      return;
-    }
-    await runCheckout();
+    window.location.href = `/pricing?from=${pricingFrom}&feature=value_moment_${surface}`;
   };
 
   const handleCta = () => {
@@ -127,7 +107,7 @@ export function ValueMomentPaywall({
         className={className}
         surface={surface}
         source={pricingFrom}
-        onDone={() => void continueToCheckout()}
+        onDone={continueToDetails}
       />
     );
   }
@@ -145,12 +125,16 @@ export function ValueMomentPaywall({
           Continuity
         </p>
         <p className="mt-2 text-base font-medium text-white">{copy.headline}</p>
-        <p className="mt-2 text-sm leading-relaxed text-zinc-300">{copy.body}</p>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-300">
+          {copy.body}
+        </p>
         <div className="mt-4 space-y-3 rounded-lg border border-white/10 bg-black/20 p-3">
           <ArchiveMilestones entriesOverride={entriesOverride} />
           <ArchiveHistorySummary entriesOverride={entriesOverride} />
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-500">{copy.continuityLine}</p>
+        <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+          {copy.continuityLine}
+        </p>
         <ul className="mt-4 space-y-1.5 text-sm text-zinc-400">
           {copy.proBullets.map((bullet) => (
             <li key={bullet} className="flex gap-2">
@@ -159,34 +143,34 @@ export function ValueMomentPaywall({
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-xs leading-relaxed text-zinc-600">{copy.trustLine}</p>
+        <p className="mt-3 text-xs leading-relaxed text-zinc-600">
+          {copy.trustLine}
+        </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Button type="button" className="w-full sm:w-auto" onClick={handleCta}>
+          <Button
+            type="button"
+            className="w-full sm:w-auto"
+            onClick={handleCta}
+          >
             {copy.cta}
           </Button>
-          <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={handleDismiss}>
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full sm:w-auto"
+            onClick={handleDismiss}
+          >
             {copy.secondary}
           </Button>
         </div>
         <p className="mt-2 text-xs text-zinc-600">
-          {proPriceLabel}
-          {billingLive ? (
-            <>
-              {" "}
-              ·{" "}
-              <Link href={`/pricing?from=${pricingFrom}`} className="text-violet-300 hover:underline">
-                View plans
-              </Link>
-            </>
-          ) : (
-            <>
-              {" "}
-              ·{" "}
-              <Link href={`/pricing?from=${pricingFrom}`} className="text-violet-300 hover:underline">
-                See Pro details
-              </Link>
-            </>
-          )}
+          Subscriptions are available in the ArchiveMe mobile app.{" "}
+          <Link
+            href={`/pricing?from=${pricingFrom}`}
+            className="text-violet-300 hover:underline"
+          >
+            See Pro details
+          </Link>
         </p>
       </CardContent>
     </Card>

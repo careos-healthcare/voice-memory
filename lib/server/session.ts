@@ -14,6 +14,7 @@ import {
   sessionExistsPostgres,
 } from "@/lib/server/auth-store-postgres";
 import { shouldUsePostgresStorage } from "@/lib/server/db";
+import { isAccountDeletionPending } from "@/lib/server/privacy/account-deletion-state";
 import type { StoredUser } from "@/lib/server/auth-storage";
 
 export interface ServerSession {
@@ -32,6 +33,7 @@ export async function getServerSession(): Promise<ServerSession | null> {
   if (shouldUsePostgresStorage()) {
     const active = await sessionExistsPostgres(token);
     if (!active) return null;
+    if (await isAccountDeletionPending(payload.userId)) return null;
   }
 
   const user = await getUserById(payload.userId);

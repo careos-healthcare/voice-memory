@@ -309,7 +309,7 @@ export function EntryAtmosphereAttachment({
 
       {phase === "saved" ? (
         <p className="text-xs text-zinc-500" aria-live="polite">
-          Visual echo saved with this reflection.
+          Visual echo saved with this moment.
         </p>
       ) : null}
 

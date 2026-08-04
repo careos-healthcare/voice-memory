@@ -39,7 +39,7 @@ export function downloadArchiveZipPackage(archive: ArchiveMeArchivePackage): voi
         "ArchiveMe Archive Package",
         "",
         "archive.json — full structured archive",
-        "reflections.md — readable export",
+        "reflections.md — saved moments in a readable export",
         "audio/ — recordings where available",
         "photos/ — memory anchor images where available",
         "",

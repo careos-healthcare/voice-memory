@@ -28,7 +28,7 @@ for (const phrase of [
   "Your archive is still evaluating",
   "New evidence may support",
   "This theory may be changing",
-  "Recent reflections point",
+  "Recent saved moments point",
   "Great job",
   "ARCHIVE_VOICE_FORBIDDEN",
 ]) {

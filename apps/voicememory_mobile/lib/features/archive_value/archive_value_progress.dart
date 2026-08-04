@@ -59,11 +59,11 @@ class ArchiveValueProgress {
 
   static String nextMilestoneCopy(int count) {
     if (count >= target) return 'Open your pattern review.';
-    if (count >= 3) return '1 more reflection until your first pattern review.';
+    if (count >= 3) return '1 more moment until your first pattern review.';
     if (count >= 1) {
-      return '1 more reflection until ArchiveMe can compare this properly.';
+      return '1 more moment until ArchiveMe can compare this properly.';
     }
-    return 'Record your first reflection.';
+    return 'Save one real moment.';
   }
 
   static ArchiveValueSnapshot build(List<JournalEntry> entries) {
@@ -81,14 +81,14 @@ class ArchiveValueProgress {
       nextMilestoneCopy: nextMilestoneCopy(count),
       progressPercent: progressPercent,
       readyForPatternReview: ready,
-      ctaLabel: ready ? 'Open pattern review' : 'Add another reflection',
-      ctaRoute: ready ? '/blind-spots' : '/record',
+      ctaLabel: ready ? 'Open pattern review' : 'Record another moment',
+      ctaRoute: ready ? '/self-discovery?tab=blind-spots' : '/record',
     );
   }
 
   static String archiveChangedMessage(List<JournalEntry> entries) {
     final snapshot = build(entries);
-    return 'Your archive now has ${snapshot.reflectionCount} reflection'
+    return 'Your archive now has ${snapshot.reflectionCount} saved moment'
         '${snapshot.reflectionCount == 1 ? '' : 's'}. '
         '${snapshot.valueCopy} ${snapshot.nextMilestoneCopy}';
   }

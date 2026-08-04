@@ -2,20 +2,20 @@
 
 import {
   APP_DESCRIPTION_SHORT,
+  CORE_PRODUCT_VISION,
   EXPORT_TRUST_FOOTER,
   NOT_AI_JOURNAL_LINE,
-  PRODUCT_WEDGE_LINE,
   WEDGE_RESURFACING,
 } from "@/lib/product-copy";
 
 export const SHORT_APP_DESCRIPTION = APP_DESCRIPTION_SHORT;
 
-export const FULL_APP_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}
+export const FULL_APP_DESCRIPTION = `${CORE_PRODUCT_VISION}
 
-Talk naturally for a minute or two. Your audio and transcript stay on this device. Over time, ArchiveMe brings back words you forgot you were repeating — from your own voice, not therapy.
+Talk naturally for a minute or two. Over time, ArchiveMe connects your entries into one life story and surfaces personal intelligence grounded in your own words.
 
 What you can do:
-• Record voice reflections in a quiet, private space
+• Save moments in your voice in a quiet, private space
 • Revisit past entries and replay your own voice
 • Notice what keeps returning — without scores or pressure
 • Export your archive anytime
@@ -28,23 +28,23 @@ Local-first. Your words stay yours.`;
 
 /** Apple App Store — 100 characters max, comma-separated, no spaces after commas. */
 export const APP_STORE_KEYWORDS =
-  "voice journal,private journal,audio diary,voice diary,journal by voice,revisit,reflections,private thoughts,hear yourself,calm";
+  "voice archive,private archive,audio diary,voice diary,archive by voice,revisit,moments,private thoughts,hear yourself,calm";
 
 /** Google Play — natural phrases for description indexing (also used in coverage checks). */
 export const PLAY_STORE_KEYWORDS = [
-  "voice journal",
-  "private journal",
-  "audio journal",
+  "voice archive",
+  "private archive",
+  "audio archive",
   "voice diary",
   "speak your thoughts",
   "private voice notes",
   "revisit old entries",
   "hear yourself again",
-  "personal reflections",
-  "on-device journal",
-  "export journal",
+  "personal moments",
+  "on-device archive",
+  "export archive",
   "encrypted backup",
-  "quiet journaling",
+  "quiet voice notes",
   "return to past thoughts",
 ] as const;
 
@@ -74,7 +74,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
     id: "privacy",
     label: "Privacy",
     headlines: [
-      "Private voice reflections",
+      "Private moments in your voice",
       "Stays on your device",
       "Optional encrypted backup",
       "Export your words anytime",
@@ -86,7 +86,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
     id: "revisit",
     label: "Revisit",
     headlines: [
-      "Past reflections resurface",
+      "Past moments resurface",
       "Open what still fits",
       "Hear your older voice",
       "Continue the thread",
@@ -119,13 +119,13 @@ export const SCREENSHOT_HEADLINES: Record<ScreenshotSetId, readonly string[]> = 
 export const ONBOARDING_HOOKS = [
   "A private place to hear yourself again.",
   "Speak what you are actually thinking.",
-  "Your reflections stay on this device.",
+  "Your moments stay on this device.",
   WEDGE_RESURFACING.pastWordsMatch,
   "No streaks. No scores. Return when it matters.",
 ] as const;
 
 export const TRUST_LINES = [
-  "Private by default — your reflections stay on this device.",
+  "Private by default — your moments stay on this device.",
   "Not therapy, not coaching, not a productivity app.",
   "Export your archive anytime.",
   "Encrypted backup is optional.",
@@ -136,9 +136,9 @@ export const REVIEW_RESPONSE_TEMPLATES = {
   grateful:
     "Thank you for sharing this — it means a lot that ArchiveMe felt worth your time. If something confused you or broke, hello@voicememory.app reaches us directly.",
   privacyQuestion:
-    "Your reflections stay on your device unless you turn on encrypted backup. We do not run a cloud journal database. More detail is on the Privacy page in the app.",
+    "Your moments stay on your device unless you turn on encrypted backup. We do not run a cloud archive database. More detail is on the Privacy page in the app.",
   revisitConfusion:
-    "Older reflections sometimes appear again when they still connect to what you said recently — you can open them, ignore them, or record a follow-up. Both are fine.",
+    "Older moments sometimes appear again when they still connect to what you said recently — you can open them, ignore them, or record a follow-up. Both are fine.",
   notTherapy:
     `${NOT_AI_JOURNAL_LINE} Not therapy or medical advice. If you are in crisis, please contact local emergency services or a trusted helpline.`,
   featureRequest:
@@ -166,7 +166,7 @@ export const PREFERRED_ACQUISITION_WORDS = [
   "local-first",
   "encrypted",
   "your words",
-  "past reflections",
+  "past moments",
   "forgotten",
   "repeating",
 ] as const;

@@ -24,23 +24,23 @@ abstract final class CaptureFrictionCopyFix {
   ];
 
   static List<FirstSessionProofRepairChip> compactChips() => [
-        FirstSessionProofRepairChip(
-          id: FirstSessionProofRepairChipId.feltFamiliar,
-          text: chipWorkPressure,
-        ),
-        FirstSessionProofRepairChip(
-          id: FirstSessionProofRepairChipId.avoidedReplying,
-          text: chipSaidYes,
-        ),
-        FirstSessionProofRepairChip(
-          id: FirstSessionProofRepairChipId.wantedControl,
-          text: chipAvoidedSomething,
-        ),
-        FirstSessionProofRepairChip(
-          id: FirstSessionProofRepairChipId.keptCheckingAgain,
-          text: chipSameFeelingAgain,
-        ),
-      ];
+    FirstSessionProofRepairChip(
+      id: FirstSessionProofRepairChipId.feltFamiliar,
+      text: chipWorkPressure,
+    ),
+    FirstSessionProofRepairChip(
+      id: FirstSessionProofRepairChipId.avoidedReplying,
+      text: chipSaidYes,
+    ),
+    FirstSessionProofRepairChip(
+      id: FirstSessionProofRepairChipId.wantedControl,
+      text: chipAvoidedSomething,
+    ),
+    FirstSessionProofRepairChip(
+      id: FirstSessionProofRepairChipId.keptCheckingAgain,
+      text: chipSameFeelingAgain,
+    ),
+  ];
 
   static Iterable<String> allVisibleStrings() sync* {
     yield typedCapturePrompt;

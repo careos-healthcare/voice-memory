@@ -41,7 +41,7 @@ abstract class RecordPipelineLog {
     required bool exists,
     required int byteLength,
   }) {
-    log('audio file path=$path');
+    log('audio file pathProvided=${path.trim().isNotEmpty}');
     log('audio file exists=$exists');
     log('audio file byteLength=$byteLength');
   }
@@ -111,21 +111,37 @@ abstract class RecordPipelineLog {
     required String reason,
     required String audioPath,
   }) {
-    log('transcription_fallback reason=$reason audio_path=$audioPath');
+    log(
+      'transcription_fallback reason=${_reasonCode(reason)} '
+      'audio_path_provided=${audioPath.trim().isNotEmpty}',
+    );
   }
 
   static void analysisFailed({required String reason}) {
-    log('analysis_failed reason=$reason');
+    log('analysis_failed reason=${_reasonCode(reason)}');
   }
 
   static void analysisFallback({
     required String reason,
     required String audioPath,
   }) {
-    log('analysis_fallback reason=$reason audio_path=$audioPath');
+    log(
+      'analysis_fallback reason=${_reasonCode(reason)} '
+      'audio_path_provided=${audioPath.trim().isNotEmpty}',
+    );
   }
 
   static void postSaveComparisonSkipped({required String reason}) {
     log('post_save_comparison skipped reason=$reason');
+  }
+
+  static String _reasonCode(String value) {
+    final category = value.split(':').first;
+    final normalized = category
+        .toLowerCase()
+        .replaceAll(RegExp('[^a-z0-9]+'), '_')
+        .replaceAll(RegExp('^_+|_+\$'), '');
+    if (normalized.isEmpty) return 'unknown';
+    return normalized.substring(0, normalized.length.clamp(0, 64));
   }
 }

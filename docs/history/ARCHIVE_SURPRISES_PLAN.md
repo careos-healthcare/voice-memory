@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Surprises V1 — plan
 
 ## Goal
@@ -57,3 +59,4 @@ Surface **evidence-backed** observations that differ from the user’s apparent 
 cd apps/voicememory_mobile
 flutter test test/archive_surprises_engine_test.dart test/archive_surprises_personas_test.dart
 ```
+

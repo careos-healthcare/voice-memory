@@ -22,8 +22,6 @@ const _allowlistedPaths = {
   'lib/theme/voicememory_colors.dart',
   'lib/theme/voicememory_cards.dart',
   'lib/config/app_config.dart',
-  'lib/features/search/voice_memory_search.dart',
-  'lib/dev/screenshot_registry.dart',
   'lib/product/consumer_copy_guard.dart',
 };
 

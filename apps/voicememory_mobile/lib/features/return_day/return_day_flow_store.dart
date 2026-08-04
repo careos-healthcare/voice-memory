@@ -63,17 +63,17 @@ class ReturnDayFlowStore {
   }
 
   static ReturnDayFlowAnswer? _parseAnswer(Object? raw) => switch (raw) {
-        'came_back' => ReturnDayFlowAnswer.cameBack,
-        'not_today' => ReturnDayFlowAnswer.notToday,
-        'different' => ReturnDayFlowAnswer.different,
-        _ => null,
-      };
+    'came_back' => ReturnDayFlowAnswer.cameBack,
+    'not_today' => ReturnDayFlowAnswer.notToday,
+    'different' => ReturnDayFlowAnswer.different,
+    _ => null,
+  };
 
   static String _answerKey(ReturnDayFlowAnswer answer) => switch (answer) {
-        ReturnDayFlowAnswer.cameBack => 'came_back',
-        ReturnDayFlowAnswer.notToday => 'not_today',
-        ReturnDayFlowAnswer.different => 'different',
-      };
+    ReturnDayFlowAnswer.cameBack => 'came_back',
+    ReturnDayFlowAnswer.notToday => 'not_today',
+    ReturnDayFlowAnswer.different => 'different',
+  };
 
   Future<void> dismissForDay() async {
     final day = _todayUtc();

@@ -57,7 +57,7 @@ export function buildWhyArchiveTrustsThisLines(
 
   if (reputation.accuracySignals >= 1) {
     push(
-      `${reputation.accuracySignals} later reflection${reputation.accuracySignals === 1 ? "" : "s"} may align with this belief.`,
+      `${reputation.accuracySignals} later saved moment${reputation.accuracySignals === 1 ? "" : "s"} may align with this belief.`,
     );
   }
 
@@ -66,7 +66,7 @@ export function buildWhyArchiveTrustsThisLines(
   }
 
   if (belief.evidence.costEvidenceLines.length > 0) {
-    push("Cost signals appear in reflections tied to this belief.");
+    push("Cost signals appear in saved moments tied to this belief.");
   }
 
   if (belief.evidence.predictionFailureLines.length > 0) {

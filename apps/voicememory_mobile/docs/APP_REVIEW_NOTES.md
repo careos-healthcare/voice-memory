@@ -1,38 +1,39 @@
 # ArchiveMe — App Review Notes (for App Store reviewer)
 
 ## What ArchiveMe is
-A personal reflection tool. You record one short moment today; tomorrow the app
-gives you one simple check about it. Over a few days it shows what kept repeating.
+**Category:** Auditable personal change.
 
-It is **not** a medical or mental-health service and makes no diagnostic claims.
+**Promise:** “See what repeated. See what changed. Verify it in your own words.”
+
+**In full:** A private change ledger that shows exactly what repeated, what
+changed, the words proving it, and lets you correct the record.
+
+AI is used for transcription and for drafting each observation. That is a
+processing detail, not the product: nothing is presented without the exact saved
+words and dates behind it.
+
+It is **not** a medical or mental-health service, **not** a companion or chat
+product, and makes no diagnostic, personality, or hidden-truth claims.
 
 ## Release identity (reviewer reference)
 
 - **Public app name:** ArchiveMe
 - **iOS bundle ID:** `com.voicememory.mobile`
 - **Android application ID:** `com.voicememory.mobile`
-- **Deep links:** `archiveme://` (primary), `voicememory://` (legacy compatibility)
+- **Release deep link:** `archiveme://`
 
-## Fastest path: App Review Access (recommended)
+## Review flow
 
-This review build includes **App Review Access** in Settings.
-
-1. Open **Settings** (Account tab).
-2. Scroll to **App Review Access**.
-3. Enter review code: **ARCHIVEME-REVIEW-2026**
-4. Tap **Unlock Pro access**.
-
-This loads a **pre-populated sample archive** (repeated patterns, archive proof,
-and Pro features) without purchase or account setup.
-
-After unlock, open **Archive** to see patterns and proof from the sample entries.
-
-## Alternative: Sample Archive only
-
-- **Sample Archive:** Settings → Privacy & data → View sample archive, or route `/sample-archive`
-- **Help & reviewer guide:** Settings → `/help-reviewer-guide`
-
-Sample Archive uses isolated demo data and never writes to a real journal.
+1. Open Record and choose **Type instead** if microphone capture is inconvenient.
+2. Save a real sentence. The receipt shows Saved, the editable transcript, and
+   at most one validated “Possible read”.
+3. Open the exact source moment from the evidence receipt and try Accurate,
+   Wrong angle, Too generic, or Hide.
+4. Save a second related but different moment, then open Changes. A defensible
+   comparison shows exact Then/Now words and dates; unrelated moments correctly
+   show no comparison.
+5. Open Account for privacy, export, deletion, subscription, restore, terms,
+   and support controls.
 
 ## Reviewing without a backend / account
 
@@ -46,18 +47,28 @@ flutter run --dart-define=ARCHIVEME_TRIAL_MODE=true
 
 # App Review build (includes Settings → App Review Access)
 flutter run --dart-define=ARCHIVEME_APP_REVIEW_MODE=true
+
+# Or use the helper script:
+./tool/run_app_review_mode.sh
 ```
+
+In that review build, open Settings → App Review Access and enter
+`ARCHIVEME-REVIEW-2026`. The review flow then loads the pre-populated sample archive.
+This access path is disabled in ordinary production builds unless App Review
+mode was explicitly enabled at compile time.
 
 > Trial, screenshot, and App Review modes are **off by default** in normal release
 > builds unless the matching `--dart-define` is set at compile time.
 
 ## Demo flow (under 1 minute)
-1. Unlock App Review Access (above) **or** record one short moment on Record.
-2. Open **Archive** to see patterns and proof.
-3. On Record, use **Type instead** if microphone is unavailable.
-4. **Pro / paywall:** Settings → See Pro preview, or complete the first loop to
-   reach the paywall. Subscription details, Terms of Use, and Privacy Policy
-   appear on the paywall before purchase.
+1. Record or type one short moment.
+2. Review and optionally edit the transcript.
+3. Inspect the exact evidence behind the cautious observation, if one is
+   reliable enough to show.
+4. Return with a related moment and open **Changes** for an auditable Then/Now
+   comparison.
+5. Open Account → Subscription to review purchase and restore UI. No paywall is
+   shown before the free proof.
 
 ## Login requirements
 - None for App Review Access, Sample Archive, or the trial/local core loop.
@@ -81,23 +92,21 @@ flutter run --dart-define=ARCHIVEME_APP_REVIEW_MODE=true
 ## Reviewer routes (production build)
 - **Record:** `/record` — use **Type instead** if microphone is unavailable
 - **Archive Home:** Archive tab → `/archive-belief`
-- **Sample Archive:** `/sample-archive` (example data only)
-- **Help & reviewer guide:** Settings → `/help-reviewer-guide`
-- **Support & feedback:** Settings → `/support-feedback`
-- **Pro preview:** Settings → `/pro-preview`
-- **Paywall / Pro:** `/subscription`
-- **Restore purchases:** Settings → Restore purchases action
-- **Privacy / Terms:** Settings → `/privacy` and `/terms`
+- **Changes:** Changes tab → `/belief-changes`
+- **Account:** `/account`
+- **Support & feedback:** Account → `/support-feedback`
+- **Paywall / Pro:** Account → `/subscription`
+- **Restore purchases:** Account → `/restore-purchases`
+- **Privacy / Terms:** Account → `/privacy` and `/terms`
 
 ## Microphone usage
 - Used only to record the user's own voice reflections.
 - Before the system permission dialog, the Record screen uses **Use voice to record**
   (not Apple-style "Allow" wording).
-- Info.plist string: "ArchiveMe needs the microphone to record private voice reflections."
+- `Info-Release.plist` string: "ArchiveMe uses the microphone when you choose
+  to record a private journal moment."
 
 ## Known limitations
 - Transcription/analysis requires the backend in the full (non-trial) build.
-- Some developer/diagnostic screens exist but are gated and hidden from the normal
-  participant flow.
 - PNG/screenshot export tests are developer tooling and are excluded from the
   routine test run (they are slow/headless-only).

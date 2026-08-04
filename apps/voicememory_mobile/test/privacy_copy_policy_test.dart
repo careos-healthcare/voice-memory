@@ -17,6 +17,20 @@ void main() {
       );
       expect(PrivacyCopyPolicy.lockArchiveMe, 'Protect this archive');
     });
+
+    test('focused V1 privacy summary reflects verified capabilities', () {
+      final snapshot = PrivacyCapabilitySnapshot.focusedV1;
+      expect(snapshot.journalTextEncryptedAtRest, isTrue);
+      expect(snapshot.retainedAudioEncryptedAtRest, isTrue);
+      expect(snapshot.keysUsePlatformSecureStorage, isTrue);
+      expect(snapshot.syncEndToEndEncryptionVerified, isFalse);
+      expect(snapshot.analysisMode, PrivacyAnalysisMode.mixed);
+      expect(snapshot.accountSummary.join(' '), isNot(contains('end to end.')));
+      expect(
+        snapshot.recordReassurance,
+        'Saved moments and retained recordings are encrypted on this device.',
+      );
+    });
   });
 
   group('PrivacyCopyPolicy literal guards', () {

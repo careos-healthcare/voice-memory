@@ -48,16 +48,15 @@ abstract final class AnchorCalibrationEngine {
     CorrectionMemorySnapshot? correction,
     required String source,
     bool trackAnalytics = false,
-  }) =>
-      apply(
-        extraction: extraction,
-        feedbackType: feedbackType,
-        hasChangeDelta: hasChangeDelta,
-        hasFreshReturn: hasFreshReturn,
-        correction: correction,
-        source: source,
-        trackAnalytics: trackAnalytics,
-      ).extraction;
+  }) => apply(
+    extraction: extraction,
+    feedbackType: feedbackType,
+    hasChangeDelta: hasChangeDelta,
+    hasFreshReturn: hasFreshReturn,
+    correction: correction,
+    source: source,
+    trackAnalytics: trackAnalytics,
+  ).extraction;
 
   static AnchorCalibrationResult apply({
     required EvidenceAnchorExtractionResult extraction,
@@ -84,7 +83,8 @@ abstract final class AnchorCalibrationEngine {
     var downgradeCurrentRelevance = false;
     var suppressStrongSurfacing = false;
     var strengthenSimilarAnchors = false;
-    AnchorCalibrationAction? analyticsAction = AnchorCalibrationAction.rerankAnchors;
+    AnchorCalibrationAction? analyticsAction =
+        AnchorCalibrationAction.rerankAnchors;
 
     switch (feedbackType) {
       case BetaProofFeedbackType.tooVague:
@@ -140,11 +140,7 @@ abstract final class AnchorCalibrationEngine {
         .toList();
     final hasSafeAnchor = safeSummaries.isNotEmpty && !forceWatchOnly;
     final usesFallback = !hasSafeAnchor;
-    final resolvedAnchors = hasSafeAnchor
-        ? selected
-        : [
-            _fallbackAnchor(),
-          ];
+    final resolvedAnchors = hasSafeAnchor ? selected : [_fallbackAnchor()];
     final newPrimaryType = _primaryType(resolvedAnchors);
 
     final calibrated = EvidenceAnchorExtractionResult(
@@ -172,14 +168,15 @@ abstract final class AnchorCalibrationEngine {
       ),
     );
 
-    final applied = feedbackType != null ||
+    final applied =
+        feedbackType != null ||
         oldPrimaryType != newPrimaryType ||
         forceWatchOnly ||
         useChangeTrackingCopy ||
         downgradeCurrentRelevance ||
         suppressStrongSurfacing;
 
-    if (trackAnalytics && applied && analyticsAction != null) {
+    if (trackAnalytics && applied) {
       AnchorCalibrationAnalytics.applied(
         entryCount: extraction.entryCount,
         source: source,
@@ -212,17 +209,18 @@ abstract final class AnchorCalibrationEngine {
   }) {
     final ranked = [...anchors]
       ..sort(
-        (a, b) => _scoreFor(
-          b,
-          feedbackType: feedbackType,
-          strengthenSimilar: strengthenSimilar,
-        ).compareTo(
-          _scoreFor(
-            a,
-            feedbackType: feedbackType,
-            strengthenSimilar: strengthenSimilar,
-          ),
-        ),
+        (a, b) =>
+            _scoreFor(
+              b,
+              feedbackType: feedbackType,
+              strengthenSimilar: strengthenSimilar,
+            ).compareTo(
+              _scoreFor(
+                a,
+                feedbackType: feedbackType,
+                strengthenSimilar: strengthenSimilar,
+              ),
+            ),
       );
     return ranked;
   }
@@ -231,14 +229,13 @@ abstract final class AnchorCalibrationEngine {
 
   static List<EvidenceAnchor> _preferSpecificAnchors(
     List<EvidenceAnchor> anchors,
-  ) =>
-      anchors
-          .where(
-            (anchor) =>
-                _tooVaguePreferredTypes.contains(anchor.type) &&
-                anchor.isSafeForDisplay,
-          )
-          .toList();
+  ) => anchors
+      .where(
+        (anchor) =>
+            _tooVaguePreferredTypes.contains(anchor.type) &&
+            anchor.isSafeForDisplay,
+      )
+      .toList();
 
   static List<EvidenceAnchor> _requireFreshReturnAnchor(
     List<EvidenceAnchor> anchors, {
@@ -258,7 +255,8 @@ abstract final class AnchorCalibrationEngine {
       anchors.isEmpty ||
       anchors.every(
         (anchor) =>
-            anchor.type == EvidenceAnchorType.unknown || !anchor.isSafeForDisplay,
+            anchor.type == EvidenceAnchorType.unknown ||
+            !anchor.isSafeForDisplay,
       );
 
   static EvidenceAnchorType? _primaryType(List<EvidenceAnchor> anchors) {
@@ -288,15 +286,15 @@ abstract final class AnchorCalibrationEngine {
   }
 
   static EvidenceAnchor _fallbackAnchor() => EvidenceAnchor(
-        id: 'anchor_fallback',
-        type: EvidenceAnchorType.unknown,
-        label: EvidenceAnchorType.unknown.label,
-        safeSummary: EvidenceAnchorCopy.fallbackSummary,
-        strength: 0.2,
-        recencyWeight: 0,
-        sourceCount: 0,
-        isUserCorrected: false,
-        isFreshReturn: false,
-        isSafeForDisplay: false,
-      );
+    id: 'anchor_fallback',
+    type: EvidenceAnchorType.unknown,
+    label: EvidenceAnchorType.unknown.label,
+    safeSummary: EvidenceAnchorCopy.fallbackSummary,
+    strength: 0.2,
+    recencyWeight: 0,
+    sourceCount: 0,
+    isUserCorrected: false,
+    isFreshReturn: false,
+    isSafeForDisplay: false,
+  );
 }

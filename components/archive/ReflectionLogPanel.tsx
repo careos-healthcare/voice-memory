@@ -56,12 +56,12 @@ export function ReflectionLogPanel({
       <p className="sr-only">{justificationFor("ReflectionLog")}</p>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <label className="flex-1">
-          <span className="sr-only">Search reflections</span>
+          <span className="sr-only">Search saved words</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search reflections…"
+            placeholder="Search saved words…"
             className="w-full rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600"
           />
         </label>
@@ -74,7 +74,7 @@ export function ReflectionLogPanel({
       </div>
 
       {entries.length === 0 ? (
-        <p className="mt-4 text-sm text-zinc-500">No reflections match that search.</p>
+        <p className="mt-4 text-sm text-zinc-500">No saved words match that search.</p>
       ) : (
         <ul className="mt-4 space-y-2">
           {entries.map((entry) => (

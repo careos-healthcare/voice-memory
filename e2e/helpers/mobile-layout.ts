@@ -13,9 +13,9 @@ export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
 export async function assertNavUsable(page: Page): Promise<void> {
   const nav = page.getByRole("navigation", { name: "Primary" });
   await expect(nav).toBeVisible();
-  const journal = nav.getByRole("link", { name: "Journal" });
-  await expect(journal).toBeVisible();
-  const box = await journal.boundingBox();
+  const account = nav.getByRole("link", { name: "Account" });
+  await expect(account).toBeVisible();
+  const box = await account.boundingBox();
   expect(box?.width ?? 0).toBeGreaterThan(0);
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(40);
 }

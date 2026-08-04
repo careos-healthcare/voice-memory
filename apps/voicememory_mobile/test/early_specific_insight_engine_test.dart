@@ -11,21 +11,20 @@ JournalEntry _entry({
   String transcript = '',
   String observation = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('EarlySpecificInsightEngine', () {

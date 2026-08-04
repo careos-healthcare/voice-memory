@@ -24,10 +24,7 @@ void main() {
         PrimaryDestination.values.map((destination) => destination.route),
         RouteCatalog.primaryRoutes,
       );
-      expect(
-        RouteCatalog.primaryRoutes,
-        isNot(contains(RouteCatalog.graphHome)),
-      );
+      expect(RouteCatalog.primaryRoutes, hasLength(4));
     });
   });
 
@@ -180,20 +177,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Account branch'), findsOneWidget);
     });
-
-    testWidgets('graph is a root secondary route and keeps query values', (
-      tester,
-    ) async {
-      final harness = _ShellHarness(
-        initialLocation: '${RouteCatalog.graphHome}?view=evidence&nodeId=test',
-      );
-      addTearDown(harness.dispose);
-      await _pumpHarness(tester, harness);
-
-      expect(find.text('Graph evidence test'), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
-      expect(find.byType(NavigationRail), findsNothing);
-    });
   });
 
   group('responsive and accessible navigation', () {
@@ -268,7 +251,12 @@ void main() {
         for (final forbidden in [
           'showCanvasFeaturePanel',
           'Timer(',
+          'Future.delayed',
+          'Duration(milliseconds: 500)',
           'RadialActionMenu',
+          '_voiceLaunchTimer',
+          '_openVoiceCapture',
+          '_captureExpanded',
           'ArchiveBeliefScreen',
           'AccountScreen',
           'memory_graph_capture_fab',
@@ -282,7 +270,7 @@ void main() {
       final source = File('lib/router/app_router.dart').readAsStringSync();
       final shell = source.substring(
         source.indexOf('StatefulShellRoute.indexedStack'),
-        source.indexOf('GoRoute(\n      path: RouteCatalog.graphHome'),
+        source.indexOf('GoRoute(\n      path: RouteCatalog.quickTextCapture'),
       );
       expect(
         RegExp(r'StatefulShellBranch\s*\(').allMatches(shell),
@@ -393,18 +381,6 @@ class _ShellHarness {
           parentNavigatorKey: rootKey,
           builder: (_, _) =>
               const Scaffold(body: Center(child: Text('Settings page'))),
-        ),
-        GoRoute(
-          path: RouteCatalog.graphHome,
-          parentNavigatorKey: rootKey,
-          builder: (_, state) => Scaffold(
-            body: Center(
-              child: Text(
-                'Graph ${state.uri.queryParameters['view']} '
-                '${state.uri.queryParameters['nodeId']}',
-              ),
-            ),
-          ),
         ),
       ],
     );

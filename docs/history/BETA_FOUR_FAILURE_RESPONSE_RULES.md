@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Beta Four Failure Response Rules
 
 Focused fallback rules for the four remaining beta failure modes after the Beta Readiness Simplification Pack.
@@ -45,3 +47,4 @@ This document tracks the **Beta Four Failure Response Pack** fallbacks:
 2. **Activation** — 1/3 and 2/3 cards lead with “Done for now”; secondary offers save when a real moment happens.
 3. **Daily change** — six sharper response categories (new outcome, same outcome, later cost, partly fit, quick capture still work, boundary selected).
 4. **Alternatives** — fixed pull-specific labels and usable text; selected boundary response always wins.
+

@@ -5,13 +5,18 @@ import {
   processVaultRecoveryUpload,
   VaultRecoveryProcessError,
 } from "@/lib/live-audio/vault-recovery-process";
-import { hashVaultBytes } from "@/lib/live-audio/vault-recovery-store";
 import {
   apiPayloadTooLarge,
   guardOpenAiRoute,
   MAX_AUDIO_BYTES,
 } from "@/lib/server/api-guard";
 import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
+import { requireRemoteTranscriptionDisclosure } from "@/lib/server/remote-transcription-disclosure";
+import { meterBestEffort } from "@/lib/server/unit-economics-meter";
+import {
+  commitUsageReservation,
+  releaseUsageReservation,
+} from "@/lib/server/usage-reservation-store";
 
 export const runtime = "nodejs";
 
@@ -37,7 +42,11 @@ export async function GET() {
 
 /** Accepts an encrypted offline live-audio vault, decrypts server-side, transcribes, and analyzes. */
 export async function POST(request: Request) {
+  let usageReservationId: string | undefined;
   try {
+    const disclosureError = requireRemoteTranscriptionDisclosure(request);
+    if (disclosureError) return disclosureError;
+
     const idempotencyKey = request.headers.get("x-vm-idempotency-key")?.trim();
     if (!idempotencyKey) {
       return NextResponse.json(
@@ -97,12 +106,9 @@ export async function POST(request: Request) {
       audioBytes: vault.size,
     });
     if (!guard.ok) return guard.response;
+    usageReservationId = guard.ctx.monetization?.reservation?.reservationId;
 
     const vaultBytes = Buffer.from(await vault.arrayBuffer());
-    logLiveAudio(
-      `vault recovery upload sessionId=${sessionId} bytes=${vaultBytes.length} hash=${hashVaultBytes(vaultBytes).slice(0, 12)}`,
-    );
-
     const result = await processVaultRecoveryUpload({
       subject: guard.ctx.subject,
       sessionId,
@@ -110,9 +116,24 @@ export async function POST(request: Request) {
       vaultBytes,
       durationSeconds,
     });
+    if (usageReservationId) {
+      await commitUsageReservation(
+        usageReservationId,
+        Math.max(1, Math.ceil(result.durationSeconds)),
+      );
+    }
+    await meterBestEffort({
+      operation: "vault-recovery.ingress",
+      subject: guard.ctx,
+      idempotencyKey,
+      metric: "ingress_bytes",
+      resource: "network.ingress",
+      quantity: vaultBytes.length,
+      measurementBasis: "exact",
+    });
 
     logLiveAudio(
-      `vault recovery complete sessionId=${sessionId} ack=${result.recoveryAckId} duplicate=${result.duplicate}`,
+      `vault recovery complete duplicate=${result.duplicate} frameCount=${result.frameCount}`,
     );
 
     return NextResponse.json({
@@ -125,6 +146,7 @@ export async function POST(request: Request) {
       frameCount: result.frameCount,
     });
   } catch (error) {
+    if (usageReservationId) await releaseUsageReservation(usageReservationId);
     if (error instanceof VaultRecoveryProcessError) {
       return NextResponse.json(
         { error: error.message, code: error.code },

@@ -70,7 +70,7 @@ export function TestimonialCapturePrompt({
           onChange={(e) => setText(e.target.value)}
           rows={3}
           className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-200"
-          placeholder="A sentence is enough — no reflection text needed."
+          placeholder="A sentence is enough — no saved words needed."
         />
         <div className="flex items-center gap-2">
           <label className="text-xs text-zinc-500">How much did it surprise you?</label>

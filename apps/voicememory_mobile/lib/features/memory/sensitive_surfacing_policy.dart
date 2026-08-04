@@ -45,7 +45,6 @@ enum MemorySurfaceType {
         MemoryCardType.threadReturn => MemorySurfaceType.threadReturn,
         MemoryCardType.beliefDistance => MemorySurfaceType.beliefDistance,
         MemoryCardType.weeklyReview => MemorySurfaceType.weeklyReview,
-        _ => MemorySurfaceType.recordContext,
       };
 
   static MemorySurfaceType? fromSource(String? source) {

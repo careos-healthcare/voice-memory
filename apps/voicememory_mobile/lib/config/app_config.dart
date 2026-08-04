@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'backend_url_resolver.dart';
 import 'developer_settings_gate.dart';
+import 'release_identity.dart';
 import '../storage/app_storage_paths.dart';
 
 /// Backend base URL — set at build/run time (never hardcode secrets here).
@@ -21,8 +22,11 @@ import '../storage/app_storage_paths.dart';
 class AppConfig {
   AppConfig._();
 
-  static const String appName = 'ArchiveMe';
-  static const String bundleId = 'com.voicememory.mobile';
+  static const String appName = ReleaseIdentity.appName;
+  static const String bundleId = ReleaseIdentity.applicationId;
+  static const String spotifyClientId = String.fromEnvironment(
+    'SPOTIFY_CLIENT_ID',
+  );
 
   /// Production Next.js API (Vercel). `careosapp.co.uk` is marketing-only and
   /// does not serve `/api/*` — do not point mobile captures at that host.
@@ -97,7 +101,9 @@ class AppConfig {
       _resolvedApiBase = defaultDevBaseUrl;
       _backendConfigured = true;
       _apiResolutionInitialized = true;
-      debugPrint('AppConfig: debug API base → $_resolvedApiBase (iOS simulator)');
+      debugPrint(
+        'AppConfig: debug API base → $_resolvedApiBase (iOS simulator)',
+      );
       return;
     }
 

@@ -14,8 +14,7 @@ abstract final class ProPackagingCopyFix {
   static const proValue =
       'Pro: keep older evidence, longer history, and change over time.';
 
-  static const proofBridge =
-      'This is the kind of trail Pro keeps building.';
+  static const proofBridge = 'This is the kind of trail Pro keeps building.';
 
   static const whyPayLine =
       'Paying is not for more AI. It is for keeping the longer proof trail.';
@@ -58,18 +57,14 @@ abstract final class ProPackagingCopyFix {
   ];
 
   static ProPackagingBoundary boundary() => const ProPackagingBoundary(
-        freeItems: [
-          'First useful repeat',
-          'First proof',
-          'Basic archive start',
-        ],
-        proItems: [
-          'Longer trail',
-          'Older evidence',
-          'Change over time',
-          'Longer comparison history',
-        ],
-      );
+    freeItems: ['First useful repeat', 'First proof', 'Basic archive start'],
+    proItems: [
+      'Longer trail',
+      'Older evidence',
+      'Change over time',
+      'Longer comparison history',
+    ],
+  );
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

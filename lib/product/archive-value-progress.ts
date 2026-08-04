@@ -122,7 +122,7 @@ export function buildArchiveValueSnapshot(
     progressPercent,
     readyForPatternReview,
     ctaHref: readyForPatternReview ? "/blind-spots" : "/#recorder",
-    ctaLabel: readyForPatternReview ? "Open first working theory" : "Add another reflection",
+    ctaLabel: readyForPatternReview ? "Open first working theory" : "Save another moment",
   };
 }
 
@@ -133,15 +133,15 @@ export function buildArchiveChangedMessage(
   const snapshot = buildArchiveValueSnapshot(entriesInput);
   const count = snapshot.reflectionCount;
 
-  if (count <= 0) return "Your archive is waiting for a first reflection.";
-  if (count === 1) return "Your archive now has 1 reflection.";
+  if (count <= 0) return "Your archive is waiting for a first moment.";
+  if (count === 1) return "Your archive now has 1 moment.";
   if (count === 2) {
-    return `Your archive now has ${count} reflections. ArchiveMe can now check for possible repeats.`;
+    return `Your archive now has ${count} moments. ArchiveMe can now check for possible repeats.`;
   }
   if (count >= PATTERN_REVIEW_TARGET) {
-    return `Your archive now has ${count} reflections. ${snapshot.valueCopy}`;
+    return `Your archive now has ${count} moments. ${snapshot.valueCopy}`;
   }
-  return `Your archive now has ${count} reflections. ${snapshot.nextMilestoneCopy}`;
+  return `Your archive now has ${count} moments. ${snapshot.nextMilestoneCopy}`;
 }
 
 export function shouldShowArchiveValueBanner(reflectionCount?: number): boolean {

@@ -27,7 +27,7 @@ export function ReflectOnEntryButton({
       setError(
         reflectError instanceof Error
           ? reflectError.message
-          : "Could not reflect on this entry",
+          : "Could not look for patterns in this moment",
       );
     } finally {
       setBusy(false);
@@ -45,10 +45,10 @@ export function ReflectOnEntryButton({
   return (
     <div className="space-y-3 px-1">
       <Button type="button" variant="secondary" size="sm" onClick={() => void handleReflect()}>
-        Reflect on this
+        Look for patterns
       </Button>
       <p className="text-xs leading-relaxed text-zinc-600">
-        Generate a reflection when you are ready — nothing happens until you ask.
+        Look for patterns when you are ready — nothing happens until you ask.
       </p>
       {error ? <p className="text-xs text-red-300/90">{error}</p> : null}
     </div>

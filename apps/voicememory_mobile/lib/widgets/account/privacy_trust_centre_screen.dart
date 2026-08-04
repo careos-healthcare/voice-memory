@@ -1,329 +1,150 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../design/archive_mobile_typography.dart';
-import '../../features/archive_history/archive_history_engine.dart';
-import '../../features/beta/archive_beta_mission_gate.dart';
-import '../../features/beta_activation/beta_activation_summary_copy.dart';
-import '../../features/beta_feedback/beta_feedback_engine.dart';
-import '../../features/early_archive/early_first_signal_engine.dart';
-import '../../features/early_archive/private_archive_report_engine.dart';
-import '../../features/local_backup/local_backup_copy.dart';
-import '../../features/local_backup/local_backup_restore_service.dart';
-import '../../features/privacy_trust/privacy_trust_copy.dart';
-import '../../features/repeat_return_check/repeat_return_check_store.dart';
-import '../../security/local_privacy_data_controls.dart';
-import '../../security/privacy_data_controls_copy.dart';
-import '../../services/app_services.dart';
-import '../../billing/archive_entitlement_reader.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_spacing.dart';
-import '../../widgets/account/beta_activation_summary_sheet.dart';
-import '../../widgets/account/beta_feedback_sheet.dart';
-import '../../widgets/account/local_backup_restore_sheet.dart';
-import '../../widgets/archive_history/archive_history_sheet.dart';
-import '../../widgets/pushed_screen_shell.dart';
-import '../../features/private_report/private_report_engine.dart';
-import '../../widgets/settings/privacy_data_controls_dialogs.dart';
+import '../../features/archive_export/archive_ownership_copy.dart';
+import '../../features/archive_export/archive_privacy_summary.dart';
 
-/// Privacy & Trust Centre — what is stored, what stays private, and controls.
-class PrivacyTrustCentreScreen extends StatefulWidget {
+/// Focused V1 privacy centre.
+///
+/// Export, deletion, security, and legal actions each have one canonical route;
+/// this screen does not construct backup, graph, beta, or analytics tooling.
+class PrivacyTrustCentreScreen extends StatelessWidget {
   const PrivacyTrustCentreScreen({
     super.key,
-    this.controls,
-    this.entitlementReader,
+    @Deprecated('Privacy controls are owned by their canonical routes')
+    Object? controls,
+    @Deprecated('Entitlement is irrelevant to user-owned privacy controls')
+    Object? entitlementReader,
+    @Deprecated('Behavioral-log export is not a V1 customer capability')
+    Object? shareBehavioralLogExport,
+    @Deprecated('Use the canonical export route') Object? openDataPortability,
   });
 
-  final LocalPrivacyDataControls? controls;
-  final ArchiveEntitlementReader? entitlementReader;
-
   @override
-  State<PrivacyTrustCentreScreen> createState() =>
-      _PrivacyTrustCentreScreenState();
-}
-
-class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
-  bool _deleteBusy = false;
-  bool _exportBusy = false;
-  bool _restoreBusy = false;
-  int _entryCount = 0;
-  bool _loaded = false;
-
-  LocalPrivacyDataControls get _controls =>
-      widget.controls ?? LocalPrivacyDataControls.instance();
-
-  LocalBackupRestoreService get _backupService => LocalBackupRestoreService(
-        controls: widget.controls,
-      );
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEntryCount();
-  }
-
-  Future<void> _loadEntryCount() async {
-    if (!AppServices.isInitialized) {
-      if (mounted) setState(() => _loaded = true);
-      return;
-    }
-    final entries = await AppServices.instance.journal.loadAll();
-    if (!mounted) return;
-    setState(() {
-      _entryCount = const BetaFeedbackEngine().realEntryCount(entries);
-      _loaded = true;
-    });
-  }
-
-  Future<void> _openArchiveHistory() async {
-    if (!AppServices.isInitialized) return;
-    final entries = await AppServices.instance.journal.loadAll();
-    final content = ArchiveHistoryEngine.build(entries: entries);
-    if (!mounted) return;
-    await ArchiveHistorySheet.show(
-      context,
-      content: content,
-      entryCount: entries.length,
-    );
-  }
-
-  Future<void> _deleteArchive() async {
-    if (_deleteBusy) return;
-    final confirmed = await showClearLocalArchiveDialog(context);
-    if (!confirmed || !mounted) return;
-
-    setState(() => _deleteBusy = true);
-    try {
-      await _controls.clearLocalArchive();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(PrivacyTrustCopy.deleteArchiveDone)),
-      );
-      await _loadEntryCount();
-    } finally {
-      if (mounted) setState(() => _deleteBusy = false);
-    }
-  }
-
-  Future<void> _copyPrivateReport() async {
-    if (!AppServices.isInitialized) return;
-    final entries = await AppServices.instance.journal.loadAll();
-    final viewingConfirmed =
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
-    if (!mounted) return;
-
-    final reader =
-        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
-    final isPro = await reader.isPro;
-    if (!mounted) return;
-
-    await PrivateReportEngine.showSheet(
-      context,
-      entries: entries,
-      source: 'privacy_trust_centre',
-      isPro: isPro,
-      returnChecks: RepeatReturnCheckStore.cached,
-      viewingConfirmedRepeatOrTimeline: viewingConfirmed,
-    );
-  }
-
-  void _sendBetaFeedback() {
-    BetaFeedbackSheet.show(
-      context,
-      source: 'privacy_trust_centre',
-      entryCount: _entryCount,
-    );
-  }
-
-  void _openBetaProgressSummary() {
-    BetaActivationSummarySheet.show(context);
-  }
-
-  Future<void> _exportLocalBackup() async {
-    if (_exportBusy || !_loaded) return;
-    setState(() => _exportBusy = true);
-    try {
-      await runExportLocalBackupFlow(
-        context,
-        service: _backupService,
-        source: 'privacy_trust_centre',
-        onComplete: _loadEntryCount,
-      );
-    } finally {
-      if (mounted) setState(() => _exportBusy = false);
-    }
-  }
-
-  Future<void> _restoreLocalBackup() async {
-    if (_restoreBusy || !_loaded) return;
-    setState(() => _restoreBusy = true);
-    try {
-      await runRestoreLocalBackupFlowWithConfirmation(
-        context,
-        service: _backupService,
-        source: 'privacy_trust_centre',
-        pickBackupFile: () => _backupService.pickBackupFileContent(),
-        onComplete: _loadEntryCount,
-      );
-    } finally {
-      if (mounted) setState(() => _restoreBusy = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final showBetaSummary = ArchiveBetaMissionGate.isEnabled;
-
-    return PushedScreenShell(
-      title: PrivacyTrustCopy.title,
-      fallbackRoute: '/settings',
-      body: SingleChildScrollView(
-        key: const Key('privacy_trust_centre_screen'),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_what_stores'),
-              heading: PrivacyTrustCopy.whatStoresHeading,
-              body: PrivacyTrustCopy.whatStoresBody,
-              bodyStyle: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_not_included'),
-              heading: PrivacyTrustCopy.whatNotIncludedHeading,
-              body: PrivacyTrustCopy.whatNotIncludedBody,
-              bodyStyle: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_stays_private'),
-              heading: PrivacyTrustCopy.whatStaysPrivateHeading,
-              body: PrivacyTrustCopy.whatStaysPrivateBody,
-              bodyStyle: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              PrivacyTrustCopy.yourControlsHeading,
-              key: const Key('privacy_trust_controls_heading'),
-              style: ArchiveMobileTypography.cardLabel(context),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            _controlTile(
-              key: const Key('privacy_trust_control_correct_transcript'),
-              title: PrivacyTrustCopy.correctTranscriptControl,
-              onTap: _loaded ? _openArchiveHistory : null,
-            ),
-            _controlTile(
-              key: const Key('privacy_trust_control_delete_archive'),
-              title: PrivacyTrustCopy.deleteArchiveControl,
-              destructive: true,
-              busy: _deleteBusy,
-              onTap: _deleteBusy ? null : _deleteArchive,
-            ),
-            _controlTile(
-              key: const Key('privacy_trust_control_copy_private_report'),
-              title: PrivacyTrustCopy.copyPrivateReportControl,
-              onTap: _loaded ? _copyPrivateReport : null,
-            ),
-            _controlTile(
-              key: const Key('privacy_trust_control_export_backup'),
-              title: LocalBackupCopy.exportControl,
-              busy: _exportBusy,
-              onTap: _exportBusy || !_loaded ? null : _exportLocalBackup,
-            ),
-            _controlTile(
-              key: const Key('privacy_trust_control_restore_backup'),
-              title: LocalBackupCopy.restoreControl,
-              busy: _restoreBusy,
-              onTap: _restoreBusy || !_loaded ? null : _restoreLocalBackup,
-            ),
-            _controlTile(
-              key: const Key('privacy_trust_control_beta_feedback'),
-              title: PrivacyTrustCopy.sendBetaFeedbackControl,
-              onTap: _sendBetaFeedback,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_beta_measurement'),
-              heading: PrivacyTrustCopy.betaMeasurementHeading,
-              body: PrivacyTrustCopy.betaMeasurementBody,
-              bodyStyle: bodyStyle,
-            ),
-            if (showBetaSummary) ...[
-              const SizedBox(height: AppSpacing.sm),
-              _controlTile(
-                key: const Key('privacy_trust_control_beta_summary'),
-                title: BetaActivationSummaryCopy.openLink,
-                onTap: _openBetaProgressSummary,
-              ),
-            ],
-            const SizedBox(height: AppSpacing.sm),
-            TextButton(
-              key: const Key('privacy_trust_full_privacy_policy'),
-              onPressed: () => context.push('/privacy'),
-              child: Text(PrivacyDataControlsCopy.dataStaysOnDeviceTitle),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _infoSection(
-    BuildContext context, {
-    required Key key,
-    required String heading,
-    required String body,
-    required TextStyle bodyStyle,
-  }) {
-    return Column(
-      key: key,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Privacy centre')),
+    body: ListView(
+      padding: const EdgeInsets.all(16),
       children: [
         Text(
-          heading,
-          style: ArchiveMobileTypography.listTitle(context),
+          'Your archive stays under your control',
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(body, style: bodyStyle),
+        const SizedBox(height: 8),
+        const Text(
+          'Recordings and saved text are encrypted on this device. '
+          'Remote transcription is used only after disclosure and consent. '
+          'ArchiveMe does not sell access to your original moments.',
+        ),
+        const SizedBox(height: 12),
+        for (final promise in ArchiveOwnershipCopy.all)
+          Padding(
+            key: Key('privacy_centre_promise_$promise'),
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(promise),
+          ),
+        const SizedBox(height: 16),
+        Text(
+          ArchivePrivacySummary.title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 4),
+        for (final fact in ArchivePrivacySummary.facts)
+          _PrivacyFact(
+            key: Key('privacy_centre_fact_${fact.title}'),
+            icon: Icons.check_circle_outline,
+            title: fact.title,
+            body: fact.body,
+          ),
+        const Divider(height: 32),
+        const _PrivacyFact(
+          icon: Icons.mic_none,
+          title: 'Remote transcription',
+          body:
+              'Audio selected for remote transcription is sent to the configured service. '
+              'Cancelling keeps remote processing off.',
+        ),
+        const _PrivacyFact(
+          icon: Icons.lock_outline,
+          title: 'Protected originals',
+          body:
+              'Local journal data and audio vault files use the app’s protected storage boundaries.',
+        ),
+        const _PrivacyFact(
+          icon: Icons.fact_check_outlined,
+          title: 'Evidence and correction',
+          body:
+              'Interpretations link back to exact source moments and can be corrected or hidden.',
+        ),
+        const Divider(height: 32),
+        const _RouteTile(
+          icon: Icons.security_outlined,
+          title: 'App lock and device privacy',
+          route: '/security',
+        ),
+        const _RouteTile(
+          icon: Icons.download_outlined,
+          title: 'Export your archive',
+          route: '/export',
+        ),
+        const _RouteTile(
+          icon: Icons.delete_forever_outlined,
+          title: 'Delete account and archive',
+          route: '/delete-account',
+        ),
+        const _RouteTile(
+          icon: Icons.privacy_tip_outlined,
+          title: 'Privacy policy',
+          route: '/privacy',
+        ),
+        const _RouteTile(
+          icon: Icons.description_outlined,
+          title: 'Terms',
+          route: '/terms',
+        ),
       ],
-    );
-  }
+    ),
+  );
+}
 
-  Widget _controlTile({
-    required Key key,
-    required String title,
-    required VoidCallback? onTap,
-    bool destructive = false,
-    bool busy = false,
-  }) {
-    return ListTile(
-      key: key,
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        title,
-        style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
-        ),
-      ),
-      trailing: busy
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.chevron_right),
-      onTap: onTap,
-    );
-  }
+class _PrivacyFact extends StatelessWidget {
+  const _PrivacyFact({
+    required this.icon,
+    required this.title,
+    required this.body,
+    super.key,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    contentPadding: EdgeInsets.zero,
+    leading: Icon(icon),
+    title: Text(title),
+    subtitle: Text(body),
+  );
+}
+
+class _RouteTile extends StatelessWidget {
+  const _RouteTile({
+    required this.icon,
+    required this.title,
+    required this.route,
+  });
+
+  final IconData icon;
+  final String title;
+  final String route;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    contentPadding: EdgeInsets.zero,
+    leading: Icon(icon),
+    title: Text(title),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: () => context.push(route),
+  );
 }

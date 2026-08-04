@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "archive-me-identity-2026-08-02",
+  "description": "Single source of truth for ArchiveMe release identity. Bundle identifiers, store product identifiers, and vendor identifiers are deliberately kept in separate keys because they are different namespaces that happen to share a `com.voicememory.` prefix. Never treat a value from one key as a substitute for another.",
+  "namespaceWarning": "`ios.bundleId` / `android.applicationId` identify the APPLICATION BINARY. `storeProductIds` identify PURCHASABLE SKUs inside that application. They are unrelated namespaces. In this project the store product identifiers begin with `com.voicememory.app.`, which is also the legacy bundle identifier prefix. That collision is the root cause of the identity drift this file resolves. Renaming a bundle ID to match a product ID prefix, or vice versa, would break either the published app or existing subscriptions.",
+  "canonical": {
+    "appName": "ArchiveMe",
+    "shippingClient": "apps/voicememory_mobile"
+  },
+  "ios": {
+    "bundleId": "com.voicememory.mobile",
+    "evidence": [
+      "apps/voicememory_mobile/ios/Runner.xcodeproj/project.pbxproj:925 — PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile; inside the Runner target Release build configuration (97C147071CF9000F007C117D /* Release */, name = Release; at line 932)",
+      "apps/voicememory_mobile/lib/config/release_identity.dart:7 — ReleaseIdentity.applicationId = 'com.voicememory.mobile'"
+    ],
+    "targetBundleIds": {
+      "Runner": "com.voicememory.mobile",
+      "RunnerTests": "com.voicememory.mobile.RunnerTests",
+      "ShareExtension": "com.voicememory.mobile.ShareExtension",
+      "ArchiveMeWidgets": "com.voicememory.mobile.ArchiveMeWidgets"
+    },
+    "appGroupId": "group.com.voicememory.mobile",
+    "iCloudContainerId": "iCloud.com.voicememory.mobile"
+  },
+  "android": {
+    "applicationId": "com.voicememory.mobile",
+    "namespace": "com.voicememory.mobile",
+    "evidence": [
+      "apps/voicememory_mobile/android/app/build.gradle.kts:70 — applicationId = \"com.voicememory.mobile\"",
+      "apps/voicememory_mobile/android/app/build.gradle.kts:55 — namespace = \"com.voicememory.mobile\"",
+      "apps/voicememory_mobile/android/fastlane/Fastfile:58 — package_name: \"com.voicememory.mobile\"",
+      "apps/voicememory_mobile/tool/verify_android_release_artifact.sh:79 — EXPECTED_APPLICATION_ID default com.voicememory.mobile"
+    ]
+  },
+  "revenueCat": {
+    "appId": null,
+    "projectReference": null,
+    "entitlementId": "archive_loop_pro",
+    "legacyEntitlementAliases": ["pro"],
+    "entitlementEvidence": [
+      "config/monetization/archive_me_entitlement_matrix.json:5 — canonicalProEntitlementId = archive_loop_pro",
+      "apps/voicememory_mobile/lib/features/monetization/domain/generated/monetization_policy.g.dart:76 — canonicalProEntitlementId = 'archive_loop_pro'",
+      ".github/workflows/build_and_deploy.yml:99,207 — REVENUECAT_ENTITLEMENT_ID: archive_loop_pro"
+    ],
+    "apiKeyDelivery": "Platform SDK keys are injected at build time as REVENUECAT_IOS_API_KEY / REVENUECAT_ANDROID_API_KEY GitHub secrets (.github/workflows/build_and_deploy.yml:97,204). Server-side verification uses REVENUECAT_SECRET_API_KEY and REVENUECAT_WEBHOOK_AUTH_TOKEN (.env.example:93,95). No RevenueCat app id or project reference is committed anywhere in this repository."
+  },
+  "storeProductIds": {
+    "ios": ["com.voicememory.app.pro.monthly", "com.voicememory.app.pro.annual"],
+    "android": ["com.voicememory.app.pro.monthly", "com.voicememory.app.pro.annual"],
+    "evidence": [
+      ".github/workflows/build_and_deploy.yml:100,101 — Android build REVENUECAT_MONTHLY_PRODUCT_ID / REVENUECAT_YEARLY_PRODUCT_ID",
+      ".github/workflows/build_and_deploy.yml:208,209 — iOS build REVENUECAT_MONTHLY_PRODUCT_ID / REVENUECAT_YEARLY_PRODUCT_ID",
+      "apps/voicememory_mobile/tool/validate_revenuecat_configuration.sh:58,59,65,69 — asserts these exact product identifiers"
+    ],
+    "note": "These SKUs intentionally retain the `com.voicememory.app.` prefix. They are store product identifiers, not bundle identifiers, and renaming them would orphan existing subscriptions. The prefix does not imply that `com.voicememory.app` is the application bundle identifier."
+  },
+  "firebase": {
+    "iosAppId": null,
+    "androidAppId": null,
+    "delivery": "Supplied at build time via dart-define. apps/voicememory_mobile/lib/push/firebase_options.dart reads FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_PROJECT_ID, FIREBASE_MESSAGING_SENDER_ID and FIREBASE_IOS_BUNDLE_ID from String.fromEnvironment with empty defaults, and push is inert when they are absent.",
+    "committedConfigFiles": "none",
+    "note": "No GoogleService-Info.plist and no google-services.json exist in this repository, so no Firebase application id can be verified from source. A single FIREBASE_APP_ID is threaded to both platforms, which cannot be correct for a real Firebase project — Firebase issues a distinct app id per platform. Resolving this requires reading the Firebase console."
+  },
+  "urlSchemes": {
+    "primary": "archiveme",
+    "evidence": [
+      "apps/voicememory_mobile/ios/Runner/Info.plist:30-33 — CFBundleURLSchemes contains archiveme",
+      "apps/voicememory_mobile/android/app/src/main/AndroidManifest.xml:130 — <data android:scheme=\"archiveme\" android:host=\"quick-capture\" />",
+      "apps/voicememory_mobile/lib/config/release_identity.dart:10 — primaryUrlScheme = 'archiveme'"
+    ],
+    "hosts": ["quick-capture"]
+  },
+  "keychainAccessGroup": {
+    "value": "$(AppIdentifierPrefix)com.voicememory.mobile.shared",
+    "evidence": [
+      "apps/voicememory_mobile/ios/Runner/Runner.entitlements:11",
+      "apps/voicememory_mobile/ios/ShareExtension/ShareExtension.entitlements:11",
+      "apps/voicememory_mobile/ios/ArchiveMeWidgets/ArchiveMeWidgets.entitlements:11"
+    ],
+    "keychainService": "com.voicememory.mobile.os-integration"
+  },
+  "pushIdentifiers": {
+    "apnsTopic": "com.voicememory.mobile",
+    "apnsTopicDerivation": "The APNs topic for an iOS app is its bundle identifier, so this is derived from ios.bundleId rather than declared separately.",
+    "apsEnvironmentEntitlement": null,
+    "fcmSenderId": null,
+    "note": "apps/voicememory_mobile/ios/Runner/Runner.entitlements declares application-groups, keychain-access-groups and iCloud containers but NO aps-environment key, and apps/voicememory_mobile/ios/Runner/Runner-Release.entitlements is an empty dict. Xcode normally injects aps-environment from the Push Notifications capability at signing time. Whether the App ID actually has the Push Notifications capability enabled cannot be determined from this repository.",
+    "iosProvisioningProfileMapping": ".github/workflows/build_and_deploy.yml:276 — <key>com.voicememory.mobile</key><string>$IOS_PROVISIONING_PROFILE_NAME</string>"
+  },
+  "associatedDomains": {
+    "ios": [],
+    "androidAppLinks": [],
+    "note": "No com.apple.developer.associated-domains entitlement and no autoVerify android:appLinks intent filter exist in the shipping client. Deep linking is custom-scheme only via `archiveme://`. If universal links are ever added, both platforms must be updated together and this key kept in sync."
+  },
+  "legacyIdentifiers": [
+    {
+      "value": "com.voicememory.app",
+      "classification": "legacy migration compatibility",
+      "purpose": "Superseded application identifier. Retained only as a negative assertion and as the historical prefix of live store product identifiers. It must never be reintroduced as a bundle identifier or application id.",
+      "occurrences": [
+        "apps/voicememory_mobile/test/release_identity_consistency_test.dart:35,129 — asserts active config files do NOT contain com.voicememory.app",
+        "apps/voicememory_mobile/test/ios_testflight_submission_readiness_test.dart:12 — _legacyBundleId constant used as a negative assertion",
+        "RELEASE_CHECKLIST.md:21 — stale instruction that App Store Connect uses com.voicememory.app; contradicted by the shipping pbxproj"
+      ]
+    },
+    {
+      "value": "pro",
+      "classification": "legacy migration compatibility",
+      "purpose": "Legacy RevenueCat entitlement alias still honoured for existing subscribers. Not the canonical entitlement id.",
+      "occurrences": [
+        "config/monetization/archive_me_entitlement_matrix.json:6",
+        "apps/voicememory_mobile/lib/features/monetization/domain/generated/monetization_policy.g.dart:79"
+      ]
+    }
+  ],
+  "experimentalIdentifiers": [
+    {
+      "value": "com.voicememory.app",
+      "classification": "experimental client",
+      "declaredIn": "android/app/src/main/assets/capacitor.config.json:2 — \"appId\": \"com.voicememory.app\"",
+      "status": "NEUTRALISED_BY_EXCLUSION",
+      "detail": "The repository root contains a residual Capacitor Android project that declares a SECOND production application identity, `com.voicememory.app`, with appName ArchiveMe, a remote server URL of https://voicememory.app and an iOS scheme of `voicememory`. This is not the shipping client. It was neutralised by exclusion and documentation rather than by renaming, because renaming the shipping `com.voicememory.mobile` identity would break a potentially published application. See neutralisation below.",
+      "neutralisation": [
+        ".vercelignore already excludes android/ and capacitor.config.* from the deployed surface",
+        ".dockerignore already excludes android/ and capacitor.config.ts from the server image",
+        "The root Capacitor Gradle project is not buildable: android/app/build.gradle, android/build.gradle, android/settings.gradle and the Gradle wrapper are all deleted in the working tree, so no artifact bearing com.voicememory.app can be produced",
+        "config/release/archive_me_identity.json (this file) records it as experimental, never canonical",
+        "scripts/check-release-identity.mjs fails if this identifier ever appears in the shipping iOS pbxproj or Android build.gradle.kts"
+      ]
+    },
+    {
+      "value": "voicememory",
+      "classification": "experimental client",
+      "declaredIn": "android/app/src/main/assets/capacitor.config.json — ios.scheme",
+      "status": "NEUTRALISED_BY_EXCLUSION",
+      "detail": "Legacy Capacitor URL scheme. The shipping client uses `archiveme`. Not a canonical scheme."
+    }
+  ],
+  "obsoleteDocumentationOccurrences": [
+    {
+      "path": "RELEASE_CHECKLIST.md:21-22",
+      "text": "Verify `com.voicememory.app` in App Store Connect and `com.voicememory.mobile` in Play Console without renaming either application.",
+      "classification": "obsolete documentation",
+      "problem": "This is the single most dangerous drift artefact in the repository. It asserts that iOS ships under `com.voicememory.app` while Android ships under `com.voicememory.mobile`. The shipping iOS Release build configuration says `com.voicememory.mobile`. One of the two is wrong and only App Store Connect can settle it, which is why the release identity gate is BLOCKED_EXTERNAL."
+    },
+    {
+      "path": "V1_REACHABILITY_REPORT.md:83-84",
+      "classification": "obsolete documentation",
+      "problem": "Generated artefact. Correctly reports com.voicememory.mobile for both platforms, consistent with this file."
+    }
+  ],
+  "testFixtureOccurrences": [
+    {
+      "path": "apps/voicememory_mobile/test/revenuecat_configuration_test.dart:10,16,29,30",
+      "classification": "test fixture",
+      "detail": "Store product identifiers com.voicememory.app.pro.monthly / .annual used as purchase fixtures."
+    },
+    {
+      "path": "apps/voicememory_mobile/test/paywall_purchase_flow_test.dart:16,22",
+      "classification": "test fixture",
+      "detail": "Same store product identifiers as purchase fixtures."
+    },
+    {
+      "path": "apps/voicememory_mobile/tool/fixtures/v1_permissions_forbidden_android.xml:8",
+      "classification": "test fixture",
+      "detail": "com.voicememory.mobile.MainActivity in a deliberately-invalid permissions fixture."
+    },
+    {
+      "path": "apps/voicememory_mobile/tool/test_audit_v1_permissions.sh:18,52",
+      "classification": "test fixture",
+      "detail": "Inline manifest and entitlements fixtures."
+    },
+    {
+      "path": "artifacts/v1-architecture/v1-reachability-report.json:9909-9922, artifacts/v1-slice/baseline-flutter-test.txt, artifacts/dependency-reduction/*",
+      "classification": "test fixture",
+      "detail": "Generated build and test artefacts. Not authoritative."
+    }
+  ],
+  "verification": {
+    "gate": "RELEASE_IDENTITY",
+    "status": "BLOCKED_EXTERNAL",
+    "manualChecklist": "docs/current/STORE_IDENTITY_CHECKLIST.md",
+    "automatedGuard": {
+      "script": "scripts/check-release-identity.mjs",
+      "npmScript": "check:identity",
+      "scope": "Asserts only what is verifiable from source: that the shipping iOS pbxproj, iOS Info.plist, iOS entitlements and Android build.gradle.kts agree with ios.bundleId and android.applicationId, and that no neutralised experimental identifier has leaked into them."
+    },
+    "verifiableFromSource": [
+      "ios.bundleId",
+      "ios.targetBundleIds",
+      "ios.appGroupId",
+      "ios.iCloudContainerId",
+      "android.applicationId",
+      "android.namespace",
+      "revenueCat.entitlementId",
+      "revenueCat.legacyEntitlementAliases",
+      "storeProductIds.ios",
+      "storeProductIds.android",
+      "urlSchemes.primary",
+      "keychainAccessGroup.value"
+    ],
+    "blockedExternal": [
+      {
+        "field": "ios.bundleId",
+        "system": "App Store Connect",
+        "reason": "Source says com.voicememory.mobile; RELEASE_CHECKLIST.md says com.voicememory.app. Only App Store Connect can confirm which identifier the published or in-review iOS application actually uses. Nothing in this repository can settle it and no attempt was made to contact Apple."
+      },
+      {
+        "field": "android.applicationId",
+        "system": "Google Play Console",
+        "reason": "A Play package name is immutable once published. Source consistently says com.voicememory.mobile, but confirmation that this is the published package requires the Play Console."
+      },
+      {
+        "field": "storeProductIds.ios",
+        "system": "App Store Connect",
+        "reason": "Existence, approval state and price tier of com.voicememory.app.pro.monthly and com.voicememory.app.pro.annual as in-app purchase products cannot be verified from source."
+      },
+      {
+        "field": "storeProductIds.android",
+        "system": "Google Play Console",
+        "reason": "Existence and active state of the matching Play subscription products cannot be verified from source."
+      },
+      {
+        "field": "revenueCat.appId",
+        "system": "RevenueCat",
+        "reason": "No RevenueCat app id is committed. Must be read from the RevenueCat dashboard."
+      },
+      {
+        "field": "revenueCat.projectReference",
+        "system": "RevenueCat",
+        "reason": "No RevenueCat project reference is committed. Must be read from the RevenueCat dashboard."
+      },
+      {
+        "field": "revenueCat.entitlementId",
+        "system": "RevenueCat",
+        "reason": "The identifier archive_loop_pro is verified in source, but that a RevenueCat entitlement with that exact identifier exists and is attached to both store products can only be confirmed in the dashboard."
+      },
+      {
+        "field": "firebase.iosAppId",
+        "system": "Firebase",
+        "reason": "Not committed; injected as FIREBASE_APP_ID at build time. A per-platform app id must be read from the Firebase console."
+      },
+      {
+        "field": "firebase.androidAppId",
+        "system": "Firebase",
+        "reason": "Not committed; the same single FIREBASE_APP_ID is threaded to both platforms, which cannot be correct for a real Firebase project."
+      },
+      {
+        "field": "pushIdentifiers.apsEnvironmentEntitlement",
+        "system": "Apple Developer portal",
+        "reason": "No aps-environment entitlement is declared in source. Whether the App ID has the Push Notifications capability enabled and whether an APNs key is uploaded to Firebase can only be checked externally."
+      },
+      {
+        "field": "pushIdentifiers.fcmSenderId",
+        "system": "Firebase",
+        "reason": "Injected as FIREBASE_MESSAGING_SENDER_ID at build time; not committed."
+      }
+    ]
+  }
+}

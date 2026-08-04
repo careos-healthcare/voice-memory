@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Beta surface-area guardrail
 
 **Branch context:** TestFlight beta (`testflight-full-suite-stabilisation`)  
@@ -27,7 +29,7 @@ Save one yes moment → save two more → review what repeated.
 
 ## Copy guardrails (consumer-visible)
 
-- **Allowed:** “Private by default”; “Your journal file on this device is encrypted”; honest cloud/transcription lines when features are used.
+- **Allowed:** “Private by default”; “Your archive file on this device is encrypted”; honest cloud/transcription lines when features are used.
 - **Forbidden:** therapy / diagnosis / medical / treatment language; score language; “ArchiveMe knows”; “everything stays on device”; “fully encrypted archive” (unless every storage path supports it).
 - **Do not expose private transcript text** in prefs, analytics, feedback, paid-intent stores, or share-safe surfaces.
 
@@ -36,3 +38,4 @@ Save one yes moment → save two more → review what repeated.
 - [POST_BETA_RESPONSE_ROADMAP.md](./POST_BETA_RESPONSE_ROADMAP.md)
 - [TESTFLIGHT_FULL_SUITE_STABILISATION.md](./TESTFLIGHT_FULL_SUITE_STABILISATION.md)
 - [DEPENDENCY_MAINTENANCE_PLAN.md](../apps/voicememory_mobile/docs/DEPENDENCY_MAINTENANCE_PLAN.md)
+

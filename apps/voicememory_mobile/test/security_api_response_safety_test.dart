@@ -45,20 +45,22 @@ void main() {
 
     test('allows https production URLs', () {
       expect(
-        ApiResponseSafety.isBaseUrlAllowed('https://voice-memory-iota.vercel.app'),
+        ApiResponseSafety.isBaseUrlAllowed(
+          'https://voice-memory-iota.vercel.app',
+        ),
         isTrue,
       );
     });
 
     test('remaps marketing-only careosapp host to production API', () {
-    expect(
-      BackendUrlResolver.normalizeApiBaseUrl('https://careosapp.co.uk'),
-      BackendUrlResolver.productionApiBaseUrl,
-    );
-    expect(
-      BackendUrlResolver.normalizeApiBaseUrl('https://www.careosapp.co.uk/'),
-      BackendUrlResolver.productionApiBaseUrl,
-    );
-  });
+      expect(
+        BackendUrlResolver.normalizeApiBaseUrl('https://careosapp.co.uk'),
+        BackendUrlResolver.productionApiBaseUrl,
+      );
+      expect(
+        BackendUrlResolver.normalizeApiBaseUrl('https://www.careosapp.co.uk/'),
+        BackendUrlResolver.productionApiBaseUrl,
+      );
+    });
   });
 }

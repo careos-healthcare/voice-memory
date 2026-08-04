@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/core/config/v1_feature_flags.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_correction_store.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_entry_signal_guard.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_threshold.dart';
-import 'package:voicememory_mobile/features/archive_thought_map/archive_thought_map_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -10,64 +10,63 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _repeatPressureEntries() => [
-      _entry(
-        id: 'a',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'b',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'c',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'a',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'b',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'c',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _unrelatedEntries() => [
-      _entry(
-        id: 'w',
-        transcript:
-            'Work deadline stress piled up and I stayed late finishing slides.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'h',
-        transcript:
-            'Health worry kept me up — doctor appointment next week feels heavy.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'f',
-        transcript:
-            'Family tension at dinner — partner and I talked past each other.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'w',
+    transcript:
+        'Work deadline stress piled up and I stayed late finishing slides.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'h',
+    transcript:
+        'Health worry kept me up — doctor appointment next week feels heavy.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'f',
+    transcript:
+        'Family tension at dinner — partner and I talked past each other.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 const _bannedPhrases = [
   'therapy',
@@ -112,7 +111,9 @@ void main() {
     });
 
     test('three repeated pressure entries shows repeated thread', () {
-      final result = ArchiveEvidenceThreshold.evaluate(_repeatPressureEntries());
+      final result = ArchiveEvidenceThreshold.evaluate(
+        _repeatPressureEntries(),
+      );
       expect(result.canNameThread, isTrue);
       expect(result.sharedThemeEntryCount, greaterThanOrEqualTo(2));
       expect(result.snippetCount, greaterThanOrEqualTo(2));
@@ -134,56 +135,46 @@ void main() {
         _entry(id: 'low', transcript: 'Test'),
       ];
       expect(ArchiveEntrySignalGuard.isLowSignalText('Test'), isTrue);
-      expect(
-        ArchiveEvidenceThreshold.meaningfulEntryCount(entries),
-        3,
-      );
+      expect(ArchiveEvidenceThreshold.meaningfulEntryCount(entries), 3);
     });
 
-    test('named thread requires at least two evidence snippets', () {
-      final result = ArchiveEvidenceThreshold.evaluate(_repeatPressureEntries());
-      expect(result.snippetCount, greaterThanOrEqualTo(2));
-      expect(result.canNameThread, isTrue);
-
-      const engine = ArchiveThoughtMapEngine();
-      final preview = engine.build(_repeatPressureEntries());
-      final totalSnippets = preview.nodes
-          .fold<int>(0, (sum, node) => sum + node.snippets.length);
-      expect(totalSnippets, greaterThanOrEqualTo(2));
-    });
+    test(
+      'named thread threshold remains available while V1 thought map is off',
+      () {
+        final result = ArchiveEvidenceThreshold.evaluate(
+          _repeatPressureEntries(),
+        );
+        expect(result.snippetCount, greaterThanOrEqualTo(2));
+        expect(result.canNameThread, isTrue);
+        expect(V1FeatureFlags.enableThoughtMap, isFalse);
+      },
+    );
 
     test('Not quite suppresses the same thread', () {
-      const engine = ArchiveThoughtMapEngine();
       final entries = _repeatPressureEntries();
-      final preview = engine.build(entries);
-      expect(preview.shouldShow, isTrue);
+      const suggestionId = 'repeat-pressure';
 
-      ArchiveBeliefCorrectionStore.dismiss(preview.suggestionId);
-      final suppressed = engine.build(entries);
-      expect(suppressed.shouldShow, isFalse);
+      ArchiveBeliefCorrectionStore.dismiss(suggestionId);
 
       final threshold = ArchiveEvidenceThreshold.evaluate(
         entries,
-        suggestionId: preview.suggestionId,
+        suggestionId: suggestionId,
       );
       expect(threshold.suppressedByCorrection, isTrue);
       expect(threshold.canNameThread, isFalse);
     });
 
     test('This feels right allows thread to remain visible at threshold', () {
-      const engine = ArchiveThoughtMapEngine();
       final entries = _repeatPressureEntries();
-      final preview = engine.build(entries);
-      ArchiveBeliefCorrectionStore.markSaved(preview.suggestionId);
-
-      final rebuilt = engine.build(entries);
-      expect(rebuilt.shouldShow, isTrue);
+      const suggestionId = 'repeat-pressure';
+      ArchiveBeliefCorrectionStore.markSaved(suggestionId);
 
       final threshold = ArchiveEvidenceThreshold.evaluate(
         entries,
-        suggestionId: preview.suggestionId,
+        suggestionId: suggestionId,
       );
       expect(threshold.boostedByCorrection, isTrue);
+      expect(threshold.canNameThread, isTrue);
     });
 
     test('confidence labels are non-numeric and safe', () {

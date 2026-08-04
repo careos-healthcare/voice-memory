@@ -31,8 +31,7 @@ class ArchiveDemoPreviewResolver {
         patternFirstSeen: mirror.heroBody,
         repeatWouldBe: ArchiveDemoPreviewCopy.twoEntryPossibleLoopRepeatHint,
         softeningWouldBe:
-            mirror.nextQuestion ??
-            ArchiveDemoPreviewCopy.twoEntrySofteningHint,
+            mirror.nextQuestion ?? ArchiveDemoPreviewCopy.twoEntrySofteningHint,
         recordNext: mirror.primaryCta.isNotEmpty
             ? mirror.primaryCta
             : ArchiveDemoPreviewCopy.twoEntryRecordNextHint,

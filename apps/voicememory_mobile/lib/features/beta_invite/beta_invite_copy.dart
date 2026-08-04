@@ -90,37 +90,37 @@ abstract final class BetaInviteCopy {
   ];
 
   static List<String> loopDisplayedStrings() => [
-        loopCardTitle,
-        loopCardBody,
-        loopCta,
-        loopSecondary,
-        loopInviteText,
-        loopCopiedConfirmation,
-      ];
+    loopCardTitle,
+    loopCardBody,
+    loopCta,
+    loopSecondary,
+    loopInviteText,
+    loopCopiedConfirmation,
+  ];
 
   static String variantTitle(BetaInviteVariantId id) => switch (id) {
-        BetaInviteVariantId.general => variantGeneralTitle,
-        BetaInviteVariantId.workPatterns => variantWorkPatternsTitle,
-        BetaInviteVariantId.journalingUpgrade => variantJournalingUpgradeTitle,
-        BetaInviteVariantId.founderCreator => variantFounderCreatorTitle,
-        BetaInviteVariantId.privateArchive => variantPrivateArchiveTitle,
-      };
+    BetaInviteVariantId.general => variantGeneralTitle,
+    BetaInviteVariantId.workPatterns => variantWorkPatternsTitle,
+    BetaInviteVariantId.journalingUpgrade => variantJournalingUpgradeTitle,
+    BetaInviteVariantId.founderCreator => variantFounderCreatorTitle,
+    BetaInviteVariantId.privateArchive => variantPrivateArchiveTitle,
+  };
 
   static String shortInvite(BetaInviteVariantId id) => switch (id) {
-        BetaInviteVariantId.general => _shortGeneral,
-        BetaInviteVariantId.workPatterns => _shortWorkPatterns,
-        BetaInviteVariantId.journalingUpgrade => _shortJournalingUpgrade,
-        BetaInviteVariantId.founderCreator => _shortFounderCreator,
-        BetaInviteVariantId.privateArchive => _shortPrivateArchive,
-      };
+    BetaInviteVariantId.general => _shortGeneral,
+    BetaInviteVariantId.workPatterns => _shortWorkPatterns,
+    BetaInviteVariantId.journalingUpgrade => _shortJournalingUpgrade,
+    BetaInviteVariantId.founderCreator => _shortFounderCreator,
+    BetaInviteVariantId.privateArchive => _shortPrivateArchive,
+  };
 
   static String longInvite(BetaInviteVariantId id) => switch (id) {
-        BetaInviteVariantId.general => _longGeneral,
-        BetaInviteVariantId.workPatterns => _longWorkPatterns,
-        BetaInviteVariantId.journalingUpgrade => _longJournalingUpgrade,
-        BetaInviteVariantId.founderCreator => _longFounderCreator,
-        BetaInviteVariantId.privateArchive => _longPrivateArchive,
-      };
+    BetaInviteVariantId.general => _longGeneral,
+    BetaInviteVariantId.workPatterns => _longWorkPatterns,
+    BetaInviteVariantId.journalingUpgrade => _longJournalingUpgrade,
+    BetaInviteVariantId.founderCreator => _longFounderCreator,
+    BetaInviteVariantId.privateArchive => _longPrivateArchive,
+  };
 
   static const _shortGeneral =
       'I\'m testing ArchiveMe — a private app that helps you see what keeps '
@@ -143,7 +143,7 @@ abstract final class BetaInviteCopy {
       'tell me if the archive shows anything useful.';
 
   static const _shortPrivateArchive =
-      'I\'m testing ArchiveMe as a private archive for reflection without '
+      'I\'m testing ArchiveMe as a private archive for saved words without '
       'sharing entries. Save a few small moments when something stands out and tell '
       'me if the archive shows what returned by the third.';
 
@@ -178,44 +178,45 @@ What to report back:
 $reportBackPrompt
 
 $privacyReminder
-'''.trim();
+'''
+        .trim();
   }
 
   static List<String> allVisibleCopy() => [
-        corePositioning,
-        screenTitle,
-        subtitle,
-        variantSectionTitle,
-        previewSectionTitle,
-        privacyReminder,
-        copyShortButton,
-        copyFullButton,
-        copyTaskButton,
-        openBetaOutcomesButton,
-        openProInterestButton,
-        shortCopied,
-        fullCopied,
-        taskCopied,
-        supportTitle,
-        supportSubtitle,
-        openBetaInviteButton,
-        helpTitle,
-        helpBody,
-        betaOutcomesTotalLabel,
-        betaOutcomesLastVariantLabel,
-        betaOutcomesTaskCopiedLabel,
-        betaOutcomesNoneLabel,
-        variantGeneralTitle,
-        variantWorkPatternsTitle,
-        variantJournalingUpgradeTitle,
-        variantFounderCreatorTitle,
-        variantPrivateArchiveTitle,
-        testerTask,
-        reportBackPrompt,
-        betaSuccessChecklist,
-        capacityYesBetaTaskLine,
-        capacityActivationFitBetaLine,
-        ...BetaInviteVariantId.values.map(shortInvite),
-        ...BetaInviteVariantId.values.map(longInvite),
-      ];
+    corePositioning,
+    screenTitle,
+    subtitle,
+    variantSectionTitle,
+    previewSectionTitle,
+    privacyReminder,
+    copyShortButton,
+    copyFullButton,
+    copyTaskButton,
+    openBetaOutcomesButton,
+    openProInterestButton,
+    shortCopied,
+    fullCopied,
+    taskCopied,
+    supportTitle,
+    supportSubtitle,
+    openBetaInviteButton,
+    helpTitle,
+    helpBody,
+    betaOutcomesTotalLabel,
+    betaOutcomesLastVariantLabel,
+    betaOutcomesTaskCopiedLabel,
+    betaOutcomesNoneLabel,
+    variantGeneralTitle,
+    variantWorkPatternsTitle,
+    variantJournalingUpgradeTitle,
+    variantFounderCreatorTitle,
+    variantPrivateArchiveTitle,
+    testerTask,
+    reportBackPrompt,
+    betaSuccessChecklist,
+    capacityYesBetaTaskLine,
+    capacityActivationFitBetaLine,
+    ...BetaInviteVariantId.values.map(shortInvite),
+    ...BetaInviteVariantId.values.map(longInvite),
+  ];
 }

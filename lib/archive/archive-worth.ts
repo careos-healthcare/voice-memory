@@ -58,7 +58,7 @@ export function buildArchiveWorthSummaryLine(
     snapshot.workingBeliefs > 0
       ? `${snapshot.workingBeliefs} working belief${snapshot.workingBeliefs === 1 ? "" : "s"}`
       : `${snapshot.beliefsTracked} belief${snapshot.beliefsTracked === 1 ? "" : "s"} tracked`;
-  return `Your archive contains ${snapshot.reflectionCount} reflection${snapshot.reflectionCount === 1 ? "" : "s"}${days}, ${beliefs}, and ${snapshot.evidenceQuotesStored} evidence quote${snapshot.evidenceQuotesStored === 1 ? "" : "s"}.`;
+  return `Your archive contains ${snapshot.reflectionCount} saved moment${snapshot.reflectionCount === 1 ? "" : "s"}${days}, ${beliefs}, and ${snapshot.evidenceQuotesStored} evidence quote${snapshot.evidenceQuotesStored === 1 ? "" : "s"}.`;
 }
 
 function resolveCtas(entries: JournalEntry[], isSignedIn: boolean): ArchiveWorthCtaId[] {

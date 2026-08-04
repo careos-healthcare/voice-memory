@@ -70,10 +70,5 @@ abstract class EntryPackScopeSession {
   }
 
   @visibleForTesting
-  static void resetSessionForTest() {
-    selectedScope = EntryPackScope.noPack;
-    selectedPackId = null;
-    pendingNewPackName = null;
-    scopeExplicitlyChosen = false;
-  }
+  static void resetSessionForTest() => resetAfterSave();
 }

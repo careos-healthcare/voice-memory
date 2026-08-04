@@ -211,7 +211,7 @@ function collectCandidates(ctx: ImplicationContext, entries: JournalEntry[]): Ar
     pushImplication(
       out,
       "LONG_RUNNING",
-      `The archive is tracking this belief across ${ctx.reflectionCount} reflection${ctx.reflectionCount === 1 ? "" : "s"}.`,
+      `The archive is tracking this belief across ${ctx.reflectionCount} saved moment${ctx.reflectionCount === 1 ? "" : "s"}.`,
     );
   }
 
@@ -245,7 +245,7 @@ export function implicationsAnswerLines(
   view: ArchiveImplicationsView | null,
 ): string[] {
   if (!view) {
-    return ["The archive needs more reflections before it can describe why this belief matters."];
+    return ["The archive needs more saved moments before it can describe why this belief matters."];
   }
   if (view.headlineLines.length > 0) return view.headlineLines;
   return ["Significance lines will appear as the archive gathers more evidence."];

@@ -4,10 +4,7 @@ import 'package:voicememory_mobile/features/chat_differentiation/chat_differenti
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
-JournalEntry _entry({
-  required String id,
-  required DateTime createdAt,
-}) =>
+JournalEntry _entry({required String id, required DateTime createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt,
@@ -28,8 +25,9 @@ JournalEntry _entry({
 void main() {
   group('ChatDifferentiationCopy', () {
     test('visible strings avoid attack language', () {
-      final joined =
-          ChatDifferentiationCopy.allVisibleStrings().join(' ').toLowerCase();
+      final joined = ChatDifferentiationCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in ChatDifferentiationCopy.bannedAttackPhrases) {
         expect(joined, isNot(contains(banned)), reason: banned);
       }

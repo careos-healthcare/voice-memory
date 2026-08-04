@@ -4,7 +4,7 @@ export const BELIEF_RECALL_QUESTION = "Do you remember this belief?";
 
 export const BELIEF_RECALL_NOTE_QUESTION = "What stuck with you?";
 
-export const BELIEF_RECALL_DISMISS = "Skip";
+export const BELIEF_RECALL_DISMISS = "Not today";
 
 export const BELIEF_RECALL_LEVEL_LABELS: Record<BeliefRecallLevelId, string> = {
   yes_clearly: "Yes, clearly",

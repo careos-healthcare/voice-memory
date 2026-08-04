@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Counter-Evidence Quality Audit
 
 **Date:** 2026-05-25  
@@ -245,3 +247,4 @@ dart run tool/analyze_archive_v2_validation.dart
 ### What would “topic-aware” require?
 
 Counter recordings should **share the belief’s theme** and **tension** with the supporting set (e.g. work stress belief → work transcripts showing calm, confidence, or positive work sentiment — not partner or gym entries). That requires theme alignment and contradiction semantics, not `hits == 0` as a default counter rule.
+

@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../features/archive_export/complete_archive_export.dart';
+import '../features/changes/change_thread_projection.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../models/journal_entry.dart';
+import '../services/privacy/audio_vault_service.dart';
 import '../storage/app_storage_paths.dart';
 import '../storage/journal_store.dart';
 import '../storage/mobile_prefs_store.dart';
@@ -177,6 +180,7 @@ abstract class TempRecordingCleanup {
         durationSeconds: entry.durationSeconds,
         reflection: entry.reflection,
         syncStatus: entry.syncStatus,
+        localAudioVaultRef: entry.localAudioVaultRef,
         treatAsNew: entry.treatAsNew,
         connectionApproved: entry.connectionApproved,
         keepExactDetails: entry.keepExactDetails,
@@ -191,6 +195,7 @@ abstract class TempRecordingCleanup {
         memorySurfacing: entry.memorySurfacing,
         preserveOriginal: entry.preserveOriginal,
         captureContextTag: entry.captureContextTag,
+        mediaAttachments: entry.mediaAttachments,
       );
 
   static Future<bool> _deleteFileIfExists(String path) async {
@@ -209,15 +214,25 @@ abstract class TempRecordingCleanup {
 class PrivateDataService {
   PrivateDataService({
     required JournalStore journalStore,
-    MobilePrefsStore? prefs,
+    this._prefs,
+    AudioVaultService? audioVault,
     Future<Directory> Function()? tempDirProvider,
+    this.modelWipe,
+    this.localDerivedDataWipe,
+    this.auxiliaryAudioWipe,
   }) : _journal = journalStore,
-       _prefs = prefs,
+       // Public named parameter cannot expose a private field name.
+       // ignore: prefer_initializing_formals
+       _audioVault = audioVault,
        _tempDirProvider = tempDirProvider ?? AppStoragePaths.temporaryDirectory;
 
   final JournalStore _journal;
+  final AudioVaultService? _audioVault;
   final MobilePrefsStore? _prefs;
   final Future<Directory> Function() _tempDirProvider;
+  final Future<void> Function()? modelWipe;
+  final Future<void> Function()? localDerivedDataWipe;
+  final Future<void> Function()? auxiliaryAudioWipe;
 
   static const wipeConfirmationPhrase = 'DELETE MY ARCHIVE';
 
@@ -238,12 +253,12 @@ class PrivateDataService {
     }
 
     var audioRemoved = false;
-    final audioPath = entry.localAudioPath?.trim();
-    if (audioPath != null && audioPath.isNotEmpty) {
-      audioRemoved = await _deleteFileIfExists(audioPath);
-    }
-
+    final audioPath = entry.localAudioReference;
     await _journal.delete(id);
+    if (audioPath != null && audioPath.isNotEmpty) {
+      audioRemoved = await _deleteAudioPath(audioPath);
+    }
+    await _deleteEntryMedia(entry);
     await TempRecordingCleanup.purgeRetryRecordings(
       tempDir: await _resolveTempDirectory(),
     );
@@ -266,20 +281,58 @@ class PrivateDataService {
   }
 
   Future<void> _performLocalArchiveWipe() async {
+    // Model state includes the user's opt-in. Cancel the owned task and remove
+    // plaintext weights before clearing archive-derived local state.
+    await modelWipe?.call();
     final entries = await _journal.loadAll();
     for (final entry in entries) {
-      final path = entry.localAudioPath?.trim();
+      final path = entry.localAudioReference;
       if (path != null && path.isNotEmpty) {
-        await _deleteFileIfExists(path);
+        await _deleteAudioPath(path);
       }
+      await _deleteEntryMedia(entry);
     }
 
     await _journal.clearAll();
+    await _audioVault?.wipeVaultAndDestroyKey();
+    await _audioVault?.purgeWorkingFiles(
+      temporaryDirectory: await _resolveTempDirectory(),
+    );
+    await auxiliaryAudioWipe?.call();
+    await localDerivedDataWipe?.call();
     await TempRecordingCleanup.purgeTempRecordings(
       tempDir: await _resolveTempDirectory(),
     );
     await _clearArchiveCaches();
   }
+
+  Future<bool> _deleteAudioPath(String path) async {
+    final vault = _audioVault;
+    if (vault != null &&
+        (vault.isVaultReference(path) || vault.isVaultPath(path))) {
+      if (!await vault.exists(path)) return false;
+      await vault.delete(path);
+      return true;
+    }
+    final file = File(path);
+    if (!await file.exists()) return false;
+    if (vault != null) {
+      await vault.secureDeletePlaintext(file);
+      return true;
+    }
+    return _deleteFileIfExists(path);
+  }
+
+  /// The complete, deterministic export a user is entitled to take with them.
+  ///
+  /// Unlike [buildSanitizedExport], which deliberately strips identifiers for
+  /// share targets, this keeps everything needed to reconstruct the archive:
+  /// ids, corrections, evidence links, audio references, tombstones, and the
+  /// Changes history the caller passes in. No entitlement is consulted.
+  Future<ArchiveExportBundle> buildCompleteExport({
+    ChangeThreadProjection changes = const ChangeThreadProjection.empty(),
+  }) =>
+      CompleteArchiveExportBuilder.fromJournalStore(_journal, changes: changes);
 
   Future<ArchiveExportPayload> buildSanitizedExport() async {
     final all = await _journal.loadAll();
@@ -354,6 +407,17 @@ class PrivateDataService {
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  Future<void> _deleteEntryMedia(JournalEntry entry) async {
+    for (final attachment in entry.mediaAttachments) {
+      if (attachment.localPath.trim().isNotEmpty) {
+        await _deleteFileIfExists(attachment.localPath);
+      }
+      if (attachment.encryptedThumbnailPath.trim().isNotEmpty) {
+        await _deleteFileIfExists(attachment.encryptedThumbnailPath);
+      }
     }
   }
 }

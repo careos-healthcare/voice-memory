@@ -24,6 +24,7 @@ class WatchForItem {
     this.checkInQuestion,
     this.promptStrength,
     this.comparisonHint,
+    this.isSuppressed = false,
   });
 
   final String id;
@@ -45,6 +46,9 @@ class WatchForItem {
 
   /// Quick-answer hint from [ReturnCaptureStore] when completing on return day.
   final String? comparisonHint;
+
+  /// Disables passive reminders until new evidence links to this target.
+  final bool isSuppressed;
 
   /// Rich prompts from [WatchForPromptEngine]; legacy items use [text] only.
   bool get hasRichPrompt =>
@@ -87,6 +91,7 @@ class WatchForItem {
     String? promptStrength,
     String? comparisonHint,
     bool clearComparisonHint = false,
+    bool? isSuppressed,
   }) {
     return WatchForItem(
       id: id ?? this.id,
@@ -108,6 +113,7 @@ class WatchForItem {
       comparisonHint: clearComparisonHint
           ? null
           : (comparisonHint ?? this.comparisonHint),
+      isSuppressed: isSuppressed ?? this.isSuppressed,
     );
   }
 
@@ -130,6 +136,7 @@ class WatchForItem {
     if (checkInQuestion != null) 'checkInQuestion': checkInQuestion,
     if (promptStrength != null) 'promptStrength': promptStrength,
     if (comparisonHint != null) 'comparisonHint': comparisonHint,
+    if (isSuppressed) 'isSuppressed': true,
   };
 
   static WatchForItem? fromJson(Map<String, dynamic>? json) {
@@ -177,6 +184,7 @@ class WatchForItem {
       checkInQuestion: json['checkInQuestion']?.toString(),
       promptStrength: json['promptStrength']?.toString(),
       comparisonHint: json['comparisonHint']?.toString(),
+      isSuppressed: json['isSuppressed'] == true,
     );
   }
 

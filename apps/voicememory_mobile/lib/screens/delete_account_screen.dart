@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api/api_error_message.dart';
+import '../security/local_privacy_data_controls.dart';
 import '../services/app_services.dart';
 import '../widgets/pushed_screen_shell.dart';
 
@@ -18,8 +19,14 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   Future<void> _delete() async {
     setState(() => _busy = true);
     try {
-      await AppServices.instance.api.deleteAccount();
-      await AppServices.instance.auth.signOut();
+      final services = AppServices.instance;
+      await services.authApi.deleteAccount();
+      try {
+        await LocalPrivacyDataControls.instance().clearLocalArchive();
+        await services.destroySanctuaryKeysAfterWipe();
+      } finally {
+        await services.auth.signOut();
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account deletion requested.')),
@@ -55,8 +62,8 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'This permanently deletes your server account and synced data. '
-              'Local reflections on this device are not removed unless you clear app data.',
+              'This permanently deletes your server account, synced data, '
+              'local moments, and retained audio on this device.',
             ),
             const SizedBox(height: 24),
             FilledButton(

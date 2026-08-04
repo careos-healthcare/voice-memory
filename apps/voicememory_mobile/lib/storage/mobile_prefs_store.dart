@@ -2,11 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-/// Non-secret app preferences (onboarding, paywall, discover baseline).
+import '../core/sync/journal_sync_conflict_resolver.dart';
+import 'secure_storage.dart';
+
+/// App preferences backed by platform secure storage in production.
+///
+/// [file] is retained only as a one-time plaintext migration source and as an
+/// explicitly selected test backend. Production callers inject
+/// [SecureStorageService], causing the legacy file to be securely migrated and
+/// deleted.
 class MobilePrefsStore {
-  MobilePrefsStore({required this.file});
+  MobilePrefsStore({required this.file, this._secureStorage});
 
   final File file;
+  final SecureStorageService? _secureStorage;
+  static const storageKey = 'mobile_prefs_json_v1';
+  static const journalSyncManifestKey = 'journalSyncManifestV1';
 
   /// Serializes read-modify-write sequences so concurrent updates (including
   /// fire-and-forget metric writes) cannot lose updates or corrupt the file.
@@ -27,27 +38,59 @@ class MobilePrefsStore {
     });
   }
 
-  static Future<MobilePrefsStore> open(String filePath) async {
+  static Future<MobilePrefsStore> open(
+    String filePath, {
+    SecureStorageService? secureStorage,
+  }) async {
     final file = File(filePath);
     if (!await file.parent.exists()) {
       await file.parent.create(recursive: true);
     }
+
+    final store = MobilePrefsStore(file: file, secureStorage: secureStorage);
+    if (secureStorage != null) {
+      final existing = await secureStorage.read(storageKey);
+      if (existing == null) {
+        final legacyRaw = await file.exists()
+            ? await file.readAsString()
+            : '{}';
+        final normalized = legacyRaw.trim().isEmpty ? '{}' : legacyRaw;
+        // Validate before migration so corrupt plaintext is never copied into
+        // the platform keychain/encrypted preferences backend.
+        jsonDecode(normalized) as Map<String, dynamic>;
+        await secureStorage.write(storageKey, normalized);
+      }
+      if (await file.exists()) {
+        await file.delete();
+      }
+      return store;
+    }
+
     if (!await file.exists()) {
       await file.writeAsString('{}');
     }
-    return MobilePrefsStore(file: file);
+    return store;
   }
 
   Future<Map<String, dynamic>> _read() async {
-    final raw = await file.readAsString();
+    final raw = _secureStorage == null
+        ? await file.readAsString()
+        : (await _secureStorage.read(storageKey) ?? '{}');
     if (raw.trim().isEmpty) return {};
     return jsonDecode(raw) as Map<String, dynamic>;
   }
 
   Future<void> _write(Map<String, dynamic> data) async {
+    final encoded = jsonEncode(data);
+    final secureStorage = _secureStorage;
+    if (secureStorage != null) {
+      await secureStorage.write(storageKey, encoded);
+      return;
+    }
+
     // Write to a temp file then rename so readers never see a partial file.
     final tmp = File('${file.path}.tmp');
-    await tmp.writeAsString(jsonEncode(data), flush: true);
+    await tmp.writeAsString(encoded, flush: true);
     await tmp.rename(file.path);
   }
 
@@ -106,6 +149,16 @@ class MobilePrefsStore {
 
   Future<void> setLastSyncAt(DateTime? at) async {
     await _update((data) => data['lastSyncAt'] = at?.toIso8601String());
+  }
+
+  Future<JournalSyncManifest?> get journalSyncManifest async {
+    final raw = (await _read())[journalSyncManifestKey];
+    if (raw is! Map) return null;
+    return JournalSyncManifest.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  Future<void> setJournalSyncManifest(JournalSyncManifest manifest) async {
+    await _update((data) => data[journalSyncManifestKey] = manifest.toJson());
   }
 
   Future<Map<String, dynamic>?> get discoverBaseline async {
@@ -174,5 +227,10 @@ class MobilePrefsStore {
 
   Future<void> writeJsonMap(String key, Map<String, dynamic> value) async {
     await _update((data) => data[key] = value);
+  }
+
+  /// Atomically removes [key] from the preferences payload.
+  Future<void> remove(String key) async {
+    await _update((data) => data.remove(key));
   }
 }

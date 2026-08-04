@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Memory surfacing — internal guide
 
 How ArchiveMe decides what to show, and what we deliberately avoid building.
@@ -109,3 +111,4 @@ Implementation: `lib/sync/merge-strategy.ts`, wired in `lib/sync/client.ts`.
 - [ ] New score gate? Add constant to `score-thresholds.ts`
 - [ ] New synced field? Extend `SyncContinuityModel` + merge function + schema version
 - [ ] User-visible copy? Run `npm run validate`
+

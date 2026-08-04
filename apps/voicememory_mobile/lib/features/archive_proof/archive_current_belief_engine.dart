@@ -80,7 +80,9 @@ abstract final class ArchiveCurrentBeliefEngine {
     return ArchiveBeliefSurfaceCopy.beliefWithPhrase(phrase);
   }
 
-  static String? _whatChangedRecently(RepeatReturnCheckChangeProof? changeProof) {
+  static String? _whatChangedRecently(
+    RepeatReturnCheckChangeProof? changeProof,
+  ) {
     final fromProof = ArchiveDisplayCopyGuard.sanitize(changeProof?.body);
     if (fromProof != null) return fromProof;
     return ArchiveBeliefSurfaceCopy.whatChangedFallback;

@@ -12,7 +12,7 @@ export const SESSION_MOVEMENT_COPY = {
   beliefWeakened: "A belief weakened as new evidence arrived.",
   beliefStrengthened: "A belief strengthened as new evidence arrived.",
   comparisonPoint:
-    "No major change yet. This reflection still gives the archive another comparison point.",
+    "No major change yet. This moment still gives the archive another comparison point.",
   comparisonBrowse:
     "No major change since your last visit. The archive is still comparing new evidence against your history.",
 } as const;

@@ -16,7 +16,7 @@ export const WHY_THIS_MATTERS_TOPICS: WhyThisMattersTopic[] = [
   },
   {
     id: "emotional_drift",
-    title: "Emotional drift",
+    title: "Emotional shift",
     summary: "How intensity and tone shift week to week.",
     detail:
       "A single entry is a snapshot. Over a week or two, averages and comparisons show whether things feel calmer, heavier, or steady. It is a trend line in your language, not a mood score from a clinician.",

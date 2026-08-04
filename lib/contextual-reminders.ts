@@ -34,7 +34,7 @@ export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   {
     kind: "stressful",
     message: "Your words from a heavy moment are still here",
-    whenShown: "After a stressful entry (intensity 7+) with no follow-up reflection",
+    whenShown: "After a stressful entry (intensity 7+) with no follow-up moment",
   },
   {
     kind: "weekly",
@@ -43,18 +43,18 @@ export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   },
   {
     kind: "usual_time",
-    message: "You usually reflect around this time",
-    whenShown: "Near your preferred daily reflection hour, if you have not reflected today",
+    message: "You often save a moment around this time",
+    whenShown: "Near your preferred daily moment hour, if you have not saved a moment today",
   },
   {
     kind: "daily",
     message: "When you're ready, a short voice note can help close the day",
-    whenShown: "Daily reflection preference on, no entry yet today",
+    whenShown: "Daily moment preference on, no save yet today",
   },
   {
     kind: "inactive",
     message: "Your words are still here when you are ready",
-    whenShown: "No reflection for 3+ days with inactivity reminders enabled",
+    whenShown: "No moment for 3+ days with inactivity reminders enabled",
   },
 ];
 
@@ -98,18 +98,18 @@ export function evaluateContextualReminders(
         id: "usual_time",
         kind: "usual_time",
         title: "Your usual time",
-        message: "You usually reflect around this time",
+        message: "You often save a moment around this time",
         href: "/",
-        cta: "Record reflection",
+        cta: "Record moment",
       });
     } else {
       reminders.push({
         id: "daily",
         kind: "daily",
-        title: "Daily reflection",
-        message: "When you're ready, a short voice note can help close the day",
+        title: "Save one real moment",
+        message: "When you're ready, one sentence is enough",
         href: "/",
-        cta: "Record reflection",
+        cta: "Record moment",
       });
     }
   }
@@ -131,7 +131,7 @@ export function evaluateContextualReminders(
           title: "After a heavy moment",
           message: "Your words from a heavy moment are still here",
           href: "/",
-          cta: "View reflections",
+          cta: "View moments",
         });
       }
     }
@@ -164,7 +164,7 @@ export function evaluateContextualReminders(
         title: "Gentle check-in",
         message: "Your words are still here when you are ready",
         href: "/",
-        cta: "View reflections",
+        cta: "View moments",
       });
     }
   }

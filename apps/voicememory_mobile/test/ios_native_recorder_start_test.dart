@@ -1,19 +1,18 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/voice_capture/audio/audio_capture_diagnostics.dart';
-import 'package:voicememory_mobile/features/voice_capture/audio/ios_native_recorder.dart';
+import 'package:voicememory_mobile/features/voice_capture/audio/native_audio_recorder.dart';
 
 void main() {
-  tearDown(() {
-    IosNativeRecorder.testPlatform = null;
-  });
-
   test('NativeRecorderException parses native failure step from platform', () {
     final exception = NativeRecorderException.fromPlatform(
       PlatformException(
         code: 'native_recorder_start',
         message: 'OSStatus error -50.',
-        details: const {'step': 'recorder_init_failed', 'reason': 'OSStatus error -50.'},
+        details: const {
+          'step': 'recorder_init_failed',
+          'reason': 'OSStatus error -50.',
+        },
       ),
     );
 
@@ -22,26 +21,34 @@ void main() {
   });
 
   test('native AAC start success returns resolved path', () async {
-    IosNativeRecorder.testPlatform = _AacSuccessPlatform();
-
-    final path = await IosNativeRecorder.startRecording('/tmp/vm_native.m4a');
-
-    expect(path, '/tmp/vm_native.m4a');
-  });
-
-  test('native start can resolve wav path after AAC fallback on device', () async {
-    IosNativeRecorder.testPlatform = _FallbackSuccessPlatform();
-
-    final path = await IosNativeRecorder.startRecording('/tmp/vm_native.m4a');
-
-    expect(path, '/tmp/vm_native.wav');
-  });
-
-  test('native both formats fail returns clean NativeRecorderException', () async {
-    IosNativeRecorder.testPlatform = _BothFailPlatform();
+    final recorder = NativeAudioRecorder(
+      platform: _ResolvedPathPlatform('/tmp/vm_native.m4a'),
+      config: const NativeAudioCaptureConfig(format: NativeAudioFormat.aac),
+    );
 
     expect(
-      () => IosNativeRecorder.startRecording('/tmp/vm_native.m4a'),
+      await recorder.startRecording('/tmp/vm_native.m4a'),
+      '/tmp/vm_native.m4a',
+    );
+  });
+
+  test('native start can resolve wav path after AAC fallback', () async {
+    final recorder = NativeAudioRecorder(
+      platform: _ResolvedPathPlatform('/tmp/vm_native.wav'),
+      config: const NativeAudioCaptureConfig(format: NativeAudioFormat.aac),
+    );
+
+    expect(
+      await recorder.startRecording('/tmp/vm_native.m4a'),
+      '/tmp/vm_native.wav',
+    );
+  });
+
+  test('native start failure remains a clean NativeRecorderException', () {
+    final recorder = NativeAudioRecorder(platform: _BothFailPlatform());
+
+    expect(
+      () => recorder.startRecording('/tmp/vm_native.wav'),
       throwsA(
         isA<NativeRecorderException>().having(
           (error) => error.step,
@@ -80,9 +87,9 @@ void main() {
   });
 }
 
-class _AacSuccessPlatform implements IosNativeRecorderPlatform {
+abstract class _BaseNativePlatform implements NativeAudioRecorderPlatform {
   @override
-  Future<NativeRecordingLevel> currentNativeLevel() async {
+  Future<NativeRecordingLevel> currentLevel() async {
     return const NativeRecordingLevel(
       currentDb: -25,
       peakDb: -20,
@@ -92,10 +99,13 @@ class _AacSuccessPlatform implements IosNativeRecorderPlatform {
   }
 
   @override
-  Future<bool> isNativeRecorderAvailable() async => true;
+  Future<void> dispose() async {}
 
   @override
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+  Future<bool> isAvailable() async => true;
+
+  @override
+  Future<NativeMicrophonePermission> microphonePermission() async {
     return const NativeMicrophonePermission(
       status: 'granted',
       granted: true,
@@ -104,77 +114,12 @@ class _AacSuccessPlatform implements IosNativeRecorderPlatform {
   }
 
   @override
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
+  Future<NativeMicrophonePermission> requestMicrophonePermission() async {
+    return microphonePermission();
   }
 
   @override
-  Future<String> startNativeRecording(
-    String path, {
-    required dynamic format,
-  }) async => path;
-
-  @override
-  Future<NativeRecordingStopResult> stopNativeRecording() async {
-    return const NativeRecordingStopResult(
-      path: '/tmp/vm_native.m4a',
-      bytes: 2048,
-      durationMs: 2500,
-      minDb: -30,
-      maxDb: -20,
-      avgDb: -25,
-      likelySilent: false,
-      format: 'aac',
-    );
-  }
-}
-
-class _FallbackSuccessPlatform implements IosNativeRecorderPlatform {
-  @override
-  Future<NativeRecordingLevel> currentNativeLevel() async {
-    return const NativeRecordingLevel(
-      currentDb: -25,
-      peakDb: -20,
-      maxDb: -20,
-      avgDb: -25,
-    );
-  }
-
-  @override
-  Future<bool> isNativeRecorderAvailable() async => true;
-
-  @override
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
-  }
-
-  @override
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
-  }
-
-  @override
-  Future<String> startNativeRecording(
-    String path, {
-    required dynamic format,
-  }) async {
-    return path.replaceAll('.m4a', '.wav');
-  }
-
-  @override
-  Future<NativeRecordingStopResult> stopNativeRecording() async {
+  Future<NativeRecordingStopResult> stop() async {
     return const NativeRecordingStopResult(
       path: '/tmp/vm_native.wav',
       bytes: 4096,
@@ -188,55 +133,33 @@ class _FallbackSuccessPlatform implements IosNativeRecorderPlatform {
   }
 }
 
-class _BothFailPlatform implements IosNativeRecorderPlatform {
+class _ResolvedPathPlatform extends _BaseNativePlatform {
+  _ResolvedPathPlatform(this.resolvedPath);
+
+  final String resolvedPath;
+
   @override
-  Future<NativeRecordingLevel> currentNativeLevel() async {
-    return const NativeRecordingLevel(
-      currentDb: -160,
-      peakDb: -160,
-      maxDb: -160,
-      avgDb: -160,
+  Future<NativeAudioStartResult> start(
+    String path,
+    NativeAudioCaptureConfig config,
+  ) async {
+    return NativeAudioStartResult(
+      path: resolvedPath,
+      format: resolvedPath.endsWith('.m4a') ? 'aac' : 'wav',
     );
   }
+}
 
+class _BothFailPlatform extends _BaseNativePlatform {
   @override
-  Future<bool> isNativeRecorderAvailable() async => true;
-
-  @override
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
-  }
-
-  @override
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
-  }
-
-  @override
-  Future<String> startNativeRecording(
-    String path, {
-    required dynamic format,
-  }) async {
+  Future<NativeAudioStartResult> start(
+    String path,
+    NativeAudioCaptureConfig config,
+  ) async {
     throw const NativeRecorderException(
       step: 'record_start_failed',
-      reason: 'AVAudioRecorder.record() returned false for wav',
+      reason: 'Native recorder returned false',
       format: 'wav',
-    );
-  }
-
-  @override
-  Future<NativeRecordingStopResult> stopNativeRecording() async {
-    throw const NativeRecorderException(
-      step: 'stop',
-      reason: 'No active native recording',
     );
   }
 }

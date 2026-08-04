@@ -51,17 +51,23 @@ void main() {
     expect(summary.likelySilent, isTrue);
   });
 
-  test('shouldRetryForInitialSilence when max stays below retry threshold', () async {
-    final monitor = AudioLevelMonitor();
-    final controller = StreamController<Amplitude>();
+  test(
+    'shouldRetryForInitialSilence when max stays below retry threshold',
+    () async {
+      final monitor = AudioLevelMonitor();
+      final controller = StreamController<Amplitude>();
 
-    monitor.start(_FakeRecorder(controller.stream));
-    controller.add(Amplitude(current: -62, max: -58));
-    await pumpEventQueue();
+      monitor.start(_FakeRecorder(controller.stream));
+      controller.add(Amplitude(current: -62, max: -58));
+      await pumpEventQueue();
 
-    expect(monitor.shouldRetryForInitialSilence(isIosPhysical: true), isTrue);
-    expect(monitor.shouldRetryForInitialSilence(isIosPhysical: false), isFalse);
-  });
+      expect(monitor.shouldRetryForInitialSilence(isIosPhysical: true), isTrue);
+      expect(
+        monitor.shouldRetryForInitialSilence(isIosPhysical: false),
+        isFalse,
+      );
+    },
+  );
 
   test('does not retry when max rises above retry threshold', () async {
     final monitor = AudioLevelMonitor();

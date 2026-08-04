@@ -46,10 +46,7 @@ class ArchiveBeliefThread {
 }
 
 class ArchiveEvidenceTimelineStep {
-  const ArchiveEvidenceTimelineStep({
-    required this.label,
-    required this.body,
-  });
+  const ArchiveEvidenceTimelineStep({required this.label, required this.body});
 
   final String label;
   final String body;

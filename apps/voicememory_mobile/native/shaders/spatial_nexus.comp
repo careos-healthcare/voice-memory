@@ -1,0 +1,25 @@
+#version 450
+
+layout(local_size_x = 64) in;
+
+struct Particle {
+  vec4 positionRadius;
+  vec4 velocityValence;
+};
+
+layout(std430, binding = 0) buffer ParticleBuffer {
+  Particle particles[];
+};
+
+layout(push_constant) uniform Simulation {
+  uint count;
+  float timeStep;
+} simulation;
+
+void main() {
+  uint index = gl_GlobalInvocationID.x;
+  if (index >= simulation.count) return;
+  particles[index].velocityValence.xyz *= 0.92;
+  particles[index].positionRadius.xyz +=
+      particles[index].velocityValence.xyz * simulation.timeStep;
+}

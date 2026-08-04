@@ -16,8 +16,7 @@ abstract class VoiceCaptureQuality {
   }
 
   static bool isVoiceEntry(JournalEntry entry) {
-    final path = entry.localAudioPath?.trim() ?? '';
-    return path.isNotEmpty;
+    return entry.localAudioReference?.isNotEmpty == true;
   }
 
   static bool hasUsableSpokenText(JournalEntry entry) {

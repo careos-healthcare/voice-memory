@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Share Cards Plan (Growth Loop V1)
 
 ## Goal
@@ -56,3 +58,4 @@ ArchiveMe
 
 - New social graph or in-app feed
 - AI-generated share copy (GPT-5 synthesis not required for cards)
+

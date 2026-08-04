@@ -15,20 +15,16 @@ enum PatternReviewInboxItemType {
   patternRename;
 
   String get analyticsValue => switch (this) {
-        PatternReviewInboxItemType.firstProofTruth => 'first_proof_truth',
-        PatternReviewInboxItemType.whatChanged => 'what_changed',
-        PatternReviewInboxItemType.patternCorrection => 'pattern_correction',
-        PatternReviewInboxItemType.quietSignal => 'quiet_signal',
-        PatternReviewInboxItemType.helpedTracking => 'helped_tracking',
-        PatternReviewInboxItemType.patternRename => 'pattern_rename',
-      };
+    PatternReviewInboxItemType.firstProofTruth => 'first_proof_truth',
+    PatternReviewInboxItemType.whatChanged => 'what_changed',
+    PatternReviewInboxItemType.patternCorrection => 'pattern_correction',
+    PatternReviewInboxItemType.quietSignal => 'quiet_signal',
+    PatternReviewInboxItemType.helpedTracking => 'helped_tracking',
+    PatternReviewInboxItemType.patternRename => 'pattern_rename',
+  };
 }
 
-enum PatternReviewInboxChip {
-  needsCheck,
-  optional,
-  quietSignal,
-}
+enum PatternReviewInboxChip { needsCheck, optional, quietSignal }
 
 /// One review item gathered from existing engines.
 class PatternReviewInboxItem {

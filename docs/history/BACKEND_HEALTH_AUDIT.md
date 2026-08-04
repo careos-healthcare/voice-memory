@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Backend health audit — Settings > Backend health shows "unreachable"
 
 **Scope:** Read-only audit of the Flutter mobile app (`apps/voicememory_mobile`). No code was changed.
@@ -255,3 +257,4 @@ flutter run --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.ve
 
 - **No on-device run** was performed in this audit; URL and status for your machine depend on how `flutter run` / `.env` / defines were set.
 - **No code changes** were made; fixes above are operational (run commands, env files) except where platform policy (ATS/cleartext) or Settings error handling would need code changes.
+

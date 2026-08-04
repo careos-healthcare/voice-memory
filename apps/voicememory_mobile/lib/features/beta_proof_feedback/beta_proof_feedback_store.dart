@@ -22,7 +22,10 @@ class BetaProofFeedbackStore {
   static bool isAnsweredToday(BetaProofFeedbackSurface surface) {
     final record = recordFor(surface);
     final day = record.dateKey;
-    return record.answered && day != null && day.isNotEmpty && day == _todayUtc();
+    return record.answered &&
+        day != null &&
+        day.isNotEmpty &&
+        day == _todayUtc();
   }
 
   static BetaProofFeedbackStore instance() =>
@@ -50,8 +53,9 @@ class BetaProofFeedbackStore {
       if (entry is Map<String, dynamic>) {
         _cached[surface] = BetaProofFeedbackRecord.fromJson(entry);
       } else if (entry is Map) {
-        _cached[surface] =
-            BetaProofFeedbackRecord.fromJson(Map<String, dynamic>.from(entry));
+        _cached[surface] = BetaProofFeedbackRecord.fromJson(
+          Map<String, dynamic>.from(entry),
+        );
       }
     }
   }

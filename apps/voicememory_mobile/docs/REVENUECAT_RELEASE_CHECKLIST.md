@@ -10,15 +10,24 @@
 
 Set at build time only — via CI secrets, Xcode scheme, or `flutter build` `--dart-define`.
 
-## RevenueCat dashboard setup
+## External console checklist (not evidence of completed changes)
 
-- [ ] Entitlement ID: `pro` (matches `RevenueCatService.proEntitlementId`)
-- [ ] Offering ID: configure in RevenueCat; app uses `offerings.current`
-- [ ] Monthly product ID: `com.voicememory.app.pro.monthly` (App Store + Play — set in dashboard)
-- [ ] Annual product ID: `com.voicememory.app.pro.annual` (App Store + Play — set in dashboard)
-- [ ] Product IDs linked to offering packages (`monthly`, `annual`)
+- [ ] In RevenueCat, confirm primary entitlement ID: `archive_loop_pro` (legacy `pro` is read-only
+  migration compatibility)
+- [ ] In RevenueCat, set the intended offering as current; the app reads
+  `offerings.current` unless an offering ID is explicitly provided
+- [ ] In the store consoles, create the intended monthly and annual products
+- [ ] In RevenueCat, link those products to exactly the `monthly` and `annual`
+  package types; do not expose a lifetime package
+- [ ] Optionally pass `REVENUECAT_MONTHLY_PRODUCT_ID` and
+  `REVENUECAT_YEARLY_PRODUCT_ID` to validate identifiers for a release
+- [ ] Restore behavior: **Transfer to new App User ID**
 - [ ] App Store Connect / Play Console products created and approved
 - [ ] Entitlement attached to both products
+
+Completing this file does not claim that RevenueCat, App Store Connect, or Play
+Console was changed. Attach external screenshots and physical-device evidence
+before marking paid launch ready.
 
 ## iOS test purchase steps
 

@@ -7,12 +7,14 @@ import { getEmailMode } from "@/lib/server/email-mode";
 import { verifyMigrations } from "@/lib/server/migration-verify";
 import { getProductionReadinessSnapshot } from "@/lib/server/production-readiness";
 import { logServerEvent } from "@/lib/server/structured-log";
+import { getUnitEconomicsReadiness } from "@/lib/server/unit-economics-readiness";
 
 export const runtime = "nodejs";
 
 /** Deep readiness — checks DB migrations and billing config. Use `/api/healthz` for liveness. */
 export async function GET() {
   const snapshot = getProductionReadinessSnapshot();
+  const unitEconomics = await getUnitEconomicsReadiness();
   let databaseReachable = false;
   let migrationsOk = false;
 
@@ -29,6 +31,7 @@ export async function GET() {
   const healthy =
     databaseReachable &&
     migrationsOk &&
+    unitEconomics.ready &&
     (!process.env.NODE_ENV ||
       process.env.NODE_ENV !== "production" ||
       (snapshot.rateLimiterDurable && snapshot.stripeConfigured));
@@ -50,6 +53,13 @@ export async function GET() {
       stripeConfigured: isStripeConfigured(),
       emailMode: getEmailMode(),
       productionEnvOk: snapshot.envOk,
+      unitEconomics: {
+        ready: unitEconomics.ready,
+        enabled: unitEconomics.enabled,
+        pricingRequired: unitEconomics.pricingRequired,
+        activePricingVersion: unitEconomics.activePricingVersion,
+        codes: unitEconomics.codes,
+      },
     },
-  });
+  }, { status: healthy ? 200 : 503 });
 }

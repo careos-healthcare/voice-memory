@@ -6,7 +6,7 @@ export const THEORY_RESOLUTION_COPY = {
   softening: "This may be softening",
   mayNoLongerFit: "This theory may no longer fit",
   behaviorChanging:
-    "Your recent reflections suggest this pattern may be changing",
+    "Your recent moments suggest this pattern may be changing",
 } as const;
 
 const RECENT_BEHAVIOR_DAYS = 14;

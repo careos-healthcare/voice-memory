@@ -87,23 +87,22 @@ abstract final class BetaImprovementPackEngine {
   static bool preferTypedCaptureFirst({
     required int entryCount,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      BetaImprovementRecommendationGate.shouldApplyBranch(
-        branch: BetaImprovementBranch.captureFriction,
-        entryCount: entryCount,
-        hasMeaningfulProof: false,
-        outcomesOverride: outcomesOverride,
-      );
+  }) => BetaImprovementRecommendationGate.shouldApplyBranch(
+    branch: BetaImprovementBranch.captureFriction,
+    entryCount: entryCount,
+    hasMeaningfulProof: false,
+    outcomesOverride: outcomesOverride,
+  );
 
   static String typedCapturePrompt({required String fallback}) =>
       preferTypedCaptureFirst(entryCount: 0)
-          ? CaptureFrictionCopyFix.typedCapturePrompt
-          : fallback;
+      ? CaptureFrictionCopyFix.typedCapturePrompt
+      : fallback;
 
   static String typeInsteadLabel({required String fallback}) =>
       preferTypedCaptureFirst(entryCount: 0)
-          ? CaptureFrictionCopyFix.typeInsteadLabel
-          : fallback;
+      ? CaptureFrictionCopyFix.typeInsteadLabel
+      : fallback;
 
   static FirstSessionCaptureRepairResult? applyCaptureRepair({
     required FirstSessionCaptureRepairResult base,
@@ -173,23 +172,21 @@ abstract final class BetaImprovementPackEngine {
     String? groundedPhrase,
     List<String>? snippetQuotes,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      ProofEmotionalClarityEngine.build(
-        entries: entries,
-        calibration: calibration,
-        hasStrongEvidence: hasStrongEvidence,
-        groundedPhrase: groundedPhrase,
-        snippetQuotes: snippetQuotes,
-        outcomesOverride: outcomesOverride,
-      );
+  }) => ProofEmotionalClarityEngine.build(
+    entries: entries,
+    calibration: calibration,
+    hasStrongEvidence: hasStrongEvidence,
+    groundedPhrase: groundedPhrase,
+    snippetQuotes: snippetQuotes,
+    outcomesOverride: outcomesOverride,
+  );
 
   static String firstProofHeadline({
     required int entryCount,
     required bool hasStrongEvidence,
     required String fallback,
     ProofEmotionalClarityDisplay? emotionalClarity,
-  }) =>
-      emotionalClarity?.headline ?? fallback;
+  }) => emotionalClarity?.headline ?? fallback;
 
   static String? firstProofWhyMattersLine({
     required int entryCount,
@@ -311,15 +308,13 @@ abstract final class BetaImprovementPackEngine {
     return rows;
   }
 
-  static String? proFreeLine() =>
-      ProofToProPathEngine.allowsProPackaging()
-          ? ProPackagingCopyFix.freeLine
-          : null;
+  static String? proFreeLine() => ProofToProPathEngine.allowsProPackaging()
+      ? ProPackagingCopyFix.freeLine
+      : null;
 
-  static String? proPaidLine() =>
-      ProofToProPathEngine.allowsProPackaging()
-          ? ProPackagingCopyFix.proLine
-          : null;
+  static String? proPaidLine() => ProofToProPathEngine.allowsProPackaging()
+      ? ProPackagingCopyFix.proLine
+      : null;
 
   static ProofToProPathModel proofToProPath({
     required int entryCount,
@@ -327,16 +322,16 @@ abstract final class BetaImprovementPackEngine {
     bool proofClarityRenderable = false,
     bool firstProofPayoffVisible = false,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      ProofToProPathEngine.build(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        proofClarityRenderable: proofClarityRenderable,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        outcomesOverride: outcomesOverride,
-      );
+  }) => ProofToProPathEngine.build(
+    entryCount: entryCount,
+    hasMeaningfulProof: hasMeaningfulProof,
+    proofClarityRenderable: proofClarityRenderable,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    outcomesOverride: outcomesOverride,
+  );
 
-  static String? paywallHeadline() => ProPackagingBranchEngine.paywallHeadline();
+  static String? paywallHeadline() =>
+      ProPackagingBranchEngine.paywallHeadline();
 
   static String? paywallSubheadline() =>
       ProPackagingBranchEngine.paywallSubheadline();
@@ -362,6 +357,6 @@ abstract final class BetaImprovementPackEngine {
       BetaImprovementRecommendationGate.isBranchActive(
         BetaImprovementBranch.recordOnboardingCopy,
       )
-          ? RecordOnboardingCopyFix.body
-          : ProgressiveEvidenceStateCopy.zeroBody;
+      ? RecordOnboardingCopyFix.body
+      : ProgressiveEvidenceStateCopy.zeroBody;
 }

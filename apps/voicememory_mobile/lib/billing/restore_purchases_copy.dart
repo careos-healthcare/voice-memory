@@ -6,6 +6,9 @@ abstract final class RestorePurchasesCopy {
 
   static const purchaseRestored = 'Purchase restored. Pro is active.';
 
+  static const cachedAccessRetained =
+      'You are offline. Existing Pro access remains available; reconnect to check purchases.';
+
   static const noActivePurchase =
       'No previous Pro purchase was found on this Apple ID.';
 

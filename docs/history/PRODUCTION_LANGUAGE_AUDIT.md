@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Production Language Audit
 
 **Date:** 2026-05-25  
@@ -114,3 +116,4 @@ cd apps/voicememory_mobile && flutter test test/settings_screen_widget_test.dart
 ## Sign-off
 
 Production customer paths (record, archive, account sign-in, blind spots, pricing preview card, onboarding privacy-simple) no longer surface the scanned engineering terms. QA and founder tooling retains explicit labels behind gates.
+

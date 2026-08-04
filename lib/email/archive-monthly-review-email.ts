@@ -66,7 +66,7 @@ export function buildArchiveMonthlyReviewBody(
     "Your ArchiveMe monthly archive review",
     "",
     `Month: ${review.monthKey}`,
-    `Reflections in archive: ${review.eligibleCount}`,
+    `Saved moments in archive: ${review.eligibleCount}`,
     "",
   ];
 

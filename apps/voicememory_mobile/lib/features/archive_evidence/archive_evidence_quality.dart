@@ -235,7 +235,10 @@ abstract final class ArchiveEvidenceQuality {
   }
 
   static bool _isGenericTestText(String text) {
-    final normalized = text.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+    final normalized = text
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim()
+        .toLowerCase();
     if (normalized.isEmpty) return true;
 
     for (final phrase in _genericTestPhrases) {
@@ -248,25 +251,35 @@ abstract final class ArchiveEvidenceQuality {
     }
 
     final stripped = normalized.replaceAll(RegExp(r'[^\w\s]'), '').trim();
-    final wordList =
-        stripped.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final wordList = stripped
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
 
     if (RegExp(r'\btests?\b').hasMatch(normalized)) {
-      final harnessHits =
-          wordList.where((w) => _genericTestHarnessTokens.contains(w)).length;
+      final harnessHits = wordList
+          .where((w) => _genericTestHarnessTokens.contains(w))
+          .length;
       if (harnessHits >= 2) return true;
       if (wordList.contains('test') && wordList.length <= 8) return true;
     }
 
     if (wordList.length <= 2 &&
         wordList.every(
-          (w) => const {'test', 'testing', 'hello', 'checking', 'mic'}.contains(w),
+          (w) =>
+              const {'test', 'testing', 'hello', 'checking', 'mic'}.contains(w),
         )) {
       return true;
     }
 
     if (wordList.length == 1 &&
-        const {'test', 'testing', 'hello', 'checking', 'mic'}.contains(wordList.single)) {
+        const {
+          'test',
+          'testing',
+          'hello',
+          'checking',
+          'mic',
+        }.contains(wordList.single)) {
       return true;
     }
 

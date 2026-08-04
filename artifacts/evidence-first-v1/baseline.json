@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-08-02T02:47:00+01:00",
+  "repositoryRoot": "/Users/chiragpatel/Projects/voice-memory",
+  "branch": "main",
+  "head": "81fc184c9b4a026564c9f427a9b4f9078b9e5883",
+  "workingTreeDirty": true,
+  "toolchain": {
+    "flutter": "3.44.6",
+    "dart": "3.12.2",
+    "node": "25.2.1"
+  },
+  "releaseSlice": {
+    "primaryRoutes": 4,
+    "canonicalConclusion": "ExplainableConclusion",
+    "canonicalValidator": "ExplainableConclusionValidator",
+    "shippingClient": "Flutter mobile",
+    "backend": "Next.js API-only artifact"
+  },
+  "verificationStatus": "pending"
+}

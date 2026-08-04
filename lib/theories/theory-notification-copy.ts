@@ -73,7 +73,7 @@ export function copyForNotification(input: {
         title: "This theory may no longer fit.",
         body: sanitizeNotificationCopy(
           input.evidenceSummary ||
-            `A theory about ${hint} may have been retired — later reflections may not support it.`,
+            `A theory about ${hint} may have been retired — later moments may not support it.`,
         ),
         importance: "high",
         relatedRoute: "/theories",
@@ -103,7 +103,7 @@ export function copyForNotification(input: {
         title: "A prediction outcome may have shifted.",
         body: sanitizeNotificationCopy(
           input.evidenceSummary ||
-            `Later reflections may not match what you expected for ${hint}.`,
+            `Later moments may not match what you expected for ${hint}.`,
         ),
         importance: "medium",
         relatedRoute: "/discover",

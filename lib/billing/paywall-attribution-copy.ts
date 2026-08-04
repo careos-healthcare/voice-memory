@@ -10,13 +10,13 @@ export const PAYWALL_INTEREST_QUESTION = "What made Pro interesting?";
 
 export const CONVERSION_REASON_QUESTION = "What convinced you?";
 
-export const PAYWALL_ATTRIBUTION_DISMISS = "Skip";
+export const PAYWALL_ATTRIBUTION_DISMISS = "Not today";
 
 export const PAYWALL_REJECTION_LABELS: Record<PaywallRejectionReasonId, string> = {
   too_expensive: "Too expensive",
   need_more_proof: "Need more proof",
   just_exploring: "Just exploring",
-  not_enough_reflections: "Not enough reflections yet",
+  not_enough_reflections: "Not enough moments yet",
   not_useful_enough: "Not useful enough",
   prefer_free_tools: "Prefer free tools",
   other: "Other",

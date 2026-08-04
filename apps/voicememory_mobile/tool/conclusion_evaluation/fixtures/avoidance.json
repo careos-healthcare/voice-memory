@@ -1,0 +1,125 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "avoid_001_avoided_to_engaged",
+      "entryA": {
+        "id": "avoid_001_a",
+        "transcript": "I avoided the difficult email and felt guilty.",
+        "capturedAt": "2026-05-01T09:00:00Z"
+      },
+      "entryB": {
+        "id": "avoid_001_b",
+        "transcript": "I engaged with the difficult email and felt relieved.",
+        "capturedAt": "2026-06-10T09:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "behaviouralResponse:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "Email — how you responded looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are no longer an avoidant person.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "You felt relieved because you engaged.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "avoidance",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "avoid_002_still_avoiding_repeat",
+      "entryA": {
+        "id": "avoid_002_a",
+        "transcript": "I avoided the difficult email and felt guilty.",
+        "capturedAt": "2026-05-02T09:00:00Z"
+      },
+      "entryB": {
+        "id": "avoid_002_b",
+        "transcript": "I avoided the difficult email again and felt guilty.",
+        "capturedAt": "2026-06-11T09:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated how you responded to the difficult email.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How you responded to the difficult email looks different across these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You always avoid difficult things.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "avoidance",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "avoid_003_conflicting_intensity_and_certainty",
+      "entryA": {
+        "id": "avoid_003_a",
+        "transcript": "I avoided the call and felt very anxious and I was unsure.",
+        "capturedAt": "2026-05-03T11:00:00Z"
+      },
+      "entryB": {
+        "id": "avoid_003_b",
+        "transcript": "I avoided the call and felt less anxious and I was certain.",
+        "capturedAt": "2026-06-12T11:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "How strongly you felt it looks less across these saved moments.",
+          "violation": "unsupportedDirection"
+        }
+      ],
+      "expectedSuppressionReason": "conflictingDimensionEvidence",
+      "sourceDomain": "avoidance",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "avoid_004_unrelated_moments",
+      "entryA": {
+        "id": "avoid_004_a",
+        "transcript": "I avoided the difficult email and felt guilty.",
+        "capturedAt": "2026-05-04T09:00:00Z"
+      },
+      "entryB": {
+        "id": "avoid_004_b",
+        "transcript": "I booked the train tickets for the coast trip.",
+        "capturedAt": "2026-06-13T09:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "How you responded to the difficult email looks different across these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "avoidance",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

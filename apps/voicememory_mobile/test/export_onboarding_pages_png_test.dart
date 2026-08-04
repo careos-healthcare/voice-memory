@@ -6,12 +6,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_pages.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_visuals.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/onboarding_screen.dart';
 import 'package:voicememory_mobile/theme/app_colors.dart';
 import 'package:voicememory_mobile/theme/app_spacing.dart';
 
-/// Exports onboarding-1.png … onboarding-4.png for design review.
+/// Exports the single pre-capture promise for design review.
 ///
 /// Run:
 /// ```bash
@@ -175,7 +173,7 @@ class _OnboardingExportFrame extends StatelessWidget {
                     child: isLast
                         ? FilledButton(
                             onPressed: () {},
-                            child: Text(ConsumerUiCopy.onboardingFinalCta),
+                            child: const Text(OnboardingPages.primaryAction),
                           )
                         : FilledButton(
                             onPressed: () {},

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/features/archive_tab/archive_tab_four_state_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 
 void main() {
@@ -22,18 +21,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(
-      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewTitle),
+      find.textContaining(ArchiveTabFourStateCopy.emptyBody),
       findsOneWidget,
     );
-    expect(
-      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBody),
-      findsOneWidget,
-    );
-    expect(
-      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewCta),
-      findsOneWidget,
-    );
-    expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
+    expect(find.text(ArchiveTabFourStateCopy.recordMomentCta), findsOneWidget);
     expect(find.textContaining('freedom, but I keep choosing'), findsNothing);
     expect(find.textContaining('VoiceMemory'), findsNothing);
     expect(find.textContaining('Your archive is ready'), findsNothing);

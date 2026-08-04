@@ -58,7 +58,7 @@ export function EmergingPatternsSection({
               </div>
               <p className="mt-2 text-sm leading-relaxed text-zinc-400">{pattern.hypothesis}</p>
               <p className="text-xs text-zinc-600">
-                {pattern.matchingReflections} related reflections — hypothesis only
+                {pattern.matchingReflections} related moments — hypothesis only
               </p>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -75,7 +75,7 @@ export function EmergingPatternsSection({
                     href={`/entry/${item.entryId}`}
                     className="mt-2 inline-block text-xs text-zinc-500 hover:text-violet-300"
                   >
-                    Open reflection
+                    Open moment
                   </Link>
                 </div>
               ))}

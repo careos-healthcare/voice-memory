@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/micro_habit_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/micro_habit_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/micro_habit"
+        android:textColor="#1A1A1A"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/micro_habit_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#E0E7FF"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/habit_not_done"
+        android:textColor="#3730A3"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -61,7 +61,7 @@ function repeatedPhraseNotice(
   if (phrasePattern?.evidence[0]?.phrase) {
     return {
       kind: "repeated_phrase",
-      detail: trimLine(`“${phrasePattern.evidence[0].phrase}” echoed across reflections.`),
+      detail: trimLine(`“${phrasePattern.evidence[0].phrase}” echoed across saved moments.`),
     };
   }
 
@@ -73,7 +73,7 @@ function repeatedPhraseNotice(
     if (hit && needle.length >= 8) {
       return {
         kind: "repeated_phrase",
-        detail: trimLine(`Similar wording to an earlier reflection: “${needle}”.`),
+        detail: trimLine(`Similar wording to an earlier saved moment: “${needle}”.`),
       };
     }
   }
@@ -151,7 +151,7 @@ function theoryMovementNotice(
   return {
     kind: "theory_movement",
     detail: trimLine(
-      `Archive linked this reflection to a working theory (${trimLine(lead.statement, 60)}).`,
+      `Archive linked this saved moment to a working theory (${trimLine(lead.statement, 60)}).`,
     ),
   };
 }
@@ -218,7 +218,7 @@ function contradictionNotice(
   if (lead && lead.contradictingEvidenceCount > 0 && leadTouchesNew) {
     return {
       kind: "contradiction",
-      detail: "Recent reflections may pull in different directions on the same thread.",
+      detail: "Recent saved moments may pull in different directions on the same thread.",
     };
   }
 
@@ -239,14 +239,14 @@ function newEvidenceNotice(
     return {
       kind: "new_evidence",
       detail: trimLine(
-        `${lead.supportingEvidenceCount} supporting reflection${lead.supportingEvidenceCount === 1 ? "" : "s"} in archive for this thread.`,
+        `${lead.supportingEvidenceCount} supporting moment${lead.supportingEvidenceCount === 1 ? "" : "s"} in archive for this thread.`,
       ),
     };
   }
 
   return {
     kind: "new_evidence",
-    detail: `Your archive now has ${afterCount} reflection${afterCount === 1 ? "" : "s"} to compare.`,
+    detail: `Your archive now has ${afterCount} saved moment${afterCount === 1 ? "" : "s"} to compare.`,
   };
 }
 
@@ -264,7 +264,7 @@ function pickNotice(
     contradictionNotice(entriesBefore, entriesAfter, newEntryId) ??
     newEvidenceNotice(entriesBefore, entriesAfter) ?? {
       kind: "new_evidence",
-      detail: "Your archive is actively comparing this reflection against prior evidence.",
+      detail: "Your archive is actively comparing this saved moment against prior evidence.",
     }
   );
 }

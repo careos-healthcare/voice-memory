@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../storage/mobile_prefs_store.dart';
+import 'app_feature_flags.dart';
 import 'screenshot_mode.dart';
 
 /// Clean ArchiveMe demo archive for screenshots and short videos.
@@ -23,7 +24,13 @@ abstract class ArchiveMeDemoState {
   static bool get enabledCompileTime => ScreenshotMode.archiveMeDemoPreview;
 
   @visibleForTesting
-  static bool debugForceEnabledForTest = false;
+  static bool get debugForceEnabledForTest =>
+      AppFeatureFlags.testOverrides.archiveMeDemoEnabled;
+
+  @visibleForTesting
+  static set debugForceEnabledForTest(bool enabled) {
+    AppFeatureFlags.testOverrides.archiveMeDemoEnabled = enabled;
+  }
 
   /// Debug-only in-memory toggle — never persisted, easy to reset.
   static bool _debugSessionEnabled = false;
@@ -63,10 +70,12 @@ abstract class ArchiveMeDemoState {
     _debugSessionEnabled = false;
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void clearSessionState() {
     debugForceEnabledForTest = false;
     _debugSessionEnabled = false;
     _reviewDemoUnlocked = false;
   }
+
+  @visibleForTesting
+  static void resetForTest() => clearSessionState();
 }

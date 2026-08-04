@@ -8,7 +8,7 @@ abstract class AppLockCopy {
   static const String settingsBody =
       'This protects the archive on this device.';
   static const String relockTimeoutNote =
-      'Relocks after about 2 minutes in the background.';
+      'Relocks whenever you return from the background.';
   static const String settingsBiometricsLabel =
       'Use Face ID or Touch ID when available.';
   static const String settingsChangePin = 'Change PIN';

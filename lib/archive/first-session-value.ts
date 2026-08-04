@@ -19,6 +19,6 @@ export function buildFirstSessionValueView(
     evidenceAdded: 1,
     observationCount: 1,
     observationLabel: count === 1 ? "1 observation" : `${count} observations`,
-    nextMilestone: "Evidence begins connecting after a few reflections.",
+    nextMilestone: "Evidence begins connecting after a few saved moments.",
   };
 }

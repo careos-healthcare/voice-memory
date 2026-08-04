@@ -1,324 +1,76 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/billing/billing_async_guard.dart';
-import 'package:voicememory_mobile/billing/billing_service.dart';
-import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
-import 'package:voicememory_mobile/billing/restore_purchases_feedback.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/billing/store_billing_port.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/storage/entitlement_cache.dart';
+import 'package:voicememory_mobile/subscriptions/domain/subscription_models.dart';
 
-class _FakeStoreBilling implements StoreBillingPort {
-  _FakeStoreBilling({
-    this.configured = true,
-    PremiumEntitlements? restoreResult,
-    this.restoreError,
-    PremiumEntitlements? refreshResult,
-    this.restoreDelay = Duration.zero,
-  })  : _restoreResult = restoreResult ?? PremiumEntitlements.free(),
-        _refreshResult =
-            refreshResult ?? restoreResult ?? PremiumEntitlements.free();
+import 'subscriptions/fake_subscription_repository.dart';
 
-  final bool configured;
-  final PremiumEntitlements _restoreResult;
-  final PremiumEntitlements _refreshResult;
-  final Object? restoreError;
-  final Duration restoreDelay;
-
-  int restoreCalls = 0;
-  int refreshCalls = 0;
-
-  @override
-  bool get isConfigured => configured;
-
-  @override
-  Stream<PremiumEntitlements> get entitlementStream => const Stream.empty();
-
-  @override
-  Future<PremiumEntitlements> restorePurchases() async {
-    restoreCalls++;
-    if (restoreError != null) throw restoreError!;
-    await Future<void>.delayed(restoreDelay);
-    return _restoreResult;
-  }
-
-  @override
-  Future<PremiumEntitlements> refreshEntitlements() async {
-    refreshCalls++;
-    return _refreshResult;
-  }
-
-  @override
-  Future<PremiumEntitlements> purchasePackage(Package package) async =>
-      _restoreResult;
-}
-
-PremiumEntitlements _proEntitlements() => const PremiumEntitlements(
-      tier: BillingTier.pro,
-      entitlementIds: ['pro'],
-      billingConnected: true,
-      source: 'revenuecat',
-    );
-
-Future<({BillingService billing, EntitlementCache cache, Directory dir})>
-    _openBillingHarness(_FakeStoreBilling store) async {
-  final dir = await Directory.systemTemp.createTemp('restore_flow_test');
-  final cache = await EntitlementCache.open('${dir.path}/entitlements.json');
-  final billing = BillingService(
-    ApiClient(baseUrl: 'http://test.invalid'),
-    cache,
-    store,
-  );
-  return (billing: billing, cache: cache, dir: dir);
-}
+const _pro = SubscriptionState(
+  tier: SubscriptionTier.pro,
+  entitlementIds: [SubscriptionEntitlements.pro],
+  billingConnected: true,
+  origin: SubscriptionStateOrigin.store,
+);
 
 void main() {
-  group('RestorePurchasesCopy', () {
-    test('uses App Store-safe restore messaging', () {
-      expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-      expect(RestorePurchasesCopy.purchaseRestored, 'Purchase restored. Pro is active.');
-      expect(
-        RestorePurchasesCopy.noActivePurchase,
-        'No previous Pro purchase was found on this Apple ID.',
-      );
-      expect(
-        RestorePurchasesCopy.restoreError,
-        'We could not check purchases right now. Please try again.',
-      );
-    });
+  test('returns restored when repository verifies Pro', () async {
+    final repository = FakeSubscriptionRepository(state: _pro);
+    final result = await RestorePurchasesFlow(repository: repository).restore();
+
+    expect(result.outcome, RestorePurchasesOutcome.restored);
+    expect(result.subscriptionState, same(_pro));
+    expect(repository.restoreCalls, 1);
   });
 
-  group('RestorePurchasesFlow', () {
-    late Directory tempDir;
-    late _FakeStoreBilling store;
-    late BillingService billing;
-    late RestorePurchasesFlow flow;
+  test('returns no purchase for verified free state', () async {
+    final repository = FakeSubscriptionRepository();
+    final result = await RestorePurchasesFlow(repository: repository).restore();
 
-    setUp(() async {
-      store = _FakeStoreBilling();
-      final harness = await _openBillingHarness(store);
-      tempDir = harness.dir;
-      billing = harness.billing;
-      flow = RestorePurchasesFlow(
-        billing: billing,
-        isBillingConfigured: () => store.configured,
-      );
-    });
-
-    tearDown(() async {
-      if (await tempDir.exists()) {
-        await tempDir.delete(recursive: true);
-      }
-    });
-
-    test('restore success updates entitlement state', () async {
-      store = _FakeStoreBilling(
-        restoreResult: _proEntitlements(),
-        refreshResult: _proEntitlements(),
-      );
-      final harness = await _openBillingHarness(store);
-      tempDir = harness.dir;
-      flow = RestorePurchasesFlow(
-        billing: harness.billing,
-        isBillingConfigured: () => store.configured,
-      );
-
-      final result = await flow.restore();
-
-      expect(result.outcome, RestorePurchasesOutcome.restored);
-      expect(result.isPro, isTrue);
-      expect(result.userMessage, RestorePurchasesCopy.purchaseRestored);
-      expect(store.restoreCalls, 1);
-    });
-
-    test('restore with no active purchase shows no-purchase message', () async {
-      final result = await flow.restore();
-
-      expect(result.outcome, RestorePurchasesOutcome.noPurchase);
-      expect(result.userMessage, RestorePurchasesCopy.noActivePurchase);
-    });
-
-    test('restore error shows retryable error', () async {
-      store = _FakeStoreBilling(restoreError: StateError('network down'));
-      final harness = await _openBillingHarness(store);
-      tempDir = harness.dir;
-      flow = RestorePurchasesFlow(
-        billing: harness.billing,
-        isBillingConfigured: () => store.configured,
-      );
-
-      final result = await flow.restore();
-
-      expect(result.outcome, RestorePurchasesOutcome.error);
-      expect(result.userMessage, RestorePurchasesCopy.restoreError);
-    });
-
-    test('restore timeout maps to billing unavailable copy', () async {
-      store = _FakeStoreBilling(
-        restoreError: BillingOperationException(
-          'Billing operation timed out (restorePurchases)',
-        ),
-      );
-      final harness = await _openBillingHarness(store);
-      tempDir = harness.dir;
-      flow = RestorePurchasesFlow(
-        billing: harness.billing,
-        isBillingConfigured: () => store.configured,
-      );
-
-      final result = await flow.restore();
-
-      expect(result.outcome, RestorePurchasesOutcome.unavailable);
-      expect(result.userMessage, RestorePurchasesCopy.billingUnavailable);
-      expect(
-        result.userMessage,
-        'We could not check purchases right now. Please try again.',
-      );
-      expect(result.userMessage, isNot(contains('Plans are not available')));
-    });
-
-    test('restore outcomes never use plans unavailable copy', () async {
-      expect(
-        RestorePurchasesCopy.billingUnavailable,
-        isNot(contains('Plans are not available yet')),
-      );
-      expect(
-        RestorePurchasesCopy.restoreError,
-        isNot(contains('Plans are not available yet')),
-      );
-    });
-
-    test('missing RevenueCat API key shows unavailable without crashing', () async {
-      store = _FakeStoreBilling(configured: false);
-      flow = RestorePurchasesFlow(
-        billing: billing,
-        isBillingConfigured: () => store.configured,
-      );
-
-      final result = await flow.restore();
-
-      expect(result.outcome, RestorePurchasesOutcome.unavailable);
-      expect(store.restoreCalls, 0);
-      expect(result.userMessage, RestorePurchasesCopy.restoreError);
-    });
-
-    test('restore button cannot be double tapped while loading', () async {
-      store = _FakeStoreBilling(
-        restoreResult: _proEntitlements(),
-        restoreDelay: const Duration(milliseconds: 50),
-      );
-      final harness = await _openBillingHarness(store);
-      tempDir = harness.dir;
-      flow = RestorePurchasesFlow(
-        billing: harness.billing,
-        isBillingConfigured: () => store.configured,
-      );
-
-      final first = flow.restore();
-      expect(flow.isBusy, isTrue);
-
-      final second = await flow.restore();
-      expect(second.outcome, RestorePurchasesOutcome.skippedBusy);
-      expect(store.restoreCalls, 1);
-
-      await first;
-      expect(flow.isBusy, isFalse);
-    });
+    expect(result.outcome, RestorePurchasesOutcome.noPurchase);
   });
 
-  group('BillingService.restoreNative', () {
-    late Directory tempDir;
-    late EntitlementCache cache;
-    late _FakeStoreBilling store;
-    late BillingService billing;
+  test('retains cached access without claiming a restore', () async {
+    final repository = FakeSubscriptionRepository(
+      state: _pro.copyWith(
+        verification: SubscriptionVerification.cached,
+        origin: SubscriptionStateOrigin.offline,
+      ),
+    );
+    final result = await RestorePurchasesFlow(repository: repository).restore();
 
-    setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp('billing_restore_test');
-      cache = await EntitlementCache.open('${tempDir.path}/entitlements.json');
-      store = _FakeStoreBilling();
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
-    });
-
-    tearDown(() async {
-      if (await tempDir.exists()) {
-        await tempDir.delete(recursive: true);
-      }
-    });
-
-    test('restore success persists Pro to entitlement cache', () async {
-      store = _FakeStoreBilling(
-        restoreResult: _proEntitlements(),
-        refreshResult: _proEntitlements(),
-      );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
-
-      final ent = await billing.restoreNative();
-
-      expect(ent.isPro, isTrue);
-      expect((await cache.load())?.isPro, isTrue);
-      expect(store.restoreCalls, 1);
-      expect(store.refreshCalls, greaterThanOrEqualTo(1));
-    });
-
-    test('restore with no purchase clears stale Pro cache', () async {
-      await cache.save(_proEntitlements());
-      store = _FakeStoreBilling(
-        restoreResult: PremiumEntitlements.free(),
-        refreshResult: PremiumEntitlements.free(),
-      );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
-
-      final ent = await billing.restoreNative();
-
-      expect(ent.isPro, isFalse);
-      expect(await cache.load(), isNull);
-    });
+    expect(result.outcome, RestorePurchasesOutcome.cachedAccessRetained);
   });
 
-  test('missing RevenueCat key does not crash initialize', () async {
-    final rc = RevenueCatService.instance;
-    await rc.initialize();
-    expect(rc.isConfigured, isFalse);
+  test('restore does not depend on store package availability', () async {
+    final repository = FakeSubscriptionRepository(
+      availability: SubscriptionAvailability.notConfigured,
+    );
+    final result = await RestorePurchasesFlow(repository: repository).restore();
+
+    expect(result.outcome, RestorePurchasesOutcome.noPurchase);
+    expect(repository.restoreCalls, 1);
   });
 
-  group('RestorePurchasesFeedback', () {
-    test('timeout outcome surfaces restore-specific copy', () {
-      const result = RestorePurchasesResult(
-        outcome: RestorePurchasesOutcome.unavailable,
-      );
-      expect(
-        RestorePurchasesFeedback.messageFor(result),
-        RestorePurchasesCopy.billingUnavailable,
-      );
-      expect(
-        RestorePurchasesFeedback.messageFor(result),
-        isNot(contains('Plans are not available yet')),
-      );
-    });
+  test('guards concurrent restore calls', () async {
+    final completer = Completer<SubscriptionState>();
+    final repository = _BlockingRepository(completer.future);
+    final flow = RestorePurchasesFlow(repository: repository);
 
-    test('skipped busy is the only silent outcome', () {
-      const result = RestorePurchasesResult(
-        outcome: RestorePurchasesOutcome.skippedBusy,
-      );
-      expect(RestorePurchasesFeedback.messageFor(result), isNull);
-    });
+    final first = flow.restore();
+    final second = await flow.restore();
+    expect(second.outcome, RestorePurchasesOutcome.skippedBusy);
+
+    completer.complete(_pro);
+    expect((await first).outcome, RestorePurchasesOutcome.restored);
   });
+}
+
+class _BlockingRepository extends FakeSubscriptionRepository {
+  _BlockingRepository(this.result);
+
+  final Future<SubscriptionState> result;
+
+  @override
+  Future<SubscriptionState> restore() => result;
 }

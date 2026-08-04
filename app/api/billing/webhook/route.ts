@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { WEB_STRIPE_FUNNEL_EVENTS } from "@/lib/analytics/web-stripe-funnel-events";
 import { processStripeWebhookEvent } from "@/lib/billing/stripe-webhook-handler";
 import { getStripeBillingConfig } from "@/lib/billing/stripe-config";
 import { requireStripeClient } from "@/lib/server/stripe-client";
+import { trackWebStripeFunnelEvent } from "@/lib/server/analytics-service";
 import { logServerEvent } from "@/lib/server/structured-log";
 
 export const runtime = "nodejs";
@@ -34,9 +36,21 @@ export async function POST(request: Request) {
     const result = await processStripeWebhookEvent(event, (id) =>
       stripe.subscriptions.retrieve(id),
     );
+    if (
+      event.type === "checkout.session.completed" &&
+      !result.skippedDuplicate
+    ) {
+      trackWebStripeFunnelEvent(
+        WEB_STRIPE_FUNNEL_EVENTS.subscriptionCompleted,
+        {
+          source: "stripe_webhook",
+          checkoutSessionId: event.data.object.id,
+          stripeEventId: event.id,
+        },
+      );
+    }
     logServerEvent("billing_webhook", {
       type: event.type,
-      eventId: event.id,
       duplicate: result.skippedDuplicate,
     });
   } catch (error) {

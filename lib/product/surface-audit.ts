@@ -31,7 +31,7 @@ const PUBLIC_ROUTES: Array<{ route: string; label: string }> = [
   { route: "/updates", label: "Changes" },
   { route: "/timeline", label: "Timeline" },
   { route: "/search", label: "Search (in archive)" },
-  { route: "/journal", label: "Journal" },
+  { route: "/journal", label: "Archive" },
   { route: "/", label: "Record home" },
   { route: "/record", label: "Record" },
   { route: "/account", label: "Account" },

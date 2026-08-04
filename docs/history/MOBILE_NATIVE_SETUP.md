@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Mobile native setup (Capacitor)
 
 ArchiveMe’s mobile path is a **Capacitor shell** around the existing Next.js app. Native projects live in `ios/` and `android/`.
@@ -54,3 +56,4 @@ Checkout opens in the WebView (or system browser if you change flow). App Store 
 - Prove account deletion and data export on device
 - Decide IAP vs web billing per store policy
 - Device QA: mic permission, offline recording draft, cookie persistence
+

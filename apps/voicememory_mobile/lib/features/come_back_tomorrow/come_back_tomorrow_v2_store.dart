@@ -68,22 +68,22 @@ class ComeBackTomorrowV2Store {
   }
 
   Map<String, dynamic> _serialize(ActiveWatchTarget target) => {
-        'watchKey': target.watchKey,
-        'groundedPhrase': target.groundedPhrase,
-        'createdDateKey': target.createdDateKey,
-        'source': target.source,
-        if (target.lastAnsweredDateKey != null)
-          'lastAnsweredDateKey': target.lastAnsweredDateKey,
-        if (target.lastResponseType != null)
-          'lastResponseType': target.lastResponseType,
-        'unrelatedSaveCount': target.unrelatedSaveCount,
-        'quietSignalDismissed': target.quietSignalDismissed,
-        if (target.lastSeenDateKey != null)
-          'lastSeenDateKey': target.lastSeenDateKey,
-        if (target.quietDetectedDateKey != null)
-          'quietDetectedDateKey': target.quietDetectedDateKey,
-        'updatedAt': DateTime.now().toUtc().toIso8601String(),
-      };
+    'watchKey': target.watchKey,
+    'groundedPhrase': target.groundedPhrase,
+    'createdDateKey': target.createdDateKey,
+    'source': target.source,
+    if (target.lastAnsweredDateKey != null)
+      'lastAnsweredDateKey': target.lastAnsweredDateKey,
+    if (target.lastResponseType != null)
+      'lastResponseType': target.lastResponseType,
+    'unrelatedSaveCount': target.unrelatedSaveCount,
+    'quietSignalDismissed': target.quietSignalDismissed,
+    if (target.lastSeenDateKey != null)
+      'lastSeenDateKey': target.lastSeenDateKey,
+    if (target.quietDetectedDateKey != null)
+      'quietDetectedDateKey': target.quietDetectedDateKey,
+    'updatedAt': DateTime.now().toUtc().toIso8601String(),
+  };
 
   Future<void> saveWatchTarget(ActiveWatchTarget target) async {
     _active = target;
@@ -120,7 +120,9 @@ class ComeBackTomorrowV2Store {
       current.copyWith(
         lastAnsweredDateKey: day,
         lastResponseType: responseType,
-        unrelatedSaveCount: answer == ComeBackTomorrowAnswerType.cameBack ? 0 : current.unrelatedSaveCount,
+        unrelatedSaveCount: answer == ComeBackTomorrowAnswerType.cameBack
+            ? 0
+            : current.unrelatedSaveCount,
       ),
     );
   }
@@ -190,11 +192,13 @@ class ComeBackTomorrowV2Store {
     _loaded = true;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest(MobilePrefsStore? prefs) async {
+  static Future<void> clear(MobilePrefsStore? prefs) async {
     _active = null;
     _loaded = false;
     if (prefs == null) return;
     await prefs.writeMap(prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest(MobilePrefsStore? prefs) => clear(prefs);
 }

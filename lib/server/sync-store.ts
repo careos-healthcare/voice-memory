@@ -17,6 +17,9 @@ export interface StoredSyncBlob {
   encrypted: EncryptedPayload;
   updatedAt: string;
   byteLength: number;
+  deviceId?: string;
+  vectorClock?: Record<string, number>;
+  keyEpoch?: number;
 }
 
 interface UserSyncStore {
@@ -144,4 +147,16 @@ export async function readEncryptedBlobs(userId: string): Promise<StoredSyncBlob
   }
 
   return readUserStore(userId).blobs;
+}
+
+export function deleteLocalSyncStore(userId: string): number {
+  const existing = globalForSync.__voicememorySyncStores?.[userId];
+  if (globalForSync.__voicememorySyncStores) {
+    delete globalForSync.__voicememorySyncStores[userId];
+  }
+  return existing ? existing.blobs.length : 0;
+}
+
+export function localSyncStoreExists(userId: string): boolean {
+  return Boolean(globalForSync.__voicememorySyncStores?.[userId]?.blobs.length);
 }

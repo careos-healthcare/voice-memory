@@ -25,7 +25,7 @@ export function TerritoryList({ territories }: { territories: EmotionalTerritory
               {territory.label}
             </p>
             <p className="text-xs text-zinc-500">
-              {territory.mentionCount} reflection{territory.mentionCount === 1 ? "" : "s"}
+              {territory.mentionCount} moment{territory.mentionCount === 1 ? "" : "s"}
             </p>
             {territory.continuityLines[0] ? (
               <p className="text-sm leading-relaxed text-zinc-500/90">
@@ -62,7 +62,7 @@ export function TerritoryMentionsSection({
                 {territory.label}
               </p>
               <p className="text-xs text-zinc-600">
-                {territory.mentionCount} reflection{territory.mentionCount === 1 ? "" : "s"} ·{" "}
+                {territory.mentionCount} moment{territory.mentionCount === 1 ? "" : "s"} ·{" "}
                 {formatTerritoryDateRange(territory)}
               </p>
             </Link>
@@ -99,7 +99,7 @@ export function TerritoryDetail({ territory }: { territory: EmotionalTerritory }
           {territory.label}
         </h1>
         <p className="text-sm text-zinc-500">
-          {territory.mentionCount} related reflection
+          {territory.mentionCount} related moment
           {territory.mentionCount === 1 ? "" : "s"}
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-zinc-600">
@@ -129,7 +129,7 @@ export function TerritoryDetail({ territory }: { territory: EmotionalTerritory }
       ) : null}
 
       <section className="space-y-6">
-        <h2 className="text-xs font-normal tracking-wide text-zinc-600">Related reflections</h2>
+        <h2 className="text-xs font-normal tracking-wide text-zinc-600">Related moments</h2>
         <ul className="space-y-6">
           {territory.relatedReflections.map((related) => (
             <li key={related.entryId}>
@@ -150,7 +150,7 @@ export function TerritoryDetail({ territory }: { territory: EmotionalTerritory }
                   </p>
                 ) : (
                   <p className="text-sm text-zinc-600 transition-colors group-hover:text-zinc-400">
-                    View reflection
+                    View moment
                   </p>
                 )}
               </RevisitEntryLink>

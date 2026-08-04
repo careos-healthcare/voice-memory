@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "archiveme://conclusion_evaluation/schema.json",
+  "title": "ArchiveMe conclusion evaluation record",
+  "description": "One evaluation case for the auditable conclusion pipeline. A fixture file is an object with a `cases` array of these records. Fixture content is SYNTHETIC ONLY: no real user journal text may ever be placed in this directory.",
+  "type": "object",
+  "required": [
+    "caseId",
+    "entryA",
+    "entryB",
+    "relatedExpected",
+    "expectedKind",
+    "expectedChangedDimensions",
+    "supportedConclusion",
+    "prohibitedConclusions",
+    "expectedSuppressionReason",
+    "sourceDomain",
+    "difficulty",
+    "humanLabelStatus"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "caseId": {
+      "type": "string",
+      "description": "Stable unique identifier for the case.",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "entryA": {
+      "$ref": "#/definitions/entry",
+      "description": "The earlier saved moment."
+    },
+    "entryB": {
+      "description": "The later saved moment, or null for single-moment (observation) cases.",
+      "oneOf": [
+        { "$ref": "#/definitions/entry" },
+        { "type": "null" }
+      ]
+    },
+    "relatedExpected": {
+      "type": "boolean",
+      "description": "Whether a careful human reader would say the two moments are about the same subject or thread. This is a semantic judgement, NOT a prediction of what the engine does: a pair can be genuinely related and still be correctly refused a conclusion. For single-moment cases this is false and the case is excluded from related-pair metrics."
+    },
+    "expectedKind": {
+      "type": "string",
+      "description": "The strongest reading the evidence honestly supports. `neither` means no conclusion of any kind should be produced.",
+      "enum": ["observation", "repeat", "change", "neither"]
+    },
+    "expectedChangedDimensions": {
+      "type": "array",
+      "description": "Dimensions that a careful human reader would say actually moved, as `dimension:direction` pairs. Empty for repeat, observation and neither cases.",
+      "items": {
+        "type": "string",
+        "pattern": "^(situation|action|behaviouralResponse|emotionalState|emotionalIntensity|certainty|frequency|duration|stoppingOrCompletionBehaviour|copingResponse|outcome):(increased|decreased|replaced|unchanged)$"
+      },
+      "uniqueItems": true
+    },
+    "supportedConclusion": {
+      "description": "A statement the cited evidence genuinely supports, or null when nothing should be concluded. The harness probes this through the real semantic gate and expects it to be accepted (except where `expectedSuppressionReason` says otherwise).",
+      "type": ["string", "null"]
+    },
+    "prohibitedConclusions": {
+      "type": "array",
+      "description": "Statements the evidence must never support. Every one of these is probed through the real semantic gate and must be rejected.",
+      "items": {
+        "type": "object",
+        "required": ["statement", "violation"],
+        "additionalProperties": false,
+        "properties": {
+          "statement": { "type": "string", "minLength": 1 },
+          "violation": {
+            "type": "string",
+            "enum": [
+              "wrongDomain",
+              "identityOrTrait",
+              "generic",
+              "causal",
+              "unsupportedDirection",
+              "overclaim"
+            ]
+          }
+        }
+      }
+    },
+    "expectedSuppressionReason": {
+      "description": "The SemanticConclusionRejection the gate should raise when this case must produce nothing, or null when a conclusion is expected.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "unrelatedSources",
+            "noComparableDimension",
+            "changeWithoutMovedDimension",
+            "repeatWithoutConsistentDimensions",
+            "conflictingDimensionEvidence",
+            "unsupportedClaimLanguage",
+            "unsupportedDirectionClaim",
+            "unsupportedCausalClaim",
+            "identityOrTraitClaim",
+            "genericFraming",
+            "generatedTextCitedAsEvidence",
+            "deletedSource",
+            "singleSourcePatternOrChange",
+            "sameEntryThenAndNow",
+            "belowConfidenceFloor"
+          ]
+        },
+        { "type": "null" }
+      ]
+    },
+    "sourceDomain": {
+      "type": "string",
+      "description": "Life area the synthetic language belongs to. `health` never contains diagnosis language.",
+      "enum": [
+        "work",
+        "relationships",
+        "money",
+        "health",
+        "overchecking",
+        "avoidance",
+        "completion",
+        "askingForHelp",
+        "mixed"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"]
+    },
+    "humanLabelStatus": {
+      "type": "string",
+      "description": "Provenance of the expectations on this record. Everything under fixtures/ is `unlabelled`: the expectations are author-written synthetic intent, not human-validated ground truth.",
+      "enum": ["unlabelled", "humanLabelled", "disputed"]
+    }
+  },
+  "definitions": {
+    "entry": {
+      "type": "object",
+      "required": ["id", "transcript", "capturedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "transcript": {
+          "type": "string",
+          "minLength": 1,
+          "description": "SYNTHETIC transcript text. Never real user content."
+        },
+        "capturedAt": { "type": "string", "format": "date-time" },
+        "threadId": {
+          "description": "Explicit archive thread assignment, when the case tests thread-only alignment.",
+          "type": ["string", "null"]
+        },
+        "captureContextTag": {
+          "description": "Explicit capture context tag, when the case tests tag-only alignment.",
+          "type": ["string", "null"]
+        },
+        "runtime": {
+          "type": "object",
+          "description": "Case-level runtime conditions carried on the entry they apply to.",
+          "additionalProperties": false,
+          "properties": {
+            "deleted": {
+              "type": "boolean",
+              "description": "The saved moment has been deleted by the user."
+            },
+            "modelGenerated": {
+              "type": "boolean",
+              "description": "The text is model-generated and must never be cited as the user's own words."
+            },
+            "framingCorrectedByUser": {
+              "type": "boolean",
+              "description": "The user previously said this framing was the wrong angle."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -20,7 +20,7 @@ const SECONDARY_LINKS = [
   { href: "/theories", label: NAV_ARCHIVE_BELIEFS },
   { href: "/memory", label: NAV_REFLECTION_LOG },
   { href: "/search", label: "Search" },
-  { href: "/journal", label: "Journal" },
+  { href: "/journal", label: "Saved words" },
   { href: "/timeline", label: "Timeline" },
   { href: "/weekly", label: "Weekly" },
   { href: "/monthly", label: "Monthly" },

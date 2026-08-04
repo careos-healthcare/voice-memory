@@ -9,7 +9,7 @@ const failures = [];
 const guarded = [
   "app/api/transcribe/route.ts",
   "app/api/analyze/route.ts",
-  "app/api/atmosphere/route.ts",
+  "experiments/backend/app/api/atmosphere/route.ts",
   "app/api/capture/attest/route.ts",
 ];
 

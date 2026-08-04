@@ -14,7 +14,7 @@ export const ARCHIVE_ONBOARDING_SCREENS: readonly ArchiveOnboardingScreen[] = [
   },
   {
     id: "evidence",
-    headline: "Every reflection becomes evidence.",
+    headline: "Every moment becomes evidence.",
   },
   {
     id: "beliefs",
@@ -26,7 +26,7 @@ export const ARCHIVE_ONBOARDING_SCREENS: readonly ArchiveOnboardingScreen[] = [
   },
   {
     id: "record",
-    headline: "Record your first reflection.",
+    headline: "Record your first moment.",
   },
 ] as const;
 

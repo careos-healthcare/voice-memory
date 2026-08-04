@@ -1,0 +1,273 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "work_001_action_shift_pause",
+      "entryA": {
+        "id": "work_001_a",
+        "transcript": "I answered the work message about the deadline immediately and felt worried.",
+        "capturedAt": "2026-03-02T09:15:00Z"
+      },
+      "entryB": {
+        "id": "work_001_b",
+        "transcript": "I paused before answering the work message about the deadline and felt calm.",
+        "capturedAt": "2026-04-06T09:20:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["action:replaced", "emotionalState:replaced"],
+      "supportedConclusion": "What you did with the work message changed between these saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The relationship with your partner may have changed.",
+          "violation": "wrongDomain"
+        },
+        {
+          "statement": "You are the kind of person who avoids hard conversations.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "This may be a possible pattern worth noting.",
+          "violation": "generic"
+        },
+        {
+          "statement": "You paused because the deadline felt calm.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_002_repeat_same_response",
+      "entryA": {
+        "id": "work_002_a",
+        "transcript": "I checked the report before the work review and felt worried.",
+        "capturedAt": "2026-03-03T18:00:00Z"
+      },
+      "entryB": {
+        "id": "work_002_b",
+        "transcript": "I checked the report again before the work review and felt worried.",
+        "capturedAt": "2026-04-07T18:05:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated what you did with the work report.",
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work report changed between these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You are always worried about work.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_003_negation_is_not_a_change",
+      "entryA": {
+        "id": "work_003_a",
+        "transcript": "I checked the report before the work review.",
+        "capturedAt": "2026-03-04T08:00:00Z"
+      },
+      "entryB": {
+        "id": "work_003_b",
+        "transcript": "I did not check the report before the work review.",
+        "capturedAt": "2026-04-08T08:10:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work report changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "changeWithoutMovedDimension",
+      "sourceDomain": "work",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_004_conflicting_evidence",
+      "entryA": {
+        "id": "work_004_a",
+        "transcript": "I felt very worried and I was unsure about the work deadline.",
+        "capturedAt": "2026-03-05T12:00:00Z"
+      },
+      "entryB": {
+        "id": "work_004_b",
+        "transcript": "I felt less worried and I was certain about the work deadline.",
+        "capturedAt": "2026-04-09T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "How strongly you felt it looks less across these saved moments.",
+          "violation": "unsupportedDirection"
+        }
+      ],
+      "expectedSuppressionReason": "conflictingDimensionEvidence",
+      "sourceDomain": "work",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_005_identical_wording",
+      "entryA": {
+        "id": "work_005_a",
+        "transcript": "I answered the work message about the deadline and felt worried.",
+        "capturedAt": "2026-03-06T07:30:00Z"
+      },
+      "entryB": {
+        "id": "work_005_b",
+        "transcript": "I answered the work message about the deadline and felt worried.",
+        "capturedAt": "2026-04-10T07:30:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work message changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "changeWithoutMovedDimension",
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_006_unrelated_moments",
+      "entryA": {
+        "id": "work_006_a",
+        "transcript": "I answered the work message about the deadline.",
+        "capturedAt": "2026-03-07T11:00:00Z"
+      },
+      "entryB": {
+        "id": "work_006_b",
+        "transcript": "I planted tomatoes in the garden and watered them.",
+        "capturedAt": "2026-04-11T11:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work message changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_007_long_entries",
+      "entryA": {
+        "id": "work_007_a",
+        "transcript": "I answered the work message about the deadline immediately. It was late in the evening and the office was quiet, and the room smelled of the coffee someone had left on the side table by the window. I remember thinking that the reply had to go out before anyone else noticed the thread, and that thought stayed with me the whole way home on the bus.",
+        "capturedAt": "2026-03-08T20:00:00Z"
+      },
+      "entryB": {
+        "id": "work_007_b",
+        "transcript": "I paused before answering the work message about the deadline. The office was quiet again and the same coffee cup was still sitting on the side table by the window, which struck me as funny. I read the thread twice, put the phone face down, and only picked it back up once the bus had already pulled away from the stop.",
+        "capturedAt": "2026-04-12T20:10:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["action:replaced"],
+      "supportedConclusion": "What you did with the work message changed between these saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The relationship with your partner may have changed.",
+          "violation": "wrongDomain"
+        },
+        {
+          "statement": "There might be a deeper issue here.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_008_single_moment_observation",
+      "entryA": {
+        "id": "work_008_a",
+        "transcript": "I checked the report before the work review and felt worried.",
+        "capturedAt": "2026-03-09T06:45:00Z"
+      },
+      "entryB": null,
+      "relatedExpected": false,
+      "expectedKind": "observation",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "You checked the report before the work review in this saved moment.",
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work report changed between these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You always check the report twice.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "work_009_certainty_increase",
+      "entryA": {
+        "id": "work_009_a",
+        "transcript": "I was unsure about the client project deadline.",
+        "capturedAt": "2026-03-10T15:00:00Z"
+      },
+      "entryB": {
+        "id": "work_009_b",
+        "transcript": "I was certain about the client project deadline.",
+        "capturedAt": "2026-04-13T15:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["certainty:increased"],
+      "supportedConclusion": "Deadline — how certain you sounded looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How certain you sounded looks less across these saved moments.",
+          "violation": "unsupportedDirection"
+        },
+        {
+          "statement": "You are a confident person now.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

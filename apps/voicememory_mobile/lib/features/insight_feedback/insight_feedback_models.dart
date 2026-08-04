@@ -1,9 +1,16 @@
 /// Local feedback choice for archive insights — never synced.
+///
+/// The first four values preserve the original archive-feedback wire format.
+/// The auditable conclusion values are shared by Record, Archive and Changes.
 enum InsightFeedbackChoice {
   fits,
   notQuite,
   tooEarly,
   saveAsWatchTheme,
+  accurate,
+  wrongAngle,
+  tooGeneric,
+  hide,
 }
 
 /// Safe insight surface type — metadata only.
@@ -11,6 +18,7 @@ enum InsightFeedbackType {
   thenVsNow,
   archiveClarity,
   weeklyReview,
+  auditableConclusion,
 }
 
 /// One local feedback record — no raw journal text.
@@ -21,6 +29,10 @@ class InsightFeedbackRecord {
     required this.choice,
     required this.createdAt,
     required this.sourceRoute,
+    this.templateId,
+    this.conclusionKind,
+    this.evidenceEntryIds = const [],
+    this.correctionNote,
   });
 
   final String insightId;
@@ -28,14 +40,26 @@ class InsightFeedbackRecord {
   final InsightFeedbackChoice choice;
   final DateTime createdAt;
   final String sourceRoute;
+  final String? templateId;
+  final String? conclusionKind;
+  final List<String> evidenceEntryIds;
+
+  /// Private local interpretation context. Never include this in analytics.
+  final String? correctionNote;
 
   Map<String, dynamic> toJson() => {
-        'insightId': insightId,
-        'insightType': insightType.name,
-        'choice': choice.name,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'sourceRoute': sourceRoute,
-      };
+    'insightId': insightId,
+    'insightType': insightType.name,
+    'choice': choice.name,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'sourceRoute': sourceRoute,
+    if (templateId?.trim().isNotEmpty == true) 'templateId': templateId,
+    if (conclusionKind?.trim().isNotEmpty == true)
+      'conclusionKind': conclusionKind,
+    if (evidenceEntryIds.isNotEmpty) 'evidenceEntryIds': evidenceEntryIds,
+    if (correctionNote?.trim().isNotEmpty == true)
+      'correctionNote': correctionNote!.trim(),
+  };
 
   factory InsightFeedbackRecord.fromJson(Map<String, dynamic> json) {
     final createdRaw = json['createdAt'] as String?;
@@ -53,7 +77,19 @@ class InsightFeedbackRecord {
           ? DateTime.parse(createdRaw).toLocal()
           : DateTime.now(),
       sourceRoute: json['sourceRoute'] as String? ?? '',
+      templateId: json['templateId']?.toString(),
+      conclusionKind: json['conclusionKind']?.toString(),
+      evidenceEntryIds: (json['evidenceEntryIds'] as List? ?? const [])
+          .map((value) => value.toString())
+          .where((value) => value.isNotEmpty)
+          .toList(growable: false),
+      correctionNote: json['correctionNote']?.toString(),
     );
+  }
+
+  bool hasMateriallyNewEvidence(Iterable<String> candidateEntryIds) {
+    final prior = evidenceEntryIds.toSet();
+    return candidateEntryIds.any((entryId) => !prior.contains(entryId));
   }
 }
 

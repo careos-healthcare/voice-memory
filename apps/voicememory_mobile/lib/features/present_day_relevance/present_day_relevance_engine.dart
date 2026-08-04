@@ -42,7 +42,8 @@ abstract final class PresentDayRelevanceEngine {
       entries: entries,
       beliefSurfaceVisible: beliefSurfaceVisible,
     );
-    final weighting = evidenceWeighting ??
+    final weighting =
+        evidenceWeighting ??
         EvidenceWeightingEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -60,11 +61,12 @@ abstract final class PresentDayRelevanceEngine {
           evidenceWeighting: weighting,
         ),
       ),
-      calibrationFeedback: calibrationFeedback ??
-          _resolveCalibrationFeedback(entries: entries),
+      calibrationFeedback:
+          calibrationFeedback ?? _resolveCalibrationFeedback(entries: entries),
       hasFreshReturn: correction?.returnedAfterFaded == true,
     );
-    final patternMatchQuality = weighting?.patternMatchQuality ??
+    final patternMatchQuality =
+        weighting?.patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -111,7 +113,8 @@ abstract final class PresentDayRelevanceEngine {
   }) {
     if (evidenceWeighting == null) return state;
 
-    final patternQuality = evidenceWeighting.patternMatchQuality ??
+    final patternQuality =
+        evidenceWeighting.patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -120,8 +123,9 @@ abstract final class PresentDayRelevanceEngine {
           evidenceWeighting: evidenceWeighting,
         );
     if (!patternQuality.shouldResolve) return state;
-    if (patternQuality.weakReasons
-        .contains(PatternMatchWeakReason.userMarkedNotRelevant)) {
+    if (patternQuality.weakReasons.contains(
+      PatternMatchWeakReason.userMarkedNotRelevant,
+    )) {
       return PresentDayRelevanceState.fading;
     }
     if (patternQuality.shouldShowAsWatchOnly &&
@@ -190,17 +194,16 @@ abstract final class PresentDayRelevanceEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool shouldShowOnPatterns({
     required PresentDayRelevanceResult? result,
@@ -211,26 +214,24 @@ abstract final class PresentDayRelevanceEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static PresentDayRelevanceState _resolveState({
     required CurrentRelevanceState? currentRelevance,
@@ -254,7 +255,9 @@ abstract final class PresentDayRelevanceEngine {
 
     if (evidenceWeighting.hasSofteningSignal ||
         evidenceWeighting.primaryState == EvidenceWeightState.softened ||
-        evidenceWeighting.secondaryStates.contains(EvidenceWeightState.softened)) {
+        evidenceWeighting.secondaryStates.contains(
+          EvidenceWeightState.softened,
+        )) {
       return PresentDayRelevanceState.softened;
     }
 
@@ -268,11 +271,17 @@ abstract final class PresentDayRelevanceEngine {
     if (evidenceWeighting.primaryState == EvidenceWeightState.oldSignal ||
         evidenceWeighting.primaryState == EvidenceWeightState.needsFreshProof ||
         evidenceWeighting.hasQuietSignal ||
-        evidenceWeighting.secondaryStates.contains(EvidenceWeightState.fading) ||
-        evidenceWeighting.secondaryStates.contains(EvidenceWeightState.oldSignal) ||
-        evidenceWeighting.secondaryStates
-            .contains(EvidenceWeightState.needsFreshProof) ||
-        (evidenceWeighting.hasOlderEntry && !evidenceWeighting.hasRecentEntry)) {
+        evidenceWeighting.secondaryStates.contains(
+          EvidenceWeightState.fading,
+        ) ||
+        evidenceWeighting.secondaryStates.contains(
+          EvidenceWeightState.oldSignal,
+        ) ||
+        evidenceWeighting.secondaryStates.contains(
+          EvidenceWeightState.needsFreshProof,
+        ) ||
+        (evidenceWeighting.hasOlderEntry &&
+            !evidenceWeighting.hasRecentEntry)) {
       return PresentDayRelevanceState.fading;
     }
 

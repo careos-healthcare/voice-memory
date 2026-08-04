@@ -1,19 +1,17 @@
 import '../../billing/paywall_source.dart';
+import '../monetization/domain/generated/monetization_policy.g.dart';
 
 /// Proof-connected paywall copy — display only, no billing logic.
 abstract final class PaywallValueSharpeningCopy {
   PaywallValueSharpeningCopy._();
 
-  static const proofConnectedHeadline =
-      'You saw the first useful repeat.';
+  static const proofConnectedHeadline = MonetizationPolicy.paywallHeadline;
 
   static const genericHeadline = proofConnectedHeadline;
 
-  static const body =
-      'Free shows the first useful proof. Pro keeps the longer trail.';
+  static const body = MonetizationPolicy.paywallSupportingLine;
 
-  static const proofConnectedLine =
-      'Pro keeps longer evidence history, weekly archive reviews, and timeline views.';
+  static const proofConnectedLine = MonetizationPolicy.paywallSupportingLine;
 
   static const cta = 'Keep the longer trail';
 
@@ -21,9 +19,9 @@ abstract final class PaywallValueSharpeningCopy {
       'You stay in control. You can delete entries and correct what you saved.';
 
   static const benefitBullets = <String>[
-    'Longer evidence history',
-    'Weekly archive reviews',
-    'Timeline views over time',
+    MonetizationPolicy.ongoingComparisons,
+    MonetizationPolicy.deeperArchiveAnalysis,
+    MonetizationPolicy.remoteTranscriptionAllowance,
   ];
 
   static const corePaidReason = 'Keep the longer proof trail.';
@@ -40,9 +38,7 @@ abstract final class PaywallValueSharpeningCopy {
       source == PaywallSource.valueMoment;
 
   static String headlineFor(PaywallSource? source) =>
-      isProofConnectedSource(source)
-          ? proofConnectedHeadline
-          : genericHeadline;
+      isProofConnectedSource(source) ? proofConnectedHeadline : genericHeadline;
 
   static PaywallSourceCopy sourceCopyFor(PaywallSource source) {
     if (isProofConnectedSource(source)) {
@@ -59,12 +55,12 @@ abstract final class PaywallValueSharpeningCopy {
   );
 
   static List<String> allPaywallStrings() => [
-        proofConnectedHeadline,
-        genericHeadline,
-        body,
-        proofConnectedLine,
-        cta,
-        secondaryReassurance,
-        ...benefitBullets,
-      ];
+    proofConnectedHeadline,
+    genericHeadline,
+    body,
+    proofConnectedLine,
+    cta,
+    secondaryReassurance,
+    ...benefitBullets,
+  ];
 }

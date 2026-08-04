@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ASO & acquisition positioning
 
 ArchiveMe is a **private voice journal** people use to **hear themselves again** — not a coach, therapist, or productivity tool.
@@ -118,3 +120,4 @@ Templates live in `lib/marketing/acquisition-copy.ts` → `REVIEW_RESPONSE_TEMPL
 - `/debug/acquisition-review` — clarity score, keyword coverage, banned phrase scan
 - First-session comprehension events — revisit understood, old entry opened, audio replayed
 - Founder export bundles positioning + risks for store iteration
+

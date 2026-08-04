@@ -54,19 +54,23 @@ void main() {
     if (g['changeFeedAddsValue'] == true) changeFeedValue++;
     if ((g['surpriseMoments'] as List).isNotEmpty) surpriseMoments++;
 
-    print('=== $persona @ $size (eligible $eligible) ===');
-    print('  Theory: ${g['theoryGrade']} — ${g['theoryNote']}');
-    print('  Lifecycle: ${g['lifecycleGrade']} — ${g['lifecycleNote']}');
-    print('  ChangeFeed: ${g['changeFeedGrade']} — ${g['changeFeedNote']}');
-    print('  DeepDive: ${g['deepDiveGrade']} — ${g['deepDiveNote']}');
-    print('  Analyst: ${g['analystGrade']} — ${g['analystNote']}');
+    stdout.writeln('=== $persona @ $size (eligible $eligible) ===');
+    stdout.writeln('  Theory: ${g['theoryGrade']} — ${g['theoryNote']}');
+    stdout.writeln(
+      '  Lifecycle: ${g['lifecycleGrade']} — ${g['lifecycleNote']}',
+    );
+    stdout.writeln(
+      '  ChangeFeed: ${g['changeFeedGrade']} — ${g['changeFeedNote']}',
+    );
+    stdout.writeln('  DeepDive: ${g['deepDiveGrade']} — ${g['deepDiveNote']}');
+    stdout.writeln('  Analyst: ${g['analystGrade']} — ${g['analystNote']}');
     if ((g['surpriseMoments'] as List).isNotEmpty) {
-      print('  SURPRISE: ${g['surpriseMoments']}');
+      stdout.writeln('  SURPRISE: ${g['surpriseMoments']}');
     }
     if ((g['issues'] as List).isNotEmpty) {
-      print('  ISSUES: ${g['issues']}');
+      stdout.writeln('  ISSUES: ${g['issues']}');
     }
-    print('');
+    stdout.writeln();
   }
 
   final summary = {
@@ -83,14 +87,18 @@ void main() {
   final out = File('tool/output/archive_v2_validation_summary.json');
   out.writeAsStringSync(const JsonEncoder.withIndent('  ').convert(summary));
 
-  print('--- Aggregate ---');
-  print(
+  stdout.writeln('--- Aggregate ---');
+  stdout.writeln(
     'Theory more trustworthy than Belief framing: $theoryTrustWins / $theoryTrustTotal scenarios',
   );
-  print('Lifecycle emotional impact: $lifecycleImpact / $scenarioCount');
-  print('Change Feed adds value: $changeFeedValue / $scenarioCount');
-  print('Scenarios with ≥1 surprise moment: $surpriseMoments / $scenarioCount');
-  print('Summary written: ${out.path}');
+  stdout.writeln(
+    'Lifecycle emotional impact: $lifecycleImpact / $scenarioCount',
+  );
+  stdout.writeln('Change Feed adds value: $changeFeedValue / $scenarioCount');
+  stdout.writeln(
+    'Scenarios with ≥1 surprise moment: $surpriseMoments / $scenarioCount',
+  );
+  stdout.writeln('Summary written: ${out.path}');
 }
 
 Map<String, dynamic> _gradeScenario({
@@ -149,7 +157,7 @@ Map<String, dynamic> _gradeScenario({
       theoryNote = 'confident with quoted strengthen lines';
     } else {
       theoryGrade = 'obvious';
-      theoryNote = 'restates dominant observation (${conf}%)';
+      theoryNote = 'restates dominant observation ($conf%)';
     }
   }
 

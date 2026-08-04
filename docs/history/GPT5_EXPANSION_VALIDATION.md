@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # GPT-5 Archive Synthesis Expansion V2 — Validation
 
 **Date:** 2026-05-25  
@@ -116,3 +118,4 @@ cd apps/voicememory_mobile
 flutter test test/archive_synthesis_pack_test.dart test/archive_synthesis_models_test.dart test/archive_synthesis_trigger_test.dart
 flutter test test/gpt5_expansion_validation_test.dart
 ```
+

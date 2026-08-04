@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Top 10 Archive Improvements (Insight Quality)
 
 Ranked by **expected impact** on retention, trust, and willingness to pay.  
@@ -42,3 +44,4 @@ flutter test test/archive_quality_validation_test.dart
 ```
 
 Compare `tool/output/archive_quality_raw.json` metrics: `genericPhraseHits`, `counterExceedsSupport`, `debatesMissingExcerpts` should trend to zero.
+

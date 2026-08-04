@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Paywall Variant B — Production Implementation
 
 **Default:** Variant B — *What changed in your life?*  
@@ -150,3 +152,4 @@ cd apps/voicememory_mobile
 flutter test test/archive_paywall_stats_test.dart
 flutter analyze lib/billing/archive_paywall_copy.dart lib/billing/archive_paywall_stats.dart lib/widgets/archive_paywall/
 ```
+

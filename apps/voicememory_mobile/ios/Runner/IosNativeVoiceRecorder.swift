@@ -11,6 +11,100 @@ final class IosNativeVoiceRecorder {
     case wav
   }
 
+  private enum ProcessingControl: String {
+    case platformDefault = "default"
+    case enabled
+    case disabled
+
+    static func from(_ value: Any?) -> ProcessingControl {
+      guard let value = value as? String else { return .platformDefault }
+      return ProcessingControl(rawValue: value) ?? .platformDefault
+    }
+  }
+
+  private struct CaptureConfig {
+    let format: RecordingFormat
+    let sampleRate: Double
+    let channels: Int
+    let bitDepth: Int
+    let bufferDuration: TimeInterval
+    let sessionMode: String
+    let acousticEchoCancellation: ProcessingControl
+    let noiseSuppression: ProcessingControl
+    let automaticGainControl: ProcessingControl
+
+    var requestsVoiceProcessing: Bool {
+      sessionMode == "spokenAudio" && [
+        acousticEchoCancellation,
+        noiseSuppression,
+        automaticGainControl,
+      ].contains(.enabled)
+    }
+
+    static func from(arguments: [String: Any]?) -> CaptureConfig {
+      let values = arguments?["config"] as? [String: Any] ?? [:]
+      let formatValue = (values["format"] as? String)?.lowercased() ?? "wav"
+      let requestedRate = (values["sampleRate"] as? NSNumber)?.doubleValue ?? 16000
+      let requestedChannels = (values["channels"] as? NSNumber)?.intValue ?? 1
+      let requestedBitDepth = (values["bitDepth"] as? NSNumber)?.intValue ?? 16
+      let requestedBufferMs = (values["bufferDurationMs"] as? NSNumber)?.doubleValue ?? 20
+      let requestedMode = values["sessionMode"] as? String ?? "spokenAudio"
+      return CaptureConfig(
+        format: formatValue == "aac" || formatValue == "m4a" ? .aac : .wav,
+        sampleRate: min(max(requestedRate.isFinite ? requestedRate : 16000, 8000), 192000),
+        channels: min(max(requestedChannels, 1), 2),
+        bitDepth: min(max(requestedBitDepth, 8), 32),
+        bufferDuration: min(
+          max(requestedBufferMs.isFinite ? requestedBufferMs : 20, 1),
+          500
+        ) / 1000,
+        sessionMode: ["measurement", "raw"].contains(requestedMode)
+          ? requestedMode
+          : "spokenAudio",
+        acousticEchoCancellation: ProcessingControl.from(
+          values["acousticEchoCancellation"]
+        ),
+        noiseSuppression: ProcessingControl.from(values["noiseSuppression"]),
+        automaticGainControl: ProcessingControl.from(values["automaticGainControl"])
+      )
+    }
+
+    var requestedProcessingPayload: [String: String] {
+      [
+        "acousticEchoCancellation": acousticEchoCancellation.rawValue,
+        "noiseSuppression": noiseSuppression.rawValue,
+        "automaticGainControl": automaticGainControl.rawValue,
+      ]
+    }
+
+    func appliedProcessingPayload(voiceProcessingMode: Bool) -> [String: String] {
+      if sessionMode == "measurement" || sessionMode == "raw" {
+        return [
+          "acousticEchoCancellation": ProcessingControl.disabled.rawValue,
+          "noiseSuppression": ProcessingControl.disabled.rawValue,
+          "automaticGainControl": ProcessingControl.disabled.rawValue,
+        ]
+      }
+      if requestsVoiceProcessing && !voiceProcessingMode {
+        return [
+          "acousticEchoCancellation":
+            acousticEchoCancellation == .enabled
+              ? ProcessingControl.platformDefault.rawValue
+              : acousticEchoCancellation.rawValue,
+          "noiseSuppression":
+            noiseSuppression == .enabled
+              ? ProcessingControl.platformDefault.rawValue
+              : noiseSuppression.rawValue,
+          "automaticGainControl":
+            automaticGainControl == .enabled
+              ? ProcessingControl.platformDefault.rawValue
+              : automaticGainControl.rawValue,
+        ]
+      }
+      return requestedProcessingPayload
+    }
+  }
+
   private enum NativeRecordPermission: String {
     case granted
     case denied
@@ -22,6 +116,9 @@ final class IosNativeVoiceRecorder {
   private var startedAt: Date?
   private var activePath: String?
   private var activeFormat: RecordingFormat?
+  private var activeConfig: CaptureConfig?
+  private var activeMetadata: [String: Any]?
+  private var lastResult: [String: Any]?
   private var meterTimer: Timer?
   private var lastFailedStep: String?
 
@@ -71,38 +168,40 @@ final class IosNativeVoiceRecorder {
     }
   }
 
-  func start(path: String, preferredFormat: String = "wav") throws -> String {
+  func start(path: String, arguments: [String: Any]?) throws -> [String: Any] {
+    let config = CaptureConfig.from(arguments: arguments)
     stopInternal(deleteFile: true)
+    lastResult = nil
     lastFailedStep = nil
 
-    logStep("prepare_session_start format=\(preferredFormat)")
+    logStep("prepare_session_start format=\(config.format.rawValue)")
     try ensureMicrophonePermissionGranted()
 
     let session = AVAudioSession.sharedInstance()
     logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_BEFORE")
 
-    try configureCaptureOnlySession()
+    try configureCaptureOnlySession(config: config)
 
     logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_AFTER")
     logSelectedInput(session)
 
-    let targetFormat = parsePreferredFormat(preferredFormat)
+    let targetFormat = config.format
 
     if targetFormat == .wav {
       let wavURL = try resolveRecordingURL(
         preferredPath: swapPathExtension(path, to: "wav"),
         fileExtension: "wav"
       )
-      let resolvedPath = try startRecording(at: wavURL, format: .wav)
+      let resolvedPath = try startRecording(at: wavURL, format: .wav, config: config)
       logStartSuccess(path: resolvedPath, format: .wav)
-      return resolvedPath
+      return startPayload(path: resolvedPath, format: .wav, config: config)
     }
 
     let aacURL = try resolveRecordingURL(preferredPath: path, fileExtension: "m4a")
     do {
-      let resolvedPath = try startRecording(at: aacURL, format: .aac)
+      let resolvedPath = try startRecording(at: aacURL, format: .aac, config: config)
       logStartSuccess(path: resolvedPath, format: .aac)
-      return resolvedPath
+      return startPayload(path: resolvedPath, format: .aac, config: config)
     } catch let aacError {
       print("\(logPrefix)_FALLBACK format=wav reason=\(aacError.localizedDescription)")
       cleanupPartialFile(at: aacURL)
@@ -112,9 +211,9 @@ final class IosNativeVoiceRecorder {
         fileExtension: "wav"
       )
       do {
-        let resolvedPath = try startRecording(at: wavURL, format: .wav)
+        let resolvedPath = try startRecording(at: wavURL, format: .wav, config: config)
         logStartSuccess(path: resolvedPath, format: .wav)
-        return resolvedPath
+        return startPayload(path: resolvedPath, format: .wav, config: config)
       } catch let wavError {
         throw wrapFailure(
           wavError,
@@ -127,6 +226,9 @@ final class IosNativeVoiceRecorder {
 
   func stop() throws -> [String: Any] {
     guard let recorder = recorder else {
+      if let lastResult {
+        return lastResult
+      }
       throw RecorderError(step: "stop", message: "No active native recording")
     }
 
@@ -150,6 +252,7 @@ final class IosNativeVoiceRecorder {
     let resolvedMaxDb = maxDb
     let likelySilent = sampleCount == 0 || resolvedMaxDb < silentThresholdDb
     let format = activeFormat?.rawValue ?? "unknown"
+    let metadata = activeMetadata ?? [:]
 
     let session = AVAudioSession.sharedInstance()
     logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_AFTER")
@@ -167,8 +270,10 @@ final class IosNativeVoiceRecorder {
     self.activePath = nil
     self.activeFormat = nil
     self.startedAt = nil
+    self.activeConfig = nil
+    self.activeMetadata = nil
 
-    return [
+    let result = metadata.merging([
       "path": path,
       "bytes": bytes,
       "durationMs": durationMs,
@@ -179,7 +284,9 @@ final class IosNativeVoiceRecorder {
       "format": format,
       "inputPortName": selectedInput.name,
       "inputPortType": selectedInput.type,
-    ]
+    ]) { _, stopValue in stopValue }
+    lastResult = result
+    return result
   }
 
   func currentLevel() -> [String: Any] {
@@ -205,12 +312,11 @@ final class IosNativeVoiceRecorder {
     ]
   }
 
-  private func parsePreferredFormat(_ value: String) -> RecordingFormat {
-    switch value.lowercased() {
-    case "aac", "m4a":
-      return .aac
-    default:
-      return .wav
+  func dispose() {
+    if recorder != nil {
+      _ = try? stop()
+    } else {
+      stopInternal(deleteFile: false)
     }
   }
 
@@ -252,7 +358,7 @@ final class IosNativeVoiceRecorder {
     }
   }
 
-  private func configureCaptureOnlySession() throws {
+  private func configureCaptureOnlySession(config: CaptureConfig) throws {
     let session = AVAudioSession.sharedInstance()
     let bluetoothOptions: AVAudioSession.CategoryOptions = [.allowBluetooth]
 
@@ -263,10 +369,21 @@ final class IosNativeVoiceRecorder {
       logStep("set_active_false_failed error=\(error.localizedDescription)")
     }
 
+    let requestedMode: AVAudioSession.Mode
+    if config.requestsVoiceProcessing {
+      requestedMode = .voiceChat
+    } else {
+      requestedMode = config.sessionMode == "spokenAudio" ? .spokenAudio : .measurement
+    }
+    let requestedCategory: AVAudioSession.Category =
+      config.sessionMode == "spokenAudio" ? .playAndRecord : .record
     var categoryConfigured = false
     do {
-      try session.setCategory(.record, mode: .measurement, options: bluetoothOptions)
-      logStep("set_category_ok category=record mode=measurement options=allowBluetooth")
+      try session.setCategory(requestedCategory, mode: requestedMode, options: bluetoothOptions)
+      logStep(
+        "set_category_ok category=\(requestedCategory.rawValue) " +
+          "mode=\(requestedMode.rawValue) options=allowBluetooth"
+      )
       categoryConfigured = true
     } catch {
       logStep("set_category_measurement_failed error=\(error.localizedDescription)")
@@ -301,17 +418,24 @@ final class IosNativeVoiceRecorder {
     }
 
     do {
-      try session.setPreferredSampleRate(44100)
-      logStep("set_preferred_sample_rate_ok sampleRate=44100")
+      try session.setPreferredSampleRate(config.sampleRate)
+      logStep("set_preferred_sample_rate_ok sampleRate=\(config.sampleRate)")
     } catch {
       logStep("set_preferred_sample_rate_failed error=\(error.localizedDescription)")
     }
 
     do {
-      try session.setPreferredInputNumberOfChannels(1)
-      logStep("set_preferred_input_channels_ok channels=1")
+      try session.setPreferredInputNumberOfChannels(config.channels)
+      logStep("set_preferred_input_channels_ok channels=\(config.channels)")
     } catch {
       logStep("set_preferred_input_channels_failed error=\(error.localizedDescription)")
+    }
+
+    do {
+      try session.setPreferredIOBufferDuration(config.bufferDuration)
+      logStep("set_preferred_io_buffer_ok seconds=\(config.bufferDuration)")
+    } catch {
+      logStep("set_preferred_io_buffer_failed error=\(error.localizedDescription)")
     }
 
     do {
@@ -396,11 +520,15 @@ final class IosNativeVoiceRecorder {
     )
   }
 
-  private func startRecording(at url: URL, format: RecordingFormat) throws -> String {
+  private func startRecording(
+    at url: URL,
+    format: RecordingFormat,
+    config: CaptureConfig
+  ) throws -> String {
     let path = url.path
     logStep("create_file_url path=\(path) url=\(url.absoluteString)")
 
-    let settings = settingsForFormat(format)
+    let settings = settingsForFormat(format, config: config)
     logStep("settings=\(settingsDescription(settings)) format=\(format.rawValue)")
 
     let newRecorder: AVAudioRecorder
@@ -440,6 +568,7 @@ final class IosNativeVoiceRecorder {
     recorder = newRecorder
     activePath = path
     activeFormat = format
+    activeConfig = config
     startedAt = Date()
     resetMeterStats()
     startMeterTimer()
@@ -491,22 +620,25 @@ final class IosNativeVoiceRecorder {
     return url.deletingPathExtension().appendingPathExtension(fileExtension).path
   }
 
-  private func settingsForFormat(_ format: RecordingFormat) -> [String: Any] {
+  private func settingsForFormat(
+    _ format: RecordingFormat,
+    config: CaptureConfig
+  ) -> [String: Any] {
     switch format {
     case .aac:
       return [
         AVFormatIDKey: NSNumber(value: kAudioFormatMPEG4AAC),
-        AVSampleRateKey: NSNumber(value: 44100.0),
-        AVNumberOfChannelsKey: NSNumber(value: 1),
+        AVSampleRateKey: NSNumber(value: config.sampleRate),
+        AVNumberOfChannelsKey: NSNumber(value: config.channels),
         AVEncoderAudioQualityKey: NSNumber(value: AVAudioQuality.high.rawValue),
         AVEncoderBitRateKey: NSNumber(value: 96000),
       ]
     case .wav:
       return [
         AVFormatIDKey: NSNumber(value: kAudioFormatLinearPCM),
-        AVSampleRateKey: NSNumber(value: 44100.0),
-        AVNumberOfChannelsKey: NSNumber(value: 1),
-        AVLinearPCMBitDepthKey: NSNumber(value: 16),
+        AVSampleRateKey: NSNumber(value: config.sampleRate),
+        AVNumberOfChannelsKey: NSNumber(value: config.channels),
+        AVLinearPCMBitDepthKey: NSNumber(value: config.bitDepth),
         AVLinearPCMIsFloatKey: NSNumber(value: false),
         AVLinearPCMIsBigEndianKey: NSNumber(value: false),
         AVLinearPCMIsNonInterleaved: NSNumber(value: false),
@@ -519,6 +651,58 @@ final class IosNativeVoiceRecorder {
       .map { key, value in "\(key)=\(value)" }
       .sorted()
       .joined(separator: ",")
+  }
+
+  private func startPayload(
+    path: String,
+    format: RecordingFormat,
+    config: CaptureConfig
+  ) -> [String: Any] {
+    let session = AVAudioSession.sharedInstance()
+    let recorderSettings = recorder?.settings ?? [:]
+    let appliedSampleRate =
+      (recorderSettings[AVSampleRateKey] as? NSNumber)?.doubleValue ?? session.sampleRate
+    let appliedChannels =
+      (recorderSettings[AVNumberOfChannelsKey] as? NSNumber)?.intValue
+        ?? max(session.inputNumberOfChannels, 1)
+    let appliedBitDepth =
+      (recorderSettings[AVLinearPCMBitDepthKey] as? NSNumber)?.intValue ?? config.bitDepth
+    let selectedInput = resolvedSelectedInput(session)
+    let voiceProcessingMode = config.requestsVoiceProcessing && session.mode == .voiceChat
+    let payload: [String: Any] = [
+      "path": path,
+      "format": format.rawValue,
+      "sampleRate": appliedSampleRate,
+      "channels": appliedChannels,
+      "bitDepth": appliedBitDepth,
+      "bufferDurationMs": session.ioBufferDuration * 1000,
+      "sessionMode": session.mode.rawValue,
+      "audioSource": selectedInput.type,
+      "inputPortName": selectedInput.name,
+      "inputPortType": selectedInput.type,
+      "processing": [
+        "requested": config.requestedProcessingPayload,
+        "applied": config.appliedProcessingPayload(
+          voiceProcessingMode: voiceProcessingMode
+        ),
+        // AVAudioRecorder does not expose independent AEC/NS/AGC capability
+        // or state. Do not infer individual effect state from the session mode.
+        "supported": [
+          "acousticEchoCancellation": false,
+          "noiseSuppression": false,
+          "automaticGainControl": false,
+        ],
+        "enabled": [
+          "acousticEchoCancellation": NSNull(),
+          "noiseSuppression": NSNull(),
+          "automaticGainControl": NSNull(),
+        ],
+        "voiceProcessingMode": voiceProcessingMode,
+        "platformManaged": voiceProcessingMode,
+      ] as [String: Any],
+    ]
+    activeMetadata = payload
+    return payload
   }
 
   private func cleanupPartialFile(at url: URL) {
@@ -630,6 +814,8 @@ final class IosNativeVoiceRecorder {
     recorder = nil
     activePath = nil
     activeFormat = nil
+    activeConfig = nil
+    activeMetadata = nil
     startedAt = nil
     resetMeterStats()
     try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
@@ -681,10 +867,8 @@ final class IosNativeVoiceRecorderHandler {
     case "startNativeRecording":
       let args = call.arguments as? [String: Any]
       let path = args?["path"] as? String ?? ""
-      let format = args?["format"] as? String ?? "wav"
       do {
-        let resolvedPath = try recorder.start(path: path, preferredFormat: format)
-        result(["path": resolvedPath])
+        result(try recorder.start(path: path, arguments: args))
       } catch let error as IosNativeVoiceRecorder.RecorderError {
         print(
           "ARCHIVEME_NATIVE_RECORDER_FAILED step=\(error.step) reason=\(error.message)"
@@ -749,8 +933,16 @@ final class IosNativeVoiceRecorderHandler {
     case "currentNativeLevel":
       result(recorder.currentLevel())
 
+    case "disposeNativeRecorder":
+      recorder.dispose()
+      result(nil)
+
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+
+  func dispose() {
+    IosNativeVoiceRecorder.shared.dispose()
   }
 }

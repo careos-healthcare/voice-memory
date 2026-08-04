@@ -125,7 +125,7 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
                   writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
                 }
               >
-                Open reflection
+                Open moment
               </Link>
               {loop.status === "open" ? (
                 <button
@@ -162,7 +162,7 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
             writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
           }
         >
-          Open reflection
+          Open moment
         </Link>
       )}
     </article>

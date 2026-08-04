@@ -7,7 +7,7 @@ export const ARCHIVE_MOVEMENT_COPY = {
   confidenceIncreased: ARCHIVE_EMOTIONAL.confidenceIncreased,
   confidenceDecreased: ARCHIVE_EMOTIONAL.theoryWeakened,
   confidenceReasonSupport: "New experiences supported this view.",
-  confidenceReasonWeaken: "Recent reflections challenged this belief.",
+  confidenceReasonWeaken: "Recent moments challenged this belief.",
   evidenceAdded: ARCHIVE_EMOTIONAL.evidenceAdded,
   evidenceHarderToFool: ARCHIVE_VALUE_POSITIONING.archiveHarderToFool,
   statusChanged: "Status changed",

@@ -1,5 +1,3 @@
-import 'comparison_engine_prompt.dart';
-
 /// Exact confidence labels for comparison output.
 enum ComparisonConfidenceLabel {
   earlySignal('Early signal'),
@@ -34,6 +32,8 @@ class ComparisonEngineOutput {
     this.connectedEntryId,
     this.whatChanged,
     this.thinEvidencePhrase,
+    this.pastQuote = '',
+    this.presentQuote = '',
   });
 
   final ComparisonConfidenceLabel confidenceLabel;
@@ -43,16 +43,39 @@ class ComparisonEngineOutput {
   final String? whatChanged;
   final String? thinEvidencePhrase;
 
+  /// Verbatim excerpt from the prior saved moment.
+  final String pastQuote;
+
+  /// Verbatim excerpt from the current saved moment.
+  final String presentQuote;
+
   bool get hasThinEvidence =>
       thinEvidencePhrase != null && thinEvidencePhrase!.trim().isNotEmpty;
+
+  /// Grounded output requires both evidence quotes unless label is not enough evidence.
+  bool get hasRequiredEvidenceQuotes {
+    if (confidenceLabel == ComparisonConfidenceLabel.notEnoughEvidence) {
+      return true;
+    }
+    return pastQuote.trim().isNotEmpty && presentQuote.trim().isNotEmpty;
+  }
 
   /// Prompt-ordered summary for display or export.
   String formatStructuredSummary() {
     final lines = <String>[
-      'Confidence: ${confidenceLabel.label}',
-      'What appears to have repeated: $whatAppearsRepeated',
+      'Label: ${confidenceLabel.label}',
+      'Connection: $whatAppearsRepeated',
       'Connects to: $connectedMomentDayTime',
     ];
+    if (pastQuote.trim().isNotEmpty || presentQuote.trim().isNotEmpty) {
+      lines.add('Evidence:');
+      if (pastQuote.trim().isNotEmpty) {
+        lines.add('- Past: "${pastQuote.trim()}"');
+      }
+      if (presentQuote.trim().isNotEmpty) {
+        lines.add('- Present: "${presentQuote.trim()}"');
+      }
+    }
     final changed = whatChanged?.trim();
     if (changed != null && changed.isNotEmpty) {
       lines.add('What changed: $changed');

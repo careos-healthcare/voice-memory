@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Paywall Trigger Audit
 
 **Scope:** ArchiveMe monorepo — Flutter mobile (`apps/voicememory_mobile`) + Next.js web (`app/`, `components/`, `lib/`).  
@@ -362,3 +364,4 @@ flowchart TD
 | Web entitlements | `lib/entitlement/entitlements.ts` |
 | Upgrade CTA | `components/billing/UpgradeCta.tsx` |
 | Types | `types/value-moment-paywall.ts` |
+

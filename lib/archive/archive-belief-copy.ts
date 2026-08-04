@@ -14,14 +14,14 @@ export const ARCHIVE_BELIEF_WHAT_CHANGED_TITLE = "What changed";
 export const ARCHIVE_BELIEF_EVIDENCE_TITLE = "Why the archive currently weighs this";
 
 export const ARCHIVE_BELIEF_EVIDENCE_LABELS = {
-  supporting: "Supporting reflections",
+  supporting: "Supporting moments",
   contradictions: "Contradictions",
   lifeAreas: "Life areas",
   costEvidence: "Cost evidence",
   predictionFailures: "Prediction failures",
 } as const;
 
-export const ARCHIVE_BELIEF_EMPTY = "Record another reflection.";
+export const ARCHIVE_BELIEF_EMPTY = "Record another moment.";
 
 export const HOME_ARCHIVE_BELIEF_LEAD = "Your archive is building a view of you.";
 
@@ -43,9 +43,9 @@ export const ARCHIVE_BELIEF_STATUS_LABEL: Record<PersonalTheoryStatus, string> =
 };
 
 export const ARCHIVE_BELIEF_STATUS_EXPLANATION: Record<PersonalTheoryStatus, string> = {
-  under_review: "Your archive is still evaluating this against prior reflections.",
-  strengthening: "Recent reflections support this theory.",
-  weakening: "Recent reflections may be pulling against this theory.",
+  under_review: "Your archive is still evaluating this against prior moments.",
+  strengthening: "Recent moments support this theory.",
+  weakening: "Recent moments may be pulling against this theory.",
   resolved: "Your archive may no longer treat this as an active working case.",
   disproven: "Later evidence may no longer support keeping this belief active.",
 };

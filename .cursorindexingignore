@@ -1,0 +1,33 @@
+# Caches and generated output only. Production source is never excluded.
+.git/
+node_modules/
+.next/
+coverage/
+
+# Dart / Flutter
+**/.dart_tool/
+**/build/
+**/.flutter-plugins-deps
+apps/voicememory_mobile/.dart_tool/
+apps/voicememory_mobile/build/
+
+# Android
+**/.gradle/
+**/.cxx/
+**/local.properties
+
+# iOS / macOS
+**/ios/Pods/
+**/macos/Pods/
+**/DerivedData/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+
+# Build artifacts and old exports
+artifacts/
+dist/
+out/
+*.ipa
+*.apk
+*.aab
+*.app.zip

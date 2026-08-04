@@ -175,7 +175,7 @@ export function LongitudinalContinuityCard({
   report,
   title = "Longitudinal continuity",
   subtitle = "How themes, language, and intensity shifted across your archive",
-  emptyLabel = "Continuity patterns appear as you accumulate voice reflections.",
+  emptyLabel = "Continuity patterns appear as you save more voice moments.",
   maxItems = 8,
   highlightEntryId,
   hideWhenEmpty = false,
@@ -242,7 +242,7 @@ export function LongitudinalContinuityCard({
 
         {showIdentity && report.identityDrift.length > 0 ? (
           <div className="space-y-3">
-            <p className="text-xs uppercase tracking-wider text-zinc-500">Identity drift</p>
+            <p className="text-xs uppercase tracking-wider text-zinc-500">Identity shifts</p>
             {report.identityDrift.slice(0, 3).map((insight) => (
               <IdentityBlock key={insight.id} insight={insight} />
             ))}

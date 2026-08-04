@@ -105,7 +105,7 @@ function observationFor(
     insight.evidence[0]?.phrase ??
     insight.detail.slice(0, 120);
   const trimmed = lead.replace(/\s+/g, " ").trim();
-  return `Your words suggest this thread appeared across ${matchingReflections} reflections — e.g. “${trimmed.slice(0, 120)}${trimmed.length > 120 ? "…" : ""}”. This is observation only, not a conclusion.`;
+  return `Your words suggest this thread appeared across ${matchingReflections} saved moments — e.g. “${trimmed.slice(0, 120)}${trimmed.length > 120 ? "…" : ""}”. This is observation only, not a conclusion.`;
 }
 
 function likelyCostFor(insight: PatternInsight, signalIds: string[]): string {
@@ -308,7 +308,7 @@ function buildReviewFromCandidate(
     ifThisDisappeared,
     whyThisMatters: sanitizeCopy(`${likelyCost} ${ifThisDisappeared}`),
     disclaimer:
-      "Built from your saved reflections only. This may be incomplete or off — use it as a hypothesis, not a verdict.",
+      "Built from your saved words only. This may be incomplete or off — use it as a hypothesis, not a verdict.",
     reflectionCount: entries.length,
     archiveEntryIds: entries.map((e) => e.id).sort(),
     estimatedImpactScore: candidate.impactScore,

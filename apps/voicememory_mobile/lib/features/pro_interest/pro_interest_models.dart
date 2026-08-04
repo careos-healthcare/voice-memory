@@ -36,8 +36,7 @@ class ProInterestState {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  bool get hasCapture =>
-      selectedValueIds.isNotEmpty || pricingIntentId != null;
+  bool get hasCapture => selectedValueIds.isNotEmpty || pricingIntentId != null;
 
   bool get optionalNotePresent => note?.trim().isNotEmpty == true;
 
@@ -53,8 +52,9 @@ class ProInterestState {
   }) {
     return ProInterestState(
       selectedValueIds: selectedValueIds ?? this.selectedValueIds,
-      pricingIntentId:
-          clearPricingIntent ? null : (pricingIntentId ?? this.pricingIntentId),
+      pricingIntentId: clearPricingIntent
+          ? null
+          : (pricingIntentId ?? this.pricingIntentId),
       note: clearNote ? null : (note ?? this.note),
       sourceRoute: sourceRoute ?? this.sourceRoute,
       createdAt: createdAt ?? this.createdAt,
@@ -63,15 +63,16 @@ class ProInterestState {
   }
 
   Map<String, dynamic> toJson() => {
-        'selectedValueIds':
-            selectedValueIds.map((id) => id.name).toList(growable: false),
-        if (pricingIntentId != null) 'pricingIntentId': pricingIntentId!.name,
-        if (note != null && note!.trim().isNotEmpty) 'note': note!.trim(),
-        if (sourceRoute != null && sourceRoute!.trim().isNotEmpty)
-          'sourceRoute': sourceRoute!.trim(),
-        if (createdAt != null) 'createdAt': createdAt!.toUtc().toIso8601String(),
-        if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
-      };
+    'selectedValueIds': selectedValueIds
+        .map((id) => id.name)
+        .toList(growable: false),
+    if (pricingIntentId != null) 'pricingIntentId': pricingIntentId!.name,
+    if (note != null && note!.trim().isNotEmpty) 'note': note!.trim(),
+    if (sourceRoute != null && sourceRoute!.trim().isNotEmpty)
+      'sourceRoute': sourceRoute!.trim(),
+    if (createdAt != null) 'createdAt': createdAt!.toUtc().toIso8601String(),
+    if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
+  };
 
   static ProInterestState fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;

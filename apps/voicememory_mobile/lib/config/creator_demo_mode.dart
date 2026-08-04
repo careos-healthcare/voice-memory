@@ -4,6 +4,7 @@ import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../models/journal_entry.dart';
 import '../models/reflection.dart';
 import '../models/sync_status.dart';
+import 'app_feature_flags.dart';
 
 /// Creator Demo Mode — internal/demo-only. Compile with
 /// `--dart-define=ARCHIVEME_CREATOR_DEMO_MODE=true` to record safe App
@@ -28,16 +29,19 @@ abstract class CreatorDemoMode {
   CreatorDemoMode._();
 
   /// Compile-time gate — false unless the dart define is explicitly true.
-  static const bool enabled = bool.fromEnvironment(
-    'ARCHIVEME_CREATOR_DEMO_MODE',
-    defaultValue: false,
-  );
+  static const bool enabled = AppFeatureFlags.creatorDemoModeEnabled;
 
   /// Test-only override so suites can exercise demo behavior without a
   /// dart define. Never set outside tests; [enabled] stays the only
   /// production path in.
   @visibleForTesting
-  static bool debugForceEnabledForTest = false;
+  static bool get debugForceEnabledForTest =>
+      AppFeatureFlags.testOverrides.creatorDemoEnabled;
+
+  @visibleForTesting
+  static set debugForceEnabledForTest(bool enabled) {
+    AppFeatureFlags.testOverrides.creatorDemoEnabled = enabled;
+  }
 
   /// True when demo behavior is active.
   static bool get isActive => enabled || debugForceEnabledForTest;

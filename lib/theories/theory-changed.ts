@@ -22,7 +22,7 @@ export function buildWhatChanged(input: WhatChangedInput): string[] {
 
   if (input.isFirstSnapshot && input.status === "active") {
     lines.push(
-      `This is new because it appeared across ${Math.max(2, input.supportingEvidenceCount)} recent reflections.`,
+      `This is new because it appeared across ${Math.max(2, input.supportingEvidenceCount)} recent moments.`,
     );
     return lines.slice(0, 3);
   }
@@ -65,7 +65,7 @@ export function buildWhatChanged(input: WhatChangedInput): string[] {
 
   if (input.status === "active" && lines.length === 0 && input.isFirstSnapshot) {
     lines.push(
-      `This is new because it appeared across ${Math.max(2, input.supportingEvidenceCount)} recent reflections.`,
+      `This is new because it appeared across ${Math.max(2, input.supportingEvidenceCount)} recent moments.`,
     );
   }
 

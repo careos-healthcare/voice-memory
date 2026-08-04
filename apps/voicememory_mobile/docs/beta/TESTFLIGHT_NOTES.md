@@ -33,7 +33,9 @@ See [THREE_DAY_TEST_SCRIPT.md](./THREE_DAY_TEST_SCRIPT.md) for a step-by-step sc
 
 ## Known limitations (beta)
 
-- **Local-first:** entries stay on your device in this beta build.
+- **Local-first archive:** retained journal data stays encrypted on device.
+  Voice transcription/analysis sends the chosen recording to ArchiveMe's
+  production API when the on-device path cannot complete it.
 - **No cloud sync yet** — reinstalling may lose data unless you export/backup.
 - **Push notifications may be limited or off** in early TestFlight builds.
 - **Value may take a few real saves** on the same thread before return/proof surfaces appear.
@@ -66,11 +68,13 @@ Triage guide for the team: [FEEDBACK_TRIAGE.md](./FEEDBACK_TRIAGE.md).
 
 ## Privacy reminder
 
-- Your moments are saved **locally on your device** in this beta.
+- Your retained archive is stored encrypted on device. Voice processing may
+  send a recording to ArchiveMe's production API as described in the privacy
+  policy.
 - Do not share private journal text in feedback unless you choose to.
 - ArchiveMe is designed for personal reflection, not for sharing sensitive health records with the team.
 
-Privacy policy: https://careosapp.co.uk/privacy  
+Privacy policy: https://careosapp.co.uk/archiveme-privacy
 Support: https://careosapp.co.uk/archiveme-support
 
 ---

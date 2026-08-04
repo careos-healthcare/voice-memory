@@ -99,9 +99,7 @@ class ApiUsageGuard {
   Duration exponentialBackoffDelay(int attemptCount) {
     if (attemptCount <= 0) return Duration.zero;
     final multiplier = 1 << (attemptCount - 1).clamp(0, 6);
-    return Duration(
-      milliseconds: baseBackoff.inMilliseconds * multiplier,
-    );
+    return Duration(milliseconds: baseBackoff.inMilliseconds * multiplier);
   }
 
   void _rollDailyIfNeeded() {
@@ -117,12 +115,20 @@ class ApiUsageGuard {
     return '${now.year}-${now.month}-${now.day}';
   }
 
-  static String _scopeOperationKey(String scopeKey, ApiUsageOperation operation) {
+  static String _scopeOperationKey(
+    String scopeKey,
+    ApiUsageOperation operation,
+  ) {
     return '$scopeKey:${operation.name}';
   }
 }
 
-enum ApiUsageOperation { transcribe, analyze, archiveSynthesis, liveAudioSession }
+enum ApiUsageOperation {
+  transcribe,
+  analyze,
+  archiveSynthesis,
+  liveAudioSession,
+}
 
 class ApiUsageCheckResult {
   const ApiUsageCheckResult._({

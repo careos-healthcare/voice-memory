@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { createCipheriv, randomBytes } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 
 import { parseReflectionResponse } from "@/lib/analyze/parse-reflection-response";
 import {
@@ -21,6 +23,10 @@ import {
   registerVaultRecoverySession,
   resetVaultRecoveryStoreForTest,
 } from "@/lib/live-audio/vault-recovery-store";
+import {
+  recordVaultChunkUpload,
+  resetVaultChunkStoreForTest,
+} from "@/lib/live-audio/vault-chunk-store";
 
 function buildEncryptedVault(
   secret: Buffer,
@@ -98,6 +104,7 @@ export async function runLiveAudioVaultRecoveryRouteTests(): Promise<{
 
   await check("vault recovery store deduplicates idempotency keys", () => {
     resetVaultRecoveryStoreForTest();
+    resetVaultChunkStoreForTest();
     const secret = createVaultRecoverySecret();
     registerVaultRecoverySession({
       sessionId: "session_test",
@@ -132,6 +139,43 @@ export async function runLiveAudioVaultRecoveryRouteTests(): Promise<{
     const ack = lookupVaultRecoveryAck("session_test", "idem_1");
     assert.ok(ack);
     assert.equal(ack?.recoveryAckId, "ack_1");
+  });
+
+  await check("recordVaultChunkUpload is idempotent by idempotency key", () => {
+    const audioBytes = Buffer.from([1, 2, 3, 4]);
+    const first = recordVaultChunkUpload({
+      sessionId: "session_chunk",
+      chunkId: "chunk_1",
+      idempotencyKey: "chunk:session_chunk:1",
+      audioBytes,
+    });
+    const second = recordVaultChunkUpload({
+      sessionId: "session_chunk",
+      chunkId: "chunk_1",
+      idempotencyKey: "chunk:session_chunk:1",
+      audioBytes,
+    });
+    assert.equal(first.duplicate, false);
+    assert.equal(second.duplicate, true);
+    assert.equal(second.chunkAckId, first.chunkAckId);
+  });
+
+  await check("both recovery routes gate disclosure before formData parsing", () => {
+    for (const routePath of [
+      "experiments/backend/app/api/live-audio/recover/route.ts",
+      "experiments/backend/app/api/live-audio/vault-recovery/route.ts",
+    ]) {
+      const source = fs.readFileSync(path.join(process.cwd(), routePath), "utf8");
+      const disclosureIndex = source.indexOf(
+        "requireRemoteTranscriptionDisclosure(request)",
+      );
+      const formDataIndex = source.indexOf("request.formData()");
+      assert.ok(disclosureIndex >= 0, `${routePath} has disclosure gate`);
+      assert.ok(
+        formDataIndex > disclosureIndex,
+        `${routePath} gates before multipart parsing`,
+      );
+    }
   });
 
   return { failures };

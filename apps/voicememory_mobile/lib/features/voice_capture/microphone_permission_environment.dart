@@ -35,9 +35,7 @@ abstract class MicrophonePermissionEnvironment {
     return isIosPhysicalDevice();
   }
 
-  static void logPhysicalMismatchWarning({
-    required PermissionStatus status,
-  }) {
+  static void logPhysicalMismatchWarning({required PermissionStatus status}) {
     if (_physicalMismatchWarningLogged) return;
     _physicalMismatchWarningLogged = true;
     debugPrint(
@@ -108,12 +106,14 @@ abstract class MicrophonePermissionEnvironment {
     return isIosSimulator();
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void clearOverrides() {
     _iosSimulatorOverride = null;
     _forceIosPhysicalForTest = false;
     _physicalMismatchWarningLogged = false;
   }
+
+  @visibleForTesting
+  static void resetForTest() => clearOverrides();
 
   @visibleForTesting
   static void setIosPhysicalForTest(bool value) {

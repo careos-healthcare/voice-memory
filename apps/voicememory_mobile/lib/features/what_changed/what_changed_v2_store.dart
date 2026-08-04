@@ -36,9 +36,8 @@ class WhatChangedV2Store {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => WhatChangedV2Record.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              WhatChangedV2Record.fromJson(Map<String, dynamic>.from(entry)),
         )
         .where((record) => record.entryId.isNotEmpty)
         .toList()
@@ -106,14 +105,15 @@ class WhatChangedV2Store {
     }
   }
 
-  static RepeatReturnCheckChoice? _repeatChoiceFor(WhatChangedV2Option option) =>
-      switch (option) {
-        WhatChangedV2Option.stronger => RepeatReturnCheckChoice.stronger,
-        WhatChangedV2Option.softer => RepeatReturnCheckChoice.softer,
-        WhatChangedV2Option.same => RepeatReturnCheckChoice.same,
-        WhatChangedV2Option.differentResponse => RepeatReturnCheckChoice.changed,
-        WhatChangedV2Option.somethingHelped => null,
-      };
+  static RepeatReturnCheckChoice? _repeatChoiceFor(
+    WhatChangedV2Option option,
+  ) => switch (option) {
+    WhatChangedV2Option.stronger => RepeatReturnCheckChoice.stronger,
+    WhatChangedV2Option.softer => RepeatReturnCheckChoice.softer,
+    WhatChangedV2Option.same => RepeatReturnCheckChoice.same,
+    WhatChangedV2Option.differentResponse => RepeatReturnCheckChoice.changed,
+    WhatChangedV2Option.somethingHelped => null,
+  };
 
   static Future<void> clearAll() async {
     _cached = const [];
@@ -122,7 +122,6 @@ class WhatChangedV2Store {
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
 
-  @visibleForTesting
   static void invalidateCache() {
     _cached = const [];
     _loaded = false;

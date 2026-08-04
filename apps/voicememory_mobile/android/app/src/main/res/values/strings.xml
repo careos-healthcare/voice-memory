@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="today_check_widget_description">Today\u2019s check from ArchiveMe</string>
+    <string name="share_with_archiveme">Save to ArchiveMe</string>
+    <string name="share_saved_securely">Saved securely to ArchiveMe</string>
+    <string name="share_save_failed">ArchiveMe could not save this item</string>
+    <string name="quick_capture">Quick capture</string>
+    <string name="quick_capture_widget_description">Start a quick ArchiveMe capture</string>
+    <string name="micro_habit">Micro-habit</string>
+    <string name="micro_habit_widget_description">Complete your ArchiveMe micro-habit</string>
+    <string name="habit_done">Done \u2713</string>
+    <string name="habit_not_done">Mark done</string>
+    <string name="semantic_cluster_pulse">Memory pulse</string>
+    <string name="semantic_cluster_default">Open your semantic clusters</string>
+    <string name="semantic_cluster_widget_description">View an ArchiveMe semantic cluster pulse</string>
+    <string name="pulse_action">Pulse</string>
+    <string name="widget_private">Private</string>
+    <string name="widget_unlock_to_view">Unlock to view</string>
 </resources>

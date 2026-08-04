@@ -84,6 +84,17 @@ void main() {
       expect(logs, contains(AppStoragePaths.simulatorFallbackLog));
     });
 
+    test('support fallback uses archiveme_sim_support under system temp', () {
+      final dir = AppStoragePaths.debugSimulatorSupportDirectorySync(
+        systemTemp: tempRoot,
+        log: logs.add,
+      );
+
+      expect(dir.path, '${tempRoot.path}/archiveme_sim_support');
+      expect(dir.existsSync(), isTrue);
+      expect(logs, contains(AppStoragePaths.simulatorFallbackLog));
+    });
+
     test('fallback logs reason when provided', () {
       AppStoragePaths.debugSimulatorDocumentsDirectorySync(
         systemTemp: tempRoot,

@@ -60,7 +60,7 @@ export function MobileReturningHome({
             {secondary.snippet}
           </p>
           <span className="mt-3 inline-flex items-center gap-1 text-xs text-zinc-600 group-hover:text-violet-300">
-            Open last reflection
+            Open last moment
             <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </Link>

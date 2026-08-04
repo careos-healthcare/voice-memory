@@ -29,11 +29,11 @@ abstract final class PresentDayRelevanceCopy {
       'is connected to what has kept returning.';
 
   static String stateBodyFor(PresentDayRelevanceState state) => switch (state) {
-        PresentDayRelevanceState.current => currentStateBody,
-        PresentDayRelevanceState.fading => fadingStateBody,
-        PresentDayRelevanceState.softened => softenedStateBody,
-        PresentDayRelevanceState.unclear => unclearStateBody,
-      };
+    PresentDayRelevanceState.current => currentStateBody,
+    PresentDayRelevanceState.fading => fadingStateBody,
+    PresentDayRelevanceState.softened => softenedStateBody,
+    PresentDayRelevanceState.unclear => unclearStateBody,
+  };
 
   static const List<String> all = [
     title,

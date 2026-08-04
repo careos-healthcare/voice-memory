@@ -30,7 +30,7 @@ if (!analyze.includes("guardOpenAiRoute")) {
   failures.push("analyze must use guardOpenAiRoute");
 }
 
-const atmosphere = fs.readFileSync(path.join(ROOT, "app/api/atmosphere/route.ts"), "utf8");
+const atmosphere = fs.readFileSync(path.join(ROOT, "experiments/backend/app/api/atmosphere/route.ts"), "utf8");
 if (!atmosphere.includes("guardOpenAiRoute")) {
   failures.push("atmosphere must use guardOpenAiRoute");
 }

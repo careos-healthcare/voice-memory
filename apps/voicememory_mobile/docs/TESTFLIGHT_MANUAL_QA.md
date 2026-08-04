@@ -11,11 +11,11 @@ Run after #137 sticky-loop consolidation is on `main`.
 | **iOS bundle ID** | `com.voicememory.mobile` |
 | **Android application ID** | `com.voicememory.mobile` (Play is separate) |
 | **Marketing version** | `0.2.0` |
-| **Build number** | `38` (`pubspec.yaml` → `version: 0.2.0+38`) |
+| **Build number** | `49` (`pubspec.yaml` → `version: 0.2.0+49`) |
 | **Support URL** | https://careosapp.co.uk/archiveme-support |
 | **Primary URL scheme** | `archiveme://` |
-| **Legacy URL scheme** | `voicememory://` |
-| **App Group** | `group.com.voicememory.mobile` |
+| **V1 embedded extensions** | None |
+| **V1 explicit entitlements** | None |
 
 ## Xcode workspace (required)
 
@@ -126,7 +126,7 @@ Language should prefer: **saved moment**, **archive**, **evidence**, **compare**
 Test on device if feasible; otherwise mark **manual later**:
 
 - `archiveme://` — primary scheme (widget / deep link target).
-- `voicememory://` — legacy compatibility route.
+- Focused V1 Release intentionally omits legacy and extension-only URL routes.
 
 ### I. Offline
 
@@ -139,11 +139,45 @@ Test on device if feasible; otherwise mark **manual later**:
 
 1. No placeholder app icon warning in release build log.
 2. Launch screen looks correct on device (not default Flutter placeholder).
-3. TestFlight build number matches `pubspec.yaml` build `38` (or incremented upload).
+3. TestFlight build number matches `pubspec.yaml` build `49` (or a later
+   value first recorded in `pubspec.yaml`).
 4. Support URL https://careosapp.co.uk/archiveme-support loads in Safari.
 5. In-app Privacy (`/privacy`) and Terms (`/terms`) routes open.
 
-### K. Screenshot-mode checks (optional build)
+### K. Accessibility — physical iPhone required
+
+Run this section on a real iPhone so safe-area insets, VoiceOver focus, and
+hardware accessibility settings match TestFlight behavior.
+
+1. Turn on VoiceOver. Traverse Future Preview, Life Evidence graph, semantic
+   Archive search, and conclusion cards using swipe navigation. Confirm headers,
+   selected stage/filter state, result summaries, confidence/uncertainty, and
+   actionable evidence are announced once.
+2. In the graph, use the accessibility actions rotor to center/reset the canvas
+   and switch to Entity list. Open an entity, dismiss its detail sheet, and
+   confirm focus returns to the graph/list control that launched it.
+3. In semantic search, activate an example, wait for the live result-count
+   announcement, open a result, and use “Repeat match explanation”. Confirm
+   date, mood when present, reason, and snippet are included.
+4. In Future Preview, confirm VoiceOver-style accessible navigation disables
+   horizontal page swipes while stage chips and Previous/Next buttons continue
+   to work. Open and dismiss graph/evidence/history sheets; each sheet must
+   focus its heading and restore focus on close.
+5. Settings → Accessibility → Display & Text Size → Larger Text: test every
+   Accessibility size through the maximum AX size (approximately 200–320%).
+   Repeat in portrait and short landscape. Content must scroll without clipped
+   headings, hidden evidence, or an action bar that starves the stage content.
+6. Turn on Reduce Motion. Center/reset the graph and move between preview
+   stages. Transitions must complete immediately without zoom/page animation.
+7. Test increased contrast if available. Search highlights, selected filters,
+   focus indicators, and disabled controls must remain distinguishable without
+   relying on color alone.
+8. Check a notched/Dynamic Island iPhone in portrait and landscape. Bottom
+   sheets, close controls, and action bars must remain inside the real safe area.
+9. Confirm every icon/chip/button target is at least 44×44 pt (48×48 pt for
+   primary controls) and keyboard/Switch Control traversal follows visual order.
+
+### L. Screenshot-mode checks (optional build)
 
 Only if validating a screenshot-mode build separately — **not** for TestFlight upload:
 
@@ -200,6 +234,12 @@ Copy this table per tester / build. Attach screenshots for blockers and major is
 | Launch screen / icon | | | | | |
 | Support URL | | | | | |
 | Privacy / terms routes | | | | | |
+| VoiceOver reading and actions | | | | | |
+| VoiceOver focus restoration | | | | | |
+| Dynamic Type 200–320% | | | | | |
+| Reduce Motion | | | | | |
+| Real iPhone safe areas | | | | | |
+| 44/48 pt controls and focus order | | | | | |
 
 ### Severity labels
 

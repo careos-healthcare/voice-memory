@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Journey Plan (Growth Loop V1)
 
 ## Goal
@@ -43,3 +45,4 @@ Deliver the **first wow moment** on Day 1, a recurring pattern on Day 3, and the
 
 - Push notifications for journey steps (future)
 - Server-side journey (local-first archive)
+

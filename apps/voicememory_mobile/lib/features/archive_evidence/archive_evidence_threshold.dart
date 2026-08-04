@@ -17,12 +17,12 @@ enum ArchivePatternStage {
 
 extension ArchivePatternStageCopy on ArchivePatternStage {
   String get label => switch (this) {
-        ArchivePatternStage.stillForming => 'Still forming',
-        ArchivePatternStage.earlySignal => 'Early signal',
-        ArchivePatternStage.repeatedThread => 'Repeated thread',
-        ArchivePatternStage.strongPattern => 'Strong pattern',
-        ArchivePatternStage.changedRecently => 'Changed recently',
-      };
+    ArchivePatternStage.stillForming => 'Still forming',
+    ArchivePatternStage.earlySignal => 'Early signal',
+    ArchivePatternStage.repeatedThread => 'Repeated thread',
+    ArchivePatternStage.strongPattern => 'Strong pattern',
+    ArchivePatternStage.changedRecently => 'Changed recently',
+  };
 }
 
 /// Result of evaluating whether a thread/pattern may be named.
@@ -79,9 +79,9 @@ abstract final class ArchiveEvidenceThreshold {
 
   /// Meaningful entries: eligible transcript, not degraded, not low-signal.
   static List<JournalEntry> meaningfulEntries(List<JournalEntry> entries) {
-    return ArchiveEvidenceGuard.eligibleEntries(entries)
-        .where((e) => !ArchiveEntrySignalGuard.isLowSignalEntry(e))
-        .toList();
+    return ArchiveEvidenceGuard.eligibleEntries(
+      entries,
+    ).where((e) => !ArchiveEntrySignalGuard.isLowSignalEntry(e)).toList();
   }
 
   static int meaningfulEntryCount(List<JournalEntry> entries) =>
@@ -133,11 +133,13 @@ abstract final class ArchiveEvidenceThreshold {
     );
     final snippets = _collectSnippets(meaningful, attachedSnippets);
     final hasRepeated = _hasRepeatedSignal(resolvedAnalysis, meaningful);
-    final boosted = suggestionId != null &&
+    final boosted =
+        suggestionId != null &&
         suggestionId.isNotEmpty &&
         ArchiveBeliefCorrectionStore.isSaved(suggestionId);
 
-    final meetsCoreThreshold = sharedThemeCount >= minSharedThemeEntries &&
+    final meetsCoreThreshold =
+        sharedThemeCount >= minSharedThemeEntries &&
         snippets.length >= minEvidenceSnippets &&
         hasRepeated;
 
@@ -157,7 +159,8 @@ abstract final class ArchiveEvidenceThreshold {
 
     if (!meetsCoreThreshold && boosted) {
       return ArchiveEvidenceThresholdResult(
-        canNameThread: sharedThemeCount >= minSharedThemeEntries &&
+        canNameThread:
+            sharedThemeCount >= minSharedThemeEntries &&
             snippets.length >= minEvidenceSnippets,
         showFormingFallback: false,
         stage: ArchivePatternStage.earlySignal,
@@ -194,7 +197,8 @@ abstract final class ArchiveEvidenceThreshold {
     required int meaningfulCount,
     required bool boosted,
   }) {
-    final changed = analysis.whatChangedLine?.trim().isNotEmpty == true &&
+    final changed =
+        analysis.whatChangedLine?.trim().isNotEmpty == true &&
         analysis.whatChangedLine !=
             'Your latest moment may sit differently from the one before it.';
     if (changed &&
@@ -239,7 +243,9 @@ abstract final class ArchiveEvidenceThreshold {
     }
 
     if (meaningful.length >= 2) {
-      final rawTexts = meaningful.map((e) => e.transcript.toLowerCase()).toList();
+      final rawTexts = meaningful
+          .map((e) => e.transcript.toLowerCase())
+          .toList();
       for (var i = 1; i < rawTexts.length; i++) {
         if (_sharedTokenOverlap(rawTexts[i - 1], rawTexts[i]) >= 0.35) {
           return true;
@@ -269,8 +275,7 @@ abstract final class ArchiveEvidenceThreshold {
         themeCounts[theme] = (themeCounts[theme] ?? 0) + 1;
       }
     }
-    final themeMax =
-        themeCounts.values.fold(0, (a, b) => a > b ? a : b);
+    final themeMax = themeCounts.values.fold(0, (a, b) => a > b ? a : b);
 
     final repeatMax = _entriesSharingRepeatSignal(texts);
     return [themeMax, repeatMax].reduce((a, b) => a > b ? a : b);
@@ -281,20 +286,22 @@ abstract final class ArchiveEvidenceThreshold {
 
     final wordCounts = <String, int>{};
     for (final text in texts) {
-      for (final word in text
-          .replaceAll(RegExp(r'[^a-z0-9\s]'), ' ')
-          .split(RegExp(r'\s+'))
-          .where((w) => w.length > 4)
-          .toSet()) {
+      for (final word
+          in text
+              .replaceAll(RegExp(r'[^a-z0-9\s]'), ' ')
+              .split(RegExp(r'\s+'))
+              .where((w) => w.length > 4)
+              .toSet()) {
         wordCounts[word] = (wordCounts[word] ?? 0) + 1;
       }
     }
 
-    final sharedWords = wordCounts.entries
-        .where((e) => e.value >= minSharedThemeEntries)
-        .map((e) => e.key)
-        .toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+    final sharedWords =
+        wordCounts.entries
+            .where((e) => e.value >= minSharedThemeEntries)
+            .map((e) => e.key)
+            .toList()
+          ..sort((a, b) => b.length.compareTo(a.length));
 
     for (final word in sharedWords) {
       final count = texts.where((t) => t.contains(word)).length;
@@ -327,7 +334,9 @@ abstract final class ArchiveEvidenceThreshold {
       final trimmed = resolveEntryDisplayText(entry).text.trim();
       if (trimmed.length < minSnippetChars) continue;
       if (ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) continue;
-      snippets.add(trimmed.length <= 96 ? trimmed : '${trimmed.substring(0, 95)}…');
+      snippets.add(
+        trimmed.length <= 96 ? trimmed : '${trimmed.substring(0, 95)}…',
+      );
       if (snippets.length >= minEvidenceSnippets) break;
     }
     return snippets;

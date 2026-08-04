@@ -57,7 +57,7 @@ export function ArchiveWorthStatement({
       {!compact ? (
         <ul className="mt-3 grid gap-1 text-xs text-zinc-500 sm:grid-cols-2">
           {snapshot.firstReflectionDateLabel ? (
-            <li>First reflection: {snapshot.firstReflectionDateLabel}</li>
+            <li>First moment: {snapshot.firstReflectionDateLabel}</li>
           ) : null}
           <li>{snapshot.beliefChangesRecorded} belief changes recorded</li>
           {snapshot.strongestRememberedBelief ? (

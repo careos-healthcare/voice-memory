@@ -9,6 +9,8 @@ JournalEntry _entry({
   required String transcript,
   int intensity = 3,
   List<String> themes = const [],
+  String? pattern,
+  String observation = '',
 }) {
   return JournalEntry(
     id: id,
@@ -19,8 +21,8 @@ JournalEntry _entry({
       mood: 'neutral',
       emotionalIntensity: intensity,
       recurringThemes: themes,
-      exactLanguagePattern: transcript,
-      concreteObservation: '',
+      exactLanguagePattern: pattern ?? transcript,
+      concreteObservation: observation,
       repeatedSignal: '',
     ),
   );
@@ -38,7 +40,7 @@ void main() {
     );
   });
 
-  test('detects uncertainty from transcript', () {
+  test('exact language outranks generic uncertainty', () {
     final r = engine.respond(
       entry: _entry(
         id: '2',
@@ -46,8 +48,9 @@ void main() {
             'I am not sure what to do about this job and I feel uncertain today.',
       ),
     );
-    expect(r?.signal, InstantReflectionSignal.uncertainty);
-    expect(r?.bodyLine, contains('uncertain'));
+    expect(r?.signal, InstantReflectionSignal.specificObservation);
+    expect(r?.bodyLine, contains('From this moment'));
+    expect(r?.bodyLine, contains('not sure'));
   });
 
   test('detects importance language', () {
@@ -59,7 +62,42 @@ void main() {
         intensity: 4,
       ),
     );
-    expect(r?.signal, InstantReflectionSignal.importance);
+    expect(r?.signal, InstantReflectionSignal.specificObservation);
+  });
+
+  test('quotes exact phrase with observable micro-habit', () {
+    final r = engine.respond(
+      entry: _entry(
+        id: 'habit',
+        transcript:
+            'When Slack pings late, I say yes before checking my calendar.',
+        pattern: 'say yes before checking my calendar',
+        observation:
+            'When Slack pings late, you say yes before checking your calendar.',
+      ),
+    );
+    expect(r?.signal, InstantReflectionSignal.specificObservation);
+    expect(r?.bodyLine, contains('“say yes before checking my calendar”'));
+    expect(r?.bodyLine, contains('When Slack pings late'));
+  });
+
+  test('exact cross-entry phrase outranks a generic topic', () {
+    final prior = _entry(
+      id: 'prior',
+      transcript:
+          'Yesterday I said yes before checking my calendar and had no room.',
+      pattern: 'said yes before checking my calendar',
+    );
+    final current = _entry(
+      id: 'current',
+      transcript:
+          'Today I said yes before checking my calendar when work called.',
+      pattern: 'said yes before checking my calendar',
+    );
+    final r = engine.respond(entry: current, priorEntries: [prior]);
+    expect(r?.signal, InstantReflectionSignal.repeatedPhrase);
+    expect(r?.bodyLine, contains('Early signal from 2 moments'));
+    expect(r?.bodyLine, contains('“said yes”'));
   });
 
   test('detects repeated topic across archive', () {
@@ -70,6 +108,7 @@ void main() {
         transcript:
             'Work stress at the office keeps coming up in my daily reflections $i.',
         themes: const ['career'],
+        pattern: '',
       ),
     );
     final r = engine.respond(
@@ -78,6 +117,7 @@ void main() {
         transcript:
             'Another long day at work with career pressure and office stress.',
         themes: const ['career'],
+        pattern: '',
       ),
       priorEntries: prior,
     );
@@ -90,6 +130,7 @@ void main() {
         id: '4',
         transcript:
             'Today I walked in the park and watched the clouds for a while peacefully.',
+        pattern: '',
       ),
     );
     expect(r?.signal, InstantReflectionSignal.listening);

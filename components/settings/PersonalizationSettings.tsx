@@ -130,7 +130,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Warmth preference</p>
-        <p className="text-sm text-muted">How warm the interface should feel over a session.</p>
+        <p className="text-sm text-muted">How warm the interface should feel over time.</p>
         <div className="flex flex-wrap gap-2">
           {WARMTH_OPTIONS.map((option) => (
             <Button
@@ -153,7 +153,7 @@ export function PersonalizationSettings() {
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Contrast comfort</p>
         <p className="text-sm text-muted">
-          Softer contrast during long reading sessions or when you prefer less visual weight.
+          Softer contrast during long reading stretches or when you prefer less visual weight.
         </p>
         <div className="flex flex-wrap gap-2">
           {CONTRAST_OPTIONS.map((option) => (
@@ -197,7 +197,7 @@ export function PersonalizationSettings() {
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Photo attachments</p>
         <p className="text-sm text-muted">
-          One optional photo per reflection — stored on this device only. No feed, filters, or
+          One optional photo per moment — stored on this device only. No feed, filters, or
           sharing prompts.
         </p>
         <Button

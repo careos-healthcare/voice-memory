@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../memory/memory_scope.dart';
 import '../memory/memory_scope_policy.dart';
-import 'archive_pack_scope_policy.dart';
 
 /// Cross-pack confirmation — user must approve before a strong claim
 /// spans two archive packs.

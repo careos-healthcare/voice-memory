@@ -8,19 +8,18 @@ import 'audio_diag_log.dart';
 abstract class AudioCaptureDiagnostics {
   AudioCaptureDiagnostics._();
 
-  static const RecordConfig iosCaptureConfig = RecordConfig(
-    encoder: AudioEncoder.aacLc,
-    sampleRate: 44100,
+  static const RecordConfig captureConfig = RecordConfig(
+    encoder: AudioEncoder.pcm16bits,
+    sampleRate: 16000,
     numChannels: 1,
-    bitRate: 128000,
-    iosConfig: IosRecordConfig(
-      manageAudioSession: false,
-    ),
   );
 
+  @Deprecated('Use captureConfig instead.')
+  static const RecordConfig iosCaptureConfig = captureConfig;
+
   static void logRecorderConfig({
-    RecordConfig config = iosCaptureConfig,
-    String containerExtension = 'm4a',
+    RecordConfig config = captureConfig,
+    String containerExtension = 'wav',
   }) {
     AudioDiagLog.recorderConfig(
       encoder: config.encoder.name,
@@ -31,10 +30,7 @@ abstract class AudioCaptureDiagnostics {
     );
   }
 
-  static void logCapturedFile(
-    File file, {
-    int? durationMs,
-  }) {
+  static void logCapturedFile(File file, {int? durationMs}) {
     final path = file.path;
     final exists = file.existsSync();
     final bytes = exists ? file.lengthSync() : 0;

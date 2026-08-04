@@ -10,6 +10,8 @@ class InstantReflectionResponse {
 }
 
 enum InstantReflectionSignal {
+  specificObservation,
+  repeatedPhrase,
   uncertainty,
   importance,
   familiarConcern,

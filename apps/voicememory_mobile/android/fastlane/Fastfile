@@ -1,0 +1,82 @@
+default_platform(:android)
+
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+ENV["FASTLANE_OPT_OUT_USAGE"] = "1"
+ENV["FLUTTER_SUPPRESS_ANALYTICS"] = "true"
+
+platform :android do
+  desc "Clean, validate, test, and audit the Android paid release configuration"
+  lane :verify do
+    app_root = File.expand_path("../..", __dir__)
+    Dir.chdir(app_root) do
+      sh("tool/validate_revenuecat_configuration.sh", "--platform", "android", "--paid")
+      sh("tool/validate_release_version.sh")
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+      sh("dart", "format", "--output=none", "--set-exit-if-changed", "lib", "test", "integration_test")
+      sh("flutter", "analyze", "--fatal-infos", "--fatal-warnings")
+      sh(
+        "flutter",
+        "test",
+        "test/revenuecat_configuration_test.dart",
+        "test/revenuecat_resilience_test.dart",
+        "test/revenuecat_offline_cache_policy_test.dart",
+        "test/subscriptions/default_subscription_repository_test.dart",
+        "test/paywall_purchase_flow_test.dart",
+        "test/paywall_restore_test.dart",
+        "test/restore_purchases_flow_test.dart"
+      )
+      sh("./android/gradlew", "-p", "android", ":app:processReleaseMainManifest")
+      sh("tool/audit_v1_permissions.sh")
+    end
+  end
+
+  desc "Verify and upload a production-signed AAB to Play Internal"
+  lane :internal do |options|
+    unless ENV["CI"] == "true" && ENV["ARCHIVEME_PROTECTED_RELEASE"] == "true"
+      UI.user_error!("internal is CI/protected-environment only")
+    end
+    json = ENV["PLAY_STORE_CONFIG_JSON"].to_s
+    fingerprint = ENV["ANDROID_SIGNING_CERT_SHA256"].to_s
+    UI.user_error!("Missing PLAY_STORE_CONFIG_JSON") if json.empty?
+    UI.user_error!("Missing ANDROID_SIGNING_CERT_SHA256") if fingerprint.empty?
+
+    app_root = File.expand_path("../..", __dir__)
+    aab = options[:aab] || File.join(
+      app_root,
+      "build/app/outputs/bundle/release/app-release.aab"
+    )
+    UI.user_error!("Release AAB not found") unless File.file?(aab)
+    Dir.chdir(app_root) do
+      sh("tool/validate_revenuecat_configuration.sh", "--platform", "android", "--paid")
+      sh("tool/verify_android_release_artifact.sh", aab)
+    end
+    upload_to_play_store(
+      track: "internal",
+      aab: aab,
+      json_key_data: json,
+      package_name: "com.voicememory.mobile",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Build locally signed Genesis APK and AAB without upload actions"
+  lane :genesis do |options|
+    key_properties = File.expand_path("../key.properties", __dir__)
+    requires_signing = !options[:dry_run] && !options[:skip_signing]
+    if requires_signing && !File.file?(key_properties)
+      UI.user_error!("Create android/key.properties for local release signing")
+    end
+
+    script = File.expand_path("../../../../scripts/build/build_genesis.sh", __dir__)
+    args = ["--targets", "android"]
+    args << "--legacy-android" if options[:legacy]
+    args << "--dry-run" if options[:dry_run]
+    args << "--skip-signing" if options[:skip_signing]
+    args += ["--source-date-epoch", options[:source_date_epoch].to_s] if options[:source_date_epoch]
+    args << "--allow-dirty" if options[:allow_dirty]
+    sh(script, *args)
+  end
+end

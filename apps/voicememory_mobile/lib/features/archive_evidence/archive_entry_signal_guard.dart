@@ -32,7 +32,15 @@ abstract final class ArchiveEntrySignalGuard {
     'yes',
   };
 
-  static const _fillerTokens = {'um', 'uh', 'erm', 'like', 'yeah', 'yep', 'nope'};
+  static const _fillerTokens = {
+    'um',
+    'uh',
+    'erm',
+    'like',
+    'yeah',
+    'yep',
+    'nope',
+  };
 
   /// True when [entry] lacks enough user wording to connect archive insight.
   static bool isLowSignalEntry(JournalEntry entry) =>
@@ -75,10 +83,7 @@ abstract final class ArchiveEntrySignalGuard {
   }
 
   static String _normalize(String? raw) {
-    return (raw ?? '')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim()
-        .toLowerCase();
+    return (raw ?? '').replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
   }
 
   static int _meaningfulCharacterCount(String text) {
@@ -103,7 +108,10 @@ abstract final class ArchiveEntrySignalGuard {
   }
 
   static bool _isMostlyPunctuationOrNumbers(String normalized) {
-    final withoutNoise = normalized.replaceAll(RegExp(r'[\s\p{P}\p{S}]', unicode: true), '');
+    final withoutNoise = normalized.replaceAll(
+      RegExp(r'[\s\p{P}\p{S}]', unicode: true),
+      '',
+    );
     if (withoutNoise.isEmpty) return true;
     return RegExp(r'^[0-9]+$').hasMatch(withoutNoise);
   }

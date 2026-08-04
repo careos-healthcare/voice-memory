@@ -34,7 +34,7 @@ export function buildArchiveExportPreview(
   const sections: ArchiveExportPreviewSection[] = [
     {
       id: "reflections",
-      label: "Reflections",
+      label: "Saved moments",
       detail: worth
         ? `${worth.reflectionCount} on device`
         : `${entries.filter((e) => e.reflectionPending !== true).length} on device`,

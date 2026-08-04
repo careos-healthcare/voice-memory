@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ArchiveMe",
     short_name: "ArchiveMe",
     description:
-      "Private voice reflections — local-first, resurfaced in your own words.",
+      "Private voice moments — local-first, resurfaced in your own words.",
     start_url: "/",
     scope: "/",
     display: "standalone",

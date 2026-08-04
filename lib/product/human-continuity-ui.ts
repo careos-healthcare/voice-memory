@@ -39,7 +39,7 @@ export function entryContinuitySnippet(entry: JournalEntry, maxLen = 160): strin
     return "Voice capture on this device";
   }
   const observation = sanitizeUserFacingObservation(getEntryPreviewLine(entry.reflection));
-  return observation ?? "Voice reflection";
+  return observation ?? "Voice moment";
 }
 
 /** Match chips for continuity — mood-based matching stays internal only. */

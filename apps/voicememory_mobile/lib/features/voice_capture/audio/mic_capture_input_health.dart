@@ -24,8 +24,7 @@ abstract class MicCaptureInputHealth {
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      likelySilent && isBuiltInMic(portType: portType, portName: portName);
+  }) => likelySilent && isBuiltInMic(portType: portType, portName: portName);
 
   static String? recommendation({
     required bool likelySilent,
@@ -42,10 +41,7 @@ abstract class MicCaptureInputHealth {
     return null;
   }
 
-  static String selectedLabel({
-    String? portName,
-    String? portType,
-  }) {
+  static String selectedLabel({String? portName, String? portType}) {
     final name = portName?.trim();
     final type = portType?.trim();
     if (name != null && name.isNotEmpty && type != null && type.isNotEmpty) {
@@ -57,10 +53,7 @@ abstract class MicCaptureInputHealth {
   }
 
   /// Short debug label for post-save UI — e.g. "AirPods" or "iPad Microphone".
-  static String? debugInputLabel({
-    String? portName,
-    String? portType,
-  }) {
+  static String? debugInputLabel({String? portName, String? portType}) {
     final name = portName?.trim() ?? '';
     final lowerName = name.toLowerCase();
     if (isBluetoothOrHeadset(portType: portType)) {

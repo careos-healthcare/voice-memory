@@ -164,7 +164,7 @@ export function buildATierWhyMatterBullets(
     if (patternType === "avoidance_signal") {
       bullets.push("Followed by avoidance later in your archive.");
     } else if (review.costEvidenceLines.length > 0) {
-      bullets.push("Later reflections may show a cost after this thread repeats.");
+      bullets.push("Later saved moments may show a cost after this thread repeats.");
     }
   }
 
@@ -173,7 +173,7 @@ export function buildATierWhyMatterBullets(
     facts.contradictionPresent ||
     review.contradictionNote
   ) {
-    bullets.push("May conflict with another belief your reflections keep circling.");
+    bullets.push("May conflict with another belief your saved words keep circling.");
   }
 
   if (profile.presentIngredients.includes("failed_prediction") || review.predictionEvidenceNote) {

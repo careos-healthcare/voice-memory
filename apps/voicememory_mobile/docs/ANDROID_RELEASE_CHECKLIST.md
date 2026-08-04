@@ -10,22 +10,39 @@
 
 - `RECORD_AUDIO` — required for reflection recording
 - `INTERNET` — API, transcribe, analyze
+- `USE_BIOMETRIC` — optional private-lock authentication
 
 ## SDK
 
-- **minSdk:** 24 (see `android/app/build.gradle.kts`)
-- **Release signing:** replace debug signing in `buildTypes.release` before Play production
+- **compileSdk:** 36
+- **targetSdk:** 36
+- **minSdk:** 26
+- **Version/build source:** `pubspec.yaml`
+- **Release signing:** fail-closed; production release APK/AAB tasks reject
+  missing, partial or invalid `android/key.properties`
 
-```kotlin
-// TODO: signingConfigs { create("release") { ... } }
-// release { signingConfig = signingConfigs.getByName("release") }
+```bash
+cp android/key.properties.example android/key.properties
+# Replace every placeholder and provide android/app/upload-keystore.jks.
+./android/gradlew -p android app:verifyProductionReleaseSigning
 ```
 
 ## Play Console
 
 - Data safety: audio recordings, email, device ID; no sale of data
 - Internal testing track first
-- Screenshots: Record, Archive (Patterns), Account, Sample Archive
+- Screenshots: Record post-save receipt, Archive originals, chronological
+  Changes, and Account
+
+## Focused return QA
+
+- [ ] First save shows Saved → editable transcript → at most one validated
+  observation → exact evidence → correction controls → one next action
+- [ ] Second related save can show a distinct Then/Now comparison in Changes
+- [ ] Both evidence sources open, including audio timestamps when available
+- [ ] Existing Changes items remain readable without active Pro
+- [ ] No graph, analyst, blind-spot, reminder, streak, or paywall card appears
+  in the post-save stack
 
 ## Purchases (RevenueCat — not ready until setup complete)
 
@@ -40,10 +57,15 @@
 ```bash
 flutter build appbundle --release \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app
+bash tool/audit_v1_permissions.sh
+bash tool/verify_android_release_artifact.sh \
+  build/app/outputs/bundle/release/app-release.aab
 ```
 
 Add RevenueCat dart-define when billing setup is complete.
 
-Upload `build/app/outputs/bundle/release/app-release.aab`.
+Only upload `build/app/outputs/bundle/release/app-release.aab` after both audits
+pass. The protected manual workflow builds and verifies the artifact but does
+not publish it to Google Play.
 
 See also: `LAUNCH_VALIDATION.md`, `REVENUECAT_LAUNCH_BLOCKERS.md`.

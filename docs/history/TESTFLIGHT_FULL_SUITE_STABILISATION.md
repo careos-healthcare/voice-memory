@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # TestFlight full-suite stabilisation
 
 **Date:** 2026-06-25  
@@ -189,3 +191,4 @@ This pass is stabilisation + guardrails only — no new dashboards, guided paths
 ## Remaining work
 
 None for full-suite stabilisation — **6335 passed / 0 failed** (pass 4). Merge PR #170 and proceed to TestFlight submission checklist.
+

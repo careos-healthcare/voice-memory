@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/config/v1_navigation_guard.dart';
+import '../core/config/v1_feature_flags.dart';
+import '../product/archive_me_v1_product_contract.dart';
 import 'archive_tool_routes.dart';
 import 'developer_settings_gate.dart';
 import 'trial_mode.dart';
@@ -30,6 +33,11 @@ class ProductionNavigation {
   static bool isDebugOnlyRoute(String route) => debugOnlyRoutes.contains(route);
 
   static bool isNavRouteVisible(String route) {
+    if (V1FeatureFlags.enableV1Only &&
+        !ArchiveMeV1ProductContract.isConsumerRouteAllowed(route)) {
+      return false;
+    }
+    if (!V1NavigationGuard.isNavRouteVisible(route)) return false;
     if (isDebugOnlyRoute(route) &&
         !DeveloperSettingsGate.canShowDeveloperSettings) {
       return false;
@@ -42,6 +50,13 @@ class ProductionNavigation {
 
   /// Redirect deep links away from incomplete archive tools and verification routes.
   static String? redirectAwayFromIncomplete(String path) {
+    if (V1FeatureFlags.enableV1Only &&
+        !ArchiveMeV1ProductContract.isConsumerRouteAllowed(path)) {
+      return V1NavigationGuard.redirectFor(path);
+    }
+    final v1Redirect = V1NavigationGuard.redirectFor(path);
+    if (v1Redirect != null) return v1Redirect;
+
     if (TrialMode.hideDeveloperSurfaces && isDebugOnlyRoute(path)) {
       return '/record';
     }

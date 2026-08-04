@@ -7,9 +7,9 @@ export const THEORY_MOVEMENT_COPY = {
   confidenceDecreased: ARCHIVE_EMOTIONAL.theoryWeakened,
   theoryRetired: ARCHIVE_EMOTIONAL.theoryRetired,
   whyLabel: "Why",
-  supportingWhy: "New evidence appeared in recent reflections.",
+  supportingWhy: "New evidence appeared in recent moments.",
   supportingWhyArea: (area: string) => `New evidence appeared in ${area}.`,
-  contradictingWhy: "Recent reflections contradict this theory.",
+  contradictingWhy: "Recent moments contradict this theory.",
   retiredWhy: "Recent evidence no longer supports it.",
   emptyTitle: "No movement yet",
   emptyBody:

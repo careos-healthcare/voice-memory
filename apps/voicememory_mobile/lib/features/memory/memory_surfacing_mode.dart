@@ -119,6 +119,7 @@ abstract class MemorySurfacingSession {
     reflection: entry.reflection,
     syncStatus: entry.syncStatus,
     localAudioPath: entry.localAudioPath,
+    localAudioVaultRef: entry.localAudioVaultRef,
     treatAsNew: entry.treatAsNew,
     connectionApproved: entry.connectionApproved,
     keepExactDetails: entry.keepExactDetails,
@@ -144,13 +145,15 @@ abstract class MemorySurfacingSession {
     lastSaveWasDoNotSurface = false;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSession() {
     selected = MemorySurfacingMode.normal;
     lastSaveWasSensitive = false;
     lastSaveWasDoNotSurface = false;
     pickerSeenThisSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSession();
 }
 
 abstract class MemorySurfacingCopy {

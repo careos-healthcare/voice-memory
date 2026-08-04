@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ArchiveMe rebrand audit
 
 **Date:** 2026-05-25  
@@ -152,3 +154,4 @@ rg "'VoiceMemory\"|\"VoiceMemory\"|>VoiceMemory<" app components lib --glob '!**
 ```
 
 Expected: no user-facing string matches; analyze may report existing info-level lints unrelated to rebrand.
+

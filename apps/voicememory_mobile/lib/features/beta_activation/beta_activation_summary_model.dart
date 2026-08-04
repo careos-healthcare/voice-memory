@@ -142,38 +142,41 @@ class BetaActivationSummaryExtension {
       firstProofTruthNo: firstProofTruthNo ?? this.firstProofTruthNo,
       firstProofActionWatchThisNext:
           firstProofActionWatchThisNext ?? this.firstProofActionWatchThisNext,
-      firstProofActionViewPatternDetails: firstProofActionViewPatternDetails ??
+      firstProofActionViewPatternDetails:
+          firstProofActionViewPatternDetails ??
           this.firstProofActionViewPatternDetails,
       firstProofActionRenamePattern:
           firstProofActionRenamePattern ?? this.firstProofActionRenamePattern,
       firstProofActionKeepRecording:
           firstProofActionKeepRecording ?? this.firstProofActionKeepRecording,
-      firstProofActionCorrectTranscript: firstProofActionCorrectTranscript ??
+      firstProofActionCorrectTranscript:
+          firstProofActionCorrectTranscript ??
           this.firstProofActionCorrectTranscript,
-      firstProofActionRemoveFromPattern: firstProofActionRemoveFromPattern ??
+      firstProofActionRemoveFromPattern:
+          firstProofActionRemoveFromPattern ??
           this.firstProofActionRemoveFromPattern,
     );
   }
 
   Map<String, dynamic> toMap() => {
-        'firstProofReached': firstProofReached,
-        'patternsOpened': patternsOpened,
-        'patternDetailsOpened': patternDetailsOpened,
-        'weeklyReviewOpened': weeklyReviewOpened,
-        'returnDayFlowAnswered': returnDayFlowAnswered,
-        'transcriptCorrected': transcriptCorrected,
-        'betaFeedbackOpened': betaFeedbackOpened,
-        'betaFeedbackSubmitted': betaFeedbackSubmitted,
-        'firstProofTruthYes': firstProofTruthYes,
-        'firstProofTruthSortOf': firstProofTruthSortOf,
-        'firstProofTruthNo': firstProofTruthNo,
-        'firstProofActionWatchThisNext': firstProofActionWatchThisNext,
-        'firstProofActionViewPatternDetails': firstProofActionViewPatternDetails,
-        'firstProofActionRenamePattern': firstProofActionRenamePattern,
-        'firstProofActionKeepRecording': firstProofActionKeepRecording,
-        'firstProofActionCorrectTranscript': firstProofActionCorrectTranscript,
-        'firstProofActionRemoveFromPattern': firstProofActionRemoveFromPattern,
-      };
+    'firstProofReached': firstProofReached,
+    'patternsOpened': patternsOpened,
+    'patternDetailsOpened': patternDetailsOpened,
+    'weeklyReviewOpened': weeklyReviewOpened,
+    'returnDayFlowAnswered': returnDayFlowAnswered,
+    'transcriptCorrected': transcriptCorrected,
+    'betaFeedbackOpened': betaFeedbackOpened,
+    'betaFeedbackSubmitted': betaFeedbackSubmitted,
+    'firstProofTruthYes': firstProofTruthYes,
+    'firstProofTruthSortOf': firstProofTruthSortOf,
+    'firstProofTruthNo': firstProofTruthNo,
+    'firstProofActionWatchThisNext': firstProofActionWatchThisNext,
+    'firstProofActionViewPatternDetails': firstProofActionViewPatternDetails,
+    'firstProofActionRenamePattern': firstProofActionRenamePattern,
+    'firstProofActionKeepRecording': firstProofActionKeepRecording,
+    'firstProofActionCorrectTranscript': firstProofActionCorrectTranscript,
+    'firstProofActionRemoveFromPattern': firstProofActionRemoveFromPattern,
+  };
 
   factory BetaActivationSummaryExtension.fromMap(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return empty;
@@ -197,8 +200,9 @@ class BetaActivationSummaryExtension {
       firstProofTruthSortOf: n('firstProofTruthSortOf'),
       firstProofTruthNo: n('firstProofTruthNo'),
       firstProofActionWatchThisNext: n('firstProofActionWatchThisNext'),
-      firstProofActionViewPatternDetails:
-          n('firstProofActionViewPatternDetails'),
+      firstProofActionViewPatternDetails: n(
+        'firstProofActionViewPatternDetails',
+      ),
       firstProofActionRenamePattern: n('firstProofActionRenamePattern'),
       firstProofActionKeepRecording: n('firstProofActionKeepRecording'),
       firstProofActionCorrectTranscript: n('firstProofActionCorrectTranscript'),

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { CORE_PRODUCT_VISION } from "@/lib/product-copy";
+
 import "./globals.css";
 import { AppProviders } from "./providers";
 
@@ -15,9 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ArchiveMe — Private voice reflections",
-  description:
-    "Save small moments when something stands out. ArchiveMe turns them into a private timeline of what appeared, what returned, what you corrected, and what still matters now. No daily journal required.",
+  title: "ArchiveMe — Your private voice life story",
+  description: CORE_PRODUCT_VISION,
   applicationName: "ArchiveMe",
   appleWebApp: {
     capable: true,

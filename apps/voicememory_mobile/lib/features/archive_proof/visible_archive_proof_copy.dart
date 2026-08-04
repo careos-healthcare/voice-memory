@@ -1,15 +1,15 @@
-import '../early_archive/early_first_signal_copy.dart';
+import '../../product/auditable_change_positioning.dart';
+import '../../product/core_product_vision.dart';
 
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
-  static const firstRunRecordTitle = 'When it repeats, save it.';
+  static const firstRunRecordTitle = AuditableChangePositioning.primaryPromise;
 
-  static const firstRunRecordBody =
-      'Save one real moment. ArchiveMe compares it later.';
+  static const firstRunRecordBody = CoreProductVision.valueProposition;
 
   static const firstRunRecordSupportingLine =
-      'Not a diary. Not homework. One sentence is enough.';
+      'Private by design. Start with one honest thought.';
 
   static const firstRunPromiseStep1 = firstRunRecordTitle;
   static const firstRunPromiseStep2 = firstRunRecordBody;
@@ -86,8 +86,7 @@ abstract final class VisibleArchiveProofCopy {
   static String archiveFirstComparisonConnectBody({
     required String thread,
     required String change,
-  }) =>
-      'This may connect to: $thread. What changed: $change.';
+  }) => 'This may connect to: $thread. What changed: $change.';
 
   static const archiveFirstComparisonWhatChangedLabel = 'What changed';
 
@@ -142,8 +141,7 @@ abstract final class VisibleArchiveProofCopy {
 
   static const patternsEmptyPreviewBody = patternsMindMapEmptyBody;
 
-  static const patternsEmptyPreviewBadge =
-      'Preview — not a conclusion yet';
+  static const patternsEmptyPreviewBadge = 'Preview — not a conclusion yet';
 
   static const patternsEmptyPreviewBeliefRow = 'Not enough evidence yet';
   static const patternsEmptyPreviewEvidenceRow =
@@ -182,8 +180,7 @@ abstract final class VisibleArchiveProofCopy {
       'Record once more to strengthen the signal.';
 
   // Two-entry comparison payoff (second session).
-  static const twoEntryCompareTitle =
-      'ArchiveMe has two moments to compare.';
+  static const twoEntryCompareTitle = 'ArchiveMe has two moments to compare.';
 
   static const twoEntryBodyUngrounded =
       'No clear repeat yet. One more moment will make the thread easier to see.';
@@ -234,8 +231,7 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefUpdateBodyStillBuilding =
       'A repeated thread is starting to stand out.';
 
-  static const beliefUpdateCurrentBeliefLabel =
-      'What this may be pointing to';
+  static const beliefUpdateCurrentBeliefLabel = 'What this may be pointing to';
 
   static const beliefUpdateEvidenceLabel = 'Evidence';
 
@@ -317,8 +313,7 @@ abstract final class VisibleArchiveProofCopy {
 
   static const beliefHistoryEarlierBeliefLabel = 'Earlier belief';
 
-  static const beliefHistoryCurrentBeliefLabel =
-      'What this may be pointing to';
+  static const beliefHistoryCurrentBeliefLabel = 'What this may be pointing to';
 
   static const beliefHistoryWhatChangedLabel = 'What changed';
 
@@ -398,8 +393,7 @@ abstract final class VisibleArchiveProofCopy {
       'it more clearly.';
 
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
-  static const returnLoopOneEntryBody =
-      'Come back when this shows up again.';
+  static const returnLoopOneEntryBody = 'Come back when this shows up again.';
 
   static const returnLoopTwoEntryRelatedBody =
       'One more will confirm whether this repeats.';
@@ -424,8 +418,7 @@ abstract final class VisibleArchiveProofCopy {
   static const oneEntryTomorrowLine = 'Come back when this shows up again.';
   static const oneEntryAddMoreInvite =
       'Save that moment only if it happens again.';
-  static const oneEntryShareableLine =
-      'I recorded one moment for my archive.';
+  static const oneEntryShareableLine = 'I recorded one moment for my archive.';
 
   // Share-safe proof — privacy-first growth copy (counts only, never snippets).
   static const shareProofTitle = 'Share-safe proof';
@@ -619,7 +612,7 @@ abstract final class VisibleArchiveProofCopy {
 
   static const insightCorrectionSaveCta = 'Save note';
 
-  static const insightCorrectionSkipCta = 'Skip';
+  static const insightCorrectionSkipCta = 'Not today';
 
   static const insightCorrectionMarkedNotQuite =
       'You marked this as not quite right.';
@@ -664,8 +657,7 @@ abstract final class VisibleArchiveProofCopy {
   static const insightQualityPrivacyDevice =
       'Your feedback stays on this device.';
 
-  static const insightQualityPrivacyNotes =
-      'Correction notes are not shared.';
+  static const insightQualityPrivacyNotes = 'Correction notes are not shared.';
 
   static const insightQualityPrivacyShareSafe =
       'Share-safe proof never includes your private notes.';
@@ -826,7 +818,7 @@ abstract final class VisibleArchiveProofCopy {
   static const captureContextTagHelper =
       'Tags stay on this device and help your archive compare moments.';
 
-  static const captureContextTagSkip = 'Skip';
+  static const captureContextTagSkip = 'Not today';
 
   static const captureContextTagSave = 'Save tag';
 
@@ -873,8 +865,7 @@ abstract final class VisibleArchiveProofCopy {
   static const contextInsightsSubtitle =
       'Based on optional tags saved on this device.';
 
-  static const contextInsightsOneTagged =
-      'Your archive has one tagged moment.';
+  static const contextInsightsOneTagged = 'Your archive has one tagged moment.';
 
   static const contextInsightsAddAnotherTagged =
       'Add another tagged moment to compare contexts.';
@@ -888,8 +879,7 @@ abstract final class VisibleArchiveProofCopy {
   static const contextInsightsAcrossContexts =
       'This is showing up across more than one context.';
 
-  static const contextInsightsStillThin =
-      'The context evidence is still thin.';
+  static const contextInsightsStillThin = 'The context evidence is still thin.';
 
   static const contextInsightsTopContextsLabel = 'Tagged moments by context';
 
@@ -913,6 +903,7 @@ abstract final class VisibleArchiveProofCopy {
         return captureContextTagWork;
       case 'home':
         return captureContextTagHome;
+      case 'family':
         return captureContextTagFamily;
       case 'money':
         return captureContextTagMoney;
@@ -929,7 +920,8 @@ abstract final class VisibleArchiveProofCopy {
     }
   }
 
-  static const contextAwareAddDifferentContext = contextInsightsAddDifferentContext;
+  static const contextAwareAddDifferentContext =
+      contextInsightsAddDifferentContext;
 
   static const contextAwareAcrossContexts =
       'This has shown up in more than one context.';
@@ -977,10 +969,9 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveEvidenceMapUntaggedRow = 'Untagged';
 
-  static String archiveEvidenceMapUntaggedCount(int count) =>
-      count == 1
-          ? '1 moment does not have a context tag yet.'
-          : '$count moments do not have a context tag yet.';
+  static String archiveEvidenceMapUntaggedCount(int count) => count == 1
+      ? '1 moment does not have a context tag yet.'
+      : '$count moments do not have a context tag yet.';
 
   static String archiveEvidenceMapThinContexts(List<String> labels) {
     if (labels.length == 1) {
@@ -1035,8 +1026,7 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveWorkspaceQuickActionReviewCorrections =
       'Review corrections';
 
-  static const archiveWorkspaceQuickActionViewEvidenceMap =
-      'View evidence map';
+  static const archiveWorkspaceQuickActionViewEvidenceMap = 'View evidence map';
 
   static const archiveWorkspaceQuickActionViewWeeklyReview =
       'View weekly review';

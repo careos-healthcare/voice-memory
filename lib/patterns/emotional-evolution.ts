@@ -134,7 +134,7 @@ function analyzeDayOfWeekPatterns(
       id: `dow-${best.key.replace(/\s+/g, "-").toLowerCase()}-${window}`,
       kind: "day_of_week",
       line: `Your highest-intensity entries cluster on ${day} ${slotLabel}.`,
-      detail: `${best.row.entryIds.length} reflections averaged ${best.avg}/10 — your charged language tends to land ${day} ${slotLabel}.`,
+      detail: `${best.row.entryIds.length} saved moments averaged ${best.avg}/10 — your charged language tends to land ${day} ${slotLabel}.`,
       window,
       confidence: confidenceScore(best.row.entryIds.length, best.avg - 4),
       entryIds: best.row.entryIds,
@@ -203,7 +203,7 @@ function analyzeEmotionalCycles(
       id: `cycle-${window}`,
       kind: "emotional_cycle",
       line: `Recent moods swing often (${sequence}).`,
-      detail: `Last ${recent.length} reflections cycle through ${alternations + 1} distinct moods without settling.`,
+      detail: `Your last ${recent.length} saved moments cycle through ${alternations + 1} distinct moods without settling.`,
       window,
       confidence: confidenceScore(recent.length, alternations),
       entryIds: recent.map((e) => e.id),
@@ -238,7 +238,7 @@ function analyzeTriggerContexts(
     results.push({
       id: `trigger-${theme}-${window}`,
       kind: "recurring_trigger",
-      line: `"${capitalize(theme)}" entries run ${avg}/10 — hotter than your typical reflections.`,
+      line: `"${capitalize(theme)}" moments run ${avg}/10 — hotter than your typical saved moments.`,
       detail: `${row.entryIds.length} entries tag "${theme}" when your language carries more charge.`,
       window,
       confidence: confidenceScore(row.entryIds.length, avg - 4),
@@ -514,7 +514,7 @@ export function buildWeeklyEvolutionComparison(
           : `This week and last week both averaged around ${thisWeekAvg}/10 intensity.`,
     );
   } else if (thisWeekAvg !== null) {
-    lines.push(`This week's reflections averaged ${thisWeekAvg}/10 intensity.`);
+    lines.push(`This week's saved moments averaged ${thisWeekAvg}/10 intensity.`);
   }
 
   const periodInsights = analyzePeriodComparison(sorted);

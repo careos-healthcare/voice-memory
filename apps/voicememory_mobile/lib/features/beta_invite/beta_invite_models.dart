@@ -42,13 +42,13 @@ class BetaInviteVariantStats {
   }
 
   Map<String, dynamic> toJson() => {
-        'variantId': variantId.name,
-        'shortCopiedCount': shortCopiedCount,
-        'fullCopiedCount': fullCopiedCount,
-        'taskCopiedCount': taskCopiedCount,
-        if (lastCopiedAt != null)
-          'lastCopiedAt': lastCopiedAt!.toUtc().toIso8601String(),
-      };
+    'variantId': variantId.name,
+    'shortCopiedCount': shortCopiedCount,
+    'fullCopiedCount': fullCopiedCount,
+    'taskCopiedCount': taskCopiedCount,
+    if (lastCopiedAt != null)
+      'lastCopiedAt': lastCopiedAt!.toUtc().toIso8601String(),
+  };
 
   static BetaInviteVariantStats fromJson(Map<String, dynamic> json) {
     BetaInviteVariantId? id;
@@ -82,10 +82,7 @@ class BetaInviteVariantStats {
 
 /// Aggregate beta invite copy tracking — metadata only.
 class BetaInviteCopyStats {
-  const BetaInviteCopyStats({
-    this.records = const {},
-    this.lastVariantId,
-  });
+  const BetaInviteCopyStats({this.records = const {}, this.lastVariantId});
 
   static const empty = BetaInviteCopyStats();
 
@@ -104,8 +101,7 @@ class BetaInviteCopyStats {
       records.values.any((record) => record.taskCopiedCount > 0);
 
   BetaInviteVariantStats statsFor(BetaInviteVariantId id) =>
-      records[id] ??
-      BetaInviteVariantStats(variantId: id);
+      records[id] ?? BetaInviteVariantStats(variantId: id);
 
   BetaInviteCopyStats copyWith({
     Map<BetaInviteVariantId, BetaInviteVariantStats>? records,
@@ -118,9 +114,9 @@ class BetaInviteCopyStats {
   }
 
   Map<String, dynamic> toJson() => {
-        'records': records.values.map((r) => r.toJson()).toList(),
-        if (lastVariantId != null) 'lastVariantId': lastVariantId!.name,
-      };
+    'records': records.values.map((r) => r.toJson()).toList(),
+    if (lastVariantId != null) 'lastVariantId': lastVariantId!.name,
+  };
 
   static BetaInviteCopyStats fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -146,10 +142,7 @@ class BetaInviteCopyStats {
         }
       }
     }
-    return BetaInviteCopyStats(
-      records: records,
-      lastVariantId: lastVariantId,
-    );
+    return BetaInviteCopyStats(records: records, lastVariantId: lastVariantId);
   }
 }
 

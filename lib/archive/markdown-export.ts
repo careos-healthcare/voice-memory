@@ -22,7 +22,7 @@ export function buildArchiveMarkdown(archive: ArchiveMeArchivePackage): string {
     "# ArchiveMe Archive",
     "",
     `Exported: ${formatEntryDate(archive.exportedAt)}`,
-    `Reflections: ${archive.entries.length}`,
+    `Saved moments: ${archive.entries.length}`,
     "",
     EXPORT_TRUST_FOOTER,
     "",
@@ -40,7 +40,7 @@ export function buildArchiveMarkdown(archive: ArchiveMeArchivePackage): string {
     lines.push("", "---", "");
   }
 
-  lines.push("## Reflections", "");
+  lines.push("## Saved moments", "");
 
   const sorted = [...archive.entries].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),

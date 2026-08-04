@@ -33,7 +33,8 @@ abstract final class ArchiveHomeSummaryCopy {
 
   static const recordCta = VisibleArchiveProofCopy.archiveHomeRecordCta;
 
-  static const typeInsteadCta = VisibleArchiveProofCopy.archiveHomeTypeInsteadCta;
+  static const typeInsteadCta =
+      VisibleArchiveProofCopy.archiveHomeTypeInsteadCta;
 
   static const oneTitle = VisibleArchiveProofCopy.archiveHomeOneTitle;
 
@@ -98,9 +99,7 @@ abstract final class ArchiveHomeSummaryEngine {
   static String? _nextActionLine(List<JournalEntry> entries) =>
       NextMomentPromptEngine.build(entries: entries)?.nextActionSummary;
 
-  static ArchiveHomeSummary build({
-    required List<JournalEntry> entries,
-  }) {
+  static ArchiveHomeSummary build({required List<JournalEntry> entries}) {
     return _applyContextAware(_buildSummary(entries: entries), entries);
   }
 
@@ -149,10 +148,14 @@ abstract final class ArchiveHomeSummaryEngine {
           stage: ArchiveHomeStage.three,
           title: ArchiveEvidenceThreshold.formingTitle,
           body: ArchiveEvidenceThreshold.formingBody,
-          footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-          currentBeliefLine: VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
-          whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
-          nextActionLine: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+          footnoteLine:
+              VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+          currentBeliefLine:
+              VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
+          whatChangedLine:
+              VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+          nextActionLine:
+              VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
           primaryCta: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
           secondaryCta: VisibleArchiveProofCopy.typeInsteadCta,
           primaryAction: ArchiveHomeAction.addMoment,
@@ -162,16 +165,18 @@ abstract final class ArchiveHomeSummaryEngine {
       }
       return ArchiveHomeSummary(
         stage: ArchiveHomeStage.three,
-        title: payoff?.title ?? VisibleArchiveProofCopy.threeEntryBeliefTitle,
-        body: payoff?.bodyIntro ??
-            VisibleArchiveProofCopy.threeEntryBeliefBodyIntro,
-        footnoteLine: payoff?.bodySource,
-        currentBeliefLine: VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
-        whatChangedLine: payoff?.thinEvidenceNote ??
+        title: payoff.title,
+        body: payoff.bodyIntro,
+        footnoteLine: payoff.bodySource,
+        currentBeliefLine:
+            VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
+        whatChangedLine:
+            payoff.thinEvidenceNote ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThin,
-        evidenceRows: payoff?.evidenceRows ?? const [],
-        nextActionLine: _nextActionLine(entries) ??
-            payoff?.thinEvidenceAction ??
+        evidenceRows: payoff.evidenceRows,
+        nextActionLine:
+            _nextActionLine(entries) ??
+            payoff.thinEvidenceAction ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThinAction,
         primaryCta: VisibleArchiveProofCopy.threeEntryBeliefPrimaryCta,
         secondaryCta: VisibleArchiveProofCopy.threeEntryBeliefViewArchiveCta,
@@ -188,10 +193,14 @@ abstract final class ArchiveHomeSummaryEngine {
           stage: ArchiveHomeStage.four,
           title: ArchiveEvidenceThreshold.formingTitle,
           body: ArchiveEvidenceThreshold.formingBody,
-          footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-          currentBeliefLine: VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
-          whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
-          nextActionLine: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+          footnoteLine:
+              VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+          currentBeliefLine:
+              VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
+          whatChangedLine:
+              VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+          nextActionLine:
+              VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
           primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
           secondaryCta: VisibleArchiveProofCopy.typeInsteadCta,
           primaryAction: ArchiveHomeAction.addMoment,
@@ -201,12 +210,12 @@ abstract final class ArchiveHomeSummaryEngine {
       }
       return ArchiveHomeSummary(
         stage: ArchiveHomeStage.four,
-        title: payoff?.title ?? VisibleArchiveProofCopy.beliefUpdateTitle,
-        body: payoff?.body ?? VisibleArchiveProofCopy.beliefUpdateBodyChanged,
-        currentBeliefLine: payoff?.currentBelief,
-        whatChangedLine: payoff?.whatChangedLine,
-        evidenceRows: payoff?.evidenceRows ?? const [],
-        nextActionLine: _nextActionLine(entries) ?? payoff?.primaryCta,
+        title: payoff.title,
+        body: payoff.body,
+        currentBeliefLine: payoff.currentBelief,
+        whatChangedLine: payoff.whatChangedLine,
+        evidenceRows: payoff.evidenceRows,
+        nextActionLine: _nextActionLine(entries) ?? payoff.primaryCta,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         secondaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
         primaryAction: ArchiveHomeAction.addMoment,
@@ -216,13 +225,15 @@ abstract final class ArchiveHomeSummaryEngine {
     }
 
     final review = WeeklyArchiveReviewEngine.build(entries: entries);
-    final shareProof =
-        const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+    final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+      entries: entries,
+    );
     return ArchiveHomeSummary(
       stage: ArchiveHomeStage.fivePlus,
       title: review.title,
       subtitle: review.subtitle,
-      body: review.strongestThreadLine ??
+      body:
+          review.strongestThreadLine ??
           review.subtitle ??
           VisibleArchiveProofCopy.weeklyArchiveReviewSubtitle,
       footnoteLine: review.notConclusionLine,

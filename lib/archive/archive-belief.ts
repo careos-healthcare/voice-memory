@@ -104,7 +104,7 @@ function buildBeliefChangeLines(
 
   if (theory.status === "weakening") push(ARCHIVE_EMOTIONAL.theoryWeakened);
   if (theory.status === "strengthening" && lines.length === 0) {
-    push("Recent reflections support this theory");
+    push("Recent saved moments support this theory");
   }
   if (theory.contradictingEvidenceCount > 0 && !seen.has("+ Contradicting evidence appeared")) {
     push("Contradicting evidence appeared");
@@ -125,7 +125,7 @@ function predictionFailureLines(
   );
   if (!item) return [];
   if (item.outcomeStatus === "aligned") return [];
-  return [item.outcomeSummary.trim() || "Later reflections may not match what you expected."];
+  return [item.outcomeSummary.trim() || "Later saved moments may not match what you expected."];
 }
 
 function buildBeliefEvidence(

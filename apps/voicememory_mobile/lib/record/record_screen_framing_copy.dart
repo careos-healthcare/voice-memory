@@ -14,13 +14,13 @@ abstract class RecordScreenFramingCopy {
 
   /// True empty archive — count 0 only.
   static String get emptyArchiveTitle => BetaImprovementPackEngine.recordTitle(
-        entryCount: 0,
-        fallback: 'Save one real moment.',
-      );
+    entryCount: 0,
+    fallback: 'Save one real moment.',
+  );
   static String get emptyArchiveBody => BetaImprovementPackEngine.recordBody(
-        entryCount: 0,
-        fallback: ProgressiveEvidenceStateCopy.zeroBody,
-      );
+    entryCount: 0,
+    fallback: ProgressiveEvidenceStateCopy.zeroBody,
+  );
   static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// Demo archive entry on Record first use.
@@ -31,8 +31,8 @@ abstract class RecordScreenFramingCopy {
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
   static const String firstRunPrivacyTitle = 'Before you record';
-  static const String firstRunPrivacyBody =
-      PrivacyCopyPolicy.personalNotMedicalDisclaimer;
+  static String get firstRunPrivacyBody =>
+      PrivacyCapabilitySnapshot.focusedV1.recordReassurance;
   static const String firstRunPrivacyLink = 'How it works';
 
   /// Low-friction pressure wedge under the first-use capture block.
@@ -67,14 +67,14 @@ abstract final class RecordFirstUsePromptCopy {
   RecordFirstUsePromptCopy._();
 
   static String get title => BetaImprovementPackEngine.recordTitle(
-        entryCount: 0,
-        fallback: 'Save one real moment.',
-      );
+    entryCount: 0,
+    fallback: 'Save one real moment.',
+  );
 
   static String get body => BetaImprovementPackEngine.recordBody(
-        entryCount: 0,
-        fallback: ProgressiveEvidenceStateCopy.zeroBody,
-      );
+    entryCount: 0,
+    fallback: ProgressiveEvidenceStateCopy.zeroBody,
+  );
 
   static const examplesHeading = 'Examples';
 
@@ -93,7 +93,8 @@ abstract final class RecordFirstRunPromiseCopy {
 
   static const title = VisibleArchiveProofCopy.firstRunRecordTitle;
   static const body = VisibleArchiveProofCopy.firstRunRecordBody;
-  static const supportingLine = VisibleArchiveProofCopy.firstRunRecordSupportingLine;
+  static const supportingLine =
+      VisibleArchiveProofCopy.firstRunRecordSupportingLine;
   static const proLine =
       'Free shows the first useful proof. Pro keeps the longer trail.';
 }

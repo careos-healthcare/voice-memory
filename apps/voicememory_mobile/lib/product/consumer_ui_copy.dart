@@ -1,20 +1,21 @@
 import '../features/archive_proof/visible_archive_proof_copy.dart';
-import '../features/early_archive/early_first_signal_copy.dart';
-import '../features/landing_continuity/landing_app_continuity_copy.dart';
 import '../features/paywall_alignment/paywall_alignment_copy.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+import 'auditable_change_positioning.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
   ConsumerUiCopy._();
 
   // ——— ArchiveMe competitive positioning ———
+  static const String archivePositioningCategory =
+      AuditableChangePositioning.category;
   static const String archivePositioningHeadline =
-      'Catch the loop where doing more never feels like enough.';
+      AuditableChangePositioning.primaryPromise;
   static const String archivePositioningSubhead =
-      'Record short moments. ArchiveMe helps you test whether pressure, productivity, and enoughness keep repeating.';
+      AuditableChangePositioning.full;
   static const String archiveMemoryPromise =
-      'ArchiveMe helps you catch the proving loop earlier next time.';
+      'ArchiveMe keeps the record of what repeated and what changed.';
   static const String archiveLoopPromise =
       'Record one moment. Test whether the loop repeats.';
   static const String archiveNotChatLine =
@@ -31,28 +32,6 @@ abstract class ConsumerUiCopy {
       'See how this has changed over time.';
   static const String patternsEarlyStateBody =
       'Record a few real moments. ArchiveMe will look for what repeats across them.';
-  static const String onboardingPositioningHeadline =
-      LandingAppContinuityCopy.hero;
-  static const String onboardingPositioningBody =
-      LandingAppContinuityCopy.heroBody;
-
-  // ——— Launch onboarding (promise + 3 steps) ———
-  static const String onboardingStep1Title = LandingAppContinuityCopy.step1Title;
-  static const String onboardingStep1Body = LandingAppContinuityCopy.step1Body;
-  static const String onboardingStep2Title = LandingAppContinuityCopy.step2Title;
-  static const String onboardingStep2Body = LandingAppContinuityCopy.step2Body;
-  static const String onboardingStep3Title = LandingAppContinuityCopy.step3Title;
-  static const String onboardingStep3Body = LandingAppContinuityCopy.step3Body;
-  static const String onboardingPage2Title = onboardingStep1Title;
-  static const String onboardingPage2Body = onboardingStep1Body;
-  static const String onboardingPage3Title = onboardingStep2Title;
-  static const String onboardingPage3Body = onboardingStep2Body;
-  static const String onboardingPage4Title = onboardingStep3Title;
-  static const String onboardingPage4Body = onboardingStep3Body;
-  static const String onboardingPage5Title = onboardingPage4Title;
-  static const String onboardingPage5Body = onboardingPage4Body;
-  static const String onboardingFinalCta = 'Start my archive';
-  static const String onboardingContinueCta = 'Continue';
   static const String recordOneMomentCta = 'Record one moment';
   static const String recordMomentCta = 'Record moment';
   static const String stopRecordingCta = 'Stop recording';
@@ -109,7 +88,7 @@ abstract class ConsumerUiCopy {
   // ——— Onboarding audience wedge ———
   static const String acquisitionIntentQuestion =
       'What pressure loop do you want to catch?';
-  static const String acquisitionIntentSkip = 'Skip';
+  static const String acquisitionIntentSkip = 'Not today';
   static const String reminderNotAvailableInBuild =
       'Reminder not available in this build.';
 
@@ -132,8 +111,7 @@ abstract class ConsumerUiCopy {
   // ——— Positioning comprehension rescue ———
   static const String firstRecordPositioningLine =
       'Each moment helps ArchiveMe remember the pattern.';
-  static const String archiveMemoryDemoTitle =
-      'How ArchiveMe builds evidence';
+  static const String archiveMemoryDemoTitle = 'How ArchiveMe builds evidence';
   static const List<String> archiveMemoryDemoRows = [
     'Day 1: “I said yes before checking what I needed.”',
     'Day 3: “It showed up again before a work message.”',
@@ -142,8 +120,7 @@ abstract class ConsumerUiCopy {
   static const String archiveMemoryDemoRememberLine =
       'ArchiveMe watches what repeats — from your own words.';
   static const String archiveMemoryDemoCta = recordOneMomentCta;
-  static const String archiveMemoryPreviewTitle =
-      'What your archive will show';
+  static const String archiveMemoryPreviewTitle = 'What your archive will show';
   static const String archiveMemoryPreviewBody =
       'Over time, ArchiveMe can show what returned, what changed, and what helped.';
   static const List<String> archiveMemoryPreviewBullets = [
@@ -215,50 +192,52 @@ abstract class ConsumerUiCopy {
     'You see what is strengthening, fading, or changing',
   ];
   static const String patternsPrivacyReassurance =
-      'No judgement. No public feed. Your reflections stay private.';
+      'No judgement. No public feed. Your archive stays private.';
   static const String viewAllPatterns = 'See all patterns';
   static const String seeWhatChanged = 'See what changed';
 
   // ——— All patterns list ———
   static const String allPatternsTitle = 'All patterns';
   static const String allPatternsLead =
-      'Patterns and themes ArchiveMe keeps noticing in your reflections.';
+      'Patterns and themes ArchiveMe keeps noticing in your saved moments.';
   static const String patternsSectionCurrent = 'Patterns that keep repeating';
   static const String patternsSectionEmerging = 'A pattern is forming';
   static const String patternsSectionChanging = 'This seems to be changing';
   static const String patternsSectionHidden = 'Quiet patterns';
 
-  // ——— What is changing ———
-  static const String changesScreenTitle = 'What is changing';
+  // ——— Changes ———
+  static const String changesScreenTitle = 'Changes';
   static const String changesScreenLead =
-      'Stories about patterns getting stronger, fading, or shifting.';
+      'See what repeated. See what changed. Check the exact saved words and '
+      'dates proving it.';
   static const String changesEmptyLead =
-      'When you have enough reflections, you will see stories here — not charts.';
+      'One moment gives ArchiveMe an observation. Returning gives it '
+      'something real to compare.';
 
   // ——— Pattern detail ———
   static const String patternDetailTitle = 'Pattern';
   static const String labelPattern = 'Pattern';
   static const String labelConfidence = 'Confidence';
-  static const String labelBasedOn = 'Based on your reflections';
+  static const String labelBasedOn = 'Based on your saved moments';
   static const String labelWhy = 'Why you may be seeing this';
   static const String labelWhyItMatters = 'Why it matters';
   static const String labelPatternNote = 'In your own words';
   static const String labelWhat = 'What';
   static const String labelMoments = 'Moments you mentioned';
   static const String labelWhatThisMeans = 'What this may mean';
-  static const String detailMomentsSection = 'Moments from your reflections';
+  static const String detailMomentsSection = 'Moments from your archive';
   static const String detailWhatThisMeans = 'What this may mean for you';
-  static const String basedOnReflectionsCount =
-      'Based on your recent reflections';
+  static const String basedOnReflectionsCount = 'Based on your recent moments';
 
   // ——— Pattern cards (hero + insights) ———
-  static const String addReflectionTitle = 'Add a reflection';
+  static const String addReflectionTitle = 'Save one real moment';
   static const String addReflectionLead =
       'Each new moment helps surface what keeps repeating.';
 
   // ——— Record ———
-  static const String recordTitle = 'What is on your mind?';
-  static const String recordSubtitle = 'Say one small thing from today.';
+  static const String recordTitle = 'What happened?';
+  static const String recordSubtitle =
+      'Record one real moment, or type it instead.';
   static const String trySayingOneOfThese = 'Try saying one of these';
   static const String trySayingLabel = 'Try saying:';
   static const String showMorePromptIdeas = 'Show more prompt ideas';
@@ -267,7 +246,7 @@ abstract class ConsumerUiCopy {
       'Choose one, then record one sentence.';
   static const String startRecording = 'Start recording';
   static const String continueBuildingPatterns =
-      'Keep adding reflections to sharpen your patterns.';
+      'Keep adding moments to sharpen what repeats.';
   static const List<String> recordTopicChips = [
     'Work',
     'Relationships',
@@ -287,7 +266,7 @@ abstract class ConsumerUiCopy {
     'What are you worried might happen?',
     'What keeps repeating in this situation?',
   ];
-  static const String reflectionSavedTitle = 'Reflection saved';
+  static const String reflectionSavedTitle = 'Moment saved';
   static const String possiblePatternForming = 'A pattern may be forming';
   static const String postSaveConfidence = 'How clear it feels';
   static const String postSaveBasedOn = 'How often it shows up';
@@ -536,7 +515,7 @@ abstract class ConsumerUiCopy {
   static const String secondSessionNeedMoreMoments =
       'ArchiveMe needs one more moment to compare this properly.';
   static const String earlyObservationsNote =
-      'Early take — it gets clearer as you add more reflections.';
+      'Early take — it gets clearer as you add more moments.';
   static const String instantPatternLead = 'A pattern that may be forming';
   static const String instantStillLearning =
       'Keep recording — patterns get clearer with more moments.';
@@ -565,8 +544,8 @@ abstract class ConsumerUiCopy {
   static const String accountStatsTitle = 'At a glance';
   static const String accountPatternsIdentified = 'Patterns noticed';
   static const String accountStrongestPattern = 'Strongest pattern';
-  static const String accountReflectionsCounted = 'Reflections counted';
-  static const String accountDaysWithReflections = 'Days with reflections';
+  static const String accountReflectionsCounted = 'Moments saved';
+  static const String accountDaysWithReflections = 'Days with saved moments';
   static const String protectPatternsTitle =
       'Save your patterns with email sign-in.';
   static const String protectPatternsCta = 'Save my patterns';
@@ -575,7 +554,7 @@ abstract class ConsumerUiCopy {
   static const String privacyPolicy = 'Privacy policy';
   static const String termsOfUse = 'Terms of use';
   static const String restorePurchases = 'Restore purchases';
-  static const String exportReflections = 'Export reflections';
+  static const String exportReflections = 'Export saved moments';
   static const String appVersion = 'App version';
 
   // ——— Paywall ———
@@ -603,8 +582,7 @@ abstract class ConsumerUiCopy {
       'are available on this device.';
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
-  static const String paywallBillingNotConfigured =
-      paywallSetupUnavailableBody;
+  static const String paywallBillingNotConfigured = paywallSetupUnavailableBody;
   static const String paywallUnavailablePlansLoading =
       'Monthly and yearly plans will appear when App Store products finish loading.';
   static const String plansUnavailable = paywallUnavailablePlansLoading;
@@ -612,10 +590,6 @@ abstract class ConsumerUiCopy {
   // ——— Pattern memory limits (Pro) ———
   static const String patternMemoryGrowingTitle =
       'Your pattern memory is growing.';
-  static const String freeKeepsSevenKeyMoments =
-      'Free keeps your first 7 key moments.';
-  static const String proKeepsFullMemory =
-      'Pro keeps the longer proof trail across weeks and months.';
   static const String unlockFullMemoryCta = 'See deeper history';
 
   // ——— Narrative headlines (change stories) ———
@@ -636,7 +610,6 @@ abstract class ConsumerUiCopy {
   static const String searchIdleBody =
       'Find saved moments after you record a few real ones.';
   static const String needAnIdea = 'Need an idea?';
-  static const String onboardingBeginCta = onboardingFinalCta;
   static const String archiveMeNoticedHeading = 'ARCHIVEME NOTICED';
   static const String archiveMeNoticedTitle = 'Today ArchiveMe noticed';
   @Deprecated('Use archiveMeNoticedHeading')
@@ -644,7 +617,7 @@ abstract class ConsumerUiCopy {
   @Deprecated('Use archiveMeNoticedTitle')
   static const String voiceMemoryNoticedTitle = archiveMeNoticedTitle;
   static const String processingReflectionSaved =
-      'Your reflection will appear in Patterns when finished.';
+      'Your moment will appear in Patterns when finished.';
   static const String discoveryNoticeHeadline = 'Something worth noticing';
 
   // ——— Tomorrow return loop ———
@@ -657,11 +630,11 @@ abstract class ConsumerUiCopy {
   static const String nextTimeWatchFor = 'Next time, watch for…';
   static const String tomorrowWatchForSection = 'What to watch for next time';
   static const String oneMoreReflectionMakesClearer =
-      'One more reflection makes this clearer.';
+      'One more moment makes this clearer.';
   static const String oneReflectionMomentLead =
-      'One reflection is a moment. A few reflections start to show what repeats.';
+      'One saved moment is a start. A few moments start to show what repeats.';
   static const String tomorrowCompareWithToday =
-      'Tomorrow, add one more reflection and ArchiveMe can compare it with today.';
+      'Tomorrow, add one more moment and ArchiveMe can compare it with today.';
   static const String tomorrowReturnCardBody = tomorrowCompareWithToday;
   static const String tomorrowComparePatternsBody =
       'ArchiveMe can check whether the same pattern shows up again.';
@@ -681,9 +654,8 @@ abstract class ConsumerUiCopy {
   static const String patternsComeBackBody =
       'ArchiveMe gets useful when it can compare today with tomorrow. '
       'The more ordinary moments you add, the clearer your repeating patterns become.';
-  static const String patternsComeBackRecordCta = "Record today's reflection";
-  static const String postSaveRecordAnotherReflection =
-      'Record another reflection';
+  static const String patternsComeBackRecordCta = "Record today's moment";
+  static const String postSaveRecordAnotherReflection = 'Record another moment';
 
   // ——— Tomorrow commitment ———
   static const String tomorrowCommitmentLabel = 'TOMORROW';
@@ -699,7 +671,7 @@ abstract class ConsumerUiCopy {
   static const String tomorrowCommitmentConfirmedLine2 =
       'Come back tomorrow to see what changed.';
   static const String tomorrowCommitmentDefaultPrompt =
-      'Notice what shows up again in your next reflection.';
+      'Notice what shows up again in your next moment.';
   static const String tomorrowReturnStatusCameBackTitle = 'You came back';
   static const String tomorrowReturnStatusCameBackBodyPrefix =
       'Yesterday you were watching for:';
@@ -720,7 +692,7 @@ abstract class ConsumerUiCopy {
   static const String todaysWatchForTitle = 'Today, watch for this';
   static const String todaysWatchForCheckInLabel = 'When you record, notice';
   static const String todaysWatchForRecordCta = 'Record what happened';
-  static const String todaysWatchForSkipCta = 'Skip this';
+  static const String todaysWatchForSkipCta = 'Not today';
   static const String watchForResultCardTitle = 'Yesterday\'s watch-for';
   static const String watchForResultShowedAgain = 'It showed up again.';
   static const String watchForResultDidNotShow = 'It did not show up today.';
@@ -743,7 +715,7 @@ abstract class ConsumerUiCopy {
   static const String returnComparisonRecordAnotherCta =
       'Record another moment';
   static const String returnComparisonShortReflection =
-      'A short reflection from today.';
+      'A short moment from today.';
   static const String returnComparisonHeadlineRepeated =
       'That pattern showed up again.';
   static const String returnComparisonHeadlineShifted =
@@ -755,7 +727,7 @@ abstract class ConsumerUiCopy {
   static const String returnComparisonHeadlineUnclear =
       'One more moment will make this clearer.';
   static const String returnComparisonBodyUnclear =
-      "Today's reflection was short, so ArchiveMe needs another moment "
+      "Today's moment was short, so ArchiveMe needs another save "
       'before comparing it properly.';
   static const String returnComparisonChipShowedAgain = 'showed up again';
   static const String returnComparisonChipChangedShape = 'changed shape';
@@ -967,6 +939,5 @@ abstract class ConsumerUiCopy {
   static const String patternsNoClearPatternTitle = 'No clear pattern yet';
 
   static const String patternsNoClearPatternBody =
-      'Keep recording short reflections. Patterns become clearer after a few entries.';
-
+      'Keep recording short moments. Patterns become clearer after a few saves.';
 }

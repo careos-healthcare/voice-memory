@@ -3,7 +3,7 @@
 export const EVOLVING_UNDERSTANDING_INTRO = {
   headline: "A working view from repeated evidence",
   body:
-    "ArchiveMe does not try to define you from one reflection. It builds a working view from repeated evidence.",
+    "ArchiveMe does not try to define you from one moment. It builds a working view from repeated evidence.",
 } as const;
 
 export const EVOLVING_FIRST_WORKING_THEORY = {
@@ -11,7 +11,7 @@ export const EVOLVING_FIRST_WORKING_THEORY = {
   notVerdict:
     "This is not a verdict. It is the first theory your archive can support.",
   mayChange:
-    "As you add more reflections, this may strengthen, weaken, or disappear.",
+    "As you add more moments, this may strengthen, weaken, or disappear.",
   archiveView:
     "ArchiveMe is starting to build an evidence-based view of what keeps repeating.",
 } as const;
@@ -19,7 +19,7 @@ export const EVOLVING_FIRST_WORKING_THEORY = {
 export const WHAT_HAPPENS_NEXT = {
   title: "What happens next?",
   bullets: [
-    "New reflections can strengthen this theory.",
+    "New moments can strengthen this theory.",
     "Contradicting evidence can weaken it.",
     "Patterns can disappear when your behavior changes.",
     "Discover shows what changed since your last visit.",
@@ -30,7 +30,7 @@ export const WHAT_HAPPENS_NEXT = {
 
 export const EVOLVING_VIEW_CARD = {
   headline: "Your archive has started forming a view.",
-  subline: "Each new reflection can change that view.",
+  subline: "Each new moment can change that view.",
   totalTheories: "Theories tracked",
   underReview: "Under review",
   strengthening: "Strengthening",
@@ -40,7 +40,7 @@ export const EVOLVING_VIEW_CARD = {
 
 export const POST_SAVE_EVOLVING_NOTES = [
   "Your archive view may change as new evidence arrives.",
-  "This reflection has been added to the evidence.",
+  "This moment has been added to the evidence.",
   "ArchiveMe will compare this against what you have said before.",
 ] as const;
 

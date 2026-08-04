@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Analyst V1 — test plan
 
 ## Automated tests
@@ -71,3 +73,4 @@ Manual checks:
 | `test/archive_analyst_gate_test.dart` | Tests |
 | `test/archive_analyst_confidence_test.dart` | Tests |
 | `test/archive_analyst_engine_test.dart` | Tests |
+

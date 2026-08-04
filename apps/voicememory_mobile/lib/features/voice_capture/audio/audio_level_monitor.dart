@@ -25,7 +25,8 @@ class AudioLevelSummary {
 
 /// Samples recorder amplitude during capture and logs level diagnostics.
 class AudioLevelMonitor {
-  static const Duration silenceRetryWindow = AudioSilenceRetryPolicy.initialWindow;
+  static const Duration silenceRetryWindow =
+      AudioSilenceRetryPolicy.initialWindow;
 
   StreamSubscription<Amplitude>? _subscription;
   double _minDb = double.infinity;
@@ -34,11 +35,9 @@ class AudioLevelMonitor {
   int _sampleCount = 0;
   DateTime? _lastLogAt;
 
-  double get currentMinDb =>
-      _minDb.isFinite ? _minDb : double.negativeInfinity;
+  double get currentMinDb => _minDb.isFinite ? _minDb : double.negativeInfinity;
 
-  double get currentMaxDb =>
-      _maxDb.isFinite ? _maxDb : double.negativeInfinity;
+  double get currentMaxDb => _maxDb.isFinite ? _maxDb : double.negativeInfinity;
 
   double get currentAvgDb =>
       _sampleCount > 0 ? _sumDb / _sampleCount : double.negativeInfinity;
@@ -52,32 +51,36 @@ class AudioLevelMonitor {
         maxDbInInitialWindow: currentMaxDb,
       );
 
-  void start(AudioRecorder recorder) {
+  void start(
+    AudioRecorder recorder, {
+    void Function(double decibels)? onLevel,
+  }) {
     stop(logSummary: false);
     resetStats();
 
     _subscription = recorder
         .onAmplitudeChanged(const Duration(milliseconds: 200))
         .listen((amplitude) {
-      _sampleCount += 1;
-      final current = amplitude.current;
-      _minDb = _min(_minDb, current);
-      _maxDb = _max(_maxDb, amplitude.current);
-      _maxDb = _max(_maxDb, amplitude.max);
-      _sumDb += current;
+          _sampleCount += 1;
+          final current = amplitude.current;
+          _minDb = _min(_minDb, current);
+          _maxDb = _max(_maxDb, amplitude.current);
+          _maxDb = _max(_maxDb, amplitude.max);
+          _sumDb += current;
+          onLevel?.call(current);
 
-      final now = DateTime.now();
-      if (_lastLogAt == null ||
-          now.difference(_lastLogAt!) >= const Duration(seconds: 1)) {
-        _lastLogAt = now;
-        AudioDiagLog.level(
-          currentDb: current,
-          minDb: currentMinDb,
-          maxDb: currentMaxDb,
-          avgDb: currentAvgDb,
-        );
-      }
-    });
+          final now = DateTime.now();
+          if (_lastLogAt == null ||
+              now.difference(_lastLogAt!) >= const Duration(seconds: 1)) {
+            _lastLogAt = now;
+            AudioDiagLog.level(
+              currentDb: current,
+              minDb: currentMinDb,
+              maxDb: currentMaxDb,
+              avgDb: currentAvgDb,
+            );
+          }
+        });
   }
 
   void resetStats() {
@@ -92,14 +95,13 @@ class AudioLevelMonitor {
     _subscription?.cancel();
     _subscription = null;
 
-    final resolvedMinDb =
-        _minDb.isFinite ? _minDb : double.negativeInfinity;
-    final resolvedMaxDb =
-        _maxDb.isFinite ? _maxDb : double.negativeInfinity;
+    final resolvedMinDb = _minDb.isFinite ? _minDb : double.negativeInfinity;
+    final resolvedMaxDb = _maxDb.isFinite ? _maxDb : double.negativeInfinity;
     final resolvedAvgDb = _sampleCount > 0
         ? _sumDb / _sampleCount
         : double.negativeInfinity;
-    final likelySilent = _sampleCount == 0 ||
+    final likelySilent =
+        _sampleCount == 0 ||
         resolvedMaxDb < AudioLevelSummary.silentThresholdDb;
     final summary = AudioLevelSummary(
       minDb: resolvedMinDb,

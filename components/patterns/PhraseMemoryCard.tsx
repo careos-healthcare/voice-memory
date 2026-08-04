@@ -36,7 +36,7 @@ export function PhraseMemoryCard({
   phrases,
   title = "Repeated language",
   subtitle = "Phrases you return to across entries",
-  emptyLabel = "Repeated phrases appear as you accumulate voice reflections.",
+  emptyLabel = "Repeated phrases appear as you save more voice moments.",
   maxItems = 6,
   highlightEntryId,
   showOccurrences = true,

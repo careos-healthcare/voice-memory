@@ -6,6 +6,7 @@ const globalStore = globalThis as typeof globalThis & {
       subject: string;
       ipHash: string;
       uaHash: string;
+      usageReservationId?: string;
       createdAt: number;
       consumed: boolean;
     }
@@ -19,6 +20,7 @@ function store(): Map<
     subject: string;
     ipHash: string;
     uaHash: string;
+    usageReservationId?: string;
     createdAt: number;
     consumed: boolean;
   }
@@ -35,12 +37,14 @@ export async function registerLiveAudioSession(input: {
   subject: string;
   ipHash: string;
   uaHash: string;
+  usageReservationId?: string;
 }): Promise<void> {
   store().set(input.jti, {
     sessionId: input.sessionId,
     subject: input.subject,
     ipHash: input.ipHash,
     uaHash: input.uaHash,
+    usageReservationId: input.usageReservationId,
     createdAt: Date.now(),
     consumed: false,
   });
@@ -51,7 +55,7 @@ export async function consumeLiveAudioSession(input: {
   ipHash: string;
   uaHash: string;
 }): Promise<
-  | { ok: true; sessionId: string; subject: string }
+  | { ok: true; sessionId: string; subject: string; usageReservationId?: string }
   | { ok: false; reason: "missing" | "consumed" | "binding_mismatch" }
 > {
   const row = store().get(input.jti);
@@ -61,7 +65,12 @@ export async function consumeLiveAudioSession(input: {
     return { ok: false, reason: "binding_mismatch" };
   }
   row.consumed = true;
-  return { ok: true, sessionId: row.sessionId, subject: row.subject };
+  return {
+    ok: true,
+    sessionId: row.sessionId,
+    subject: row.subject,
+    usageReservationId: row.usageReservationId,
+  };
 }
 
 export function resetLiveAudioSessionStoreForTest(): void {

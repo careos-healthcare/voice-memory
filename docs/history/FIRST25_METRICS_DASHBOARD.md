@@ -1,3 +1,10 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+>
+> Replaced by `apps/voicememory_mobile/docs/FIRST25_METRICS_DASHBOARD.md`. The
+> events named below are pre-V1 and the analytics catalog now rejects most of
+> them, so the funnels and the snapshot template here are not derivable. The
+> "Target (example)" column was never a measurement.
+
 # First 25 User Metrics Dashboard
 
 Early-cohort funnel for the first ~25 beta users. Events fire to **Firebase Analytics** via `ProductAnalytics` on mobile (`apps/voicememory_mobile`).
@@ -176,3 +183,4 @@ Fill from Firebase after beta week:
 ---
 
 *Generated for ArchiveMe mobile — event names are stable for cross-build comparison in the first beta cohort.*
+

@@ -52,3 +52,28 @@ class SecureStorageService {
     }
   }
 }
+
+/// Process-local secure-storage substitute for tests.
+///
+/// Production composition never constructs this class.
+class InMemorySecureStorageService extends SecureStorageService {
+  InMemorySecureStorageService();
+
+  final Map<String, String> _values = {};
+
+  @override
+  Future<void> write(String key, String value) async {
+    _values[key] = value;
+  }
+
+  @override
+  Future<String?> read(String key) async => _values[key];
+
+  @override
+  Future<void> delete(String key) async {
+    _values.remove(key);
+  }
+
+  @override
+  Future<void> clearAll() async => _values.clear();
+}

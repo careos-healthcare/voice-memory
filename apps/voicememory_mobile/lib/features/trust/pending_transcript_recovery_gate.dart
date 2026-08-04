@@ -14,7 +14,8 @@ abstract final class PendingTranscriptRecoveryGate {
     final verdict = ArchiveEvidenceQuality.assess(entry);
     return verdict.level == ArchiveEvidenceQualityLevel.unusable &&
         (verdict.reason == ArchiveEvidenceQualityReason.degradedVoice ||
-            verdict.reason == ArchiveEvidenceQualityReason.placeholderOrPending);
+            verdict.reason ==
+                ArchiveEvidenceQualityReason.placeholderOrPending);
   }
 
   static JournalEntry? newestRecoverableEntry(Iterable<JournalEntry> entries) {

@@ -43,15 +43,16 @@ NOT `ios/Runner.xcodeproj` (CocoaPods integration lives in the workspace).
 ## 4. Bundle id checklist
 - App bundle id (Xcode): `com.voicememory.mobile`.
 - Confirm it matches `AppConfig.bundleId` and the App Store Connect app record.
-- App Group (widget prep): `group.com.voicememory.mobile`.
-- URL schemes in Info.plist: `archiveme://` (primary), `voicememory://` (legacy).
-- Deployment target: iOS 13.0 (satisfies flutter_local_notifications + others).
+- Focused V1 Release has no App Group, iCloud or embedded extensions.
+- Release URL scheme in `Info-Release.plist`: `archiveme://`.
+- Deployment target: iOS 15.5 (matches the Podfile and Runner build settings).
 
 ## 5. Build number increment
-- Version/build come from `pubspec.yaml` (`version: 0.2.0+38` → CFBundleShortVersionString 0.2.0, CFBundleVersion 38).
+- Version/build come from `pubspec.yaml` (`version: 0.2.0+49` →
+  CFBundleShortVersionString 0.2.0, CFBundleVersion 49).
 - Increment the build number for every TestFlight upload:
-  - bump the `+N` in pubspec (e.g. `0.2.0+2`), or
-  - pass `--build-number=N` to the flutter build command.
+  - bump the `+N` in `pubspec.yaml`;
+  - do not leave a CI-only build number that contradicts the source file.
 
 ## 6. Upload via Xcode Organizer
 1. Product → Archive (Release, "Any iOS Device").

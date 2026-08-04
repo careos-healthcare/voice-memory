@@ -54,9 +54,8 @@ class CurrentRelevanceStore {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => CurrentRelevanceRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              CurrentRelevanceRecord.fromJson(Map<String, dynamic>.from(entry)),
         )
         .where((record) => record.proofKey.isNotEmpty)
         .toList()

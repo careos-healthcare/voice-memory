@@ -82,7 +82,7 @@ export function MemoryContinuitySection({ report }: MemoryContinuitySectionProps
       <Card className="border-white/10 bg-white/[0.02]">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-medium text-zinc-200">
-            Earlier reflections
+            Earlier moments
           </CardTitle>
           <p className="text-xs leading-relaxed text-zinc-600">
             Same argument, person, or phrase — linked by what you said, not a label.
@@ -188,7 +188,7 @@ export function MemoryContinuitySection({ report }: MemoryContinuitySectionProps
           {report.relatedReflections.length > 0 ? (
             <div>
               <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-600">
-                Related reflections
+                Related moments
               </p>
               <div className="mt-3 space-y-2">
                 {report.relatedReflections.map((item, index) => (

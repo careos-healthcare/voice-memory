@@ -27,7 +27,7 @@ abstract class SecuritySettingsCopy {
   // Data actions.
   static const String wipeLocalArchive = 'Delete all local archive data';
   static const String wipeLocalArchiveBody =
-      'Removes every reflection, draft, cached insight, and local recording '
+      'Removes every saved moment, draft, cached insight, and local recording '
       'on this device. This cannot be undone.';
   static const String wipeConfirmTitle = 'Delete all local data?';
   static const String wipeConfirmBody =

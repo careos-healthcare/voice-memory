@@ -6,9 +6,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci
 
-# Copy source and compile
+# Copy source and compile the API-only Next.js artifact plus custom WebSocket server.
 COPY . .
-RUN npm run build && npm run build:server
+RUN npm run build:backend
 
 RUN npm prune --production
 
@@ -19,6 +19,7 @@ WORKDIR /usr/src/app
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
+ENV VOICEMEMORY_UNIT_ECONOMICS_PRICING_CATALOG_PATH=".backend-release/config/unit-economics/pricing-catalog.v1.json"
 # Force WebSockets to process backpressure correctly via standard memory limits
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 
@@ -28,9 +29,7 @@ RUN apk add --no-cache dumb-init
 # Copy runtime assets from builder
 COPY --chown=node:node --from=builder /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /usr/src/app/dist ./dist
-COPY --chown=node:node --from=builder /usr/src/app/.next ./.next
-COPY --chown=node:node --from=builder /usr/src/app/public ./public
-COPY --chown=node:node --from=builder /usr/src/app/next.config.ts ./next.config.ts
+COPY --chown=node:node --from=builder /usr/src/app/.backend-release ./.backend-release
 COPY --chown=node:node --from=builder /usr/src/app/package.json ./package.json
 
 # Enforce non-root execution privilege

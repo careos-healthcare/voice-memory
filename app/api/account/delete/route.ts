@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
 import {
   deleteUserServerData,
-  revokeAllSessionsForUser,
 } from "@/lib/server/account-deletion";
-import { SESSION_COOKIE } from "@/lib/server/auth-crypto";
 import {
   clearSessionCookie,
   getServerSession,
@@ -37,18 +34,16 @@ export async function POST(request: Request) {
     );
   }
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get(SESSION_COOKIE)?.value ?? "";
-
-  const removed = await deleteUserServerData(session.userId, session.email);
-  await revokeAllSessionsForUser(session.userId, token);
+  const result = await deleteUserServerData(session.userId, session.email);
 
   const response = NextResponse.json({
     ok: true,
-    removed,
-    message:
-      "Server account data removed. Clear local data on this device from Settings if you have not already.",
-  });
+    pending: result.pending,
+    ...(result.receiptId ? { receiptId: result.receiptId } : {}),
+    message: result.pending
+      ? "Account deletion is in progress. Provider deletion will continue automatically."
+      : "Server account data removed. Clear local data on this device from Settings if you have not already.",
+  }, { status: result.pending ? 202 : 200 });
   response.cookies.set(clearSessionCookie());
 
   return response;

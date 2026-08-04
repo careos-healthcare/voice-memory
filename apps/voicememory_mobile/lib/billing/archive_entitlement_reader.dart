@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import '../config/trial_mode.dart';
-import '../models/entitlement.dart';
+import '../features/monetization/domain/access_policy_engine.dart';
 import '../services/app_services.dart';
+import '../subscriptions/domain/subscription_models.dart';
 
 /// Reads whether the user has ArchiveMe Pro — injectable for tests.
 abstract class ArchiveEntitlementReader {
   const ArchiveEntitlementReader();
 
+  Future<EntitlementSnapshot> get entitlement;
+
+  @Deprecated('Evaluate a CapabilityId through AccessPolicyEngine.')
   Future<bool> get isPro;
 
   static ArchiveEntitlementReader instance() => _LiveArchiveEntitlementReader();
@@ -19,15 +25,29 @@ abstract class ArchiveEntitlementReader {
 
 class _LiveArchiveEntitlementReader extends ArchiveEntitlementReader {
   @override
-  Future<bool> get isPro async {
-    if (!AppServices.isInitialized) return false;
-    final ent = await AppServices.instance.billing.loadEntitlements();
-    return ent.isPro;
+  Future<EntitlementSnapshot> get entitlement async {
+    if (!AppServices.isInitialized) return const EntitlementSnapshot.unknown();
+    final repository = AppServices.instance.subscriptionRepository;
+    final cached = await repository.loadCachedState();
+    unawaited(repository.refresh(force: true));
+    return cached == null
+        ? const EntitlementSnapshot.unknown()
+        : EntitlementSnapshot.fromSubscriptionState(cached);
   }
+
+  @override
+  Future<bool> get isPro async => (await entitlement).hasProAccess;
 }
 
 class _ProArchiveEntitlementReader extends ArchiveEntitlementReader {
   const _ProArchiveEntitlementReader();
+
+  @override
+  Future<EntitlementSnapshot> get entitlement async =>
+      const EntitlementSnapshot(
+        plan: PlanKind.pro,
+        status: EntitlementStatus.active,
+      );
 
   @override
   Future<bool> get isPro async => true;
@@ -35,6 +55,14 @@ class _ProArchiveEntitlementReader extends ArchiveEntitlementReader {
 
 /// Fixed entitlement for widget tests.
 class FakeArchiveEntitlementReader extends ArchiveEntitlementReader {
+  @override
+  Future<EntitlementSnapshot> get entitlement async => pro
+      ? const EntitlementSnapshot(
+          plan: PlanKind.pro,
+          status: EntitlementStatus.active,
+        )
+      : const EntitlementSnapshot.free();
+
   FakeArchiveEntitlementReader({required this.pro});
 
   final bool pro;
@@ -43,6 +71,6 @@ class FakeArchiveEntitlementReader extends ArchiveEntitlementReader {
   Future<bool> get isPro async => pro;
 }
 
-extension PremiumEntitlementsPro on PremiumEntitlements {
+extension SubscriptionStatePro on SubscriptionState {
   bool get archiveProAccess => isPro;
 }

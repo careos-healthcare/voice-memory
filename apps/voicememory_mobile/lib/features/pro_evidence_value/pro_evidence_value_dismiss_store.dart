@@ -51,10 +51,12 @@ abstract final class ProEvidenceValueDismissStore {
     _loaded = false;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> clear() async {
     invalidateSessionForTest();
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeString(prefsKey, '');
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => clear();
 }

@@ -87,7 +87,8 @@ void _checkSecretPatterns(String root, List<String> failures) {
       final path = entity.path;
       if (_shouldSkipScanPath(path)) continue;
       if (!_isScannableFile(path)) continue;
-      final text = entity.readAsStringSync();
+      final text = _readTextOrNull(entity);
+      if (text == null) continue;
       for (final (pattern, label) in patterns) {
         if (RegExp(pattern).hasMatch(text)) {
           failures.add('$label pattern found in $path');
@@ -110,6 +111,21 @@ bool _shouldSkipScanPath(String path) {
     if (path.contains(fragment)) return true;
   }
   return false;
+}
+
+/// Text of [file], or null when it is not UTF-8 text.
+///
+/// Extension is not proof of encoding: an iOS framework ships its Info.plist in
+/// the binary plist format, so a `.plist` under Pods threw here and took the
+/// whole check down with it. A crash is worse than a miss, because the files
+/// after it were never scanned and the run still looked like a tool error
+/// rather than an unscanned tree.
+String? _readTextOrNull(File file) {
+  try {
+    return file.readAsStringSync();
+  } on FileSystemException {
+    return null;
+  }
 }
 
 bool _isScannableFile(String path) {

@@ -64,7 +64,7 @@ export function ActivationTheoryPreview({
         <p className="text-sm leading-relaxed text-zinc-200">{preview.possibleTheory}</p>
         {!compact ? (
           <p className="text-xs text-zinc-500">
-            {preview.evidenceCount} reflection{preview.evidenceCount === 1 ? "" : "s"} in this
+            {preview.evidenceCount} moment{preview.evidenceCount === 1 ? "" : "s"} in this
             early read
           </p>
         ) : null}
@@ -76,7 +76,7 @@ export function ActivationTheoryPreview({
           className="inline-block text-xs text-violet-300 underline-offset-2 hover:text-violet-200 hover:underline"
           onClick={() => trackActivationTheoryPreviewClicked(preview.reflectionCount)}
         >
-          Record your next reflection
+          Record your next moment
         </Link>
       </CardContent>
     </Card>

@@ -73,10 +73,12 @@ abstract class CurrentIntentSignal {
     _ => false,
   };
 
-  @visibleForTesting
-  static void resetSessionForTest() {
-    EntryMemoryModeSession.resetSessionForTest();
-    EntryThreadScopeSession.resetSessionForTest();
-    EntryPackScopeSession.resetSessionForTest();
+  static void resetSession() {
+    EntryMemoryModeSession.resetSession();
+    EntryThreadScopeSession.resetAfterSave();
+    EntryPackScopeSession.resetAfterSave();
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSession();
 }

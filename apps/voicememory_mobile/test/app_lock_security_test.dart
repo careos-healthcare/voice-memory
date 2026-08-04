@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/security/app_lock_gate.dart';
 import 'package:voicememory_mobile/security/app_lock_service.dart';
 import 'package:voicememory_mobile/security/app_lock_settings.dart';
 import 'package:voicememory_mobile/security/app_lock_store.dart';
 import 'package:voicememory_mobile/security/pin_hash.dart';
+import 'package:voicememory_mobile/security/secure_archive_shell.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/widgets/security/app_lock_screen.dart';
 import 'package:voicememory_mobile/widgets/security/setup_pin_screen.dart';
 
 class _FakeBiometrics implements BiometricAuthenticator {
-  _FakeBiometrics({this.isAvailable = false, this.result = false});
-
-  bool isAvailable;
-  bool result;
+  bool isAvailable = false;
+  bool result = false;
   int attempts = 0;
 
   @override
@@ -53,9 +52,19 @@ void main() {
     memory = MemoryAppLockStore();
     biometrics = _FakeBiometrics();
     now = DateTime(2026, 6, 11, 9);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('secure_application'),
+          (_) async => null,
+        );
   });
 
   tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('secure_application'),
+          null,
+        );
     ActivationFunnelAnalytics.resetForTest();
     AppLockService.instanceForTest = null;
   });
@@ -160,20 +169,12 @@ void main() {
       expect(disabled.single.properties, {'enabled': 'false'});
     });
 
-    test('re-locks after the background timeout, not before', () async {
+    test('re-locks after every background transition', () async {
       final service = buildService();
       await service.enableWithPin('1234');
       expect(await service.isLocked(), isFalse);
 
-      // Short background: stays unlocked.
       service.onAppBackgrounded();
-      now = now.add(const Duration(minutes: 1));
-      await service.onAppResumed();
-      expect(await service.isLocked(), isFalse);
-
-      // Long background: re-locks.
-      service.onAppBackgrounded();
-      now = now.add(const Duration(minutes: 2));
       await service.onAppResumed();
       expect(await service.isLocked(), isTrue);
     });
@@ -242,11 +243,16 @@ void main() {
   group('App lock gate', () {
     const privateProbe = 'PRIVATE ARCHIVE CONTENT PROBE';
 
-    Future<void> pumpGate(WidgetTester tester, AppLockService service) async {
+    Future<void> pumpGate(
+      WidgetTester tester,
+      AppLockService service, {
+      Future<void> Function()? onUnlocked,
+    }) async {
       await tester.pumpWidget(
         MaterialApp(
           home: AppLockGate(
             service: service,
+            onUnlocked: onUnlocked,
             child: const Scaffold(body: Text(privateProbe)),
           ),
         ),
@@ -281,6 +287,39 @@ void main() {
 
       expect(find.byKey(const Key('app_lock_screen')), findsNothing);
       expect(find.text(privateProbe), findsOneWidget);
+    });
+
+    testWidgets('resume re-locks before foreground services can drain', (
+      tester,
+    ) async {
+      await buildService().enableWithPin('1234');
+      final session = buildService();
+      var drains = 0;
+      await pumpGate(
+        tester,
+        session,
+        onUnlocked: () async {
+          drains++;
+        },
+      );
+      expect(drains, 0);
+
+      await tester.enterText(
+        find.byKey(const Key('app_lock_pin_field')),
+        '1234',
+      );
+      await tester.tap(find.byKey(const Key('app_lock_unlock_cta')));
+      await tester.pump();
+      await tester.pump();
+      expect(drains, 1);
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump();
+      expect(drains, 1);
+      expect(find.byKey(const Key('app_lock_screen')), findsOneWidget);
+      expect(find.text(privateProbe), findsNothing);
     });
 
     testWidgets('wrong PIN shows Try again and keeps content hidden', (
@@ -321,6 +360,7 @@ void main() {
       final session = buildService();
       await pumpGate(tester, session);
       expect(find.byKey(const Key('app_lock_biometric_cta')), findsOneWidget);
+      expect(biometrics.attempts, 1);
 
       // Biometric failure keeps the lock and the PIN path available.
       await tester.tap(find.byKey(const Key('app_lock_biometric_cta')));
@@ -346,6 +386,48 @@ void main() {
       await pumpGate(tester, session);
       expect(find.byKey(const Key('app_lock_screen')), findsOneWidget);
       expect(find.byKey(const Key('app_lock_biometric_cta')), findsNothing);
+    });
+  });
+
+  group('Secure task switcher shell', () {
+    testWidgets('covers background content and shows lock on resume', (
+      tester,
+    ) async {
+      final service = buildService();
+      await service.enableWithPin('1234');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SecureArchiveShell(
+            appLock: service,
+            child: const Scaffold(body: Text('PRIVATE TRANSCRIPT')),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text('PRIVATE TRANSCRIPT'), findsOneWidget);
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.byKey(const Key('secure_task_switcher_overlay')),
+        findsOneWidget,
+      );
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const Key('app_lock_screen')), findsOneWidget);
+      expect(find.text('PRIVATE TRANSCRIPT'), findsNothing);
+      expect(
+        find.byKey(const Key('secure_task_switcher_overlay')),
+        findsNothing,
+      );
     });
   });
 

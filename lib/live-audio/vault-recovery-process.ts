@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { File } from "node:buffer";
+import { toFile } from "openai/uploads";
 
 import { parseReflectionResponse } from "@/lib/analyze/parse-reflection-response";
 import { buildEvidencePacket } from "@/lib/evidence/evidence-pipeline";
@@ -15,6 +15,12 @@ import {
 } from "@/lib/live-audio/vault-recovery-store";
 import { getOpenAIClient } from "@/lib/openai";
 import type { Reflection } from "@/types/journal";
+import {
+  meterBestEffort,
+  meterOpenAiChatUsage,
+  type RawEconomicsSubject,
+  vendorRequestId,
+} from "@/lib/server/unit-economics-meter";
 
 const ANALYZE_SYSTEM_PROMPT = `You read voice transcripts for ArchiveMe. Return sharp, concrete notes from the speaker's own words — not therapy, not coaching, not diagnosis.
 
@@ -87,6 +93,12 @@ function durationSecondsFromVault(decrypted: {
   );
 }
 
+function economicsSubject(subject: string): RawEconomicsSubject | null {
+  if (subject.startsWith("user:")) return { kind: "user", id: subject.slice(5) };
+  if (subject.startsWith("device:")) return { kind: "device", id: subject.slice(7) };
+  return null;
+}
+
 export async function processVaultRecoveryUpload(
   input: VaultRecoveryProcessInput,
 ): Promise<VaultRecoveryProcessResult> {
@@ -119,8 +131,7 @@ export async function processVaultRecoveryUpload(
     inlineRecoverySecret: input.inlineRecoverySecret,
   });
   const decrypted = decryptVaultFile(input.vaultBytes, recoverySecret);
-  const durationSeconds =
-    input.durationSeconds ?? durationSecondsFromVault(decrypted);
+  const durationSeconds = durationSecondsFromVault(decrypted);
   const wavBytes = wrapPcm16LeInWav(
     decrypted.pcm16Le,
     decrypted.header.sampleRateHz,
@@ -128,14 +139,32 @@ export async function processVaultRecoveryUpload(
   );
 
   const openai = getOpenAIClient();
-  const wavFile = new File([wavBytes], "vault-recovery.wav", {
+  const wavFile = await toFile(wavBytes, "vault-recovery.wav", {
     type: "audio/wav",
   });
   const transcription = await openai.audio.transcriptions.create({
     file: wavFile,
     model: "whisper-1",
     language: "en",
+    response_format: "verbose_json",
   });
+  const subject = economicsSubject(input.subject);
+  const vendorDuration =
+    "duration" in transcription && typeof transcription.duration === "number"
+      ? transcription.duration
+      : null;
+  if (subject) {
+    await meterBestEffort({
+      operation: "vault-recovery.audio",
+      subject,
+      idempotencyKey: vendorRequestId(transcription, input.idempotencyKey),
+      metric: "transcription_audio_milliseconds",
+      resource: "openai.whisper-1",
+      quantity: Math.round((vendorDuration ?? durationSeconds) * 1_000),
+      dimensions: { provider: "openai", model: "whisper-1" },
+      measurementBasis: vendorDuration === null ? "estimated" : "exact",
+    });
+  }
   const transcript = transcription.text?.trim() ?? "";
   if (!transcript) {
     throw new VaultRecoveryProcessError(
@@ -145,7 +174,11 @@ export async function processVaultRecoveryUpload(
     );
   }
 
-  const reflection = await analyzeTranscript(transcript);
+  const reflection = await analyzeTranscript(
+    transcript,
+    subject,
+    input.idempotencyKey,
+  );
   const recoveryAckId = randomUUID();
   recordVaultRecoveryAck({
     sessionId: input.sessionId,
@@ -166,7 +199,11 @@ export async function processVaultRecoveryUpload(
   };
 }
 
-async function analyzeTranscript(transcript: string): Promise<Reflection> {
+async function analyzeTranscript(
+  transcript: string,
+  subject: RawEconomicsSubject | null,
+  idempotencyKey: string,
+): Promise<Reflection> {
   const { packet } = buildEvidencePacket([], { memoryScope: "automatic" });
   const promptContext = buildPromptContext({
     currentEntry: { transcript },
@@ -185,6 +222,16 @@ async function analyzeTranscript(transcript: string): Promise<Reflection> {
       },
     ],
   });
+  if (subject) {
+    await meterOpenAiChatUsage({
+      operation: "vault-recovery.chat",
+      subject,
+      idempotencyKey: vendorRequestId(completion, idempotencyKey),
+      resource: "openai.gpt-4o-mini",
+      modelDimension: "gpt-4o-mini",
+      usage: completion.usage,
+    });
+  }
   const content = completion.choices[0]?.message?.content;
   if (!content) {
     throw new VaultRecoveryProcessError(

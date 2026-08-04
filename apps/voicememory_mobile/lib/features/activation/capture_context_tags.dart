@@ -16,10 +16,7 @@ abstract final class CaptureContextTagIds {
 
 /// One optional capture context tag.
 class CaptureContextTag {
-  const CaptureContextTag({
-    required this.id,
-    required this.label,
-  });
+  const CaptureContextTag({required this.id, required this.label});
 
   final String id;
   final String label;
@@ -84,6 +81,7 @@ abstract final class CaptureContextTags {
         reflection: entry.reflection,
         syncStatus: entry.syncStatus,
         localAudioPath: entry.localAudioPath,
+        localAudioVaultRef: entry.localAudioVaultRef,
         treatAsNew: entry.treatAsNew,
         connectionApproved: entry.connectionApproved,
         keepExactDetails: entry.keepExactDetails,
@@ -98,6 +96,7 @@ abstract final class CaptureContextTags {
         memorySurfacing: entry.memorySurfacing,
         preserveOriginal: entry.preserveOriginal,
         captureContextTag: tagId,
+        localCaptureContext: entry.localCaptureContext,
       );
 
   static JournalEntry clearTag(JournalEntry entry) => updateTag(entry, null);

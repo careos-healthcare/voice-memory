@@ -17,6 +17,9 @@ import {
   ipHashFromRequest,
   userAgentHashFromRequest,
 } from "@/lib/server/request-identity";
+import {
+  releaseUsageReservation,
+} from "@/lib/server/usage-reservation-store";
 
 export const runtime = "nodejs";
 
@@ -46,22 +49,30 @@ export async function POST(request: Request) {
 
   const { token, payload } = signLiveAudioSessionToken(guard.ctx.subject, binding);
   const vaultRecoverySecret = createVaultRecoverySecret();
-  await registerLiveAudioSession({
-    jti: payload.jti,
-    sessionId: payload.sessionId,
-    subject: payload.subject,
-    ipHash: binding.ipHash,
-    uaHash: binding.uaHash,
-  });
-  registerVaultRecoverySession({
-    sessionId: payload.sessionId,
-    subject: payload.subject,
-    vaultRecoverySecretBase64: vaultRecoverySecret,
-  });
+  const usageReservationId =
+    guard.ctx.monetization?.reservation?.reservationId;
+  try {
+    await registerLiveAudioSession({
+      jti: payload.jti,
+      sessionId: payload.sessionId,
+      subject: payload.subject,
+      ipHash: binding.ipHash,
+      uaHash: binding.uaHash,
+      usageReservationId,
+    });
+    registerVaultRecoverySession({
+      sessionId: payload.sessionId,
+      subject: payload.subject,
+      vaultRecoverySecretBase64: vaultRecoverySecret,
+    });
+  } catch (error) {
+    if (usageReservationId) {
+      await releaseUsageReservation(usageReservationId);
+    }
+    throw error;
+  }
 
-  logLiveAudio(
-    `session minted sessionId=${payload.sessionId} subject=${payload.subject}`,
-  );
+  logLiveAudio("session minted");
 
   const origin = new URL(request.url).origin;
 

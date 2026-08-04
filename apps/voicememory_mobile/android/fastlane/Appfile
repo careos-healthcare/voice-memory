@@ -1,0 +1,2 @@
+# Genesis Fastlane lanes package locally and define no store credentials.
+package_name("com.voicememory.mobile")

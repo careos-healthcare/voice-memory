@@ -568,7 +568,7 @@ function detectPatternLifecycle(
     const afterEntry = sorted.find((e) => toDayKey(e.createdAt) > toDayKey(last.entry.createdAt));
     const afterEv = afterEntry ? [evidenceFrom(afterEntry)] : [];
     const confidence = 54 + points.length * 4 + Math.min(daysSinceLast, 14);
-    const summary = `"${series.subject}" faded from your reflections after ${last.entry.createdAt ? formatEntryDate(last.entry.createdAt).split(",")[0] : "a while ago"}.`;
+    const summary = `"${series.subject}" faded from your saved words after ${last.entry.createdAt ? formatEntryDate(last.entry.createdAt).split(",")[0] : "a while ago"}.`;
 
     results.push({
       id: `faded-${series.subjectType}-${series.subject}`,
@@ -623,7 +623,7 @@ function detectPatternLifecycle(
   if (points.length >= 2 && points.length <= 3) {
     const firstThird = points.slice(0, 1);
     const confidence = 50 + points.length * 5;
-    const summary = `"${series.subject}" started showing up in your reflections around ${formatEntryDate(first.entry.createdAt).split(",")[0]}.`;
+    const summary = `"${series.subject}" started showing up in your saved words around ${formatEntryDate(first.entry.createdAt).split(",")[0]}.`;
     results.push({
       id: `started-${series.subjectType}-${series.subject}`,
       kind: "pattern_started",

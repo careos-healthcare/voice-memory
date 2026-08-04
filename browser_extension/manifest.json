@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ArchiveMe Encrypted Web Clipper",
+  "version": "0.1.0",
+  "description": "Clip pages and highlights into your local encrypted vault.",
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus", "tabs"],
+  "host_permissions": ["<all_urls>", "http://127.0.0.1/*", "https://127.0.0.1/*"],
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Encrypted Web Clipper"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src ws://127.0.0.1:* wss://127.0.0.1:*"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "web-clipper@archiveme.local",
+      "strict_min_version": "121.0"
+    }
+  }
+}

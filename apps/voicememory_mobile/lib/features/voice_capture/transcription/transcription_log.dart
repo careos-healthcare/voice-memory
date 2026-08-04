@@ -5,7 +5,10 @@ abstract class TranscriptionLog {
   TranscriptionLog._();
 
   static void started({required String audioPath}) {
-    debugPrint('ARCHIVEME_TRANSCRIPTION_STARTED audioPath=$audioPath');
+    debugPrint(
+      'ARCHIVEME_TRANSCRIPTION_STARTED '
+      'audioPathProvided=${audioPath.trim().isNotEmpty}',
+    );
   }
 
   static void mode(String mode) {
@@ -43,10 +46,7 @@ abstract class TranscriptionLog {
     debugPrint('ARCHIVEME_TRANSCRIPTION_REQUEST url=$url');
   }
 
-  static void response({
-    required int status,
-    required String contentType,
-  }) {
+  static void response({required int status, required String contentType}) {
     debugPrint(
       'ARCHIVEME_TRANSCRIPTION_RESPONSE status=$status contentType=$contentType',
     );

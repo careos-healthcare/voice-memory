@@ -13,13 +13,13 @@ enum EvidenceWeightState {
 
 extension EvidenceWeightStateAnalytics on EvidenceWeightState {
   String get analyticsValue => switch (this) {
-        EvidenceWeightState.fresh => 'fresh',
-        EvidenceWeightState.repeated => 'repeated',
-        EvidenceWeightState.fading => 'fading',
-        EvidenceWeightState.softened => 'softened',
-        EvidenceWeightState.oldSignal => 'old_signal',
-        EvidenceWeightState.needsFreshProof => 'needs_fresh_proof',
-      };
+    EvidenceWeightState.fresh => 'fresh',
+    EvidenceWeightState.repeated => 'repeated',
+    EvidenceWeightState.fading => 'fading',
+    EvidenceWeightState.softened => 'softened',
+    EvidenceWeightState.oldSignal => 'old_signal',
+    EvidenceWeightState.needsFreshProof => 'needs_fresh_proof',
+  };
 }
 
 /// Resolved weighting summary from existing eligible entries only.
@@ -51,7 +51,7 @@ class EvidenceWeightingResult {
   final PatternMatchQualityResult? patternMatchQuality;
 
   List<EvidenceWeightState> get displayStates => [
-        primaryState,
-        ...secondaryStates.where((state) => state != primaryState),
-      ];
+    primaryState,
+    ...secondaryStates.where((state) => state != primaryState),
+  ];
 }

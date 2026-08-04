@@ -69,7 +69,7 @@ export function ArchiveValueBanner({
       ) : null}
       <p className="mt-2 text-sm text-zinc-400">
         {Math.min(snapshot.reflectionCount, PATTERN_REVIEW_TARGET)}/{PATTERN_REVIEW_TARGET}{" "}
-        reflections toward pattern review · {snapshot.progressPercent}%
+        moments toward pattern review · {snapshot.progressPercent}%
       </p>
       <p className="mt-1 text-xs text-zinc-500">{snapshot.nextMilestoneCopy}</p>
 

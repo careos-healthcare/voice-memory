@@ -13,7 +13,13 @@ import {
 import { consumeLiveAudioSession } from "@/lib/live-audio/session-store";
 
 export type LiveAudioWsAuthResult =
-  | { ok: true; sessionId: string; subject: string; payload: LiveAudioSessionPayload }
+  | {
+      ok: true;
+      sessionId: string;
+      subject: string;
+      usageReservationId?: string;
+      payload: LiveAudioSessionPayload;
+    }
   | { ok: false; code: string; message: string; httpStatus: number };
 
 function headerValue(
@@ -143,6 +149,7 @@ export async function authenticateLiveAudioWebSocketRequest(input: {
     ok: true,
     sessionId: consumed.sessionId,
     subject: consumed.subject,
+    usageReservationId: consumed.usageReservationId,
     payload,
   };
 }

@@ -5,7 +5,7 @@ abstract final class ArchiveEvidenceAnalytics {
   ArchiveEvidenceAnalytics._();
 
   static const skippedPlaceholderEvent = 'archive_evidence_skipped_placeholder';
-  static const skippedPlaceholderReason = 'placeholder_or_pending_transcript';
+  static const skippedPlaceholderReason = 'placeholder_or_pending';
 
   static void evidenceSkippedPlaceholder({
     required String source,

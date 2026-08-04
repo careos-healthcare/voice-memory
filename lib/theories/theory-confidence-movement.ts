@@ -11,10 +11,10 @@ export const PERSONAL_THEORY_COPY = {
   archiveLessConfident:
     "Your archive has become less confident — the theory may need more or different evidence.",
   archiveUnchanged: "Confidence unchanged since your last visit.",
-  supportingEvidenceLine: "New evidence appeared in recent reflections.",
+  supportingEvidenceLine: "New evidence appeared in recent moments.",
   contradictingEvidenceLine: "Recent entries contradicted this theory.",
   mixedEvidenceLine:
-    "Supporting and contradicting reflections both appear — still under review.",
+    "Supporting and contradicting moments both appear — still under review.",
 } as const;
 
 const CERTAINTY_RE =
@@ -60,7 +60,7 @@ export function explainConfidenceMovement(
   if (delta > 0) {
     const area = input.lifeAreaHint?.trim();
     if (area) {
-      return `New evidence appeared in ${area} reflections.`;
+      return `New evidence appeared in ${area} moments.`;
     }
     return PERSONAL_THEORY_COPY.supportingEvidenceLine;
   }

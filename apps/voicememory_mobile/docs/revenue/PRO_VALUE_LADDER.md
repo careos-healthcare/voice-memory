@@ -1,6 +1,8 @@
 # ArchiveMe — Pro value ladder
 
-Free vs Pro framing for messaging, pricing tests, and store copy. Aligns with `ArchiveProFeatureMap` in code — **this doc does not change entitlements**.
+Free vs Pro framing for messaging and store review. The canonical source is
+`config/monetization/archive_me_entitlement_matrix.json`; this document does
+not define entitlements.
 
 **Monetization principle:** charge for **longer memory and preserved evidence**, not for AI chat or generic coaching.
 
@@ -13,10 +15,11 @@ What users should get without paying:
 | Capability | Status | Notes |
 | --- | --- | --- |
 | **Save real moments** (voice or typed) | Live | Core loop entry |
-| **First repeat proof** | Live | Typically after ~3 related entries; gated by evidence |
+| **First valid observation** | Live | Evidence-backed; invalid output does not consume proof |
+| **First valid comparison** | Live | Two related, distinct entries with exact evidence |
 | **Basic pattern detection** | Live | Early signal → confirmed repeat; cautious copy |
 | **Basic correction** | Live | Pattern correction options when gates pass |
-| **Short local history** | Live | Free tier keeps **last 7 key moments** (product map) |
+| **Complete original archive** | Live | Every recording, entry, transcript, and export remains accessible |
 | **Tomorrow check / return comparison** | Live | Return loop, watch targets |
 | **Beta feedback** | Live | Settings → Testing ArchiveMe? → Send feedback |
 
@@ -30,17 +33,17 @@ What Pro should mean in market copy (check **Live** vs **Partial** vs **Future**
 
 | Capability | Status | Notes |
 | --- | --- | --- |
-| **Longer memory / full pattern history** | Live (positioning) | `fullHistory` in feature map; soft paywall surfaces |
-| **What ArchiveMe remembers** (cross-week view) | Live (positioning) | Beyond last-7 key moments |
+| **Ongoing comparisons** | Live | New generation after free proof |
+| **Full Changes history generation** | Live | Existing generated results remain readable after expiry |
 | **Pattern map** | Live (positioning) | Gated on pattern map route when loop closed |
 | **Change timeline** | Live (positioning) | Archive timeline — day-by-day pattern change |
-| **Key moments search** | Live (positioning) | Search full archive |
+| **Basic local search** | Free | Never paywalled |
 | **Monthly review** | Live (positioning) | Monthly archive review surface |
 | **Private report / recap export** | Partial | Export/recap exists in map; TestFlight billing may be inert |
 | **Review history** | Partial | Review inbox + weekly/monthly surfaces evolving |
 | **More archive beliefs** | Partial | Belief/archive surfaces exist; Pro packaging still clarifying |
 | **Advanced pattern correction** | Partial | Correction flows live; “advanced” tier not fully separated |
-| **Exportable evidence (PDF/share)** | Partial | Export screen exists; Pro enforcement not uniform everywhere |
+| **Export original content** | Free | Never paywalled |
 | **Backup / multi-device sync** | **Future** | Not live — do not sell until shipped |
 | **GPT-5 archive synthesis** | **Future / flag** | Behind `enableGpt5ArchiveSynthesis` + Pro; not default beta story |
 
@@ -51,7 +54,7 @@ What Pro should mean in market copy (check **Live** vs **Partial** vs **Future**
 ## Value ladder narrative
 
 **Free:** *“Prove the loop works for you.”*  
-Record → return → first proof → basic correction → last 7 key moments.
+Record → return → first observation → first comparison → correction.
 
 **Pro:** *“Keep the full memory growing.”*  
 Full history → timeline → map → search → monthly review → private export.
@@ -60,7 +63,7 @@ Upgrade moment should follow **value felt**, not day zero:
 
 1. After **first proof** (“keep this memory”)  
 2. After **private report preview** (“keep a copy”)  
-3. When user hits **7 key moments** ceiling (“see older moments”)  
+3. When a configured remote allowance is reached
 
 See [REVENUE_EXPERIMENTS.md](./REVENUE_EXPERIMENTS.md).
 
@@ -80,7 +83,7 @@ See [REVENUE_EXPERIMENTS.md](./REVENUE_EXPERIMENTS.md).
 
 **Headline direction:** “Keep your pattern memory growing.”  
 
-**Subhead direction:** “Free keeps your last 7 key moments. Pro keeps your full archive — timeline, map, and private export.”  
+**Subhead direction:** “Your recordings stay yours. Pro unlocks ongoing comparisons and deeper archive analysis.”
 
 **Do not use** while purchases unavailable: “Subscribe now” without TestFlight disclaimer.
 

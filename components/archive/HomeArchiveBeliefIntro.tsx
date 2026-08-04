@@ -29,7 +29,7 @@ export function HomeArchiveBeliefIntro({
       data-testid="home-archive-belief-intro"
     >
       <p className="text-sm leading-relaxed text-zinc-200">{HOME_ARCHIVE_BELIEF_LEAD}</p>
-      <p className="mt-3 text-sm text-zinc-500">Every reflection can:</p>
+      <p className="mt-3 text-sm text-zinc-500">Every moment can:</p>
       <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-zinc-400">
         {HOME_ARCHIVE_BELIEF_BULLETS.map((item) => (
           <li key={item}>{item}</li>

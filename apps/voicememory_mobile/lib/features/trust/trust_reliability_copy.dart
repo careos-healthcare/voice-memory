@@ -6,7 +6,7 @@ abstract final class TrustReliabilityCopy {
 
   static const archivePrivateTitle = 'Your archive is private';
   static const archivePrivateSubtitle =
-      'Recordings and reflections stay in your archive on this device.';
+      'Recordings and saved moments stay in your archive on this device.';
 
   static const resetArchiveTitle = 'You can reset your archive';
   static const resetArchiveSubtitle =

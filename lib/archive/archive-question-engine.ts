@@ -121,11 +121,11 @@ function buildWhyAnswer(ctx: QuestionContext): ArchiveQuestionAnswer {
 
   if (rep) {
     lines.push(
-      `${rep.supportingReflections} reflection${rep.supportingReflections === 1 ? "" : "s"} support it`,
+      `${rep.supportingReflections} saved moment${rep.supportingReflections === 1 ? "" : "s"} support it`,
     );
   } else if (surv) {
     lines.push(
-      `${surv.reflectionsSupporting} reflection${surv.reflectionsSupporting === 1 ? "" : "s"} support it`,
+      `${surv.reflectionsSupporting} saved moment${surv.reflectionsSupporting === 1 ? "" : "s"} support it`,
     );
   }
 
@@ -157,11 +157,11 @@ function buildSupportingEvidence(ctx: QuestionContext): ArchiveQuestionAnswer {
   const count = ctx.belief.evidence.supportingQuotes.length;
   lines.push(
     count > 0
-      ? `${count} supporting reflection excerpt${count === 1 ? "" : "s"} on record`
+      ? `${count} supporting excerpt${count === 1 ? "" : "s"} from saved moments on record`
       : "No supporting excerpts stored yet — the archive is still gathering evidence.",
   );
   if (ctx.belief.evidence.costEvidenceLines.length > 0) {
-    lines.push("Cost and pattern lines from your reflections are included.");
+    lines.push("Cost and pattern lines from your saved words are included.");
   }
   return buildAnswer(
     "SHOW_EVIDENCE",
@@ -251,7 +251,7 @@ function buildWhatChangesThis(ctx: QuestionContext): ArchiveQuestionAnswer {
     lines.push(
       areas
         ? `Contradictions in ${areas}`
-        : "Contradicting reflections are on record",
+        : "Contradicting moments are on record",
     );
     evidence.push(...quoteLines(ctx.belief.evidence.contradictingQuotes).slice(0, 3));
   }
@@ -261,19 +261,19 @@ function buildWhatChangesThis(ctx: QuestionContext): ArchiveQuestionAnswer {
   );
   if (leadAccuracy?.status === "challenged") {
     lines.push(
-      leadAccuracy.detail ?? "Later reflections challenged how this belief holds.",
+      leadAccuracy.detail ?? "Later saved moments challenged how this belief holds.",
     );
   }
 
   if (ctx.belief.status === "weakening") {
     lines.push("Confidence would likely decrease if the pattern continues.");
   } else if (ctx.reputation && ctx.reputation.accuracySignals === 0) {
-    lines.push("More aligned follow-up reflections would increase archive confidence.");
+    lines.push("More aligned follow-up moments would increase archive confidence.");
   }
 
   if (lines.length === 0) {
     lines.push(
-      "New contradicting reflections or mixed signals across life areas would shift this belief.",
+      "New contradicting moments or mixed signals across life areas would shift this belief.",
     );
   }
 
@@ -297,7 +297,7 @@ function buildReliability(ctx: QuestionContext): ArchiveQuestionAnswer {
       trustExplanation(ctx.reputation.level, ctx.reputation.summary),
     );
     lines.push(
-      `${ctx.reputation.supportingReflections} supporting reflections · ${ctx.reputation.daysTracked} days tracked`,
+      `${ctx.reputation.supportingReflections} supporting moments · ${ctx.reputation.daysTracked} days tracked`,
     );
     if (ctx.reputation.contradictionsSurvived > 0) {
       lines.push(
@@ -336,7 +336,7 @@ function buildStrongestEvidence(ctx: QuestionContext): ArchiveQuestionAnswer {
   const lines: string[] = [];
   const strongest = pickStrongestQuote(ctx.belief.evidence.supportingQuotes);
   if (strongest) {
-    lines.push("Strongest supporting excerpt from your reflections:");
+    lines.push("Strongest supporting excerpt from your saved words:");
     return buildAnswer("STRONGEST_EVIDENCE", "STRONGEST_EVIDENCE", lines, [strongest]);
   }
   const cost = ctx.belief.evidence.costEvidenceLines[0];

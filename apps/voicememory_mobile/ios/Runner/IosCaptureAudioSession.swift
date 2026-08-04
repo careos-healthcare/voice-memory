@@ -38,9 +38,14 @@ enum IosCaptureAudioSession {
     ]
   }
 
-  static func configure(mode: String) throws -> [String: Any] {
+  static func configure(config: [String: Any]) throws -> [String: Any] {
     let session = AVAudioSession.sharedInstance()
-    let avMode: AVAudioSession.Mode = mode == "measurement" ? .measurement : .spokenAudio
+    let mode = config["sessionMode"] as? String ?? config["mode"] as? String ?? "spokenAudio"
+    let avMode: AVAudioSession.Mode =
+      mode == "measurement" || mode == "raw" ? .measurement : .spokenAudio
+    let sampleRate = (config["sampleRate"] as? NSNumber)?.doubleValue ?? 16000
+    let channels = (config["channels"] as? NSNumber)?.intValue ?? 1
+    let bufferMs = (config["bufferDurationMs"] as? NSNumber)?.doubleValue ?? 20
 
     var options: AVAudioSession.CategoryOptions = [
       .defaultToSpeaker,
@@ -51,9 +56,9 @@ enum IosCaptureAudioSession {
     }
 
     try session.setCategory(.playAndRecord, mode: avMode, options: options)
-    try session.setPreferredSampleRate(44100)
-    try session.setPreferredInputNumberOfChannels(1)
-    try session.setPreferredIOBufferDuration(0.02)
+    try session.setPreferredSampleRate(max(sampleRate, 8000))
+    try session.setPreferredInputNumberOfChannels(max(channels, 1))
+    try session.setPreferredIOBufferDuration(max(bufferMs, 1) / 1000)
     try session.setActive(true)
 
     preferBuiltInMic(session: session)
@@ -150,19 +155,19 @@ final class IosCaptureAudioSessionHandler {
       }
 
     case "configureCaptureSession":
-      guard let args = call.arguments as? [String: Any],
-            let mode = args["mode"] as? String else {
+      guard let args = call.arguments as? [String: Any] else {
         result(
           FlutterError(
             code: "invalid_args",
-            message: "Expected mode string",
+            message: "Expected capture configuration",
             details: nil
           )
         )
         return
       }
+      let mode = args["sessionMode"] as? String ?? args["mode"] as? String ?? "spokenAudio"
       do {
-        let snapshot = try IosCaptureAudioSession.configure(mode: mode)
+        let snapshot = try IosCaptureAudioSession.configure(config: args)
         result(snapshot)
       } catch {
         print(

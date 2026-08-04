@@ -1,7 +1,7 @@
-/// User-facing copy when microphone permission blocks voice capture.
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../trust/capture_recovery_copy.dart';
 
+/// User-facing copy when microphone permission blocks voice capture.
 abstract class MicrophonePermissionCopy {
   MicrophonePermissionCopy._();
 
@@ -11,10 +11,32 @@ abstract class MicrophonePermissionCopy {
       'ArchiveMe saves short moments in your own words. '
       'Ten seconds is enough.';
 
-  /// Alias for blocked-panel title — same calm framing when access is denied.
-  static const String deniedTitle = neededTitle;
+  static const String softPromptTitle = 'Use your voice to journal';
+  static const String softPromptBody =
+      'Microphone access lets you capture a journal entry by speaking.';
+  static const String softPromptPrivacy =
+      'Your recording stays in app-private storage while it is processed. '
+      'Offline transcription stays on this device.';
+  static const String notNowCta = 'Not now';
 
-  static const String deniedBody = CaptureRecoveryCopy.micDeniedBody;
+  /// Alias for blocked-panel title — same calm framing when access is denied.
+  static const String deniedTitle =
+      'ArchiveMe needs your microphone to transcribe and save your thoughts.';
+
+  static const String deniedBody =
+      'To start your First Three Journey, enable microphone access in your '
+      'device settings. Recordings stay in app-private storage while they are '
+      'processed. Online transcription may securely send audio to the '
+      'ArchiveMe transcription service.';
+
+  static const String whyMicrophoneTitle = 'Why do we need this?';
+  static const String localWhisperDetail =
+      'Offline transcription uses Whisper on this device when available.';
+  static const String privacyDetail =
+      'Raw audio is never included in analytics, and typed journaling remains '
+      'available without microphone access.';
+  static const String connectedMessage =
+      'Microphone connected. Tap to begin recording.';
 
   static const String openSettingsCta = 'Open Settings';
 

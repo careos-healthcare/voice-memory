@@ -24,16 +24,13 @@ abstract final class ContextAwareArchiveCopyEngine {
 
   static const _maxNamedLabels = 2;
 
-  static ContextAwareArchiveCopy build({
-    required List<JournalEntry> entries,
-  }) {
+  static ContextAwareArchiveCopy build({required List<JournalEntry> entries}) {
     final counts = CaptureContextTagAnalysis.tagCounts(entries);
     if (counts.isEmpty) {
       return ContextAwareArchiveCopy.hidden();
     }
 
-    final taggedCount =
-        counts.values.fold<int>(0, (sum, count) => sum + count);
+    final taggedCount = counts.values.fold<int>(0, (sum, count) => sum + count);
     final distinctTags = counts.length;
 
     if (taggedCount == 1) {
@@ -66,19 +63,20 @@ abstract final class ContextAwareArchiveCopyEngine {
   }
 
   static List<String> _topFriendlyLabels(Map<String, int> counts) {
-    final rows = counts.entries
-        .map(
-          (entry) => (
-            label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
-            count: entry.value,
-          ),
-        )
-        .toList()
-      ..sort((a, b) {
-        final byCount = b.count.compareTo(a.count);
-        if (byCount != 0) return byCount;
-        return a.label.compareTo(b.label);
-      });
+    final rows =
+        counts.entries
+            .map(
+              (entry) => (
+                label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
+                count: entry.value,
+              ),
+            )
+            .toList()
+          ..sort((a, b) {
+            final byCount = b.count.compareTo(a.count);
+            if (byCount != 0) return byCount;
+            return a.label.compareTo(b.label);
+          });
     return rows.take(_maxNamedLabels).map((row) => row.label).toList();
   }
 }

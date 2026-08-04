@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Trait Pollution Audit — Archive Analyst & Related Surfaces
 
 **Date:** 2026-05-25  
@@ -318,3 +320,4 @@ dart run tool/analyze_archive_v2_validation.dart
 | Deep Dive / Theory evidence drift | `archive_deep_dive_engine.dart`, `archive_v1_builder.dart` | Use same `splitEntries.supporting` for counts and excerpts |
 
 **Counter-evidence inflation** (0 ev / many counters) is documented separately in [COUNTER_EVIDENCE_AUDIT.md](./COUNTER_EVIDENCE_AUDIT.md) — fixing counters reduces “unsupported” Theory panels that cite only counter mass.
+

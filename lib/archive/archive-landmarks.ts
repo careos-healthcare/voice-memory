@@ -9,7 +9,7 @@ import type { ArchiveLandmark, ArchiveLandmarkReport } from "@/types/archive-per
 
 export const LANDMARK_COPY = {
   returnedManyTimes: "You came back to this many times.",
-  stayedWithYou: "This reflection stayed with you.",
+  stayedWithYou: "This saved moment stayed with you.",
   returnedMonthsLater: "You returned here months later.",
 } as const;
 
@@ -107,7 +107,7 @@ export function buildArchiveLandmarkReport(
       entryId: link.entryId,
       callbackId: link.noteId,
       strength: 78,
-      evidence: link.sources || "Revisit led to reflection",
+      evidence: link.sources || "Revisit led to a saved moment",
     });
   }
 

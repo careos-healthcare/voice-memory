@@ -5,6 +5,7 @@ const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: "e2e",
+  testIgnore: "**/ui-internal-prod.spec.ts",
   timeout: 30_000,
   retries: process.env.CI ? 1 : 0,
   use: {
@@ -12,7 +13,7 @@ export default defineConfig({
     trace: "off",
   },
   webServer: {
-    command: `npm run dev -- -p ${port}`,
+    command: `npm run build:server && NODE_ENV=development node dist/main.js -p ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

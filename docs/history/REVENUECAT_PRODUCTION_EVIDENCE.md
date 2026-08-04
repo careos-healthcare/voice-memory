@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # RevenueCat End-to-End Production Audit
 
 **Audit date:** 2026-06-03 (UTC)  
@@ -12,6 +14,17 @@
 | **RevenueCat API keys in build** | **Absent** — no `REVENUECAT_*` dart-define; no keys in repo `.env*` files |
 | **Runtime JSON** | [revenuecat_e2e_runtime.json](apps/voicememory_mobile/tool/screenshots/revenuecat_e2e/revenuecat_e2e_runtime.json) |
 | **Re-run command** | See [How to re-run](#how-to-re-run-with-real-keys) |
+
+## Required RevenueCat project configuration
+
+- **Project Settings → General → Restore behavior:** `Transfer to new App User ID`
+- The app configures RevenueCat with a persistent UUID v4 from platform secure
+  storage before any purchase or restore call.
+- This dashboard setting cannot be configured by `purchases_flutter`; release
+  approval must verify it in the RevenueCat project before rerunning step 10,
+  step 11, and step 12.
+- Offline Pro cache entries expire after five days. Missing, future-dated, and
+  legacy timestamp-free Pro cache entries fail closed.
 
 ---
 
@@ -251,3 +264,4 @@ npm run validate:revenuecat-production
 ---
 
 *This report is based solely on runtime output from 2026-06-03. Steps 5–11 require human sandbox purchase and RevenueCat dashboard access; they are marked FAIL because that proof was not produced in this audit run.*
+

@@ -3,7 +3,7 @@ import type { JournalEntry } from "@/types/journal";
 
 export const WHAT_IS_MY_ARCHIVE_BODY = [
   "Your archive is building a view of you.",
-  "Every reflection becomes evidence.",
+  "Every saved moment becomes evidence.",
   "Over time the archive forms beliefs.",
   "Those beliefs strengthen, weaken, or disappear.",
 ] as const;
@@ -18,9 +18,9 @@ export const ARCHIVE_UNDERSTANDING_STAGES: ReadonlyArray<{
   reflectionRange: string;
   label: string;
 }> = [
-  { id: "collecting_evidence", reflectionRange: "Reflection 1–2", label: "Collecting evidence" },
-  { id: "testing_beliefs", reflectionRange: "Reflection 3–4", label: "Testing beliefs" },
-  { id: "tracking_changes", reflectionRange: "Reflection 5+", label: "Tracking belief changes" },
+  { id: "collecting_evidence", reflectionRange: "Moments 1–2", label: "Collecting evidence" },
+  { id: "testing_beliefs", reflectionRange: "Moments 3–4", label: "Testing beliefs" },
+  { id: "tracking_changes", reflectionRange: "Moments 5+", label: "Tracking belief changes" },
 ];
 
 export function stageIdForReflectionCount(count: number): ArchiveUnderstandingStageId {

@@ -1,5 +1,3 @@
-import 'archive_timeline_spine_copy.dart';
-
 import '../evidence_anchors/evidence_anchor_model.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
@@ -15,13 +13,13 @@ enum ArchiveTimelineSpineRowId {
 
 extension ArchiveTimelineSpineRowIdAnalytics on ArchiveTimelineSpineRowId {
   String get analyticsValue => switch (this) {
-        ArchiveTimelineSpineRowId.firstSeen => 'first_seen',
-        ArchiveTimelineSpineRowId.returned => 'returned',
-        ArchiveTimelineSpineRowId.stillCurrent => 'still_current',
-        ArchiveTimelineSpineRowId.correctedByYou => 'corrected_by_you',
-        ArchiveTimelineSpineRowId.weightChanged => 'weight_changed',
-        ArchiveTimelineSpineRowId.needsFreshProof => 'needs_fresh_proof',
-      };
+    ArchiveTimelineSpineRowId.firstSeen => 'first_seen',
+    ArchiveTimelineSpineRowId.returned => 'returned',
+    ArchiveTimelineSpineRowId.stillCurrent => 'still_current',
+    ArchiveTimelineSpineRowId.correctedByYou => 'corrected_by_you',
+    ArchiveTimelineSpineRowId.weightChanged => 'weight_changed',
+    ArchiveTimelineSpineRowId.needsFreshProof => 'needs_fresh_proof',
+  };
 }
 
 enum ArchiveTimelineSpineCurrentWeight {
@@ -35,12 +33,12 @@ enum ArchiveTimelineSpineCurrentWeight {
 extension ArchiveTimelineSpineCurrentWeightAnalytics
     on ArchiveTimelineSpineCurrentWeight {
   String get analyticsValue => switch (this) {
-        ArchiveTimelineSpineCurrentWeight.strong => 'strong',
-        ArchiveTimelineSpineCurrentWeight.light => 'light',
-        ArchiveTimelineSpineCurrentWeight.fading => 'fading',
-        ArchiveTimelineSpineCurrentWeight.corrected => 'corrected',
-        ArchiveTimelineSpineCurrentWeight.needsFreshProof => 'needs_fresh_proof',
-      };
+    ArchiveTimelineSpineCurrentWeight.strong => 'strong',
+    ArchiveTimelineSpineCurrentWeight.light => 'light',
+    ArchiveTimelineSpineCurrentWeight.fading => 'fading',
+    ArchiveTimelineSpineCurrentWeight.corrected => 'corrected',
+    ArchiveTimelineSpineCurrentWeight.needsFreshProof => 'needs_fresh_proof',
+  };
 }
 
 class ArchiveTimelineSpineRow {

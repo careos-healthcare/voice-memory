@@ -63,23 +63,19 @@ abstract final class PositivePatternEngine {
     'slept early',
   ];
 
-  static PositivePatternResult? build({
-    required List<JournalEntry> entries,
-  }) {
+  static PositivePatternResult? build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < minEntryCount) return null;
 
     final texts = eligible.map(_entryText).where((t) => t.isNotEmpty).toList();
     if (texts.length < minEntryCount) return null;
 
-    final repeatPhraseSet = EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-      entries,
-    )
-        ? ConfirmedRepeatEvidencePhraseEngine.extract(entries)
-            .phrases
-            .map((phrase) => ArchiveRepeatPhraseSanitizer.sanitize(phrase))
-            .where((phrase) => phrase.isNotEmpty)
-            .toSet()
+    final repeatPhraseSet =
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)
+        ? ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases
+              .map((phrase) => ArchiveRepeatPhraseSanitizer.sanitize(phrase))
+              .where((phrase) => phrase.isNotEmpty)
+              .toSet()
         : const <String>{};
 
     final cueEntryCounts = <String, Set<int>>{};
@@ -92,14 +88,15 @@ abstract final class PositivePatternEngine {
       }
     }
 
-    final repeatedCues = cueEntryCounts.entries
-        .where((entry) => entry.value.length >= minEntriesPerCue)
-        .toList()
-      ..sort((a, b) {
-        final countCompare = b.value.length.compareTo(a.value.length);
-        if (countCompare != 0) return countCompare;
-        return b.key.length.compareTo(a.key.length);
-      });
+    final repeatedCues =
+        cueEntryCounts.entries
+            .where((entry) => entry.value.length >= minEntriesPerCue)
+            .toList()
+          ..sort((a, b) {
+            final countCompare = b.value.length.compareTo(a.value.length);
+            if (countCompare != 0) return countCompare;
+            return b.key.length.compareTo(a.key.length);
+          });
 
     if (repeatedCues.isEmpty) return null;
 

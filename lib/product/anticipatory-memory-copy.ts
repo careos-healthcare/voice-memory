@@ -49,7 +49,7 @@ const ANTICIPATORY_BY_TIER: Record<EntryTier, AnticipatoryEmptyCopy> = {
   few: {
     tier: "few",
     headline: "Words are starting to repeat",
-    body: "What you said before may surface again. Each reflection gives ArchiveMe more evidence about what keeps repeating.",
+    body: "What you said before may surface again. Each moment gives ArchiveMe more evidence about what keeps repeating.",
     showMilestones: false,
   },
   building: {

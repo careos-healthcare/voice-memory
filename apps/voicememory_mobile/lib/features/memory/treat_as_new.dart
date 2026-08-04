@@ -75,6 +75,7 @@ abstract class TreatAsNew {
       reflection: entry.reflection,
       syncStatus: entry.syncStatus,
       localAudioPath: entry.localAudioPath,
+      localAudioVaultRef: entry.localAudioVaultRef,
       treatAsNew: true,
       connectionApproved: entry.connectionApproved,
       keepExactDetails: entry.keepExactDetails,

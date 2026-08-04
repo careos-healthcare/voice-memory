@@ -9,7 +9,7 @@ abstract final class RecordOnboardingCopyFix {
       'changed, faded, or corrected.';
 
   static const notADiaryLine =
-      'This is not a diary to fill every day. It is a place to save moments that might come back.';
+      'Save moments when something repeats — not every day.';
 
   static const lowEvidenceClarifier =
       'Use it when something repeats, feels familiar, or might matter later.';

@@ -37,21 +37,18 @@ class ActiveWatchTarget {
     bool? quietSignalDismissed,
     String? lastSeenDateKey,
     String? quietDetectedDateKey,
-  }) =>
-      ActiveWatchTarget(
-        watchKey: watchKey ?? this.watchKey,
-        groundedPhrase: groundedPhrase ?? this.groundedPhrase,
-        createdDateKey: createdDateKey ?? this.createdDateKey,
-        source: source ?? this.source,
-        lastAnsweredDateKey: lastAnsweredDateKey ?? this.lastAnsweredDateKey,
-        lastResponseType: lastResponseType ?? this.lastResponseType,
-        unrelatedSaveCount: unrelatedSaveCount ?? this.unrelatedSaveCount,
-        quietSignalDismissed:
-            quietSignalDismissed ?? this.quietSignalDismissed,
-        lastSeenDateKey: lastSeenDateKey ?? this.lastSeenDateKey,
-        quietDetectedDateKey:
-            quietDetectedDateKey ?? this.quietDetectedDateKey,
-      );
+  }) => ActiveWatchTarget(
+    watchKey: watchKey ?? this.watchKey,
+    groundedPhrase: groundedPhrase ?? this.groundedPhrase,
+    createdDateKey: createdDateKey ?? this.createdDateKey,
+    source: source ?? this.source,
+    lastAnsweredDateKey: lastAnsweredDateKey ?? this.lastAnsweredDateKey,
+    lastResponseType: lastResponseType ?? this.lastResponseType,
+    unrelatedSaveCount: unrelatedSaveCount ?? this.unrelatedSaveCount,
+    quietSignalDismissed: quietSignalDismissed ?? this.quietSignalDismissed,
+    lastSeenDateKey: lastSeenDateKey ?? this.lastSeenDateKey,
+    quietDetectedDateKey: quietDetectedDateKey ?? this.quietDetectedDateKey,
+  );
 }
 
 /// Post-save watch card content.
@@ -108,8 +105,4 @@ class ComeBackTomorrowQuietSignal {
 }
 
 /// User response on the return-day question.
-enum ComeBackTomorrowAnswerType {
-  cameBack,
-  notToday,
-  different,
-}
+enum ComeBackTomorrowAnswerType { cameBack, notToday, different }

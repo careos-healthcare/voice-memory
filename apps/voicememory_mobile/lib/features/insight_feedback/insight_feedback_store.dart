@@ -33,9 +33,10 @@ class InsightFeedbackStore {
     if (recordsRaw is! List) return const [];
     return recordsRaw
         .whereType<Map>()
-        .map((entry) => InsightFeedbackRecord.fromJson(
-              Map<String, dynamic>.from(entry),
-            ))
+        .map(
+          (entry) =>
+              InsightFeedbackRecord.fromJson(Map<String, dynamic>.from(entry)),
+        )
         .where((record) => record.insightId.isNotEmpty)
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -62,6 +63,30 @@ class InsightFeedbackStore {
     }
     return null;
   }
+
+  static InsightFeedbackRecord? latestForConclusionOrTemplate({
+    required String conclusionId,
+    String? templateId,
+  }) {
+    for (final record in _cached) {
+      if (record.insightId == conclusionId) return record;
+      if (templateId?.isNotEmpty == true && record.templateId == templateId) {
+        return record;
+      }
+    }
+    return null;
+  }
+
+  static List<InsightFeedbackRecord> forConclusionOrTemplate({
+    required String conclusionId,
+    String? templateId,
+  }) => List.unmodifiable(
+    _cached.where(
+      (record) =>
+          record.insightId == conclusionId ||
+          (templateId?.isNotEmpty == true && record.templateId == templateId),
+    ),
+  );
 
   static int countForChoice(InsightFeedbackChoice choice) =>
       _cached.where((record) => record.choice == choice).length;

@@ -162,7 +162,7 @@ function candidatesFromComparison(
             theory,
             "retired",
             theory.resolutionNote ??
-              "Your archive suggests this working theory may no longer match recent reflections.",
+              "Your archive suggests this working theory may no longer match recent moments.",
             supportingIds,
           ),
         );
@@ -184,8 +184,8 @@ function candidatesFromComparison(
             theory,
             "new_evidence",
             qualifying.length === 1
-              ? "One new supporting reflection appeared after a longer gap."
-              : `${qualifying.length} new supporting reflections appeared after a longer gap.`,
+              ? "One new supporting moment appeared after a longer gap."
+              : `${qualifying.length} new supporting moments appeared after a longer gap.`,
             qualifying,
           ),
         );
@@ -199,8 +199,8 @@ function candidatesFromComparison(
           theory,
           "contradiction",
           newContradicting.length === 1
-            ? "One new reflection may pull against this theory."
-            : `${newContradicting.length} new reflections may pull against this theory.`,
+            ? "One new moment may pull against this theory."
+            : `${newContradicting.length} new moments may pull against this theory.`,
           newContradicting,
         ),
       );

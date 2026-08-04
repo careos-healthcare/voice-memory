@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_tab/archive_tab_four_state_engine.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/archive_semantic_colors.dart';
 import '../../theme/voicememory_cards.dart';
 
 /// Calm Archive tab card for the four early entry-count states.
@@ -19,16 +19,16 @@ class ArchiveTabEntryStateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final colors = ArchiveSemanticColors.of(context);
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: colors.primaryText, height: 1.45);
 
     return Container(
       key: Key('archive_tab_entry_state_${model.state.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF5F9F4)),
+      decoration: VoiceMemoryCards.standard(background: colors.elevatedSurface),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -55,7 +55,7 @@ Ask in order; follow up with “why?” once per section.
 
 **Would longer memory matter?**
 
-- Explain: “Free keeps last 7 key moments; Pro keeps full searchable history.”  
+- Explain: “Your recordings and transcripts stay yours. Pro generates ongoing comparisons and deeper archive analysis.”
 - Would that matter **after** they felt first proof?  
 
 ### 6. Private report

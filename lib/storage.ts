@@ -12,8 +12,6 @@ import { ensureStorageReady } from "@/lib/reliability/migrations";
 import { safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { bumpPhraseScanCache } from "@/lib/performance/phrase-scan-cache";
 import { clearResurfacingCaches } from "@/lib/performance/resurfacing-cache";
-import { FREE_ENTRY_LIMIT } from "@/lib/subscription";
-import { hasEntitlement } from "@/lib/entitlement/entitlements";
 import { entriesForResurfacingScope } from "@/lib/entitlement/resurfacing-scope";
 import type { JournalEntry, Reflection } from "@/types/journal";
 
@@ -70,7 +68,9 @@ export function getMemoryEligibleEntries(): JournalEntry[] {
   if (memoryEligibleCachedVersion === memoryEligibleVersion) {
     return memoryEligibleCache;
   }
-  const eligible = loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+  const eligible = loadAllEntries().filter(
+    (entry) => entry.reflectionPending !== true,
+  );
   memoryEligibleCache = entriesForResurfacingScope(eligible);
   memoryEligibleCachedVersion = memoryEligibleVersion;
   return memoryEligibleCache;
@@ -84,11 +84,9 @@ export function isReflectionPendingEntry(entry: JournalEntry): boolean {
   return entry.reflectionPending === true;
 }
 
-/** Entries visible for the current plan (Free: latest 7). */
+/** Every user-owned entry, regardless of plan or archive size. */
 export function getEntries(): JournalEntry[] {
-  const all = loadAllEntries();
-  if (hasEntitlement("unlimited_archive") || all.length <= FREE_ENTRY_LIMIT) return all;
-  return all.slice(0, FREE_ENTRY_LIMIT);
+  return loadAllEntries();
 }
 
 export function getStoredEntryCount(): number {
@@ -96,9 +94,7 @@ export function getStoredEntryCount(): number {
 }
 
 export function getLockedEntryCount(): number {
-  const total = getStoredEntryCount();
-  if (hasEntitlement("unlimited_archive")) return 0;
-  return Math.max(0, total - FREE_ENTRY_LIMIT);
+  return 0;
 }
 
 export function getEntry(id: string): JournalEntry | undefined {
@@ -124,7 +120,9 @@ export function saveEntry(entry: JournalEntry): void {
     await sync.syncEntryServerFirst(entry);
   });
 
-  const entries = loadAllEntries().filter((existing) => existing.id !== entry.id);
+  const entries = loadAllEntries().filter(
+    (existing) => existing.id !== entry.id,
+  );
   entries.unshift(entry);
   persistEntries(entries);
   bumpMemoryEligibleCache();
@@ -180,7 +178,9 @@ export async function deleteAllEntries(): Promise<number> {
   persistEntries([]);
   bumpMemoryEligibleCache();
   clearHabitState();
-  void import("@/lib/persistence/journal-indexeddb").then((mod) => mod.clearJournalIndexedDb());
+  void import("@/lib/persistence/journal-indexeddb").then((mod) =>
+    mod.clearJournalIndexedDb(),
+  );
 
   for (const entry of entries) {
     await deleteAudio(entry.id);

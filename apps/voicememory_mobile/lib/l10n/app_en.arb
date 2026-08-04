@@ -1,0 +1,180 @@
+{
+  "@@locale": "en",
+  "accountAuthCreateTitle": "Create your ArchiveMe account",
+  "accountAuthCreateBody": "ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.",
+  "accountAuthCreateCta": "Create account",
+  "accountAuthSignInTitle": "Sign in to ArchiveMe",
+  "accountAuthSignInCta": "Sign in",
+  "accountAuthEmailLabel": "Email",
+  "accountAuthCodeTitle": "Check your email",
+  "accountAuthCodeBody": "Enter the sign-in code we just sent you.",
+  "accountAuthCodeLabel": "Code",
+  "accountAuthCodeCta": "Continue",
+  "accountAuthResendCode": "Resend code",
+  "accountAuthCodeSent": "Code sent — check your email.",
+  "accountAuthContinueWithoutAccount": "Continue without an account",
+  "accountAuthPrivacyLine": "Your archive stays private. We do not include your recordings in analytics.",
+  "accountAuthInvalidEmail": "Enter a valid email address.",
+  "accountAuthInvalidCode": "Enter the code from your email.",
+  "accountAuthSendCodeFailed": "Could not send the code.",
+  "accountAuthSignInFailed": "Sign-in failed. Check the code and try again.",
+  "accountAuthSignOut": "Sign out",
+  "accountAuthSignOutKeepsArchive": "Signing out keeps your recordings on this device.",
+  "accountAuthTimingNote": "ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.",
+  "authTriggerProtectArchiveTitle": "Protect this archive",
+  "authTriggerProtectArchiveLead": "Sign in with email to encrypt a backup of what you built on this device.",
+  "authTriggerProtectArchiveCta": "Protect with email",
+  "authTriggerSyncArchiveTitle": "Back up your archive",
+  "authTriggerSyncArchiveLead": "Email sign-in enables encrypted sync on this device.",
+  "authTriggerSyncArchiveCta": "Sign in to sync",
+  "authTriggerExportTitle": "Export with a protected account",
+  "authTriggerExportLead": "Sign in before exporting your archive.",
+  "authTriggerExportCta": "Sign in to export",
+  "authTriggerProPaywallTitle": "Sign in for Pro",
+  "authTriggerProPaywallLead": "Checkout needs an account to protect your archive.",
+  "authTriggerProPaywallCta": "Continue with email",
+  "authTriggerCrossDeviceTitle": "Continue on another device",
+  "authTriggerCrossDeviceLead": "Sign in to pick up your archive where you left off.",
+  "authTriggerCrossDeviceCta": "Sign in to continue",
+  "authTriggerFirstWorkingBeliefTitle": "Your archive has a working belief",
+  "authTriggerFirstWorkingBeliefLead": "Sign in to protect the belief your archive is forming.",
+  "authTriggerFirstWorkingBeliefCta": "Protect this belief",
+  "authTriggerArchiveChangedReturnTitle": "See what your archive believes now",
+  "authTriggerArchiveChangedReturnLead": "Sign in to protect your archive after it may have shifted.",
+  "authTriggerArchiveChangedReturnCta": "Protect archive",
+  "authTriggerKeepTrackingProTitle": "Keep tracking with Pro",
+  "authTriggerKeepTrackingProLead": "Sign in before upgrading so your archive stays backed up.",
+  "authTriggerKeepTrackingProCta": "Sign in to continue",
+  "meshStatusTitle": "Nearby encrypted sync",
+  "meshStatusSearching": "Searching nearby",
+  "meshStatusConnected": "Connected securely",
+  "meshStatusComplete": "Local sync complete",
+  "meshNoPeers": "No paired devices are nearby.",
+  "meshPairDevice": "Pair a device",
+  "meshSyncNow": "Sync nearby",
+  "meshShareCluster": "Share this cluster",
+  "meshReadOnlyBranch": "Read-only shared branch",
+  "meshPrivacyDescription": "Nearby discovery advertises only a rotating identifier. Archive metadata is exchanged after encrypted pairing.",
+  "primaryNavigationLabel": "Primary navigation",
+  "recordScreenLabel": "Record screen",
+  "archiveScreenLabel": "Archive screen",
+  "changesScreenLabel": "Changes screen",
+  "accountScreenLabel": "Account screen",
+  "navigationRecord": "Record",
+  "navigationArchive": "Archive",
+  "navigationChanges": "Changes",
+  "navigationAccount": "Account",
+  "recordingStatus": "Recording",
+  "recordingInProgressSeconds": "Recording in progress, {seconds, plural, =1{1 second} other{{seconds} seconds}}",
+  "@recordingInProgressSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "recordingReadyStatus": "Ready to record",
+  "recordingProcessingStatus": "Processing",
+  "recordingSavedStatus": "Saved",
+  "recordingStopAndSaveHint": "Tap Stop and save when you are finished.",
+  "recordingSavedBackgroundTranscription": "Recording saved. Transcription will finish in the background.",
+  "recordingPromptNudgeTitle": "Keep your daily archive prompts improving",
+  "recordingPromptNudgeBody": "ArchiveMe uses what you record to surface sharper things worth checking each day.",
+  "recordingUnlockPro": "Unlock Pro",
+  "commonNotNow": "Not now",
+  "recordingPlainLanguageHint": "Say it plainly. ArchiveMe looks for patterns, not judgment.",
+  "recordingCopyRecap": "Copy recap",
+  "recordingEnoughForNow": "That's enough for now",
+  "savedForNextCheckIn": "Saved for your next check-in.",
+  "savedForTomorrowCheck": "Saved for tomorrow's check.",
+  "savedForNextMonthCheck": "Saved for next month's check.",
+  "tomorrowCheckSet": "Tomorrow's check is set.",
+  "recapCopied": "Recap copied.",
+  "archiveTitle": "Archive",
+  "archiveWhatChangedTitle": "What changed?",
+  "archiveWhyTitle": "Why?",
+  "archiveEvidenceTitle": "Evidence",
+  "archiveNextStepsTitle": "Next steps",
+  "archiveAddMoment": "Add a moment",
+  "archiveNeedsComparison": "Add another moment so ArchiveMe can compare what changed.",
+  "archiveCurrentObservation": "Your clearest current observation is: {statement}",
+  "@archiveCurrentObservation": {
+    "placeholders": {
+      "statement": {
+        "type": "String"
+      }
+    }
+  },
+  "archiveNeedsSupportedMoments": "ArchiveMe needs at least two supported moments before explaining a pattern.",
+  "archiveEvidenceCount": "{count, plural, =1{1 saved moment available for comparison.} other{{count} saved moments available for comparison.}}",
+  "@archiveEvidenceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "archiveNextMomentGuidance": "Record or type one specific moment. A second supported observation makes change visible.",
+  "coachingInsightSemantics": "{category}. Confidence {percentage} percent. {content}",
+  "@coachingInsightSemantics": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "int"
+      },
+      "content": {
+        "type": "String"
+      }
+    }
+  },
+  "coachingInsightHint": "AI-generated reflection based on recent journal evidence.",
+  "coachingConfidence": "{percentage}% confidence",
+  "@coachingConfidence": {
+    "placeholders": {
+      "percentage": {
+        "type": "int"
+      }
+    }
+  },
+  "coachingConfidenceSemantics": "Confidence {percentage} percent",
+  "@coachingConfidenceSemantics": {
+    "placeholders": {
+      "percentage": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryGraphActionBarLabel": "Memory Graph actions",
+  "memoryGraphActionBarHint": "Swipe horizontally to explore more graph actions.",
+  "memoryGraphActionButtonHint": "Double tap to activate this graph action.",
+  "memoryGraphNodeCount": "{count, plural, =1{1 node} other{{count} nodes}}",
+  "@memoryGraphNodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryGraphLifeSimulator": "Life Simulator",
+  "memoryGraphSmallSteps": "Small steps",
+  "memoryGraphWidgets": "Widgets",
+  "memoryGraphDocuments": "Documents",
+  "memoryGraphWeekly": "Weekly",
+  "memoryGraphClusters": "Clusters {count}",
+  "@memoryGraphClusters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryGraphCloseRewind": "Close Rewind",
+  "memoryGraphTimeMachine": "Time Machine",
+  "memoryGraphLifeDashboard": "Life Dashboard",
+  "memoryGraphClosePreview": "Close Preview",
+  "memoryGraphPreview": "Preview Graph",
+  "memoryGraphSampleBadge": "Sample Mind · illustrative",
+  "memoryGraphReturnToPresent": "Return to Present"
+}

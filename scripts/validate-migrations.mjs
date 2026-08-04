@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-import { AUTH_SYNC_SCHEMA_STATEMENTS } from "../lib/server/db.ts";
+import { DATABASE_SCHEMA_STATEMENTS } from "../lib/server/db.ts";
 import { REQUIRED_INDEXES, REQUIRED_TABLES } from "../lib/server/migration-manifest.ts";
 import { verifyMigrations } from "../lib/server/migration-verify.ts";
 
 const failures = [];
 
-if (AUTH_SYNC_SCHEMA_STATEMENTS.length < 10) {
-  failures.push("AUTH_SYNC_SCHEMA_STATEMENTS too short");
+if (DATABASE_SCHEMA_STATEMENTS.length < 10) {
+  failures.push("DATABASE_SCHEMA_STATEMENTS too short");
 }
 
 for (const table of REQUIRED_TABLES) {
-  const found = AUTH_SYNC_SCHEMA_STATEMENTS.some((s) => s.includes(table));
+  const found = DATABASE_SCHEMA_STATEMENTS.some((s) => s.includes(table));
   if (!found) failures.push(`schema statements missing table ${table}`);
 }
 

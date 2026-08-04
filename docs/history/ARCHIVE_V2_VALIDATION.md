@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive V2 Validation — Theory, Lifecycle, Change Feed
 
 **Date:** 2026-05-25  
@@ -283,3 +285,4 @@ Deep Dive inherits primary selection — fixing ranking fixes Theory, Lifecycle 
 
 - `apps/voicememory_mobile/tool/output/archive_quality_raw.json` — includes `theory`, `lifecycle`, `changeFeed`, `metrics.*` V2 fields
 - `apps/voicememory_mobile/tool/output/archive_v2_validation_summary.json` — per-scenario grades
+

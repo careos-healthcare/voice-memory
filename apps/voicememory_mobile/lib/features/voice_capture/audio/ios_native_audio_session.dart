@@ -59,9 +59,8 @@ class IosAudioSessionSnapshot {
   }
 }
 
-typedef IosNativeAudioSessionInvoker = Future<IosAudioSessionSnapshot?> Function(
-  IosCaptureAudioMode mode,
-);
+typedef IosNativeAudioSessionInvoker =
+    Future<IosAudioSessionSnapshot?> Function(IosCaptureAudioMode mode);
 
 /// Native AVAudioSession configuration via AppDelegate method channel.
 abstract class IosNativeAudioSession {
@@ -92,10 +91,9 @@ abstract class IosNativeAudioSession {
     if (kIsWeb || !Platform.isIOS) return null;
 
     try {
-      final result = await const MethodChannel(channelName).invokeMethod<Object?>(
-        'configureCaptureSession',
-        {'mode': mode.value},
-      );
+      final result = await const MethodChannel(
+        channelName,
+      ).invokeMethod<Object?>('configureCaptureSession', {'mode': mode.value});
       final snapshot = IosAudioSessionSnapshot.fromMap(
         result is Map<Object?, Object?> ? result : null,
       );

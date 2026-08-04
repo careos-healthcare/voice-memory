@@ -22,7 +22,7 @@ export function MemorySeasonList({
               </h2>
               <p className="text-sm leading-[1.75] text-zinc-500/90">{season.headline}</p>
               <p className="text-xs text-zinc-600">
-                {season.period.entryCount} reflection
+                {season.period.entryCount} moment
                 {season.period.entryCount === 1 ? "" : "s"}
               </p>
             </div>
@@ -49,7 +49,7 @@ export function MemorySeasonList({
                   href={`/entry/${entryId}`}
                   className="text-xs text-zinc-600 transition-colors hover:text-zinc-400"
                 >
-                  View reflection
+                  View moment
                 </Link>
               ))}
               {season.period.entryCount > 4 ? (

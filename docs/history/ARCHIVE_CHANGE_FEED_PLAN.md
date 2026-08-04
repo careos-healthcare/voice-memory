@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Change Feed V1 — plan
 
 ## Goal
@@ -69,3 +71,4 @@ flutter test test/archive_change_feed_engine_test.dart
 ## Tests
 
 `test/archive_change_feed_engine_test.dart`
+

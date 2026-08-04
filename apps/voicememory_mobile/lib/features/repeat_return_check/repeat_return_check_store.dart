@@ -118,11 +118,13 @@ class RepeatReturnCheckStore {
     return eligible.last.id;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> clear() async {
     _cached = const [];
     _loaded = false;
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => clear();
 }

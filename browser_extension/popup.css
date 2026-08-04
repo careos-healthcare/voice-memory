@@ -1,0 +1,62 @@
+:root {
+  color-scheme: dark;
+  font: 14px/1.45 system-ui, sans-serif;
+  background: #080b12;
+  color: #eef4ff;
+}
+
+body {
+  width: 340px;
+  margin: 0;
+}
+
+main {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 19px;
+}
+
+textarea,
+button {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #33415c;
+  border-radius: 10px;
+  padding: 10px;
+  background: #121827;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button.primary {
+  border-color: #58d6d0;
+  background: #153b42;
+}
+
+.toggle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.toggle input {
+  width: auto;
+}
+
+#status[data-error="true"] {
+  color: #ff9b9b;
+}
+
+.privacy {
+  margin: 0;
+  color: #9facbf;
+  font-size: 12px;
+}

@@ -1,8 +1,8 @@
 /** Record screen framing — low friction, no coaching tone. */
 
-export const RECORD_SCREEN_HEADLINE = "What's on your mind?";
+export const RECORD_SCREEN_HEADLINE = "When it repeats, save it.";
 
-export const RECORD_SCREEN_SUBTEXT = "Small things become patterns.";
+export const RECORD_SCREEN_SUBTEXT = "One sentence is enough.";
 
 export const RECORD_SCREEN_SECONDARY =
   "The archive is built from ordinary moments.";

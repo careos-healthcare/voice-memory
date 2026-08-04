@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "versionKey": "production-2026-07-26-v1",
+  "effectiveFrom": "2026-07-26T00:00:00.000Z",
+  "effectiveTo": null,
+  "currency": "USD",
+  "source": {
+    "asOf": "2026-07-26",
+    "reference": "Vendor public pricing pages and deployment-provider contract assumptions",
+    "assumption": "Activation template only. Public prices and provider contracts can change; verify every value against current invoices before activation. All lines are therefore marked estimated."
+  },
+  "lines": [
+    { "metric": "ai_input_tokens", "resource": "openai.gpt-4o-mini", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "150000", "costBasis": "estimated" },
+    { "metric": "ai_cached_tokens", "resource": "openai.gpt-4o-mini", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "75000", "costBasis": "estimated" },
+    { "metric": "ai_output_tokens", "resource": "openai.gpt-4o-mini", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "600000", "costBasis": "estimated" },
+    { "metric": "ai_reasoning_tokens", "resource": "openai.gpt-4o-mini", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "600000", "costBasis": "estimated" },
+    { "metric": "ai_input_tokens", "resource": "openai.gpt-5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "1250000", "costBasis": "estimated" },
+    { "metric": "ai_cached_tokens", "resource": "openai.gpt-5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "125000", "costBasis": "estimated" },
+    { "metric": "ai_output_tokens", "resource": "openai.gpt-5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "10000000", "costBasis": "estimated" },
+    { "metric": "ai_reasoning_tokens", "resource": "openai.gpt-5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "10000000", "costBasis": "estimated" },
+    { "metric": "ai_input_tokens", "resource": "openai.gpt-5.5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "1750000", "costBasis": "estimated" },
+    { "metric": "ai_cached_tokens", "resource": "openai.gpt-5.5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "175000", "costBasis": "estimated" },
+    { "metric": "ai_output_tokens", "resource": "openai.gpt-5.5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "14000000", "costBasis": "estimated" },
+    { "metric": "ai_reasoning_tokens", "resource": "openai.gpt-5.5", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "14000000", "costBasis": "estimated" },
+    { "metric": "ai_input_tokens", "resource": "openai.gpt-5.5-pro", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "15000000", "costBasis": "estimated" },
+    { "metric": "ai_cached_tokens", "resource": "openai.gpt-5.5-pro", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "1500000", "costBasis": "estimated" },
+    { "metric": "ai_output_tokens", "resource": "openai.gpt-5.5-pro", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "120000000", "costBasis": "estimated" },
+    { "metric": "ai_reasoning_tokens", "resource": "openai.gpt-5.5-pro", "cogsCategory": "ai", "unitQuantity": "1000000", "unitPriceMicroUsd": "120000000", "costBasis": "estimated" },
+    { "metric": "transcription_audio_milliseconds", "resource": "openai.whisper-1", "cogsCategory": "transcription", "unitQuantity": "60000", "unitPriceMicroUsd": "6000", "costBasis": "estimated" },
+    { "metric": "ingress_bytes", "resource": "network.ingress", "cogsCategory": "bandwidth", "unitQuantity": "1000000000", "unitPriceMicroUsd": "0", "costBasis": "estimated" },
+    { "metric": "egress_bytes", "resource": "network.egress", "cogsCategory": "bandwidth", "unitQuantity": "1000000000", "unitPriceMicroUsd": "150000", "costBasis": "estimated" },
+    { "metric": "retrieval_bytes", "resource": "network.retrieval", "cogsCategory": "bandwidth", "unitQuantity": "1000000000", "unitPriceMicroUsd": "10000", "costBasis": "estimated" },
+    { "metric": "storage_snapshot_bytes", "resource": "storage.snapshot", "cogsCategory": "storage", "unitQuantity": "1000000000", "unitPriceMicroUsd": "770", "costBasis": "estimated" },
+    { "metric": "live_session_milliseconds", "resource": "google.gemini-live", "cogsCategory": "live", "unitQuantity": "60000", "unitPriceMicroUsd": "30000", "costBasis": "estimated" },
+    { "metric": "image_generations", "resource": "image.atmosphere", "cogsCategory": "image", "unitQuantity": "1", "unitPriceMicroUsd": "40000", "costBasis": "estimated" }
+  ]
+}

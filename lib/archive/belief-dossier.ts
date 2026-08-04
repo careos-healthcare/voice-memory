@@ -44,11 +44,11 @@ function buildWhatWouldChangeLines(
     push("Contradicting evidence would reduce confidence.");
   }
   if (belief.status === "weakening") {
-    push("More reflections that do not repeat the pattern would weaken it.");
+    push("More saved moments that do not repeat the pattern would weaken it.");
   }
   if (belief.status === "strengthening" || belief.status === "under_review") {
     push(
-      "More reflections where the same pattern holds without contradiction would strengthen it.",
+      "More saved moments where the same pattern holds without contradiction would strengthen it.",
     );
   }
   if (belief.evidence.lifeAreas.length >= 2) {
@@ -59,14 +59,14 @@ function buildWhatWouldChangeLines(
     );
   }
   if (belief.evidence.costEvidenceLines.length > 0) {
-    push("New cost signals in reflections would shift how seriously the archive weighs it.");
+    push("New cost signals in saved moments would shift how seriously the archive weighs it.");
   }
   if (belief.evidence.predictionFailureLines.length > 0) {
-    push("Reflections that match what you expected would soften a failed-prediction read.");
+    push("Saved moments that match what you expected would soften a failed-prediction read.");
   }
   if (theory && theory.contradictingEvidenceCount === 0 && belief.confidence >= 70) {
     push(
-      "More reflections where criticism does not lead to spiralling would weaken a high-confidence read.",
+      "More saved moments where criticism does not lead to spiralling would weaken a high-confidence read.",
     );
   }
 

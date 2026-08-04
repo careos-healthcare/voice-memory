@@ -68,7 +68,7 @@ export function HabitLoopCard({
             <Button asChild size="sm">
               <Link href="/">
                 <Mic className="h-4 w-4" />
-                Record a reflection
+                Record a moment
               </Link>
             </Button>
           ) : null}
@@ -82,14 +82,14 @@ export function HabitLoopCard({
       <div className="space-y-3 rounded-xl px-1 py-2">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs tracking-wide text-zinc-600">Your reflection rhythm</p>
+            <p className="text-xs tracking-wide text-zinc-600">Your recording rhythm</p>
             <p className="mt-2 flex items-center gap-2 text-xl font-normal text-zinc-200">
               <Calendar className="h-5 w-5 text-violet-300/80" />
               {formatLastReflectionLabel(stats.lastReflectionDate)}
             </p>
             <p className="mt-2 text-sm text-zinc-500">
               {recap.entryCount > 0
-                ? `${recap.entryCount} reflection${recap.entryCount === 1 ? "" : "s"} this week`
+                ? `${recap.entryCount} moment${recap.entryCount === 1 ? "" : "s"} this week`
                 : "Return whenever it helps."}
             </p>
           </div>
@@ -117,7 +117,7 @@ export function HabitLoopCard({
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Reflection rhythm
+                Recording rhythm
               </p>
               <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
                 <Calendar className="h-6 w-6 text-violet-300" />
@@ -125,8 +125,8 @@ export function HabitLoopCard({
               </CardTitle>
               <p className="mt-2 text-sm text-zinc-400">
                 {stats.weeklyRecap.entryCount > 0
-                  ? `${stats.weeklyRecap.entryCount} reflection${stats.weeklyRecap.entryCount === 1 ? "" : "s"} this week`
-                  : `Last reflection · ${formatLastReflectionLabel(stats.lastReflectionDate)}`}
+                  ? `${stats.weeklyRecap.entryCount} moment${stats.weeklyRecap.entryCount === 1 ? "" : "s"} this week`
+                  : `Last moment · ${formatLastReflectionLabel(stats.lastReflectionDate)}`}
               </p>
             </div>
             {stats.reflectedToday ? (
@@ -164,12 +164,12 @@ export function HabitLoopCard({
         <CardContent className="text-sm text-zinc-400">
           {recap.entryCount === 0 ? (
             <p>
-              After 1–3 real reflections, a weekly recap can name what repeated in your words.
+              After 1–3 real moments, a weekly recap can name what repeated in your words.
             </p>
           ) : (
             <ul className="space-y-2">
               <li>
-                <span className="text-white">{recap.entryCount}</span> reflection
+                <span className="text-white">{recap.entryCount}</span> moment
                 {recap.entryCount === 1 ? "" : "s"} logged
               </li>
               {recap.topTheme ? (

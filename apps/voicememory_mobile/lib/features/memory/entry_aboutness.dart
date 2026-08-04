@@ -109,6 +109,7 @@ abstract class EntryAboutnessSession {
         reflection: entry.reflection,
         syncStatus: entry.syncStatus,
         localAudioPath: entry.localAudioPath,
+        localAudioVaultRef: entry.localAudioVaultRef,
         treatAsNew: entry.treatAsNew,
         connectionApproved: entry.connectionApproved,
         keepExactDetails: entry.keepExactDetails,
@@ -119,11 +120,11 @@ abstract class EntryAboutnessSession {
         pinnedAt: entry.pinnedAt,
         isArchived: entry.isArchived,
         archivedAt: entry.archivedAt,
-    entryAboutness: aboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: entry.captureContextTag,
-  );
+        entryAboutness: aboutness,
+        memorySurfacing: entry.memorySurfacing,
+        preserveOriginal: entry.preserveOriginal,
+        captureContextTag: entry.captureContextTag,
+      );
 
   static void resetAfterSave() {
     selected = EntryAboutness.aboutMe;
@@ -133,12 +134,14 @@ abstract class EntryAboutnessSession {
     lastSaveWasNonPersonal = false;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSession() {
     selected = EntryAboutness.aboutMe;
     lastSaveWasNonPersonal = false;
     pickerSeenThisSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSession();
 }
 
 abstract class EntryAboutnessCopy {

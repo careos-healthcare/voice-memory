@@ -1,7 +1,7 @@
+import '../features/monetization/domain/product_value_delivery_ledger.dart';
 import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import '../product/consumer_ui_copy.dart';
-import '../config/app_config.dart';
-import '../models/entitlement.dart';
+import '../subscriptions/domain/subscription_models.dart';
 import '../storage/mobile_prefs_store.dart';
 
 /// Value-moment paywall rules — mirrors web; no paywall before first value.
@@ -58,7 +58,7 @@ class ValueMomentPaywallLogic {
     await _save(s);
   }
 
-  bool shouldBypass(PremiumEntitlements? entitlements) {
+  bool shouldBypass(SubscriptionState? entitlements) {
     return entitlements?.isPro == true;
   }
 
@@ -67,13 +67,20 @@ class ValueMomentPaywallLogic {
     return DelayedPaywallProofStore.passesGate;
   }
 
+  /// A paywall may only follow value ArchiveMe actually delivered.
+  ///
+  /// The number of saved moments is not that evidence: an archive can hold
+  /// dozens of entries and still have been given nothing it can defend. The
+  /// delivery ledger is the only thing that proves the promise was kept.
   Future<bool> shouldShowPostBlindSpot({
-    required int reflectionCount,
-    required PremiumEntitlements? entitlements,
+    required ProductValueDeliveryLedger deliveredProof,
+    required SubscriptionState? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
     if (!await _passesProofFirstGate()) return false;
-    if (reflectionCount < AppConfig.patternReviewReflectionTarget) return false;
+    if (!deliveredProof.hasDelivered(DeliveredValueKind.observation)) {
+      return false;
+    }
     final s = await _state();
     if (s['hasSeenFirstBlindSpot'] != true) return false;
     if (s['postBlindSpotPaywallSeen'] == true) return false;
@@ -82,7 +89,7 @@ class ValueMomentPaywallLogic {
   }
 
   Future<bool> shouldShowPostDiscover({
-    required PremiumEntitlements? entitlements,
+    required SubscriptionState? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
     if (!await _passesProofFirstGate()) return false;
@@ -94,7 +101,7 @@ class ValueMomentPaywallLogic {
   }
 
   Future<bool> shouldGateContinuity({
-    required PremiumEntitlements? entitlements,
+    required SubscriptionState? entitlements,
   }) async {
     if (shouldBypass(entitlements)) return false;
     if (!await _passesProofFirstGate()) return false;

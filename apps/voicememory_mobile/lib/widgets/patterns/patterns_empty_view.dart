@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import '../../features/onboarding/archive_journey_explainer_gates.dart';
 import '../../features/onboarding/archive_journey_model.dart';
@@ -37,10 +36,7 @@ class PatternsEmptyView extends StatelessWidget {
             explainer: ArchiveJourneyExplainer.full(),
           ),
         ],
-        if (footer.isNotEmpty) ...[
-          SizedBox(height: gap),
-          ...footer,
-        ],
+        if (footer.isNotEmpty) ...[SizedBox(height: gap), ...footer],
       ],
     );
 

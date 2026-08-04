@@ -33,7 +33,7 @@ const requiredTokens = [
   "scheduleAfterMount",
   "runEntryPresentationSafe",
   "heavyReady",
-  "Reflection not found",
+  "Moment not found",
 ];
 
 for (const token of requiredTokens) {

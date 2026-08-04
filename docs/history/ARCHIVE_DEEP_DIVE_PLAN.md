@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Deep Dive V1 — plan
 
 ## Goal
@@ -79,3 +81,4 @@ flutter test test/archive_deep_dive_gate_test.dart test/archive_deep_dive_engine
 ## Analytics (optional V1)
 
 - None required for V1; screen is local-only.
+

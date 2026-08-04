@@ -18,9 +18,9 @@ function summarizeEvidence(lines: string[], evidenceCount: number): string {
     return lines[0]!;
   }
   if (evidenceCount > 0) {
-    return `The archive is weighing ${evidenceCount} evidence item${evidenceCount === 1 ? "" : "s"} from your reflections.`;
+    return `The archive is weighing ${evidenceCount} evidence item${evidenceCount === 1 ? "" : "s"} from your saved words.`;
   }
-  return "Record more reflections so the archive can explain why it believes this.";
+  return "Save more moments so the archive can explain why it believes this.";
 }
 
 function summarizeChange(changeLines: string[]): string {

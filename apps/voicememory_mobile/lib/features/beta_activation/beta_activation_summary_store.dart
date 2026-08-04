@@ -24,19 +24,30 @@ class BetaActivationSummaryStore {
   }
 
   Future<BetaActivationSummaryExtension> increment(String field) async {
-    return _prefs.updateMap(countsKey, (current) {
-      final counts = BetaActivationSummaryExtension.fromMap(current);
-      return counts.copyWithIncrement(field).toMap();
-    }).then(BetaActivationSummaryExtension.fromMap);
+    return _prefs
+        .updateMap(countsKey, (current) {
+          final counts = BetaActivationSummaryExtension.fromMap(current);
+          return counts.copyWithIncrement(field).toMap();
+        })
+        .then(BetaActivationSummaryExtension.fromMap);
+  }
+
+  Future<Map<String, int>> exportAggregateCounts() async {
+    final values = (await read()).toMap();
+    return {
+      for (final entry in values.entries)
+        if (entry.value is int && (entry.value as int) >= 0)
+          entry.key: entry.value as int,
+    };
   }
 
   Future<void> clear() async {
-    await _prefs.writeMap(countsKey, {});
+    await _prefs.remove(countsKey);
   }
 
   @visibleForTesting
   static Future<void> resetForTest(MobilePrefsStore? prefs) async {
     if (prefs == null) return;
-    await prefs.writeMap(countsKey, {});
+    await prefs.remove(countsKey);
   }
 }

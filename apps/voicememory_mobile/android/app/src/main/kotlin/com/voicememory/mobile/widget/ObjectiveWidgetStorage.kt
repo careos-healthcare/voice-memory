@@ -1,10 +1,14 @@
 package com.voicememory.mobile.widget
 
 import android.content.Context
+import com.voicememory.mobile.integration.SecureNativeStorage
+import org.json.JSONObject
+import java.io.File
 
 object ObjectiveWidgetStorage {
     const val PREFS_NAME = "archive_me_today_check_widget"
     const val EXTRA_WIDGET_ROUTE = "archive_me_widget_route"
+    private const val AAD = "today-check-widget:v1"
 
     private const val KEY_TITLE = "title"
     private const val KEY_BODY = "body"
@@ -15,44 +19,49 @@ object ObjectiveWidgetStorage {
     private const val KEY_UPDATED_AT = "updatedAt"
 
     fun save(context: Context, payload: Map<*, *>) {
-        prefs(context).edit()
-            .putString(KEY_TITLE, payload[KEY_TITLE]?.toString() ?: "")
-            .putString(KEY_BODY, payload[KEY_BODY]?.toString() ?: "")
-            .putString(
-                KEY_CHECK_QUESTION,
-                payload[KEY_CHECK_QUESTION]?.toString() ?: "",
-            )
-            .putString(
-                KEY_PRIMARY_ACTION,
-                payload[KEY_PRIMARY_ACTION]?.toString() ?: "",
-            )
-            .putString(KEY_ROUTE, payload[KEY_ROUTE]?.toString() ?: "/record")
-            .putString(KEY_TYPE, payload[KEY_TYPE]?.toString() ?: "")
-            .putString(KEY_UPDATED_AT, payload[KEY_UPDATED_AT]?.toString() ?: "")
-            .apply()
+        SecureNativeStorage.locked(context) {
+            eraseLegacyPlaintext(context)
+            val value = JSONObject()
+                .put(KEY_TITLE, bounded(payload[KEY_TITLE]))
+                .put(KEY_BODY, bounded(payload[KEY_BODY]))
+                .put(KEY_CHECK_QUESTION, bounded(payload[KEY_CHECK_QUESTION]))
+                .put(KEY_PRIMARY_ACTION, bounded(payload[KEY_PRIMARY_ACTION]))
+                .put(KEY_ROUTE, bounded(payload[KEY_ROUTE], "/record"))
+                .put(KEY_TYPE, bounded(payload[KEY_TYPE]))
+                .put(KEY_UPDATED_AT, bounded(payload[KEY_UPDATED_AT]))
+            SecureNativeStorage.writeEncryptedAtomic(file(context), AAD) {
+                it.write(value.toString().toByteArray(Charsets.UTF_8))
+            }
+        }
     }
 
     fun clear(context: Context) {
-        prefs(context).edit().clear().apply()
+        SecureNativeStorage.locked(context) {
+            eraseLegacyPlaintext(context)
+            file(context).delete()
+        }
     }
 
-    fun readPayload(context: Context): Map<String, String> {
-        val stored = prefs(context)
-        val title = stored.getString(KEY_TITLE, "") ?: ""
-        val body = stored.getString(KEY_BODY, "") ?: ""
+    fun readPayload(context: Context): Map<String, String> = SecureNativeStorage.locked(context) {
+        eraseLegacyPlaintext(context)
+        val stored = runCatching {
+            SecureNativeStorage.readEncrypted(file(context), AAD)
+                .bufferedReader(Charsets.UTF_8)
+                .use { JSONObject(it.readText()) }
+        }.getOrNull() ?: return@locked defaultPayload()
+        val title = stored.optString(KEY_TITLE)
+        val body = stored.optString(KEY_BODY)
         if (title.isBlank() && body.isBlank()) {
-            return defaultPayload()
+            return@locked defaultPayload()
         }
-        return mapOf(
+        mapOf(
             KEY_TITLE to title,
             KEY_BODY to body,
-            KEY_CHECK_QUESTION to (stored.getString(KEY_CHECK_QUESTION, "") ?: ""),
-            KEY_PRIMARY_ACTION to (
-                stored.getString(KEY_PRIMARY_ACTION, "Open") ?: "Open"
-                ),
-            KEY_ROUTE to (stored.getString(KEY_ROUTE, "/record") ?: "/record"),
-            KEY_TYPE to (stored.getString(KEY_TYPE, "") ?: ""),
-            KEY_UPDATED_AT to (stored.getString(KEY_UPDATED_AT, "") ?: ""),
+            KEY_CHECK_QUESTION to stored.optString(KEY_CHECK_QUESTION),
+            KEY_PRIMARY_ACTION to stored.optString(KEY_PRIMARY_ACTION, "Open"),
+            KEY_ROUTE to stored.optString(KEY_ROUTE, "/record"),
+            KEY_TYPE to stored.optString(KEY_TYPE),
+            KEY_UPDATED_AT to stored.optString(KEY_UPDATED_AT),
         )
     }
 
@@ -66,6 +75,13 @@ object ObjectiveWidgetStorage {
         KEY_UPDATED_AT to "",
     )
 
-    private fun prefs(context: Context) =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private fun bounded(value: Any?, fallback: String = "") =
+        (value?.toString() ?: fallback).take(2_048)
+
+    private fun file(context: Context) =
+        File(context.noBackupFilesDir, "native_os/widgets/today_check.enc")
+
+    private fun eraseLegacyPlaintext(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().clear().commit()
+    }
 }

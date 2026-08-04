@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../billing/restore_purchases_copy.dart';
 import '../billing/restore_purchases_flow.dart';
-import '../billing/revenuecat_service.dart';
 import '../billing/restore_production_evidence.dart';
-import '../models/entitlement.dart';
 import '../services/app_services.dart';
+import '../subscriptions/domain/subscription_models.dart';
 import '../theme/app_theme.dart';
 import '../config/developer_settings_gate.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -21,13 +20,13 @@ class RestorePurchasesScreen extends StatefulWidget {
 class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
   bool _busy = false;
   RestorePurchasesFlow? _restoreFlow;
-  PremiumEntitlements? _result;
+  SubscriptionState? _result;
   String? _evidenceJson;
   String? _inlineMessage;
 
   Future<void> _restore() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
-      billing: AppServices.instance.billing,
+      repository: AppServices.instance.subscriptionRepository,
     );
     if (flow.isBusy || _busy) return;
 
@@ -43,22 +42,24 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
         return;
       }
       if (result.outcome == RestorePurchasesOutcome.error ||
-          result.outcome == RestorePurchasesOutcome.unavailable) {
+          result.outcome == RestorePurchasesOutcome.unavailable ||
+          result.outcome == RestorePurchasesOutcome.cachedAccessRetained) {
         final evidence = await RestoreProductionEvidence.toJson(success: false);
         setState(() {
+          _result = result.subscriptionState;
           _evidenceJson = evidence;
           _inlineMessage = result.userMessage;
         });
         return;
       }
-      final ent = result.entitlements ?? PremiumEntitlements.free();
+      final state = result.subscriptionState ?? SubscriptionState.free();
       final evidence = await RestoreProductionEvidence.toJson(
         success: true,
-        entitlements: ent,
+        subscriptionState: state,
       );
       if (mounted) {
         setState(() {
-          _result = ent;
+          _result = state;
           _evidenceJson = evidence;
           _inlineMessage = result.outcome == RestorePurchasesOutcome.restored
               ? RestorePurchasesCopy.restoreScreenSuccess
@@ -73,35 +74,30 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
   @override
   Widget build(BuildContext context) {
     final result = _result;
-    final subscriptionsAvailable = RevenueCatService.instance.isConfigured;
 
     return PushedScreenShell(
       title: RestorePurchasesCopy.restoreScreenTitle,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         children: [
-          if (!subscriptionsAvailable) ...[
-            Text(
-              RestorePurchasesCopy.billingUnavailable,
-              style: const TextStyle(color: AppTheme.foreground, height: 1.45),
-            ),
-          ] else ...[
-            const Text(
-              RestorePurchasesCopy.restoreScreenBody,
-              style: TextStyle(color: AppTheme.muted, height: 1.45),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _busy ? null : _restore,
-              child: _busy
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(RestorePurchasesCopy.restorePurchases),
-            ),
-          ],
+          const Text(
+            RestorePurchasesCopy.restoreScreenBody,
+            style: TextStyle(color: AppTheme.muted, height: 1.45),
+          ),
+          const SizedBox(height: 24),
+          FilledButton(
+            // Restoring an existing purchase is independent of whether the
+            // current RevenueCat offering loaded. Package availability may
+            // disable a new purchase, but must never hide this recovery path.
+            onPressed: _busy ? null : _restore,
+            child: _busy
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(RestorePurchasesCopy.restorePurchases),
+          ),
           if (_inlineMessage != null) ...[
             const SizedBox(height: 24),
             Text(
@@ -117,8 +113,7 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
               style: const TextStyle(color: AppTheme.muted),
             ),
           ],
-          if (subscriptionsAvailable &&
-              _evidenceJson != null &&
+          if (_evidenceJson != null &&
               DeveloperSettingsGate.canShowInternalVerificationDetails) ...[
             const SizedBox(height: 24),
             const Text(

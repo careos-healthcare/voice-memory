@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Reproducibly acquired native dependency (see third_party/llama.cpp.lock.json).
+/third_party/llama.cpp/
+/native/ios/.cmake/
+/native/ios/build/

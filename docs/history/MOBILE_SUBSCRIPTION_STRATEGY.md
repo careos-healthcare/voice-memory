@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Mobile subscription strategy
 
 ArchiveMe keeps **one entitlement layer** (`lib/entitlement/entitlements.ts`) regardless of how the user pays.
@@ -32,3 +34,4 @@ Do **not** fork product logic per store — only the purchase adapter changes.
 1. Stripe on web → validate entitlements in production.
 2. Ship PWA + Capacitor shell with same Next.js origin or bundled static export.
 3. Add RevenueCat only if App Store review requires IAP for Pro features.
+

@@ -7,8 +7,8 @@ import '../../design/archive_mobile_typography.dart';
 import '../../security/app_lock_service.dart';
 import '../../security/app_lock_settings.dart';
 import '../../security/pin_hash.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/archive_semantic_colors.dart';
 import 'wipe_local_archive_dialog.dart';
 
 /// Full-screen lock shown before any archive content. PIN entry with an
@@ -45,6 +45,9 @@ class _AppLockScreenState extends State<AppLockScreen> {
     final ready = await widget.service.biometricUnlockReady();
     if (!mounted) return;
     setState(() => _biometricsReady = ready);
+    if (ready) {
+      unawaited(_tryBiometrics());
+    }
   }
 
   Future<void> _submitPin() async {
@@ -77,9 +80,10 @@ class _AppLockScreenState extends State<AppLockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ArchiveSemanticColors.of(context);
     return Scaffold(
       key: const Key('app_lock_screen'),
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -93,7 +97,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                   Icon(
                     Icons.lock_outline,
                     size: 40,
-                    color: AppColors.textSecondary,
+                    color: colors.secondaryText,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
@@ -109,7 +113,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                     textAlign: TextAlign.center,
                     style: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.textSecondary),
+                    ).copyWith(color: colors.secondaryText),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   TextField(
@@ -135,7 +139,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                       textAlign: TextAlign.center,
                       style: ArchiveMobileTypography.responsiveHelper(
                         context,
-                      ).copyWith(color: AppColors.error),
+                      ).copyWith(color: colors.destructive),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.md),

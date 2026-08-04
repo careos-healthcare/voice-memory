@@ -1,42 +1,50 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../config/archive_me_demo_state.dart';
-import '../features/demo/archive_me_demo_archive.dart';
-import '../config/creator_demo_mode.dart';
 import '../features/activation/capture_context_tags.dart';
-import '../features/curiosity_loop/domain/services/cognitive_analyzer.dart';
 import '../features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
-import '../features/first25/first25_journal_hooks.dart';
-import '../features/memory/entry_memory_mode.dart';
-import '../features/memory/entry_save_coordinator.dart';
-import '../features/memory/entry_thread_scope.dart';
-import '../features/first_session/first_recording_sample.dart';
-import '../features/first_session/first_save_rescue.dart';
-import '../features/referral/invite_funnel_metrics.dart';
-import '../features/referral/invited_user_welcome.dart';
+import '../features/journal/migration/saved_moment_legacy_adapter.dart';
+import '../core/sync/journal_sync_conflict_resolver.dart';
 import '../models/journal_entry.dart';
 import '../models/sync_status.dart';
-import '../services/activation_funnel_analytics.dart';
 import 'encrypted_json_file_store.dart';
 import 'private_data_encryption_key_store.dart';
 import 'secure_storage.dart';
 
+typedef JournalPostPersistHook =
+    Future<void> Function(List<JournalEntry> persistedEntries);
+typedef JournalSyncDeviceIdProvider = Future<String> Function();
+typedef JournalStoreClock = DateTime Function();
+
 /// Durable journal file on device — encrypted at rest when [encryptAtRest] is enabled.
+///
+/// Every store is bound to exactly one [ownerArchiveId]. There is no global
+/// journal and no default owner: a caller that cannot name an archive cannot
+/// open a store, and a store never returns an entry belonging to a different
+/// archive even if one is present in its file.
 class JournalStore {
   JournalStore({
     required this.file,
+    required this.ownerArchiveId,
     EncryptedJsonFileStore? encryptedStore,
     File? plaintextLegacyFile,
-    bool encryptAtRest = false,
-    CognitiveAnalyzer? cognitiveAnalyzer,
+    this._encryptAtRest = false,
+    Object? cognitiveAnalyzer,
     JournalSaveInterceptorPipeline? saveInterceptorPipeline,
-  }) : _encrypted = encryptedStore,
+    JournalSyncDeviceIdProvider? syncDeviceIdProvider,
+    JournalStoreClock? clock,
+  }) : assert(
+         ownerArchiveId != '',
+         'A journal store must be bound to an archive.',
+       ),
+       _encrypted = encryptedStore,
        _plaintextLegacy = plaintextLegacyFile,
-       _encryptAtRest = encryptAtRest,
-       _cognitiveAnalyzer = cognitiveAnalyzer ?? const CognitiveAnalyzer(),
        _saveInterceptorPipeline =
-           saveInterceptorPipeline ?? JournalSaveInterceptorPipeline.empty();
+           saveInterceptorPipeline ?? JournalSaveInterceptorPipeline.empty(),
+       _syncDeviceIdProvider =
+           syncDeviceIdProvider ?? _defaultSyncDeviceIdProvider,
+       _clock = clock ?? DateTime.now;
 
   /// Primary on-disk file — encrypted envelope when [encryptAtRest] is true.
   final File file;
@@ -44,15 +52,29 @@ class JournalStore {
   final EncryptedJsonFileStore? _encrypted;
   final File? _plaintextLegacy;
   final bool _encryptAtRest;
-  final CognitiveAnalyzer _cognitiveAnalyzer;
+  final JournalSyncDeviceIdProvider _syncDeviceIdProvider;
+  final JournalStoreClock _clock;
+  final String ownerArchiveId;
   JournalSaveInterceptorPipeline _saveInterceptorPipeline;
+  JournalPostPersistHook? _postPersistHook;
 
   List<JournalEntry>? _cache;
+  final StreamController<List<JournalEntry>> _changes =
+      StreamController<List<JournalEntry>>.broadcast();
+
+  Stream<List<JournalEntry>> watchAll() async* {
+    yield List<JournalEntry>.unmodifiable(await loadAll());
+    yield* _changes.stream;
+  }
 
   void configureSaveInterceptorPipeline(
     JournalSaveInterceptorPipeline pipeline,
   ) {
     _saveInterceptorPipeline = pipeline;
+  }
+
+  void configurePostPersistHook(JournalPostPersistHook? hook) {
+    _postPersistHook = hook;
   }
 
   static String encryptedPathFor(String legacyJsonPath) {
@@ -64,11 +86,14 @@ class JournalStore {
 
   static Future<JournalStore> open(
     String filePath, {
+    required String ownerArchiveId,
     PrivateDataEncryptionKeyStore? keyStore,
     bool encryptAtRest = true,
     SecureStorageService? secureStorage,
-    CognitiveAnalyzer? cognitiveAnalyzer,
+    Object? cognitiveAnalyzer,
     JournalSaveInterceptorPipeline? saveInterceptorPipeline,
+    JournalSyncDeviceIdProvider? syncDeviceIdProvider,
+    JournalStoreClock? clock,
   }) async {
     final legacyFile = File(filePath);
     if (!await legacyFile.parent.exists()) {
@@ -84,6 +109,9 @@ class JournalStore {
         encryptAtRest: false,
         cognitiveAnalyzer: cognitiveAnalyzer,
         saveInterceptorPipeline: saveInterceptorPipeline,
+        syncDeviceIdProvider: syncDeviceIdProvider,
+        clock: clock,
+        ownerArchiveId: ownerArchiveId,
       );
       store._cache = store._decodeEntries(await legacyFile.readAsString());
       return store;
@@ -110,33 +138,26 @@ class JournalStore {
       encryptAtRest: true,
       cognitiveAnalyzer: cognitiveAnalyzer,
       saveInterceptorPipeline: saveInterceptorPipeline,
+      syncDeviceIdProvider: syncDeviceIdProvider,
+      clock: clock,
+      ownerArchiveId: ownerArchiveId,
     );
     store._cache = await store._loadEntriesFromEncrypted();
     return store;
   }
 
-  Future<List<JournalEntry>> loadAll() async {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
-    }
-    if (CreatorDemoMode.isActive) {
-      return CreatorDemoMode.demoJournalEntries();
-    }
+  Future<List<JournalEntry>> loadAll({bool includeDeleted = false}) async {
     if (_encryptAtRest && _encrypted != null) {
       _cache = await _loadEntriesFromEncrypted();
-      return List<JournalEntry>.from(_cache!);
+      return _visibleEntries(_cache!, includeDeleted: includeDeleted);
     }
-    return loadAllSync();
+    return loadAllSync(includeDeleted: includeDeleted);
   }
 
   /// Same as [loadAll] but synchronous — uses the in-memory cache after [open].
-  List<JournalEntry> loadAllSync() {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
-    }
-    if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
+  List<JournalEntry> loadAllSync({bool includeDeleted = false}) {
     if (_cache != null) {
-      return List<JournalEntry>.from(_cache!);
+      return _visibleEntries(_cache!, includeDeleted: includeDeleted);
     }
 
     final source = _encryptAtRest ? file : (_plaintextLegacy ?? file);
@@ -144,74 +165,47 @@ class JournalStore {
     final raw = source.readAsStringSync();
     if (raw.trim().isEmpty) return [];
     _cache = _decodeEntries(raw);
-    return List<JournalEntry>.from(_cache!);
+    return _visibleEntries(_cache!, includeDeleted: includeDeleted);
   }
 
   Future<void> clearAll() async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
-    _cache = const [];
-    if (_encrypted != null) {
-      await _encrypted!.writeJson([]);
-      return;
-    }
-    await file.writeAsString('[]');
+    await _writeAll(const []);
   }
 
   Future<void> save(
     JournalEntry entry, {
     String first25Source = 'journal_save',
   }) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
-    final all = await loadAll();
+    if (entry.ownerArchiveId != ownerArchiveId &&
+        entry.ownerArchiveId !=
+            SavedMomentLegacyAdapter.legacyUnscopedArchiveId) {
+      throw StateError(
+        'Saved moment ${entry.id} belongs to ${entry.ownerArchiveId} and '
+        'cannot be written into $ownerArchiveId.',
+      );
+    }
+    final all = await loadAll(includeDeleted: true);
     final isNew = !all.any((e) => e.id == entry.id);
     var toPersist = entry;
-    if (isNew) {
-      toPersist = await EntrySaveCoordinator.applyNewEntryOptions(
-        entry,
-        entryCount: all.length + 1,
+    if (entry.localCaptureContext != null &&
+        toPersist.localCaptureContext == null) {
+      toPersist = toPersist.copyWith(
+        localCaptureContext: entry.localCaptureContext,
       );
     }
-    toPersist = _cognitiveAnalyzer.enrichEntry(toPersist);
+    toPersist = JournalSyncConflictResolver.stampLocalWrite(
+      entry: toPersist,
+      previous: isNew ? null : all.firstWhere((item) => item.id == entry.id),
+      deviceId: await _syncDeviceIdProvider(),
+      updatedAt: _clock(),
+    );
+    toPersist = toPersist.copyWith(
+      ownerArchiveId: ownerArchiveId,
+      updatedAt: _clock().toUtc(),
+      schemaVersion: JournalEntry.currentSchemaVersion,
+    );
     final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
-    if (isNew && next.length == 1) {
-      ActivationFunnelAnalytics.track(
-        ActivationFunnelAnalytics.firstRecordingSaved,
-        entryCount: 1,
-        oncePerSession: true,
-      );
-      if (FirstSaveRescue.startedFromRescueThisSession) {
-        FirstSaveRescue.startedFromRescueThisSession = false;
-        ActivationFunnelAnalytics.track(
-          ActivationFunnelAnalytics.firstSaveRescueSaved,
-          entryCount: 1,
-          oncePerSession: true,
-        );
-      }
-      if (FirstRecordingSample.startedFromSampleThisSession) {
-        FirstRecordingSample.startedFromSampleThisSession = false;
-        ActivationFunnelAnalytics.track(
-          ActivationFunnelAnalytics.firstRecordingSampleSaved,
-          entryCount: 1,
-          oncePerSession: true,
-        );
-      }
-      InviteFunnelMetrics.firstSave();
-      if (InvitedUserWelcome.startedFromWelcomeThisSession) {
-        InvitedUserWelcome.startedFromWelcomeThisSession = false;
-        ActivationFunnelAnalytics.track(
-          ActivationFunnelAnalytics.invitedUserFirstSave,
-          source: InvitedUserWelcome.sessionSource,
-          entryCount: 1,
-          oncePerSession: true,
-        );
-      }
-    }
-    await First25JournalHooks.onJournalSave(
-      entry: entry,
-      isNew: isNew,
-      source: first25Source,
-    );
     await _saveInterceptorPipeline.execute(toPersist);
   }
 
@@ -223,41 +217,8 @@ class JournalStore {
     await save(CaptureContextTags.updateTag(entry, tagId));
   }
 
-  static JournalEntry _withMemoryFlags(
-    JournalEntry entry, {
-    bool? treatAsNew,
-    bool? connectionApproved,
-    bool? keepSeparate,
-    String? archiveThreadId,
-    String? archivePackId,
-    String? captureContextTag,
-  }) => JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
-    transcript: entry.transcript,
-    durationSeconds: entry.durationSeconds,
-    reflection: entry.reflection,
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: treatAsNew ?? entry.treatAsNew,
-    connectionApproved: connectionApproved ?? entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: keepSeparate ?? entry.keepSeparate,
-    archiveThreadId: archiveThreadId ?? entry.archiveThreadId,
-    archivePackId: archivePackId ?? entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entry.entryAboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: captureContextTag ?? entry.captureContextTag,
-    biomarkers: entry.biomarkers,
-  );
-
   Future<List<JournalEntry>> loadEligible() async {
-    final all = await loadAll();
+    final all = await loadAll(includeDeleted: true);
     return all
         .where(
           (e) =>
@@ -270,92 +231,55 @@ class JournalStore {
   Future<int> reflectionCount() async => (await loadEligible()).length;
 
   Future<List<JournalEntry>> pendingSyncQueue() async {
-    final all = await loadAll();
+    final all = await loadAll(includeDeleted: true);
     return all
         .where(
           (e) =>
-              e.syncStatus == SyncStatus.pendingUpload ||
-              e.syncStatus == SyncStatus.localOnly,
+              e.captureContextTag != 'memory_graph_voice_conversation' &&
+              (e.syncStatus == SyncStatus.pendingUpload ||
+                  e.syncStatus == SyncStatus.localOnly),
         )
         .toList();
   }
 
   Future<void> markSynced(String id) async {
-    final entry = await getById(id);
-    if (entry == null) return;
-    await save(
-      JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        syncStatus: SyncStatus.synced,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
-        captureContextTag: entry.captureContextTag,
-        biomarkers: entry.biomarkers,
-      ),
-    );
+    final all = await loadAll(includeDeleted: true);
+    var found = false;
+    final next = all.map((entry) {
+      if (entry.id != id) return entry;
+      found = true;
+      return entry.copyWith(syncStatus: SyncStatus.synced);
+    }).toList();
+    if (found) await _writeAll(next);
   }
 
-  Future<void> mergeRemote(List<JournalEntry> remote) async {
-    final local = await loadAll();
-    final byId = {for (final e in local) e.id: e};
-    for (final r in remote) {
-      final existing = byId[r.id];
-      if (existing == null || r.createdAt.isAfter(existing.createdAt)) {
-        byId[r.id] = JournalEntry(
-          id: r.id,
-          createdAt: r.createdAt,
-          transcript: r.transcript,
-          durationSeconds: r.durationSeconds,
-          reflection: r.reflection,
-          syncStatus: SyncStatus.synced,
-          localAudioPath: existing?.localAudioPath,
-          treatAsNew: r.treatAsNew || (existing?.treatAsNew ?? false),
-          connectionApproved:
-              r.connectionApproved || (existing?.connectionApproved ?? false),
-          keepExactDetails:
-              r.keepExactDetails || (existing?.keepExactDetails ?? false),
-          keepSeparate: r.keepSeparate || (existing?.keepSeparate ?? false),
-          archiveThreadId: r.archiveThreadId ?? existing?.archiveThreadId,
-          archivePackId: r.archivePackId ?? existing?.archivePackId,
-          isPinned: r.isPinned || (existing?.isPinned ?? false),
-          pinnedAt: r.pinnedAt ?? existing?.pinnedAt,
-          isArchived: r.isArchived || (existing?.isArchived ?? false),
-          archivedAt: r.archivedAt ?? existing?.archivedAt,
-          entryAboutness: r.entryAboutness,
-          memorySurfacing: r.memorySurfacing,
-          preserveOriginal:
-              r.preserveOriginal || (existing?.preserveOriginal ?? false),
-          captureContextTag: r.captureContextTag ?? existing?.captureContextTag,
-          biomarkers: r.biomarkers ?? existing?.biomarkers,
-        );
-      }
-    }
-    final merged = byId.values
-        .map(_cognitiveAnalyzer.enrichEntry)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    await _writeAll(merged);
+  Future<JournalMergeResult> mergeRemote(
+    List<JournalEntry> remote, {
+    String? localDeviceId,
+  }) async {
+    final deviceId = localDeviceId ?? await _syncDeviceIdProvider();
+    final local = await loadAll(includeDeleted: true);
+    final result = JournalSyncConflictResolver.merge(
+      localEntries: local,
+      remoteEntries: remote,
+      localDeviceId: deviceId,
+    );
+    await _writeAll(result.entries);
+    return result;
   }
 
   Future<void> delete(String id) async {
-    final all = await loadAll();
-    await _writeAll(all.where((e) => e.id != id).toList());
+    final all = await loadAll(includeDeleted: true);
+    final existing = all.where((entry) => entry.id == id).firstOrNull;
+    if (existing == null || existing.isDeleted) return;
+    final deletedAt = _clock().toUtc();
+    final tombstone = JournalSyncConflictResolver.stampLocalWrite(
+      entry: existing.copyWith(deletedAt: deletedAt, updatedAt: deletedAt),
+      previous: existing,
+      deviceId: await _syncDeviceIdProvider(),
+      updatedAt: deletedAt,
+    );
+    await _writeAll([tombstone, ...all.where((entry) => entry.id != id)]);
   }
 
   Future<JournalEntry?> getById(String id) async {
@@ -374,40 +298,102 @@ class JournalStore {
   }
 
   /// Replaces the on-device journal — local backup restore only.
+  ///
+  /// A restore always lands in the archive doing the restoring; a backup file
+  /// cannot carry another account's ownership into this archive.
   Future<void> replaceAll(List<JournalEntry> entries) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
-    final next = List<JournalEntry>.from(entries)
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final next =
+        entries
+            .map((entry) => entry.copyWith(ownerArchiveId: ownerArchiveId))
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     await _writeAll(next);
   }
 
   Future<void> _writeAll(List<JournalEntry> entries) async {
-    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
-    _cache = List<JournalEntry>.from(entries);
-    final encoded = entries.map((e) => e.toJson()).toList();
-    if (_encrypted != null) {
-      await _encrypted!.writeJson(encoded);
-      return;
+    final owned = entries
+        .where((entry) => entry.ownerArchiveId == ownerArchiveId)
+        .toList(growable: false);
+    if (owned.length != entries.length) {
+      throw StateError(
+        'Refusing to write an entry owned by another archive into '
+        '$ownerArchiveId.',
+      );
     }
-    await file.writeAsString(jsonEncode(encoded));
+    // Rows belonging to another archive are retained byte-for-byte. They are
+    // never readable here, but this store must not destroy another owner's
+    // data just because it happens to share a file after a partial migration.
+    final foreign = (_cache ?? const <JournalEntry>[])
+        .where((entry) => entry.ownerArchiveId != ownerArchiveId)
+        .toList(growable: false);
+    final combined = [...owned, ...foreign];
+    final encoded = combined.map((e) => e.toJson()).toList();
+    if (_encrypted != null) {
+      await _encrypted.writeJson(encoded);
+    } else {
+      await file.writeAsString(jsonEncode(encoded));
+    }
+    _cache = combined;
+    _emitChanges();
+    final hook = _postPersistHook;
+    if (hook != null) {
+      try {
+        await hook(List<JournalEntry>.unmodifiable(owned));
+      } on Object {
+        // Derived indexes are best-effort and never roll back a durable write.
+      }
+    }
+  }
+
+  void _emitChanges() {
+    if (_changes.isClosed) return;
+    _changes.add(
+      List<JournalEntry>.unmodifiable(
+        _visibleEntries(_cache ?? const [], includeDeleted: false),
+      ),
+    );
   }
 
   Future<List<JournalEntry>> _loadEntriesFromEncrypted() async {
     if (_encrypted == null) return [];
-    final decoded = await _encrypted!.readJson();
+    final decoded = await _encrypted.readJson();
     if (decoded == null) return [];
     return _decodeEntries(jsonEncode(decoded));
   }
+
+  static Future<String> _defaultSyncDeviceIdProvider() async => 'local-device';
 
   List<JournalEntry> _decodeEntries(String raw) {
     if (raw.trim().isEmpty) return [];
     final list = jsonDecode(raw) as List<dynamic>;
     final entries = list
-        .map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
+        .map(
+          (e) => JournalEntry.fromJson(
+            SavedMomentLegacyAdapter.migrate(
+              Map<String, dynamic>.from(e as Map),
+              ownerArchiveId: ownerArchiveId,
+              migratedAt: _clock().toUtc(),
+            ),
+          ),
+        )
         .toList();
     entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return entries;
   }
+
+  /// Owner-constrained projection. Anything stamped with another archive is
+  /// treated as absent rather than merely hidden, so no read path — Archive,
+  /// search, Changes, export, sync queue or analysis — can observe it.
+  List<JournalEntry> _visibleEntries(
+    Iterable<JournalEntry> entries, {
+    required bool includeDeleted,
+  }) => List<JournalEntry>.from(
+    entries.where(
+      (entry) =>
+          entry.ownerArchiveId == ownerArchiveId &&
+          (includeDeleted || !entry.isDeleted),
+    ),
+  );
 
   static PrivateDataEncryptionKeyStore _defaultKeyStore(
     SecureStorageService? secureStorage,

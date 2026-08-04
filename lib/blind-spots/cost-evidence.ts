@@ -61,13 +61,13 @@ export function hasCostEvidence(counts: CostEvidenceCounts): boolean {
 
 export function possibleCostLead(counts: CostEvidenceCounts): string | null {
   if (!hasCostEvidence(counts)) return null;
-  return "Possible cost (not proof of causation): later reflections may show avoidance, delay, conflict, quitting language, or spirals — correlation only.";
+  return "Possible cost (not proof of causation): later saved moments may show avoidance, delay, conflict, quitting language, or spirals — correlation only.";
 }
 
 export function formatCostEvidenceLine(counts: CostEvidenceCounts): string[] {
   const lines: string[] = [];
   if (counts.avoidance > 0) {
-    lines.push(`Avoidance language may have followed ${counts.avoidance} time${counts.avoidance === 1 ? "" : "s"} in later reflections.`);
+    lines.push(`Avoidance language may have followed ${counts.avoidance} time${counts.avoidance === 1 ? "" : "s"} in later saved moments.`);
   }
   if (counts.delayedDecisions > 0) {
     lines.push(`Delayed-decision wording may have followed ${counts.delayedDecisions} time${counts.delayedDecisions === 1 ? "" : "s"}.`);

@@ -21,4 +21,4 @@ export const RETURN_EXPECTATION_LABELS: Record<ReturnExpectationMet, string> = {
   no: "No",
 };
 
-export const RETURN_TRIGGER_ATTRIBUTION_DISMISS = "Skip";
+export const RETURN_TRIGGER_ATTRIBUTION_DISMISS = "Not today";

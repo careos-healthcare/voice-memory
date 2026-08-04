@@ -1,0 +1,198 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "rel_001_snapped_to_listened",
+      "entryA": {
+        "id": "rel_001_a",
+        "transcript": "I snapped at my partner during dinner and felt guilty.",
+        "capturedAt": "2026-02-02T19:00:00Z"
+      },
+      "entryB": {
+        "id": "rel_001_b",
+        "transcript": "I listened to my partner during dinner and felt calm.",
+        "capturedAt": "2026-03-16T19:05:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "behaviouralResponse:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "How you responded to your partner looks different across these saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The work deadline may have changed.",
+          "violation": "wrongDomain"
+        },
+        {
+          "statement": "You felt calm because you listened.",
+          "violation": "causal"
+        },
+        {
+          "statement": "You are a person who always snaps at people.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "relationships",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "rel_002_avoided_to_confronted",
+      "entryA": {
+        "id": "rel_002_a",
+        "transcript": "I avoided the conversation with my sister and felt anxious.",
+        "capturedAt": "2026-02-03T13:00:00Z"
+      },
+      "entryB": {
+        "id": "rel_002_b",
+        "transcript": "I confronted the conversation with my sister and felt calm.",
+        "capturedAt": "2026-03-17T13:10:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "behaviouralResponse:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "How you responded in the conversation with your sister looks different across these saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are avoidant by personality trait.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "Something might be shifting for you.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "relationships",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "rel_003_repeat_withdrew",
+      "entryA": {
+        "id": "rel_003_a",
+        "transcript": "I withdrew from my partner after the argument and felt lonely.",
+        "capturedAt": "2026-02-04T21:00:00Z"
+      },
+      "entryB": {
+        "id": "rel_003_b",
+        "transcript": "I withdrew from my partner again after the argument and felt lonely.",
+        "capturedAt": "2026-03-18T21:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated how you responded with your partner.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How you responded with your partner looks different across these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You never stay in the room during an argument.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "relationships",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "rel_004_frequency_increase_mother",
+      "entryA": {
+        "id": "rel_004_a",
+        "transcript": "I rarely called my mother and felt guilty about it.",
+        "capturedAt": "2026-02-05T17:00:00Z"
+      },
+      "entryB": {
+        "id": "rel_004_b",
+        "transcript": "I often called my mother and felt guilty about it.",
+        "capturedAt": "2026-03-19T17:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["frequency:increased"],
+      "supportedConclusion": "Mother — how often it happened looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You rarely speak to anyone in your family.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "This could mean you are healing.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "relationships",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "rel_005_unrelated_partner_and_invoice",
+      "entryA": {
+        "id": "rel_005_a",
+        "transcript": "I listened to my partner during dinner and felt calm.",
+        "capturedAt": "2026-02-06T19:30:00Z"
+      },
+      "entryB": {
+        "id": "rel_005_b",
+        "transcript": "I emailed the supplier about the unpaid invoice this morning.",
+        "capturedAt": "2026-03-20T09:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "How you responded with your partner looks different across these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "relationships",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "rel_006_user_corrected_framing",
+      "entryA": {
+        "id": "rel_006_a",
+        "transcript": "I snapped at my friend about the plans and felt guilty.",
+        "capturedAt": "2026-02-07T16:00:00Z"
+      },
+      "entryB": {
+        "id": "rel_006_b",
+        "transcript": "I paused before answering my friend about the plans and felt calm.",
+        "capturedAt": "2026-03-21T16:10:00Z",
+        "runtime": { "framingCorrectedByUser": true }
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "behaviouralResponse:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "How you responded to your friend about the plans looks different across these saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are the kind of person who snaps under pressure.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "relationships",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

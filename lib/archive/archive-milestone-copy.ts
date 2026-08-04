@@ -13,16 +13,16 @@ export const ARCHIVE_MILESTONE_FEED_HEADLINE = "Recent archive history";
 export const ARCHIVE_MILESTONE_WHY_LABEL = "Why this matters";
 
 export const MILESTONE_TITLES: Record<ArchiveMilestoneTypeId, string> = {
-  FIRST_REFLECTION: "First reflection recorded",
+  FIRST_REFLECTION: "First moment recorded",
   FIRST_BELIEF: "First belief formed",
   FIRST_BELIEF_CHANGE: "First belief change",
   FIRST_CONTRADICTION: "First contradicting evidence",
   FIRST_CROSS_LIFE_PATTERN: "First cross-life pattern",
   FIRST_STRONG_BELIEF: "First strong belief",
   ARCHIVE_CHANGED_ITS_MIND: "Archive changed its mind",
-  TEN_REFLECTIONS: "Ten reflections on record",
-  FIFTY_REFLECTIONS: "Fifty reflections on record",
-  ONE_HUNDRED_REFLECTIONS: "One hundred reflections on record",
+  TEN_REFLECTIONS: "Ten moments on record",
+  FIFTY_REFLECTIONS: "Fifty moments on record",
+  ONE_HUNDRED_REFLECTIONS: "One hundred moments on record",
   THIRTY_DAYS_OF_HISTORY: "Thirty days of history",
   NINETY_DAYS_OF_HISTORY: "Ninety days of history",
   FIRST_SURVIVED_CHALLENGE: "First survived challenge",
@@ -35,9 +35,9 @@ export const MILESTONE_EXPLANATIONS: Record<ArchiveMilestoneTypeId, string> = {
   FIRST_REFLECTION:
     "The archive began collecting the raw material it needs to track patterns over time.",
   FIRST_BELIEF:
-    "The archive moved from collecting reflections to identifying a recurring pattern.",
+    "The archive moved from collecting moments to identifying a recurring pattern.",
   FIRST_BELIEF_CHANGE:
-    "The archive recorded its first shift as new reflections changed a working belief.",
+    "The archive recorded its first shift as new moments changed a working belief.",
   FIRST_CONTRADICTION:
     "The archive stored evidence that did not fit its current belief.",
   FIRST_CROSS_LIFE_PATTERN:
@@ -61,7 +61,7 @@ export const MILESTONE_EXPLANATIONS: Record<ArchiveMilestoneTypeId, string> = {
   FIRST_REPUTATION_STRONG:
     "The archive accumulated enough supporting evidence to rate this belief as well-grounded.",
   FIRST_RECURRING_PATTERN:
-    "The archive detected language or themes that keep returning in your reflections.",
+    "The archive detected language or themes that keep returning in your moments.",
   FIRST_ARCHIVE_QUESTION_ANSWERED:
     "You asked the archive a structured question and it answered from your evidence.",
 };

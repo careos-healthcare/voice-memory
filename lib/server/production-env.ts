@@ -4,6 +4,11 @@
 
 import { isStripeConfigured } from "@/lib/billing/stripe-config";
 import { isEmailDisabled } from "@/lib/server/email-mode";
+import {
+  isUnitEconomicsEnabled,
+  validateUnitEconomicsConfiguration,
+} from "@/lib/server/unit-economics-config";
+import { validateProductionUsageAllowances } from "@/lib/server/usage-allowance-config";
 
 const WEAK_DEBUG_TOKENS = new Set([
   "debug",
@@ -75,6 +80,53 @@ export function validateProductionEnv(options?: {
 
   if (!process.env.DATABASE_URL?.trim()) {
     push("error", "DATABASE_URL", "DATABASE_URL is required for durable auth, limits, and journal.");
+  }
+
+  if (isUnitEconomicsEnabled()) {
+    for (const message of validateUnitEconomicsConfiguration()) {
+      push("error", "UNIT_ECONOMICS", message);
+    }
+  }
+
+  for (const message of validateProductionUsageAllowances()) {
+    push("error", "USAGE_ALLOWANCES", message);
+  }
+
+  for (const name of [
+    "VOICEMEMORY_DAILY_TRANSCRIBE_LIMIT",
+    "VOICEMEMORY_MINUTE_TRANSCRIBE_LIMIT",
+    "VOICEMEMORY_DAILY_ANALYZE_LIMIT",
+    "VOICEMEMORY_MINUTE_ANALYZE_LIMIT",
+    "VOICEMEMORY_DAILY_ATMOSPHERE_LIMIT",
+    "VOICEMEMORY_MINUTE_ATMOSPHERE_LIMIT",
+    "VOICEMEMORY_DAILY_ATTEST_LIMIT",
+    "VOICEMEMORY_MINUTE_ATTEST_LIMIT",
+    "VOICEMEMORY_DAILY_LIVE_AUDIO_LIMIT",
+    "VOICEMEMORY_MINUTE_LIVE_AUDIO_LIMIT",
+  ]) {
+    const value = Number(process.env[name]);
+    if (!Number.isSafeInteger(value) || value <= 0) {
+      push(
+        "error",
+        "USAGE_RATE_LIMITS",
+        `${name} must be a positive integer; production has no default.`,
+      );
+    }
+  }
+
+  if (!process.env.REVENUECAT_SECRET_API_KEY?.trim()) {
+    push(
+      "error",
+      "REVENUECAT_SECRET_API_KEY",
+      "REVENUECAT_SECRET_API_KEY is required for server entitlement verification.",
+    );
+  }
+  if ((process.env.REVENUECAT_WEBHOOK_AUTH_TOKEN?.trim().length ?? 0) < 32) {
+    push(
+      "error",
+      "REVENUECAT_WEBHOOK_AUTH_TOKEN",
+      "REVENUECAT_WEBHOOK_AUTH_TOKEN must be at least 32 characters.",
+    );
   }
 
   if (!isAuthSecretStrong(process.env.AUTH_SECRET)) {

@@ -60,13 +60,18 @@ class SuggestionAttributionEvent {
   };
 
   static SuggestionAttributionEvent? fromJson(Map<String, dynamic> json) {
-    final type = SuggestionAttributionEventType.fromId(json['type'] as String?);
-    final at = DateTime.tryParse(json['at'] as String? ?? '');
+    final typeRaw = json['type'];
+    final atRaw = json['at'];
+    final type = SuggestionAttributionEventType.fromId(
+      typeRaw is String ? typeRaw : null,
+    );
+    final at = DateTime.tryParse(atRaw is String ? atRaw : '');
     if (type == null || at == null) return null;
+    final suggestionIdRaw = json['suggestionId'];
     return SuggestionAttributionEvent(
       type: type,
       at: at,
-      suggestionId: json['suggestionId'] as String?,
+      suggestionId: suggestionIdRaw is String ? suggestionIdRaw : null,
     );
   }
 }

@@ -31,7 +31,7 @@ for (const [rel, needle] of srSources) {
 }
 
 const deleteEntry = read("app/entry/[id]/page.tsx");
-if (!deleteEntry.includes('aria-label="Delete reflection"')) {
+if (!deleteEntry.includes('aria-label="Delete moment"')) {
   failures.push("entry delete control needs aria-label");
 }
 

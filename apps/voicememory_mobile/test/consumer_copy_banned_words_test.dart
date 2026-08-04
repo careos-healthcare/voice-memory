@@ -32,7 +32,11 @@ const _bannedPatterns = <String, String>{
   r'Cloud analysis pending': 'Cloud analysis pending',
   r'Never synced': 'Never synced',
   r'archive intelligence': 'archive intelligence',
-  r'\barchive\b': 'archive',
+  // The bare noun is deliberately allowed. "Your archive" is the reader-facing
+  // word for their own saved moments and appears in required ownership copy
+  // ("Export or delete your archive at any time"). The jargon compounds it was
+  // introduced to catch — archive intelligence, analyst, blind spot — are
+  // banned individually and remain banned.
   r'\bbeliefs?\b': 'belief/beliefs',
   r'\bintelligence\b': 'intelligence',
   r'\bdiscover(?:y|ies)?\b': 'discover/discovery',
@@ -47,182 +51,65 @@ const _bannedPatterns = <String, String>{
   r'\bprediction\b': 'prediction',
 };
 
-/// Internal QA sample reflections — natural language, not consumer UI copy.
-const _excludedFromBannedWordScan = {
-  'lib/features/first_session/first_pattern_quality_samples.dart',
+const _legacyMicrocopyPatterns = <String, String>{
+  r'\breflections?\b': 'reflection',
+  r'\bjournal entr(?:y|ies)\b': 'journal entry',
+  r'\bsessions?\b': 'session',
+  r'\bdrift(?:ed|ing|s)?\b': 'drift',
+};
+
+/// Not consumer copy, so a literal match here proves nothing.
+const _excludedFromBannedWordScan = <String>{
+  // Stores the forbidden positioning phrases as its own pattern table. Scanning
+  // it for those phrases only ever finds the guard itself. The copy in this
+  // file is policed by product_positioning_copy_test.dart instead.
+  'lib/product/auditable_change_positioning.dart',
 };
 
 /// Trial-only comprehension survey may use journal/chat labels.
-const _companionCopyAllowedFiles = {
-  'lib/features/trial/positioning_comprehension_model.dart',
-  'lib/widgets/trial/positioning_comprehension_sheet.dart',
-};
+const _companionCopyAllowedFiles = <String>{};
 
 /// Consumer-visible copy sources (central + surfaces reachable from main tabs).
+///
+/// The V1 reduction deleted most of the surfaces this list once named. Rather
+/// than shrink to whatever survived, it names the retained V1 surfaces a reader
+/// actually reaches: Record, Changes, Account, paywall, export and the
+/// post-capture choice. A guard that scans only leftovers guards nothing.
 const _consumerCopyFiles = [
   'lib/product/consumer_ui_copy.dart',
-  'lib/product/belief_product_copy.dart',
-  'lib/config/screenshot_sample_data.dart',
+  'lib/product/auditable_change_positioning.dart',
   'lib/config/production_navigation.dart',
-  'lib/config/release_config.dart',
+  'lib/screens/record_screen.dart',
+  'lib/screens/belief_changes_screen.dart',
+  'lib/screens/paywall_screen.dart',
+  'lib/screens/v1_settings_screen.dart',
+  'lib/screens/export_screen.dart',
+  'lib/features/recording/post_capture_choice_sheet.dart',
+  'lib/features/weekly_review/weekly_review.dart',
+  'lib/features/archive_ownership/archive_ownership_decision_sheet.dart',
   'lib/onboarding/onboarding_pages.dart',
   'lib/onboarding/onboarding_visuals.dart',
-  'lib/billing/archive_paywall_copy.dart',
-  'lib/billing/archive_paywall_plans.dart',
-  'lib/billing/archive_intelligence_proof_copy.dart',
   'lib/billing/value_moment_paywall.dart',
-  'lib/billing/archive_pro_feature_map.dart',
-  'lib/billing/paywall_trigger_engine.dart',
-  'lib/widgets/billing/pattern_memory_limit_card.dart',
-  'lib/widgets/billing/pro_value_preview_card.dart',
   'lib/billing/pro_value_preview_model.dart',
   'lib/billing/pro_value_preview_engine.dart',
-  'lib/widgets/archive/archive_range_selector.dart',
-  'lib/widgets/patterns/archive_range_review_card.dart',
-  'lib/billing/subscription_copy.dart',
-  'lib/screens/subscription_review_preview.dart',
   'lib/screens/onboarding_screen.dart',
-  'lib/screens/account_screen.dart',
   'lib/services/capture_save_messages.dart',
   'lib/widgets/patterns/patterns_empty_view.dart',
-  'lib/design/warm_archive_copy.dart',
   'lib/design/empty_archive_experience.dart',
-  'lib/features/insights/archive_insight_mapper.dart',
-  'lib/features/archive_beliefs/archive_beliefs_presenter.dart',
-  'lib/features/retention/archive_discovery_service.dart',
-  'lib/features/return_reason/return_reason_coordinator.dart',
-  'lib/widgets/processing_background_card.dart',
-  'lib/widgets/first_archive_insight_section.dart',
-  'lib/widgets/tomorrow_return/tomorrow_return_loop_card.dart',
-  'lib/widgets/record/tomorrow_return_card.dart',
-  'lib/widgets/record/today_noticed_post_save_card.dart',
-  'lib/widgets/potential_signals_card.dart',
-  'lib/widgets/patterns/patterns_come_back_tomorrow_card.dart',
-  'lib/widgets/patterns/tomorrow_return_status_card.dart',
-  'lib/widgets/record/tomorrow_commitment_card.dart',
-  'lib/widgets/patterns/return_comparison_card.dart',
-  'lib/widgets/patterns/trial_usefulness_prompt.dart',
-  'lib/widgets/trial/trial_first_moment_card.dart',
-  'lib/features/tomorrow_return/check_in_result_copy.dart',
-  'lib/features/tomorrow_return/result_next_check_engine.dart',
-  'lib/features/tomorrow_return/useful_result_takeaway_engine.dart',
-  'lib/widgets/record/tomorrow_check_in_due_card.dart',
-  'lib/widgets/record/check_in_completed_card.dart',
-  'lib/widgets/record/result_next_check_card.dart',
-  'lib/widgets/record/perspective_shift_card.dart',
-  'lib/features/perspective/perspective_shift_engine.dart',
-  'lib/widgets/record/kinder_angle_card.dart',
-  'lib/features/perspective/kinder_angle_engine.dart',
-  'lib/widgets/quick_help/quick_help_sheet.dart',
-  'lib/widgets/quick_help/quick_help_button.dart',
-  'lib/features/quick_help/quick_help_engine.dart',
-  'lib/features/moments/key_moment_engine.dart',
-  'lib/features/moments/moment_tag_model.dart',
-  'lib/features/moments/moment_tag_engine.dart',
-  'lib/screens/key_moments_screen.dart',
-  'lib/screens/key_moment_detail_screen.dart',
-  'lib/screens/ask_archive_screen.dart',
-  'lib/widgets/patterns/archive_clean_view_card.dart',
-  'lib/widgets/patterns/pattern_profile_card.dart',
-  'lib/screens/pattern_profile_screen.dart',
-  'lib/features/archive_clean/archive_clean_section_model.dart',
-  'lib/features/archive_search/archive_search_model.dart',
-  'lib/features/pattern_map/pattern_map_engine.dart',
-  'lib/widgets/patterns/pattern_map_card.dart',
-  'lib/screens/pattern_map_screen.dart',
-  'lib/features/archive_memory/archive_memory_summary_engine.dart',
-  'lib/features/archive_memory/memory_quality_model.dart',
-  'lib/features/archive_memory/memory_quality_engine.dart',
-  'lib/widgets/patterns/memory_quality_chip.dart',
-  'lib/features/record/record_stack_policy.dart',
-  'lib/features/retention/retention_state_engine.dart',
-  'lib/features/retention/retention_diagnosis_engine.dart',
-  'lib/widgets/retention/retention_state_card.dart',
-  'lib/widgets/objective/current_objective_card.dart',
-  'lib/features/objective/current_objective_engine.dart',
-  'lib/features/objective/current_objective_widget_snapshot.dart',
-  'lib/features/objective/current_objective_snapshot_builder.dart',
-  'lib/features/objective/objective_shortcut_registry.dart',
-  'lib/features/objective/current_objective_widget_exporter.dart',
-  'lib/features/objective/current_objective_widget_bridge.dart',
-  'lib/features/objective/current_objective_widget_refresh_service.dart',
   'docs/WIDGET_SHORTCUT_PREP.md',
   'docs/IOS_WIDGETKIT_SETUP.md',
   'docs/TODAYS_CHECK_WIDGET_QA.md',
-  'lib/widgets/patterns/archive_memory_summary_card.dart',
-  'lib/features/archive_memory/archive_evolution_engine.dart',
-  'lib/widgets/patterns/archive_evolution_timeline_card.dart',
-  'lib/screens/archive_evolution_timeline_screen.dart',
-  'lib/features/monthly_review/monthly_pattern_review_engine.dart',
-  'lib/widgets/patterns/monthly_pattern_review_card.dart',
-  'lib/features/export/private_recap_model.dart',
-  'lib/features/export/private_recap_engine.dart',
-  'lib/widgets/export/private_recap_actions.dart',
-  'lib/widgets/record/make_result_more_useful_sheet.dart',
-  'lib/widgets/patterns/patterns_check_in_status_card.dart',
-  'lib/widgets/patterns/missed_check_in_reason_prompt.dart',
-  'lib/widgets/trial/check_in_worth_rating_prompt.dart',
-  'lib/widgets/trial/check_in_result_rating_prompt.dart',
-  'lib/widgets/patterns/return_streak_card.dart',
-  'lib/widgets/patterns/change_summary_card.dart',
-  'lib/widgets/patterns/weekly_pattern_recap_card.dart',
-  'lib/widgets/record/watch_for_tomorrow_card.dart',
-  'lib/widgets/record/todays_watch_for_card.dart',
-  'lib/widgets/patterns/watch_for_result_card.dart',
-  'lib/features/tomorrow_return/return_capture_engine.dart',
-  'lib/features/tomorrow_return/watch_for_engine.dart',
-  'lib/features/tomorrow_return/watch_for_prompt_engine.dart',
-  'lib/features/tomorrow_return/watch_for_coordinator.dart',
-  'lib/features/tomorrow_return/change_summary_engine.dart',
-  'lib/features/tomorrow_return/weekly_pattern_recap_engine.dart',
-  'lib/features/tomorrow_return/return_comparison_engine.dart',
-  'lib/features/tomorrow_return/active_pattern_thread_engine.dart',
-  'lib/features/tomorrow_return/active_pattern_thread_coordinator.dart',
-  'lib/widgets/record/active_pattern_thread_prompt_card.dart',
-  'lib/widgets/patterns/active_pattern_thread_card.dart',
   'lib/features/first_session/first_session_pattern_engine.dart',
-  'lib/widgets/record/first_session_pattern_card.dart',
-  'lib/widgets/record/post_save_insight_choice_card.dart',
-  'lib/features/post_save_insight/post_save_insight_engine.dart',
-  'lib/widgets/record/second_session_comparison_card.dart',
   'lib/features/retention/second_session_signal_engine.dart',
   'lib/features/activation/first_three_journey_engine.dart',
-  'lib/widgets/activation/first_three_journey_card.dart',
-  'lib/widgets/record/first_session_pattern_card.dart',
-  'lib/widgets/record/post_save_insight_choice_card.dart',
-  'lib/features/post_save_insight/post_save_insight_engine.dart',
-  'lib/widgets/record/second_session_comparison_card.dart',
   'lib/features/retention/second_session_signal_engine.dart',
-  'lib/features/tomorrow_return/check_in_reminder_service.dart',
-  'lib/widgets/record/better_first_record_prompt_card.dart',
-  'lib/widgets/record/pattern_memory_after_save_card.dart',
-  'lib/widgets/patterns/pattern_memory_card.dart',
-  'lib/widgets/record/pattern_progress_after_save_card.dart',
-  'lib/widgets/patterns/pattern_progress_card.dart',
-  'lib/features/pattern_memory/pattern_progress_engine.dart',
-  'lib/widgets/record/pattern_next_action_card.dart',
-  'lib/widgets/patterns/pattern_next_action_card.dart',
-  'lib/features/pattern_memory/pattern_next_action_engine.dart',
-  'lib/widgets/record/habit_proof_card.dart',
-  'lib/widgets/patterns/habit_proof_card.dart',
-  'lib/features/pattern_memory/habit_proof_engine.dart',
-  'lib/widgets/record/weekly_pattern_recap_card.dart',
-  'lib/widgets/patterns/weekly_recap_card.dart',
-  'lib/features/pattern_memory/weekly_pattern_recap_engine.dart',
-  'lib/widgets/patterns/pattern_share_recap_card.dart',
-  'lib/features/pattern_memory/pattern_share_recap_engine.dart',
-  'lib/widgets/record/first_loop_start_card.dart',
-  'lib/widgets/record/first_loop_ready_card.dart',
-  'lib/widgets/patterns/first_loop_state_card.dart',
-  'lib/features/routine/routine_anchor_model.dart',
-  'lib/widgets/routine/routine_anchor_chooser.dart',
-  'lib/widgets/feedback/archive_feedback_chips.dart',
-  'lib/features/archive_compression/archive_compression_engine.dart',
-  'lib/widgets/patterns/archive_compression_card.dart',
-  'lib/screens/archive_compression_screen.dart',
-  'lib/widgets/onboarding/archive_memory_demo_card.dart',
-  'lib/widgets/patterns/archive_memory_empty_preview_card.dart',
 ];
+
+final _manifestoCopyFiles = <String>{
+  ..._consumerCopyFiles,
+  'lib/api/api_exceptions.dart',
+  'lib/onboarding/onboarding_visuals.dart',
+};
 
 /// Fails if consumer copy still uses the old VoiceMemory brand name.
 void main() {
@@ -232,8 +119,28 @@ void main() {
     expect(source, contains('ArchiveMe'));
   });
 
+  // A deleted surface used to fail this suite once per missing file, which
+  // buried real violations under hundreds of PathNotFoundExceptions and let
+  // coverage rot unnoticed. Drift is now one readable failure.
+  test('every guarded copy file still exists', () {
+    final missing = [
+      ..._consumerCopyFiles,
+      ..._manifestoCopyFiles,
+    ].where((path) => !File(path).existsSync()).toList()..sort();
+
+    expect(
+      missing,
+      isEmpty,
+      reason:
+          'These files are guarded for banned consumer copy but no longer '
+          'exist. Delete the entry if the surface is gone, or repoint it if '
+          'the surface moved:\n${missing.join('\n')}',
+    );
+  });
+
   for (final path in _consumerCopyFiles) {
     if (_excludedFromBannedWordScan.contains(path)) continue;
+    if (!File(path).existsSync()) continue;
 
     test('$path has no banned consumer jargon in string literals', () {
       final source = File(path).readAsStringSync();
@@ -248,6 +155,20 @@ void main() {
         source,
         path,
         _companionBannedPatterns,
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+  }
+
+  for (final path in _manifestoCopyFiles) {
+    if (path.startsWith('docs/')) continue;
+    if (!File(path).existsSync()) continue;
+    test('$path uses manifesto-aligned microcopy', () {
+      final source = File(path).readAsStringSync();
+      final violations = _scanBannedWords(
+        source,
+        path,
+        _legacyMicrocopyPatterns,
       );
       expect(violations, isEmpty, reason: violations.join('\n'));
     });

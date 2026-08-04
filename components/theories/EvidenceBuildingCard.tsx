@@ -63,8 +63,8 @@ export function EvidenceBuildingCard({
   if (reflectionCount < 1) return null;
 
   const evidenceLine = theory
-    ? `${PERSONAL_THEORY_COPY.evidenceLabel}: ${theory.evidenceCount} reflection${theory.evidenceCount === 1 ? "" : "s"}`
-    : `${PERSONAL_THEORY_COPY.evidenceLabel}: ${reflectionCount} reflection${reflectionCount === 1 ? "" : "s"}`;
+    ? `${PERSONAL_THEORY_COPY.evidenceLabel}: ${theory.evidenceCount} moment${theory.evidenceCount === 1 ? "" : "s"}`
+    : `${PERSONAL_THEORY_COPY.evidenceLabel}: ${reflectionCount} moment${reflectionCount === 1 ? "" : "s"}`;
 
   const confidenceLine = theory
     ? `${PERSONAL_THEORY_COPY.confidenceLabel}: ${theory.confidence}%`

@@ -1,9 +1,5 @@
 /// User truth rating for a first proof moment.
-enum FirstProofTruthAnswer {
-  yes,
-  sortOf,
-  no,
-}
+enum FirstProofTruthAnswer { yes, sortOf, no }
 
 /// Local first-proof truth follow-up state for one proof key.
 class FirstProofTruthPrompt {

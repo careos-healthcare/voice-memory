@@ -28,15 +28,15 @@ function evidenceSummary(theory: Theory): string {
   const supporting = theory.supportingEvidenceCount;
   const contradicting = theory.contradictingEvidenceCount;
   if (supporting === 0 && contradicting === 0) {
-    return "Not enough reflections linked yet to test this theory.";
+    return "Not enough moments linked yet to test this theory.";
   }
   if (contradicting > 0 && supporting > 0) {
-    return `${supporting} supporting and ${contradicting} contradicting reflections in range.`;
+    return `${supporting} supporting and ${contradicting} contradicting moments in range.`;
   }
   if (contradicting > 0) {
-    return `${contradicting} reflection${contradicting === 1 ? "" : "s"} may contradict this theory.`;
+    return `${contradicting} moment${contradicting === 1 ? "" : "s"} may contradict this theory.`;
   }
-  return `${supporting} reflection${supporting === 1 ? "" : "s"} currently support this theory.`;
+  return `${supporting} moment${supporting === 1 ? "" : "s"} currently support this theory.`;
 }
 
 function whyConfidenceChanged(theory: Theory): string {
@@ -53,7 +53,7 @@ function whyConfidenceChanged(theory: Theory): string {
   if (theory.confidenceDelta < 0) {
     return "Recent entries may be contradicting this theory.";
   }
-  return "Confidence may shift as new reflections arrive.";
+  return "Confidence may shift as new moments arrive.";
 }
 
 export function theoryToPersonalTheory(theory: Theory): PersonalTheory {

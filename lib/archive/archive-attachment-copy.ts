@@ -20,7 +20,7 @@ export const ARCHIVE_MOAT_PERCEPTION_LABELS: Record<ArchiveMoatPerceptionId, str
   definitely_not: "Definitely not",
 };
 
-export const ARCHIVE_ATTACHMENT_DISMISS = "Skip";
+export const ARCHIVE_ATTACHMENT_DISMISS = "Not today";
 
 export const ARCHIVE_ATTACHMENT_LEVEL_LABELS: Record<ArchiveAttachmentLevelId, string> = {
   not_at_all: "Not at all",
@@ -36,7 +36,7 @@ export const ARCHIVE_ATTACHMENT_REASON_LABELS: Record<ArchiveAttachmentReasonId,
   discover: "Discover",
   theory_changes: "Theory changes",
   evidence_history: "Evidence history",
-  reflection_archive: "Reflection archive",
+  reflection_archive: "Saved words archive",
   other: "Other",
 };
 

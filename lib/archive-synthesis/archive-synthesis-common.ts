@@ -3,6 +3,8 @@ import type {
   ArchiveSynthesisPack,
 } from "@/types/archive-synthesis";
 import { findBannedPhrase } from "@/lib/archive-synthesis/archive-synthesis-banned";
+import { validateExplainableConclusion } from "@/lib/explainability/validate-explainable-conclusion";
+import type { CanonicalTranscriptSourceMap } from "@/types/explainability";
 
 export function collectPackEntryIds(pack: ArchiveSynthesisPack): Set<string> {
   const ids = new Set<string>();
@@ -24,55 +26,95 @@ export function collectPackEntryIds(pack: ArchiveSynthesisPack): Set<string> {
   return ids;
 }
 
+export function buildPackCanonicalSourceMap(
+  pack: ArchiveSynthesisPack,
+): Map<string, string> {
+  return new Map(
+    pack.reflectionIndex.flatMap((entry) =>
+      typeof entry.canonicalTranscript === "string"
+        ? [[entry.id, entry.canonicalTranscript] as const]
+        : [],
+    ),
+  );
+}
+
 export function validateConclusion(
   item: ArchiveSynthesisConclusion,
-  allowedIds: Set<string>,
+  sources: CanonicalTranscriptSourceMap,
   path: string,
 ): string[] {
-  const errors: string[] = [];
-  if (!item.statement?.trim()) errors.push(`${path}: empty statement`);
-  if (!item.uncertaintyNote?.trim()) {
-    errors.push(`${path}: missing uncertaintyNote`);
+  const errors = validateExplainableConclusion(item, sources, path).errors;
+  if (!item || typeof item !== "object") return errors;
+  if (
+    !Number.isInteger(item.confidence) ||
+    item.confidence !== item.confidencePercent
+  ) {
+    errors.push(`${path}: confidence must equal confidencePercent`);
   }
-  if (item.confidencePercent < 0 || item.confidencePercent > 100) {
-    errors.push(`${path}: confidence out of range`);
+  if (
+    !Array.isArray(item.reasoning) ||
+    item.reasoning.length === 0 ||
+    item.reasoning.some(
+      (step) => typeof step !== "string" || step.trim().length < 8,
+    )
+  ) {
+    errors.push(`${path}: step-by-step reasoning required`);
+  }
+  if (
+    !item.alternativeExplanation ||
+    item.alternativeExplanation.statement !==
+      item.alternatives?.[0]?.statement ||
+    item.alternativeExplanation.reason !== item.alternatives?.[0]?.reason
+  ) {
+    errors.push(
+      `${path}: alternativeExplanation must equal the primary alternative`,
+    );
+  }
+  if (
+    typeof item.uncertainty !== "string" ||
+    item.uncertainty !== item.uncertaintyNote
+  ) {
+    errors.push(`${path}: uncertainty must equal uncertaintyNote`);
+  }
+  if (
+    item.provenance?.schemaVersion !== 4 ||
+    item.provenance?.promptVersion !== "archive-explainable-v2"
+  ) {
+    errors.push(`${path}: V4 provenance required`);
   }
   const banned = findBannedPhrase(
-    `${item.statement} ${item.uncertaintyNote}`,
+    `${item?.statement ?? ""} ${item?.reasoning?.join(" ") ?? ""} ${
+      item?.alternativeExplanation?.statement ?? ""
+    } ${item?.alternativeExplanation?.reason ?? ""} ${
+      item?.uncertaintyNote ?? ""
+    }`,
   );
   if (banned) errors.push(`${path}: banned phrase "${banned}"`);
-  if (!item.evidence?.length) {
-    errors.push(`${path}: evidence required`);
-  }
-  for (const ev of item.evidence ?? []) {
-    if (!allowedIds.has(ev.entryId)) {
-      errors.push(`${path}: unknown entryId ${ev.entryId}`);
-    }
-    if (ev.excerpt) {
-      const b = findBannedPhrase(ev.excerpt);
-      if (b) errors.push(`${path}: banned excerpt phrase "${b}"`);
-    }
+  for (const ev of Array.isArray(item.evidence) ? item.evidence : []) {
+    const b = findBannedPhrase(ev.quote);
+    if (b) errors.push(`${path}: banned evidence phrase "${b}"`);
   }
   return errors;
 }
 
 export function validateConclusionSection(
   items: ArchiveSynthesisConclusion[],
-  allowedIds: Set<string>,
+  sources: CanonicalTranscriptSourceMap,
   section: string,
 ): string[] {
+  if (!Array.isArray(items)) return [`${section}: must be an array`];
   return items.flatMap((item, i) =>
-    validateConclusion(item, allowedIds, `${section}[${i}]`),
+    validateConclusion(item, sources, `${section}[${i}]`),
   );
 }
 
 export function validateOptionalConclusion(
   item: ArchiveSynthesisConclusion | null | undefined,
-  allowedIds: Set<string>,
+  sources: CanonicalTranscriptSourceMap,
   path: string,
 ): string[] {
   if (item == null) return [];
-  return validateConclusion(item, allowedIds, path);
+  return validateConclusion(item, sources, path);
 }
 
 export function findBannedInText(text: string, path: string): string[] {

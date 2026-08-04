@@ -103,8 +103,9 @@ abstract final class NotRelevantRecoveryEngine {
       proofKey: proofKey,
       answer: CurrentRelevanceAnswer.notReally,
       entryCountAtCapture: entries.length,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
       source: source,
     );
   }
@@ -149,15 +150,12 @@ abstract final class NotRelevantRecoveryEngine {
 
   static CurrentRelevanceAnswer _answerFor(
     NotRelevantRecoveryActionType actionType,
-  ) =>
-      switch (actionType) {
-        NotRelevantRecoveryActionType.keepAsBackground =>
-          CurrentRelevanceAnswer.notReally,
-        NotRelevantRecoveryActionType.watchLightly =>
-          CurrentRelevanceAnswer.little,
-        NotRelevantRecoveryActionType.relevantAgain =>
-          CurrentRelevanceAnswer.yes,
-      };
+  ) => switch (actionType) {
+    NotRelevantRecoveryActionType.keepAsBackground =>
+      CurrentRelevanceAnswer.notReally,
+    NotRelevantRecoveryActionType.watchLightly => CurrentRelevanceAnswer.little,
+    NotRelevantRecoveryActionType.relevantAgain => CurrentRelevanceAnswer.yes,
+  };
 
   static bool shouldShow({
     required NotRelevantRecoveryResult result,
@@ -210,9 +208,8 @@ abstract final class NotRelevantRecoveryEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

@@ -135,3 +135,18 @@ export async function aggregateResurfacingMetrics(
   }
   return empty;
 }
+
+export function deleteLocalResurfacingEvents(userId: string, subjectKey: string): number {
+  const rows = memoryEvents.__vmResurfacingEvents ?? [];
+  const retained = rows.filter(
+    (row) => row.userId !== userId && row.subjectKey !== subjectKey,
+  );
+  memoryEvents.__vmResurfacingEvents = retained;
+  return rows.length - retained.length;
+}
+
+export function localResurfacingEventsExist(userId: string, subjectKey: string): boolean {
+  return (memoryEvents.__vmResurfacingEvents ?? []).some(
+    (row) => row.userId === userId || row.subjectKey === subjectKey,
+  );
+}

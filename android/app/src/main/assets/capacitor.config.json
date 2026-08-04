@@ -1,0 +1,22 @@
+{
+	"appId": "com.voicememory.app",
+	"appName": "ArchiveMe",
+	"webDir": "mobile/web",
+	"server": {
+		"url": "https://voicememory.app",
+		"cleartext": false,
+		"androidScheme": "https"
+	},
+	"ios": {
+		"contentInset": "automatic",
+		"scheme": "voicememory"
+	},
+	"android": {
+		"allowMixedContent": false
+	},
+	"plugins": {
+		"CapacitorHttp": {
+			"enabled": true
+		}
+	}
+}

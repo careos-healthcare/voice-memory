@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Repository integrity and workspace isolation audit
 
 **Audit date:** 2026-05-25  
@@ -343,3 +345,4 @@ node -p "require('./package.json').name"
 - **Contamination from TextRecognitionAppFlutter:** **Not found** in ArchiveMe source or Vercel linkage
 - **Workspace isolation issue:** **Yes** — Cursor opened on Flutter while ArchiveMe lives on Desktop; fix by switching workspace
 - **Commit:** None (per audit instructions)
+

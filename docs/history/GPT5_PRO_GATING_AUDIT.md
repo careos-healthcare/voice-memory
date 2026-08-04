@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # GPT-5 Synthesis Pro Gating — Audit
 
 **Date:** 2026-05-25  
@@ -108,3 +110,4 @@ flutter test test/archive_synthesis_pro_gate_test.dart
 | Free user experiences archive value (theory, change feed, surprises, standard deep dive) | Yes |
 | Pro user receives archive intelligence (monthly, historian, milestones, narrative) | Yes |
 | No critical archive functionality locked before value (50-reflection floor for upgrade teaser) | Yes |
+

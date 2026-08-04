@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Product–Market Fit Audit
 
 **Date:** 2026-05-25  
@@ -306,3 +308,4 @@ Across all five personas and all archive sizes, the primary blind spot is effect
 - [ARCHIVE_V2_VALIDATION.md](./ARCHIVE_V2_VALIDATION.md)
 - [NEXT_HIGHEST_ROI_IMPROVEMENTS.md](./NEXT_HIGHEST_ROI_IMPROVEMENTS.md) (12-item backlog)
 - [ARCHIVE_QUALITY_REPORT.md](./ARCHIVE_QUALITY_REPORT.md)
+

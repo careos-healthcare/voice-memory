@@ -41,11 +41,11 @@ test.describe("Screen reader structure — runtime", () => {
     });
   }
 
-  test("dynamic entry route icon delete has accessible name", async ({ page }) => {
+  test("dynamic moment route icon delete has accessible name", async ({ page }) => {
     await installA11yDynamicSeed(page);
     await page.goto(A11Y_DYNAMIC_ROUTES.entry);
     await page.waitForLoadState("domcontentloaded");
-    const deleteBtn = page.getByRole("button", { name: /delete reflection/i });
+    const deleteBtn = page.getByRole("button", { name: /delete moment/i });
     if ((await deleteBtn.count()) > 0) {
       await expect(deleteBtn.first()).toBeVisible();
     }

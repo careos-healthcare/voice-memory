@@ -49,7 +49,7 @@ export function RecordCaptureChrome({
       </div>
       {showFirstTimeHint ? (
         <p className="text-center text-sm leading-relaxed text-zinc-400">
-          Tap the mic when you are ready. One reflection at a time — saved on this device unless you
+          Tap the mic when you are ready. One moment at a time — saved on this device unless you
           sign in to back up.
         </p>
       ) : null}

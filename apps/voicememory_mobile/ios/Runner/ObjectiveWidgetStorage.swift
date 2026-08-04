@@ -1,53 +1,38 @@
 import Foundation
 import WidgetKit
 
-/// Shared App Group payload for Today\u{2019}s Check home-screen widgets.
+/// Encrypted App Group payload for the legacy current-objective widget.
 enum ObjectiveWidgetStorage {
   static let appGroupId = "group.com.voicememory.mobile"
-
-  static let keyTitle = "title"
-  static let keyBody = "body"
-  static let keyCheckQuestion = "checkQuestion"
-  static let keyPrimaryActionLabel = "primaryActionLabel"
-  static let keyRoute = "route"
-  static let keyType = "type"
-  static let keyUpdatedAt = "updatedAt"
+  private static let category = "objective-widget"
+  private static let identifier = "current"
 
   static func save(payload: [String: Any]) {
-    guard let defaults = sharedDefaults() else { return }
-    defaults.set(String(describing: payload[keyTitle] ?? ""), forKey: keyTitle)
-    defaults.set(String(describing: payload[keyBody] ?? ""), forKey: keyBody)
-    defaults.set(String(describing: payload[keyCheckQuestion] ?? ""), forKey: keyCheckQuestion)
-    defaults.set(
-      String(describing: payload[keyPrimaryActionLabel] ?? ""),
-      forKey: keyPrimaryActionLabel
-    )
-    defaults.set(String(describing: payload[keyRoute] ?? "/record"), forKey: keyRoute)
-    defaults.set(String(describing: payload[keyType] ?? ""), forKey: keyType)
-    defaults.set(String(describing: payload[keyUpdatedAt] ?? ""), forKey: keyUpdatedAt)
-    defaults.synchronize()
-    reloadWidgets()
+    do {
+      try SecureAppGroupStore.shared.writeJSONObject(
+        payload,
+        category: category,
+        identifier: identifier
+      )
+      reloadWidgets()
+    } catch {
+      // Widget state is optional; never fall back to plaintext shared defaults.
+    }
   }
 
   static func clear() {
-    guard let defaults = sharedDefaults() else { return }
-    for key in [
-      keyTitle,
-      keyBody,
-      keyCheckQuestion,
-      keyPrimaryActionLabel,
-      keyRoute,
-      keyType,
-      keyUpdatedAt,
-    ] {
-      defaults.removeObject(forKey: key)
+    do {
+      try SecureAppGroupStore.shared.remove(category: category, identifier: identifier)
+      reloadWidgets()
+    } catch {
+      // Nothing actionable for an optional OS surface.
     }
-    defaults.synchronize()
-    reloadWidgets()
   }
 
   static func isAppGroupAvailable() -> Bool {
-    sharedDefaults() != nil
+    FileManager.default.containerURL(
+      forSecurityApplicationGroupIdentifier: appGroupId
+    ) != nil
   }
 
   static func route(from url: URL) -> String? {
@@ -70,10 +55,6 @@ enum ObjectiveWidgetStorage {
     let safePath = path.isEmpty ? "record" : path
     return URL(string: "archiveme://\(safePath)")
       ?? URL(string: "archiveme://record")!
-  }
-
-  private static func sharedDefaults() -> UserDefaults? {
-    UserDefaults(suiteName: appGroupId)
   }
 
   private static func reloadWidgets() {

@@ -6,11 +6,11 @@ export const PERSONAL_HYPOTHESIS_DISCOVER = {
 
 export const PERSONAL_HYPOTHESIS_THEORIES_PAGE = {
   title: "Archive beliefs",
-  lead: "What your archive currently believes — each belief is a working case built from your reflections.",
+  lead: "What your archive currently believes — each belief is a working case built from your moments.",
 } as const;
 
 export const EVIDENCE_BUILDING_CARD_COPY = {
   buildingEvidence: "You are building evidence.",
-  notLogging: "Not logging another reflection.",
+  notLogging: "Not just saving another moment.",
   archiveReadDefault: "New evidence may support or challenge a working theory.",
 } as const;

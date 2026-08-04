@@ -5,19 +5,19 @@ export const THEORY_PAGE = {
   title: THEORIES_PAGE_ARCHIVE_BELIEFS.title,
   lead: THEORIES_PAGE_ARCHIVE_BELIEFS.lead,
   disclaimer:
-    "Not advice, not clinical labeling, and not a fixed identity label — only hypotheses tied to your saved reflections.",
+    "Not advice, not clinical labeling, and not a fixed identity label — only hypotheses tied to your saved moments.",
   activeTitle: "Active",
   strengtheningTitle: "Strengthening",
   weakeningTitle: "Weakening",
   resolvedTitle: "Resolved",
   retiredTitle: "Retired",
   whatChangedLabel: "What changed?",
-  supportingLabel: "Supporting reflections",
-  contradictingLabel: "Contradicting reflections",
+  supportingLabel: "Supporting moments",
+  contradictingLabel: "Contradicting moments",
   confidenceLabel: "Confidence",
   emptyTitle: "No working theories yet",
   emptyBody:
-    "After a few reflections, ArchiveMe can surface falsifiable hypotheses from patterns already in your archive.",
+    "After a few moments, ArchiveMe can surface falsifiable hypotheses from patterns already in your archive.",
 } as const;
 
 export const THEORY_FEEDBACK_LABELS: Record<
@@ -38,7 +38,7 @@ export function sanitizeTheoryCopy(text: string): string {
   const trimmed = text.replace(/\s+/g, " ").trim();
   if (!trimmed) return "This may be a working hypothesis from your recorded history.";
   if (FORBIDDEN_THEORY_OUTPUT.test(trimmed)) {
-    return "This may be a repeating thread in your thinking history — worth checking against new reflections.";
+    return "This may be a repeating thread in your thinking history — worth checking against new moments.";
   }
   return trimmed;
 }

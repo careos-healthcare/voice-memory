@@ -1,0 +1,3 @@
+analyzer:
+  exclude:
+    - experiments/archive_me_legacy_flutter/**

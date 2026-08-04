@@ -85,13 +85,9 @@ void main() {
     expect(shell, isNot(contains('showCanvasFeaturePanel')));
   });
 
-  test('experimental surfaces default off at compile time', () {
-    final flag = File(
-      'lib/config/experimental_features.dart',
-    ).readAsStringSync();
-    final graph = File(
-      'lib/features/memory_graph/memory_graph_canvas.dart',
-    ).readAsStringSync();
+  test('experimental surfaces are absent from the shipping workspace', () {
+    final flag = File('lib/config/experimental_features.dart');
+    final graph = File('lib/features/memory_graph/memory_graph_canvas.dart');
     final archive = File(
       'lib/screens/archive_belief_screen.dart',
     ).readAsStringSync();
@@ -99,13 +95,10 @@ void main() {
       'lib/core/config/v1_capability_registry.dart',
     ).readAsStringSync();
 
-    expect(flag, contains("'ENABLE_EXPERIMENTAL'"));
-    expect(
-      graph,
-      contains('if (enableExperimentalFeatures && morningBriefing != null)'),
-    );
-    expect(archive, contains('ArchiveIntelligencePresentation.build'));
-    expect(archive, contains('ArchiveIntelligenceHome'));
+    expect(flag.existsSync(), isFalse);
+    expect(graph.existsSync(), isFalse);
+    expect(archive, isNot(contains('ArchiveIntelligencePresentation')));
+    expect(archive, isNot(contains('ArchiveIntelligenceHome')));
     for (final excluded in [
       'notifications = false',
       'health = false',

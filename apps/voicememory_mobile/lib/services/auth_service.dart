@@ -10,7 +10,7 @@ import 'activation_funnel_analytics.dart';
 class AuthService {
   AuthService(this._api, this._secure, this._cookies);
 
-  final ApiClient _api;
+  final AuthApiClient _api;
   final SecureStorageService _secure;
   final SessionCookieStore _cookies;
 

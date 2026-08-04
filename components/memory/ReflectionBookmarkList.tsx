@@ -49,7 +49,7 @@ export function ReflectionBookmarkList({
                     </p>
                   ) : (
                     <p className="text-sm text-zinc-600 transition-colors group-hover:text-zinc-400">
-                      View reflection
+                      View moment
                     </p>
                   )}
                 </RevisitEntryLink>

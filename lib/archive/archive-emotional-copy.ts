@@ -5,10 +5,10 @@
 export const ARCHIVE_EMOTIONAL = {
   confidenceIncreased: "The archive has become more certain.",
   evidenceAdded: "New experiences supported this view.",
-  theoryWeakened: "Recent reflections challenged this belief.",
+  theoryWeakened: "Recent moments challenged this belief.",
   theoryRetired: "The archive no longer sees enough evidence.",
-  confidenceDecreased: "Recent reflections challenged this belief.",
-  contradictingEvidence: "New reflections pulled in a different direction.",
+  confidenceDecreased: "Recent moments challenged this belief.",
+  contradictingEvidence: "New moments pulled in a different direction.",
   stillChanging: "This belief is still changing.",
   notCertainYet: "The archive is not certain yet.",
 } as const;

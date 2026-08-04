@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ArchiveMeSharedKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)com.voicememory.mobile.shared</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -27,8 +29,11 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>voicememory</string>
 				<string>archiveme</string>
+				<!-- Retained from before the rename. Links already sent to
+				     installed users still open the app; dropping it would
+				     silently break them. -->
+				<string>voicememory</string>
 			</array>
 		</dict>
 	</array>
@@ -42,11 +47,9 @@
 		<false/>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>ArchiveMe uses Face ID to unlock the app on this device.</string>
+	<string>ArchiveMe uses Face ID only when you enable the optional private archive lock.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>ArchiveMe uses the microphone so you can record short private reflections.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>ArchiveMe uses speech recognition to turn your recording into text when you choose to transcribe.</string>
+	<string>ArchiveMe uses the microphone to record moments in your own words, so you can see what repeated and what changed.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

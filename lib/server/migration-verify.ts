@@ -1,4 +1,4 @@
-import { AUTH_SYNC_SCHEMA_STATEMENTS, dbQuery, hasDatabaseUrl } from "@/lib/server/db";
+import { DATABASE_SCHEMA_STATEMENTS, dbQuery, hasDatabaseUrl } from "@/lib/server/db";
 import { REQUIRED_INDEXES, REQUIRED_TABLES } from "@/lib/server/migration-manifest";
 
 export interface MigrationVerifyResult {
@@ -26,7 +26,7 @@ export async function verifyMigrations(): Promise<MigrationVerifyResult> {
 
   try {
     await dbQuery("SELECT 1");
-    for (const statement of AUTH_SYNC_SCHEMA_STATEMENTS) {
+    for (const statement of DATABASE_SCHEMA_STATEMENTS) {
       await dbQuery(statement);
     }
 

@@ -54,7 +54,7 @@ export const ARCHIVE_SURFACE_EYEBROWS: Record<ArchiveCopyRestraintSurface, strin
 
 export const MEMORY_LOG_COPY: ArchiveSectionCopySpec = {
   headline: MEMORY_PAGE_UTILITY_TITLE,
-  support: "Reflections on this device.",
+  support: "Moments on this device.",
 };
 
 /** Phrases disallowed on post-onboarding archive surfaces. */

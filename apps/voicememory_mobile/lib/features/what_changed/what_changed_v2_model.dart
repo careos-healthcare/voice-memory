@@ -9,20 +9,20 @@ enum WhatChangedV2Option {
 
 extension WhatChangedV2OptionLabels on WhatChangedV2Option {
   String get label => switch (this) {
-        WhatChangedV2Option.stronger => 'Felt stronger',
-        WhatChangedV2Option.softer => 'Felt softer',
-        WhatChangedV2Option.same => 'Felt the same',
-        WhatChangedV2Option.differentResponse => 'I responded differently',
-        WhatChangedV2Option.somethingHelped => 'Something helped',
-      };
+    WhatChangedV2Option.stronger => 'Felt stronger',
+    WhatChangedV2Option.softer => 'Felt softer',
+    WhatChangedV2Option.same => 'Felt the same',
+    WhatChangedV2Option.differentResponse => 'I responded differently',
+    WhatChangedV2Option.somethingHelped => 'Something helped',
+  };
 
   String get analyticsValue => switch (this) {
-        WhatChangedV2Option.stronger => 'stronger',
-        WhatChangedV2Option.softer => 'softer',
-        WhatChangedV2Option.same => 'same',
-        WhatChangedV2Option.differentResponse => 'different_response',
-        WhatChangedV2Option.somethingHelped => 'something_helped',
-      };
+    WhatChangedV2Option.stronger => 'stronger',
+    WhatChangedV2Option.softer => 'softer',
+    WhatChangedV2Option.same => 'same',
+    WhatChangedV2Option.differentResponse => 'different_response',
+    WhatChangedV2Option.somethingHelped => 'something_helped',
+  };
 }
 
 /// One local change marker tied to a saved entry.
@@ -40,11 +40,11 @@ class WhatChangedV2Record {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
-        'entryId': entryId,
-        'option': option.analyticsValue,
-        'entryCountAtCapture': entryCountAtCapture,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'entryId': entryId,
+    'option': option.analyticsValue,
+    'entryCountAtCapture': entryCountAtCapture,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory WhatChangedV2Record.fromJson(Map<String, dynamic> json) {
     final optionRaw = json['option']?.toString() ?? '';
@@ -55,7 +55,8 @@ class WhatChangedV2Record {
         orElse: () => WhatChangedV2Option.same,
       ),
       entryCountAtCapture: json['entryCountAtCapture'] as int? ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
           DateTime.now().toUtc(),
     );
   }

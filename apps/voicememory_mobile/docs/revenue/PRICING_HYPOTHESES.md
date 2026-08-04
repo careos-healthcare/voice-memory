@@ -1,6 +1,8 @@
 # ArchiveMe — Pricing hypotheses
 
-Exploratory price points for interviews and App Store tests. **Not final pricing** — validate with TestFlight before enabling live SKUs.
+Exploratory price points for interviews and store tests. **These are
+hypotheses, not measured results or final pricing.** The app must display only
+the localized prices returned by the current RevenueCat offering.
 
 Do not change RevenueCat product IDs or entitlement logic from this doc.
 
@@ -14,9 +16,10 @@ Do not change RevenueCat product IDs or entitlement logic from this doc.
 | **Monthly B** | £7.99 / month | Anchor for serious personal tool |
 | **Annual A** | £39.99 / year | ~£3.33/mo — default annual push |
 | **Annual B** | £59.99 / year | Premium anchor if export + timeline feel strong |
-| **Founder lifetime** | £49–£99 one-time | Beta cohort cap; cash now, support later |
 
-**Default test recommendation:** lead with **£39.99/year** on paywall, show **£7.99/month** as secondary, hold **founder lifetime** for Experiment A only.
+Monthly and annual are the only new-purchase package types. Historical,
+verified non-expiring purchases remain grandfathered; no lifetime offer is
+available for a new purchase.
 
 ---
 
@@ -28,7 +31,6 @@ Do not change RevenueCat product IDs or entitlement logic from this doc.
 | £7.99/mo | “This replaces messy notes + ChatGPT threads for *my* repeats.” |
 | £39.99/yr | “I’ll use this for months — full memory is the product.” |
 | £59.99/yr | “Export + timeline + report = personal record I’d pay for.” |
-| £49–99 lifetime | “I’m early; I want to back the product once.” |
 
 ---
 
@@ -59,12 +61,13 @@ Use in TestFlight interviews ([TESTFLIGHT_REVENUE_SCRIPT.md](./TESTFLIGHT_REVENU
 
 ### Price fairness
 
-- **What price feels fair?**  
-  Show three cards: £4.99/mo · £39.99/yr · £79 lifetime — which feels “fair” vs “too much”?  
+- **What price feels fair?**
+  Discuss monthly and annual hypotheses without presenting them as live store
+  prices. Record the store locale with any observed response.
 
 ---
 
-## Success thresholds (hypothesis)
+## Success thresholds (unmeasured hypotheses)
 
 Before turning on live billing at scale:
 
@@ -81,7 +84,7 @@ Before turning on live billing at scale:
 ## Anti-patterns
 
 - Discounting before proof (paywall on day 0)  
-- Lifetime offer without cap (support burden)  
+- New lifetime offers (not supported by the canonical monetization policy)
 - Multiple concurrent SKUs on first launch  
 - Competing on “cheaper than ChatGPT Plus”  
 

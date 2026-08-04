@@ -13,13 +13,12 @@ abstract final class ArchiveJourneyExplainerGates {
     required int entryCount,
     required bool isPostSave,
     required List<JournalEntry> entries,
-  }) =>
-      showFirstProofJourneyStripOnRecord(
-        loaded: loaded,
-        entryCount: entryCount,
-        isPostSave: isPostSave,
-        entries: entries,
-      );
+  }) => showFirstProofJourneyStripOnRecord(
+    loaded: loaded,
+    entryCount: entryCount,
+    isPostSave: isPostSave,
+    entries: entries,
+  );
 
   /// First-proof journey strip — early/low evidence only, not after first proof.
   static bool showFirstProofJourneyStripOnRecord({
@@ -27,14 +26,8 @@ abstract final class ArchiveJourneyExplainerGates {
     required int entryCount,
     required bool isPostSave,
     required List<JournalEntry> entries,
-  }) =>
-      loaded &&
-      !isPostSave &&
-      !hasFirstProof(entries) &&
-      entryCount <= 3;
+  }) => loaded && !isPostSave && !hasFirstProof(entries) && entryCount <= 3;
 
-  static bool showFullOnPatternsEmpty({
-    required bool hasFirstProof,
-  }) =>
+  static bool showFullOnPatternsEmpty({required bool hasFirstProof}) =>
       !hasFirstProof;
 }

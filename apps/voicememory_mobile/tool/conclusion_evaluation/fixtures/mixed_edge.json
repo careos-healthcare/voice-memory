@@ -1,0 +1,197 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Edge and cross-domain cases. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "edge_001_deleted_source",
+      "entryA": {
+        "id": "edge_001_a",
+        "transcript": "I answered the work message about the deadline immediately and felt worried.",
+        "capturedAt": "2026-06-01T09:00:00Z",
+        "runtime": { "deleted": true }
+      },
+      "entryB": {
+        "id": "edge_001_b",
+        "transcript": "I paused before answering the work message about the deadline and felt calm.",
+        "capturedAt": "2026-07-01T09:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work message changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "deletedSource",
+      "sourceDomain": "work",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_002_model_generated_evidence",
+      "entryA": {
+        "id": "edge_002_a",
+        "transcript": "I snapped at my partner during dinner and felt guilty.",
+        "capturedAt": "2026-06-02T19:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_002_b",
+        "transcript": "I listened to my partner during dinner and felt calm.",
+        "capturedAt": "2026-07-02T19:00:00Z",
+        "runtime": { "modelGenerated": true }
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "How you responded to your partner looks different across these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "generatedTextCitedAsEvidence",
+      "sourceDomain": "relationships",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_003_same_entry_then_and_now",
+      "entryA": {
+        "id": "edge_003_a",
+        "transcript": "I paused before answering the work message about the deadline.",
+        "capturedAt": "2026-06-03T09:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_003_a",
+        "transcript": "I paused before answering the work message about the deadline.",
+        "capturedAt": "2026-06-03T09:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the work message changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "sameEntryThenAndNow",
+      "sourceDomain": "work",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_004_negation_diminisher",
+      "entryA": {
+        "id": "edge_004_a",
+        "transcript": "I was certain about the plan for the launch.",
+        "capturedAt": "2026-06-04T09:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_004_b",
+        "transcript": "I was less certain about the plan for the launch.",
+        "capturedAt": "2026-07-04T09:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["certainty:decreased"],
+      "supportedConclusion": "Launch — how certain you sounded looks less across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You have lost confidence in yourself.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "work",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_005_all_stopword_subject",
+      "entryA": {
+        "id": "edge_005_a",
+        "transcript": "It happened again today and there was nothing to say.",
+        "capturedAt": "2026-06-05T09:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_005_b",
+        "transcript": "It happened again yesterday and there was nothing to say.",
+        "capturedAt": "2026-07-05T09:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "This may be a possible pattern in your archive.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": "changeWithoutMovedDimension",
+      "sourceDomain": "mixed",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_006_false_positive_shared_verb",
+      "entryA": {
+        "id": "edge_006_a",
+        "transcript": "I checked the weather before my run along the river.",
+        "capturedAt": "2026-06-06T07:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_006_b",
+        "transcript": "I checked my email before the meeting with the client.",
+        "capturedAt": "2026-07-06T07:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the weather changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "mixed",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "edge_007_false_positive_cross_domain_worry",
+      "entryA": {
+        "id": "edge_007_a",
+        "transcript": "I worried about the rent and checked my bank balance.",
+        "capturedAt": "2026-06-07T07:00:00Z"
+      },
+      "entryB": {
+        "id": "edge_007_b",
+        "transcript": "I worried about the deadline and checked my work email.",
+        "capturedAt": "2026-07-07T07:00:00Z"
+      },
+      "relatedExpected": false,
+      "expectedKind": "neither",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": null,
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did with the rent changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": "unrelatedSources",
+      "sourceDomain": "mixed",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

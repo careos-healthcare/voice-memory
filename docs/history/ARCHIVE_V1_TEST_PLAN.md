@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive V1 — Test Plan
 
 **Date:** 2026-06-03  
@@ -111,3 +113,4 @@ flutter analyze lib/features/archive_v1 lib/widgets/archive_v1 lib/screens/archi
 ---
 
 *End of test plan.*
+

@@ -2,6 +2,10 @@
 apps/voicememory_mobile/
 apps/voicememory_mobile/**
 
+# Non-release surfaces held out of the production build
+experiments/
+experiments/**
+
 # Local build artifacts (Vercel rebuilds on platform)
 .next/
 node_modules/

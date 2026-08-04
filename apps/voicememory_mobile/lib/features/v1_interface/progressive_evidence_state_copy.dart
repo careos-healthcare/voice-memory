@@ -8,8 +8,9 @@ abstract final class ProgressiveEvidenceStateCopy {
   static const threePlusTitle = 'First thread can appear.';
 
   static const zeroBody =
-      'When something like it happens again, ArchiveMe will show what returned, '
-      'changed, faded, or corrected.';
+      'When something like it happens again, ArchiveMe shows what repeated, '
+      'what changed, and the words proving it — and you can correct the '
+      'record.';
   static const oneBody =
       'One moment is saved. A second similar moment gives ArchiveMe something to compare.';
   static const twoBody =

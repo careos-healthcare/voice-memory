@@ -12,6 +12,9 @@ export const PRODUCT_WEDGE_LINE = WEDGE_POSITIONING.wedge;
 
 export const NOT_AI_JOURNAL_LINE = WEDGE_POSITIONING.notAiJournal;
 
+export const CORE_PRODUCT_VISION =
+  "ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence.";
+
 /** Concrete resurfacing lines — prefer evidence over abstraction. */
 export const WEDGE_RESURFACING = {
   forgottenPatterns: "Words you forgot you had already spoken.",
@@ -67,7 +70,7 @@ export {
 
 export const APP_SUBTITLE = RECOGNITION_COPY.appSubtitle;
 export const APP_DESCRIPTION_SHORT =
-  "Private voice reflections that return in your own words.";
+  "Private voice journal turning spoken thoughts into your unified life story.";
 
 export const SERVICE_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}`;
 

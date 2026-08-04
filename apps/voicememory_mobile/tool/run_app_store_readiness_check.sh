@@ -3,7 +3,7 @@
 # ArchiveMe — App Store readiness check.
 #
 # Runs analyze + the critical test set, then verifies that screenshot/trial
-# modes are not hardcoded on, required docs exist, and Info.plist carries the
+# modes are not hardcoded on, required docs exist, and Info-Release.plist carries the
 # microphone permission string. Exits non-zero if any check fails.
 #
 # Usage:  ./tool/run_app_store_readiness_check.sh
@@ -65,9 +65,9 @@ for d in \
   if [[ -f "$d" ]]; then pass "$d"; else fail "missing doc: $d"; fi
 done
 
-# 5. Info.plist permission strings
-section "Info.plist permission strings"
-if grep -q "NSMicrophoneUsageDescription" ios/Runner/Info.plist; then
+# 5. Release Info.plist permission strings
+section "Info-Release.plist permission strings"
+if grep -q "NSMicrophoneUsageDescription" ios/Runner/Info-Release.plist; then
   pass "NSMicrophoneUsageDescription present"
 else
   fail "NSMicrophoneUsageDescription missing"

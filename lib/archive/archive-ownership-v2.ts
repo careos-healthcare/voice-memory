@@ -61,7 +61,7 @@ export function buildArchiveMilestones(
   const items: string[] = [];
 
   items.push(
-    `${stats.reflectionCount} reflection${stats.reflectionCount === 1 ? "" : "s"}`,
+    `${stats.reflectionCount} saved moment${stats.reflectionCount === 1 ? "" : "s"}`,
   );
 
   if (stats.beliefsTracked >= 1) {

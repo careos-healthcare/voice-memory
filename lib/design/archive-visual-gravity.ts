@@ -49,6 +49,6 @@ export const ARCHIVE_SURFACE_PRIMARY_QUESTION: Record<string, string> = {
   archive: "What does my archive believe?",
   discover: "What changed since my last visit?",
   blind_spots: "Why does the archive believe this?",
-  memory: "What reflections support the archive?",
+  memory: "What moments support the archive?",
   changes: "What archive changes need attention?",
 };

@@ -31,12 +31,18 @@ void main() {
     }
   });
 
-  test('verification routes visible when gesture unlock is active', () {
-    DeveloperSettingsGate.resetForTest();
-    DeveloperSettingsGate.loadFromPrefs(true);
-    for (final route in ProductionNavigation.debugOnlyRoutes) {
-      expect(ProductionNavigation.redirectAwayFromIncomplete(route), isNull);
-      expect(ProductionNavigation.isNavRouteVisible(route), isTrue);
-    }
-  });
+  test(
+    'verification routes stay blocked under strict V1 even when unlocked',
+    () {
+      DeveloperSettingsGate.resetForTest();
+      DeveloperSettingsGate.loadFromPrefs(true);
+      for (final route in ProductionNavigation.debugOnlyRoutes) {
+        expect(
+          ProductionNavigation.redirectAwayFromIncomplete(route),
+          '/archive-belief',
+        );
+        expect(ProductionNavigation.isNavRouteVisible(route), isFalse);
+      }
+    },
+  );
 }

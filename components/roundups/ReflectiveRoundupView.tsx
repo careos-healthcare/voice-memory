@@ -318,7 +318,7 @@ export function ReflectiveRoundupIndex({
   if (items.length === 0) {
     return (
       <p className="text-sm leading-relaxed text-zinc-500">
-        Record a few reflections and roundups will appear here.
+        Record a few moments and roundups will appear here.
       </p>
     );
   }

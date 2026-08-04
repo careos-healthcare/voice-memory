@@ -14,9 +14,7 @@ abstract class UserContentSafety {
   static final RegExp _bidiOverridePattern = RegExp(
     r'[\u202A-\u202E\u2066-\u2069]',
   );
-  static final RegExp _zeroWidthPattern = RegExp(
-    r'[\u200B-\u200D\uFEFF]',
-  );
+  static final RegExp _zeroWidthPattern = RegExp(r'[\u200B-\u200D\uFEFF]');
 
   static final List<RegExp> _promptInjectionPatterns = [
     RegExp(r'ignore\s+(all\s+)?previous\s+instructions', caseSensitive: false),
@@ -62,7 +60,10 @@ abstract class UserContentSafety {
   }
 
   /// Plain-text preview with ellipsis cap — no HTML or markdown interpretation.
-  static String safeSnippet(String input, {int maxChars = defaultSnippetChars}) {
+  static String safeSnippet(
+    String input, {
+    int maxChars = defaultSnippetChars,
+  }) {
     final sanitized = sanitizePlainText(input);
     if (sanitized.isEmpty) return '';
     final limit = maxChars.clamp(1, maxPlainTextChars);

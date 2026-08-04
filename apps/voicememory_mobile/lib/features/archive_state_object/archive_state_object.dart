@@ -60,14 +60,14 @@ String _watchItem({
     final need =
         ArchiveEvidenceGuard.minimumEvidenceCount - eligibleEvidenceCount;
     return need > 0
-        ? 'Record $need more reflection${need == 1 ? '' : 's'} with enough spoken detail for belief and evidence surfaces.'
-        : 'Add reflections with at least $archiveMinTranscriptChars characters of transcript.';
+        ? 'Save $need more moment${need == 1 ? '' : 's'} with enough spoken detail for belief and evidence surfaces.'
+        : 'Add moments with at least $archiveMinTranscriptChars characters of transcript.';
   }
   if (hasChanges) {
     return 'This belief may be changing.';
   }
   if (eligibleEvidenceCount >= ArchiveEvidenceGuard.minimumEvidenceCount) {
-    return 'The archive is tracking patterns across your recorded reflections.';
+    return 'The archive is tracking patterns across your saved moments.';
   }
   return 'The archive is still gathering evidence.';
 }

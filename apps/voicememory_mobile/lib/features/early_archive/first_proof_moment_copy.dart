@@ -8,8 +8,7 @@ abstract final class FirstProofMomentCopy {
 
   static const titlePossible = 'ArchiveMe found a possible repeat';
 
-  static const bodyStrong =
-      'This showed up across three related moments.';
+  static const bodyStrong = 'This showed up across three related moments.';
 
   static const bodyFallback =
       'ArchiveMe noticed a possible repeat across three moments. When it shows up in your words again, your archive can compare whether it holds.';
@@ -23,13 +22,13 @@ abstract final class FirstProofMomentCopy {
       'Next: record when this comes back so ArchiveMe can compare what changed.';
 
   static List<String> get allVisibleStrings => [
-        primaryLabel,
-        title,
-        titlePossible,
-        bodyStrong,
-        bodyFallback,
-        evidenceLabel,
-        whyLine,
-        nextLine,
-      ];
+    primaryLabel,
+    title,
+    titlePossible,
+    bodyStrong,
+    bodyFallback,
+    evidenceLabel,
+    whyLine,
+    nextLine,
+  ];
 }

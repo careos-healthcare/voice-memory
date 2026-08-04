@@ -1,3 +1,5 @@
+import '../impossible_insight/impossible_insight_models.dart';
+
 /// How specific a read is — based on concrete behaviour + context in text.
 enum InterpretationSpecificityLevel { low, medium, high }
 
@@ -67,6 +69,7 @@ class InterpretationResult {
     this.archiveRepeatDetected = false,
     this.changedAngleDetected = false,
     this.loopUnsupported = false,
+    this.impossibleInsight,
   });
 
   final List<InterpretationRead> reads;
@@ -76,6 +79,7 @@ class InterpretationResult {
   final bool loopUnsupported;
   final bool archiveRepeatDetected;
   final bool changedAngleDetected;
+  final ImpossibleInsight? impossibleInsight;
 
   bool get hasReads => reads.isNotEmpty;
 }

@@ -32,8 +32,7 @@ abstract final class ProofEmotionalClarityCopyFix {
 
   static const watchOnlySubhead =
       'ArchiveMe is watching for whether this comes back.';
-  static const watchOnlyEvidence =
-      'There is not enough proof yet.';
+  static const watchOnlyEvidence = 'There is not enough proof yet.';
 
   static const cautionFooter =
       'ArchiveMe compares your own words cautiously — not as certainty or a guarantee.';

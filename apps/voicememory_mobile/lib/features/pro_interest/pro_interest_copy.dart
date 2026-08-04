@@ -23,7 +23,8 @@ abstract final class ProInterestCopy {
   static const saveButton = 'Save Pro interest';
   static const copySummaryButton = 'Copy Pro interest summary';
   static const summaryCopied = 'Pro interest summary copied';
-  static const thanksMessage = 'Thanks — your Pro interest stays on this device only.';
+  static const thanksMessage =
+      'Thanks — your Pro interest stays on this device only.';
 
   static const openProInterestButton = 'Open Pro interest';
   static const markProInterestButton = 'Mark Pro interest';
@@ -42,7 +43,8 @@ abstract final class ProInterestCopy {
   static const valueMoreWatchThemes = 'More watch themes';
   static const valueRicherReviews = 'Richer weekly and monthly reviews';
   static const valueAdvancedExport = 'Advanced export report packs';
-  static const valueDeeperContextViews = 'Deeper context and evidence map views';
+  static const valueDeeperContextViews =
+      'Deeper context and evidence map views';
 
   static const pricingFreeFirst = 'I would try this free first';
   static const pricingLowMonthly = 'I would consider a low monthly price';
@@ -67,22 +69,21 @@ abstract final class ProInterestCopy {
   static const betaOutcomesNotePresentLabel = 'Pro interest note present';
 
   static String labelForValue(ProInterestValueId id) => switch (id) {
-        ProInterestValueId.longerArchiveHistory => valueLongerArchiveHistory,
-        ProInterestValueId.deeperBeliefTimeline => valueDeeperBeliefTimeline,
-        ProInterestValueId.moreWatchThemes => valueMoreWatchThemes,
-        ProInterestValueId.richerReviews => valueRicherReviews,
-        ProInterestValueId.advancedExport => valueAdvancedExport,
-        ProInterestValueId.deeperContextViews => valueDeeperContextViews,
-      };
+    ProInterestValueId.longerArchiveHistory => valueLongerArchiveHistory,
+    ProInterestValueId.deeperBeliefTimeline => valueDeeperBeliefTimeline,
+    ProInterestValueId.moreWatchThemes => valueMoreWatchThemes,
+    ProInterestValueId.richerReviews => valueRicherReviews,
+    ProInterestValueId.advancedExport => valueAdvancedExport,
+    ProInterestValueId.deeperContextViews => valueDeeperContextViews,
+  };
 
   static String labelForPricing(ProInterestPricingIntentId? id) => switch (id) {
-        ProInterestPricingIntentId.freeFirst => pricingSignalFreeFirst,
-        ProInterestPricingIntentId.lowMonthly => pricingSignalLowMonthly,
-        ProInterestPricingIntentId.yearly => pricingSignalYearly,
-        ProInterestPricingIntentId.notEnoughValue =>
-          pricingSignalNotEnoughValue,
-        null => pricingSignalNone,
-      };
+    ProInterestPricingIntentId.freeFirst => pricingSignalFreeFirst,
+    ProInterestPricingIntentId.lowMonthly => pricingSignalLowMonthly,
+    ProInterestPricingIntentId.yearly => pricingSignalYearly,
+    ProInterestPricingIntentId.notEnoughValue => pricingSignalNotEnoughValue,
+    null => pricingSignalNone,
+  };
 
   static String pricingOptionLabel(ProInterestPricingIntentId id) =>
       switch (id) {
@@ -104,49 +105,49 @@ abstract final class ProInterestCopy {
   }
 
   static List<String> allVisibleCopy() => [
-        screenTitle,
-        sectionTitle,
-        sectionBody,
-        interestOnlyNote,
-        purchasesUnavailableNote,
-        valueSectionTitle,
-        pricingSectionTitle,
-        noteLabel,
-        noteHint,
-        saveButton,
-        copySummaryButton,
-        summaryCopied,
-        thanksMessage,
-        openProInterestButton,
-        markProInterestButton,
-        supportTitle,
-        supportSubtitle,
-        archiveCardTitle,
-        archiveCardBody,
-        previewSectionTitle,
-        previewSectionBody,
-        valueLongerArchiveHistory,
-        valueDeeperBeliefTimeline,
-        valueMoreWatchThemes,
-        valueRicherReviews,
-        valueAdvancedExport,
-        valueDeeperContextViews,
-        pricingFreeFirst,
-        pricingLowMonthly,
-        pricingYearly,
-        pricingNotEnoughValue,
-        pricingSignalNone,
-        pricingSignalFreeFirst,
-        pricingSignalLowMonthly,
-        pricingSignalYearly,
-        pricingSignalNotEnoughValue,
-        interpretationNotCaptured,
-        interpretationRevenueSignal,
-        interpretationValueNeedsProof,
-        interpretationProValueUnclear,
-        betaOutcomesCapturedLabel,
-        betaOutcomesValueCountLabel,
-        betaOutcomesPricingLabel,
-        betaOutcomesNotePresentLabel,
-      ];
+    screenTitle,
+    sectionTitle,
+    sectionBody,
+    interestOnlyNote,
+    purchasesUnavailableNote,
+    valueSectionTitle,
+    pricingSectionTitle,
+    noteLabel,
+    noteHint,
+    saveButton,
+    copySummaryButton,
+    summaryCopied,
+    thanksMessage,
+    openProInterestButton,
+    markProInterestButton,
+    supportTitle,
+    supportSubtitle,
+    archiveCardTitle,
+    archiveCardBody,
+    previewSectionTitle,
+    previewSectionBody,
+    valueLongerArchiveHistory,
+    valueDeeperBeliefTimeline,
+    valueMoreWatchThemes,
+    valueRicherReviews,
+    valueAdvancedExport,
+    valueDeeperContextViews,
+    pricingFreeFirst,
+    pricingLowMonthly,
+    pricingYearly,
+    pricingNotEnoughValue,
+    pricingSignalNone,
+    pricingSignalFreeFirst,
+    pricingSignalLowMonthly,
+    pricingSignalYearly,
+    pricingSignalNotEnoughValue,
+    interpretationNotCaptured,
+    interpretationRevenueSignal,
+    interpretationValueNeedsProof,
+    interpretationProValueUnclear,
+    betaOutcomesCapturedLabel,
+    betaOutcomesValueCountLabel,
+    betaOutcomesPricingLabel,
+    betaOutcomesNotePresentLabel,
+  ];
 }

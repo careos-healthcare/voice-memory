@@ -8,10 +8,7 @@ abstract class AnalysisLog {
     debugPrint('ARCHIVEME_ANALYSIS_REQUEST url=$url');
   }
 
-  static void response({
-    required int status,
-    required String contentType,
-  }) {
+  static void response({required int status, required String contentType}) {
     debugPrint(
       'ARCHIVEME_ANALYSIS_RESPONSE status=$status contentType=$contentType',
     );
@@ -23,16 +20,22 @@ abstract class AnalysisLog {
     );
   }
 
-  static void failed({
-    required String reason,
-    int? status,
-    String? code,
-  }) {
+  static void failed({required String reason, int? status, String? code}) {
     debugPrint(
       'ARCHIVEME_ANALYSIS_FAILED'
       '${status == null ? '' : ' status=$status'}'
       '${code == null ? '' : ' code=$code'}'
-      ' reason=$reason',
+      ' reason=${_reasonCode(reason)}',
     );
+  }
+
+  static String _reasonCode(String value) {
+    final category = value.split(':').first;
+    final normalized = category
+        .toLowerCase()
+        .replaceAll(RegExp('[^a-z0-9]+'), '_')
+        .replaceAll(RegExp('^_+|_+\$'), '');
+    if (normalized.isEmpty) return 'unknown';
+    return normalized.substring(0, normalized.length.clamp(0, 64));
   }
 }

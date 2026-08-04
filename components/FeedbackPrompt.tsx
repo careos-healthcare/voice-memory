@@ -21,7 +21,7 @@ interface FeedbackPromptProps {
 export function FeedbackPrompt({
   kind,
   targetKey,
-  label = "Was this reflection useful?",
+  label = "Was this moment useful?",
   className,
 }: FeedbackPromptProps) {
   const [existing, setExisting] = useState(() =>

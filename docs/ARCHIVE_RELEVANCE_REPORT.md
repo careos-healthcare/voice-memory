@@ -2,7 +2,7 @@
 
 Surface Reduction v2 — which routes stay prominent vs demoted.
 
-_ Generated 2026-05-30T18:23:58.515Z_
+_ Generated 2026-08-02T02:53:56.415Z_
 Core surfaces: 5
 Primary journey: Record → Archive → Archive Changes → Account
 Secondary: Archive Detail hub

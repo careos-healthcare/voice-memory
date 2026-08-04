@@ -68,7 +68,7 @@ export function EvidenceLocker({
                 href={`/memory/${item.entryId}`}
                 className="mt-2 inline-block text-xs text-violet-300 hover:text-violet-200"
               >
-                Source reflection →
+                Source moment →
               </Link>
             ) : null}
           </li>

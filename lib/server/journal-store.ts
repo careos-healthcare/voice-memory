@@ -1,4 +1,5 @@
 import { dbQuery, shouldUsePostgresStorage } from "@/lib/server/db";
+import { assertAccountDeletionNotPending } from "@/lib/server/privacy/account-deletion-state";
 import type { JournalEntry } from "@/types/journal";
 
 export type JournalSyncStatus = "local_only" | "synced" | "sync_failed";
@@ -57,6 +58,7 @@ export async function upsertServerJournalEntries(
   userId: string,
   entries: Array<{ entry: JournalEntry; syncStatus?: JournalSyncStatus }>,
 ): Promise<{ upserted: number }> {
+  await assertAccountDeletionNotPending(userId);
   let upserted = 0;
   for (const item of entries) {
     const status = item.syncStatus ?? "synced";

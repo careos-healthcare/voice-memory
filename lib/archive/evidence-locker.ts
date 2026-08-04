@@ -38,7 +38,7 @@ function whyForTag(tag: EvidenceLockerTag, beliefText: string): string {
     case "cross-area":
       return "Same pattern showing up across more than one life area.";
     case "prediction":
-      return "A prediction the archive tracked that later reflections did not match.";
+      return "A prediction the archive tracked that later saved moments did not match.";
     default:
       return `Supporting line the archive uses for: ${beliefText.slice(0, 80)}${beliefText.length > 80 ? "…" : ""}`;
   }

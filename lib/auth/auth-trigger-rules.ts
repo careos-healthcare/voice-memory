@@ -96,7 +96,7 @@ export const AUTH_TRIGGER_COPY: Record<
   },
   sync_archive: {
     title: "Back up your archive",
-    lead: "Email sign-in enables encrypted sync — your reflections stay on this device until you choose to protect them.",
+    lead: "Email sign-in enables encrypted sync — your saved moments stay on this device until you choose to protect them.",
     cta: "Sign in to sync",
   },
   export: {

@@ -52,8 +52,7 @@ abstract final class ArchiveClarityCopy {
       'Save one moment your future archive can compare.';
   static const comparisonNext =
       'Save one more moment so it can check what repeats.';
-  static const patternNext =
-      'Mark whether the archive showed anything useful.';
+  static const patternNext = 'Mark whether the archive showed anything useful.';
   static const evidenceNext = 'Add one moment around a watch theme.';
   static const reviewNext =
       'Review what repeated, what changed, and what to watch next.';
@@ -71,44 +70,44 @@ abstract final class ArchiveClarityCopy {
 
   static String weeklyReviewRoute({required bool weeklyReviewAvailable}) =>
       weeklyReviewAvailable
-          ? WeeklyArchiveReviewNavigation.route
-          : archiveHomeRoute;
+      ? WeeklyArchiveReviewNavigation.route
+      : archiveHomeRoute;
 
   static String weeklyReviewCta({required bool weeklyReviewAvailable}) =>
       weeklyReviewAvailable ? openWeeklyReviewCta : reviewArchiveCta;
 
   static List<String> get allVisibleStrings => [
-        screenTitle,
-        cardLabel,
-        evidenceStrengthLabel,
-        nextUsefulMomentLabel,
-        viewClarityCta,
-        saveMomentCta,
-        openBetaFeedbackCta,
-        pickWatchThemeCta,
-        openWeeklyReviewCta,
-        reviewArchiveCta,
-        supportSectionTitle,
-        supportSectionBody,
-        betaOutcomesLabel,
-        screenshotTitle,
-        screenshotBody,
-        stageStarting,
-        stageComparisonForming,
-        stagePatternEmerging,
-        stageEvidenceGrowing,
-        stageReviewReady,
-        startingBody,
-        comparisonBody,
-        patternBody,
-        evidenceBody,
-        reviewBody,
-        startingNext,
-        comparisonNext,
-        patternNext,
-        evidenceNext,
-        reviewNext,
-        evidenceStrengthValue(savedCount: 1, usableCount: 1, target: 7),
-        evidenceStrengthValue(savedCount: 3, usableCount: 2, target: 7),
-      ];
+    screenTitle,
+    cardLabel,
+    evidenceStrengthLabel,
+    nextUsefulMomentLabel,
+    viewClarityCta,
+    saveMomentCta,
+    openBetaFeedbackCta,
+    pickWatchThemeCta,
+    openWeeklyReviewCta,
+    reviewArchiveCta,
+    supportSectionTitle,
+    supportSectionBody,
+    betaOutcomesLabel,
+    screenshotTitle,
+    screenshotBody,
+    stageStarting,
+    stageComparisonForming,
+    stagePatternEmerging,
+    stageEvidenceGrowing,
+    stageReviewReady,
+    startingBody,
+    comparisonBody,
+    patternBody,
+    evidenceBody,
+    reviewBody,
+    startingNext,
+    comparisonNext,
+    patternNext,
+    evidenceNext,
+    reviewNext,
+    evidenceStrengthValue(savedCount: 1, usableCount: 1, target: 7),
+    evidenceStrengthValue(savedCount: 3, usableCount: 2, target: 7),
+  ];
 }

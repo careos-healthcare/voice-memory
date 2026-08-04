@@ -1,4 +1,4 @@
-import { entitlementsForTier, FREE_ARCHIVE_LIMIT, TIER_BY_ID } from "@/lib/entitlement/tiers";
+import { entitlementsForTier, TIER_BY_ID } from "@/lib/entitlement/tiers";
 import {
   PRO_GATE_DEEPER_RESURFACING,
   PRO_GATE_EXPORT,
@@ -6,7 +6,12 @@ import {
 } from "@/lib/product/pro-framing";
 import { isProPreviewAllowed } from "@/lib/billing/billing-state";
 import { isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
-import type { EntitlementId, EntitlementRecord, TierId, TierSnapshot } from "@/types/entitlement";
+import type {
+  EntitlementId,
+  EntitlementRecord,
+  TierId,
+  TierSnapshot,
+} from "@/types/entitlement";
 
 const PLAN_KEY = "voicememory_plan";
 const BILLING_ENTITLEMENT_KEY = "voicememory_billing_entitlements";
@@ -20,8 +25,6 @@ interface ServerEntitlementSnapshot {
   previewMode: boolean;
   founderPreview: boolean;
 }
-
-export { FREE_ARCHIVE_LIMIT };
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -48,7 +51,9 @@ function readServerEntitlementSnapshot(): ServerEntitlementSnapshot | null {
 export async function refreshServerEntitlements(): Promise<ServerEntitlementSnapshot | null> {
   if (!isBrowser() || !isLiveBillingAvailable()) return null;
   try {
-    const res = await fetch("/api/billing/entitlements", { credentials: "include" });
+    const res = await fetch("/api/billing/entitlements", {
+      credentials: "include",
+    });
     if (!res.ok) return null;
     const data = (await res.json()) as ServerEntitlementSnapshot;
     sessionStorage.setItem(SERVER_ENTITLEMENT_CACHE_KEY, JSON.stringify(data));
@@ -85,8 +90,10 @@ function readBillingGrantedEntitlements(): EntitlementId[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((id): id is EntitlementId =>
-      typeof id === "string" && entitlementsForTier("pro").includes(id as EntitlementId),
+    return parsed.filter(
+      (id): id is EntitlementId =>
+        typeof id === "string" &&
+        entitlementsForTier("pro").includes(id as EntitlementId),
     );
   } catch {
     return [];
@@ -169,7 +176,8 @@ export function listEntitlementRecords(): EntitlementRecord[] {
     id,
     tier: snapshot.tier,
     granted: snapshot.entitlements.includes(id),
-    source: snapshot.previewMode && snapshot.tier === "pro" ? "preview" : "tier",
+    source:
+      snapshot.previewMode && snapshot.tier === "pro" ? "preview" : "tier",
   }));
 }
 
@@ -183,7 +191,8 @@ const GATE_COPY: Partial<
   unlimited_archive: PRO_GATE_UNLIMITED_ARCHIVE,
   open_loops: {
     title: "Open loops are part of Pro",
-    detail: "Keep unfinished threads in your own words — no tasks, reminders, or advice.",
+    detail:
+      "Keep unfinished threads in your own words — no tasks, reminders, or advice.",
     feature: "open_loops",
   },
   export_reports: PRO_GATE_EXPORT,

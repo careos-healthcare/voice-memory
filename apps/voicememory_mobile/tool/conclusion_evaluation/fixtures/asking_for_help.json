@@ -1,0 +1,132 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "help_001_ruminated_to_reached_out",
+      "entryA": {
+        "id": "help_001_a",
+        "transcript": "I ruminated about the project alone and felt overwhelmed.",
+        "capturedAt": "2026-02-10T20:00:00Z"
+      },
+      "entryB": {
+        "id": "help_001_b",
+        "transcript": "I reached out about the project and felt relieved.",
+        "capturedAt": "2026-03-24T20:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["copingResponse:replaced"],
+      "supportedConclusion": "Project — how you handled it looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are someone who cannot ask for help.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "You felt relieved because you reached out.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "askingForHelp",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "help_002_stayed_quiet_to_asked",
+      "entryA": {
+        "id": "help_002_a",
+        "transcript": "I stayed quiet in the meeting and felt worried.",
+        "capturedAt": "2026-02-11T11:00:00Z"
+      },
+      "entryB": {
+        "id": "help_002_b",
+        "transcript": "I asked for help in the meeting and felt calm.",
+        "capturedAt": "2026-03-25T11:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "action:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "Meeting — what you did looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are finally confident in meetings.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "The relationship with your partner may have changed.",
+          "violation": "wrongDomain"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "askingForHelp",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "help_003_repeat_stayed_quiet",
+      "entryA": {
+        "id": "help_003_a",
+        "transcript": "I stayed quiet in the meeting and felt worried.",
+        "capturedAt": "2026-02-12T11:00:00Z"
+      },
+      "entryB": {
+        "id": "help_003_b",
+        "transcript": "I stayed quiet in the meeting again and felt worried.",
+        "capturedAt": "2026-03-26T11:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated what you did in the meeting.",
+      "prohibitedConclusions": [
+        {
+          "statement": "What you did in the meeting changed between these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "askingForHelp",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "help_004_thread_only_alignment",
+      "entryA": {
+        "id": "help_004_a",
+        "transcript": "I stayed quiet and felt worried the whole way through.",
+        "capturedAt": "2026-02-13T11:00:00Z",
+        "threadId": "thread_help",
+        "captureContextTag": "asking_for_help"
+      },
+      "entryB": {
+        "id": "help_004_b",
+        "transcript": "I asked for help and felt calm afterwards.",
+        "capturedAt": "2026-03-27T11:00:00Z",
+        "threadId": "thread_help",
+        "captureContextTag": "asking_for_help"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "action:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "What you did changed between these saved moments: you stayed quiet, and later you asked for help.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are finally confident at work.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "askingForHelp",
+      "difficulty": "hard",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+import '../../subscriptions/domain/subscription_models.dart';
+import '../../services/app_services.dart';
+import '../loop_mode/loop_mode_coordinator.dart';
+import 'monthly_ambition_pressure_review_engine.dart';
+import 'monthly_ambition_pressure_review_model.dart';
+import 'monthly_ambition_pressure_review_store.dart';
+import 'prove_enough_contradiction_store.dart';
+
+/// Loads monthly prove_enough review data and access rules.
+abstract class MonthlyAmbitionPressureReviewCoordinator {
+  MonthlyAmbitionPressureReviewCoordinator._();
+
+  static const _engine = MonthlyAmbitionPressureReviewEngine();
+
+  static Future<MonthlyAmbitionPressureReview> load({DateTime? now}) async {
+    if (!AppServices.isInitialized) {
+      return _emptyReview(now);
+    }
+
+    final entries = await AppServices.instance.journalStore.loadAll();
+    final contradictions = await ProveEnoughContradictionStore.instance()
+        .loadAll();
+    final loop = await LoopModeCoordinator.loadActive();
+    if (loop?.isProveEnough != true) {
+      return _engine.build(entries: entries, now: now);
+    }
+
+    return _engine.build(
+      entries: entries,
+      contradictions: contradictions,
+      now: now,
+    );
+  }
+
+  static Future<bool> canViewFullReview(SubscriptionState? entitlements) async {
+    if (entitlements?.isPro == true) return true;
+    if (!AppServices.isInitialized) return true;
+    return !(await MonthlyAmbitionPressureReviewStore.instance()
+        .freeReviewConsumed());
+  }
+
+  static Future<void> consumeFreeReviewIfNeeded(
+    SubscriptionState? entitlements,
+  ) async {
+    if (entitlements?.isPro == true || !AppServices.isInitialized) return;
+    final consumed = await MonthlyAmbitionPressureReviewStore.instance()
+        .freeReviewConsumed();
+    if (!consumed) {
+      await MonthlyAmbitionPressureReviewStore.instance().markFreeReviewUsed();
+    }
+  }
+
+  static MonthlyAmbitionPressureReview _emptyReview(DateTime? now) {
+    return _engine.build(entries: const [], now: now);
+  }
+}

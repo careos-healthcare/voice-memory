@@ -79,7 +79,7 @@ On sign-in, `GuestFirstAuth.registerDeviceAfterSignIn()` runs **`syncNow()`**, w
 | EntitlementCache | `entitlements.json` | No (billing tier only) | **No** |
 | SecureStorageService | flutter_secure_storage | **Yes** | Device-scoped |
 | AppLockStore | flutter_secure_storage | **Yes** (PIN hash + salt) | Device-scoped |
-| Voice temp files | `vm_rec_*.m4a` / `.wav` | No | **No** |
+| Voice recovery files | opaque random names in protected no-backup storage | No (bounded plaintext) | Logical owner metadata |
 | CaptureTokenCache | In-memory only | N/A | N/A |
 | OfflineDrafts | encrypted journal + `localAudioPath` | Journal **yes**; audio file **no** | **No** |
 
@@ -87,15 +87,24 @@ On sign-in, `GuestFirstAuth.registerDeviceAfterSignIn()` runs **`syncNow()`**, w
 
 ### Temp voice audio — highest-priority local plaintext risk
 
-Voice capture writes short-lived `vm_rec_*.m4a` files under the system temp directory. They are **not encrypted at rest**.
+Voice capture uses `SensitiveTemporaryAudioStore`: Android stores files below
+`noBackupFilesDir`; iOS uses an app-private Application Support subdirectory
+excluded from backup with `completeUnlessOpen` file protection. Names are
+random opaque tokens with no timestamp or user text. Plaintext is limited to
+24 hours, 20 items, and 512 MiB, with sweeps on startup and lifecycle changes.
+Creation time is persisted when state changes. Successful vault encryption
+removes the source before transcription continues from a controlled decrypted
+lease. Recovery listing/deletion is local only and does not upload.
 
-**Mitigations (2026-06-15):**
+One-time migration moves valid `vm_rec_*` files from known legacy temp,
+documents, and support locations without making a plaintext copy. Expired or
+empty legacy files are deleted; a cross-filesystem move failure is left in
+place rather than copied. Deletion attempts a zero pass before unlinking, but
+flash translation layers and copy-on-write filesystems provide no physical
+overwrite guarantee.
 
-1. **After successful save** — when transcription produced usable text (`TempRecordingCleanup.releaseTempAudioIfSafe`), the temp file is deleted and `localAudioPath` is cleared from the journal entry.
-2. **On app startup** — `TempRecordingCleanup.purgeStaleOnStartup` removes unreferenced orphans older than one hour and always removes leftover `vm_rec_retry_*` silence-retry files.
-3. **Offline / degraded drafts** — when transcription failed or the entry is still a `[draft]`, temp audio is **retained** so the user can retry or type a fallback. This is an intentional, documented temporary plaintext risk until retry completes.
-
-**Files:** `lib/security/private_data_service.dart` (`TempRecordingCleanup`), `lib/services/capture_pipeline_service.dart`, `lib/services/app_services.dart`
+**Files:** `lib/services/privacy/sensitive_temporary_audio_store.dart`,
+`lib/audio/recording_service.dart`, `lib/services/privacy/audio_vault_service.dart`
 
 ### Remaining plaintext stores (audit count unchanged)
 
@@ -197,8 +206,15 @@ Merge rule (`mergeEntitlements`): RC Pro wins; when RC configured and free, **st
 
 ### Primary funnel — `ActivationFunnelAnalytics`
 
-- Typed parameters only; string values must match `^[a-z0-9_]{1,40}$` or whitelisted enums.
-- User text, transcripts, and journal bodies are **dropped by design** (`test/activation_funnel_analytics_test.dart`).
+- Funnel and product analytics converge on the machine-readable
+  `AnalyticsCatalog` and the same final Firebase dispatch guard.
+- The provider receives fixed metadata tokens, flags, and coarse count buckets
+  only. Unknown ids/keys, free text, content labels, raw ids, identifiers,
+  timestamps, nested/null values, and hash substitutes are rejected.
+- Debug/test builds fail loudly; release builds drop invalid payloads and
+  increment a local diagnostic counter.
+- Account deletion and local wipe clear queued events and reset Firebase's
+  installation analytics data.
 
 ### Reviewed events (metadata only)
 
@@ -216,9 +232,11 @@ Merge rule (`mergeEntitlements`): RC Pro wins; when RC configured and free, **st
 
 ### Secondary path — `ProductAnalytics`
 
-- Weaker guard (100-char truncation, no whitelist).
-- Reviewed string properties are **static catalog prompts** or **canonical theme labels** (not user journal text).
-- `topic_label` in early insights infers theme bucket — behavioral metadata, not transcript.
+- `ProductAnalytics` is the only Firebase Analytics facade; a source audit test
+  prevents direct SDK access elsewhere.
+- The raw string API remains only as a catalog lookup compatibility boundary.
+  New event/property data cannot reach the provider by truncation or
+  stringification.
 
 ### Not analytics — but sensitive API traffic
 

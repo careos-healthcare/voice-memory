@@ -5,9 +5,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../api/api_client.dart';
 import '../../../api/api_exceptions.dart';
+import '../../capture_api_retry/capture_api_retry_queue.dart';
 import '../../../security/api_usage_guard.dart';
 import '../../../security/api_response_safety.dart';
+import 'on_device_transcription_engine.dart';
 import 'transcript_quality.dart';
+import 'transcription_connectivity.dart';
 import 'transcription_log.dart';
 
 /// How auto transcription is performed for a voice capture.
@@ -15,7 +18,7 @@ enum TranscriptionMode {
   /// Backend `/api/transcribe` — the only supported auto path today.
   server,
 
-  /// On-device iOS speech recognition — not implemented yet.
+  /// On-device Whisper inference over the completed local WAV file.
   local,
 
   /// Auto transcription intentionally not attempted.
@@ -42,6 +45,8 @@ class TranscriptionOutcome {
     this.failureReason,
     this.skippedReason,
     this.speechPermissionStatus,
+    this.retryableCloudFailure = false,
+    this.cloudIdempotencyKey,
   });
 
   const TranscriptionOutcome.skipped({
@@ -59,22 +64,30 @@ class TranscriptionOutcome {
     required TranscriptionMode mode,
     required String reason,
     String? speechPermissionStatus,
+    bool retryableCloudFailure = false,
+    String? cloudIdempotencyKey,
   }) : this(
          mode: mode,
          attempted: true,
          failureReason: reason,
          speechPermissionStatus: speechPermissionStatus,
+         retryableCloudFailure: retryableCloudFailure,
+         cloudIdempotencyKey: cloudIdempotencyKey,
        );
 
   const TranscriptionOutcome.success({
     required TranscriptionMode mode,
     required String transcript,
     String? speechPermissionStatus,
+    bool retryableCloudFailure = false,
+    String? cloudIdempotencyKey,
   }) : this(
          mode: mode,
          attempted: true,
          transcript: transcript,
          speechPermissionStatus: speechPermissionStatus,
+         retryableCloudFailure: retryableCloudFailure,
+         cloudIdempotencyKey: cloudIdempotencyKey,
        );
 
   final TranscriptionMode mode;
@@ -83,21 +96,24 @@ class TranscriptionOutcome {
   final String? failureReason;
   final String? skippedReason;
   final String? speechPermissionStatus;
+  final bool retryableCloudFailure;
+  final String? cloudIdempotencyKey;
 
   bool get succeeded => transcript != null && transcript!.trim().isNotEmpty;
 }
 
-/// Voice transcription orchestration — server-side today; local iOS not wired.
+/// Voice transcription orchestration with deterministic local fallback.
 abstract class TranscriptionService {
   TranscriptionService._();
 
-  /// Native on-device speech recognition is not implemented in this app yet.
-  static const bool localIosSpeechRecognitionImplemented = false;
+  static const bool localIosSpeechRecognitionImplemented = true;
 
-  static TranscriptionMode activeMode({bool testStub = false}) {
+  static TranscriptionMode activeMode({
+    bool testStub = false,
+    bool isOnline = true,
+  }) {
     if (testStub) return TranscriptionMode.stubbed;
-    if (!localIosSpeechRecognitionImplemented) return TranscriptionMode.server;
-    return TranscriptionMode.local;
+    return isOnline ? TranscriptionMode.server : TranscriptionMode.local;
   }
 
   static Future<String> speechPermissionStatusLabel() async {
@@ -112,18 +128,14 @@ abstract class TranscriptionService {
   static Future<TranscriptionOutcome> transcribeRecording({
     required File audioFile,
     required int durationSeconds,
-    required ApiClient api,
+    required VoiceCaptureApiClient api,
     required Future<String> Function({bool forceRefresh}) ensureCaptureToken,
     required String scopeKey,
     required ApiUsageGuard usageGuard,
+    OnDeviceTranscriptionEngine? localEngine,
+    TranscriptionConnectivity? connectivity,
     bool testStub = false,
   }) async {
-    final mode = activeMode(testStub: testStub);
-    TranscriptionLog.mode(mode.logLabel);
-    if (!localIosSpeechRecognitionImplemented) {
-      TranscriptionLog.mode('local_not_implemented');
-    }
-
     final speechStatus = await speechPermissionStatusLabel();
     TranscriptionLog.permission(status: speechStatus);
 
@@ -131,7 +143,7 @@ abstract class TranscriptionService {
       const reason = 'audio_file_missing';
       TranscriptionLog.failed(reason: reason);
       return TranscriptionOutcome.failed(
-        mode: mode,
+        mode: TranscriptionMode.disabled,
         reason: reason,
         speechPermissionStatus: speechStatus,
       );
@@ -139,23 +151,28 @@ abstract class TranscriptionService {
 
     TranscriptionLog.started(audioPath: audioFile.path);
 
-    if (mode == TranscriptionMode.disabled) {
-      const reason = 'transcription_disabled';
-      TranscriptionLog.skipped(reason: reason);
-      return TranscriptionOutcome.skipped(
-        mode: mode,
-        reason: reason,
-        speechPermissionStatus: speechStatus,
-      );
+    final network = connectivity ?? PlatformTranscriptionConnectivity();
+    final onDevice = localEngine ?? WhisperOnDeviceTranscriptionEngine();
+    bool online;
+    try {
+      online = await network.isOnline();
+    } catch (_) {
+      online = false;
     }
+    final mode = activeMode(testStub: testStub, isOnline: online);
+    TranscriptionLog.mode(mode.logLabel);
+    final idempotencyKey = usageGuard.idempotencyKey(
+      scopeKey: scopeKey,
+      operation: ApiUsageOperation.transcribe,
+    );
 
-    if (mode == TranscriptionMode.local) {
-      const reason = 'local_ios_not_implemented';
-      TranscriptionLog.skipped(reason: reason);
-      return TranscriptionOutcome.skipped(
-        mode: mode,
-        reason: reason,
+    if (!online) {
+      return _transcribeLocally(
+        engine: onDevice,
+        audioFile: audioFile,
         speechPermissionStatus: speechStatus,
+        cloudFailure: NetworkOfflineException(),
+        cloudIdempotencyKey: idempotencyKey,
       );
     }
 
@@ -166,17 +183,13 @@ abstract class TranscriptionService {
     if (!guard.allowed) {
       final reason = guard.reason ?? 'api_guard_blocked';
       TranscriptionLog.skipped(reason: reason);
-      return TranscriptionOutcome.skipped(
-        mode: mode,
-        reason: reason,
+      return _transcribeLocally(
+        engine: onDevice,
+        audioFile: audioFile,
         speechPermissionStatus: speechStatus,
+        cloudFailureReason: reason,
       );
     }
-
-    final idempotencyKey = usageGuard.idempotencyKey(
-      scopeKey: scopeKey,
-      operation: ApiUsageOperation.transcribe,
-    );
 
     try {
       var token = await ensureCaptureToken();
@@ -193,7 +206,7 @@ abstract class TranscriptionService {
         success: true,
       );
       return _successOutcome(
-        mode: mode,
+        mode: TranscriptionMode.server,
         transcript: transcript,
         speechPermissionStatus: speechStatus,
       );
@@ -223,12 +236,12 @@ abstract class TranscriptionService {
           operation: ApiUsageOperation.transcribe,
           success: false,
         );
-        final reason = failureReason(e);
-        TranscriptionLog.failed(reason: reason);
-        return TranscriptionOutcome.failed(
-          mode: mode,
-          reason: reason,
+        return _transcribeLocally(
+          engine: onDevice,
+          audioFile: audioFile,
           speechPermissionStatus: speechStatus,
+          cloudFailure: e,
+          cloudIdempotencyKey: idempotencyKey,
         );
       }
     } catch (e) {
@@ -237,18 +250,61 @@ abstract class TranscriptionService {
         operation: ApiUsageOperation.transcribe,
         success: false,
       );
-      final reason = failureReason(e);
+      return _transcribeLocally(
+        engine: onDevice,
+        audioFile: audioFile,
+        speechPermissionStatus: speechStatus,
+        cloudFailure: e,
+        cloudIdempotencyKey: idempotencyKey,
+      );
+    }
+  }
+
+  static Future<TranscriptionOutcome> _transcribeLocally({
+    required OnDeviceTranscriptionEngine engine,
+    required File audioFile,
+    required String speechPermissionStatus,
+    String? cloudFailureReason,
+    Object? cloudFailure,
+    String? cloudIdempotencyKey,
+  }) async {
+    TranscriptionLog.mode(TranscriptionMode.local.logLabel);
+    try {
+      final transcript = await engine.transcribe(audioFile);
+      return _successOutcome(
+        mode: TranscriptionMode.local,
+        transcript: transcript,
+        speechPermissionStatus: speechPermissionStatus,
+        retryableCloudFailure:
+            cloudFailure != null &&
+            classifyCaptureApiRetryFailure(cloudFailure) !=
+                CaptureApiRetryFailure.permanent,
+        cloudIdempotencyKey: cloudIdempotencyKey,
+      );
+    } catch (error) {
+      final localReason = failureReason(error);
+      final resolvedCloudReason = cloudFailure == null
+          ? cloudFailureReason
+          : failureReason(cloudFailure);
+      final reason = resolvedCloudReason == null
+          ? 'local:$localReason'
+          : 'cloud:$resolvedCloudReason|local:$localReason';
       TranscriptionLog.failed(reason: reason);
       return TranscriptionOutcome.failed(
-        mode: mode,
+        mode: TranscriptionMode.local,
         reason: reason,
-        speechPermissionStatus: speechStatus,
+        speechPermissionStatus: speechPermissionStatus,
+        retryableCloudFailure:
+            cloudFailure != null &&
+            classifyCaptureApiRetryFailure(cloudFailure) !=
+                CaptureApiRetryFailure.permanent,
+        cloudIdempotencyKey: cloudIdempotencyKey,
       );
     }
   }
 
   static Future<String> _requestTranscript({
-    required ApiClient api,
+    required VoiceCaptureApiClient api,
     required File audioFile,
     required int durationSeconds,
     required String captureToken,
@@ -266,6 +322,8 @@ abstract class TranscriptionService {
     required TranscriptionMode mode,
     required String transcript,
     required String speechPermissionStatus,
+    bool retryableCloudFailure = false,
+    String? cloudIdempotencyKey,
   }) {
     final trimmed = transcript.trim();
     if (trimmed.isEmpty) {
@@ -295,10 +353,11 @@ abstract class TranscriptionService {
       mode: mode,
       transcript: trimmed,
       speechPermissionStatus: speechPermissionStatus,
+      retryableCloudFailure: retryableCloudFailure,
+      cloudIdempotencyKey: cloudIdempotencyKey,
     );
   }
 
-  @visibleForTesting
   static String failureReason(Object error) {
     if (error is FormatException &&
         error.message == ApiResponseSafety.htmlResponseMessage) {

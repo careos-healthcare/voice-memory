@@ -1,19 +1,20 @@
 # ArchiveMe — Revenue experiments
 
-Structured tests for monetization learning. **Documentation only** — do not implement billing changes until TestFlight feedback is triaged.
+Historical monetization research. It is not a production entitlement source.
+Current experiments must comply with `../../MONETIZATION_CONTRACT.md`.
 
 For each experiment: hypothesis → copy → success metric → build status.
 
 ---
 
-## Experiment A — Founder beta offer
+## Experiment A — Founder lifetime offer (retired)
 
 | Field | Detail |
 | --- | --- |
-| **Hypothesis** | Early believers will pay £49–£99 lifetime if framed as “founding archive” before public launch. |
-| **Copy** | “Founding member: keep full pattern memory forever. Limited to first 100 testers. Purchases may be unavailable on TestFlight — join waitlist.” |
-| **Success metric** | Waitlist signups ≥ 20; ≥ 10 complete interview; ≥ 5 state WTP ≥ £49 if billing worked. |
-| **Build status** | **Do not build yet** — waitlist email capture only (safe). Live IAP lifetime SKU later. |
+| **Hypothesis** | Retired historical idea |
+| **Copy** | None — new lifetime sales are prohibited |
+| **Success metric** | None |
+| **Build status** | **Do not build or market** |
 
 ---
 
@@ -33,7 +34,7 @@ For each experiment: hypothesis → copy → success metric → build status.
 | Field | Detail |
 | --- | --- |
 | **Hypothesis** | Showing Pro teaser immediately after first proof maximizes conversion without harming trust. |
-| **Copy** | “This fit? Free keeps your last 7 key moments. Pro keeps the full memory — timeline, map, export.” CTA: “See Pro” / “Not now”. |
+| **Copy** | “Your recordings stay yours. Pro unlocks ongoing comparisons and deeper archive analysis.” CTA: “See Pro” / “Not now”. |
 | **Success metric** | Teaser view → waitlist or “would pay” survey; no drop in truth-answer completion rate. |
 | **Build status** | **Safe to build later** — copy + existing paywall route only; do not change proof gates. |
 

@@ -4,8 +4,8 @@ export const OPEN_LOOP_SECTION_LEAD =
 export const OPEN_LOOP_PAGE_TITLE = "Threads still open";
 export const OPEN_LOOP_ENTRY_TITLE = "Keep this thread open?";
 export const OPEN_LOOP_ENTRY_LEAD =
-  "Something in this reflection sounds unfinished. Save your own next step — nothing suggested for you.";
-export const OPEN_LOOP_ANCHOR_LABEL = "From this reflection";
+  "Something in this moment sounds unfinished. Save your own next step — nothing suggested for you.";
+export const OPEN_LOOP_ANCHOR_LABEL = "From this moment";
 export const OPEN_LOOP_PROMPT_PRIMARY =
   "What do you want to remember to do about this?";
 export const OPEN_LOOP_PROMPT_ALTERNATE =
@@ -16,7 +16,7 @@ export const OPEN_LOOP_INPUT_PLACEHOLDER = "Write it in your own words.";
 export const OPEN_LOOP_SAVE_CTA = "Save next step";
 export const OPEN_LOOP_NOT_NOW = "Not now";
 export const OPEN_LOOP_EMPTY =
-  "When a reflection leaves something unfinished, you can keep the thread open with your own next step.";
+  "When a moment leaves something unfinished, you can keep the thread open with your own next step.";
 export const OPEN_LOOP_EARLIER_MOMENTS = "Earlier moments connected to this";
 export const OPEN_LOOP_CLOSURE_QUESTION = "What changed?";
 export const OPEN_LOOP_CLOSURE_PLACEHOLDER = "Optional — in your own words.";

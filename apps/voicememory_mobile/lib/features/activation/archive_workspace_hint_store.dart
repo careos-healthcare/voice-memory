@@ -26,9 +26,7 @@ abstract final class ArchiveWorkspaceHintStore {
     if (raw == null) return;
     _dismissed
       ..clear()
-      ..addAll(
-        (raw['dismissed'] as List<dynamic>? ?? []).whereType<String>(),
-      );
+      ..addAll((raw['dismissed'] as List<dynamic>? ?? []).whereType<String>());
   }
 
   static Future<void> _persist() async {

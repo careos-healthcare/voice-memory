@@ -15,7 +15,7 @@ export function IntensityTrendChart({ points }: IntensityTrendChartProps) {
   if (active.length === 0) {
     return (
       <p className="text-sm text-zinc-500">
-        Intensity trend appears after a few reflections with varied emotional tone.
+        Intensity trend appears after a few moments with varied emotional tone.
       </p>
     );
   }

@@ -4,14 +4,19 @@ import '../storage/device_id.dart';
 
 class CaptureAttestService {
   CaptureAttestService({
-    required ApiClient api,
-    required DeviceIdStore deviceIds,
-    required CaptureTokenCache tokenCache,
-  }) : _api = api,
-       _deviceIds = deviceIds,
-       _tokenCache = tokenCache;
+    @Deprecated('Pass authApi and voiceApi instead.')
+    VoiceCaptureApiClient? api,
+    AuthApiClient? authApi,
+    VoiceCaptureApiClient? voiceApi,
+    required this._deviceIds,
+    required this._tokenCache,
+  }) : assert(authApi != null || api != null),
+       assert(voiceApi != null || api != null),
+       _authApi = authApi ?? AuthApiClient(api!.transport),
+       _voiceApi = voiceApi ?? api!;
 
-  final ApiClient _api;
+  final AuthApiClient _authApi;
+  final VoiceCaptureApiClient _voiceApi;
   final DeviceIdStore _deviceIds;
   final CaptureTokenCache _tokenCache;
 
@@ -22,14 +27,14 @@ class CaptureAttestService {
     }
     _tokenCache.clear();
 
-    final session = await _api.getSession();
+    final session = await _authApi.getSession();
     if (session != null) {
       // Signed-in users use session cookies — native has no cookie jar yet.
       // Fall through to device attest for MVP.
     }
 
     final deviceId = await _deviceIds.getOrCreate();
-    final result = await _api.postCaptureAttest(deviceId);
+    final result = await _voiceApi.postCaptureAttest(deviceId);
     if (result.isSession) {
       throw StateError(
         'Server returned session attest but Flutter has no cookie session yet.',

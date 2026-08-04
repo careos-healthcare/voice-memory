@@ -17,8 +17,9 @@ import {
 } from "@/lib/live-audio/ws-proxy-connection";
 import { GeminiLiveProxy } from "@/lib/live-audio/gemini-live-proxy";
 
-const WS_ROUTE_PATH = path.join(process.cwd(), "app/api/live-audio/ws/route.ts");
+const WS_ROUTE_PATH = path.join(process.cwd(), "experiments/backend/app/api/live-audio/ws/route.ts");
 const WS_UPGRADE_PATH = path.join(process.cwd(), "lib/live-audio/ws-upgrade.ts");
+const WS_PROXY_PATH = path.join(process.cwd(), "lib/live-audio/ws-proxy-connection.ts");
 const SERVER_ENTRY_PATH = path.join(process.cwd(), "server.entry.ts");
 const SERVER_BUNDLE_PATH = path.join(process.cwd(), "dist/main.js");
 
@@ -62,19 +63,38 @@ export async function runLiveAudioWsRouteTests(): Promise<{ failures: string[] }
   await check("ws route and upgrade files exist without exposing GEMINI_API_KEY", () => {
     const routeSource = readSource(WS_ROUTE_PATH);
     const upgradeSource = readSource(WS_UPGRADE_PATH);
-    const serverEntrySource = readSource(SERVER_ENTRY_PATH);
 
     assert.match(routeSource, /LIVE_AUDIO_PROXY_WS_PATH/);
     assert.match(routeSource, /sessionTokenQueryParam/);
     assert.match(upgradeSource, /attachLiveAudioWebSocketUpgrade/);
     assert.match(upgradeSource, /authenticateLiveAudioWebSocketUpgrade/);
     assert.match(upgradeSource, /runLiveAudioProxyConnection/);
-    assert.match(serverEntrySource, /attachLiveAudioWebSocketUpgrade/);
-    if (fs.existsSync(SERVER_BUNDLE_PATH)) {
-      assert.match(readSource(SERVER_BUNDLE_PATH), /attachLiveAudioWebSocketUpgrade/);
-    }
     assert.doesNotMatch(routeSource, /GEMINI_API_KEY/);
     assert.doesNotMatch(upgradeSource, /GEMINI_API_KEY\s*[,}]/);
+  });
+
+  await check("the live audio websocket is not addressable in the V1 release", () => {
+    const serverEntrySource = readSource(SERVER_ENTRY_PATH);
+    const attaching = serverEntrySource
+      .split("\n")
+      .filter((line) => !line.trimStart().startsWith("//"))
+      .join("\n");
+    assert.doesNotMatch(attaching, /attachLiveAudioWebSocketUpgrade/);
+    if (fs.existsSync(SERVER_BUNDLE_PATH)) {
+      assert.doesNotMatch(
+        readSource(SERVER_BUNDLE_PATH),
+        /attachLiveAudioWebSocketUpgrade/,
+      );
+    }
+  });
+
+  await check("live websocket logs exclude raw session and subject identifiers", () => {
+    const proxySource = readSource(WS_PROXY_PATH);
+    assert.doesNotMatch(proxySource, /logLiveAudio\([^)]*input\.sessionId/s);
+    assert.doesNotMatch(proxySource, /logLiveAudio\([^)]*input\.subject/s);
+    assert.doesNotMatch(proxySource, /sessionId=\$\{input\.sessionId\}/);
+    assert.doesNotMatch(proxySource, /subject=\$\{input\.subject\}/);
+    assert.match(proxySource, /proxy closed reason=\$\{reason\} upstreamBytes=/);
   });
 
   await check("ws auth accepts a minted session token once", async () => {
@@ -157,7 +177,9 @@ export async function runLiveAudioWsRouteTests(): Promise<{ failures: string[] }
     });
 
     assert.equal(upstreamSent.length, 1);
-    upstreamMessageHandler?.(JSON.stringify({ setupComplete: {} }));
+    (upstreamMessageHandler as unknown as (raw: string) => void)(
+      JSON.stringify({ setupComplete: {} }),
+    );
 
     const audioFrame = JSON.stringify(buildLiveAudioInputMessage(Buffer.from([1, 2, 3, 4])));
     client.messageHandler?.(audioFrame);

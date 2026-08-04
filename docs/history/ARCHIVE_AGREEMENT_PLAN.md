@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Agreement System — plan
 
 ## Goal
@@ -61,3 +63,4 @@ Each record:
 cd apps/voicememory_mobile
 flutter test test/archive_agreement_service_test.dart
 ```
+

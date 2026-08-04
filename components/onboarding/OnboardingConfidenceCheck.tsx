@@ -12,7 +12,7 @@ import {
 
 const CATEGORY_HINT: Record<OnboardingProductPerceptionCategory, string> = {
   tracks_archive_belief: "Archive belief — strong signal",
-  journal: "Journal framing — refine onboarding",
+  journal: "Saved-words framing — refine onboarding",
   ai_coach: "AI coach framing — refine onboarding",
   notes_app: "Notes app framing — refine onboarding",
   therapy_app: "Therapy app framing — refine onboarding",

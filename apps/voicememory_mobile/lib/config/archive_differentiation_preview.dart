@@ -1,3 +1,4 @@
+import 'app_feature_flags.dart';
 import 'screenshot_mode.dart';
 
 /// QA previews for the archive differentiation layer.
@@ -8,20 +9,11 @@ import 'screenshot_mode.dart';
 abstract class ArchiveDifferentiationPreview {
   ArchiveDifferentiationPreview._();
 
-  static const bool archiveBelief = bool.fromEnvironment(
-    'ARCHIVE_BELIEF_PREVIEW',
-    defaultValue: false,
-  );
+  static const bool archiveBelief = AppFeatureFlags.archiveBeliefPreview;
 
-  static const bool evidenceTimeline = bool.fromEnvironment(
-    'EVIDENCE_TIMELINE_PREVIEW',
-    defaultValue: false,
-  );
+  static const bool evidenceTimeline = AppFeatureFlags.evidenceTimelinePreview;
 
-  static const bool weeklyReview = bool.fromEnvironment(
-    'WEEKLY_REVIEW_PREVIEW',
-    defaultValue: false,
-  );
+  static const bool weeklyReview = AppFeatureFlags.weeklyReviewPreview;
 
   static bool get forceArchiveBelief =>
       archiveBelief ||

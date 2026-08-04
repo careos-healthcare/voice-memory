@@ -3,44 +3,26 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../auth/account_auth.dart';
-import '../billing/restore_purchases_feedback.dart';
-import '../billing/restore_purchases_flow.dart';
-import '../design/archive_mobile_typography.dart';
-import '../design/archive_responsive_layout.dart';
-import '../product/consumer_ui_copy.dart';
 import '../security/app_lock_service.dart';
-import '../security/app_lock_settings.dart';
-import '../security/security_settings_copy.dart';
+import '../security/sensitive_screen_guard.dart';
 import '../services/app_services.dart';
 import '../services/auth_service.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_spacing.dart';
-import '../widgets/pushed_screen_shell.dart';
-import '../widgets/security/archive_privacy_controls_card.dart';
 import '../widgets/security/setup_pin_screen.dart';
-import '../widgets/security/wipe_local_archive_dialog.dart';
-import '../security/sensitive_screen_guard.dart';
 
-/// One place to manage archive protection and account security: app lock
-/// (PIN + optional biometrics), account state, and the existing data
-/// actions (export, delete, restore purchases). Only implemented actions
-/// render; nothing here makes encryption or sync claims, and no archive
-/// content appears.
+/// Focused V1 security settings with no experimental tools or sync engines.
 class SecuritySettingsScreen extends StatefulWidget {
   const SecuritySettingsScreen({
     super.key,
     this.appLock,
     this.auth,
-    this.restoreFlow,
+    @Deprecated('Restore is owned by the restore-purchases route')
+    Object? restoreFlow,
+    @Deprecated('Export is owned by the export route')
+    Object? openDataPortability,
   });
 
-  /// Injectable for tests; default to the app-wide services.
   final AppLockService? appLock;
   final AuthService? auth;
-
-  /// Injectable restore flow for tests; defaults to live billing.
-  final RestorePurchasesFlow? restoreFlow;
 
   @override
   State<SecuritySettingsScreen> createState() => _SecuritySettingsScreenState();
@@ -50,16 +32,12 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   AppLockService get _appLock => widget.appLock ?? AppLockService.instance;
   AuthService get _auth => widget.auth ?? AppServices.instance.auth;
 
-  bool _appLockEnabled = false;
+  bool _loading = true;
+  bool _lockEnabled = false;
   bool _biometricsAvailable = false;
   bool _biometricsEnabled = false;
+  bool _hideInSwitcher = false;
   bool _signedIn = false;
-  bool _busy = false;
-  bool _restoreBusy = false;
-  String? _restoreFeedback;
-  RestorePurchasesFlow? _restoreFlow;
-  bool _hideInAppSwitcher = false;
-  bool _wipeBusy = false;
 
   @override
   void initState() {
@@ -69,71 +47,51 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
 
   Future<void> _refresh() async {
     final lockEnabled = await _appLock.isEnabled();
-    final available = await _appLock.biometricsAvailable();
-    final biometricsOn = lockEnabled && await _appLock.biometricUnlockReady();
-    var signedIn = false;
+    final biometricsAvailable = await _appLock.biometricsAvailable();
+    final biometricsEnabled =
+        lockEnabled && await _appLock.biometricUnlockReady();
+    final hideInSwitcher =
+        await SensitiveScreenPrivacySettings.hideInAppSwitcher(
+          AppServices.instance.prefs,
+        );
+    var signedIn = _auth.currentSession != null;
     try {
       signedIn = await _auth.refreshSession() != null;
-    } catch (_) {
-      signedIn = _auth.currentSession != null;
+    } on Object {
+      // Offline account state remains useful for local privacy controls.
     }
     if (!mounted) return;
-    var hideSwitcher = false;
-    try {
-      hideSwitcher = await SensitiveScreenPrivacySettings.hideInAppSwitcher(
-        AppServices.instance.prefs,
-      );
-    } catch (_) {
-      hideSwitcher = false;
-    }
     setState(() {
-      _appLockEnabled = lockEnabled;
-      _biometricsAvailable = available;
-      _biometricsEnabled = biometricsOn;
+      _loading = false;
+      _lockEnabled = lockEnabled;
+      _biometricsAvailable = biometricsAvailable;
+      _biometricsEnabled = biometricsEnabled;
+      _hideInSwitcher = hideInSwitcher;
       _signedIn = signedIn;
-      _hideInAppSwitcher = hideSwitcher;
     });
   }
 
-  Future<void> _setupPin({required bool changeExisting}) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute<bool>(
+  Future<void> _configurePin() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
         builder: (_) =>
-            SetupPinScreen(service: _appLock, changeExisting: changeExisting),
+            SetupPinScreen(service: _appLock, changeExisting: _lockEnabled),
       ),
     );
     await _refresh();
   }
 
-  Future<void> _turnOffAppLock() async {
-    // The screen only renders behind an unlocked gate, so the service-side
-    // unlocked-session requirement holds here.
+  Future<void> _disableLock() async {
     await _appLock.disable();
     await _refresh();
   }
 
-  Future<void> _toggleBiometrics(bool enable) async {
-    await _appLock.setBiometricsEnabled(enable);
+  Future<void> _setBiometrics(bool enabled) async {
+    await _appLock.setBiometricsEnabled(enabled);
     await _refresh();
   }
 
-  Future<void> _openRoute(String route) async {
-    await context.push(route);
-    await _refresh();
-  }
-
-  Future<void> _signOut() async {
-    if (_busy) return;
-    setState(() => _busy = true);
-    try {
-      await _auth.signOut();
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-    await _refresh();
-  }
-
-  Future<void> _toggleHideInAppSwitcher(bool enabled) async {
+  Future<void> _setHideInSwitcher(bool enabled) async {
     await SensitiveScreenPrivacySettings.setHideInAppSwitcher(
       AppServices.instance.prefs,
       enabled: enabled,
@@ -141,281 +99,97 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
     await _refresh();
   }
 
-  Future<void> _wipeLocalArchive() async {
-    if (_wipeBusy) return;
-    setState(() => _wipeBusy = true);
-    try {
-      final wiped = await showWipeLocalArchiveDialog(context);
-      if (!mounted) return;
-      if (wiped) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Local archive data deleted.')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _wipeBusy = false);
-    }
-  }
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Privacy and security')),
+    body: _loading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            children: [
+              ListTile(
+                key: const Key('security_app_lock'),
+                leading: const Icon(Icons.lock_outline),
+                title: Text(_lockEnabled ? 'Change app PIN' : 'Set app PIN'),
+                subtitle: const Text(
+                  'Protect ArchiveMe when someone has access to this device.',
+                ),
+                onTap: _configurePin,
+              ),
+              if (_lockEnabled)
+                SwitchListTile(
+                  key: const Key('security_biometrics'),
+                  secondary: const Icon(Icons.fingerprint),
+                  title: const Text('Unlock with biometrics'),
+                  value: _biometricsEnabled,
+                  onChanged: _biometricsAvailable ? _setBiometrics : null,
+                ),
+              if (_lockEnabled)
+                ListTile(
+                  key: const Key('security_disable_lock'),
+                  leading: const Icon(Icons.lock_open),
+                  title: const Text('Turn off app lock'),
+                  onTap: _disableLock,
+                ),
+              SwitchListTile(
+                key: const Key('security_hide_app_switcher'),
+                secondary: const Icon(Icons.visibility_off_outlined),
+                title: const Text('Hide content in the app switcher'),
+                value: _hideInSwitcher,
+                onChanged: _setHideInSwitcher,
+              ),
+              const Divider(),
+              _RouteTile(
+                icon: Icons.privacy_tip_outlined,
+                title: 'Privacy controls',
+                route: '/privacy-trust-centre',
+              ),
+              _RouteTile(
+                icon: Icons.download_outlined,
+                title: 'Export archive',
+                route: '/export',
+              ),
+              _RouteTile(
+                icon: Icons.restore,
+                title: 'Restore purchases',
+                route: '/restore-purchases',
+              ),
+              if (_signedIn)
+                ListTile(
+                  key: const Key('security_sign_out'),
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Sign out'),
+                  onTap: () async {
+                    await _auth.signOut();
+                    await _refresh();
+                  },
+                ),
+              _RouteTile(
+                icon: Icons.delete_outline,
+                title: 'Delete account and archive',
+                route: '/delete-account',
+              ),
+            ],
+          ),
+  );
+}
 
-  RestorePurchasesFlow get _effectiveRestoreFlow =>
-      widget.restoreFlow ??
-      (_restoreFlow ??= RestorePurchasesFlow(
-        billing: AppServices.instance.billing,
-      ));
+class _RouteTile extends StatelessWidget {
+  const _RouteTile({
+    required this.icon,
+    required this.title,
+    required this.route,
+  });
 
-  Future<void> _restorePurchases() async {
-    final flow = _effectiveRestoreFlow;
-    if (flow.isBusy || _restoreBusy) return;
-
-    setState(() {
-      _restoreBusy = true;
-      _restoreFeedback = null;
-    });
-    try {
-      final result = await flow.restore();
-      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
-        return;
-      }
-      final message = RestorePurchasesFeedback.messageFor(result);
-      if (message != null) {
-        setState(() => _restoreFeedback = message);
-        RestorePurchasesFeedback.showSnackBar(context, result);
-      }
-    } finally {
-      if (mounted) setState(() => _restoreBusy = false);
-    }
-  }
+  final IconData icon;
+  final String title;
+  final String route;
 
   @override
-  Widget build(BuildContext context) {
-    return PushedScreenShell(
-      title: SecuritySettingsCopy.title,
-      body: ArchiveResponsiveLayout.page(
-        context: context,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            Text(
-              SecuritySettingsCopy.subtitle,
-              key: const Key('security_subtitle'),
-              style: ArchiveMobileTypography.responsiveHelper(
-                context,
-              ).copyWith(color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            ArchivePrivacyControlsCard(
-              deleteBusy: _wipeBusy,
-              onLockTap: () {
-                if (_appLockEnabled) {
-                  _setupPin(changeExisting: true);
-                } else {
-                  _setupPin(changeExisting: false);
-                }
-              },
-              onExportTap: () => _openRoute('/export'),
-              onDeleteTap: _wipeLocalArchive,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _sectionHeader(SecuritySettingsCopy.appLockSection),
-            ..._appLockTiles(),
-            const SizedBox(height: AppSpacing.md),
-            _sectionHeader(SecuritySettingsCopy.accountSection),
-            ..._accountTiles(),
-            const SizedBox(height: AppSpacing.md),
-            _sectionHeader(SecuritySettingsCopy.dataSection),
-            ..._dataTiles(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _appLockTiles() {
-    if (!_appLockEnabled) {
-      return [
-        _tile(
-          key: const Key('security_app_lock_status'),
-          title: AppLockCopy.settingsTitle,
-          subtitle:
-              '${SecuritySettingsCopy.statusOff} · ${AppLockCopy.settingsBody}',
-          onTap: () => _setupPin(changeExisting: false),
-        ),
-      ];
-    }
-    return [
-      _tile(
-        key: const Key('security_app_lock_status'),
-        title: AppLockCopy.settingsTitle,
-        subtitle:
-            '${SecuritySettingsCopy.statusOn} · ${AppLockCopy.settingsBody} '
-            '${AppLockCopy.relockTimeoutNote}',
-        trailing: const SizedBox.shrink(),
-      ),
-      SwitchListTile(
-        key: const Key('security_biometrics_switch'),
-        contentPadding: EdgeInsets.zero,
-        title: Text(
-          AppLockCopy.settingsBiometricsLabel,
-          style: ArchiveMobileTypography.listTitle(context),
-        ),
-        value: _biometricsEnabled,
-        // Disabled (not hidden) when the device has no biometrics — the
-        // PIN lock itself stays on either way.
-        onChanged: _biometricsAvailable ? _toggleBiometrics : null,
-      ),
-      _tile(
-        key: const Key('security_change_pin'),
-        title: AppLockCopy.settingsChangePin,
-        onTap: () => _setupPin(changeExisting: true),
-      ),
-      _tile(
-        key: const Key('security_turn_off_app_lock'),
-        title: AppLockCopy.settingsTurnOff,
-        onTap: _turnOffAppLock,
-      ),
-    ];
-  }
-
-  List<Widget> _accountTiles() {
-    final status = Text(
-      _signedIn
-          ? SecuritySettingsCopy.signedIn
-          : SecuritySettingsCopy.notSignedIn,
-      key: const Key('security_account_status'),
-      style: ArchiveMobileTypography.listSubtitle(context),
-    );
-    if (_signedIn) {
-      return [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            SecuritySettingsCopy.signOut,
-            style: ArchiveMobileTypography.listTitle(context),
-          ),
-          subtitle: status,
-          trailing: const Icon(Icons.chevron_right),
-          onTap: _busy ? null : _signOut,
-          key: const Key('security_sign_out'),
-        ),
-        Text(
-          AccountAuthCopy.signOutKeepsArchive,
-          style: ArchiveMobileTypography.responsiveHelper(
-            context,
-          ).copyWith(color: AppColors.textSecondary),
-        ),
-      ];
-    }
-    return [
-      ListTile(
-        contentPadding: EdgeInsets.zero,
-        title: Text(
-          SecuritySettingsCopy.signIn,
-          style: ArchiveMobileTypography.listTitle(context),
-        ),
-        subtitle: status,
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => _openRoute('/account/sign-in'),
-        key: const Key('security_sign_in'),
-      ),
-      _tile(
-        key: const Key('security_create_account'),
-        title: SecuritySettingsCopy.createAccount,
-        onTap: () => _openRoute('/account/create'),
-      ),
-    ];
-  }
-
-  List<Widget> _dataTiles() {
-    return [
-      SwitchListTile(
-        key: const Key('security_hide_app_switcher'),
-        contentPadding: EdgeInsets.zero,
-        title: Text(
-          SecuritySettingsCopy.hideInAppSwitcher,
-          style: ArchiveMobileTypography.listTitle(context),
-        ),
-        subtitle: Text(
-          SecuritySettingsCopy.hideInAppSwitcherBody,
-          style: ArchiveMobileTypography.listSubtitle(context),
-        ),
-        value: _hideInAppSwitcher,
-        onChanged: _toggleHideInAppSwitcher,
-      ),
-      _tile(
-        key: const Key('security_export'),
-        title: ConsumerUiCopy.exportReflections,
-        onTap: () => _openRoute('/export'),
-      ),
-      _tile(
-        key: const Key('security_wipe_local'),
-        title: SecuritySettingsCopy.wipeLocalArchive,
-        subtitle: SecuritySettingsCopy.wipeLocalArchiveBody,
-        onTap: _wipeBusy ? null : _wipeLocalArchive,
-        destructive: true,
-      ),
-      _tile(
-        key: const Key('security_restore_purchases'),
-        title: ConsumerUiCopy.restorePurchases,
-        onTap: _restoreBusy ? null : _restorePurchases,
-      ),
-      if (_restoreFeedback != null)
-        Padding(
-          key: const Key('security_restore_feedback'),
-          padding: const EdgeInsets.only(
-            top: AppSpacing.xs,
-            bottom: AppSpacing.sm,
-          ),
-          child: Text(
-            _restoreFeedback!,
-            style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ),
-      _tile(
-        key: const Key('security_delete'),
-        title: ConsumerUiCopy.deleteAccount,
-        onTap: () => _openRoute('/delete-account'),
-        destructive: true,
-      ),
-    ];
-  }
-
-  Widget _sectionHeader(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: Text(
-        label,
-        style: ArchiveMobileTypography.cardLabel(
-          context,
-          color: AppColors.textSecondary,
-        ),
-      ),
-    );
-  }
-
-  Widget _tile({
-    Key? key,
-    required String title,
-    String? subtitle,
-    VoidCallback? onTap,
-    Widget? trailing,
-    bool destructive = false,
-  }) {
-    return ListTile(
-      key: key,
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        title,
-        style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(subtitle, style: ArchiveMobileTypography.listSubtitle(context))
-          : null,
-      trailing: trailing ?? const Icon(Icons.chevron_right),
-      onTap: onTap,
-    );
-  }
+  Widget build(BuildContext context) => ListTile(
+    leading: Icon(icon),
+    title: Text(title),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: () => context.push(route),
+  );
 }

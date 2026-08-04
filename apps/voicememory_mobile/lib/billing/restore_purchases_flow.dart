@@ -1,11 +1,11 @@
-import '../models/entitlement.dart';
-import 'billing_async_guard.dart';
-import 'billing_service.dart';
+import '../subscriptions/domain/subscription_models.dart';
+import '../subscriptions/domain/subscription_repository.dart';
 import 'restore_purchases_copy.dart';
-import 'revenuecat_service.dart';
+import 'subscription_purchase_coordinator.dart';
 
 enum RestorePurchasesOutcome {
   restored,
+  cachedAccessRetained,
   noPurchase,
   unavailable,
   error,
@@ -15,65 +15,63 @@ enum RestorePurchasesOutcome {
 class RestorePurchasesResult {
   const RestorePurchasesResult({
     required this.outcome,
-    this.entitlements,
+    this.subscriptionState,
     this.error,
   });
 
   final RestorePurchasesOutcome outcome;
-  final PremiumEntitlements? entitlements;
+  final SubscriptionState? subscriptionState;
   final Object? error;
 
-  bool get isPro => entitlements?.isPro ?? false;
+  bool get isPro => subscriptionState?.isPro ?? false;
 
   String get userMessage => switch (outcome) {
-        RestorePurchasesOutcome.restored => RestorePurchasesCopy.purchaseRestored,
-        RestorePurchasesOutcome.noPurchase =>
-          RestorePurchasesCopy.noActivePurchase,
-        RestorePurchasesOutcome.unavailable =>
-          RestorePurchasesCopy.billingUnavailable,
-        RestorePurchasesOutcome.error => RestorePurchasesCopy.restoreError,
-        RestorePurchasesOutcome.skippedBusy => '',
-      };
+    RestorePurchasesOutcome.restored => RestorePurchasesCopy.purchaseRestored,
+    RestorePurchasesOutcome.cachedAccessRetained =>
+      RestorePurchasesCopy.cachedAccessRetained,
+    RestorePurchasesOutcome.noPurchase => RestorePurchasesCopy.noActivePurchase,
+    RestorePurchasesOutcome.unavailable =>
+      RestorePurchasesCopy.billingUnavailable,
+    RestorePurchasesOutcome.error => RestorePurchasesCopy.restoreError,
+    RestorePurchasesOutcome.skippedBusy => '',
+  };
 }
 
 /// Shared restore flow — loading guard, entitlement refresh, calm outcomes.
 class RestorePurchasesFlow {
   RestorePurchasesFlow({
-    required BillingService billing,
-    bool Function()? isBillingConfigured,
-  })  : _billing = billing,
-        _isBillingConfigured = isBillingConfigured ??
-            (() => RevenueCatService.instance.isConfigured);
+    required this.repository,
+    SubscriptionPurchaseCoordinator? coordinator,
+  }) : _coordinator =
+           coordinator ??
+           SubscriptionPurchaseCoordinator(repository: repository);
 
-  final BillingService _billing;
-  final bool Function() _isBillingConfigured;
+  final SubscriptionRepository repository;
+  final SubscriptionPurchaseCoordinator _coordinator;
 
-  bool _busy = false;
-
-  bool get isBusy => _busy;
+  bool get isBusy => _coordinator.isBusy;
 
   Future<RestorePurchasesResult> restore() async {
-    if (_busy) {
+    if (_coordinator.isBusy) {
       return const RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.skippedBusy,
       );
     }
-    if (!_isBillingConfigured()) {
-      return const RestorePurchasesResult(
-        outcome: RestorePurchasesOutcome.unavailable,
-      );
-    }
-
-    _busy = true;
     try {
-      final ent = await _billing.restoreNative();
+      final state = await _coordinator.restore();
       return RestorePurchasesResult(
-        outcome: ent.isPro
+        outcome: state.verification == SubscriptionVerification.cached
+            ? RestorePurchasesOutcome.cachedAccessRetained
+            : state.isPro
             ? RestorePurchasesOutcome.restored
             : RestorePurchasesOutcome.noPurchase,
-        entitlements: ent,
+        subscriptionState: state,
       );
-    } on BillingOperationException catch (e) {
+    } on SubscriptionOperationInProgressException {
+      return const RestorePurchasesResult(
+        outcome: RestorePurchasesOutcome.skippedBusy,
+      );
+    } on SubscriptionRestoreException catch (e) {
       return RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.unavailable,
         error: e,
@@ -83,8 +81,6 @@ class RestorePurchasesFlow {
         outcome: RestorePurchasesOutcome.error,
         error: e,
       );
-    } finally {
-      _busy = false;
     }
   }
 }

@@ -23,7 +23,8 @@ abstract final class DailyReturnReasonCopy {
   static const missingResultPrompt = 'Record what happened after it.';
 
   static const missingChangeBody =
-      'ArchiveMe knows the repeat. Now it needs the next return to see whether it changes.';
+      'ArchiveMe has enough evidence to compare the repeat. '
+      'Now it needs the next return to see whether it changes.';
   static const missingChangePrompt = 'Record the next time it happens.';
 
   static const missingPositiveBody =
@@ -36,7 +37,6 @@ abstract final class DailyReturnReasonCopy {
 
   static const recordCta = 'Record this';
 
-  static const missingChangeGuided =
-      'What happened when this came up again?';
+  static const missingChangeGuided = 'What happened when this came up again?';
   static const missingPositiveGuided = 'What helped in this moment?';
 }

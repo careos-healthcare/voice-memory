@@ -24,6 +24,7 @@ Prevent V1 from feeling like a **life dashboard**. Classification and release-su
 - Why proof appeared
 - Confirm or correct
 - What changed
+- Evidence Trail
 - Pro longer trail
 
 ## Rules

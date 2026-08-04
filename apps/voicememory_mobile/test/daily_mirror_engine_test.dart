@@ -11,21 +11,20 @@ JournalEntry _entry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('DailyMirrorEngine', () {
@@ -57,7 +56,7 @@ void main() {
       expect(result.hasGroundedEvidence, isFalse);
     });
 
-    test('2 capacity entries stay weak-started until a third usable moment', () {
+    test('2 capacity entries show an exact early repeated phrase', () {
       final result = _engine.build([
         _entry(
           id: 'a',
@@ -73,9 +72,10 @@ void main() {
       ]);
 
       expect(result.stage, DailyMirrorStage.heardFirstMoment);
-      expect(result.hasGroundedEvidence, isFalse);
+      expect(result.hasGroundedEvidence, isTrue);
       expect(result.heroTitle, DailyMirrorCopy.weakStartedHeroTitle);
-      expect(result.heroBody, DailyMirrorCopy.weakStartedHeroBody);
+      expect(result.heroBody, contains('Early signal from 2 moments'));
+      expect(result.heroBody, contains('“said yes”'));
       expect(result.evidenceLine, isNull);
       expect(result.evidenceTerms, isEmpty);
       expect(result.nextQuestion, isNull);

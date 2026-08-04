@@ -46,7 +46,7 @@ export function ArchiveAssetCard({
   if (!asset) return null;
 
   const stats = [
-    `${asset.totalReflections} reflection${asset.totalReflections === 1 ? "" : "s"}`,
+    `${asset.totalReflections} moment${asset.totalReflections === 1 ? "" : "s"}`,
     `${asset.daysCovered} day${asset.daysCovered === 1 ? "" : "s"} covered`,
     asset.monthsCovered > 1 ? `${asset.monthsCovered} months in archive` : null,
     asset.recurringBeliefsTracked > 0
@@ -58,7 +58,7 @@ export function ArchiveAssetCard({
     asset.beliefChangesRecorded > 0
       ? `${asset.beliefChangesRecorded} belief change${asset.beliefChangesRecorded === 1 ? "" : "s"} recorded`
       : null,
-    asset.firstReflectionLabel ? `First reflection: ${asset.firstReflectionLabel}` : null,
+    asset.firstReflectionLabel ? `First moment: ${asset.firstReflectionLabel}` : null,
   ].filter(Boolean) as string[];
 
   return (

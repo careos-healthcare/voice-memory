@@ -132,7 +132,7 @@ export function validateArchiveImport(
   }
 
   if (archive.entries.length === 0) {
-    issues.push({ level: "error", message: "Archive contains no reflections." });
+    issues.push({ level: "error", message: "Archive contains no saved moments." });
   }
 
   const localIds = new Set(getAllEntries().map((entry) => entry.id));
@@ -140,7 +140,7 @@ export function validateArchiveImport(
   if (overlap > 0) {
     issues.push({
       level: "warning",
-      message: `${overlap} reflection${overlap === 1 ? "" : "s"} already exist on this device.`,
+      message: `${overlap} saved moment${overlap === 1 ? "" : "s"} already exist on this device.`,
     });
   }
 

@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ArchiveMe — AI Model Audit
 
 **Date:** 2026-05-25  
@@ -356,3 +358,4 @@ From `.env.example` — no per-model overrides; model IDs are **hardcoded** in r
 - **Runtime config:** Production could override via forked deploys; this audit reflects **source in repo**.
 - **Serverless secrets:** No access to live Vercel env beyond documented names.
 - **Future / commented code:** Not exhaustively listing every markdown mention of “ChatGPT” in copy/comparison docs.
+

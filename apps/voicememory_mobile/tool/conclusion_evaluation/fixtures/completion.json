@@ -1,0 +1,129 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "complete_001_gave_up_to_finished",
+      "entryA": {
+        "id": "complete_001_a",
+        "transcript": "I gave up on the report before lunch and felt frustrated.",
+        "capturedAt": "2026-03-11T12:00:00Z"
+      },
+      "entryB": {
+        "id": "complete_001_b",
+        "transcript": "I finished the report before lunch and felt proud.",
+        "capturedAt": "2026-04-21T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "stoppingOrCompletionBehaviour:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "Report — stopping or finishing looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are a finisher now.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "You finished the report because you felt proud.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "completion",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "complete_002_abandoned_repeat",
+      "entryA": {
+        "id": "complete_002_a",
+        "transcript": "I abandoned the report before lunch and felt frustrated.",
+        "capturedAt": "2026-03-12T12:00:00Z"
+      },
+      "entryB": {
+        "id": "complete_002_b",
+        "transcript": "I abandoned the report again before lunch and felt frustrated.",
+        "capturedAt": "2026-04-22T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated stopping or finishing with the report.",
+      "prohibitedConclusions": [
+        {
+          "statement": "Stopping or finishing looks different across these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You never finish anything you start.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "completion",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "complete_003_duration_increase",
+      "entryA": {
+        "id": "complete_003_a",
+        "transcript": "I finished the report quickly and felt proud.",
+        "capturedAt": "2026-03-13T12:00:00Z"
+      },
+      "entryB": {
+        "id": "complete_003_b",
+        "transcript": "I finished the report hours later and felt proud.",
+        "capturedAt": "2026-04-23T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["duration:increased"],
+      "supportedConclusion": "Report — how long it lasted looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The report took hours because you were distracted.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "completion",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "complete_004_outcome_shift",
+      "entryA": {
+        "id": "complete_004_a",
+        "transcript": "I finished the report and it failed the review.",
+        "capturedAt": "2026-03-14T12:00:00Z"
+      },
+      "entryB": {
+        "id": "complete_004_b",
+        "transcript": "I finished the report and it worked for the review.",
+        "capturedAt": "2026-04-24T12:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["outcome:replaced"],
+      "supportedConclusion": "Report — how it turned out looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are getting better at your job.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "Things might be improving.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "completion",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

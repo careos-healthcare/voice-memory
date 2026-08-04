@@ -83,7 +83,7 @@ void main() {
     final state = buildArchiveStateObjectV3(entries: entries);
     expect(state!.hasMinimumEvidence, isTrue);
     expect(state.belief, contains('hard conversations'));
-    expect(state.evidenceSummary, contains('5 reflections'));
+    expect(state.evidenceSummary, contains('5 saved moments'));
     expect(state.strongestEvidenceQuote, isNotNull);
   });
 

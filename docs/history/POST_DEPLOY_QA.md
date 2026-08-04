@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Post-deploy QA — ArchiveMe
 
 Run after each production deploy or before inviting testers. Check off each item; note browser and device.
@@ -140,3 +142,4 @@ Run after each production deploy or before inviting testers. Check off each item
 Notes:
 
 _______________________________________________
+

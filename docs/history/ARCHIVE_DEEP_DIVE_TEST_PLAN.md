@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Deep Dive V1 — test plan
 
 ## Automated
@@ -33,3 +35,4 @@ flutter test test/archive_deep_dive_gate_test.dart test/archive_deep_dive_engine
 ## Deep link
 
 - Navigate to `/archive-deep-dive` without `extra` or with insufficient evidence → insufficient message, no sandbox/QA UI.
+

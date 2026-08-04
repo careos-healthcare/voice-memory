@@ -1,0 +1,232 @@
+{
+  "capturedAt": "2026-08-01T15:58:13.886Z",
+  "phase": "final",
+  "productionDartFiles": 903,
+  "productionDartLines": 136374,
+  "featureDirectories": 409,
+  "reachableScreens": 25,
+  "productionBackendRoutes": 59,
+  "startupServiceReferences": 0,
+  "backgroundServiceReferences": 0,
+  "directFlutterDependencies": 28,
+  "directFlutterDependencyNames": [
+    "flutter_localizations",
+    "go_router",
+    "http",
+    "flutter_secure_storage",
+    "permission_handler",
+    "path_provider",
+    "record",
+    "share_plus",
+    "url_launcher",
+    "uuid",
+    "crypto",
+    "cryptography",
+    "firebase_core",
+    "firebase_analytics",
+    "device_info_plus",
+    "package_info_plus",
+    "purchases_flutter",
+    "local_auth",
+    "connectivity_plus",
+    "flutter_riverpod",
+    "sqlite3",
+    "path",
+    "whisper_flutter_coreml",
+    "secure_application",
+    "pointycastle",
+    "http_parser",
+    "intl",
+    "sqlite_vec_native"
+  ],
+  "nativeFlutterPlugins": 12,
+  "nativeFlutterPluginNames": [
+    "permission_handler",
+    "path_provider",
+    "record",
+    "share_plus",
+    "url_launcher",
+    "firebase_core",
+    "firebase_analytics",
+    "device_info_plus",
+    "package_info_plus",
+    "purchases_flutter",
+    "local_auth",
+    "sqlite_vec_native"
+  ],
+  "backendPackageFiles": 5,
+  "iosPermissionKeys": [
+    "NSFaceIDUsageDescription",
+    "NSMicrophoneUsageDescription"
+  ],
+  "iosCapabilities": [
+    "com.apple.developer.icloud-container-identifiers",
+    "com.apple.developer.icloud-services",
+    "com.apple.developer.ubiquity-container-identifiers",
+    "com.apple.security.application-groups"
+  ],
+  "androidPermissions": [
+    "android.permission.ACCESS_ADSERVICES_AD_ID",
+    "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+    "android.permission.ACCESS_BACKGROUND_LOCATION",
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_WIFI_STATE",
+    "android.permission.ACTIVITY_RECOGNITION",
+    "android.permission.BLUETOOTH",
+    "android.permission.BLUETOOTH_ADMIN",
+    "android.permission.BLUETOOTH_ADVERTISE",
+    "android.permission.BLUETOOTH_CONNECT",
+    "android.permission.BLUETOOTH_SCAN",
+    "android.permission.BODY_SENSORS",
+    "android.permission.BODY_SENSORS_BACKGROUND",
+    "android.permission.CAMERA",
+    "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+    "android.permission.CHANGE_WIFI_STATE",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_CAMERA",
+    "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
+    "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+    "android.permission.FOREGROUND_SERVICE_HEALTH",
+    "android.permission.FOREGROUND_SERVICE_LOCATION",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+    "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+    "android.permission.INTERNET",
+    "android.permission.MODIFY_AUDIO_SETTINGS",
+    "android.permission.NEARBY_WIFI_DEVICES",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.READ_CALENDAR",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.READ_MEDIA_AUDIO",
+    "android.permission.READ_MEDIA_IMAGES",
+    "android.permission.READ_MEDIA_VIDEO",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "android.permission.RECORD_AUDIO",
+    "android.permission.SCHEDULE_EXACT_ALARM",
+    "android.permission.USE_BIOMETRIC",
+    "android.permission.USE_EXACT_ALARM",
+    "android.permission.USE_FINGERPRINT",
+    "android.permission.VIBRATE",
+    "android.permission.WAKE_LOCK",
+    "android.permission.WRITE_CALENDAR",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+  ],
+  "androidServices": 7,
+  "dartFilesOver500Lines": 36,
+  "dartFilesOver1000Lines": 10,
+  "dartFilesOver2000Lines": 1,
+  "largestDartFiles": [
+    {
+      "file": "apps/voicememory_mobile/lib/features/activation/activation_events_store.dart",
+      "lines": 2564
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/activation/activation_tracker.dart",
+      "lines": 1881
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/capture_pipeline_service.dart",
+      "lines": 1764
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/screens/paywall_screen.dart",
+      "lines": 1739
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/activation_funnel_analytics.dart",
+      "lines": 1244
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/core/graph/personal_knowledge_graph.dart",
+      "lines": 1204
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/interpretation/interpretation_quality_engine.dart",
+      "lines": 1066
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/archive_proof/visible_archive_proof_copy.dart",
+      "lines": 1058
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/privacy/audio_vault_service.dart",
+      "lines": 1040
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/ai/local_semantic_store.dart",
+      "lines": 1007
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/first_session/first_session_pattern_engine.dart",
+      "lines": 998
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/product/consumer_ui_copy.dart",
+      "lines": 940
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/audio/recording_service.dart",
+      "lines": 890
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/explainable_conclusion/explainable_conclusion_widgets.dart",
+      "lines": 869
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/l10n/generated/app_localizations.dart",
+      "lines": 823
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/capture_api_retry/capture_api_retry_queue.dart",
+      "lines": 739
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/voice_capture/audio/native_audio_recorder.dart",
+      "lines": 726
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/core/llm/on_device_extractor.dart",
+      "lines": 714
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/transcription_queue/transcription_job_database.dart",
+      "lines": 701
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/early_archive/early_archive_insight_quality_engine.dart",
+      "lines": 692
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/memory/memory_governance_policy.dart",
+      "lines": 692
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/loop_mode/loop_mode_engine.dart",
+      "lines": 644
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/evidence_anchors/evidence_anchor_engine.dart",
+      "lines": 624
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/archive_synthesis/archive_synthesis_models.dart",
+      "lines": 598
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/memory/memory_priority_governance.dart",
+      "lines": 588
+    }
+  ],
+  "recordingControllerLines": 585,
+  "appServicesLines": 352,
+  "flutterTestFiles": 212,
+  "staticAnalysisDurationSeconds": null,
+  "criticalSuiteDurationSeconds": null,
+  "buildArtifacts": {
+    "androidDebugApkBytes": null,
+    "androidReleaseApkBytes": null,
+    "androidReleaseBundleBytes": null,
+    "iosAppBytes": null
+  }
+}

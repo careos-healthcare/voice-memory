@@ -63,23 +63,17 @@ class NoBiometricAuthenticator implements BiometricAuthenticator {
 /// Orchestrates the optional app lock: PIN setup/verification (salted hash
 /// only — no raw PIN is ever stored, logged, or passed to analytics),
 /// optional biometric unlock with PIN fallback, the per-session unlock
-/// state, and the background re-lock timeout.
+/// state, and immediate re-lock whenever the app leaves the foreground.
 class AppLockService extends ChangeNotifier {
   AppLockService({
     AppLockStore? store,
     BiometricAuthenticator? biometrics,
     DateTime Function()? clock,
   }) : _store = store ?? AppLockStore(store: SecureAppLockStore()),
-       _biometrics = biometrics ?? LocalAuthBiometricAuthenticator(),
-       _clock = clock ?? DateTime.now;
+       _biometrics = biometrics ?? LocalAuthBiometricAuthenticator();
 
   final AppLockStore _store;
   final BiometricAuthenticator _biometrics;
-  final DateTime Function() _clock;
-
-  /// How long the app can stay backgrounded before it re-locks.
-  static const Duration backgroundLockTimeout = Duration(minutes: 2);
-
   static AppLockService? _instance;
 
   /// Process-wide instance used by the gate and the settings surface.
@@ -91,7 +85,7 @@ class AppLockService extends ChangeNotifier {
   }
 
   bool _unlockedThisSession = false;
-  DateTime? _backgroundedAt;
+  bool _wasBackgrounded = false;
 
   /// True after a successful unlock (or fresh setup) this session.
   bool get unlockedThisSession => _unlockedThisSession;
@@ -232,25 +226,23 @@ class AppLockService extends ChangeNotifier {
 
   /// Called when the app moves to the background.
   void onAppBackgrounded() {
-    _backgroundedAt = _clock();
+    _wasBackgrounded = true;
   }
 
-  /// Called when the app returns to the foreground. Re-locks when the app
-  /// was backgrounded for at least [backgroundLockTimeout].
+  /// Called when the app returns to the foreground. Every completed
+  /// background transition requires a fresh biometric or PIN unlock.
   Future<void> onAppResumed() async {
-    final since = _backgroundedAt;
-    _backgroundedAt = null;
-    if (since == null || !_unlockedThisSession) return;
+    if (!_wasBackgrounded) return;
+    _wasBackgrounded = false;
+    if (!_unlockedThisSession) return;
     if (!await isEnabled()) return;
-    if (_clock().difference(since) >= backgroundLockTimeout) {
-      _unlockedThisSession = false;
-      notifyListeners();
-    }
+    _unlockedThisSession = false;
+    notifyListeners();
   }
 
   @visibleForTesting
   void resetSessionForTest() {
     _unlockedThisSession = false;
-    _backgroundedAt = null;
+    _wasBackgrounded = false;
   }
 }

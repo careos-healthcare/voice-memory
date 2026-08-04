@@ -34,10 +34,7 @@ extension EntryDisplayTextSourceLabel on EntryDisplayTextSource {
 }
 
 class EntryDisplayResolution {
-  const EntryDisplayResolution({
-    required this.text,
-    required this.source,
-  });
+  const EntryDisplayResolution({required this.text, required this.source});
 
   final String text;
   final EntryDisplayTextSource source;
@@ -92,10 +89,7 @@ bool isDraftOrSystemTranscriptPlaceholder(String text) {
 
 bool _isTransportErrorTranscript(String text) {
   final lower = text.toLowerCase();
-  const blocked = [
-    'connection refused',
-    'backend url not configured',
-  ];
+  const blocked = ['connection refused', 'backend url not configured'];
   for (final phrase in blocked) {
     if (lower.contains(phrase)) return true;
   }
@@ -108,7 +102,8 @@ bool hasPersistedCaptureText(JournalEntry entry) {
   final hasTranscript =
       transcript.isNotEmpty &&
       !isDraftOrSystemTranscriptPlaceholder(transcript);
-  final hasBody = body.isNotEmpty && !ConsumerCopyGuard.isSystemObservation(body);
+  final hasBody =
+      body.isNotEmpty && !ConsumerCopyGuard.isSystemObservation(body);
   return hasTranscript || hasBody;
 }
 
@@ -157,6 +152,7 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
       reflection: entry.reflection,
       syncStatus: entry.syncStatus,
       localAudioPath: entry.localAudioPath,
+      localAudioVaultRef: entry.localAudioVaultRef,
       treatAsNew: entry.treatAsNew,
       connectionApproved: entry.connectionApproved,
       keepExactDetails: entry.keepExactDetails,
@@ -170,6 +166,8 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
       entryAboutness: entry.entryAboutness,
       memorySurfacing: entry.memorySurfacing,
       preserveOriginal: entry.preserveOriginal,
+      captureContextTag: entry.captureContextTag,
+      localCaptureContext: entry.localCaptureContext,
     );
   }
 
@@ -183,15 +181,19 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
       emotionalIntensity: entry.reflection.emotionalIntensity,
       recurringThemes: entry.reflection.recurringThemes,
       exactLanguagePattern: entry.reflection.exactLanguagePattern,
-      concreteObservation: resolved,
+      concreteObservation: entry.reflection.concreteObservation.trim().isEmpty
+          ? resolved
+          : entry.reflection.concreteObservation,
       repeatedSignal: entry.reflection.repeatedSignal,
       tensionOrContradiction: entry.reflection.tensionOrContradiction,
       avoidedOrVagueArea: entry.reflection.avoidedOrVagueArea,
       nextSmallAction: entry.reflection.nextSmallAction,
       patternObservations: entry.reflection.patternObservations,
+      explainableConclusion: entry.reflection.explainableConclusion,
     ),
     syncStatus: entry.syncStatus,
     localAudioPath: entry.localAudioPath,
+    localAudioVaultRef: entry.localAudioVaultRef,
     treatAsNew: entry.treatAsNew,
     connectionApproved: entry.connectionApproved,
     keepExactDetails: entry.keepExactDetails,
@@ -205,6 +207,8 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
     entryAboutness: entry.entryAboutness,
     memorySurfacing: entry.memorySurfacing,
     preserveOriginal: entry.preserveOriginal,
+    captureContextTag: entry.captureContextTag,
+    localCaptureContext: entry.localCaptureContext,
   );
 }
 
@@ -218,6 +222,13 @@ EntryDisplayResolution resolveEntryDisplayText(JournalEntry entry) {
     return EntryDisplayResolution(
       text: transcript,
       source: EntryDisplayTextSource.transcript,
+    );
+  }
+  if (entry.reflection.explainableConclusion?.provenance.generatedBy ==
+      'model') {
+    return const EntryDisplayResolution(
+      text: '',
+      source: EntryDisplayTextSource.none,
     );
   }
 
@@ -273,6 +284,10 @@ String timelineEntryTitle(JournalEntry entry) {
 
   final snippet = _transcriptSnippet(entry.transcript);
   if (snippet != null) return snippet;
+  if (entry.reflection.explainableConclusion?.provenance.generatedBy ==
+      'model') {
+    return _recordingDateTitle(entry.createdAt);
+  }
 
   final summary = _reflectionSnippet(entry.reflectionSummary);
   if (summary != null) return summary;

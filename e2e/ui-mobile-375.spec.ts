@@ -1,9 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import {
-  TIER_B_ROUTES,
-  TIER_C_ROUTES,
-} from "./helpers/accessibility-routes";
+import { TIER_B_ROUTES, TIER_C_ROUTES } from "./helpers/accessibility-routes";
 import {
   assertCriticalTextVisible,
   assertMinTapTarget,
@@ -24,7 +21,9 @@ const PRIMARY_ROUTES: Array<{
     name: "home",
     skipNav: true,
     primaryCta: (page) =>
-      page.locator("#recorder [data-primary-cta='recorder'], #recorder button").first(),
+      page
+        .locator("#recorder [data-primary-cta='recorder'], #recorder button")
+        .first(),
     critical: /record|reflection|ArchiveMe/i,
   },
   {
@@ -32,14 +31,17 @@ const PRIMARY_ROUTES: Array<{
     name: "record",
     skipNav: true,
     primaryCta: (page) =>
-      page.locator("[data-primary-cta='recorder'], button").filter({ hasText: /record/i }).first(),
+      page
+        .locator("[data-primary-cta='recorder'], button")
+        .filter({ hasText: /record/i })
+        .first(),
     critical: /Voice capture|capture/i,
   },
   {
     path: "/journal",
     name: "journal",
     primaryCta: (page) => page.getByRole("link", { name: "Record" }),
-    critical: /Journal/i,
+    critical: /Archive/i,
   },
   {
     path: "/memory",
@@ -56,13 +58,17 @@ const PRIMARY_ROUTES: Array<{
   {
     path: "/archive",
     name: "archive",
-    primaryCta: (page) => page.getByRole("link", { name: "Record" }).or(page.getByRole("button", { name: /export/i })),
+    primaryCta: (page) =>
+      page
+        .getByRole("link", { name: "Record" })
+        .or(page.getByRole("button", { name: /export/i })),
     critical: /Archive/i,
   },
   {
     path: "/pricing",
     name: "pricing",
-    primaryCta: (page) => page.locator("[data-pricing-plan='pro'], [data-pricing-ssr]").first(),
+    primaryCta: (page) =>
+      page.locator("[data-pricing-plan='pro'], [data-pricing-ssr]").first(),
     critical: /Plans for your archive/i,
   },
   {
@@ -126,10 +132,12 @@ test("pricing SSR plans visible before hydration", async ({ page }) => {
   await page.goto("/pricing", { waitUntil: "networkidle" });
   const shell = page.locator("[data-pricing-ssr]");
   await expect(shell).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator("[data-pricing-plan='free']")).toContainText("Free");
+  await expect(page.locator("[data-pricing-plan='free']")).toContainText(
+    "Free",
+  );
   await expect(page.locator("[data-pricing-plan='pro']")).toContainText("Pro");
   await expect(page.locator("[data-billing-state]")).toHaveAttribute(
     "data-billing-state",
-    /configured|disabled/,
+    "mobile-store-only",
   );
 });

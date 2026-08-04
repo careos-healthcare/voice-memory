@@ -20,7 +20,11 @@ void main() {
     );
   });
 
-  test('pattern review remains visible in release', () {
-    expect(ProductionNavigation.isNavRouteVisible('/blind-spots'), isTrue);
+  test('self-discovery center is excluded from focused V1 navigation', () {
+    expect(ProductionNavigation.isNavRouteVisible('/self-discovery'), isFalse);
+    expect(
+      ProductionNavigation.redirectAwayFromIncomplete('/self-discovery'),
+      '/archive-belief',
+    );
   });
 }

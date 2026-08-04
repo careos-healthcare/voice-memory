@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/core/graph/graph_node.dart';
+import 'package:voicememory_mobile/core/graph/personal_knowledge_graph.dart';
+import 'package:voicememory_mobile/features/horizon_lab/horizon_canvas_layer.dart';
+import 'package:voicememory_mobile/features/horizon_lab/horizon_models.dart';
+import 'package:voicememory_mobile/features/horizon_lab/ui/horizon_lab_sheet.dart';
+
+void main() {
+  testWidgets('navigates branches and toggles spatial canvas dimensions', (
+    tester,
+  ) async {
+    final pivot = GraphNode(
+      id: 'pivot',
+      type: NodeType.decision,
+      label: 'Career pivot',
+      confidence: .9,
+      evidence: [
+        GraphNodeEvidence(
+          entryId: 'entry',
+          observedAt: DateTime.utc(2026),
+          confidence: .9,
+          excerpt: 'Career pivot',
+          startUtf16: 0,
+          endUtf16: 12,
+        ),
+      ],
+    );
+    final first = _branch('a', 'Alternative A', pivot);
+    final second = _branch('b', 'Alternative B', pivot);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: _SheetHarness(sourceBranches: [first, second], pivot: pivot),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byKey(const Key('horizon-lab-sheet')), findsOneWidget);
+    expect(find.byKey(Key('horizon-branch-${first.id}')), findsOneWidget);
+    expect(find.byKey(Key('horizon-branch-${second.id}')), findsOneWidget);
+    expect(find.byKey(const Key('horizon-canvas-layer')), findsNothing);
+
+    await tester.tap(find.byKey(Key('horizon-branch-${second.id}')));
+    await tester.pump();
+    expect(find.byKey(const Key('horizon-canvas-layer')), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.byKey(const Key('horizon-year-slider')),
+      find.byType(ListView),
+      const Offset(0, -220),
+    );
+    await tester.pump();
+    await tester.drag(
+      find.byKey(const Key('horizon-year-slider')),
+      const Offset(-150, 0),
+    );
+    await tester.pump();
+    expect(find.byKey(const Key('horizon-year-label')), findsOneWidget);
+  });
+}
+
+class _SheetHarness extends StatefulWidget {
+  const _SheetHarness({required this.sourceBranches, required this.pivot});
+  final List<TimelineBranch> sourceBranches;
+  final GraphNode pivot;
+
+  @override
+  State<_SheetHarness> createState() => _SheetHarnessState();
+}
+
+class _SheetHarnessState extends State<_SheetHarness> {
+  List<TimelineBranch> branches = const [];
+  double year = 5;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      if (branches.isNotEmpty)
+        HorizonCanvasLayer(branches: branches, year: year),
+      HorizonLabSheet(
+        service: null,
+        simulation: null,
+        divergenceNode: widget.pivot,
+        clusters: const [],
+        projectionRunner: (branch, _) async => branch,
+        branchLoader: () async => widget.sourceBranches,
+        branchForker: (name, divergenceNodeId) async =>
+            _branch('new', name, widget.pivot),
+        branchMerger: (_) async {},
+        onLayerChanged: (next, nextYear) {
+          setState(() {
+            branches = next;
+            year = nextYear;
+          });
+        },
+      ),
+    ],
+  );
+}
+
+TimelineBranch _branch(String id, String name, GraphNode pivot) {
+  final now = DateTime.utc(2026);
+  return TimelineBranch(
+    id: id,
+    name: name,
+    parentBranchId: null,
+    divergenceNodeId: pivot.id,
+    status: TimelineBranchStatus.active,
+    overlay: PersonalKnowledgeGraph(nodes: [pivot]),
+    forkedNodeIds: [pivot.id],
+    forkedEdgeIds: const [],
+    createdAt: now,
+    updatedAt: now,
+  );
+}

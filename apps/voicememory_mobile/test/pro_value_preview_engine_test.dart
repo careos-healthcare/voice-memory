@@ -17,8 +17,10 @@ void main() {
     final preview = buildProValuePreview(_context(PaywallTrigger.fullHistory));
     expect(preview.type, ProValuePreviewType.memoryLimit);
     expect(preview.title, 'Your pattern memory is growing');
-    expect(preview.body, contains('first 7 key moments'));
-    expect(preview.body, contains('weeks and months'));
+    expect(
+      preview.body,
+      'Free shows the first useful proof. Pro keeps the longer trail.',
+    );
     expect(preview.previewBullets, contains('Keep older moments'));
     expect(preview.ctaLabel, ConsumerUiCopy.unlockFullMemoryCta);
   });
@@ -79,6 +81,10 @@ void main() {
     );
     expect(preview.type, ProValuePreviewType.privateExport);
     expect(preview.title, 'Export your private recap');
+    expect(
+      preview.body,
+      'Free shows the first useful proof. Pro keeps the longer trail.',
+    );
     expect(preview.previewBullets, contains('Pattern summary'));
     expect(preview.previewBullets, contains('Key moments'));
   });

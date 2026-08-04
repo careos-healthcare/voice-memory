@@ -1,14 +1,8 @@
 /// Local beta feedback usefulness choice — never synced remotely.
-enum BetaFeedbackUsefulness {
-  useful,
-  notYet,
-}
+enum BetaFeedbackUsefulness { useful, notYet }
 
 /// Local beta feedback clarity choice — never synced remotely.
-enum BetaFeedbackClarity {
-  understood,
-  confused,
-}
+enum BetaFeedbackClarity { understood, confused }
 
 /// Persisted beta feedback state — metadata only, no journal content.
 class BetaFeedbackState {
@@ -54,13 +48,13 @@ class BetaFeedbackState {
   }
 
   Map<String, dynamic> toJson() => {
-        'dismissed': dismissed,
-        if (usefulness != null) 'usefulness': usefulness!.name,
-        if (clarity != null) 'clarity': clarity!.name,
-        if (note != null && note!.trim().isNotEmpty) 'note': note!.trim(),
-        if (testimonialCopied) 'testimonialCopied': true,
-        if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
-      };
+    'dismissed': dismissed,
+    if (usefulness != null) 'usefulness': usefulness!.name,
+    if (clarity != null) 'clarity': clarity!.name,
+    if (note != null && note!.trim().isNotEmpty) 'note': note!.trim(),
+    if (testimonialCopied) 'testimonialCopied': true,
+    if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
+  };
 
   static BetaFeedbackState fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;

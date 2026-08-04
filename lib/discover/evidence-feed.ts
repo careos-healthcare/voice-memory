@@ -55,8 +55,8 @@ export function buildEvidenceFeed(entries: JournalEntry[]): EvidenceFeedReport {
         source: theory.source,
         summary:
           newSupporting.length === 1
-            ? "One new supporting reflection since your last visit."
-            : `${newSupporting.length} new supporting reflections since your last visit.`,
+            ? "One new supporting moment since your last visit."
+            : `${newSupporting.length} new supporting moments since your last visit.`,
         quotes: newSupporting,
       });
     }
@@ -70,8 +70,8 @@ export function buildEvidenceFeed(entries: JournalEntry[]): EvidenceFeedReport {
         source: theory.source,
         summary:
           newContradicting.length === 1
-            ? "One new contradicting reflection since your last visit."
-            : `${newContradicting.length} new contradicting reflections since your last visit.`,
+            ? "One new contradicting moment since your last visit."
+            : `${newContradicting.length} new contradicting moments since your last visit.`,
         quotes: newContradicting,
       });
     }
@@ -114,7 +114,7 @@ export function buildEvidenceFeed(entries: JournalEntry[]): EvidenceFeedReport {
         theoryId: theory.id,
         theoryStatement: theory.statement,
         source: theory.source,
-        summary: "New possible cost signals in later reflections.",
+        summary: "New possible cost signals in later saved moments.",
         quotes: [],
         costEvidenceLines: newCostLines,
       });

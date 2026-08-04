@@ -6,19 +6,53 @@ export type ApiUsageKind =
   | "atmosphere"
   | "attest";
 
-const DAILY_LIMITS: Record<ApiUsageKind, number> = {
-  transcribe: Number(process.env.VOICEMEMORY_DAILY_TRANSCRIBE_LIMIT ?? "40"),
-  analyze: Number(process.env.VOICEMEMORY_DAILY_ANALYZE_LIMIT ?? "40"),
-  atmosphere: Number(process.env.VOICEMEMORY_DAILY_ATMOSPHERE_LIMIT ?? "20"),
-  attest: Number(process.env.VOICEMEMORY_DAILY_ATTEST_LIMIT ?? "60"),
+const DAILY_LIMIT_ENV: Record<ApiUsageKind, string> = {
+  transcribe: "VOICEMEMORY_DAILY_TRANSCRIBE_LIMIT",
+  analyze: "VOICEMEMORY_DAILY_ANALYZE_LIMIT",
+  atmosphere: "VOICEMEMORY_DAILY_ATMOSPHERE_LIMIT",
+  attest: "VOICEMEMORY_DAILY_ATTEST_LIMIT",
 };
 
-const MINUTE_BURST: Record<ApiUsageKind, number> = {
-  transcribe: Number(process.env.VOICEMEMORY_MINUTE_TRANSCRIBE_LIMIT ?? "6"),
-  analyze: Number(process.env.VOICEMEMORY_MINUTE_ANALYZE_LIMIT ?? "10"),
-  atmosphere: Number(process.env.VOICEMEMORY_MINUTE_ATMOSPHERE_LIMIT ?? "4"),
-  attest: Number(process.env.VOICEMEMORY_MINUTE_ATTEST_LIMIT ?? "12"),
+const MINUTE_LIMIT_ENV: Record<ApiUsageKind, string> = {
+  transcribe: "VOICEMEMORY_MINUTE_TRANSCRIBE_LIMIT",
+  analyze: "VOICEMEMORY_MINUTE_ANALYZE_LIMIT",
+  atmosphere: "VOICEMEMORY_MINUTE_ATMOSPHERE_LIMIT",
+  attest: "VOICEMEMORY_MINUTE_ATTEST_LIMIT",
 };
+
+const DEVELOPMENT_DAILY_LIMITS: Record<ApiUsageKind, number> = {
+  transcribe: 40, analyze: 40, atmosphere: 20, attest: 60,
+};
+const DEVELOPMENT_MINUTE_LIMITS: Record<ApiUsageKind, number> = {
+  transcribe: 6, analyze: 10, atmosphere: 4, attest: 12,
+};
+
+function configuredLimit(
+  kind: ApiUsageKind,
+  envNames: Record<ApiUsageKind, string>,
+  development: Record<ApiUsageKind, number>,
+): number {
+  const raw = process.env[envNames[kind]]?.trim();
+  if (!raw) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(`USAGE_RATE_LIMIT_CONFIG_INVALID:${envNames[kind]}`);
+    }
+    return development[kind];
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`USAGE_RATE_LIMIT_CONFIG_INVALID:${envNames[kind]}`);
+  }
+  return value;
+}
+
+function dailyLimit(kind: ApiUsageKind): number {
+  return configuredLimit(kind, DAILY_LIMIT_ENV, DEVELOPMENT_DAILY_LIMITS);
+}
+
+function minuteLimit(kind: ApiUsageKind): number {
+  return configuredLimit(kind, MINUTE_LIMIT_ENV, DEVELOPMENT_MINUTE_LIMITS);
+}
 
 const DAY_COLUMN: Record<ApiUsageKind, string> = {
   transcribe: "transcribe_count",
@@ -81,7 +115,7 @@ async function checkMinuteBurstPostgres(
   kind: ApiUsageKind,
 ): Promise<boolean> {
   const key = minuteKey();
-  const limit = MINUTE_BURST[kind];
+  const limit = minuteLimit(kind);
   const result = await dbQuery<{ request_count: number }>(
     `INSERT INTO api_minute_usage (subject_key, endpoint, minute_key, request_count)
      VALUES ($1, $2, $3, 1)
@@ -98,7 +132,7 @@ function checkMinuteBurstMemory(subject: string, kind: ApiUsageKind): boolean {
   const mapKey = `${subject}:${kind}:${minuteKey()}`;
   const map = minuteMap();
   const current = map.get(mapKey) ?? 0;
-  if (current >= MINUTE_BURST[kind]) return false;
+  if (current >= minuteLimit(kind)) return false;
   map.set(mapKey, current + 1);
   return true;
 }
@@ -182,12 +216,13 @@ export async function checkAndRecordApiUsage(
     : readDayMemory(subject, day);
 
   const current = before[kind];
-  if (current >= DAILY_LIMITS[kind]) {
+  const limit = dailyLimit(kind);
+  if (current >= limit) {
     return {
       allowed: false,
       reason: "daily_cap",
       dailyCount: current,
-      dailyLimit: DAILY_LIMITS[kind],
+      dailyLimit: limit,
     };
   }
 
@@ -198,7 +233,7 @@ export async function checkAndRecordApiUsage(
   return {
     allowed: true,
     dailyCount: after[kind],
-    dailyLimit: DAILY_LIMITS[kind],
+    dailyLimit: limit,
   };
 }
 
@@ -212,8 +247,39 @@ export async function peekDayUsage(
     : readDayMemory(subject, day);
 }
 
-export function getDailyLimits(): typeof DAILY_LIMITS {
-  return { ...DAILY_LIMITS };
+export async function deleteApiUsageForSubject(subject: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const [daily, minute] = await Promise.all([
+      dbQuery(`DELETE FROM api_usage WHERE subject_key = $1`, [subject]),
+      dbQuery(`DELETE FROM api_minute_usage WHERE subject_key = $1`, [subject]),
+    ]);
+    return (daily.rowCount ?? 0) + (minute.rowCount ?? 0);
+  }
+  let removed = 0;
+  for (const map of [dayMap(), minuteMap()]) {
+    for (const key of map.keys()) {
+      if (key.startsWith(`${subject}:`)) {
+        map.delete(key);
+        removed += 1;
+      }
+    }
+  }
+  return removed;
+}
+
+export function localApiUsageExists(subject: string): boolean {
+  return [...dayMap().keys(), ...minuteMap().keys()].some((key) =>
+    key.startsWith(`${subject}:`),
+  );
+}
+
+export function getDailyLimits(): Record<ApiUsageKind, number> {
+  return {
+    transcribe: dailyLimit("transcribe"),
+    analyze: dailyLimit("analyze"),
+    atmosphere: dailyLimit("atmosphere"),
+    attest: dailyLimit("attest"),
+  };
 }
 
 export function usesDurableRateLimits(): boolean {

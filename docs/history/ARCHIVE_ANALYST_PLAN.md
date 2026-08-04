@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Analyst V1 — plan
 
 ## Goal
@@ -90,3 +92,4 @@ Confidence **decreases** when evidence is weak, contradictory, or stale — see 
 - Evidence counts, dates, excerpts  
 - “The archive weighed…”, “Possible explanations”  
 - Avoid: “You should”, “Try to”, “Journey”, “Heal”
+

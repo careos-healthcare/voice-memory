@@ -3,8 +3,8 @@ import '../acquisition/audience_wedge_model.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../loop_mode/loop_mode_engine.dart';
 import '../loop_mode/loop_mode_model.dart';
-import '../../product/loop_mode_copy.dart';
 import '../first_session/first_session_pattern_model.dart';
+import '../impossible_insight/impossible_insight_engine.dart';
 import '../post_save_insight/selected_signal_model.dart';
 import '../post_save_insight/signal_feedback_model.dart';
 import 'interpretation_read_model.dart';
@@ -56,7 +56,7 @@ class InterpretationQualityEngine {
     if (text.trim().isEmpty ||
         ComparableEvidenceText.entryHasPendingTranscript(latestEntry)) {
       return const InterpretationResult(
-        reads: const [],
+        reads: [],
         needsClearerMoment: true,
         clearerMomentTitle: 'Transcript pending',
         clearerMomentPrompt:
@@ -68,6 +68,24 @@ class InterpretationQualityEngine {
     final fragments = _extractFragments(text);
     final tags = _extractTags(normalized);
     const loopEngine = LoopModeEngine();
+
+    final earlyEntries = [...priorEntries, latestEntry];
+    if (earlyEntries.length <= 5) {
+      final impossible = const ImpossibleInsightEngine().build(earlyEntries);
+      if (impossible != null) {
+        return InterpretationResult(
+          reads: const [],
+          needsClearerMoment: false,
+          archiveRepeatDetected:
+              impossible.value.evidence
+                  .map((item) => item.entryId)
+                  .toSet()
+                  .length >
+              1,
+          impossibleInsight: impossible,
+        );
+      }
+    }
 
     if (activeLoop != null &&
         activeLoop.isFullyImplementedLoop &&

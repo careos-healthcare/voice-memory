@@ -32,8 +32,7 @@ ProValuePreviewType _typeForTrigger(PaywallTrigger trigger) =>
 ) => switch (type) {
   ProValuePreviewType.memoryLimit || ProValuePreviewType.keyMomentSearch => (
     title: 'Your pattern memory is growing',
-    body:
-        'Free keeps your first 7 key moments. Pro keeps the longer proof trail across weeks and months.',
+    body: 'Free shows the first useful proof. Pro keeps the longer trail.',
     bullets: const [
       'Keep older moments',
       'Search all your moments',
@@ -66,7 +65,7 @@ ProValuePreviewType _typeForTrigger(PaywallTrigger trigger) =>
   ),
   ProValuePreviewType.privateExport => (
     title: 'Export your private recap',
-    body: 'Keep a copy of your pattern memory.',
+    body: 'Free shows the first useful proof. Pro keeps the longer trail.',
     bullets: const ['Pattern summary', 'Key moments', 'Next check'],
   ),
 };

@@ -347,7 +347,7 @@ function timelineItemsFromSeries(
           id: `timeline-gone-${s.subjectType}-${s.subject}`,
           kind: "timeline_phase",
           surface: "disappeared",
-          title: `"${s.subject}" faded from your reflections.`,
+          title: `"${s.subject}" faded from your saved words.`,
           detail: `Last mentioned ${lastMention.intensity}/10 on ${formatEntryDate(lastMention.entry.createdAt)} — absent for ${daysSince}+ days since.`,
           subject: s.subject,
           subjectType: s.subjectType,
@@ -364,7 +364,7 @@ function timelineItemsFromSeries(
         id: `timeline-change-${s.subjectType}-${s.subject}`,
         kind: "timeline_phase",
         surface: "changed_over_time",
-        title: `"${s.subject}" shifted across ${entryIds.length} reflections.`,
+        title: `"${s.subject}" shifted across ${entryIds.length} saved moments.`,
         detail: phases.map((p) => p.note).join(" "),
         subject: s.subject,
         subjectType: s.subjectType,
@@ -552,7 +552,7 @@ function detectBeforeAfter(
         kind: "before_after",
         surface: "calmer",
         title: "Work entries became less intense after the Sarah conversation.",
-        detail: `Work-tagged reflections averaged ${beforeAvg}/10 before vs ${afterAvg}/10 after ${formatEntryDate(entry.createdAt).split(",")[0]}.`,
+        detail: `Work-tagged saved moments averaged ${beforeAvg}/10 before vs ${afterAvg}/10 after ${formatEntryDate(entry.createdAt).split(",")[0]}.`,
         subject: "Sarah / work",
         subjectType: "entity",
         entryIds: [entry.id, ...workAfter.slice(0, 3).map((e) => e.id)],
@@ -610,7 +610,7 @@ function detectNarrativeArcs(
         id: `arc-unresolved-${series.subject}`,
         kind: "unresolved_loop",
         title: `"${series.subject}" keeps returning without closing the loop.`,
-        detail: `${intentions.length} entries name an intention around "${series.subject}" — the thread stays open across ${series.points.length} reflections.`,
+        detail: `${intentions.length} entries name an intention around "${series.subject}" — the thread stays open across ${series.points.length} saved moments.`,
         entryIds: series.points.map((p) => p.entry.id),
         confidence: 55 + intentions.length * 5,
       });
@@ -669,7 +669,7 @@ function detectNarrativeArcs(
       arcs.push({
         id: "arc-recovery-global",
         kind: "recovery_pattern",
-        title: "After a high-intensity entry, the next reflections read calmer.",
+        title: "After a high-intensity moment, the next saved moments read calmer.",
         detail: `Peak ${maxVal}/10 on ${formatEntryDate(sorted[maxIdx].createdAt)}; following entries averaged ${roundAvg(after.map((e) => e.reflection.emotionalIntensity))}/10.`,
         entryIds: [sorted[maxIdx].id, ...after.map((e) => e.id)],
         confidence: 56,
@@ -724,7 +724,7 @@ function detectIdentityDrift(sorted: JournalEntry[]): IdentityDriftInsight[] {
     results.push({
       id: "identity-more-direct",
       title: "Clearer commitment language showed up later.",
-      detail: `Phrases like "I will" and "decided" appear more in recent reflections.`,
+      detail: `Phrases like "I will" and "decided" appear more in recent saved words.`,
       direction: "more_direct",
       entryIds: late.filter((e) => CERTAINTY_RE.test(e.transcript)).map((e) => e.id).slice(0, 4),
       confidence: 52,
@@ -797,7 +797,7 @@ function buildPeriodSummaries(sorted: JournalEntry[]): PeriodSummary[] {
     const topTheme = [...themeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
 
     const lines = [
-      `${group.length} reflections · average intensity ${avg}/10.`,
+      `${group.length} saved moments · average intensity ${avg}/10.`,
       moods.length > 0 ? `Moods tagged: ${moods.slice(0, 4).join(", ")}.` : "",
       topTheme ? `"${topTheme}" surfaced most often.` : "",
     ].filter(Boolean);
@@ -827,7 +827,7 @@ function buildPeriodSummaries(sorted: JournalEntry[]): PeriodSummary[] {
       periodLabel: quarterLabel(toDayKey(group[0].createdAt)),
       title: `${quarterLabel(toDayKey(group[0].createdAt))}: your archive reads ${direction}.`,
       lines: [
-        `${group.length} reflections across the quarter.`,
+        `${group.length} saved moments across the quarter.`,
         `First half averaged ${early}/10; second half ${late}/10.`,
         direction === "calmer"
           ? "Language trended less charged toward the end of the quarter."

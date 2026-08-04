@@ -44,11 +44,7 @@ class ShareableArchiveProof {
   final List<String> lines;
 
   /// The full text placed on the clipboard or share sheet.
-  String get shareText => [
-        ...lines,
-        privacyFooter,
-        productLine,
-      ].join('\n');
+  String get shareText => [...lines, privacyFooter, productLine].join('\n');
 
   factory ShareableArchiveProof.none() =>
       const ShareableArchiveProof(hasProof: false);

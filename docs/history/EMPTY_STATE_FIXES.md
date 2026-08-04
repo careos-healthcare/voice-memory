@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Empty State Fixes — ArchiveMe Flutter
 
 **Date:** 2026-05-25  
@@ -135,3 +137,4 @@ Optional: 11 — `/archive-belief` with full evidence — change summary and met
 ---
 
 *End of report.*
+

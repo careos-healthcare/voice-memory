@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
 
+import '../services/security/biometric_vault_service.dart';
 import 'secure_storage.dart';
 
 /// Stores the local AES key for private JSON files at rest.
@@ -30,6 +31,10 @@ class SecurePrivateDataEncryptionKeyStore
 
   @override
   Future<List<int>?> readKeyBytes() async {
+    final vault = BiometricVaultService.instance;
+    if (vault.initialized && vault.isEnabled) {
+      return vault.requireKeyBytes();
+    }
     final encoded = await _secure.read(storageKey);
     if (encoded == null || encoded.isEmpty) return null;
     return base64Decode(encoded);
@@ -75,9 +80,8 @@ class InMemoryPrivateDataEncryptionKeyStore
   List<int>? _keyBytes;
 
   @override
-  Future<List<int>?> readKeyBytes() async => _keyBytes == null
-      ? null
-      : List<int>.from(_keyBytes!);
+  Future<List<int>?> readKeyBytes() async =>
+      _keyBytes == null ? null : List<int>.from(_keyBytes!);
 
   @override
   Future<void> writeKeyBytes(List<int> keyBytes) async {

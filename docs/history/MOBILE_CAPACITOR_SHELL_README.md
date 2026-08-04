@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ArchiveMe — native mobile shell (Capacitor)
 
 This folder supports **iOS and Android store shells** that load the existing **Next.js web app**. There is **no Flutter** code and **no native UI rewrite** in this repo.

@@ -227,12 +227,12 @@ function bodyForCandidate(candidate: MiniWowCandidate, tier: MiniWowTier): strin
   if (isThemeCandidate(candidate)) {
     const label = candidate.theme;
     if (tier === "echo") {
-      return `Your recent reflections may echo around “${label}” — worth noticing, not deciding.`;
+      return `Your recent saved moments may echo around “${label}” — worth noticing, not deciding.`;
     }
     if (tier === "forming") {
-      return `A possible thread around “${label}” may be forming across ${candidate.entryIds.length} reflections.`;
+      return `A possible thread around “${label}” may be forming across ${candidate.entryIds.length} saved moments.`;
     }
-    return `This preview ties ${candidate.entryIds.length} reflections that mention “${label}”.`;
+    return `This preview ties ${candidate.entryIds.length} saved moments that mention “${label}”.`;
   }
 
   const detail = candidate.detail.replace(/\s+/g, " ").trim();
@@ -318,7 +318,7 @@ function scorecardIngredientClue(
   const card = buildInsightScorecard({
     insightId: "mini-wow:early",
     surface: "blind_spot",
-    headline: "Early reflection signal",
+    headline: "Early pattern signal",
     sourceIds: isThemeCandidate(candidate) ? candidate.entryIds : candidate.entryIds,
     ingredients,
   });

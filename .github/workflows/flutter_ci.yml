@@ -1,0 +1,178 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.6
+  NODE_VERSION: 22.22.0
+
+jobs:
+  backend-monetization-contract:
+    name: Backend monetization contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Use pinned npm
+        run: npm install --global npm@11.6.2
+
+      - name: Resolve dependencies
+        run: npm ci
+
+      - name: Validate backend monetization contract
+        run: npm run validate:backend-release
+
+  quality-and-android:
+    name: Quality, core behavior, and Android debug
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Validate V1 release and capability contracts
+        working-directory: ${{ github.workspace }}
+        run: |
+          node scripts/archive-me-v1-release-architecture.mjs --check
+          node scripts/validate-archive-me-v1-capabilities.mjs
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib test integration_test
+
+      - name: Analyze with warnings fatal
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Run release-critical behavioral tests
+        run: |
+          flutter test \
+            test/onboarding_flow_test.dart \
+            test/app_router_guards_test.dart \
+            test/archive_intelligence_presentation_test.dart \
+            test/capture_pipeline_test.dart \
+            test/capture_pipeline_audio_vault_test.dart \
+            test/services/privacy/audio_vault_service_test.dart
+
+      - name: Validate V1 permission audit fixtures
+        run: bash tool/test_audit_v1_permissions.sh
+
+      - name: Merge and audit Android Release manifest
+        run: |
+          ./android/gradlew -p android :app:processReleaseMainManifest
+          bash tool/audit_v1_permissions.sh
+
+      - name: Reject generated local-data artifacts
+        run: bash ../../scripts/validate-mobile-clean-working-tree.sh
+
+      - name: Build Android debug artifact
+        run: flutter build apk --debug
+
+  flutter-tests:
+    name: Flutter tests (shard ${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Run Flutter test shard
+        run: flutter test --total-shards 2 --shard-index ${{ matrix.shard }}
+
+  ios-release-no-codesign:
+    name: iOS Release compile and permission audit
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: "26.1.1"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Resolve iOS dependencies
+        run: pod install --project-directory=ios
+
+      - name: Build iOS Release without signing
+        run: flutter build ios --release --no-codesign
+
+      - name: Audit built iOS Release permissions
+        run: |
+          bash tool/audit_v1_permissions.sh \
+            --ios-only \
+            --ios-app build/ios/iphoneos/Runner.app \
+            --ios-entitlements ios/Runner/Runner-Release.entitlements

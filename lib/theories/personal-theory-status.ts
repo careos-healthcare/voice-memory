@@ -18,7 +18,7 @@ export const EVIDENCE_BUILDING_REFLECTION_LABELS: Record<
   3: {
     ladderLabel: "Evidence growing",
     statusLine: "Evidence growing",
-    valueCopy: "Evidence may be accumulating across reflections.",
+    valueCopy: "Evidence may be accumulating across moments.",
   },
   4: {
     ladderLabel: "Theory under review",
@@ -47,7 +47,7 @@ export function evidenceBuildingLabelForCount(count: number): string {
 }
 
 export function evidenceBuildingValueCopyForCount(count: number): string {
-  if (count <= 0) return "Your archive is waiting for a first reflection.";
+  if (count <= 0) return "Your archive is waiting for a first moment.";
   const clamped = Math.min(5, Math.max(1, count)) as 1 | 2 | 3 | 4 | 5;
   return EVIDENCE_BUILDING_REFLECTION_LABELS[clamped].valueCopy;
 }
@@ -71,9 +71,9 @@ export function ladderLabelForStage(stage: ArchiveValueStage): string {
 
 export function nextEvidenceMilestoneCopy(count: number): string {
   if (count >= 5) return "Open your first working theory.";
-  if (count === 4) return "1 more reflection until your first working theory.";
-  if (count === 3) return "1 more reflection until your first working theory.";
-  if (count === 2) return "1 more reflection until ArchiveMe can compare this properly.";
-  if (count === 1) return "1 more reflection until ArchiveMe can compare this properly.";
-  return "Record your first reflection.";
+  if (count === 4) return "1 more moment until your first working theory.";
+  if (count === 3) return "1 more moment until your first working theory.";
+  if (count === 2) return "1 more moment until ArchiveMe can compare this properly.";
+  if (count === 1) return "1 more moment until ArchiveMe can compare this properly.";
+  return "Record your first moment.";
 }

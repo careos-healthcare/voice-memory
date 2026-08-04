@@ -91,18 +91,16 @@ export function getCachedArchiveSynthesis(
   monthKey: string,
   archiveHash: string,
 ): ArchiveMonthlyReview | null {
-  const key = synthesisCacheKey(subject, monthKey, archiveHash);
-  return monthlyMap().get(key) ?? null;
+  void synthesisCacheKey(subject, monthKey, archiveHash);
+  return null;
 }
 
 export function setCachedArchiveSynthesis(
   subject: string,
   review: ArchiveMonthlyReview,
 ): void {
-  const key = synthesisCacheKey(subject, review.monthKey, review.archiveHash);
-  const map = monthlyMap();
-  trimMap(map, key);
-  map.set(key, review);
+  void subject;
+  void review;
 }
 
 export function milestoneCacheKey(
@@ -116,17 +114,16 @@ export function getCachedMilestoneReview(
   subject: string,
   threshold: number,
 ): ArchiveMilestoneReview | null {
-  return milestoneMap().get(milestoneCacheKey(subject, threshold)) ?? null;
+  void milestoneCacheKey(subject, threshold);
+  return null;
 }
 
 export function setCachedMilestoneReview(
   subject: string,
   review: ArchiveMilestoneReview,
 ): void {
-  const key = milestoneCacheKey(subject, review.milestoneThreshold);
-  const map = milestoneMap();
-  trimMap(map, key);
-  map.set(key, review);
+  void subject;
+  void review;
 }
 
 export function deepDiveCacheKey(
@@ -140,17 +137,16 @@ export function getCachedDeepDiveNarrative(
   subject: string,
   archiveHash: string,
 ): ArchiveDeepDiveNarrative | null {
-  return deepDiveMap().get(deepDiveCacheKey(subject, archiveHash)) ?? null;
+  void deepDiveCacheKey(subject, archiveHash);
+  return null;
 }
 
 export function setCachedDeepDiveNarrative(
   subject: string,
   review: ArchiveDeepDiveNarrative,
 ): void {
-  const key = deepDiveCacheKey(subject, review.archiveHash);
-  const map = deepDiveMap();
-  trimMap(map, key);
-  map.set(key, review);
+  void subject;
+  void review;
 }
 
 export function historianCacheKey(
@@ -166,18 +162,14 @@ export function getCachedHistorianReport(
   monthKey: string,
   archiveHash: string,
 ): ArchiveHistorianReport | null {
-  return (
-    historianMap().get(historianCacheKey(subject, monthKey, archiveHash)) ??
-    null
-  );
+  void historianCacheKey(subject, monthKey, archiveHash);
+  return null;
 }
 
 export function setCachedHistorianReport(
   subject: string,
   review: ArchiveHistorianReport,
 ): void {
-  const key = historianCacheKey(subject, review.monthKey, review.archiveHash);
-  const map = historianMap();
-  trimMap(map, key);
-  map.set(key, review);
+  void subject;
+  void review;
 }

@@ -1,52 +1,50 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app.dart';
-import '../config/app_config.dart';
-import '../config/developer_settings_gate.dart';
-import '../config/trial_mode.dart';
-import '../features/activation/activation_tracker.dart';
-import '../features/beta/beta_activation_loop_tracker.dart';
-import '../features/objective/current_objective_widget_refresh_service.dart';
-import '../features/tomorrow_return/check_in_reminder_service.dart';
-import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
-import '../features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
+import '../product/core_product_vision.dart';
 import '../router/onboarding_gate.dart';
 import '../security/private_storage_audit.dart';
 import '../services/app_services.dart';
+import '../services/privacy/sensitive_temporary_audio_store.dart';
 import '../storage/app_storage_paths.dart';
 import '../theme/app_colors.dart';
 
 /// Completes startup work that touches local storage and platform services.
 Future<void> completeArchiveMeStartup() async {
   await AppStoragePaths.configureFromDeviceInfo();
+  await SensitiveTemporaryAudioStore.production.purge();
   await AppServices.initialize();
-  await OfflineVaultRecoveryLaunchController.prepareScan();
-  unawaited(AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery());
-  PrivateStorageAudit.logAuditReport();
-  await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
-  await CheckInReminderService.ensureInitialized();
-  await CuriosityNotificationLaunchController.ensureInitialized();
-  unawaited(BetaActivationLoopTracker.trackAppOpened());
-  if (TrialMode.enabled) {
-    onboardingGate.markComplete();
-    await ActivationTracker.trackTrialAppOpened();
-  } else {
-    await _loadDeveloperSettingsGate();
-    await onboardingGate.refresh();
+  await SensitiveTemporaryAudioStore.production.migrateLegacyOnce(
+    knownOwnerId: 'archive:${AppServices.instance.journalStore.ownerArchiveId}',
+  );
+  await SensitiveTemporaryAudioStore.production.purge();
+  await AppServices.instance.transcriptionWorkScheduler.initialize();
+  if (AppServices.instance.transcriptionLedger.jobs.any(
+    (job) => !job.isTerminal,
+  )) {
+    unawaited(AppServices.instance.transcriptionWorkScheduler.schedule());
   }
+  PrivateStorageAudit.logAuditReport();
+  await onboardingGate.refresh();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  scheduleDeferredArchiveMeStartup();
 }
 
-Future<void> _loadDeveloperSettingsGate() async {
-  final unlocked = await AppServices.instance.prefs.readBool(
-    DeveloperSettingsGate.prefsUnlockKey,
-  );
-  DeveloperSettingsGate.loadFromPrefs(unlocked);
+/// Starts the analytics provider, monetization, sync and the derived archive
+/// stores after the first frame.
+///
+/// Capture must never wait on any of them, so they are deliberately not part of
+/// [completeArchiveMeStartup]. They still run on every launch.
+void scheduleDeferredArchiveMeStartup() {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(AppServices.activateDeferredServices());
+  });
 }
 
 /// Shows the first frame immediately, then runs [completeArchiveMeStartup].
@@ -57,22 +55,37 @@ class ArchiveMeBootstrapApp extends StatefulWidget {
   State<ArchiveMeBootstrapApp> createState() => _ArchiveMeBootstrapAppState();
 }
 
-class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
+class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp>
+    with WidgetsBindingObserver {
   bool _ready = false;
   Object? _startupError;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _initAfterFirstFrame());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    unawaited(SensitiveTemporaryAudioStore.production.handleLifecycle(state));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _initAfterFirstFrame() async {
     try {
       await completeArchiveMeStartup();
     } catch (e, st) {
-      debugPrint('ARCHIVEME_SIMULATOR_NATIVE_ASSETS: startup failed: $e');
-      debugPrint('$st');
+      if (kDebugMode) {
+        debugPrint('ARCHIVEME_SIMULATOR_NATIVE_ASSETS: startup failed: $e');
+        debugPrint('$st');
+      }
       _startupError = e;
     }
     if (mounted) {
@@ -105,9 +118,57 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
     }
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SizedBox.shrink(),
+      home: ArchiveMeStartupSplash(),
+    );
+  }
+}
+
+class ArchiveMeStartupSplash extends StatelessWidget {
+  const ArchiveMeStartupSplash({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
+      body: SafeArea(
+        child: Center(
+          child: Semantics(
+            container: true,
+            liveRegion: true,
+            label: 'ArchiveMe. ${CoreProductVision.valueProposition} Loading.',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'ArchiveMe',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    CoreProductVision.valueProposition,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

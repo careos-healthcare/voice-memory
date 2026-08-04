@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T21:19:09.261433Z",
+  "generatedAt": "2026-07-31T16:41:02.441773Z",
   "validationVersion": 2,
   "scenarioCount": 15,
   "crossPersonaDuplicateBeliefs": [
@@ -53,7 +53,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 70%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -117,7 +117,7 @@
         "beliefStatement": "I avoid difficult conversations with my cofounder when stakes feel personal.",
         "confidencePercent": 70,
         "whySummary": [
-          "The archive is weighing 50 reflections with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
+          "The archive is weighing 50 saved moments with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
         ],
         "whyEvidenceCount": 50,
         "historyThen": "I avoid difficult conversations with my cofounder when stakes feel personal.",
@@ -293,7 +293,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 72%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -369,7 +369,7 @@
         "beliefStatement": "I postpone hiring until runway feels secure even when the team is overloaded.",
         "confidencePercent": 72,
         "whySummary": [
-          "The archive is weighing 100 reflections with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
+          "The archive is weighing 100 saved moments with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
         ],
         "whyEvidenceCount": 41,
         "historyThen": "I had a direct conversation with my cofounder about hiring today.",
@@ -621,7 +621,7 @@
         "missingEvidenceMessage": "Strong contradictions in the archive are pulling confidence down.",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Fewer contradictions on the same theme, or reflections that reconcile the tension."
+          "Fewer contradictions on the same theme, or moments that reconcile the tension."
         ]
       },
       "lifecycle": {
@@ -719,7 +719,7 @@
         "beliefStatement": "I had a direct conversation with my cofounder about hiring today.",
         "confidencePercent": 44,
         "whySummary": [
-          "The archive is weighing 151 reflections with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
+          "The archive is weighing 151 saved moments with usable transcripts. Strongest recent line: “I avoid difficult conversations with my cofounder when equity and product direction feel tense.”"
         ],
         "whyEvidenceCount": 90,
         "historyThen": "I avoid difficult conversations with my cofounder when stakes feel personal.",
@@ -1024,7 +1024,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 72%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -1101,7 +1101,7 @@
         "beliefStatement": "I feel exhausted before the workday starts and weekends do not refill me.",
         "confidencePercent": 72,
         "whySummary": [
-          "The archive is weighing 50 reflections with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
+          "The archive is weighing 50 saved moments with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
         ],
         "whyEvidenceCount": 40,
         "historyThen": "I feel exhausted before the workday starts and weekends do not refill me.",
@@ -1258,7 +1258,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 78%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -1358,7 +1358,7 @@
         "beliefStatement": "I feel exhausted before the workday starts and weekends do not refill me.",
         "confidencePercent": 78,
         "whySummary": [
-          "The archive is weighing 100 reflections with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
+          "The archive is weighing 100 saved moments with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
         ],
         "whyEvidenceCount": 40,
         "historyThen": "I focus on helping others at work even when I am depleted.",
@@ -1563,7 +1563,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 80%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -1664,7 +1664,7 @@
         "beliefStatement": "I feel exhausted before the workday starts and weekends do not refill me.",
         "confidencePercent": 80,
         "whySummary": [
-          "The archive is weighing 114 reflections with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
+          "The archive is weighing 114 saved moments with usable transcripts. Strongest recent line: “I feel exhausted before the workday starts and recovery weekends do not refill my energy at all.”"
         ],
         "whyEvidenceCount": 40,
         "historyThen": "I am learning to set boundaries with my manager about after-hours work.",
@@ -1905,7 +1905,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 71%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -1969,7 +1969,7 @@
         "beliefStatement": "I replay conversations until I feel certain about what someone meant.",
         "confidencePercent": 71,
         "whySummary": [
-          "The archive is weighing 50 reflections with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
+          "The archive is weighing 50 saved moments with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
         ],
         "whyEvidenceCount": 50,
         "historyThen": "I replay conversations until I feel certain about what someone meant.",
@@ -2156,7 +2156,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 70%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -2230,7 +2230,7 @@
         "beliefStatement": "I replay conversations until I feel certain about what someone meant.",
         "confidencePercent": 70,
         "whySummary": [
-          "The archive is weighing 100 reflections with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
+          "The archive is weighing 100 saved moments with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
         ],
         "whyEvidenceCount": 92,
         "historyThen": "I replay conversations until I feel certain about what someone meant.",
@@ -2453,7 +2453,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 70%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -2535,7 +2535,7 @@
         "beliefStatement": "I replay conversations until I feel certain about what someone meant.",
         "confidencePercent": 70,
         "whySummary": [
-          "The archive is weighing 146 reflections with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
+          "The archive is weighing 146 saved moments with usable transcripts. Strongest recent line: “I replay conversations until I feel certain about what someone meant and what I should do next.”"
         ],
         "whyEvidenceCount": 112,
         "historyThen": "I increasingly seek certainty before acting on anything important.",
@@ -2817,7 +2817,7 @@
         "missingEvidenceMessage": "No supporting mention in the most recent quarter of your archive.",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "A recent reflection that mentions this theme again in the latest part of your archive."
+          "A recent moment that mentions this theme again in the latest part of your archive."
         ]
       },
       "lifecycle": {
@@ -2887,7 +2887,7 @@
         "beliefStatement": "I avoid bringing up needs with my partner until resentment builds.",
         "confidencePercent": 47,
         "whySummary": [
-          "The archive is weighing 50 reflections with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
+          "The archive is weighing 50 saved moments with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
         ],
         "whyEvidenceCount": 19,
         "historyThen": "Work delivery pressure dominates my week.",
@@ -3043,7 +3043,7 @@
         "missingEvidenceMessage": "No supporting mention in the most recent quarter of your archive.",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "A recent reflection that mentions this theme again in the latest part of your archive."
+          "A recent moment that mentions this theme again in the latest part of your archive."
         ]
       },
       "lifecycle": {
@@ -3117,7 +3117,7 @@
         "beliefStatement": "I avoid bringing up needs with my partner until resentment builds.",
         "confidencePercent": 49,
         "whySummary": [
-          "The archive is weighing 100 reflections with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
+          "The archive is weighing 100 saved moments with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
         ],
         "whyEvidenceCount": 67,
         "historyThen": "I avoid bringing up needs with my partner until resentment builds.",
@@ -3275,7 +3275,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 66%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -3360,7 +3360,7 @@
         "beliefStatement": "I avoid bringing up needs with my partner until resentment builds.",
         "confidencePercent": 66,
         "whySummary": [
-          "The archive is weighing 185 reflections with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
+          "The archive is weighing 185 saved moments with usable transcripts. Strongest recent line: “My manager expects faster delivery on the roadmap and I am behind on quarterly goals.”"
         ],
         "whyEvidenceCount": 102,
         "historyThen": "I avoid bringing up needs with my partner until resentment builds.",
@@ -3580,7 +3580,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 71%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -3645,7 +3645,7 @@
         "beliefStatement": "I skip training when sleep is poor even though consistency matters to me.",
         "confidencePercent": 71,
         "whySummary": [
-          "The archive is weighing 50 reflections with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
+          "The archive is weighing 50 saved moments with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
         ],
         "whyEvidenceCount": 42,
         "historyThen": "I skip training when sleep is poor even though consistency matters to me.",
@@ -3827,7 +3827,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 71%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -3892,7 +3892,7 @@
         "beliefStatement": "I skip training when sleep is poor even though consistency matters to me.",
         "confidencePercent": 71,
         "whySummary": [
-          "The archive is weighing 100 reflections with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
+          "The archive is weighing 100 saved moments with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
         ],
         "whyEvidenceCount": 88,
         "historyThen": "I skip training when sleep is poor even though consistency matters to me.",
@@ -4139,7 +4139,7 @@
         "missingEvidenceMessage": "Evidence is mixed or thin for a strong conclusion (confidence 71%).",
         "strengthenLineCount": 1,
         "strengthenLines": [
-          "Additional reflections over time that repeat or refine this theme."
+          "Additional moments over time that repeat or refine this theme."
         ]
       },
       "lifecycle": {
@@ -4204,7 +4204,7 @@
         "beliefStatement": "I skip training when sleep is poor even though consistency matters to me.",
         "confidencePercent": 71,
         "whySummary": [
-          "The archive is weighing 114 reflections with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
+          "The archive is weighing 114 saved moments with usable transcripts. Strongest recent line: “I skip training when sleep is poor even though consistency matters more to me than perfect sessions.”"
         ],
         "whyEvidenceCount": 102,
         "historyThen": "I skip training when sleep is poor even though consistency matters to me.",

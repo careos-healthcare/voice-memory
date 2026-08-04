@@ -6,7 +6,7 @@ export const ENCRYPTED_SYNC_COPY = {
   encryptedBeforeLeave: ONBOARDING_ACCOUNT.backupLead,
   archiveNotServer: ACCOUNT_BACKUP.signedInLead,
   serverStoresCiphertext:
-    "Our servers store encrypted blobs only — never raw transcripts, audio, or reflection text.",
+    "Our servers store encrypted blobs only — never raw transcripts, audio, or saved words.",
   restoreWarning:
     "Restore merges your encrypted backup with this device. You will see a preview first.",
 } as const;

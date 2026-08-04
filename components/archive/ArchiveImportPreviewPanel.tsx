@@ -31,7 +31,7 @@ export function ArchiveImportPreviewPanel({
     <div className="space-y-4 rounded-2xl border border-white/[0.08] bg-zinc-900/40 p-4">
       <div className="space-y-1 text-sm text-zinc-400">
         <p>
-          {preview.entryCount} reflection{preview.entryCount === 1 ? "" : "s"}
+          {preview.entryCount} moment{preview.entryCount === 1 ? "" : "s"}
           {preview.bookmarkCount > 0
             ? ` · ${preview.bookmarkCount} bookmark${preview.bookmarkCount === 1 ? "" : "s"}`
             : ""}

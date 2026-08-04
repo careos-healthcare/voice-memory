@@ -287,7 +287,7 @@ export function EntryPhotoAttachment({
             </div>
           )}
           <p className="px-1 pt-2 text-xs text-zinc-600">
-            This photo stays with this reflection.
+            This photo stays with this moment.
           </p>
         </figure>
       ) : (
@@ -334,13 +334,13 @@ export function EntryPhotoAttachment({
 
       {phase === "compressing" || phase === "saving" ? (
         <p className="text-xs text-zinc-500" aria-live="polite">
-          {phase === "compressing" ? "Preparing photo…" : "Saving with this reflection…"}
+          {phase === "compressing" ? "Preparing photo…" : "Saving with this moment…"}
         </p>
       ) : null}
 
       {savedHint ? (
         <p className="text-xs text-zinc-500" aria-live="polite">
-          Photo saved with this reflection.
+          Photo saved with this moment.
         </p>
       ) : null}
 

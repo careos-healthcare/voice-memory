@@ -3,13 +3,9 @@ import 'package:flutter/foundation.dart';
 import '../../billing/archive_entitlement_reader.dart';
 import '../../config/app_config.dart';
 import '../../storage/mobile_prefs_store.dart';
+import '../monetization/domain/access_policy_engine.dart';
 
-enum ArchiveLoopEntitlementFeature {
-  map,
-  evidence,
-  edit,
-  returnCheck,
-}
+enum ArchiveLoopEntitlementFeature { map, evidence, edit, returnCheck }
 
 extension ArchiveLoopEntitlementFeatureIds on ArchiveLoopEntitlementFeature {
   String get id => name;
@@ -17,7 +13,7 @@ extension ArchiveLoopEntitlementFeatureIds on ArchiveLoopEntitlementFeature {
 
 class ArchiveLoopEntitlementState {
   const ArchiveLoopEntitlementState({
-    this.isPro = false,
+    bool isPro = false,
     this.hasCompletedFirstLoop = false,
     this.freeLoopMapUsed = false,
     this.freeReturnCheckUsed = false,
@@ -29,7 +25,9 @@ class ArchiveLoopEntitlementState {
     this.postActivationPaywallDismissed = false,
   });
 
-  final bool isPro;
+  /// Pro access is repository-owned; retained as an always-false compatibility
+  /// getter while old persisted quota payloads age out.
+  bool get isPro => false;
   final bool hasCompletedFirstLoop;
   final bool freeLoopMapUsed;
   final bool freeReturnCheckUsed;
@@ -55,7 +53,6 @@ class ArchiveLoopEntitlementState {
     bool? postActivationPaywallDismissed,
   }) {
     return ArchiveLoopEntitlementState(
-      isPro: isPro ?? this.isPro,
       hasCompletedFirstLoop:
           hasCompletedFirstLoop ?? this.hasCompletedFirstLoop,
       freeLoopMapUsed: freeLoopMapUsed ?? this.freeLoopMapUsed,
@@ -71,7 +68,6 @@ class ArchiveLoopEntitlementState {
   }
 
   Map<String, dynamic> toJson() => {
-    'isPro': isPro,
     'hasCompletedFirstLoop': hasCompletedFirstLoop,
     'freeLoopMapUsed': freeLoopMapUsed,
     'freeReturnCheckUsed': freeReturnCheckUsed,
@@ -86,7 +82,6 @@ class ArchiveLoopEntitlementState {
   static ArchiveLoopEntitlementState fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
     return ArchiveLoopEntitlementState(
-      isPro: json['isPro'] == true,
       hasCompletedFirstLoop: json['hasCompletedFirstLoop'] == true,
       freeLoopMapUsed: json['freeLoopMapUsed'] == true,
       freeReturnCheckUsed: json['freeReturnCheckUsed'] == true,
@@ -110,7 +105,7 @@ class ArchiveLoopEntitlementSnapshot {
   final ArchiveLoopEntitlementState state;
   final bool isPro;
 
-  bool get effectivePro => isPro || state.isPro;
+  bool get effectivePro => isPro;
 }
 
 class ArchiveLoopEntitlementStore {
@@ -143,10 +138,7 @@ class ArchiveLoopEntitlementStore {
 
   Future<ArchiveLoopEntitlementState> markFirstLoopCompleted() {
     return _mutate(
-      (s) => s.copyWith(
-        hasCompletedFirstLoop: true,
-        freeLoopMapUsed: true,
-      ),
+      (s) => s.copyWith(hasCompletedFirstLoop: true, freeLoopMapUsed: true),
     );
   }
 
@@ -171,24 +163,16 @@ class ArchiveLoopEntitlementStore {
   }
 
   Future<ArchiveLoopEntitlementState> incrementReturnCheckCount() {
-    return _mutate(
-      (s) => s.copyWith(returnCheckCount: s.returnCheckCount + 1),
-    );
+    return _mutate((s) => s.copyWith(returnCheckCount: s.returnCheckCount + 1));
   }
 
   Future<ArchiveLoopEntitlementState> setPro(bool value) {
-    if (value) {
-      ArchiveLoopEntitlementLog.logProActive(source: 'store');
-    }
-    return _mutate((s) => s.copyWith(isPro: value));
+    return load();
   }
 
   /// Debug / integration-test hook — never call from production UI paths.
   Future<ArchiveLoopEntitlementState> setProDebug(bool value) {
-    if (value) {
-      ArchiveLoopEntitlementLog.logProActive(source: 'debug');
-    }
-    return _mutate((s) => s.copyWith(isPro: value));
+    return load();
   }
 
   Future<ArchiveLoopEntitlementState> markPaywallDismissed() {
@@ -205,22 +189,19 @@ abstract class ArchiveLoopPaywallCopy {
   ArchiveLoopPaywallCopy._();
 
   static const headline = 'Keep testing your loop';
-  static const subheadline =
-      'You built a map from your own words. Pro keeps tracking what repeats, '
-      'what changes, and what helps you stop the loop sooner.';
-  static const priceFallback =
-      'Pro keeps tracking this loop over time.';
+  static const subheadline = MonetizationPolicy.paywallSupportingLine;
+  static const priceFallback = MonetizationPolicy.paywallSupportingLine;
   static const priceUnavailable =
-      'Purchases are not available right now. You can keep using your first map.';
+      'Purchases are not available right now. Your recordings remain available.';
   static const unavailableHint =
-      'Purchases are not available right now. You can dismiss and keep your first map.';
+      'Purchases are not available right now. You can dismiss this and keep using your recordings.';
   static const productUnavailableTitle =
       'Subscriptions are not available right now';
   static const productUnavailableBody =
-      'ArchiveMe could not load subscription options. You can still use your free loop map and try again later.';
+      'ArchiveMe could not load subscription options. Your recordings remain available; try again later.';
   static const tryAgainCta = 'Try again';
   static const purchaseFailedHint =
-      'Purchase did not complete. You can try again or continue with your free map.';
+      'Purchase did not complete. You can try again or continue using your recordings.';
   static const startProCta = 'Keep testing this loop';
   static const restoreCta = 'Restore purchases';
   static const notNowCta = 'Not now';
@@ -229,8 +210,7 @@ abstract class ArchiveLoopPaywallCopy {
   static const subscriptionAutoRenewingSummary =
       'Monthly or yearly auto-renewing subscription.';
   static const subscriptionMonthlyTitle = 'ArchiveMe Pro Monthly';
-  static const subscriptionMonthlyDuration =
-      'Monthly plan renews every month.';
+  static const subscriptionMonthlyDuration = 'Monthly plan renews every month.';
   static const subscriptionYearlyTitle = 'ArchiveMe Pro Yearly';
   static const subscriptionYearlyDuration = 'Yearly plan renews every year.';
   static const subscriptionPriceUnavailable =
@@ -257,8 +237,7 @@ abstract class ArchiveLoopPaywallCopy {
 
   static String featureHeadline(ArchiveLoopEntitlementFeature? feature) {
     return switch (feature) {
-      ArchiveLoopEntitlementFeature.returnCheck =>
-        'Keep testing what changed',
+      ArchiveLoopEntitlementFeature.returnCheck => 'Keep testing what changed',
       ArchiveLoopEntitlementFeature.edit => 'Keep your loop map alive',
       ArchiveLoopEntitlementFeature.evidence => 'Keep your loop map alive',
       ArchiveLoopEntitlementFeature.map => 'Keep your loop map alive',
@@ -270,13 +249,12 @@ abstract class ArchiveLoopPaywallCopy {
     return switch (feature) {
       ArchiveLoopEntitlementFeature.returnCheck =>
         'Free shows the first loop. Pro tracks whether it comes back or '
-        'changes over time.',
+            'changes over time.',
       ArchiveLoopEntitlementFeature.evidence =>
         'Pro saves the evidence trail so the map can change with you.',
-      ArchiveLoopEntitlementFeature.edit ||
-      ArchiveLoopEntitlementFeature.map =>
+      ArchiveLoopEntitlementFeature.edit || ArchiveLoopEntitlementFeature.map =>
         'Your first loop map is free. Pro keeps future tests, edits, and '
-        'changes connected to the same map.',
+            'changes connected to the same map.',
       null => '',
     };
   }
@@ -295,28 +273,23 @@ abstract class ArchiveLoopEntitlementGate {
         : await entitlementStore.load();
     final entitlementReader =
         reader ?? ArchiveEntitlementReader.forAccessCheck();
-    final billingPro = entitlementStore != null ? await entitlementReader.isPro : false;
-    final isPro = billingPro || state.isPro;
-    if (billingPro && store != null && !state.isPro) {
-      await store.setPro(true);
-      ArchiveLoopEntitlementLog.logProActive(source: 'billing');
-    }
-    return ArchiveLoopEntitlementSnapshot(
-      state: isPro ? state.copyWith(isPro: true) : state,
-      isPro: isPro,
-    );
+    final billingPro = entitlementStore != null
+        ? (await entitlementReader.entitlement).hasProAccess
+        : false;
+    final isPro = billingPro;
+    return ArchiveLoopEntitlementSnapshot(state: state, isPro: isPro);
   }
 
   static bool canCreateNewMap(ArchiveLoopEntitlementSnapshot snap) {
-    if (snap.effectivePro) {
-      ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.map);
-      return true;
-    }
-    if (!snap.state.hasCompletedFirstLoop) {
-      ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.map);
-      return true;
-    }
-    final allowed = snap.state.mapCount < 1;
+    final allowed = AccessPolicyEngine.decide(
+      capability: CapabilityId.advancedEvidenceGrouping,
+      entitlement: snap.effectivePro
+          ? const EntitlementSnapshot(
+              plan: PlanKind.pro,
+              status: EntitlementStatus.active,
+            )
+          : const EntitlementSnapshot.free(),
+    ).allowed;
     if (allowed) {
       ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.map);
     } else {
@@ -325,20 +298,11 @@ abstract class ArchiveLoopEntitlementGate {
     return allowed;
   }
 
-  static bool canSaveEvidence(ArchiveLoopEntitlementSnapshot snap) {
-    if (snap.effectivePro) {
-      ArchiveLoopEntitlementLog.logAllowed(
-        ArchiveLoopEntitlementFeature.evidence,
-      );
-      return true;
-    }
-    if (!snap.state.hasCompletedFirstLoop) {
-      ArchiveLoopEntitlementLog.logAllowed(
-        ArchiveLoopEntitlementFeature.evidence,
-      );
-      return true;
-    }
-    final allowed = snap.state.evidenceCount < 3;
+  static bool canSaveEvidence(ArchiveLoopEntitlementSnapshot _) {
+    final allowed = AccessPolicyEngine.decide(
+      capability: CapabilityId.openEvidenceSource,
+      entitlement: const EntitlementSnapshot.unknown(),
+    ).allowed;
     if (allowed) {
       ArchiveLoopEntitlementLog.logAllowed(
         ArchiveLoopEntitlementFeature.evidence,
@@ -351,16 +315,11 @@ abstract class ArchiveLoopEntitlementGate {
     return allowed;
   }
 
-  static bool canEditNode(ArchiveLoopEntitlementSnapshot snap) {
-    if (snap.effectivePro) {
-      ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.edit);
-      return true;
-    }
-    if (!snap.state.hasCompletedFirstLoop) {
-      ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.edit);
-      return true;
-    }
-    final allowed = snap.state.editCount < 1;
+  static bool canEditNode(ArchiveLoopEntitlementSnapshot _) {
+    final allowed = AccessPolicyEngine.decide(
+      capability: CapabilityId.editOriginalContent,
+      entitlement: const EntitlementSnapshot.unknown(),
+    ).allowed;
     if (allowed) {
       ArchiveLoopEntitlementLog.logAllowed(ArchiveLoopEntitlementFeature.edit);
     } else {
@@ -369,20 +328,11 @@ abstract class ArchiveLoopEntitlementGate {
     return allowed;
   }
 
-  static bool canCreateReturnCheck(ArchiveLoopEntitlementSnapshot snap) {
-    if (snap.effectivePro) {
-      ArchiveLoopEntitlementLog.logAllowed(
-        ArchiveLoopEntitlementFeature.returnCheck,
-      );
-      return true;
-    }
-    if (!snap.state.hasCompletedFirstLoop) {
-      ArchiveLoopEntitlementLog.logAllowed(
-        ArchiveLoopEntitlementFeature.returnCheck,
-      );
-      return true;
-    }
-    final allowed = snap.state.returnCheckCount < 1;
+  static bool canCreateReturnCheck(ArchiveLoopEntitlementSnapshot _) {
+    final allowed = AccessPolicyEngine.decide(
+      capability: CapabilityId.createTypedEntry,
+      entitlement: const EntitlementSnapshot.unknown(),
+    ).allowed;
     if (allowed) {
       ArchiveLoopEntitlementLog.logAllowed(
         ArchiveLoopEntitlementFeature.returnCheck,
@@ -396,11 +346,9 @@ abstract class ArchiveLoopEntitlementGate {
   }
 
   static bool shouldShowPostActivationPaywall(
-    ArchiveLoopEntitlementSnapshot snap,
+    ArchiveLoopEntitlementSnapshot _,
   ) {
-    return snap.state.hasCompletedFirstLoop &&
-        !snap.effectivePro &&
-        !snap.state.postActivationPaywallDismissed;
+    return false;
   }
 
   static bool shouldShowUpgradeForFeature({
@@ -412,8 +360,7 @@ abstract class ArchiveLoopEntitlementGate {
       ArchiveLoopEntitlementFeature.map => !canCreateNewMap(snap),
       ArchiveLoopEntitlementFeature.evidence => !canSaveEvidence(snap),
       ArchiveLoopEntitlementFeature.edit => !canEditNode(snap),
-      ArchiveLoopEntitlementFeature.returnCheck =>
-        !canCreateReturnCheck(snap),
+      ArchiveLoopEntitlementFeature.returnCheck => !canCreateReturnCheck(snap),
     };
   }
 
@@ -506,11 +453,8 @@ abstract class ArchiveLoopPaywallLog {
     required String trigger,
     ArchiveLoopEntitlementFeature? feature,
   }) {
-    final featurePart =
-        feature == null ? '' : ' feature=${feature.id}';
-    debugPrint(
-      'ARCHIVEME_PAYWALL_SHOWN trigger=$trigger$featurePart',
-    );
+    final featurePart = feature == null ? '' : ' feature=${feature.id}';
+    debugPrint('ARCHIVEME_PAYWALL_SHOWN trigger=$trigger$featurePart');
   }
 
   static void logCtaTapped() {

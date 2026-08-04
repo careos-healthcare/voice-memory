@@ -145,6 +145,7 @@ async function handleUpgradeRequest(
       client,
       sessionId: auth.sessionId,
       subject: auth.subject,
+      usageReservationId: auth.usageReservationId,
       apiKey: getGeminiApiKey(),
       modelId: GEMINI_LIVE_MODEL_ID,
     }).catch((error) => {

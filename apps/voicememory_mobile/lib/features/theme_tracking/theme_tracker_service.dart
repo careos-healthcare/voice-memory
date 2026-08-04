@@ -87,6 +87,22 @@ class ThemeTrackerService {
     }
     return out.isEmpty ? null : out;
   }
+
+  /// Tolerates legacy preference maps containing strings, nulls, or malformed
+  /// values instead of failing the profile screen during hydration.
+  static Map<String, int>? parseDiscoverBaseline(Map<String, dynamic>? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    final parsed = <String, int>{};
+    for (final entry in raw.entries) {
+      final count = switch (entry.value) {
+        final num value => value.toInt(),
+        final String value => int.tryParse(value.trim()),
+        _ => null,
+      };
+      if (count != null && count > 0) parsed[entry.key] = count;
+    }
+    return parsed.isEmpty ? null : parsed;
+  }
 }
 
 List<JournalEntry> _eligibleEntries(List<JournalEntry> entries) {

@@ -7,8 +7,8 @@ import '../../design/archive_mobile_typography.dart';
 import '../../security/app_lock_service.dart';
 import '../../security/app_lock_settings.dart';
 import '../../security/pin_hash.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/archive_semantic_colors.dart';
 
 /// Two-step PIN setup: create, then confirm. Used both for first-time
 /// enablement and for changing the PIN (change requires an already
@@ -81,13 +81,14 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ArchiveSemanticColors.of(context);
     return Scaffold(
       key: const Key('setup_pin_screen'),
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundPrimary,
+        backgroundColor: colors.background,
         elevation: 0,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: colors.primaryText,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -111,7 +112,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                   AppLockCopy.setupBody,
                   style: ArchiveMobileTypography.responsiveHelper(
                     context,
-                  ).copyWith(color: AppColors.textSecondary),
+                  ).copyWith(color: colors.secondaryText),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextField(
@@ -137,7 +138,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                     key: const Key('setup_pin_mismatch'),
                     style: ArchiveMobileTypography.responsiveHelper(
                       context,
-                    ).copyWith(color: AppColors.error),
+                    ).copyWith(color: colors.destructive),
                   ),
                 ],
                 const SizedBox(height: AppSpacing.md),
@@ -156,7 +157,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                   textAlign: TextAlign.center,
                   style: ArchiveMobileTypography.responsiveHelper(
                     context,
-                  ).copyWith(color: AppColors.textSecondary),
+                  ).copyWith(color: colors.secondaryText),
                 ),
               ],
             ),

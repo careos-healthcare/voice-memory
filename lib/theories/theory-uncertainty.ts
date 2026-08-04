@@ -52,15 +52,15 @@ export interface TheoryUncertaintyInput {
 
 function missingEvidenceNote(input: TheoryUncertaintyInput, missingCount: number): string {
   if (missingCount > 0) {
-    return `${missingCount} more reflection${missingCount === 1 ? "" : "s"} may help test this pattern.`;
+    return `${missingCount} more moment${missingCount === 1 ? "" : "s"} may help test this pattern.`;
   }
   if (input.contradictingEvidenceCount === 0 && input.supportingEvidenceCount > 0) {
-    return "No opposing reflections captured in range yet — one-sided so far.";
+    return "No opposing moments captured in range yet — one-sided so far.";
   }
   if (input.contradictingEvidenceCount > 0 && input.supportingEvidenceCount > 0) {
-    return "Supporting and contradicting reflections both appear — still open.";
+    return "Supporting and contradicting moments both appear — still open.";
   }
-  return "More reflections over time may narrow or shift this.";
+  return "More moments over time may narrow or shift this.";
 }
 
 export function resolveTheoryDisplayStatus(

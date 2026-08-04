@@ -21,7 +21,7 @@ export function AvoidanceCard({
   signals,
   title = "What stays vague",
   subtitle = "Where you name the feeling but not the thing",
-  emptyLabel = "Indirect phrasing appears as you accumulate voice reflections.",
+  emptyLabel = "Indirect phrasing appears as you save more voice moments.",
   maxItems = 5,
   highlightEntryId,
   hideWhenEmpty = false,

@@ -25,7 +25,7 @@ if (!gate.includes("tier1_production_denied")) {
   failures.push("internal-gate must deny tier1 routes in production");
 }
 
-const atmosphere = fs.readFileSync(path.join(ROOT, "app/api/atmosphere/route.ts"), "utf8");
+const atmosphere = fs.readFileSync(path.join(ROOT, "experiments/backend/app/api/atmosphere/route.ts"), "utf8");
 if (!atmosphere.includes("guardOpenAiRoute")) {
   failures.push("atmosphere must use guardOpenAiRoute");
 }

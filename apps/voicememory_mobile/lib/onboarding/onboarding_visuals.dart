@@ -127,7 +127,11 @@ class _PatternNetworkVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = OnboardingLayout.isWide(context) ? 160.0 : 132.0;
+    final height = OnboardingLayout.isWide(context)
+        ? 160.0
+        : OnboardingLayout.isCompact(context)
+        ? 96.0
+        : 132.0;
     return SizedBox(
       height: height,
       child: DecoratedBox(
@@ -228,7 +232,7 @@ class _EvidenceChipsVisual extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Examples from real reflections',
+          'Examples from real saved moments',
           style: OnboardingTypography.label(),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -432,7 +436,11 @@ class _StepBadgeVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = OnboardingLayout.isWide(context) ? 88.0 : 72.0;
+    final size = OnboardingLayout.isWide(context)
+        ? 88.0
+        : OnboardingLayout.isCompact(context)
+        ? 56.0
+        : 72.0;
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
@@ -449,7 +457,11 @@ class _StepBadgeVisual extends StatelessWidget {
         child: Text(
           '$stepNumber',
           style: OnboardingTypography.title(context).copyWith(
-            fontSize: OnboardingLayout.isWide(context) ? 34 : 28,
+            fontSize: OnboardingLayout.isWide(context)
+                ? 34
+                : OnboardingLayout.isCompact(context)
+                ? 22
+                : 28,
             color: AppColors.accentPrimary,
           ),
         ),

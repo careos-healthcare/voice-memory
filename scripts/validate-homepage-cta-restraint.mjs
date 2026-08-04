@@ -150,8 +150,7 @@ for (const file of ["app/page.tsx", "app/entry/[id]/page.tsx"]) {
 }
 
 if (
-  (!activation.includes("Record your first reflection") &&
-    !activation.includes("Record a reflection")) ||
+  !activation.includes("ARCHIVE_ONBOARDING_RECORD_CTA") ||
   !activation.includes("canShowRecordCta")
 ) {
   console.error(
@@ -160,14 +159,14 @@ if (
   process.exit(1);
 }
 
-if (!recorder.includes("Start reflection") || !recorder.includes("canShowRecorderCta")) {
+if (!recorder.includes("Start recording") || !recorder.includes("canShowRecorderCta")) {
   console.error(
     "Homepage CTA validation failed — recorder start CTA must be gated by canShowRecorderCta.",
   );
   process.exit(1);
 }
 
-const habitRecordMatches = habit.match(/Record a reflection/g) ?? [];
+const habitRecordMatches = habit.match(/Record a moment/g) ?? [];
 if (habitRecordMatches.length > 0) {
   const gated =
     habit.includes("suppressRecordCta") &&
@@ -180,7 +179,7 @@ if (habitRecordMatches.length > 0) {
   }
 }
 
-if (pageContent.includes("Start reflection") || pageContent.includes("Record a reflection")) {
+if (pageContent.includes("Start recording") || pageContent.includes("Record a moment")) {
   console.error(
     "Homepage CTA validation failed — page must not inline duplicate recorder CTAs.",
   );

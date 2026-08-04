@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../record/start_here_analytics.dart';
 import '../../record/start_here_catalog.dart';
 import '../../record/start_here_visibility.dart';
-import '../../theme/voicememory_colors.dart';
+import '../../theme/archive_semantic_colors.dart';
 
 /// Start Here prompts above the record CTA — until first archive milestone.
 class StartHereRecordingSection extends StatefulWidget {
@@ -65,7 +65,6 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
 
   void _onTap(String prompt) {
     StartHereAnalytics.selected(
-      promptText: prompt,
       surface: widget.surface,
       captureMode: widget.captureMode,
     );
@@ -76,6 +75,7 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
   Widget build(BuildContext context) {
     _logShownIfNeeded();
 
+    final colors = ArchiveSemanticColors.of(context);
     if (!_showStartHere) {
       return Semantics(
         label: StartHereCatalog.continueBuildingArchive,
@@ -83,7 +83,7 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
           StartHereCatalog.continueBuildingArchive,
           key: const Key('start_here_continue_message'),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: VoiceMemoryColors.textSecondary,
+            color: colors.secondaryText,
             height: 1.45,
           ),
         ),
@@ -93,7 +93,7 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
     final scheme = Theme.of(context).colorScheme;
     final optionFill = scheme.brightness == Brightness.dark
         ? scheme.surfaceContainerHighest
-        : VoiceMemoryColors.surfaceSecondary;
+        : colors.surface;
     final optionBorder = scheme.outline.withValues(alpha: 0.45);
     final prompts = widget.compactPrompts && widget.maxPrompts != null
         ? StartHereCatalog.prompts.take(widget.maxPrompts!).toList()
@@ -142,15 +142,14 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
           StartHereCatalog.sectionTitle,
           key: const Key('start_here_section_title'),
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: VoiceMemoryColors.textPrimary,
+            color: colors.primaryText,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 10),
         Semantics(
           container: true,
-          label:
-              '${StartHereCatalog.sectionTitle}. ${prompts.length} options.',
+          label: '${StartHereCatalog.sectionTitle}. ${prompts.length} options.',
           child: promptOptions(),
         ),
       ],
@@ -187,9 +186,7 @@ class _StartHereOption extends StatelessWidget {
           borderRadius: BorderRadius.circular(compact ? 10 : 12),
           child: Container(
             width: compact ? null : double.infinity,
-            constraints: compact
-                ? const BoxConstraints(maxWidth: 320)
-                : null,
+            constraints: compact ? const BoxConstraints(maxWidth: 320) : null,
             padding: EdgeInsets.symmetric(
               horizontal: compact ? 12 : 14,
               vertical: compact ? 8 : 12,
@@ -201,7 +198,7 @@ class _StartHereOption extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: VoiceMemoryColors.textPrimary,
+                color: ArchiveSemanticColors.of(context).primaryText,
                 height: 1.35,
                 fontSize: compact ? 13 : null,
               ),

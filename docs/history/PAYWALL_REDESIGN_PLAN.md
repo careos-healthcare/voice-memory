@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ArchiveMe Paywall Redesign
 
 **Goal:** The paywall feels like *your archive discovered something important* — not a generic subscription upsell.
@@ -110,3 +112,4 @@ The archive has begun identifying patterns, contradictions, and changes over tim
 - Pro users see active state, not upsell
 - Secondary exit always available
 - No modification to `BillingService` / RevenueCat IDs
+

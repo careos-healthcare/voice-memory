@@ -110,7 +110,7 @@ function experimentForIngredient(
         smallThing:
           "Write the prediction in one sentence before the week unfolds; later, add what actually happened beside it — same page, two columns.",
         tryNextTime:
-          "Try this next time you feel sure something will go wrong: date the prediction, then let later reflections answer it.",
+          "Try this next time you feel sure something will go wrong: date the prediction, then let later saved moments answer it.",
         checkWhether:
           "Check whether the outcome matched the fear, or only matched the mood you were in when you wrote it.",
       };

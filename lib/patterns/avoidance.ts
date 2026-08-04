@@ -218,7 +218,7 @@ function detectVagueReferences(entries: JournalEntry[]): AvoidanceSignal[] {
         : `"${label}" — you describe the feeling without the referent`,
     (label, entryCount, evidenceCount) =>
       entryCount >= 2
-        ? `"${label}" in ${entryCount} reflections (${evidenceCount} uses) while the person, place, or detail stays off-record.`
+        ? `"${label}" in ${entryCount} saved moments (${evidenceCount} uses) while the person, place, or detail stays off-record.`
         : `"${label}" points at something you don't name — the subject stays implicit.`,
   );
 
@@ -251,7 +251,7 @@ function detectHedging(entries: JournalEntry[]): AvoidanceSignal[] {
         kind: "emotional_hedging",
         title: "Several hedging phrases stack in this entry",
         explanation:
-          "Softeners cluster in one reflection — you defer certainty while still circling the topic.",
+          "Softeners cluster in one saved moment — you defer certainty while still circling the topic.",
         evidence: [...labels].flatMap((l) => hedgeHits.get(l) ?? []).slice(0, 4),
         entryIds: new Set([entry.id]),
         trigger: [...labels].join(", "),
@@ -298,7 +298,7 @@ function detectIndirectReferences(entries: JournalEntry[]): AvoidanceSignal[] {
         : `"${label}" — indirect reference`,
     (label, entryCount, evidenceCount) =>
       entryCount >= 2
-        ? `"${label}" in ${entryCount} reflections; the person or topic stays unnamed.`
+        ? `"${label}" in ${entryCount} saved moments; the person or topic stays unnamed.`
         : `"${label}" points at someone or something you don't name directly.`,
   );
 
@@ -336,7 +336,7 @@ function detectUnnamedStressors(entries: JournalEntry[]): AvoidanceSignal[] {
       title: "Stress language without naming the source",
       explanation:
         entryIds.size >= 2
-          ? `Pressure or tension words in ${entryIds.size} reflections — no named who, what, or where.`
+          ? `Pressure or tension words in ${entryIds.size} saved moments — no named who, what, or where.`
           : "Pressure or tension appears more than once without naming the source.",
       evidence,
       entryIds,

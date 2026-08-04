@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Theory V1 — plan
 
 ## Goal
@@ -56,3 +58,4 @@ When `confidencePercent < 60`:
 - Title: **The Archive's Current Theory**
 - Low confidence lead: **The archive is not yet confident.**
 - Body: **The archive needs more evidence before reaching a strong conclusion.**
+

@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Memory pipeline
 
 End-to-end flow from voice capture to revisit tracking. All persistence is local-first unless encrypted account sync is enabled.
@@ -74,3 +76,4 @@ See `types/sync-continuity.ts` for the sync-ready schema.
 | `voicememory_sync_device_id` | Sync device identity |
 
 Audio recordings live in IndexedDB (`voicememory_audio`), not localStorage.
+

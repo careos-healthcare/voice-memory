@@ -1,0 +1,6 @@
+#include "../../Flutter/Flutter-Release.xcconfig"
+#include "Warnings.xcconfig"
+GCC_OPTIMIZATION_LEVEL = 3
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NDEBUG=1
+OTHER_CFLAGS = $(inherited) -ffile-prefix-map=$(SRCROOT)=.
+OTHER_CPLUSPLUSFLAGS = $(inherited) -ffile-prefix-map=$(SRCROOT)=.

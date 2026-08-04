@@ -44,10 +44,8 @@ abstract final class PatternNameStore {
   static String displayLabel({
     required String patternKey,
     required String groundedPhrase,
-  }) =>
-      _customNames[patternKey] ?? groundedPhrase;
+  }) => _customNames[patternKey] ?? groundedPhrase;
 
-  @visibleForTesting
   static String? normalizeCustomName(String raw) {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) return null;
@@ -68,9 +66,9 @@ abstract final class PatternNameStore {
   }
 
   static Map<String, dynamic> toJson() => {
-        'confirmed': _confirmedKeys.toList()..sort(),
-        'renamed': Map<String, String>.from(_customNames),
-      };
+    'confirmed': _confirmedKeys.toList()..sort(),
+    'renamed': Map<String, String>.from(_customNames),
+  };
 
   static Future<void> ensureLoaded() async {
     if (!AppServices.isInitialized) return;
@@ -101,9 +99,11 @@ abstract final class PatternNameStore {
     AppServices.instance.prefs.writeMap(_prefsKey, toJson());
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void invalidateCache() {
     _confirmedKeys.clear();
     _customNames.clear();
   }
+
+  @visibleForTesting
+  static void resetForTest() => invalidateCache();
 }

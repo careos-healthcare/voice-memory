@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Archive Quality Report
 
 **Date:** 2026-05-25  
@@ -258,3 +260,4 @@ dart run tool/summarize_archive_quality.dart
 ## Raw artifacts
 
 - `apps/voicememory_mobile/tool/output/archive_quality_raw.json` — full structured outputs + automated metrics (`genericPhraseHits`, `counterExceedsSupport`, `debatesMissingExcerpts`)
+

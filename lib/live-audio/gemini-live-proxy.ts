@@ -4,6 +4,7 @@ import {
   parseLiveClientMessage,
   parseLiveServerJson,
   serializeLiveClientMessage,
+  type BidiClientMessage,
   type LiveServerEvent,
 } from "@/lib/live-audio/protocol";
 import { geminiLiveWebSocketUrl } from "@/lib/live-audio/upstream-url";
@@ -14,7 +15,6 @@ export interface GeminiLiveProxyOptions {
   apiKey?: string;
   connectWebSocket?: (url: string) => Promise<GeminiLiveWebSocket>;
 }
-
 export interface GeminiLiveWebSocket {
   send(data: string): void;
   close(code?: number, reason?: string): void;
@@ -57,6 +57,8 @@ export class GeminiLiveProxy {
     onServerEvents: (events: LiveServerEvent[]) => void;
     onClientRelay?: (rawJson: string) => void;
     onStateChange?: (state: GeminiLiveProxyState) => void;
+    onUpstreamBytes?: (bytes: number) => void;
+    onDownstreamBytes?: (bytes: number) => void;
   }): Promise<void> {
     if (this._state !== "idle" && this._state !== "closed" && this._state !== "error") {
       throw new Error("GeminiLiveProxy already active");
@@ -76,6 +78,7 @@ export class GeminiLiveProxy {
       this._setupComplete = false;
 
       this._socket.onMessage((raw) => {
+        handlers.onDownstreamBytes?.(Buffer.byteLength(raw, "utf8"));
         handlers.onClientRelay?.(raw);
         const events = parseLiveServerJson(raw);
         handlers.onServerEvents(events);
@@ -97,7 +100,7 @@ export class GeminiLiveProxy {
         modelId: this.options.modelId,
         voiceName: this.options.voiceName,
       });
-      this.sendUpstream(setup);
+      this.sendUpstream(setup, handlers.onUpstreamBytes);
       this._setupSent = true;
       this.setState("awaiting_setup_complete", handlers.onStateChange);
       logLiveAudio(
@@ -110,7 +113,10 @@ export class GeminiLiveProxy {
     }
   }
 
-  relayClientJson(rawJson: string): { ok: true } | { ok: false; reason: string } {
+  relayClientJson(
+    rawJson: string,
+    onUpstreamBytes?: (bytes: number) => void,
+  ): { ok: true } | { ok: false; reason: string } {
     if (!this._socket || this._state === "closed" || this._state === "error") {
       return { ok: false, reason: "upstream_not_connected" };
     }
@@ -131,7 +137,9 @@ export class GeminiLiveProxy {
       return validated;
     }
 
-    this._socket.send(serializeLiveClientMessage(validated.message));
+    const serialized = serializeLiveClientMessage(validated.message);
+    this._socket.send(serialized);
+    onUpstreamBytes?.(Buffer.byteLength(serialized, "utf8"));
     return { ok: true };
   }
 
@@ -141,11 +149,16 @@ export class GeminiLiveProxy {
     this._state = "closed";
   }
 
-  private sendUpstream(message: Record<string, unknown>): void {
+  private sendUpstream(
+    message: BidiClientMessage,
+    onUpstreamBytes?: (bytes: number) => void,
+  ): void {
     if (!this._socket) {
       throw new Error("upstream socket missing");
     }
-    this._socket.send(JSON.stringify(message));
+    const serialized = JSON.stringify(message);
+    this._socket.send(serialized);
+    onUpstreamBytes?.(Buffer.byteLength(serialized, "utf8"));
   }
 
   private setState(
@@ -192,5 +205,3 @@ async function connectNativeWebSocket(url: string): Promise<GeminiLiveWebSocket>
     },
   };
 }
-
-export type { GeminiLiveProxyState };

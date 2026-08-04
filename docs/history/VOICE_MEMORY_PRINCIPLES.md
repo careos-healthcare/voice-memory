@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # ArchiveMe Product Principles
 
 Permanent rules for a long-term personal archive. When in doubt, choose silence, continuity, and trust.
@@ -133,3 +135,4 @@ Never:
 If systems overlap heavily: **the archive may be becoming overdesigned.**
 
 If emotional density rises: **the product may be explaining too much.**
+

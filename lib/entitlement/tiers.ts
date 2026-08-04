@@ -1,8 +1,6 @@
 import { PRO_FEATURE_BULLETS, PRO_HEADLINE } from "@/lib/product/pro-framing";
 import type { EntitlementId, TierId } from "@/types/entitlement";
 
-export const FREE_ARCHIVE_LIMIT = 7;
-
 export interface TierDefinition {
   id: TierId;
   label: string;
@@ -12,17 +10,17 @@ export interface TierDefinition {
   featureBullets: string[];
 }
 
-/** Free — local recording, limited archive, basic resurfacing. */
+/** Free — user-owned content plus the first evidence-backed value. */
 export const FREE_TIER: TierDefinition = {
   id: "free",
   label: "Free",
-  priceLabel: "£0",
+  priceLabel: "Free",
   headline: "Local-first reflections on your device",
-  entitlements: ["local_recording", "limited_archive", "basic_resurfacing"],
+  entitlements: ["local_recording", "unlimited_archive", "basic_resurfacing"],
   featureBullets: [
     "Voice recording and transcript on this device",
-    `Last ${FREE_ARCHIVE_LIMIT} reflections in your active archive`,
-    "Quiet resurfacing from recent reflections",
+    "Every original reflection remains accessible",
+    "First evidence-backed observation and comparison",
     "Local storage — private by default",
   ],
 };
@@ -31,7 +29,7 @@ export const FREE_TIER: TierDefinition = {
 export const PRO_TIER: TierDefinition = {
   id: "pro",
   label: "Pro",
-  priceLabel: "£9.99/month",
+  priceLabel: "Store price",
   headline: PRO_HEADLINE,
   entitlements: [
     "local_recording",

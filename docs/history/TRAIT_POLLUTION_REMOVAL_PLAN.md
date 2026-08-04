@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Trait Pollution Removal — Plan
 
 **Date:** 2026-06-03  
@@ -78,3 +80,4 @@ flutter test test/archive_belief_visibility_test.dart
 flutter test test/archive_quality_validation_test.dart
 dart run tool/analyze_archive_v2_validation.dart
 ```
+

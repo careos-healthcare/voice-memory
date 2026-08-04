@@ -22,6 +22,12 @@ import {
   userAgentHashFromRequest,
 } from "@/lib/server/request-identity";
 import { getServerSession } from "@/lib/server/session";
+import {
+  capabilityForExpensiveRoute,
+  requireMonetizedAccess,
+  type MonetizedAccessContext,
+} from "@/lib/server/monetized-access-guard";
+import { releaseUsageReservation } from "@/lib/server/usage-reservation-store";
 
 export {
   MAX_AUDIO_BYTES,
@@ -34,6 +40,7 @@ export interface ApiGuardContext {
   via: "session" | "capture";
   userId?: string;
   deviceId?: string;
+  monetization?: MonetizedAccessContext;
 }
 
 function bindingFromRequest(request: Request): { ipHash: string; uaHash: string } {
@@ -172,6 +179,7 @@ export async function guardOpenAiRoute(
     audioBytes?: number;
   },
 ): Promise<{ ok: true; ctx: ApiGuardContext } | { ok: false; response: NextResponse }> {
+  let monetizationReservationId: string | undefined;
   try {
     if (isOpenAiKillSwitchActive()) {
       return { ok: false, response: openAiKillSwitchResponse() };
@@ -190,25 +198,51 @@ export async function guardOpenAiRoute(
       };
     }
 
+    const monetized = await requireMonetizedAccess({
+      userId: ctx.userId,
+      capabilityId: capabilityForExpensiveRoute(request),
+      idempotencyKey: request.headers.get("x-vm-idempotency-key"),
+      requestedUnits:
+        kind === "transcribe" && options?.durationSeconds
+          ? Math.max(1, Math.ceil(options.durationSeconds))
+          : 1,
+    });
+    if (!monetized.ok) return monetized;
+    ctx.monetization = monetized.ctx;
+    monetizationReservationId =
+      monetized.ctx.reservation?.reservationId;
+
     const ipSubject = `ip:${ipHashFromRequest(request)}`;
     const usageSubject = ctx.subject;
     const usage = await checkAndRecordApiUsage(usageSubject, kind);
     if (!usage.allowed) {
+      if (monetizationReservationId) {
+        await releaseUsageReservation(monetizationReservationId);
+      }
       return rateLimitResponse(usage);
     }
 
     const ipUsage = await checkAndRecordApiUsage(ipSubject, kind);
     if (!ipUsage.allowed) {
+      if (monetizationReservationId) {
+        await releaseUsageReservation(monetizationReservationId);
+      }
       return rateLimitResponse(ipUsage);
     }
 
     const budget = await guardOpenAiBudget(ctx, request, kind, options);
     if (!budget.ok) {
+      if (monetizationReservationId) {
+        await releaseUsageReservation(monetizationReservationId);
+      }
       return budget;
     }
 
     return { ok: true, ctx };
   } catch (error) {
+    if (monetizationReservationId) {
+      await releaseUsageReservation(monetizationReservationId).catch(() => {});
+    }
     const message = error instanceof Error ? error.message : String(error);
     const lower = message.toLowerCase();
     const reason =

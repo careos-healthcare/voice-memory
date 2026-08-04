@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cryptography/cryptography.dart';
 
+import '../services/local_storage/encrypted_storage_engine.dart';
 import 'private_data_encryption_key_store.dart';
 
 /// Result of migrating a legacy plaintext JSON file to encrypted storage.
@@ -20,24 +21,26 @@ class EncryptedJsonMigrationResult {
 class EncryptedJsonFileStore {
   EncryptedJsonFileStore({
     required this.file,
-    required PrivateDataEncryptionKeyStore keyStore,
+    required this._keyStore,
     AesGcm? algorithm,
-  }) : _keyStore = keyStore,
-       _algorithm = algorithm ?? AesGcm.with256bits();
+  }) : _algorithm = algorithm ?? AesGcm.with256bits();
 
   final File file;
   final PrivateDataEncryptionKeyStore _keyStore;
   final AesGcm _algorithm;
+  late final EncryptedStorageEngine _engine = EncryptedStorageEngine(
+    algorithm: _algorithm,
+  );
 
-  static const envelopeVersion = 1;
+  static const envelopeVersion = EncryptedStorageEngine.envelopeVersion;
 
   Future<void> ensureKey() async {
     if (_keyStore is SecurePrivateDataEncryptionKeyStore) {
-      await (_keyStore as SecurePrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     if (_keyStore is InMemoryPrivateDataEncryptionKeyStore) {
-      await (_keyStore as InMemoryPrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     final existing = await _keyStore.readKeyBytes();
@@ -62,22 +65,25 @@ class EncryptedJsonFileStore {
     final envelope = jsonDecode(raw) as Map<String, dynamic>;
     final version = envelope['v'] as int? ?? 0;
     if (version != envelopeVersion) {
-      throw FormatException('Unsupported encrypted JSON envelope version: $version');
+      throw FormatException(
+        'Unsupported encrypted JSON envelope version: $version',
+      );
     }
 
     final keyBytes = await _keyStore.readKeyBytes();
     if (keyBytes == null || keyBytes.isEmpty) {
       throw StateError('Missing encryption key for ${file.path}');
     }
-
-    final secretKey = SecretKey(keyBytes);
-    final secretBox = SecretBox(
-      base64Decode(envelope['c'] as String),
-      nonce: base64Decode(envelope['n'] as String),
-      mac: Mac(base64Decode(envelope['m'] as String)),
-    );
-    final clearBytes = await _algorithm.decrypt(secretBox, secretKey: secretKey);
-    return jsonDecode(utf8.decode(clearBytes));
+    try {
+      final clearBytes = await _engine.decrypt(envelope, keyBytes: keyBytes);
+      try {
+        return jsonDecode(utf8.decode(clearBytes));
+      } finally {
+        clearBytes.fillRange(0, clearBytes.length, 0);
+      }
+    } finally {
+      keyBytes.fillRange(0, keyBytes.length, 0);
+    }
   }
 
   Future<void> writeJson(dynamic value) async {
@@ -87,24 +93,16 @@ class EncryptedJsonFileStore {
       throw StateError('Missing encryption key for ${file.path}');
     }
 
-    final secretKey = SecretKey(keyBytes);
-    final clearBytes = utf8.encode(jsonEncode(value));
-    final secretBox = await _algorithm.encrypt(
-      clearBytes,
-      secretKey: secretKey,
-    );
-
-    final envelope = jsonEncode({
-      'v': envelopeVersion,
-      'n': base64Encode(secretBox.nonce),
-      'c': base64Encode(secretBox.cipherText),
-      'm': base64Encode(secretBox.mac.bytes),
-    });
-
-    if (!await file.parent.exists()) {
-      await file.parent.create(recursive: true);
+    try {
+      final clearBytes = utf8.encode(jsonEncode(value));
+      try {
+        await _engine.writeFile(file, clearBytes, keyBytes: keyBytes);
+      } finally {
+        clearBytes.fillRange(0, clearBytes.length, 0);
+      }
+    } finally {
+      keyBytes.fillRange(0, keyBytes.length, 0);
     }
-    await file.writeAsString(envelope);
   }
 
   /// Reads [plaintextFile] once, writes encrypted data here, then removes

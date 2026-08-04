@@ -35,9 +35,8 @@ class HelpedTrackingStore {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => HelpedTrackingRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              HelpedTrackingRecord.fromJson(Map<String, dynamic>.from(entry)),
         )
         .where((record) => record.entryId.isNotEmpty)
         .toList()
@@ -80,7 +79,6 @@ class HelpedTrackingStore {
     );
   }
 
-  @visibleForTesting
   static String? normalizeFreeText(String? raw) {
     if (raw == null) return null;
     final trimmed = raw.trim();
@@ -96,7 +94,6 @@ class HelpedTrackingStore {
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
 
-  @visibleForTesting
   static void invalidateCache() {
     _cached = const [];
     _loaded = false;

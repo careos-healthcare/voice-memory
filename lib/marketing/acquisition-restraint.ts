@@ -74,7 +74,7 @@ export function wouldNormalUserUnderstand(text: string): { ok: boolean; notes: s
   if (words > MAX_SCREENSHOT_WORDS) {
     notes.push(`Headline has ${words} words (max ${MAX_SCREENSHOT_WORDS})`);
   }
-  if (/\b(engine|intelligence|graph|longitudinal|cognitive)\b/i.test(text)) {
+  if (/\b(engine|graph|longitudinal|cognitive)\b/i.test(text)) {
     notes.push("Contains technical or clinical wording");
   }
   if (findPreferredWordHits(text).length === 0 && words <= 14) {

@@ -6,15 +6,22 @@ import {
   VaultRecoveryProcessError,
 } from "@/lib/live-audio/vault-recovery-process";
 import { decodeVaultRecoverySecretField } from "@/lib/live-audio/vault-recovery-secret";
-import { hashVaultBytes } from "@/lib/live-audio/vault-recovery-store";
 import {
   apiPayloadTooLarge,
   guardOpenAiRoute,
   MAX_AUDIO_BYTES,
 } from "@/lib/server/api-guard";
 import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
+import { requireRemoteTranscriptionDisclosure } from "@/lib/server/remote-transcription-disclosure";
+import {
+  commitUsageReservation,
+  releaseUsageReservation,
+} from "@/lib/server/usage-reservation-store";
 
 export const runtime = "nodejs";
+const MAX_DURATION_SECONDS = Number(
+  process.env.VOICEMEMORY_MAX_RECORDING_SECONDS ?? "120",
+);
 
 function readFormField(formData: FormData, ...keys: string[]): string {
   for (const key of keys) {
@@ -45,10 +52,19 @@ export async function GET() {
 
 /** Dedicated vault ingestion target: decrypt AVME payload, transcribe, and analyze. */
 export async function POST(request: Request) {
+  let usageReservationId: string | undefined;
   try {
+    const disclosureError = requireRemoteTranscriptionDisclosure(request);
+    if (disclosureError) return disclosureError;
+
     const formData = await request.formData();
     const vault = formData.get("vault");
     const sessionId = readFormField(formData, "session_id", "sessionId");
+    const durationRaw = readFormField(
+      formData,
+      "duration_seconds",
+      "durationSeconds",
+    );
     const recoverySecretRaw = readFormField(
       formData,
       "recovery_secret",
@@ -72,6 +88,21 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+    const durationSeconds = Number(durationRaw);
+    if (
+      !Number.isFinite(durationSeconds) ||
+      durationSeconds <= 0 ||
+      durationSeconds > MAX_DURATION_SECONDS
+    ) {
+      return NextResponse.json(
+        {
+          error: `duration_seconds must be between 1 and ${MAX_DURATION_SECONDS}.`,
+          code: "USAGE_UNITS_REQUIRED",
+          preserveLocalContent: true,
+        },
+        { status: 400 },
+      );
+    }
 
     const inlineRecoverySecret = recoverySecretRaw
       ? decodeVaultRecoverySecretField(recoverySecretRaw)
@@ -92,24 +123,29 @@ export async function POST(request: Request) {
 
     const guard = await guardOpenAiRoute(request, "transcribe", {
       audioBytes: vault.size,
+      durationSeconds,
     });
     if (!guard.ok) return guard.response;
+    usageReservationId = guard.ctx.monetization?.reservation?.reservationId;
 
     const vaultBytes = Buffer.from(await vault.arrayBuffer());
-    logLiveAudio(
-      `vault recover ingest sessionId=${sessionId} bytes=${vaultBytes.length} hash=${hashVaultBytes(vaultBytes).slice(0, 12)}`,
-    );
-
     const result = await processVaultRecoveryUpload({
       subject: guard.ctx.subject,
       sessionId,
       idempotencyKey,
       vaultBytes,
       inlineRecoverySecret,
+      durationSeconds,
     });
+    if (usageReservationId) {
+      await commitUsageReservation(
+        usageReservationId,
+        Math.max(1, Math.ceil(result.durationSeconds)),
+      );
+    }
 
     logLiveAudio(
-      `vault recover complete sessionId=${sessionId} ack=${result.recoveryAckId} duplicate=${result.duplicate}`,
+      `vault recover complete duplicate=${result.duplicate} frameCount=${result.frameCount}`,
     );
 
     return NextResponse.json(
@@ -125,6 +161,7 @@ export async function POST(request: Request) {
       { status: result.duplicate ? 200 : 201 },
     );
   } catch (error) {
+    if (usageReservationId) await releaseUsageReservation(usageReservationId);
     if (error instanceof VaultRecoveryProcessError) {
       return NextResponse.json(
         { error: error.message, code: error.code },

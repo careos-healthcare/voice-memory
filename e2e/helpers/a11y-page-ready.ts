@@ -12,10 +12,7 @@ export async function preparePageForA11y(page: Page, path: string): Promise<void
       if (!el) return false;
       const style = getComputedStyle(el);
       const opacity = Number.parseFloat(style.opacity);
-      const rgb = style.color.match(/\d+/g);
-      if (!rgb || rgb.length < 3) return false;
-      const [r, g, b] = rgb.map(Number);
-      return opacity >= 0.95 && r + g + b > 120;
+      return opacity >= 0.95 && style.visibility !== "hidden";
     },
     undefined,
     { timeout: 10_000 },

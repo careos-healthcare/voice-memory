@@ -1,23 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/features/voice_capture/audio/ios_native_recorder.dart';
-import 'package:voicememory_mobile/features/voice_capture/microphone_permission_environment.dart';
+import 'package:voicememory_mobile/features/voice_capture/audio/native_audio_recorder.dart';
 
 void main() {
-  tearDown(() {
-    IosNativeRecorder.testPlatform = null;
-    IosNativeRecorder.platformIsIosOverride = null;
-    MicrophonePermissionEnvironment.resetForTest();
-  });
+  test('platform availability is exposed by unified recorder', () async {
+    final platform = _AlwaysAvailableNativePlatform();
 
-  test('shouldUseOnDevice is true for physical iOS when platform available', () async {
-    MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-    IosNativeRecorder.platformIsIosOverride = true;
-    IosNativeRecorder.testPlatform = _AlwaysAvailableNativePlatform();
-
-    expect(
-      await IosNativeRecorder.shouldUseOnDevice(enabledOverride: true),
-      isTrue,
-    );
+    expect(await platform.isAvailable(), isTrue);
   });
 
   test('stop result maps to audio level summary', () {
@@ -38,9 +26,9 @@ void main() {
   });
 }
 
-class _AlwaysAvailableNativePlatform implements IosNativeRecorderPlatform {
+class _AlwaysAvailableNativePlatform implements NativeAudioRecorderPlatform {
   @override
-  Future<NativeRecordingLevel> currentNativeLevel() async {
+  Future<NativeRecordingLevel> currentLevel() async {
     return const NativeRecordingLevel(
       currentDb: -30,
       peakDb: -25,
@@ -50,10 +38,13 @@ class _AlwaysAvailableNativePlatform implements IosNativeRecorderPlatform {
   }
 
   @override
-  Future<bool> isNativeRecorderAvailable() async => true;
+  Future<void> dispose() async {}
 
   @override
-  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+  Future<bool> isAvailable() async => true;
+
+  @override
+  Future<NativeMicrophonePermission> microphonePermission() async {
     return const NativeMicrophonePermission(
       status: 'granted',
       granted: true,
@@ -62,22 +53,20 @@ class _AlwaysAvailableNativePlatform implements IosNativeRecorderPlatform {
   }
 
   @override
-  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
-    return const NativeMicrophonePermission(
-      status: 'granted',
-      granted: true,
-      canRequest: false,
-    );
+  Future<NativeMicrophonePermission> requestMicrophonePermission() async {
+    return microphonePermission();
   }
 
   @override
-  Future<String> startNativeRecording(
-    String path, {
-    required dynamic format,
-  }) async => path;
+  Future<NativeAudioStartResult> start(
+    String path,
+    NativeAudioCaptureConfig config,
+  ) async {
+    return NativeAudioStartResult(path: path);
+  }
 
   @override
-  Future<NativeRecordingStopResult> stopNativeRecording() async {
+  Future<NativeRecordingStopResult> stop() async {
     return const NativeRecordingStopResult(
       path: '/tmp/native.m4a',
       bytes: 1000,

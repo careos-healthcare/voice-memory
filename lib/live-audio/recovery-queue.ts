@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import fs from "fs";
 import path from "path";
-import { processVaultBuffer } from "./vault-recovery-process";
+import { processVaultRecoveryUpload } from "./vault-recovery-process";
 
 export interface RecoveryJob {
   jobId: string;
@@ -95,13 +95,15 @@ class VaultRecoveryQueue extends EventEmitter {
       const vaultBuffer = await fs.promises.readFile(nextJob.filePath);
       const secretKey = Buffer.from(nextJob.secretKeyHex, "hex");
 
-      const processingPromise = processVaultBuffer({
+      const processingPromise = processVaultRecoveryUpload({
+        subject: `recovery:${nextJob.sessionId}`,
         sessionId: nextJob.sessionId,
-        vaultBuffer,
-        recoverySecret: secretKey,
+        idempotencyKey: nextJob.jobId,
+        vaultBytes: vaultBuffer,
+        inlineRecoverySecret: secretKey,
       });
 
-      const timeoutPromise = new Promise((_, reject) => {
+      const timeoutPromise = new Promise<never>((_, reject) => {
         timeoutTimer = setTimeout(() => {
           reject(new Error("Recovery job exceeded max timeout of " + (JOB_TIMEOUT_MS / 1000) + "s"));
         }, JOB_TIMEOUT_MS);
@@ -112,7 +114,7 @@ class VaultRecoveryQueue extends EventEmitter {
       nextJob.status = "completed";
       nextJob.result = {
         transcript: processed.transcript,
-        reflection: processed.reflection,
+        reflection: JSON.stringify(processed.reflection),
         durationSeconds: processed.durationSeconds,
         frameCount: processed.frameCount,
       };
@@ -120,7 +122,7 @@ class VaultRecoveryQueue extends EventEmitter {
       await fs.promises.unlink(nextJob.filePath).catch(() => {});
     } catch (err) {
       nextJob.status = "failed";
-      nextJob.error = err.message;
+      nextJob.error = err instanceof Error ? err.message : String(err);
     } finally {
       if (timeoutTimer) clearTimeout(timeoutTimer);
       nextJob.updatedAt = Date.now();

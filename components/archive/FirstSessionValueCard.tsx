@@ -35,7 +35,7 @@ export function FirstSessionValueCard({
       )}
       data-testid="first-session-value-card"
     >
-      <p className="text-sm font-medium text-emerald-100/95">This reflection created:</p>
+      <p className="text-sm font-medium text-emerald-100/95">This moment added:</p>
       <p className="mt-2 text-sm text-zinc-300">+ {view.evidenceAdded} piece of evidence</p>
 
       <p className="mt-4 text-sm font-medium text-zinc-300">The archive now has:</p>

@@ -3,6 +3,11 @@ import {
   type GeminiLiveProxyOptions,
 } from "@/lib/live-audio/gemini-live-proxy";
 import { logLiveAudio, logLiveAudioCritical } from "@/lib/live-audio/live-audio-log";
+import { meterBestEffort, type RawEconomicsSubject } from "@/lib/server/unit-economics-meter";
+import {
+  commitUsageReservation,
+  releaseUsageReservation,
+} from "@/lib/server/usage-reservation-store";
 
 const DEFAULT_LIVE_MODEL_ID =
   process.env.VOICEMEMORY_GEMINI_LIVE_MODEL ??
@@ -30,10 +35,14 @@ export async function runLiveAudioProxyConnection(input: {
   sessionId: string;
   subject: string;
   apiKey: string;
+  usageReservationId?: string;
   modelId?: string;
   voiceName?: string;
   createProxy?: LiveAudioProxyFactory;
 }): Promise<void> {
+  const startedAt = Date.now();
+  let upstreamBytes = 0;
+  let downstreamBytes = 0;
   const proxy =
     input.createProxy?.({
       apiKey: input.apiKey,
@@ -47,12 +56,57 @@ export async function runLiveAudioProxyConnection(input: {
     });
 
   let closed = false;
+  const economicsSubject = (): RawEconomicsSubject | null => {
+    if (input.subject.startsWith("user:")) {
+      return { kind: "user", id: input.subject.slice("user:".length) };
+    }
+    if (input.subject.startsWith("device:")) {
+      return { kind: "device", id: input.subject.slice("device:".length) };
+    }
+    return null;
+  };
   const closeAll = (reason: string) => {
     if (closed) return;
     closed = true;
     proxy.close();
     input.client.close(1000, reason);
-    logLiveAudio(`proxy closed sessionId=${input.sessionId} reason=${reason}`);
+    logLiveAudio(
+      `proxy closed reason=${reason} upstreamBytes=${upstreamBytes} downstreamBytes=${downstreamBytes}`,
+    );
+    const subject = economicsSubject();
+    if (subject) {
+      const common = {
+        subject,
+        idempotencyKey: input.sessionId,
+        measurementBasis: "exact" as const,
+      };
+      void Promise.all([
+        meterBestEffort({
+          ...common,
+          operation: "gemini-live.upstream",
+          metric: "ingress_bytes",
+          resource: "network.ingress",
+          quantity: upstreamBytes,
+          dimensions: { provider: "google", model: "gemini-live" },
+        }),
+        meterBestEffort({
+          ...common,
+          operation: "gemini-live.downstream",
+          metric: "egress_bytes",
+          resource: "network.egress",
+          quantity: downstreamBytes,
+          dimensions: { provider: "google", model: "gemini-live" },
+        }),
+        meterBestEffort({
+          ...common,
+          operation: "gemini-live.session",
+          metric: "live_session_milliseconds",
+          resource: "google.gemini-live",
+          quantity: Math.max(0, Date.now() - startedAt),
+          dimensions: { provider: "google", model: "gemini-live" },
+        }),
+      ]);
+    }
   };
 
   input.client.onClose(() => closeAll("client_closed"));
@@ -69,11 +123,17 @@ export async function runLiveAudioProxyConnection(input: {
           input.client.send(rawJson);
         }
       },
+      onUpstreamBytes: (bytes) => { upstreamBytes += bytes; },
+      onDownstreamBytes: (bytes) => { downstreamBytes += bytes; },
     });
-    logLiveAudio(
-      `proxy connected sessionId=${input.sessionId} subject=${input.subject}`,
-    );
+    if (input.usageReservationId) {
+      await commitUsageReservation(input.usageReservationId, 1);
+    }
+    logLiveAudio("proxy connected");
   } catch (error) {
+    if (input.usageReservationId) {
+      await releaseUsageReservation(input.usageReservationId);
+    }
     logLiveAudioCritical("proxy connect failed", error);
     if (!closed) {
       input.client.send(
@@ -102,7 +162,7 @@ export async function runLiveAudioProxyConnection(input: {
       "setup" in parsed
     ) {
       logLiveAudio(
-        `reject client setup frame sessionId=${input.sessionId} reason=client_setup_not_allowed`,
+        "reject client setup frame reason=client_setup_not_allowed",
       );
       input.client.send(
         JSON.stringify({ error: { message: "client_setup_not_allowed" } }),
@@ -110,10 +170,13 @@ export async function runLiveAudioProxyConnection(input: {
       return;
     }
 
-    const relay = proxy.relayClientJson(rawJson);
+    const relay = proxy.relayClientJson(
+      rawJson,
+      (bytes) => { upstreamBytes += bytes; },
+    );
     if (!relay.ok) {
       logLiveAudio(
-        `reject client frame sessionId=${input.sessionId} reason=${relay.reason}`,
+        `reject client frame reason=${relay.reason}`,
       );
       if (relay.reason === "awaiting_setup_complete") {
         input.client.send(

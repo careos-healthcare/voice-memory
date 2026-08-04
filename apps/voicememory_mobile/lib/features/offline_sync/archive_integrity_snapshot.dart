@@ -78,8 +78,9 @@ class ArchiveIntegritySnapshot {
       return false;
     }
     for (var i = 0; i < reflectionTimestamps.length; i++) {
-      if (reflectionTimestamps[i] != other.reflectionTimestamps[i])
+      if (reflectionTimestamps[i] != other.reflectionTimestamps[i]) {
         return false;
+      }
     }
     return true;
   }

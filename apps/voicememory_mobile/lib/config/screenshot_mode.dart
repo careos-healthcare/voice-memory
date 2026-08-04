@@ -1,3 +1,4 @@
+import 'app_feature_flags.dart';
 import '../features/tomorrow_return/return_capture_model.dart';
 import '../features/trial/hook_rescue_decision_model.dart';
 
@@ -6,16 +7,10 @@ import '../features/trial/hook_rescue_decision_model.dart';
 abstract class ScreenshotMode {
   ScreenshotMode._();
 
-  static const bool enabled = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_MODE',
-    defaultValue: false,
-  );
+  static const bool enabled = AppFeatureFlags.screenshotModeEnabled;
 
   /// Record tab preview: `return_day` (pending watch-for) or `post_save` (full stack).
-  static const String recordView = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RECORD_VIEW',
-    defaultValue: 'return_day',
-  );
+  static const String recordView = AppFeatureFlags.screenshotRecordView;
 
   static bool get recordPostSavePreview => enabled && recordView == 'post_save';
 
@@ -28,10 +23,7 @@ abstract class ScreenshotMode {
   /// Record tab clean-stack preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_RECORD_CLEAN=first_run` (or
   /// `due_check`, `post_save`).
-  static const String recordCleanRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RECORD_CLEAN',
-    defaultValue: '',
-  );
+  static const String recordCleanRaw = AppFeatureFlags.screenshotRecordClean;
 
   static const Set<String> _recordCleanModes = {
     'first_run',
@@ -58,10 +50,7 @@ abstract class ScreenshotMode {
       enabled && recordView == 'first_session';
 
   /// Journey activation preview: reflection count 0–3 (`VOICE_MEMORY_SCREENSHOT_JOURNEY_STEP`).
-  static const String journeyStep = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_JOURNEY_STEP',
-    defaultValue: '',
-  );
+  static const String journeyStep = AppFeatureFlags.screenshotJourneyStep;
 
   /// When set (0–3), Record and Patterns use this reflection count for journey UI.
   static int get screenshotJourneyReflectionCount {
@@ -78,10 +67,8 @@ abstract class ScreenshotMode {
 
   /// First-loop activation stage preview:
   /// `start`, `saved`, `choosing`, or `ready`.
-  static const String firstLoopStageRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_FIRST_LOOP_STAGE',
-    defaultValue: '',
-  );
+  static const String firstLoopStageRaw =
+      AppFeatureFlags.screenshotFirstLoopStage;
 
   static const Set<String> _firstLoopStages = {
     'start',
@@ -98,10 +85,8 @@ abstract class ScreenshotMode {
   }
 
   /// Return-day friction stage preview: `due`, `answered`, or `closed`.
-  static const String returnDayStageRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RETURN_DAY_STAGE',
-    defaultValue: '',
-  );
+  static const String returnDayStageRaw =
+      AppFeatureFlags.screenshotReturnDayStage;
 
   static const Set<String> _returnDayStages = {'due', 'answered', 'closed'};
 
@@ -113,16 +98,10 @@ abstract class ScreenshotMode {
   }
 
   /// Return-day quick answer: `same`, `lighter`, `heavier`, or `changed`.
-  static const String returnCapture = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RETURN_CAPTURE',
-    defaultValue: 'same',
-  );
+  static const String returnCapture = AppFeatureFlags.screenshotReturnCapture;
 
   /// Pre-selected check-in option: `same`, `lighter`, `heavier`, or `changed`.
-  static const String checkInOption = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_CHECK_IN_OPTION',
-    defaultValue: 'same',
-  );
+  static const String checkInOption = AppFeatureFlags.screenshotCheckInOption;
 
   static String? _checkInOptionId(String raw) {
     switch (raw.trim().toLowerCase()) {
@@ -145,10 +124,7 @@ abstract class ScreenshotMode {
       : null;
 
   /// Hook-fix preview: `sharper`, `very_sharp`, or `better_result`.
-  static const String hookFixRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_HOOK_FIX',
-    defaultValue: '',
-  );
+  static const String hookFixRaw = AppFeatureFlags.screenshotHookFix;
 
   static const Set<String> _hookFixes = {
     'sharper',
@@ -181,10 +157,8 @@ abstract class ScreenshotMode {
   /// Result-to-next-check preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_RESULT_NEXT_CHECK=true`.
   /// Shows a closed loop with the "Next useful check" card.
-  static const bool resultNextCheckRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RESULT_NEXT_CHECK',
-    defaultValue: false,
-  );
+  static const bool resultNextCheckRaw =
+      AppFeatureFlags.screenshotResultNextCheck;
 
   static bool get resultNextCheckPreview => enabled && resultNextCheckRaw;
 
@@ -192,20 +166,15 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_USEFUL_RESULT=true`.
   /// Shows a closed loop with the useful takeaway, next check, the "Make this
   /// more useful" path, and the usefulness rating below.
-  static const bool usefulResultRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_USEFUL_RESULT',
-    defaultValue: false,
-  );
+  static const bool usefulResultRaw = AppFeatureFlags.screenshotUsefulResult;
 
   static bool get usefulResultPreview => enabled && usefulResultRaw;
 
   /// Activation rescue preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ACTIVATION_RESCUE=first_record`
   /// or `tomorrow_check`, `useful_result`, or `next_check`.
-  static const String activationRescueRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ACTIVATION_RESCUE',
-    defaultValue: '',
-  );
+  static const String activationRescueRaw =
+      AppFeatureFlags.screenshotActivationRescue;
 
   static const Set<String> _activationRescueStages = {
     'first_record',
@@ -235,10 +204,7 @@ abstract class ScreenshotMode {
   /// Retention loop preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_RETENTION=check_set`
   /// or `due_today`, `loop_closed`, or `next_ready`.
-  static const String retentionRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_RETENTION',
-    defaultValue: '',
-  );
+  static const String retentionRaw = AppFeatureFlags.screenshotRetention;
 
   static const Set<String> _retentionStages = {
     'check_set',
@@ -263,29 +229,21 @@ abstract class ScreenshotMode {
 
   /// Compelling check preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_COMPELLING_CHECK=true`.
-  static const bool compellingCheckRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_COMPELLING_CHECK',
-    defaultValue: false,
-  );
+  static const bool compellingCheckRaw =
+      AppFeatureFlags.screenshotCompellingCheck;
 
   static bool get compellingCheckPreview => enabled && compellingCheckRaw;
 
   /// Real reminder preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_REAL_REMINDER=true`.
-  static const bool realReminderRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_REAL_REMINDER',
-    defaultValue: false,
-  );
+  static const bool realReminderRaw = AppFeatureFlags.screenshotRealReminder;
 
   static bool get realReminderPreview => enabled && realReminderRaw;
 
   /// Current objective preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_OBJECTIVE=due_check`
   /// or `first_moment`, or `next_ready`.
-  static const String objectiveRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_OBJECTIVE',
-    defaultValue: '',
-  );
+  static const String objectiveRaw = AppFeatureFlags.screenshotObjective;
 
   static const Set<String> _objectiveStages = {
     'due_check',
@@ -309,10 +267,7 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_PERSPECTIVE=true`. Shows a closed
   /// loop with the "Another perspective" card, "Show another perspective", and
   /// "Use this check".
-  static const bool perspectiveRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_PERSPECTIVE',
-    defaultValue: false,
-  );
+  static const bool perspectiveRaw = AppFeatureFlags.screenshotPerspective;
 
   static bool get perspectivePreview => enabled && perspectiveRaw;
 
@@ -320,10 +275,7 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_KINDNESS=true`. Shows a closed loop
   /// on a hard, self-blaming reflection with the "A kinder angle" card and
   /// "Use this check".
-  static const bool kindnessRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_KINDNESS',
-    defaultValue: false,
-  );
+  static const bool kindnessRaw = AppFeatureFlags.screenshotKindness;
 
   static bool get kindnessPreview => enabled && kindnessRaw;
 
@@ -331,60 +283,43 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_QUICK_HELP=true`. Shows the record
   /// screen with the "Need help?" pill and opens the Quick help sheet on a
   /// selected response.
-  static const bool quickHelpRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_QUICK_HELP',
-    defaultValue: false,
-  );
+  static const bool quickHelpRaw = AppFeatureFlags.screenshotQuickHelp;
 
   static bool get quickHelpPreview => enabled && quickHelpRaw;
 
   /// Key Moments preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_KEY_MOMENTS=true`. Shows the Key
   /// moments timeline with three sample days and the detail view.
-  static const bool keyMomentsRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_KEY_MOMENTS',
-    defaultValue: false,
-  );
+  static const bool keyMomentsRaw = AppFeatureFlags.screenshotKeyMoments;
 
   static bool get keyMomentsPreview => enabled && keyMomentsRaw;
 
   /// Pattern map preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_PATTERN_MAP=true`. Shows one
   /// recurring pattern map with a filled-in sample.
-  static const bool patternMapRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_PATTERN_MAP',
-    defaultValue: false,
-  );
+  static const bool patternMapRaw = AppFeatureFlags.screenshotPatternMap;
 
   static bool get patternMapPreview => enabled && patternMapRaw;
 
   /// Feedback learning loop preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_FEEDBACK=true`. Shows a completed
   /// result with the "Was this useful?" feedback chips beneath it.
-  static const bool feedbackRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_FEEDBACK',
-    defaultValue: false,
-  );
+  static const bool feedbackRaw = AppFeatureFlags.screenshotFeedback;
 
   static bool get feedbackPreview => enabled && feedbackRaw;
 
   /// Archive memory preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_MEMORY=true`. Shows the
   /// "What ArchiveMe remembers" summary card on Patterns.
-  static const bool archiveMemoryRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ARCHIVE_MEMORY',
-    defaultValue: false,
-  );
+  static const bool archiveMemoryRaw = AppFeatureFlags.screenshotArchiveMemory;
 
   static bool get archiveMemoryPreview => enabled && archiveMemoryRaw;
 
   /// Archive evolution timeline preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_TIMELINE=true`. Shows the
   /// pattern timeline card and full timeline screen.
-  static const bool archiveTimelineRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ARCHIVE_TIMELINE',
-    defaultValue: false,
-  );
+  static const bool archiveTimelineRaw =
+      AppFeatureFlags.screenshotArchiveTimeline;
 
   static bool get archiveTimelinePreview => enabled && archiveTimelineRaw;
 
@@ -392,82 +327,58 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_POSITIONING_RESCUE=true`.
   /// Shows the first-run archive memory demo on Record and the day-zero
   /// archive preview on Patterns.
-  static const bool positioningRescueRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_POSITIONING_RESCUE',
-    defaultValue: false,
-  );
+  static const bool positioningRescueRaw =
+      AppFeatureFlags.screenshotPositioningRescue;
 
   static bool get positioningRescuePreview => enabled && positioningRescueRaw;
 
   /// Ask my Archive preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ASK_ARCHIVE=true`.
-  static const bool askArchiveRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ASK_ARCHIVE',
-    defaultValue: false,
-  );
+  static const bool askArchiveRaw = AppFeatureFlags.screenshotAskArchive;
 
   static bool get askArchivePreview => enabled && askArchiveRaw;
 
   /// Archive clean view preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_CLEAN=true`.
-  static const bool archiveCleanRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ARCHIVE_CLEAN',
-    defaultValue: false,
-  );
+  static const bool archiveCleanRaw = AppFeatureFlags.screenshotArchiveClean;
 
   static bool get archiveCleanPreview => enabled && archiveCleanRaw;
 
   /// Pattern profile preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_PATTERN_PROFILE=true`.
-  static const bool patternProfileRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_PATTERN_PROFILE',
-    defaultValue: false,
-  );
+  static const bool patternProfileRaw =
+      AppFeatureFlags.screenshotPatternProfile;
 
   static bool get patternProfilePreview => enabled && patternProfileRaw;
 
   /// Patterns tab clean stack preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_PATTERNS_CLEAN=true`.
-  static const bool patternsCleanRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_PATTERNS_CLEAN',
-    defaultValue: false,
-  );
+  static const bool patternsCleanRaw = AppFeatureFlags.screenshotPatternsClean;
 
   static bool get patternsCleanPreview => enabled && patternsCleanRaw;
 
   /// Archive compression preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_COMPRESSION=true`.
-  static const bool archiveCompressionRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ARCHIVE_COMPRESSION',
-    defaultValue: false,
-  );
+  static const bool archiveCompressionRaw =
+      AppFeatureFlags.screenshotArchiveCompression;
 
   static bool get archiveCompressionPreview => enabled && archiveCompressionRaw;
 
   /// Memory quality preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_MEMORY_QUALITY=true`.
-  static const bool memoryQualityRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_MEMORY_QUALITY',
-    defaultValue: false,
-  );
+  static const bool memoryQualityRaw = AppFeatureFlags.screenshotMemoryQuality;
 
   static bool get memoryQualityPreview => enabled && memoryQualityRaw;
 
   /// Archive range review preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_ARCHIVE_REVIEW=true`.
-  static const bool archiveReviewRaw = bool.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_ARCHIVE_REVIEW',
-    defaultValue: false,
-  );
+  static const bool archiveReviewRaw = AppFeatureFlags.screenshotArchiveReview;
 
   static bool get archiveReviewPreview => enabled && archiveReviewRaw;
 
   /// Clean confirmed-repeat demo archive — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_DEMO=confirmed_repeat`.
-  static const String demoRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_DEMO',
-    defaultValue: '',
-  );
+  static const String demoRaw = AppFeatureFlags.screenshotDemo;
 
   static bool get archiveMeDemoPreview =>
       enabled && demoRaw.trim().toLowerCase() == 'confirmed_repeat';
@@ -483,10 +394,7 @@ abstract class ScreenshotMode {
   /// Input quality coach preview — compile with
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_INPUT_QUALITY=vague` (shows the
   /// coach card) or `=strong` (skips it).
-  static const String inputQualityRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_INPUT_QUALITY',
-    defaultValue: '',
-  );
+  static const String inputQualityRaw = AppFeatureFlags.screenshotInputQuality;
 
   static const Set<String> _inputQualityModes = {'vague', 'strong'};
 
@@ -504,10 +412,7 @@ abstract class ScreenshotMode {
   /// `--dart-define=VOICE_MEMORY_SCREENSHOT_LANGUAGE=es|fr|hi|gu`. Renders
   /// Record guidance, check-in/result labels, and the language chip in the
   /// selected language.
-  static const String languageRaw = String.fromEnvironment(
-    'VOICE_MEMORY_SCREENSHOT_LANGUAGE',
-    defaultValue: '',
-  );
+  static const String languageRaw = AppFeatureFlags.screenshotLanguage;
 
   static const Set<String> _languageModes = {'en', 'es', 'fr', 'hi', 'gu'};
 

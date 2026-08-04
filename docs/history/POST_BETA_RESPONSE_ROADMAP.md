@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Post-Beta Response Roadmap
 
 Evidence-based decision framework for what to build **after** the first TestFlight cohort — not all at once.
@@ -313,3 +315,4 @@ Beta feedback will point to different root causes. This roadmap maps each signal
 - [TESTFLIGHT_BETA_LAUNCH_PLAN.md](TESTFLIGHT_BETA_LAUNCH_PLAN.md) — cohort targets and observation plan
 - [PAID_LAUNCH_DECISION_CHECKLIST.md](PAID_LAUNCH_DECISION_CHECKLIST.md) — paid and RevenueCat gates
 - [DEPENDENCY_MAINTENANCE_PLAN.md](DEPENDENCY_MAINTENANCE_PLAN.md) — upgrade timing after beta
+

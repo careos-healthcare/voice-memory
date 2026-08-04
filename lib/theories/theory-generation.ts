@@ -286,7 +286,7 @@ function draftFromPrediction(
   return {
     id: `theory:prediction:${item.candidate.id}`,
     statement: sanitizeTheoryCopy(
-      `You may have expected one outcome; your later reflection suggests: ${item.outcomeSummary}`,
+      `You may have expected one outcome; your later moment suggests: ${item.outcomeSummary}`,
     ),
     source: "prediction",
     supportingEvidence: supporting,

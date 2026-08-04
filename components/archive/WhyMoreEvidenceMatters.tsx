@@ -54,7 +54,7 @@ export function WhyMoreEvidenceMatters({
       </p>
       <p className="mt-2 text-sm leading-relaxed text-zinc-200">{WHY_MORE_EVIDENCE_LEAD}</p>
       <p className="mt-2 text-sm leading-relaxed text-zinc-400">{WHY_MORE_EVIDENCE_SUBLEAD}</p>
-      <p className="mt-3 text-sm text-zinc-500">Each new reflection can:</p>
+      <p className="mt-3 text-sm text-zinc-500">Each new moment can:</p>
       <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-zinc-400">
         {WHY_MORE_EVIDENCE_BULLETS.map((item) => (
           <li key={item}>{item}</li>

@@ -31,15 +31,15 @@ abstract final class CaptureRecoveryCopy {
       'Network is unavailable in this build. Recording still works on this device.';
 
   static List<String> get all => [
-        micDeniedBody,
-        recordingFailed,
-        saveFailed,
-        transcriptUnavailable,
-        noClearMatchYet,
-        returnedAfterDelayTitle,
-        returnedAfterDelayBody,
-        simulatorMicHelper,
-        testBuildEntitlementTimeout,
-        testBuildNetworkUnavailable,
-      ];
+    micDeniedBody,
+    recordingFailed,
+    saveFailed,
+    transcriptUnavailable,
+    noClearMatchYet,
+    returnedAfterDelayTitle,
+    returnedAfterDelayBody,
+    simulatorMicHelper,
+    testBuildEntitlementTimeout,
+    testBuildNetworkUnavailable,
+  ];
 }

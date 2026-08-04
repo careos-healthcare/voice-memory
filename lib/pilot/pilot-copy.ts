@@ -8,7 +8,7 @@ export const PILOT_PAGE_COPY = {
   sections: [
     {
       title: "What support covers",
-      body: "Encrypted backup, archive continuity across devices, and long-term preservation of your reflections. Payment supports sustainable development of those protections.",
+      body: "Encrypted backup, archive continuity across devices, and long-term preservation of your moments. Payment supports sustainable development of those protections.",
     },
     {
       title: "How this works",

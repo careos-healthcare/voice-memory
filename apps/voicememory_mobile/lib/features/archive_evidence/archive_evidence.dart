@@ -55,6 +55,6 @@ String? archiveWhyArchiveBelievesCopy(List<JournalEntry> entries) {
   final quote = archiveStrongestEvidenceQuote(entries);
   if (quote == null) return null;
 
-  return 'The archive is weighing ${eligible.length} reflections with usable '
+  return 'The archive is weighing ${eligible.length} saved moments with usable '
       'transcripts. Strongest recent line: “$quote”';
 }

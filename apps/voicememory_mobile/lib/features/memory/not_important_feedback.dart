@@ -71,11 +71,13 @@ abstract class NotImportantFeedback {
     NotImportantFeedbackStore.instance().saveCurrent();
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void clearSession() {
     _demotedCardTypes.clear();
     _demotedEntryKeys.clear();
   }
+
+  @visibleForTesting
+  static void resetForTest() => clearSession();
 }
 
 class NotImportantFeedbackStore {

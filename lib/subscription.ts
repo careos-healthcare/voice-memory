@@ -1,6 +1,5 @@
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
-  FREE_ARCHIVE_LIMIT,
   getCurrentTierId,
   hasEntitlement,
   isProTier,
@@ -8,8 +7,10 @@ import {
 } from "@/lib/entitlement/entitlements";
 import type { EntitlementId } from "@/types/entitlement";
 import { FREE_TIER, PRO_TIER } from "@/lib/entitlement/tiers";
-import { PRO_DESCRIPTION } from "@/lib/product/pro-framing";
-import { getPaymentStackAudit, isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
+import {
+  getPaymentStackAudit,
+  isLiveBillingAvailable,
+} from "@/lib/entitlement/payment-stack";
 
 export type PlanId = "free" | "pro";
 
@@ -33,7 +34,6 @@ export interface UpgradeClickEvent {
   feature?: string;
 }
 
-export const FREE_ENTRY_LIMIT = FREE_ARCHIVE_LIMIT;
 export const PRO_PRICE_LABEL = PRO_TIER.priceLabel;
 
 const UPGRADE_CLICKS_KEY = "voicememory_upgrade_clicks";
@@ -54,18 +54,21 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
   },
   {
     id: "unlimited_archive",
-    title: "Full archive continuity",
-    description: "Every reflection stays active in memory and search — not just your last seven.",
+    title: "Ongoing archive analysis",
+    description:
+      "Generate new longitudinal comparisons across your full archive.",
   },
   {
     id: "open_loops",
     title: "Long-term open loops",
-    description: "Unfinished threads stay in your own words across months of speech.",
+    description:
+      "Unfinished threads stay in your own words across months of speech.",
   },
   {
     id: "encrypted_backup",
     title: "Encrypted backup",
-    description: "Encrypted sync when you sign in — your archive, not our product feed.",
+    description:
+      "Encrypted sync when you sign in — your archive, not our product feed.",
     comingSoon: !isLiveBillingAvailable(),
   },
   {
@@ -116,10 +119,16 @@ export function trackUpgradeClick(
       UPGRADE_CLICKS_KEY,
       JSON.stringify(existing.slice(-100)),
     );
-    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, { source, feature: feature ?? "" });
+    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, {
+      source,
+      feature: feature ?? "",
+    });
   } catch {
     localStorage.setItem(UPGRADE_CLICKS_KEY, JSON.stringify([event]));
-    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, { source, feature: feature ?? "" });
+    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, {
+      source,
+      feature: feature ?? "",
+    });
   }
 }
 
@@ -135,7 +144,7 @@ export function getUpgradeClickEvents(): UpgradeClickEvent[] {
 }
 
 export function requiresProForExportReports(): boolean {
-  return hasEntitlement("export_reports") === false;
+  return false;
 }
 
 export function requiresProForOpenLoops(): boolean {

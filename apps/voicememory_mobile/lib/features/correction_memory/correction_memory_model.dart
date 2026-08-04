@@ -1,30 +1,24 @@
-import 'correction_memory_copy.dart';
 import '../current_relevance/current_relevance_model.dart';
 
 /// User correction weight for how the archive talks about a pattern.
-enum CorrectionMemoryState {
-  stillCurrent,
-  partlyCurrent,
-  faded,
-  unsure,
-}
+enum CorrectionMemoryState { stillCurrent, partlyCurrent, faded, unsure }
 
 extension CorrectionMemoryStateAnalytics on CorrectionMemoryState {
   String get analyticsValue => switch (this) {
-        CorrectionMemoryState.stillCurrent => 'still_current',
-        CorrectionMemoryState.partlyCurrent => 'partly_current',
-        CorrectionMemoryState.faded => 'faded',
-        CorrectionMemoryState.unsure => 'unsure',
-      };
+    CorrectionMemoryState.stillCurrent => 'still_current',
+    CorrectionMemoryState.partlyCurrent => 'partly_current',
+    CorrectionMemoryState.faded => 'faded',
+    CorrectionMemoryState.unsure => 'unsure',
+  };
 }
 
 extension CorrectionMemoryStateMapping on CurrentRelevanceAnswer {
   CorrectionMemoryState toCorrectionMemoryState() => switch (this) {
-        CurrentRelevanceAnswer.yes => CorrectionMemoryState.stillCurrent,
-        CurrentRelevanceAnswer.little => CorrectionMemoryState.partlyCurrent,
-        CurrentRelevanceAnswer.notReally => CorrectionMemoryState.faded,
-        CurrentRelevanceAnswer.notSure => CorrectionMemoryState.unsure,
-      };
+    CurrentRelevanceAnswer.yes => CorrectionMemoryState.stillCurrent,
+    CurrentRelevanceAnswer.little => CorrectionMemoryState.partlyCurrent,
+    CurrentRelevanceAnswer.notReally => CorrectionMemoryState.faded,
+    CurrentRelevanceAnswer.notSure => CorrectionMemoryState.unsure,
+  };
 }
 
 /// Local correction record — proof key only, never transcript text.
@@ -44,12 +38,12 @@ class CorrectionMemoryRecord {
   final DateTime correctedAt;
 
   Map<String, dynamic> toJson() => {
-        'proofKey': proofKey,
-        'state': state.analyticsValue,
-        'entryCountAtCapture': entryCountAtCapture,
-        'hasConfirmedRepeat': hasConfirmedRepeat,
-        'correctedAt': correctedAt.toUtc().toIso8601String(),
-      };
+    'proofKey': proofKey,
+    'state': state.analyticsValue,
+    'entryCountAtCapture': entryCountAtCapture,
+    'hasConfirmedRepeat': hasConfirmedRepeat,
+    'correctedAt': correctedAt.toUtc().toIso8601String(),
+  };
 
   factory CorrectionMemoryRecord.fromJson(Map<String, dynamic> json) {
     final stateRaw = json['state']?.toString() ?? '';
@@ -61,7 +55,8 @@ class CorrectionMemoryRecord {
       ),
       entryCountAtCapture: json['entryCountAtCapture'] as int? ?? 0,
       hasConfirmedRepeat: json['hasConfirmedRepeat'] as bool? ?? false,
-      correctedAt: DateTime.tryParse(json['correctedAt']?.toString() ?? '') ??
+      correctedAt:
+          DateTime.tryParse(json['correctedAt']?.toString() ?? '') ??
           DateTime.now().toUtc(),
     );
   }
@@ -109,8 +104,8 @@ class CorrectionMemoryResult {
   final String differentiationLine;
 
   CorrectionMemorySnapshot get snapshot => CorrectionMemorySnapshot(
-        state: state,
-        returnedAfterFaded: returnedAfterFaded,
-        entryCountAtCapture: entryCount,
-      );
+    state: state,
+    returnedAfterFaded: returnedAfterFaded,
+    entryCountAtCapture: entryCount,
+  );
 }

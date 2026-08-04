@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../design/archive_mobile_typography.dart';
 import '../features/trust/terms_screen_copy.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../theme/archive_semantic_colors.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// In-app terms summary — avoids opening internal deployment URLs in the browser.
@@ -12,6 +12,7 @@ class TermsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ArchiveSemanticColors.of(context);
     return PushedScreenShell(
       title: TermsScreenCopy.screenTitle,
       body: SingleChildScrollView(
@@ -24,7 +25,7 @@ class TermsScreen extends StatelessWidget {
               key: const Key('terms_last_updated'),
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-                color: AppColors.textSecondary,
+                color: colors.secondaryText,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -45,7 +46,7 @@ class TermsScreen extends StatelessWidget {
                 section.body,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
-                ).copyWith(color: AppColors.textSecondary),
+                ).copyWith(color: colors.secondaryText),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],

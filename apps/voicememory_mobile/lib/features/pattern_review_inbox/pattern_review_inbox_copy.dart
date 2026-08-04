@@ -9,8 +9,7 @@ abstract final class PatternReviewInboxCopy {
   static const viewAllCta = 'View all review items';
 
   static const sheetTitle = 'Archive review inbox';
-  static const sheetSubtitle =
-      'Things ArchiveMe needs your judgement on.';
+  static const sheetSubtitle = 'Things ArchiveMe needs your judgement on.';
 
   static const emptyTitle = 'Nothing needs review right now';
   static const emptyBody =
@@ -50,32 +49,32 @@ abstract final class PatternReviewInboxCopy {
   static const keepSuggestedNameCta = 'Keep suggested name';
 
   static List<String> allVisibleStrings() => [
-        cardTitle,
-        cardSubcopy,
-        viewAllCta,
-        sheetTitle,
-        sheetSubtitle,
-        emptyTitle,
-        emptyBody,
-        chipNeedsCheck,
-        chipOptional,
-        chipQuietSignal,
-        firstProofTruthTitle,
-        firstProofTruthBody,
-        whatChangedTitle,
-        whatChangedBody,
-        patternCorrectionTitle,
-        patternCorrectionBody,
-        quietSignalTitle,
-        quietSignalBody,
-        helpedTrackingTitle,
-        helpedTrackingBody,
-        patternRenameTitle,
-        patternRenameBody,
-        reviewCorrectionCta,
-        keepWatchingCta,
-        viewPatternDetailsCta,
-        renamePatternCta,
-        keepSuggestedNameCta,
-      ];
+    cardTitle,
+    cardSubcopy,
+    viewAllCta,
+    sheetTitle,
+    sheetSubtitle,
+    emptyTitle,
+    emptyBody,
+    chipNeedsCheck,
+    chipOptional,
+    chipQuietSignal,
+    firstProofTruthTitle,
+    firstProofTruthBody,
+    whatChangedTitle,
+    whatChangedBody,
+    patternCorrectionTitle,
+    patternCorrectionBody,
+    quietSignalTitle,
+    quietSignalBody,
+    helpedTrackingTitle,
+    helpedTrackingBody,
+    patternRenameTitle,
+    patternRenameBody,
+    reviewCorrectionCta,
+    keepWatchingCta,
+    viewPatternDetailsCta,
+    renamePatternCta,
+    keepSuggestedNameCta,
+  ];
 }

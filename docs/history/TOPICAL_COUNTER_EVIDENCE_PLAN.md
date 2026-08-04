@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Topical Counter-Evidence V1 — Plan
 
 **Date:** 2026-06-03  
@@ -63,3 +65,4 @@ flutter test test/archive_quality_validation_test.dart
 dart run tool/analyze_topical_counter_relevance.dart
 dart run tool/analyze_archive_v2_validation.dart
 ```
+

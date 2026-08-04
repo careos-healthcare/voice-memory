@@ -7,7 +7,7 @@ export const NOTIFICATION_COPY = {
   },
   return_after_silence: {
     title: "Your archive is here",
-    body: "A short reflection picks up where you left off — only if you want to.",
+    body: "A few saved words pick up where you left off — only if you want to.",
   },
   emotional_continuity: {
     title: "Something familiar returned",

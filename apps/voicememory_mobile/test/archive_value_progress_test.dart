@@ -41,7 +41,7 @@ void main() {
   test('value copy includes One data point', () {
     final snap = ArchiveValueProgress.build([_entry(1)]);
     expect(snap.valueCopy, contains('One data point'));
-    expect(snap.ctaLabel, 'Add another reflection');
+    expect(snap.ctaLabel, 'Record another moment');
   });
 
   test('at 5 unlocks pattern review CTA', () {
@@ -49,6 +49,6 @@ void main() {
     final snap = ArchiveValueProgress.build(entries);
     expect(snap.readyForPatternReview, isTrue);
     expect(snap.ctaLabel, 'Open pattern review');
-    expect(snap.ctaRoute, '/blind-spots');
+    expect(snap.ctaRoute, '/self-discovery?tab=blind-spots');
   });
 }

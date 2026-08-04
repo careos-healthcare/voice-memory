@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://archiveme.app/schemas/archive-me-v1-release-contract.schema.json",
+  "title": "ArchiveMe V1 release architecture contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "contractId",
+    "product",
+    "routes",
+    "services",
+    "backendApis",
+    "plugins",
+    "permissions",
+    "identities",
+    "canonicalSystems",
+    "analytics",
+    "capabilityContract",
+    "dataFlowManifest",
+    "moduleClassifications",
+    "architectureGuardTests"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "policyVersion": { "type": "string", "minLength": 1 },
+    "contractId": { "const": "archive-me-v1-release" },
+    "product": {
+      "type": "object",
+      "required": ["name", "platform", "entryPoints", "router", "productContract", "routeCatalog"],
+      "properties": {
+        "name": { "const": "ArchiveMe" },
+        "platform": { "const": "flutter" },
+        "entryPoints": { "$ref": "#/$defs/nonEmptyUniquePaths" },
+        "router": { "$ref": "#/$defs/path" },
+        "productContract": { "$ref": "#/$defs/path" },
+        "routeCatalog": { "$ref": "#/$defs/path" }
+      },
+      "additionalProperties": false
+    },
+    "routes": {
+      "type": "object",
+      "required": ["primary", "secondary", "flows", "allowedPrefixes", "explicitlyExcluded"],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/route" }
+        },
+        "secondary": { "$ref": "#/$defs/routes" },
+        "flows": { "$ref": "#/$defs/routes" },
+        "allowedPrefixes": { "$ref": "#/$defs/routes" },
+        "explicitlyExcluded": { "$ref": "#/$defs/routes" }
+      },
+      "additionalProperties": false
+    },
+    "services": {
+      "type": "object",
+      "required": ["startupRetained", "runtimeRetained", "startupExcluded"],
+      "properties": {
+        "startupRetained": { "$ref": "#/$defs/names" },
+        "runtimeRetained": { "$ref": "#/$defs/names" },
+        "startupExcluded": { "$ref": "#/$defs/names" }
+      },
+      "additionalProperties": false
+    },
+    "backendApis": {
+      "type": "object",
+      "required": ["required", "backendOnlyPrefixes"],
+      "properties": {
+        "required": { "$ref": "#/$defs/routes" },
+        "backendOnlyPrefixes": { "$ref": "#/$defs/routes" }
+      },
+      "additionalProperties": false
+    },
+    "plugins": {
+      "type": "object",
+      "required": ["retained", "legacyCompatibility", "experimentalIsolated"],
+      "properties": {
+        "retained": { "$ref": "#/$defs/names" },
+        "legacyCompatibility": { "$ref": "#/$defs/names" },
+        "experimentalIsolated": { "$ref": "#/$defs/names" }
+      },
+      "additionalProperties": false
+    },
+    "permissions": {
+      "type": "object",
+      "required": ["android", "iosUsageDescriptions", "iosEntitlements"],
+      "properties": {
+        "android": { "$ref": "#/$defs/names" },
+        "iosUsageDescriptions": { "$ref": "#/$defs/names" },
+        "iosEntitlements": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "identities": {
+      "type": "object",
+      "required": ["displayName", "androidApplicationId", "iosBundleId", "urlSchemes"],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "androidApplicationId": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$" },
+        "iosBundleId": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*(\\.[a-zA-Z][a-zA-Z0-9_-]*)+$" },
+        "urlSchemes": { "$ref": "#/$defs/names" }
+      },
+      "additionalProperties": false
+    },
+    "canonicalSystems": {
+      "type": "object",
+      "required": [
+        "journalModel",
+        "syncClient",
+        "syncBackendRoutes",
+        "conclusionModel",
+        "conclusionValidator",
+        "correctionStore",
+        "entitlementPolicy"
+      ],
+      "properties": {
+        "journalModel": { "$ref": "#/$defs/path" },
+        "syncClient": { "$ref": "#/$defs/path" },
+        "syncBackendRoutes": { "$ref": "#/$defs/routes" },
+        "conclusionModel": { "$ref": "#/$defs/path" },
+        "conclusionValidator": { "$ref": "#/$defs/path" },
+        "correctionStore": { "$ref": "#/$defs/path" },
+        "entitlementPolicy": { "$ref": "#/$defs/path" }
+      },
+      "additionalProperties": false
+    },
+    "analytics": {
+      "type": "object",
+      "required": ["facade", "catalog", "allowedV1Events"],
+      "properties": {
+        "facade": { "$ref": "#/$defs/path" },
+        "catalog": { "$ref": "#/$defs/path" },
+        "allowedV1Events": { "$ref": "#/$defs/names" }
+      },
+      "additionalProperties": false
+    },
+    "capabilityContract": { "$ref": "#/$defs/path" },
+    "dataFlowManifest": { "$ref": "#/$defs/path" },
+    "moduleClassifications": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["classification", "modules"],
+        "properties": {
+          "classification": {
+            "enum": [
+              "RETAIN",
+              "CONSOLIDATE",
+              "REMOVE",
+              "BACKEND_ONLY",
+              "MIGRATION_ONLY",
+              "LEGACY_COMPATIBILITY",
+              "EXPERIMENTAL_ISOLATED"
+            ]
+          },
+          "modules": { "$ref": "#/$defs/nonEmptyUniquePaths" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "architectureGuardTests": { "$ref": "#/$defs/nonEmptyUniquePaths" }
+  },
+  "$defs": {
+    "path": { "type": "string", "minLength": 1, "pattern": "^[^/].*" },
+    "route": { "type": "string", "pattern": "^/" },
+    "routes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "names": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "nonEmptyUniquePaths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/path" }
+    }
+  }
+}

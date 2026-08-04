@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../router/primary_destination.dart';
 import '../router/primary_navigation_controller.dart';
 import '../router/record_navigation_activity_controller.dart';
-import '../theme/app_colors.dart';
+import '../theme/archive_semantic_colors.dart';
 import 'accessibility/accessible_primary_surface.dart';
 
 class MainShell extends StatelessWidget {
@@ -141,15 +141,16 @@ class MainShell extends StatelessWidget {
               label: selected.screenLabel,
               child: navigationShell,
             );
+            final surfaces = ArchiveSemanticColors.of(context);
             if (constraints.maxWidth < 700) {
               return Scaffold(
-                backgroundColor: AppColors.backgroundPrimary,
+                backgroundColor: surfaces.background,
                 body: body,
                 bottomNavigationBar: _phoneNavigation(context, selected),
               );
             }
             return Scaffold(
-              backgroundColor: AppColors.backgroundPrimary,
+              backgroundColor: surfaces.background,
               body: Row(
                 children: [
                   _railNavigation(

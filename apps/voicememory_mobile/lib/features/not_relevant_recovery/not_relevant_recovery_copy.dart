@@ -33,8 +33,7 @@ abstract final class NotRelevantRecoveryCopy {
 
   static String actionLabel(NotRelevantRecoveryActionType action) =>
       switch (action) {
-        NotRelevantRecoveryActionType.keepAsBackground =>
-          keepAsBackgroundLabel,
+        NotRelevantRecoveryActionType.keepAsBackground => keepAsBackgroundLabel,
         NotRelevantRecoveryActionType.watchLightly => watchLightlyLabel,
         NotRelevantRecoveryActionType.relevantAgain => relevantAgainLabel,
       };
@@ -71,10 +70,10 @@ enum NotRelevantRecoveryActionType {
 extension NotRelevantRecoveryActionTypeStorage
     on NotRelevantRecoveryActionType {
   String get storageValue => switch (this) {
-        NotRelevantRecoveryActionType.keepAsBackground => 'keep_as_background',
-        NotRelevantRecoveryActionType.watchLightly => 'watch_lightly',
-        NotRelevantRecoveryActionType.relevantAgain => 'relevant_again',
-      };
+    NotRelevantRecoveryActionType.keepAsBackground => 'keep_as_background',
+    NotRelevantRecoveryActionType.watchLightly => 'watch_lightly',
+    NotRelevantRecoveryActionType.relevantAgain => 'relevant_again',
+  };
 
   String get analyticsValue => storageValue;
 }

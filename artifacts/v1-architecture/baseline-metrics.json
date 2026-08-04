@@ -1,0 +1,291 @@
+{
+  "capturedAt": "2026-08-01T14:37:05.446Z",
+  "phase": "baseline",
+  "productionDartFiles": 3399,
+  "productionDartLines": 513479,
+  "featureDirectories": 409,
+  "reachableScreens": 26,
+  "productionBackendRoutes": 59,
+  "startupServiceReferences": 0,
+  "backgroundServiceReferences": 9,
+  "directFlutterDependencies": 67,
+  "directFlutterDependencyNames": [
+    "flutter_localizations",
+    "cupertino_icons",
+    "go_router",
+    "http",
+    "flutter_secure_storage",
+    "permission_handler",
+    "path_provider",
+    "record",
+    "audioplayers",
+    "share_plus",
+    "file_picker",
+    "url_launcher",
+    "uuid",
+    "crypto",
+    "cryptography",
+    "firebase_core",
+    "firebase_analytics",
+    "firebase_messaging",
+    "device_info_plus",
+    "package_info_plus",
+    "purchases_flutter",
+    "flutter_local_notifications",
+    "timezone",
+    "local_auth",
+    "purchases_ui_flutter",
+    "web_socket_channel",
+    "audio_session",
+    "connectivity_plus",
+    "flutter_riverpod",
+    "flutter_tts",
+    "geolocator",
+    "geocoding",
+    "sqlite3",
+    "google_sign_in",
+    "googleapis",
+    "googleapis_auth",
+    "extension_google_sign_in_as_googleapis_auth",
+    "background_downloader",
+    "ffi",
+    "path",
+    "whisper_flutter_coreml",
+    "secure_application",
+    "workmanager",
+    "archive",
+    "pointycastle",
+    "http_parser",
+    "intl",
+    "mobile_scanner",
+    "qr_flutter",
+    "bip39_mnemonic",
+    "health",
+    "flutter_web_auth_2",
+    "image_picker",
+    "image",
+    "google_mlkit_text_recognition",
+    "nsd",
+    "sqlite_vec_native",
+    "html",
+    "markdown",
+    "pdfrx",
+    "desktop_drop",
+    "battery_plus",
+    "pdf",
+    "flutter_blue_plus",
+    "flutter_ble_peripheral",
+    "flutter_webrtc",
+    "thermal"
+  ],
+  "nativeFlutterPlugins": 32,
+  "nativeFlutterPluginNames": [
+    "permission_handler",
+    "path_provider",
+    "record",
+    "audioplayers",
+    "share_plus",
+    "file_picker",
+    "url_launcher",
+    "firebase_core",
+    "firebase_analytics",
+    "firebase_messaging",
+    "device_info_plus",
+    "package_info_plus",
+    "purchases_flutter",
+    "flutter_local_notifications",
+    "local_auth",
+    "purchases_ui_flutter",
+    "audio_session",
+    "googleapis_auth",
+    "extension_google_sign_in_as_googleapis_auth",
+    "workmanager",
+    "mobile_scanner",
+    "health",
+    "flutter_web_auth_2",
+    "image_picker",
+    "nsd",
+    "sqlite_vec_native",
+    "desktop_drop",
+    "battery_plus",
+    "flutter_blue_plus",
+    "flutter_ble_peripheral",
+    "flutter_webrtc",
+    "thermal"
+  ],
+  "backendPackageFiles": 5,
+  "iosPermissionKeys": [
+    "NSFaceIDUsageDescription",
+    "NSMicrophoneUsageDescription"
+  ],
+  "iosCapabilities": [
+    "com.apple.developer.icloud-container-identifiers",
+    "com.apple.developer.icloud-services",
+    "com.apple.developer.ubiquity-container-identifiers",
+    "com.apple.security.application-groups"
+  ],
+  "androidPermissions": [
+    "android.permission.ACCESS_ADSERVICES_AD_ID",
+    "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+    "android.permission.ACCESS_BACKGROUND_LOCATION",
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_WIFI_STATE",
+    "android.permission.ACTIVITY_RECOGNITION",
+    "android.permission.BLUETOOTH",
+    "android.permission.BLUETOOTH_ADMIN",
+    "android.permission.BLUETOOTH_ADVERTISE",
+    "android.permission.BLUETOOTH_CONNECT",
+    "android.permission.BLUETOOTH_SCAN",
+    "android.permission.BODY_SENSORS",
+    "android.permission.BODY_SENSORS_BACKGROUND",
+    "android.permission.CAMERA",
+    "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+    "android.permission.CHANGE_WIFI_STATE",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_CAMERA",
+    "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
+    "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+    "android.permission.FOREGROUND_SERVICE_HEALTH",
+    "android.permission.FOREGROUND_SERVICE_LOCATION",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+    "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+    "android.permission.INTERNET",
+    "android.permission.MODIFY_AUDIO_SETTINGS",
+    "android.permission.NEARBY_WIFI_DEVICES",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.READ_CALENDAR",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.READ_MEDIA_AUDIO",
+    "android.permission.READ_MEDIA_IMAGES",
+    "android.permission.READ_MEDIA_VIDEO",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "android.permission.RECORD_AUDIO",
+    "android.permission.SCHEDULE_EXACT_ALARM",
+    "android.permission.USE_BIOMETRIC",
+    "android.permission.USE_EXACT_ALARM",
+    "android.permission.USE_FINGERPRINT",
+    "android.permission.VIBRATE",
+    "android.permission.WAKE_LOCK",
+    "android.permission.WRITE_CALENDAR",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+  ],
+  "androidServices": 7,
+  "dartFilesOver500Lines": 114,
+  "dartFilesOver1000Lines": 17,
+  "dartFilesOver2000Lines": 2,
+  "largestDartFiles": [
+    {
+      "file": "apps/voicememory_mobile/lib/features/memory_graph/memory_graph_canvas.dart",
+      "lines": 2716
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/activation/activation_events_store.dart",
+      "lines": 2564
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/activation/activation_tracker.dart",
+      "lines": 1881
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/capture_pipeline_service.dart",
+      "lines": 1764
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/screens/paywall_screen.dart",
+      "lines": 1739
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/widgets/record/post_save_insight_choice_card.dart",
+      "lines": 1618
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/activation_funnel_analytics.dart",
+      "lines": 1244
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/core/graph/personal_knowledge_graph.dart",
+      "lines": 1204
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/screens/trial_control_screen.dart",
+      "lines": 1128
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/document_ingestion/ui/document_vault_sheet.dart",
+      "lines": 1126
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/screens/testing_archiveme_screen.dart",
+      "lines": 1086
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/ui/screens/life_os/interactive_knowledge_graph_widget.dart",
+      "lines": 1086
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/interpretation/interpretation_quality_engine.dart",
+      "lines": 1066
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/archive_proof/visible_archive_proof_copy.dart",
+      "lines": 1058
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/privacy/audio_vault_service.dart",
+      "lines": 1040
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/trial/trial_summary_model.dart",
+      "lines": 1021
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/services/ai/local_semantic_store.dart",
+      "lines": 1007
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/first_session/first_session_pattern_engine.dart",
+      "lines": 998
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/config/screenshot_sample_data.dart",
+      "lines": 964
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/product/consumer_ui_copy.dart",
+      "lines": 941
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/archive_explanations/archive_explanation_engine.dart",
+      "lines": 939
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/audio/recording_service.dart",
+      "lines": 890
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/explainable_conclusion/explainable_conclusion_widgets.dart",
+      "lines": 885
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/live_audio/application/live_voice_capture_service.dart",
+      "lines": 871
+    },
+    {
+      "file": "apps/voicememory_mobile/lib/features/sync/encrypted_sync_engine.dart",
+      "lines": 846
+    }
+  ],
+  "recordingControllerLines": 581,
+  "appServicesLines": 445,
+  "flutterTestFiles": 1208,
+  "staticAnalysisDurationSeconds": 18.25,
+  "criticalSuiteDurationSeconds": 14.44,
+  "buildArtifacts": {
+    "androidDebugApkBytes": null,
+    "androidReleaseApkBytes": null,
+    "androidReleaseBundleBytes": null,
+    "iosAppBytes": null
+  }
+}

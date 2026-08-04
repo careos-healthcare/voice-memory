@@ -1,14 +1,8 @@
 /// Selected review day — metadata only.
-enum ReviewRitualDay {
-  sunday,
-}
+enum ReviewRitualDay { sunday }
 
 /// Selected daypart for the review ritual.
-enum ReviewRitualDaypart {
-  morning,
-  afternoon,
-  evening,
-}
+enum ReviewRitualDaypart { morning, afternoon, evening }
 
 /// Local review ritual preferences — no journal text.
 class ReviewRitual {
@@ -30,18 +24,17 @@ class ReviewRitual {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  bool get isConfigured =>
-      focusRepeated || focusChanged || focusWatchNext;
+  bool get isConfigured => focusRepeated || focusChanged || focusWatchNext;
 
   Map<String, dynamic> toJson() => {
-        'selectedDay': selectedDay.name,
-        'selectedDaypart': selectedDaypart.name,
-        'focusRepeated': focusRepeated,
-        'focusChanged': focusChanged,
-        'focusWatchNext': focusWatchNext,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'selectedDay': selectedDay.name,
+    'selectedDaypart': selectedDaypart.name,
+    'focusRepeated': focusRepeated,
+    'focusChanged': focusChanged,
+    'focusWatchNext': focusWatchNext,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   factory ReviewRitual.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
@@ -77,16 +70,15 @@ class ReviewRitual {
     bool? focusChanged,
     bool? focusWatchNext,
     DateTime? updatedAt,
-  }) =>
-      ReviewRitual(
-        selectedDay: selectedDay ?? this.selectedDay,
-        selectedDaypart: selectedDaypart ?? this.selectedDaypart,
-        focusRepeated: focusRepeated ?? this.focusRepeated,
-        focusChanged: focusChanged ?? this.focusChanged,
-        focusWatchNext: focusWatchNext ?? this.focusWatchNext,
-        createdAt: createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => ReviewRitual(
+    selectedDay: selectedDay ?? this.selectedDay,
+    selectedDaypart: selectedDaypart ?? this.selectedDaypart,
+    focusRepeated: focusRepeated ?? this.focusRepeated,
+    focusChanged: focusChanged ?? this.focusChanged,
+    focusWatchNext: focusWatchNext ?? this.focusWatchNext,
+    createdAt: createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 
   static final empty = ReviewRitual(
     selectedDay: ReviewRitualDay.sunday,

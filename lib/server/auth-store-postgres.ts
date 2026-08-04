@@ -12,6 +12,7 @@ import {
   userIdFromEmail,
 } from "@/lib/server/auth-crypto";
 import { dbQuery } from "@/lib/server/db";
+import { assertAccountDeletionNotPending } from "@/lib/server/privacy/account-deletion-state";
 import type { StoredUser } from "@/lib/server/auth-storage";
 
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
@@ -25,6 +26,7 @@ export async function issueAuthCodePostgres(
   code: string,
 ): Promise<{ userId: string; code: string }> {
   const normalized = normalizeEmail(email);
+  await assertAccountDeletionNotPending(userIdFromEmail(normalized));
   const now = Date.now();
 
   // Resend cooldown — refuse a new code while the last one is fresh.
@@ -106,6 +108,7 @@ export async function persistSessionPostgres(
   token: string,
   user: StoredUser,
 ): Promise<void> {
+  await assertAccountDeletionNotPending(user.id);
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
   await dbQuery(
     `INSERT INTO sessions (token_hash, user_id, email, expires_at)
@@ -115,6 +118,12 @@ export async function persistSessionPostgres(
        email = EXCLUDED.email,
        expires_at = EXCLUDED.expires_at`,
     [hashSessionToken(token), user.id, user.email, expiresAt.toISOString()],
+  );
+  await dbQuery(
+    `INSERT INTO user_profiles (user_id, focus_area, onboarding_completed)
+     VALUES ($1, 'General', false)
+     ON CONFLICT (user_id) DO NOTHING`,
+    [user.id],
   );
 }
 

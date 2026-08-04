@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
 
@@ -28,8 +26,7 @@ class ArchiveExclusionStore {
   static String _storageKey({
     required String entryId,
     required String patternKey,
-  }) =>
-      '${patternKey.trim()}|${entryId.trim()}';
+  }) => '${patternKey.trim()}|${entryId.trim()}';
 
   Future<Set<String>> loadAll() async {
     final raw = await _prefs.readJsonMap(_prefsKey);
@@ -79,7 +76,6 @@ class ArchiveExclusionStore {
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
 
-  @visibleForTesting
   static void invalidateCache() {
     _cached = {};
     _loaded = false;

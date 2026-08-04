@@ -54,7 +54,7 @@ export function ReflectionValueLadder({
               className={`flex gap-3 ${active ? "text-zinc-200" : "text-zinc-600"}`}
             >
               <span className="w-16 shrink-0 font-medium tabular-nums">
-                {step.reflections} reflection{step.reflections === 1 ? "" : "s"}
+                {step.reflections} moment{step.reflections === 1 ? "" : "s"}
               </span>
               <span className={current ? "text-violet-200/90" : undefined}>
                 → {ARCHIVE_VALUE_STAGE_COPY[step.stage].ladderLabel}

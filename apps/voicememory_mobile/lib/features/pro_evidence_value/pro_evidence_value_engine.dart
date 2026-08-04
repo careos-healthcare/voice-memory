@@ -1,9 +1,9 @@
 import '../../models/journal_entry.dart';
+import '../../billing/archive_entitlement_reader.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../first_proof_payoff/first_proof_payoff_engine.dart';
 import '../pattern_review_inbox/pattern_review_inbox_engine.dart';
 import '../pattern_review_inbox/pattern_review_inbox_model.dart';
-import '../pro_memory/pro_memory_boundary_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'pro_evidence_value_copy.dart';
 import 'pro_evidence_value_dismiss_store.dart';
@@ -21,7 +21,8 @@ abstract final class ProEvidenceValueEngine {
       body: ProEvidenceValueCopy.body,
       cta: ProEvidenceValueCopy.cta,
       secondary: ProEvidenceValueCopy.secondary,
-      chatGptDifferentiationLine: ProEvidenceValueCopy.chatGptDifferentiationLine,
+      chatGptDifferentiationLine:
+          ProEvidenceValueCopy.chatGptDifferentiationLine,
       evidenceLine: ProEvidenceValueCopy.evidenceLine,
       comparesMomentsLine: ProEvidenceValueCopy.comparesMomentsLine,
       sheetTitle: ProEvidenceValueCopy.sheetTitle,
@@ -139,8 +140,14 @@ abstract final class ProEvidenceValueEngine {
     return false;
   }
 
-  static Future<bool> resolveIsPro({bool? cachedIsPro}) =>
-      ProMemoryBoundaryEngine.resolveIsPro(cachedIsPro: cachedIsPro);
+  static Future<bool> resolveIsPro({bool? cachedIsPro}) async {
+    if (cachedIsPro == true) return true;
+    try {
+      return await ArchiveEntitlementReader.forAccessCheck().isPro;
+    } catch (_) {
+      return cachedIsPro ?? false;
+    }
+  }
 
   static Future<bool> isDismissed() async {
     await ProEvidenceValueDismissStore.ensureLoaded();

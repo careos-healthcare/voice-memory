@@ -51,17 +51,19 @@ Flutter reads the route on launch via `consumePendingWidgetRoute`.
 
 ## iOS WidgetKit
 
-Swift source and entitlements live in `ios/TodayCheckWidget/` and
-`ios/Runner/ObjectiveWidgetStorage.swift`. AppDelegate implements the same
-method channel and writes to App Group **`group.com.voicememory.mobile`**.
+The active extension lives in `ios/ArchiveMeWidgets/` and is embedded in the
+Runner project. Memory-graph snapshots are AES-GCM encrypted by
+`SecureAppGroupStore` in App Group **`group.com.voicememory.mobile`** under
+`widget/current`; the key is held in the shared Keychain access group.
 
-The Widget extension **target must be added once in Xcode** — see
-`docs/IOS_WIDGETKIT_SETUP.md`.
+`ios/TodayCheckWidget/` is inactive legacy source. Its current-objective bridge
+uses the separate encrypted `objective-widget/current` record so it cannot
+overwrite active Quick Capture, Micro-Habit, or Cluster Pulse state.
 
-Widget tap uses `archiveme://record` (or payload route). Flutter reads the
-pending route via `consumePendingWidgetRoute`.
+Widget taps use `archiveme://` routes. Interactive habit completion writes an
+encrypted pending action which Flutter applies on startup or resume.
 
-See `docs/TODAYS_CHECK_WIDGET_QA.md` for manual QA steps.
+See `docs/IOS_WIDGETKIT_SETUP.md` for signing and device QA steps.
 
 ## Shortcut actions
 

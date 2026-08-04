@@ -10,7 +10,7 @@ export const ORGANIC_REFERRAL_REASON_QUESTION = "What did you tell them?";
 
 export const REFERRAL_BLOCKER_QUESTION = "What would make this worth recommending?";
 
-export const ORGANIC_REFERRAL_DISMISS = "Skip";
+export const ORGANIC_REFERRAL_DISMISS = "Not today";
 
 export const ORGANIC_REFERRAL_STATUS_LABELS: Record<OrganicReferralStatusId, string> = {
   yes: "Yes",

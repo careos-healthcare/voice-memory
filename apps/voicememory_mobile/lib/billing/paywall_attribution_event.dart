@@ -45,15 +45,21 @@ class PaywallAttributionEvent {
   };
 
   static PaywallAttributionEvent? fromJson(Map<String, dynamic> json) {
-    final type = PaywallAttributionEventType.fromId(json['type'] as String?);
-    final source = PaywallSource.fromId(json['source'] as String?);
-    final at = DateTime.tryParse(json['at'] as String? ?? '');
+    final typeRaw = json['type'];
+    final sourceRaw = json['source'];
+    final atRaw = json['at'];
+    final type = PaywallAttributionEventType.fromId(
+      typeRaw is String ? typeRaw : null,
+    );
+    final source = PaywallSource.fromId(sourceRaw is String ? sourceRaw : null);
+    final at = DateTime.tryParse(atRaw is String ? atRaw : '');
     if (type == null || source == null || at == null) return null;
+    final sourceRouteRaw = json['sourceRoute'];
     return PaywallAttributionEvent(
       type: type,
       source: source,
       at: at,
-      sourceRoute: json['sourceRoute'] as String?,
+      sourceRoute: sourceRouteRaw is String ? sourceRouteRaw : null,
     );
   }
 }

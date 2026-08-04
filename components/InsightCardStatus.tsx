@@ -28,7 +28,7 @@ export function ProcessingStatus({ stage }: { stage: ProcessingStage }) {
   const labels = {
     transcribing: "Listening to your voice…",
     analyzing: "Reading your words…",
-    saving: "Saving your reflection…",
+    saving: "Saving your moment…",
   };
 
   return (

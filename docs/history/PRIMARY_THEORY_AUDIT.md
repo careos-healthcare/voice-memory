@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Primary Theory Selection Audit
 
 **Date:** 2026-05-25 (re-validated 2026-06-03)  
@@ -321,3 +323,4 @@ The archive does **not** today choose the most meaningful theory by evidence or 
 | P0 | `archive_theory_hero_card.dart` — gate 0-ev / 0% display |
 | P1 | `archive_analyst_confidence_engine.dart` — topical support ([COUNTER_EVIDENCE_AUDIT.md](./COUNTER_EVIDENCE_AUDIT.md)) |
 | P1 | `archive_analyst_belief_catalog.dart` — drop trait pollution ([TRAIT_POLLUTION_AUDIT.md](./TRAIT_POLLUTION_AUDIT.md)) |
+

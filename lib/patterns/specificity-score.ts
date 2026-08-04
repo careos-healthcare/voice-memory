@@ -108,10 +108,10 @@ export function scoreInsightSpecificity(
     score += Math.min(22, uniqueEntries.length * 5);
     evidenceSources.push("related_entries");
     whyThisFeltSpecific.push(
-      `Grounded across ${uniqueEntries.length} related reflection${uniqueEntries.length === 1 ? "" : "s"}.`,
+      `Grounded across ${uniqueEntries.length} related saved moment${uniqueEntries.length === 1 ? "" : "s"}.`,
     );
   } else if (uniqueEntries.length === 1) {
-    warnings.push("Single-entry signal — more reflections would strengthen this.");
+    warnings.push("Single-moment signal — more saved moments would strengthen this.");
   }
 
   if (entriesById && uniqueEntries.length >= 2) {
@@ -155,14 +155,14 @@ export function scoreInsightSpecificity(
     evidenceSources.push("date_time");
     whyThisFeltSpecific.push(
       datedEvidence > 0
-        ? `${datedEvidence} evidence item${datedEvidence === 1 ? "" : "s"} anchored to dated reflections.`
+        ? `${datedEvidence} evidence item${datedEvidence === 1 ? "" : "s"} anchored to dated saved moments.`
         : "Anchored to a day-of-week or time-window pattern in your words.",
     );
   }
 
   for (const pattern of GENERIC_PHRASES) {
     if (pattern.test(text)) {
-      warnings.push("Contains generic reflection phrasing — may feel non-specific.");
+      warnings.push("Contains generic saved-moment phrasing — may feel non-specific.");
       score = Math.max(0, score - 12);
       break;
     }

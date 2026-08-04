@@ -70,7 +70,7 @@ export function BeliefSurvivalCard({
             <dd className="mt-0.5 font-mono tabular-nums text-zinc-200">{view.daysAlive}</dd>
           </div>
           <div>
-            <dt className="text-zinc-600">Reflections supporting</dt>
+            <dt className="text-zinc-600">Supporting moments</dt>
             <dd className="mt-0.5 font-mono tabular-nums text-zinc-200">
               {view.reflectionsSupporting}
             </dd>

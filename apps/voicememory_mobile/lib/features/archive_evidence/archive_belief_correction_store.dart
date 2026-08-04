@@ -33,7 +33,6 @@ abstract class ArchiveBeliefCorrectionStore {
   }
 
   /// Normalizes user-entered thread titles — empty after trim returns null.
-  @visibleForTesting
   static String? normalizeRenamedTitle(String raw) {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) return null;
@@ -64,8 +63,7 @@ abstract class ArchiveBeliefCorrectionStore {
   static String displayThreadTitle({
     required String threadId,
     required String generatedTitle,
-  }) =>
-      getRenamedThreadTitle(threadId) ?? generatedTitle;
+  }) => getRenamedThreadTitle(threadId) ?? generatedTitle;
 
   static void applyLoaded({
     required Iterable<String> dismissed,
@@ -84,10 +82,10 @@ abstract class ArchiveBeliefCorrectionStore {
   }
 
   static Map<String, dynamic> toJson() => {
-        'dismissed': _sessionDismissed.toList()..sort(),
-        'saved': _savedThreads.toList()..sort(),
-        'renamed': Map<String, String>.from(_renamedThreadTitles),
-      };
+    'dismissed': _sessionDismissed.toList()..sort(),
+    'saved': _savedThreads.toList()..sort(),
+    'renamed': Map<String, String>.from(_renamedThreadTitles),
+  };
 
   static Future<void> ensureLoaded() async {
     if (!AppServices.isInitialized) return;

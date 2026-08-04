@@ -24,7 +24,8 @@ abstract class AppStoragePaths {
   /// Defer [AppServices.initialize] until after the first frame on debug iOS simulators.
   static Future<bool> shouldDeferLocalStorageUntilFirstFrame() async {
     if (kReleaseMode || kIsWeb || !Platform.isIOS) return false;
-    return looksLikeIosSimulatorEnvironment() || !(await _isPhysicalIosDevice());
+    return looksLikeIosSimulatorEnvironment() ||
+        !(await _isPhysicalIosDevice());
   }
 
   /// Call before resolving storage paths when [shouldDeferLocalStorageUntilFirstFrame] is true.
@@ -57,7 +58,6 @@ abstract class AppStoragePaths {
   static bool isIosDebugSimulator() =>
       kDebugMode && looksLikeIosSimulatorEnvironment();
 
-  @visibleForTesting
   static bool looksLikeIosSimulatorEnvironment({
     Map<String, String>? environment,
     bool isIos = true,
@@ -89,6 +89,28 @@ abstract class AppStoragePaths {
     }
   }
 
+  static Future<Directory> applicationSupportDirectory() async {
+    if (kReleaseMode) {
+      return getApplicationSupportDirectory();
+    }
+    if (_shouldUseSimulatorFallback()) {
+      return debugSimulatorSupportDirectorySync();
+    }
+    try {
+      return await getApplicationSupportDirectory();
+    } catch (e) {
+      if (kDebugMode && Platform.isIOS) {
+        return debugSimulatorSupportDirectorySync(reason: e);
+      }
+      rethrow;
+    }
+  }
+
+  static Future<Directory> llamaModelsDirectory() async {
+    final support = await applicationSupportDirectory();
+    return Directory('${support.path}/llm_models');
+  }
+
   static Future<Directory> temporaryDirectory() async {
     if (kReleaseMode) {
       return getTemporaryDirectory();
@@ -106,7 +128,6 @@ abstract class AppStoragePaths {
     }
   }
 
-  @visibleForTesting
   static Directory debugSimulatorDocumentsDirectorySync({
     Directory? systemTemp,
     void Function(String message)? log,
@@ -140,6 +161,26 @@ abstract class AppStoragePaths {
     }
     final base = systemTemp ?? Directory.systemTemp;
     final dir = Directory('${base.path}/archiveme_sim_tmp');
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
+    return dir;
+  }
+
+  @visibleForTesting
+  static Directory debugSimulatorSupportDirectorySync({
+    Directory? systemTemp,
+    void Function(String message)? log,
+    Object? reason,
+  }) {
+    _simulatorFallbackUsed = true;
+    final logger = log ?? debugPrint;
+    logger(simulatorFallbackLog);
+    if (reason != null) {
+      logger('ARCHIVEME_SIMULATOR_NATIVE_ASSETS: reason=$reason');
+    }
+    final base = systemTemp ?? Directory.systemTemp;
+    final dir = Directory('${base.path}/archiveme_sim_support');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }

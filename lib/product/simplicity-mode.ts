@@ -45,7 +45,7 @@ export const ARCHIVE_DETAIL_LINKS = [
   { href: "/archive-detail", label: "Archive detail hub" },
   { href: "/archive-belief#belief-dossier", label: "Belief dossier" },
   { href: "/archive-belief#evidence-locker", label: "Evidence locker" },
-  { href: "/memory", label: "Reflection log" },
+  { href: "/memory", label: "Saved moments" },
   { href: "/search", label: "Search" },
   { href: "/blind-spots", label: "Pattern review" },
   { href: "/theories", label: "Archive beliefs" },

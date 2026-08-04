@@ -37,7 +37,7 @@ export function EmotionalEvolutionCard({
   insights,
   title = "Emotional evolution",
   subtitle = "How mood and intensity move across your entries",
-  emptyLabel = "Emotional patterns emerge as you add voice reflections.",
+  emptyLabel = "Emotional patterns emerge as you save more voice moments.",
   maxItems = 8,
   weekComparison = null,
   showWeekComparison = false,
@@ -107,7 +107,7 @@ export function EmotionalEvolutionCard({
             ) : null}
             {item.entryIds.length > 0 ? (
               <p className="mt-2 text-[10px] text-zinc-600">
-                Based on {item.entryIds.length} reflection
+                Based on {item.entryIds.length} moment
                 {item.entryIds.length === 1 ? "" : "s"}
                 {item.entryIds.length <= 3
                   ? item.entryIds.map((id) => (

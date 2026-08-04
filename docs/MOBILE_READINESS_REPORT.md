@@ -1,5 +1,8 @@
 # Mobile readiness report
 
+> Historical generated snapshot. The authoritative current status is
+> `apps/voicememory_mobile/docs/RELEASE_READINESS.md`.
+
 Generated: 2026-05-30T19:55:05.622Z
 
 Overall pillars for store submission — evidence only, no manual checkboxes.

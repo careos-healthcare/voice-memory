@@ -1,3 +1,5 @@
+import { createHash, randomUUID } from "node:crypto";
+
 import { NextResponse } from "next/server";
 
 import {
@@ -6,6 +8,11 @@ import {
 } from "@/lib/server/journal-store";
 import { getServerSession } from "@/lib/server/session";
 import type { JournalEntry } from "@/types/journal";
+import {
+  serializeJsonBody,
+  serializedJsonResponse,
+} from "@/lib/server/serialized-json-response";
+import { meterBestEffort } from "@/lib/server/unit-economics-meter";
 
 export const runtime = "nodejs";
 
@@ -19,13 +26,36 @@ export async function GET() {
   }
 
   const rows = await listServerJournalEntries(session.userId);
-  return NextResponse.json({
+  const payload = {
     entries: rows.map((r) => ({
       ...r.payload,
       _syncStatus: r.syncStatus,
       _serverUpdatedAt: r.updatedAt,
     })),
-  });
+  };
+  const serialized = serializeJsonBody(payload);
+  const operationNonce = randomUUID();
+  await Promise.all([
+    meterBestEffort({
+      operation: "journal.list.egress",
+      subject: { kind: "user", id: session.userId },
+      idempotencyKey: operationNonce,
+      metric: "egress_bytes",
+      resource: "network.egress",
+      quantity: serialized.bytes,
+      measurementBasis: "exact",
+    }),
+    meterBestEffort({
+      operation: "journal.list.retrieval",
+      subject: { kind: "user", id: session.userId },
+      idempotencyKey: operationNonce,
+      metric: "retrieval_bytes",
+      resource: "network.retrieval",
+      quantity: serialized.bytes,
+      measurementBasis: "exact",
+    }),
+  ]);
+  return serializedJsonResponse(serialized);
 }
 
 export async function POST(request: Request) {
@@ -38,8 +68,10 @@ export async function POST(request: Request) {
   }
 
   let body: { entries?: JournalEntry[] };
+  let rawBody: string;
   try {
-    body = (await request.json()) as { entries?: JournalEntry[] };
+    rawBody = await request.text();
+    body = JSON.parse(rawBody) as { entries?: JournalEntry[] };
   } catch {
     return NextResponse.json({ error: "Invalid body." }, { status: 400 });
   }
@@ -57,5 +89,30 @@ export async function POST(request: Request) {
     entries.map((entry) => ({ entry, syncStatus: "synced" })),
   );
 
-  return NextResponse.json({ ok: true, upserted: result.upserted });
+  const payload = { ok: true, upserted: result.upserted };
+  const serialized = serializeJsonBody(payload);
+  const idempotencyKey =
+    request.headers.get("x-vm-idempotency-key")?.trim() ||
+    createHash("sha256").update(rawBody).digest("base64url");
+  await Promise.all([
+    meterBestEffort({
+      operation: "journal.upsert.ingress",
+      subject: { kind: "user", id: session.userId },
+      idempotencyKey,
+      metric: "ingress_bytes",
+      resource: "network.ingress",
+      quantity: Buffer.byteLength(rawBody, "utf8"),
+      measurementBasis: "exact",
+    }),
+    meterBestEffort({
+      operation: "journal.upsert.egress",
+      subject: { kind: "user", id: session.userId },
+      idempotencyKey,
+      metric: "egress_bytes",
+      resource: "network.egress",
+      quantity: serialized.bytes,
+      measurementBasis: "exact",
+    }),
+  ]);
+  return serializedJsonResponse(serialized);
 }

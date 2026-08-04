@@ -1,4 +1,4 @@
-export const WHY_MORE_EVIDENCE_LEAD = "A single reflection can be misleading.";
+export const WHY_MORE_EVIDENCE_LEAD = "A single moment can be misleading.";
 
 export const WHY_MORE_EVIDENCE_SUBLEAD = "Repeated evidence is harder to ignore.";
 

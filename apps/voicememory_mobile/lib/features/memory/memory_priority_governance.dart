@@ -581,7 +581,7 @@ abstract class MemoryPriorityGovernance {
 
   @visibleForTesting
   static void resetForTest() {
-    MemoryPriorityDecisionLog.resetForTest();
-    NotImportantFeedback.resetForTest();
+    MemoryPriorityDecisionLog.clear();
+    NotImportantFeedback.clearSession();
   }
 }

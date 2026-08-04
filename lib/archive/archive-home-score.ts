@@ -36,7 +36,7 @@ export function buildArchiveHomeScoreView(
   if (!belief && entries.length === 0) return null;
 
   return {
-    currentBelief: belief?.belief ?? "Still forming — a few more reflections help.",
+    currentBelief: belief?.belief ?? "Still forming — a few more saved moments help.",
     reputationLabel: reputation
       ? ARCHIVE_REPUTATION_LEVEL_LABEL[reputation.level]
       : "Developing",

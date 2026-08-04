@@ -12,14 +12,14 @@ const REQUIRED_FILES = [
   "lib/atmosphere/atmosphere-observation.ts",
   "types/atmosphere.ts",
   "components/entry/EntryAtmosphereAttachment.tsx",
-  "app/api/atmosphere/route.ts",
+  "experiments/backend/app/api/atmosphere/route.ts",
 ];
 
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
   "lib/atmosphere/",
   "components/entry/EntryAtmosphereAttachment.tsx",
-  "app/api/atmosphere/",
+  "experiments/backend/app/api/atmosphere/",
   "scripts/",
 ];
 

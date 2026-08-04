@@ -54,6 +54,32 @@ class EarlySpecificInsightEngine {
     'overthinking',
   ];
 
+  /// Returns a phrase present in [current] and at least one prior entry.
+  ///
+  /// Shared by immediate and early-archive surfaces so recurrence claims use
+  /// one detector and can never be inferred from the current entry alone.
+  String? exactSharedPhrase({
+    required JournalEntry current,
+    required List<JournalEntry> priorEntries,
+  }) {
+    final currentText = _entryText(current);
+    if (currentText.isEmpty) return null;
+    final priorTexts = priorEntries
+        .map(_entryText)
+        .where((text) => text.isNotEmpty);
+    final texts = [currentText, ...priorTexts];
+    if (texts.length < 2) return null;
+    final phrases = _bestSharedPhrases(texts, maxPhrases: 1);
+    if (phrases.isEmpty) return null;
+    final phrase = phrases.first;
+    final matchesPrior = priorTexts.any(
+      (text) => text.toLowerCase().contains(phrase),
+    );
+    return matchesPrior && currentText.toLowerCase().contains(phrase)
+        ? _displayPhrase(phrase)
+        : null;
+  }
+
   EarlySpecificInsight build(List<JournalEntry> entries) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) return EarlySpecificInsight.none;
@@ -71,18 +97,20 @@ class EarlySpecificInsightEngine {
     final secondary = shared.length > 1 ? shared[1] : null;
     final evidenceQuotes = _evidenceQuotes(texts, shared);
     if (evidenceQuotes.length < 2 && shared.length == 1) {
-      final single = _quoteAround(texts.firstWhere(
-        (t) => t.toLowerCase().contains(primary),
-        orElse: () => texts.first,
-      ), primary);
+      final single = _quoteAround(
+        texts.firstWhere(
+          (t) => t.toLowerCase().contains(primary),
+          orElse: () => texts.first,
+        ),
+        primary,
+      );
       if (single == null) return EarlySpecificInsight.none;
     }
 
     final oneLinePattern = _patternLine(primary, secondary, texts);
     final evidenceLine = _evidenceLine(evidenceQuotes);
     final nextQuestion = _nextQuestion(primary, secondary, texts);
-    final confidenceLabel =
-        'Early signal — based on ${texts.length} moments';
+    final confidenceLabel = 'Early signal — based on ${texts.length} moments';
 
     final insight = EarlySpecificInsight(
       title: EarlySpecificInsightCopy.sharpTitle,
@@ -99,18 +127,13 @@ class EarlySpecificInsightEngine {
 
   String _entryText(JournalEntry entry) {
     final parts = <String>[
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.concreteObservation,
-          )
-          case final observation?)
-        observation,
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.exactLanguagePattern,
-          )
-          case final pattern?)
-        pattern,
-      if (_cleanTranscript(entry.transcript) case final transcript?)
-        transcript,
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.concreteObservation,
+      ),
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.exactLanguagePattern,
+      ),
+      ?_cleanTranscript(entry.transcript),
     ];
     return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
@@ -122,7 +145,10 @@ class EarlySpecificInsightEngine {
     return line;
   }
 
-  List<String> _bestSharedPhrases(List<String> texts, {required int maxPhrases}) {
+  List<String> _bestSharedPhrases(
+    List<String> texts, {
+    required int maxPhrases,
+  }) {
     final lowerTexts = texts.map((t) => t.toLowerCase()).toList();
     final priority = <String>[];
     for (final phrase in _priorityPhrases) {
@@ -140,14 +166,17 @@ class EarlySpecificInsightEngine {
       }
     }
 
-    final ranked = counts.entries
-        .where((e) => e.value.length >= 2)
-        .where((e) => !_isGenericPhrase(e.key))
-        .where((e) => !_isWeakNgram(e.key))
-        .where((e) => !ArchiveRepeatPhraseSanitizer.isLowQuality(e.key))
-        .map((e) => MapEntry(e.key, e.value.length * e.key.split(' ').length))
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final ranked =
+        counts.entries
+            .where((e) => e.value.length >= 2)
+            .where((e) => !_isGenericPhrase(e.key))
+            .where((e) => !_isWeakNgram(e.key))
+            .where((e) => !ArchiveRepeatPhraseSanitizer.isLowQuality(e.key))
+            .map(
+              (e) => MapEntry(e.key, e.value.length * e.key.split(' ').length),
+            )
+            .toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
     return ArchiveRepeatPhraseSanitizer.dedupeNearIdentical(
       ranked.take(maxPhrases * 2).map((e) => e.key).toList(),
@@ -189,7 +218,8 @@ class EarlySpecificInsightEngine {
     if (ArchiveRepeatPhraseSanitizer.isLowQuality(phrase)) return true;
     final words = phrase.split(' ');
     if (words.length < 2) return true;
-    if (_stopWords.contains(words.first) && !_priorityPhrases.contains(phrase)) {
+    if (_stopWords.contains(words.first) &&
+        !_priorityPhrases.contains(phrase)) {
       return true;
     }
     if (_stopWords.contains(words.last) && words.last.length <= 3) {
@@ -201,9 +231,10 @@ class EarlySpecificInsightEngine {
   String _patternLine(String primary, String? secondary, List<String> texts) {
     final shared = ArchiveRepeatPhraseSanitizer.dedupeNearIdentical([
       primary,
-      if (secondary != null) secondary,
+      ?secondary,
     ]);
-    final lowerConfidence = shared.isEmpty ||
+    final lowerConfidence =
+        shared.isEmpty ||
         shared.every(ArchiveRepeatPhraseSanitizer.isLowQuality);
     return ArchiveRepeatPhraseSanitizer.buildRepeatSummary(
       texts: texts,
@@ -242,7 +273,7 @@ class EarlySpecificInsightEngine {
   }
 
   String _nextQuestion(String primary, String? secondary, List<String> texts) {
-    final blob = '${primary} ${secondary ?? ''} ${texts.join(' ')}'.toLowerCase();
+    final blob = '$primary ${secondary ?? ''} ${texts.join(' ')}'.toLowerCase();
     if (blob.contains('wanted to say no') || blob.contains('want to say no')) {
       return 'Tomorrow, notice the moment before you agree to something.';
     }

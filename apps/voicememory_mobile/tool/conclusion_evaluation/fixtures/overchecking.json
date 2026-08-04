@@ -1,0 +1,125 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "overcheck_001_frequency_up",
+      "entryA": {
+        "id": "overcheck_001_a",
+        "transcript": "I checked my email sometimes during the evening.",
+        "capturedAt": "2026-04-01T21:00:00Z"
+      },
+      "entryB": {
+        "id": "overcheck_001_b",
+        "transcript": "I checked my email constantly during the evening.",
+        "capturedAt": "2026-05-11T21:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["frequency:increased"],
+      "supportedConclusion": "Email — how often it happened looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How often it happened looks rarely across these saved moments.",
+          "violation": "unsupportedDirection"
+        },
+        {
+          "statement": "You are an anxious person.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "overchecking",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "overcheck_002_frequency_down",
+      "entryA": {
+        "id": "overcheck_002_a",
+        "transcript": "I checked my email constantly during the evening.",
+        "capturedAt": "2026-04-02T21:00:00Z"
+      },
+      "entryB": {
+        "id": "overcheck_002_b",
+        "transcript": "I checked my email rarely during the evening.",
+        "capturedAt": "2026-05-12T21:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["frequency:decreased"],
+      "supportedConclusion": "Email — how often it happened looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You check your email constantly because you are worried.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "overchecking",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "overcheck_003_kept_going_to_stopped",
+      "entryA": {
+        "id": "overcheck_003_a",
+        "transcript": "I kept going back to the message all evening and felt anxious.",
+        "capturedAt": "2026-04-03T22:00:00Z"
+      },
+      "entryB": {
+        "id": "overcheck_003_b",
+        "transcript": "I stopped checking the message this evening and felt calm.",
+        "capturedAt": "2026-05-13T22:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": [
+        "stoppingOrCompletionBehaviour:replaced",
+        "emotionalState:replaced"
+      ],
+      "supportedConclusion": "Message — stopping or finishing looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You have finally recovered from this habit.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "This may be a possible pattern of avoidance.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "overchecking",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "overcheck_004_repeat",
+      "entryA": {
+        "id": "overcheck_004_a",
+        "transcript": "I checked my email constantly during the evening and felt worried.",
+        "capturedAt": "2026-04-04T21:00:00Z"
+      },
+      "entryB": {
+        "id": "overcheck_004_b",
+        "transcript": "I checked my email constantly during the evening again and felt worried.",
+        "capturedAt": "2026-05-14T21:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated what you did with your email.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How often it happened looks different across these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "overchecking",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

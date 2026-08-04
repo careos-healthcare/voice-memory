@@ -3,7 +3,6 @@ import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
-import '../archive_proof/visible_archive_proof_copy.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../retention/second_session_signal_model.dart';
 import 'comparison_engine_model.dart';
@@ -62,7 +61,8 @@ class ComparisonEngine {
         : entries[entries.length - 2];
     final latest = eligible.isNotEmpty ? eligible.last : entries.last;
 
-    final rawRepeated = _usableLine(signal.whatRepeated) ??
+    final rawRepeated =
+        _usableLine(signal.whatRepeated) ??
         'something similar across your last two moments';
     final rawChanged = _usableLine(signal.whatChanged);
 
@@ -74,7 +74,8 @@ class ComparisonEngine {
         ? null
         : ComparisonEnginePrompt.sanitizeLine(
             rawChanged,
-            fallback: 'The latest moment may sit differently from the one before it.',
+            fallback:
+                'The latest moment may sit differently from the one before it.',
           );
 
     final confidence = _resolveConfidence(
@@ -95,6 +96,8 @@ class ComparisonEngine {
         connectedEntryId: previous.id,
         whatChanged: whatChanged,
         thinEvidencePhrase: thinEvidence,
+        pastQuote: _evidenceQuote(previous),
+        presentQuote: _evidenceQuote(latest),
       ),
     );
   }
@@ -147,7 +150,7 @@ class ComparisonEngine {
       case ComparisonConfidenceLabel.earlySignal:
       case ComparisonConfidenceLabel.possibleRepeat:
       case ComparisonConfidenceLabel.notEnoughEvidence:
-        return VisibleArchiveProofCopy.archiveFirstComparisonCautionThin;
+        return ComparisonEnginePrompt.thinEvidenceDefault;
       case ComparisonConfidenceLabel.clearRepeat:
       case ComparisonConfidenceLabel.stillCurrent:
       case ComparisonConfidenceLabel.changed:
@@ -156,6 +159,14 @@ class ComparisonEngine {
       case ComparisonConfidenceLabel.corrected:
         return null;
     }
+  }
+
+  String _evidenceQuote(JournalEntry entry) {
+    final transcript = entry.transcript.trim();
+    if (transcript.isNotEmpty) return transcript;
+    final observation = entry.reflection.concreteObservation.trim();
+    if (observation.isNotEmpty) return observation;
+    return '';
   }
 
   String? _usableLine(String? line) {

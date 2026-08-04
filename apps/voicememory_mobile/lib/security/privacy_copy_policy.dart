@@ -1,3 +1,5 @@
+import '../core/config/v1_capability_registry.dart';
+
 /// Canonical privacy promises and guards against overclaiming in consumer copy.
 abstract class PrivacyCopyPolicy {
   PrivacyCopyPolicy._();
@@ -18,13 +20,13 @@ abstract class PrivacyCopyPolicy {
       'Some features send audio or text for transcription or analysis when you use them.';
 
   static const String journalEncryptedAtRest =
-      'Your journal file on this device is encrypted.';
+      'Your archive file on this device is encrypted.';
 
   static const String lockArchiveMe = 'Protect this archive';
 
   /// Calm first-run / legal disclaimer — no encryption or therapy claims.
   static const String personalNotMedicalDisclaimer =
-      'Your recordings and reflections are personal. Some data may be stored '
+      'Your recordings and saved moments are personal. Some data may be stored '
       'on this device. ArchiveMe is not therapy, medical advice, or emergency '
       'support.';
 
@@ -35,20 +37,11 @@ abstract class PrivacyCopyPolicy {
   // ——— Consumer privacy copy sources ———
 
   static const List<String> consumerPrivacySources = [
-    'lib/security/archive_privacy_controls_copy.dart',
-    'lib/security/account_privacy_controls_copy.dart',
     'lib/security/security_settings_copy.dart',
     'lib/features/trust/privacy_screen_copy.dart',
-    'lib/features/trust/pro_trust_copy.dart',
     'lib/record/record_screen_framing_copy.dart',
-    'lib/auth/auth_trigger_rules.dart',
     'lib/screens/privacy_screen.dart',
-    'lib/widgets/security/archive_data_flow_sheet.dart',
-    'lib/widgets/security/archive_privacy_controls_card.dart',
-    'lib/widgets/account/account_privacy_controls_section.dart',
-    'lib/widgets/record/record_first_run_privacy_reassurance.dart',
     'lib/features/trust/terms_screen_copy.dart',
-    'lib/features/onboarding/first_user_experience_copy.dart',
   ];
 
   static final List<RegExp> _allowedEncryptedContexts = [
@@ -56,7 +49,11 @@ abstract class PrivacyCopyPolicy {
     RegExp(r'encrypt(?:ed)?\s+(?:a\s+)?backup', caseSensitive: false),
     RegExp(r'encrypted before it is', caseSensitive: false),
     RegExp(r'encrypted sync', caseSensitive: false),
-    RegExp(r'journal file on this device is encrypted', caseSensitive: false),
+    RegExp(r'archive file on this device is encrypted', caseSensitive: false),
+    RegExp(
+      r'saved moments and retained recordings are encrypted on this device',
+      caseSensitive: false,
+    ),
   ];
 
   static final RegExp _neverSentPattern = RegExp(
@@ -145,9 +142,7 @@ abstract class PrivacyCopyPolicy {
 
     if (_encryptPattern.hasMatch(line) &&
         !_allowedEncryptedContexts.any((pattern) => pattern.hasMatch(line))) {
-      violations.add(
-        'encryption claim without supported backup/sync context',
-      );
+      violations.add('encryption claim without supported backup/sync context');
     }
 
     return violations;
@@ -160,17 +155,33 @@ abstract class PrivacyCopyPolicy {
     return lower.contains(phrase);
   }
 
+  /// A denial standing before the phrase, in the same literal.
+  ///
+  /// Long disclaimers are written as concatenated literals, so "ArchiveMe is
+  /// not therapy, medical advice, or emergency support" reaches this check
+  /// split after "medical". Matching only the exact pair "medical advice"
+  /// therefore flags the very sentence that disclaims the thing.
+  static bool _deniedBefore(String lower, String phrase) {
+    final at = lower.indexOf(phrase);
+    if (at <= 0) return false;
+    return RegExp(
+      r'\b(?:is|are|was|were|does|do|can|will)?\s*not\b|\bnever\b|\bno\b',
+    ).hasMatch(lower.substring(0, at));
+  }
+
   static bool _isAllowedBannedPhraseContext(String lower, String phrase) {
     switch (phrase) {
       case 'therapy':
-        return lower.contains('not therapy');
+        return lower.contains('not therapy') || _deniedBefore(lower, phrase);
       case 'medical':
-        return lower.contains('not medical') || lower.contains('medical advice');
+        return lower.contains('not medical') ||
+            lower.contains('medical advice') ||
+            _deniedBefore(lower, phrase);
       case 'treatment':
-        return lower.contains('not treatment');
+        return lower.contains('not treatment') || _deniedBefore(lower, phrase);
       case 'diagnosis':
       case 'diagnose':
-        return lower.contains('not diagnos');
+        return lower.contains('not diagnos') || _deniedBefore(lower, phrase);
       default:
         return false;
     }
@@ -208,4 +219,101 @@ abstract class PrivacyCopyPolicy {
 
     return violations;
   }
+}
+
+enum PrivacyAnalysisMode { onDevice, remote, mixed }
+
+/// Capability-backed privacy facts used by Record, Account, and privacy UI.
+class PrivacyCapabilitySnapshot {
+  const PrivacyCapabilitySnapshot({
+    required this.journalTextEncryptedAtRest,
+    required this.retainedAudioEncryptedAtRest,
+    required this.keysUsePlatformSecureStorage,
+    required this.biometricLockAvailable,
+    required this.biometricLockEnabled,
+    required this.syncEnabled,
+    required this.syncEndToEndEncryptionVerified,
+    required this.analysisMode,
+    required this.permissions,
+  });
+
+  static const focusedV1 = PrivacyCapabilitySnapshot(
+    journalTextEncryptedAtRest: true,
+    retainedAudioEncryptedAtRest: true,
+    keysUsePlatformSecureStorage: true,
+    biometricLockAvailable: V1CapabilityRegistry.biometricLock,
+    biometricLockEnabled: false,
+    syncEnabled: false,
+    syncEndToEndEncryptionVerified: false,
+    analysisMode: PrivacyAnalysisMode.mixed,
+    permissions: V1CapabilityRegistry.androidPermissionAllowlist,
+  );
+
+  final bool journalTextEncryptedAtRest;
+  final bool retainedAudioEncryptedAtRest;
+  final bool keysUsePlatformSecureStorage;
+  final bool biometricLockAvailable;
+  final bool biometricLockEnabled;
+  final bool syncEnabled;
+  final bool syncEndToEndEncryptionVerified;
+  final PrivacyAnalysisMode analysisMode;
+  final Set<String> permissions;
+
+  PrivacyCapabilitySnapshot withRuntimeState({
+    required bool biometricLockEnabled,
+  }) => PrivacyCapabilitySnapshot(
+    journalTextEncryptedAtRest: journalTextEncryptedAtRest,
+    retainedAudioEncryptedAtRest: retainedAudioEncryptedAtRest,
+    keysUsePlatformSecureStorage: keysUsePlatformSecureStorage,
+    biometricLockAvailable: biometricLockAvailable,
+    biometricLockEnabled: biometricLockEnabled,
+    syncEnabled: syncEnabled,
+    syncEndToEndEncryptionVerified: syncEndToEndEncryptionVerified,
+    analysisMode: analysisMode,
+    permissions: permissions,
+  );
+
+  String get recordReassurance {
+    if (journalTextEncryptedAtRest && retainedAudioEncryptedAtRest) {
+      return 'Saved moments and retained recordings are encrypted on this device.';
+    }
+    if (journalTextEncryptedAtRest) {
+      return PrivacyCopyPolicy.journalEncryptedAtRest;
+    }
+    return PrivacyCopyPolicy.nothingSentUnlessFeatureChosen;
+  }
+
+  List<String> get accountSummary => [
+    if (journalTextEncryptedAtRest)
+      PrivacyCopyPolicy.journalEncryptedAtRest
+    else
+      'Journal storage encryption is not verified.',
+    if (retainedAudioEncryptedAtRest)
+      'Saved recordings are encrypted on this device.'
+    else
+      'Saved recording encryption is not verified.',
+    if (keysUsePlatformSecureStorage)
+      'Encryption keys use platform secure storage.',
+    if (biometricLockAvailable)
+      biometricLockEnabled
+          ? 'Biometric archive lock is on.'
+          : 'Biometric archive lock is off.',
+    switch (analysisMode) {
+      PrivacyAnalysisMode.onDevice => 'Analysis runs on this device.',
+      PrivacyAnalysisMode.remote =>
+        'Remote analysis is used when you choose a feature that needs it.',
+      PrivacyAnalysisMode.mixed =>
+        'Analysis may run on this device or remotely, depending on the feature.',
+    },
+    if (analysisMode != PrivacyAnalysisMode.onDevice)
+      'Only data required for the selected remote analysis is sent.',
+    if (!syncEnabled)
+      'Cross-device sync is off.'
+    else if (syncEndToEndEncryptionVerified)
+      'Cross-device sync encryption is verified end to end.'
+    else
+      'Cross-device sync is enabled; end-to-end encryption is not verified.',
+    'Microphone access is requested only when you start voice recording.',
+    PrivacyCopyPolicy.exportDeleteAnytime,
+  ];
 }

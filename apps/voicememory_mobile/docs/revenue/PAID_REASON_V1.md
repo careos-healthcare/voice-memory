@@ -6,17 +6,18 @@
 
 ## Core paid reason
 
-**ArchiveMe Pro is for keeping the longer story — not getting better answers.**
+**ArchiveMe Pro is for generating the ongoing story — not owning or opening it.**
 
-Free proves the loop: save moments, see the first repeat, correct lightly, keep a short slice of history.
+Free proves the loop: save moments, receive the first valid observation and
+comparison, correct interpretations, and retain every original.
 
-Pro preserves what the archive already showed you:
+Pro generates new analysis after that proof:
 
-- **Longer archive history** — older moments stay available as the pattern grows
-- **More pattern history** — repeats, change, and quiet signals across weeks
-- **Change timeline** — what returned, shifted, softened, or disappeared
-- **Private reports** — recap what the archive noticed, in your words
-- **Export** — take a copy you control (when export is live in the build)
+- **Ongoing comparisons** across distinct moments
+- **Full Changes history generation**
+- **Deeper archive synthesis**
+- **Configured remote transcription and analysis allowance**
+- **Periodic reviews and full-history questions** only where implemented
 
 ---
 
@@ -34,9 +35,9 @@ Pro preserves what the archive already showed you:
 
 ## Positioning lines (consumer-safe)
 
-**Headline:** Keep the longer story.
+**Headline:** Keep following what changes.
 
-**Body:** Free shows the first proof. Pro keeps more of the pattern history, change timeline, private reports, and older evidence.
+**Body:** Your recordings stay yours. Pro unlocks ongoing comparisons and deeper archive analysis.
 
 **Differentiation:** ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.
 
@@ -52,7 +53,7 @@ After value has appeared — not at zero entries or first recording:
 
 1. After **first proof payoff**
 2. After **private report preview**
-3. When user hits **short history** ceiling (e.g. last 7 key moments)
+3. When a configured remote allowance is reached
 4. On **Testing ArchiveMe** / beta feedback surfaces (learning only)
 
 Never before proof. Never during active review questions.
@@ -63,7 +64,7 @@ Never before proof. Never during active review questions.
 
 - `lib/features/revenue_foundation/revenue_value_copy.dart` — canonical paid-reason strings
 - `lib/features/pro_evidence_value/` — in-app Pro bridge (do not change billing)
-- `lib/billing/archive_pro_feature_map.dart` — entitlements reference only
+- `config/monetization/archive_me_entitlement_matrix.json` — canonical policy
 
 ---
 

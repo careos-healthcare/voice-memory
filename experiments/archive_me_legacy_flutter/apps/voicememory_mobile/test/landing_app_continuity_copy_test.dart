@@ -1,0 +1,160 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
+import 'package:voicememory_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:voicememory_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
+import 'package:voicememory_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
+import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise_copy.dart';
+import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_copy.dart';
+import 'package:voicememory_mobile/features/three_day_challenge/three_day_challenge_copy.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+
+const _bannedTerms = [
+  'diagnosis',
+  'treatment',
+  'therapy',
+  'clinical',
+  'medical report',
+  'cloud backup included',
+  'sync is active',
+  'your archive is backed up',
+  'better ai',
+  'more ai',
+  'guaranteed transformation',
+  'live backup',
+  'cloud backup guarantee',
+];
+
+List<String> _continuityCopyBlob() => [
+  ...LandingAppContinuityCopy.allVisibleStrings(),
+  ThreeDayChallengeCopy.title,
+  ThreeDayChallengeCopy.day1Title,
+  ThreeDayChallengeCopy.day2Title,
+  ThreeDayChallengeCopy.day3Title,
+  ConsumerUiCopy.paywallHeadline,
+  ConsumerUiCopy.paywallPrimaryCta,
+  ConsumerUiCopy.paywallPrimaryValueBlock,
+  ArchivePaywallCopy.proActiveConfirmation,
+  ConsumerUiCopy.paywallDifferentiation,
+  ConsumerUiCopy.paywallTrust,
+  ConsumerUiCopy.paywallBackupLine,
+  RevenueValueCopy.chatGptDifferentiationLine,
+  ProEvidenceValueCopy.chatGptDifferentiationLine,
+];
+
+void main() {
+  group('Landing and app continuity copy alignment', () {
+    test('website and app promises stay aligned', () {
+      expect(
+        LandingAppContinuityCopy.hero,
+        'Your voice becomes your life story',
+      );
+      expect(
+        LandingAppContinuityCopy.subheadline,
+        'Speak naturally. Keep it private. See one connected story over time.',
+      );
+      expect(
+        LandingAppContinuityCopy.coreProductVision,
+        'ArchiveMe is a private voice journal that turns your spoken thoughts '
+        'into a unified life story and deep personal intelligence.',
+      );
+      expect(
+        LandingAppContinuityCopy.chatGptDifferentiation,
+        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+      );
+      expect(
+        LandingAppContinuityCopy.proPaidReason,
+        'Pro keeps the longer proof trail over time.',
+      );
+      expect(
+        LandingAppContinuityCopy.freePositioning,
+        'Free shows the first useful proof. Pro keeps the longer proof trail.',
+      );
+      expect(LandingAppContinuityCopy.howItWorksStepTitles, [
+        'Speak your thoughts',
+        'Build one life story',
+        'Discover personal intelligence',
+        'Correct what is not relevant',
+        LandingAppContinuityCopy.step5Title,
+      ]);
+
+      expect(ThreeDayChallengeCopy.title, LandingAppContinuityCopy.hero);
+      expect(
+        ThreeDayChallengeCopy.day1Title,
+        LandingAppContinuityCopy.step1Title,
+      );
+      expect(
+        ThreeDayChallengeCopy.day2Title,
+        LandingAppContinuityCopy.step2Title,
+      );
+      expect(
+        ThreeDayChallengeCopy.day3Title,
+        LandingAppContinuityCopy.step3Title,
+      );
+
+      expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
+      expect(
+        ConsumerUiCopy.paywallHeadline,
+        'You saw the first useful repeat.',
+      );
+      expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
+      expect(
+        ConsumerUiCopy.paywallPrimaryValueBlock,
+        PaywallValueSharpeningCopy.proofConnectedLine,
+      );
+      expect(
+        ArchivePaywallCopy.proActiveConfirmation,
+        contains('keeps the longer proof trail'),
+      );
+      expect(
+        RevenueValueCopy.chatGptDifferentiationLine,
+        LandingAppContinuityCopy.chatGptDifferentiation,
+      );
+      expect(
+        ProEvidenceValueCopy.chatGptDifferentiationLine,
+        LandingAppContinuityCopy.chatGptDifferentiation,
+      );
+    });
+
+    test('continuity copy guard blocks banned positioning', () {
+      final blob = _continuityCopyBlob().join(' ').toLowerCase();
+      for (final banned in _bannedTerms) {
+        if (banned == 'therapy') continue;
+        expect(
+          blob,
+          isNot(contains(banned)),
+          reason: 'must not contain $banned',
+        );
+      }
+      expect(blob, contains('not therapy'));
+      expect(blob, contains('do not rely on this build as cloud backup'));
+      expect(blob, isNot(contains('more ai')));
+    });
+
+    test('continuity checklist doc exists with required promises', () {
+      final doc = File(
+        'docs/release/LANDING_APP_CONTINUITY_CHECKLIST.md',
+      ).readAsStringSync();
+      expect(doc, contains('Your voice becomes your life story'));
+      expect(doc, contains(LandingAppContinuityCopy.coreProductVision));
+      expect(doc, contains('Speak your thoughts'));
+      expect(doc, contains('Build one life story'));
+      expect(doc, contains('Discover personal intelligence'));
+      expect(doc, contains('Correct what is not relevant'));
+      expect(doc, contains(LandingAppContinuityCopy.step5Title));
+      expect(
+        doc,
+        contains(
+          'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+        ),
+      );
+      expect(doc, contains('Headline: `${ProSinglePromiseCopy.headline}`'));
+      expect(doc, contains(LandingAppContinuityCopy.freePositioning));
+      expect(doc.toLowerCase(), contains('not therapy'));
+      expect(doc.toLowerCase(), contains('cloud backup'));
+      expect(doc, contains('No **more AI** positioning'));
+    });
+  });
+}

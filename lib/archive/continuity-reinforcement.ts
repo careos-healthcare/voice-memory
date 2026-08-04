@@ -121,7 +121,7 @@ function reflectionCountMessage(theory: Theory): ContinuityStripMessage | null {
   return {
     id: newId("cs"),
     kind: "reflection_count",
-    text: `This has appeared in ${count} separate reflections.`,
+    text: `This has appeared in ${count} separate saved moments.`,
   };
 }
 
@@ -136,7 +136,7 @@ function stillTestingMessage(theory: Theory): ContinuityStripMessage {
 function archiveConnectingMessage(reflectionCount: number): ContinuityStripMessage {
   const text =
     reflectionCount >= 2
-      ? `Your archive is connecting observations across ${reflectionCount} reflections.`
+      ? `Your archive is connecting observations across ${reflectionCount} saved moments.`
       : CONTINUITY_ARCHIVE_FALLBACK;
   return {
     id: newId("cs"),

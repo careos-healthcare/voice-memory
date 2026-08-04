@@ -6,11 +6,11 @@ Internal release checklist so the public website promise matches the in-app expe
 
 | Surface | Promise | Canonical copy |
 | --- | --- | --- |
-| Website + App | Public promise | `When something repeats, save one real moment. ArchiveMe compares it later.` |
-| Website + App | Subheadline | `No daily journal. No streak. No dashboard to maintain.` |
-| Website + App | Hero | `When it repeats, save it` |
-| Website + App | Hero body | `When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.` |
-| Website + App | How it works | `Save one real moment` · `Come back when it repeats` · `See what appeared and returned` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
+| Website + App | Public promise | `ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence.` |
+| Website + App | Subheadline | `Speak naturally. Keep it private. See one connected story over time.` |
+| Website + App | Hero | `Your voice becomes your life story` |
+| Website + App | Hero body | `ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence.` |
+| Website + App | How it works | `Speak your thoughts` · `Build one life story` · `Discover personal intelligence` · `Correct what is not relevant` · `Keep the longer proof trail with Pro` |
 | Website + App | ChatGPT differentiation | `ChatGPT can suggest what to do. ArchiveMe shows what you already said before.` |
 | App (Record, early) | Step 1 / 2 / 3 guidance | Uses the first three how-it-works steps above |
 | Paywall | Keep the longer proof trail | Headline: `Keep the longer proof trail` · CTA: `Keep the longer trail` |
@@ -42,9 +42,9 @@ Internal release checklist so the public website promise matches the in-app expe
 
 ## Early record guidance (app only)
 
-- [ ] Step 1 body: save one real moment when something repeats.
-- [ ] Step 2 body: come back when it repeats — no daily streak required.
-- [ ] Step 3 body: after enough real moments, see the first useful proof.
+- [ ] Step 1 body: record a private voice-journal entry.
+- [ ] Step 2 body: connect moments into one life story.
+- [ ] Step 3 body: show grounded personal intelligence from spoken thoughts.
 - [ ] Completion stays hidden on Record when guidance is complete.
 - [ ] No push notifications added for early guidance.
 - [ ] Proof thresholds and evidence gates unchanged.

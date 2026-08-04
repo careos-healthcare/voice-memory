@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "2026-08-01",
+  "valueTypes": [
+    "boolean",
+    "bounded_count",
+    "count_band",
+    "fixed_enum"
+  ],
+  "events": [
+    {
+      "id": "start_here_shown",
+      "properties": ["surface"]
+    },
+    {
+      "id": "start_here_selected",
+      "properties": ["surface", "capture_mode"]
+    },
+    {
+      "id": "account_signup_started",
+      "properties": ["method"]
+    },
+    {
+      "id": "account_signup_completed",
+      "properties": ["method"]
+    },
+    {
+      "id": "account_signin_started",
+      "properties": ["method"]
+    },
+    {
+      "id": "account_signin_completed",
+      "properties": ["method"]
+    },
+    {
+      "id": "account_signout",
+      "properties": ["method"]
+    },
+    {
+      "id": "auth_error_shown",
+      "properties": ["error_type"]
+    },
+    {
+      "id": "app_lock_enabled",
+      "properties": ["enabled"]
+    },
+    {
+      "id": "app_lock_disabled",
+      "properties": ["enabled"]
+    },
+    {
+      "id": "app_lock_unlocked",
+      "properties": ["method"]
+    },
+    {
+      "id": "app_lock_failed",
+      "properties": ["method"]
+    },
+    {
+      "id": "biometric_unlock_attempted",
+      "properties": ["method"]
+    },
+    {
+      "id": "biometric_unlock_succeeded",
+      "properties": ["method"]
+    },
+    {
+      "id": "biometric_unlock_failed",
+      "properties": ["method"]
+    },
+    {
+      "id": "post_save_observation_shown",
+      "properties": ["conclusion_kind", "evidence_count", "confidence_band", "ui_origin"]
+    },
+    {
+      "id": "post_save_no_conclusion",
+      "properties": []
+    },
+    {
+      "id": "auditable_conclusion_shown",
+      "properties": ["conclusion_kind", "evidence_count", "confidence_band", "ui_origin"]
+    },
+    {
+      "id": "evidence_receipt_opened",
+      "properties": ["evidence_count", "ui_origin"]
+    },
+    {
+      "id": "exact_source_opened",
+      "properties": ["source_type", "ui_origin"]
+    },
+    {
+      "id": "interpretation_feedback_submitted",
+      "properties": [
+        "conclusion_kind",
+        "evidence_count",
+        "confidence_band",
+        "source_type",
+        "feedback",
+        "entry_count_band",
+        "ui_origin"
+      ]
+    },
+    {
+      "id": "interpretation_corrected",
+      "properties": [
+        "conclusion_kind",
+        "evidence_count",
+        "confidence_band",
+        "source_type",
+        "feedback",
+        "entry_count_band",
+        "ui_origin"
+      ]
+    },
+    {
+      "id": "conclusion_suppressed",
+      "properties": ["conclusion_kind", "feedback", "ui_origin"]
+    },
+    {
+      "id": "early_comparison_shown",
+      "properties": [
+        "conclusion_kind",
+        "evidence_count",
+        "confidence_band",
+        "entry_count_band",
+        "ui_origin"
+      ]
+    },
+    {
+      "id": "reliable_change_displayed",
+      "properties": ["evidence_count_band"]
+    },
+    {
+      "id": "changes_viewed",
+      "properties": ["reliable_change_available"]
+    },
+    {
+      "id": "archive_search_used",
+      "properties": []
+    },
+    {
+      "id": "insight_not_displayed_low_evidence",
+      "properties": ["origin"]
+    },
+    {
+      "id": "purchase_started",
+      "properties": ["ui_origin", "plan_period"]
+    },
+    {
+      "id": "purchase_completed",
+      "properties": ["ui_origin", "plan_period"]
+    },
+    {
+      "id": "playback_started",
+      "properties": ["source_type", "ui_origin"]
+    },
+    {
+      "id": "playback_completed",
+      "properties": ["source_type", "ui_origin", "duration_seconds_bucket"]
+    }
+  ],
+  "prohibitedKeyFragments": [
+    "account_id",
+    "audio",
+    "belief",
+    "conclusion_text",
+    "correction_note",
+    "email",
+    "health",
+    "journal",
+    "money",
+    "mood",
+    "prompt",
+    "push_token",
+    "question",
+    "quote",
+    "relationship",
+    "revenuecat_customer_id",
+    "text",
+    "title",
+    "topic",
+    "trait",
+    "transcript",
+    "user_id",
+    "work_pressure"
+  ]
+}

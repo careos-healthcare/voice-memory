@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Next Highest-ROI Archive Improvements
 
 Ranked after [ARCHIVE_V2_VALIDATION.md](./ARCHIVE_V2_VALIDATION.md) (Theory, Lifecycle, Change Feed, Deep Dive, Analyst on 5 personas × 50/100/200).  
@@ -104,3 +106,4 @@ dart run tool/analyze_archive_v2_validation.dart
 - [ARCHIVE_QUALITY_REPORT.md](./ARCHIVE_QUALITY_REPORT.md) — V1/Analyst-only baseline
 - [TOP_10_ARCHIVE_IMPROVEMENTS.md](./TOP_10_ARCHIVE_IMPROVEMENTS.md) — pre-V2 list (largely superseded by rankings above)
 - [ARCHIVE_CHANGE_FEED_PLAN.md](./ARCHIVE_CHANGE_FEED_PLAN.md) — Change Feed design reference
+

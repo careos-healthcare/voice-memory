@@ -27,12 +27,12 @@ abstract final class WhatChangedV2Copy {
       'Something helped this time. ArchiveMe will remember that.';
 
   static String payoffMessage(WhatChangedV2Option option) => switch (option) {
-        WhatChangedV2Option.softer => payoffSofter,
-        WhatChangedV2Option.stronger => payoffStronger,
-        WhatChangedV2Option.same => payoffSame,
-        WhatChangedV2Option.differentResponse => payoffDifferent,
-        WhatChangedV2Option.somethingHelped => payoffHelped,
-      };
+    WhatChangedV2Option.softer => payoffSofter,
+    WhatChangedV2Option.stronger => payoffStronger,
+    WhatChangedV2Option.same => payoffSame,
+    WhatChangedV2Option.differentResponse => payoffDifferent,
+    WhatChangedV2Option.somethingHelped => payoffHelped,
+  };
 
   /// Legacy alias kept for weekly review and external references.
   static String savedMessage(WhatChangedV2Option option) =>
@@ -44,14 +44,14 @@ abstract final class WhatChangedV2Copy {
   static String formatSnippet(String quote) => '"$quote"';
 
   static List<String> allVisibleStrings() => [
-        question,
-        body,
-        thenLabel,
-        nowLabel,
-        payoffSofter,
-        payoffStronger,
-        payoffSame,
-        payoffDifferent,
-        payoffHelped,
-      ];
+    question,
+    body,
+    thenLabel,
+    nowLabel,
+    payoffSofter,
+    payoffStronger,
+    payoffSame,
+    payoffDifferent,
+    payoffHelped,
+  ];
 }

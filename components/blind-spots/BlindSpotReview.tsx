@@ -119,7 +119,7 @@ export function BlindSpotReview({
           <p className="text-sm leading-relaxed text-zinc-400">{mainReview.message}</p>
           {mainReview.reason === "insufficient_reflections" ? (
             <p className="mt-3 text-xs text-zinc-600">
-              {mainReview.reflectionCount} of 5 reflections for a full blind spot review.
+              {mainReview.reflectionCount} of 5 moments for a full blind spot review.
               {showEmergingHint ? " Emerging patterns above may still apply." : ""}
             </p>
           ) : (
@@ -179,7 +179,7 @@ export function BlindSpotReview({
               href={`/entry/${item.entryId}`}
               className="mt-3 inline-block text-xs text-zinc-500 underline-offset-2 hover:text-violet-300 hover:underline"
             >
-              Open reflection
+              Open moment
             </Link>
           </li>
         ))}
@@ -345,7 +345,7 @@ export function BlindSpotReview({
           </div>
           <ul className="space-y-1.5 text-sm text-zinc-400">
             <li>
-              <span className="text-zinc-500">Reflections:</span> {facts.reflectionCount} matching
+              <span className="text-zinc-500">Moments:</span> {facts.reflectionCount} matching
             </li>
             <li>
               <span className="text-zinc-500">Time span:</span> {facts.richSpanLabel} ({facts.spanLabel})

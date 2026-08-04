@@ -100,9 +100,9 @@ export function buildSessionMovementSummary(
       "new_evidence_added",
       SESSION_MOVEMENT_COPY.newEvidence,
       lead
-        ? `Supporting reflections for this thread: ${beforeSupport} → ${afterSupport}.`
-        : `Your archive now holds ${valueAfter.reflectionCount} reflection${valueAfter.reflectionCount === 1 ? "" : "s"} to compare.`,
-      lead ? `${beforeSupport} → ${afterSupport} supporting reflections` : undefined,
+        ? `Supporting moments for this thread: ${beforeSupport} → ${afterSupport}.`
+        : `Your archive now holds ${valueAfter.reflectionCount} saved moment${valueAfter.reflectionCount === 1 ? "" : "s"} to compare.`,
+      lead ? `${beforeSupport} → ${afterSupport} supporting moments` : undefined,
       lead?.id,
     );
   }
@@ -126,7 +126,7 @@ export function buildSessionMovementSummary(
     return base(
       "belief_weakened",
       SESSION_MOVEMENT_COPY.beliefWeakened,
-      "Recent reflections may pull against an earlier working view.",
+      "Recent saved moments may pull against an earlier working view.",
       lead.previousConfidence !== undefined
         ? `${clampConfidence(lead.previousConfidence)}% → ${clampConfidence(lead.confidence)}%`
         : statusLabel(lead.status),
@@ -157,8 +157,8 @@ export function buildSessionMovementSummary(
       ? "Open Discover to see what your archive currently believes."
       : "Patterns are judged against your history, not a single mood.",
     valueAfter.reflectionCount >= 2
-      ? `${valueAfter.reflectionCount} reflections in archive`
-      : "1 reflection in archive",
+      ? `${valueAfter.reflectionCount} saved moments in archive`
+      : "1 saved moment in archive",
     lead?.id,
   );
 }

@@ -1,4 +1,7 @@
-import { NextResponse } from "next/server";
+import {
+  ephemeralAiJson,
+  logEphemeralAiFailure,
+} from "@/lib/privacy/ephemeral-ai-response";
 
 import { computeArchiveHashFromPack } from "@/lib/archive-synthesis/archive-synthesis-hash";
 import {
@@ -20,6 +23,7 @@ import {
   ARCHIVE_SYNTHESIS_SYSTEM_PROMPT,
   buildArchiveSynthesisUserMessage,
 } from "@/lib/archive-synthesis/archive-synthesis-prompt";
+import { buildHybridAiPromptContext } from "@/lib/ai/hybrid-ai-prompt-context";
 import {
   parseArchiveDeepDiveNarrative,
   parseArchiveHistorianReport,
@@ -30,20 +34,32 @@ import {
   validateArchiveMilestoneReview,
   validateArchiveMonthlyReview,
 } from "@/lib/archive-synthesis/archive-synthesis-validator";
+import { collectPackEntryIds } from "@/lib/archive-synthesis/archive-synthesis-common";
 import {
   guardOpenAiRoute,
   apiPayloadTooLarge,
 } from "@/lib/server/api-guard";
 import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
+import {
+  authenticatedUserIdMismatchResponse,
+} from "@/lib/server/revenuecat-entitlement-guard";
 import { getOpenAIClient } from "@/lib/openai";
+import {
+  meterConfiguredOpenAiChatUsage,
+  vendorRequestId,
+} from "@/lib/server/unit-economics-meter";
+import type { ApiGuardContext } from "@/lib/server/api-guard";
 import type {
   ArchiveSynthesisPack,
   ArchiveSynthesisRequestBody,
   ArchiveSynthesisResult,
   ArchiveSynthesisType,
 } from "@/types/archive-synthesis";
+import { releaseUsageReservation } from "@/lib/server/usage-reservation-store";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+const NextResponse = { json: ephemeralAiJson };
 
 const MAX_PACK_BYTES = 200_000;
 const MIN_ELIGIBLE = 50;
@@ -74,7 +90,9 @@ function normalizePack(pack: ArchiveSynthesisPack): ArchiveSynthesisPack {
       : null);
   return {
     ...pack,
-    packVersion: pack.packVersion === 2 ? 2 : 1,
+    packVersion:
+      pack.packVersion === 3 ? 3 : pack.packVersion === 2 ? 2 : 1,
+    engine: pack.engine ?? "archive_intelligence",
     primaryTheory: primary,
     secondaryTheories: pack.secondaryTheories ?? [],
   };
@@ -84,14 +102,38 @@ function validatePack(
   pack: ArchiveSynthesisPack,
   synthesisType: ArchiveSynthesisType,
 ): string | null {
-  if (pack.packVersion !== 1 && pack.packVersion !== 2) {
+  if (
+    pack.packVersion !== 1 &&
+    pack.packVersion !== 2 &&
+    pack.packVersion !== 3
+  ) {
     return "Unsupported pack version";
+  }
+  if (
+    pack.packVersion === 3 &&
+    (pack.engine !== "archive_intelligence" ||
+      !pack.slices?.theory ||
+      !pack.slices.change ||
+      !pack.slices.patterns)
+  ) {
+    return "Invalid Archive Intelligence slices";
   }
   if (!pack.monthKey?.match(/^\d{4}-\d{2}$/)) return "Invalid monthKey";
   if (pack.eligibleCount < MIN_ELIGIBLE) {
     return `Need at least ${MIN_ELIGIBLE} eligible reflections`;
   }
   if (!pack.reflectionIndex?.length) return "Empty reflection index";
+  const canonicalIds = new Set(
+    pack.reflectionIndex
+      .filter((entry) => typeof entry.canonicalTranscript === "string")
+      .map((entry) => entry.id),
+  );
+  const missingCanonical = [...collectPackEntryIds(pack)].find(
+    (entryId) => !canonicalIds.has(entryId),
+  );
+  if (missingCanonical) {
+    return `Canonical transcript required for evidence entry ${missingCanonical}`;
+  }
   if (synthesisType === "deep_dive" && !pack.deepDiveContext) {
     return "deepDiveContext required for deep_dive synthesis";
   }
@@ -101,11 +143,16 @@ function validatePack(
 async function runSynthesis(
   systemPrompt: string,
   userMessage: string,
+  metering: {
+    subject: ApiGuardContext;
+    idempotencyKey?: string;
+  },
 ): Promise<string> {
   const openai = getOpenAIClient();
   const model = synthesisModel();
   const completion = await openai.chat.completions.create({
     model,
+    store: false,
     response_format: { type: "json_object" },
     temperature: 0.4,
     messages: [
@@ -113,9 +160,27 @@ async function runSynthesis(
       { role: "user", content: userMessage },
     ],
   });
+  await meterConfiguredOpenAiChatUsage({
+    operation: "archive-synthesis.chat",
+    subject: metering.subject,
+    idempotencyKey: vendorRequestId(completion, metering.idempotencyKey),
+    model,
+    usage: completion.usage,
+  });
   const content = completion.choices[0]?.message?.content;
   if (!content) throw new Error("SYNTHESIS_EMPTY");
   return content;
+}
+
+function parseGeneratedReview<T>(
+  parser: (raw: string) => T,
+  content: string,
+): T | null {
+  try {
+    return parser(content);
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
@@ -126,6 +191,7 @@ export async function POST(request: Request) {
     );
   }
 
+  let usageReservationId: string | undefined;
   try {
     const rawBody = await request.text();
     if (rawBody.length > MAX_PACK_BYTES) {
@@ -183,23 +249,31 @@ export async function POST(request: Request) {
       transcriptChars: rawBody.length,
     });
     if (!guard.ok) return guard.response;
+    usageReservationId = guard.ctx.monetization?.reservation?.reservationId;
 
-    // Pro entitlement (`pro`) is enforced on device via RevenueCat before requests.
-    // Require signed-in session to limit anonymous synthesis abuse.
-    if (guard.ctx.via !== "session" || !guard.ctx.userId) {
+    const authenticatedUserId =
+      guard.ctx.via === "session" ? guard.ctx.userId : undefined;
+    if (!authenticatedUserId) {
+      if (usageReservationId) await releaseUsageReservation(usageReservationId);
       return NextResponse.json(
-        {
-          error: "Sign in required for Archive Intelligence",
-          code: "SYNTHESIS_REQUIRES_AUTH",
-        },
-        { status: 403 },
+        { error: "Sign in required.", code: "AUTH_REQUIRED" },
+        { status: 401 },
       );
     }
 
+    const mismatch = authenticatedUserIdMismatchResponse(
+      body.userId,
+      authenticatedUserId,
+    );
+    if (mismatch) {
+      if (usageReservationId) await releaseUsageReservation(usageReservationId);
+      return mismatch;
+    }
+
     const archiveHash = computeArchiveHashFromPack(pack);
-    const subject = guard.ctx.userId
-      ? `user:${guard.ctx.userId}`
-      : guard.ctx.subject;
+    const subject = `user:${authenticatedUserId}`;
+    const { negativeFewShotConstraints: correctionBlock } =
+      await buildHybridAiPromptContext(authenticatedUserId);
 
     if (synthesisType === "monthly") {
       const cached = getCachedArchiveSynthesis(
@@ -207,21 +281,31 @@ export async function POST(request: Request) {
         body.monthKey,
         archiveHash,
       );
-      if (cached) {
+      if (
+        !correctionBlock &&
+        cached &&
+        validateArchiveMonthlyReview(cached, pack).ok
+      ) {
         recordCacheHit();
         const response: ArchiveSynthesisResult = {
           synthesisType: "monthly",
           review: cached,
           cached: true,
         };
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json(response);
       }
       recordCacheMiss();
     } else if (synthesisType === "milestone") {
       const threshold = body.milestoneThreshold!;
       const cached = getCachedMilestoneReview(subject, threshold);
-      if (cached) {
+      if (
+        !correctionBlock &&
+        cached &&
+        validateArchiveMilestoneReview(cached, pack).ok
+      ) {
         recordCacheHit();
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json({
           synthesisType: "milestone",
           review: cached,
@@ -231,8 +315,13 @@ export async function POST(request: Request) {
       recordCacheMiss();
     } else if (synthesisType === "deep_dive") {
       const cached = getCachedDeepDiveNarrative(subject, archiveHash);
-      if (cached) {
+      if (
+        !correctionBlock &&
+        cached &&
+        validateArchiveDeepDiveNarrative(cached, pack).ok
+      ) {
         recordCacheHit();
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json({
           synthesisType: "deep_dive",
           review: cached,
@@ -246,8 +335,13 @@ export async function POST(request: Request) {
         body.monthKey,
         archiveHash,
       );
-      if (cached) {
+      if (
+        !correctionBlock &&
+        cached &&
+        validateArchiveHistorianReport(cached, pack).ok
+      ) {
         recordCacheHit();
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json({
           synthesisType: "historian",
           review: cached,
@@ -276,15 +370,23 @@ export async function POST(request: Request) {
             : ARCHIVE_SYNTHESIS_SYSTEM_PROMPT;
 
     const content = await runSynthesis(
-      systemPrompt,
+      `${systemPrompt}${correctionBlock ? `\n\n${correctionBlock}` : ""}`,
       buildArchiveSynthesisUserMessage(pack, archiveHash, extra),
+      {
+        subject: guard.ctx,
+        idempotencyKey: request.headers.get("x-vm-idempotency-key") ?? undefined,
+      },
     );
 
     const model = synthesisModel();
     const now = new Date().toISOString();
 
     if (synthesisType === "monthly") {
-      const review = parseArchiveMonthlyReview(content);
+      const review = parseGeneratedReview(parseArchiveMonthlyReview, content);
+      if (!review) {
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
+        return invalidSynthesisResponse();
+      }
       review.archiveHash = archiveHash;
       review.monthKey = body.monthKey;
       review.eligibleCount = pack.eligibleCount;
@@ -294,6 +396,7 @@ export async function POST(request: Request) {
       const validation = validateArchiveMonthlyReview(review, pack);
       if (!validation.ok) {
         console.error("Archive synthesis validation failed:", validation.errors);
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json(
           { error: "Synthesis failed evidence checks", code: "SYNTHESIS_VALIDATION_FAILED" },
           { status: 422 },
@@ -308,7 +411,11 @@ export async function POST(request: Request) {
     }
 
     if (synthesisType === "milestone") {
-      const review = parseArchiveMilestoneReview(content);
+      const review = parseGeneratedReview(parseArchiveMilestoneReview, content);
+      if (!review) {
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
+        return invalidSynthesisResponse();
+      }
       review.archiveHash = archiveHash;
       review.milestoneThreshold = body.milestoneThreshold!;
       review.eligibleCount = pack.eligibleCount;
@@ -318,6 +425,7 @@ export async function POST(request: Request) {
       const validation = validateArchiveMilestoneReview(review, pack);
       if (!validation.ok) {
         console.error("Milestone synthesis validation failed:", validation.errors);
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json(
           { error: "Synthesis failed evidence checks", code: "SYNTHESIS_VALIDATION_FAILED" },
           { status: 422 },
@@ -332,7 +440,11 @@ export async function POST(request: Request) {
     }
 
     if (synthesisType === "deep_dive") {
-      const review = parseArchiveDeepDiveNarrative(content);
+      const review = parseGeneratedReview(parseArchiveDeepDiveNarrative, content);
+      if (!review) {
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
+        return invalidSynthesisResponse();
+      }
       review.archiveHash = archiveHash;
       review.beliefStatement =
         review.beliefStatement || pack.deepDiveContext!.beliefStatement;
@@ -342,6 +454,7 @@ export async function POST(request: Request) {
       const validation = validateArchiveDeepDiveNarrative(review, pack);
       if (!validation.ok) {
         console.error("Deep dive synthesis validation failed:", validation.errors);
+        if (usageReservationId) await releaseUsageReservation(usageReservationId);
         return NextResponse.json(
           { error: "Synthesis failed evidence checks", code: "SYNTHESIS_VALIDATION_FAILED" },
           { status: 422 },
@@ -355,7 +468,11 @@ export async function POST(request: Request) {
       } satisfies ArchiveSynthesisResult);
     }
 
-    const review = parseArchiveHistorianReport(content);
+    const review = parseGeneratedReview(parseArchiveHistorianReport, content);
+    if (!review) {
+      if (usageReservationId) await releaseUsageReservation(usageReservationId);
+      return invalidSynthesisResponse();
+    }
     review.archiveHash = archiveHash;
     review.monthKey = body.monthKey;
     review.eligibleCount = pack.eligibleCount;
@@ -366,6 +483,7 @@ export async function POST(request: Request) {
     const validation = validateArchiveHistorianReport(review, pack);
     if (!validation.ok) {
       console.error("Historian synthesis validation failed:", validation.errors);
+      if (usageReservationId) await releaseUsageReservation(usageReservationId);
       return NextResponse.json(
         { error: "Synthesis failed evidence checks", code: "SYNTHESIS_VALIDATION_FAILED" },
         { status: 422 },
@@ -378,11 +496,22 @@ export async function POST(request: Request) {
       cached: false,
     } satisfies ArchiveSynthesisResult);
   } catch (error) {
-    console.error("Archive synthesis failed:", error);
+    if (usageReservationId) await releaseUsageReservation(usageReservationId);
+    logEphemeralAiFailure("archive-synthesis", error);
     const safe = safeOpenAiRouteError("analyze", error);
     return NextResponse.json(
       { error: safe.message, code: safe.code },
       { status: 500 },
     );
   }
+}
+
+function invalidSynthesisResponse() {
+  return NextResponse.json(
+    {
+      error: "Synthesis failed evidence checks",
+      code: "SYNTHESIS_VALIDATION_FAILED",
+    },
+    { status: 422 },
+  );
 }

@@ -7,6 +7,7 @@ export type LogEvent =
   | "rate_limit"
   | "billing_webhook"
   | "billing_checkout"
+  | "conversion_funnel"
   | "account_deletion"
   | "journal_sync_failure"
   | "health_check"

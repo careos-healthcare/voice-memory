@@ -99,7 +99,7 @@ export function OpenLoopEntryContinuity({ entryId }: OpenLoopEntryContinuityProp
           writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
         }
       >
-        Open source reflection
+        Open source moment
       </Link>
     </section>
   );

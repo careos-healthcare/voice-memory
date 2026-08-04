@@ -107,6 +107,27 @@ export async function peekOpenAiSpend(
   return memorySpendMap().get(memoryKey(subject, day)) ?? 0;
 }
 
+export async function deleteOpenAiSpendForSubject(subject: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery(`DELETE FROM openai_daily_spend WHERE subject_key = $1`, [
+      subject,
+    ]);
+    return result.rowCount ?? 0;
+  }
+  let removed = 0;
+  for (const key of memorySpendMap().keys()) {
+    if (key.startsWith(`${subject}:`)) {
+      memorySpendMap().delete(key);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
+export function localOpenAiSpendExists(subject: string): boolean {
+  return [...memorySpendMap().keys()].some((key) => key.startsWith(`${subject}:`));
+}
+
 export function usesDurableOpenAiSpend(): boolean {
   return shouldUsePostgresStorage();
 }

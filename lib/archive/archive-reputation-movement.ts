@@ -64,7 +64,7 @@ export function buildArchiveReputationMovement(
     repBefore &&
     archiveReputationLevelRank(repAfter.level) < archiveReputationLevelRank(repBefore.level)
   ) {
-    const headline = "Archive reputation shifted lower after new reflections.";
+    const headline = "Archive reputation shifted lower after new saved moments.";
     assertNoCertaintyLanguage(headline);
     return { id: newId(), headline, detail: repAfter.summary };
   }

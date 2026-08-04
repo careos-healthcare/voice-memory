@@ -48,7 +48,8 @@ export async function generateReflectionForEntry(
     return entry;
   }
 
-  // Prompt Context Contract: entry references only, no raw text.
+  // Prompt Context Contract: references plus bounded reflection snippets only;
+  // raw prior transcripts never leave local storage.
   const priorEvidence = buildPriorEvidenceRefs(
     getAllEntries().filter((e) => !isReflectionPending(e)),
     entryId,

@@ -27,18 +27,18 @@ abstract final class PatternDetailCopy {
   static const viewPatternDetailsCta = 'View pattern details';
 
   static List<String> allVisibleCopy() => [
-        sheetTitle,
-        patternLabelHeading,
-        evidenceHeading,
-        evidenceIntro,
-        whatChangedHeading,
-        notEnoughChangeEvidence,
-        whatHelpedHeading,
-        notEnoughHelpedEvidence,
-        savedMomentsHeading,
-        whatToWatchHeading,
-        whyThisMattersHeading,
-        whyThisMattersBody,
-        viewPatternDetailsCta,
-      ];
+    sheetTitle,
+    patternLabelHeading,
+    evidenceHeading,
+    evidenceIntro,
+    whatChangedHeading,
+    notEnoughChangeEvidence,
+    whatHelpedHeading,
+    notEnoughHelpedEvidence,
+    savedMomentsHeading,
+    whatToWatchHeading,
+    whyThisMattersHeading,
+    whyThisMattersBody,
+    viewPatternDetailsCta,
+  ];
 }

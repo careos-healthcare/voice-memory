@@ -35,7 +35,7 @@ if (!db.includes("openai_daily_spend")) {
   fail("db schema must include openai_daily_spend");
 }
 
-const weekly = fs.readFileSync(path.join(ROOT, "app/api/weekly-reflection/route.ts"), "utf8");
+const weekly = fs.readFileSync(path.join(ROOT, "experiments/backend/app/api/weekly-reflection/route.ts"), "utf8");
 if (!weekly.includes("guardOpenAiRoute")) {
   fail("weekly-reflection must use guardOpenAiRoute");
 }

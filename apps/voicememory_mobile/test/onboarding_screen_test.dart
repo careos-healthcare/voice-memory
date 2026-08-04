@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_pages.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/onboarding_screen.dart';
 
 Future<void> _pumpFrames(WidgetTester tester, {int frames = 3}) async {
@@ -11,26 +10,20 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 3}) async {
 }
 
 void main() {
-  testWidgets('welcome screen uses landing positioning copy', (
-    tester,
-  ) async {
+  testWidgets('welcome screen leads with the V1 promise', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester, frames: 5);
 
-      expect(
-        find.text('When it repeats, save it'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('save one real moment'), findsOneWidget);
-      expect(
-        find.textContaining('Not a diary'),
-        findsOneWidget,
-      );
-    expect(find.text('Notice the pressure loops that keep repeating'), findsNothing);
-    expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
+    expect(find.text(OnboardingPages.pages.first.title), findsOneWidget);
+    // Asserted through the constant rather than a fragment of its wording, so
+    // this stays a test of what the screen renders. The wording itself is
+    // owned by the positioning copy guards.
+    expect(find.text(OnboardingPages.pages.first.body), findsOneWidget);
+    expect(find.text('Record a moment'), findsOneWidget);
+    expect(find.text('Type instead'), findsOneWidget);
   });
 
-  testWidgets('launch onboarding shows promise and three loop steps', (
+  testWidgets('launch onboarding is one promise before the real capture flow', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
@@ -38,19 +31,12 @@ void main() {
 
     expect(find.text('ArchiveMe'), findsOneWidget);
     expect(find.text(OnboardingPages.pages[0].title), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.onboardingPositioningBody), findsOneWidget);
+    expect(find.text(OnboardingPages.pages.first.body), findsOneWidget);
     expect(find.text('Skip'), findsNothing);
-
-    for (var i = 1; i < OnboardingPages.pageCount; i++) {
-      await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
-      await _pumpFrames(tester, frames: 5);
-      expect(find.text(OnboardingPages.pages[i].title), findsOneWidget);
-      expect(find.text(OnboardingPages.pages[i].body), findsOneWidget);
-    }
-
-    expect(find.text(ConsumerUiCopy.onboardingFinalCta), findsOneWidget);
-    expect(find.text('I want freedom'), findsNothing);
-    expect(find.text('What you kept doing'), findsNothing);
+    expect(OnboardingPages.pageCount, 1);
+    expect(find.text('Record a moment'), findsOneWidget);
+    expect(find.text('Type instead'), findsOneWidget);
+    expect(find.textContaining('Who are 2 key people'), findsNothing);
   });
 
   testWidgets('onboarding final CTA visible on small phone surface', (
@@ -63,12 +49,8 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester, frames: 5);
 
-    for (var i = 0; i < OnboardingPages.pageCount - 1; i++) {
-      await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
-      await _pumpFrames(tester, frames: 5);
-    }
-
-    expect(find.text(ConsumerUiCopy.onboardingFinalCta), findsOneWidget);
+    expect(find.text('Record a moment'), findsOneWidget);
+    expect(find.text('Type instead'), findsOneWidget);
   });
 
   testWidgets('onboarding does not overflow on iPad-width surface', (

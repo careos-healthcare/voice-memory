@@ -20,8 +20,8 @@ import '../features/beta_feedback/beta_feedback_copy.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/share/archive_share_actions.dart';
 import '../features/support/support_feedback_copy.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../theme/archive_semantic_colors.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Support & Feedback — help, issue reporting guidance, and safe testing paths.
@@ -58,6 +58,7 @@ class SupportFeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ArchiveSemanticColors.of(context);
     return PushedScreenShell(
       title: SupportFeedbackCopy.screenTitle,
       fallbackRoute: '/settings',
@@ -303,7 +304,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ProInterestCopy.supportSubtitle,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
-                  color: AppColors.textSecondary,
+                  color: colors.secondaryText,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -367,22 +368,20 @@ class SupportFeedbackScreen extends StatelessWidget {
     required String title,
     required String body,
   }) {
+    final colors = ArchiveSemanticColors.of(context);
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
+          Text(title, style: ArchiveMobileTypography.cardLabel(context)),
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
             style: ArchiveMobileTypography.explanationBody(
               context,
-              color: AppColors.textSecondary,
+              color: colors.secondaryText,
             ),
           ),
         ],
@@ -396,16 +395,14 @@ class SupportFeedbackScreen extends StatelessWidget {
     required String title,
     required List<String> bullets,
   }) {
+    final colors = ArchiveSemanticColors.of(context);
     return Padding(
       key: key,
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
+          Text(title, style: ArchiveMobileTypography.cardLabel(context)),
           const SizedBox(height: AppSpacing.xs),
           for (final bullet in bullets)
             Padding(
@@ -417,7 +414,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                     '\u2022 ',
                     style: ArchiveMobileTypography.explanationBody(
                       context,
-                      color: AppColors.textSecondary,
+                      color: colors.secondaryText,
                     ),
                   ),
                   Expanded(
@@ -425,7 +422,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                       bullet,
                       style: ArchiveMobileTypography.explanationBody(
                         context,
-                        color: AppColors.textSecondary,
+                        color: colors.secondaryText,
                       ),
                     ),
                   ),

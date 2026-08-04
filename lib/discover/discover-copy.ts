@@ -14,7 +14,7 @@ export const DISCOVER_PAGE = {
   lead: DISCOVER_PAGE_LEAD,
   emptyTitle: "Nothing to report yet",
   emptyBody: "Changes appear after your next visit.",
-  firstVisitBody: "Record a few reflections, then return.",
+  firstVisitBody: "Record a few moments, then return.",
   baselineFallbackTitle: "Building baseline",
   baselineFallbackBody: "Nothing to compare yet.",
   strengthenedTitle: "Strengthened",

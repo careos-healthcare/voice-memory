@@ -1,3 +1,5 @@
+import '../../product/core_product_vision.dart';
+
 /// In-app terms of use — calm consumer copy, no internal launch wording.
 abstract class TermsScreenCopy {
   TermsScreenCopy._();
@@ -12,7 +14,7 @@ abstract class TermsScreenCopy {
 
   static const String serviceTitle = 'What ArchiveMe is';
   static const String serviceBody =
-      'ArchiveMe is a private archive for your own voice reflections. '
+      '${CoreProductVision.valueProposition} '
       'It is not therapy, medical advice, coaching, or emergency support.';
 
   static const String contentTitle = 'Your content';

@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Empty State Audit — ArchiveMe Flutter (`apps/voicememory_mobile`)
 
 **Date:** 2026-05-25  
@@ -240,3 +242,4 @@ Screens or behaviors that can make a user believe the app **already contains arc
 ---
 
 *End of audit.*
+

@@ -38,13 +38,13 @@ abstract final class FirstProofPayoffCopy {
   }
 
   static List<String> allVisibleStrings() => [
-        headline,
-        yourWordsLabel,
-        patternLine,
-        truthLine,
-        fallbackHeadline,
-        fallbackBody,
-        watchThisNextCta,
-        viewPatternDetailsCta,
-      ];
+    headline,
+    yourWordsLabel,
+    patternLine,
+    truthLine,
+    fallbackHeadline,
+    fallbackBody,
+    watchThisNextCta,
+    viewPatternDetailsCta,
+  ];
 }

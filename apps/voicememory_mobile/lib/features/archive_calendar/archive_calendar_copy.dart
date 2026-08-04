@@ -10,8 +10,7 @@ abstract final class ArchiveCalendarCopy {
   static const subtitle = 'Your saved moments by day';
   static const privacyLine =
       'This shows activity only — not private entry text.';
-  static const helperText =
-      'Open a day to review counts and safe markers.';
+  static const helperText = 'Open a day to review counts and safe markers.';
   static const weekCompareHelper =
       'Add one more moment to make this week easier to compare.';
 
@@ -66,7 +65,10 @@ abstract final class ArchiveCalendarCopy {
     return 'This week: $count saved moments across $dayCount days.';
   }
 
-  static String monthlyTotalLabel({required int count, required String monthLabel}) {
+  static String monthlyTotalLabel({
+    required int count,
+    required String monthLabel,
+  }) {
     if (count <= 0) return 'No moments saved in $monthLabel yet.';
     return '$count saved moment${count == 1 ? '' : 's'} in $monthLabel.';
   }
@@ -74,47 +76,48 @@ abstract final class ArchiveCalendarCopy {
   static String mostActiveDayLabel(String dayLabel, int count) =>
       'Most active day: $dayLabel ($count moment${count == 1 ? '' : 's'})';
 
-  static String noMostActiveDayLabel() => 'Most active day: not enough data yet.';
+  static String noMostActiveDayLabel() =>
+      'Most active day: not enough data yet.';
 
   static String dayDetailTitle(String dayLabel) => dayLabel;
 
   static String dayDetailMomentLine(int count) => momentCountLabel(count);
 
   static List<String> get allVisibleStrings => [
-        eyebrow,
-        subtitle,
-        privacyLine,
-        helperText,
-        weekCompareHelper,
-        openCalendarCta,
-        saveMomentCta,
-        dayDetailArchiveHomeCta,
-        dayDetailRecordCta,
-        emptyTitle,
-        emptyBody,
-        cardHeadlineActive,
-        cardSummaryActive,
-        markerOneMoment,
-        markerMultipleMoments,
-        markerWeeklyReview,
-        markerWatchTheme,
-        markerThenVsNow,
-        supportSectionTitle,
-        supportSectionBody,
-        betaOutcomesLabel,
-        betaOutcomesYes,
-        betaOutcomesNo,
-        helpSectionTitle,
-        helpSectionBullet,
-        screenshotHeadline,
-        screenshotSummary,
-        momentCountLabel(1),
-        momentCountLabel(3),
-        weekSummaryLabel(count: 2, dayCount: 2),
-        monthlyTotalLabel(count: 5, monthLabel: 'June 2026'),
-        mostActiveDayLabel('15 June 2026', 2),
-        noMostActiveDayLabel(),
-        dayDetailTitle('15 June 2026'),
-        dayDetailMomentLine(2),
-      ];
+    eyebrow,
+    subtitle,
+    privacyLine,
+    helperText,
+    weekCompareHelper,
+    openCalendarCta,
+    saveMomentCta,
+    dayDetailArchiveHomeCta,
+    dayDetailRecordCta,
+    emptyTitle,
+    emptyBody,
+    cardHeadlineActive,
+    cardSummaryActive,
+    markerOneMoment,
+    markerMultipleMoments,
+    markerWeeklyReview,
+    markerWatchTheme,
+    markerThenVsNow,
+    supportSectionTitle,
+    supportSectionBody,
+    betaOutcomesLabel,
+    betaOutcomesYes,
+    betaOutcomesNo,
+    helpSectionTitle,
+    helpSectionBullet,
+    screenshotHeadline,
+    screenshotSummary,
+    momentCountLabel(1),
+    momentCountLabel(3),
+    weekSummaryLabel(count: 2, dayCount: 2),
+    monthlyTotalLabel(count: 5, monthLabel: 'June 2026'),
+    mostActiveDayLabel('15 June 2026', 2),
+    noMostActiveDayLabel(),
+    dayDetailTitle('15 June 2026'),
+    dayDetailMomentLine(2),
+  ];
 }

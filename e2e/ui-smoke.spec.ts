@@ -16,7 +16,9 @@ test.describe("UI smoke", () => {
     expect(html).not.toMatch(/href="\/internal/);
   });
 
-  test("record route returns capture shell and privacy line", async ({ request }) => {
+  test("record route returns capture shell and privacy line", async ({
+    request,
+  }) => {
     const res = await request.get("/record");
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
@@ -24,28 +26,33 @@ test.describe("UI smoke", () => {
     expect(html).toMatch(/device|private|local/i);
   });
 
-  test("pricing SSR includes Free Pro and billing state", async ({ request }) => {
+  test("pricing SSR includes Free Pro and billing state", async ({
+    request,
+  }) => {
     const res = await request.get("/pricing");
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
     expect(html).toContain("data-pricing-ssr");
     expect(html).toContain('data-pricing-plan="free"');
     expect(html).toContain('data-pricing-plan="pro"');
-    expect(html).toMatch(/data-billing-state="(configured|disabled)"/);
+    expect(html).toContain('data-billing-state="mobile-store-only"');
     expect(html).toContain("Free");
     expect(html).toContain("Pro");
     expect(html).toContain("No daily journal required.");
-    expect(html).toContain("Free shows the first proof");
-    expect(html).toContain("Pro keeps the full timeline as it grows.");
-    expect(html).toMatch(/Checkout (available|unavailable)/i);
+    expect(html).toContain("Store price shown in the ArchiveMe mobile app");
+    expect(html).toContain("This website does not sell subscriptions");
+    expect(html).not.toMatch(/[£€¥]\s?\d|\$\s+\d|\$\d+\.\d{2}/);
   });
 
-  test("pricing cancel SSR shows cancel copy", async ({ request }) => {
+  test("legacy checkout query cannot imply a web purchase", async ({
+    request,
+  }) => {
     const res = await request.get("/pricing?checkout=cancel");
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
-    expect(html).toContain("data-checkout-cancel");
-    expect(html).toMatch(/canceled|cancelled/i);
+    expect(html).toContain('data-billing-state="mobile-store-only"');
+    expect(html).not.toContain("data-checkout-cancel");
+    expect(html).not.toContain("Checkout available");
   });
 
   test("journal page includes sync status marker", async ({ request }) => {
@@ -80,7 +87,9 @@ test.describe("UI smoke", () => {
     expect(html).not.toMatch(/href="\/internal/);
   });
 
-  test("account page includes delete confirmation phrase", async ({ request }) => {
+  test("account page includes delete confirmation phrase", async ({
+    request,
+  }) => {
     const res = await request.get("/account");
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
@@ -96,7 +105,9 @@ test.describe("UI smoke", () => {
   });
 
   test("debug route blocked without token", async ({ request }) => {
-    const res = await request.get("/internal/entitlements", { maxRedirects: 0 });
+    const res = await request.get("/internal/entitlements", {
+      maxRedirects: 0,
+    });
     expect(res.status()).toBe(404);
   });
 

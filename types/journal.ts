@@ -1,6 +1,7 @@
 import type { EntryPhotoMeta } from "@/types/personalization";
 import type { EntryAtmosphereMeta } from "@/types/atmosphere";
 import type { TranscriptCleanupMeta } from "@/types/transcript-cleanup";
+import type { ExplainableConclusion } from "@/types/explainability";
 
 export interface Reflection {
   mood: string;
@@ -26,6 +27,8 @@ export interface Reflection {
   nextSmallAction?: string;
   /** Observation-style statements: "You repeatedly…", "You tend to…" */
   patternObservations?: string[];
+  /** Strictly validated, transcript-addressable conclusion for proof-aware clients. */
+  explainableConclusion?: ExplainableConclusion;
 }
 
 export interface JournalEntry {

@@ -1,0 +1,322 @@
+name: Flutter V1 authoritative release
+
+on:
+  # Store uploads are deliberately manual and protected by the production
+  # environment. Pull requests and ordinary pushes never receive signing keys.
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: 3.44.6
+  NODE_VERSION: 22.22.0
+  FASTLANE_VERSION: 2.237.0
+
+jobs:
+  backend_validation:
+    name: Validate API-only production backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Use pinned npm
+        run: npm install --global npm@11.6.2
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate authoritative release graph
+        run: |
+          npm run validate:release-graph
+          npm run test:v1-product-contract
+
+      - name: Validate backend contracts
+        run: npm run validate:backend-release
+
+      - name: Build credential-free production backend
+        run: npm run build:backend
+
+      - name: Validate production container build
+        run: docker build --tag archiveme-backend:${{ github.sha }} .
+
+  validation:
+    name: Analyze and test Flutter
+    needs: backend_validation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+  build_android:
+    name: Build and upload Android
+    needs: validation
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    env:
+      # Required GitHub Secrets:
+      # PLAY_STORE_CONFIG_JSON: complete Google Play service-account JSON.
+      # ANDROID_KEYSTORE_BASE64: base64-encoded production upload .jks file.
+      # ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
+      # VOICE_MEMORY_API_BASE_URL and REVENUECAT_ANDROID_API_KEY.
+      PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      VOICE_MEMORY_API_BASE_URL: ${{ secrets.VOICE_MEMORY_API_BASE_URL }}
+      REVENUECAT_ANDROID_API_KEY: ${{ secrets.REVENUECAT_ANDROID_API_KEY }}
+      REVENUECAT_PURCHASES_ENABLED: "true"
+      REVENUECAT_ENTITLEMENT_ID: archive_loop_pro
+      REVENUECAT_MONTHLY_PRODUCT_ID: com.voicememory.app.pro.monthly
+      REVENUECAT_YEARLY_PRODUCT_ID: com.voicememory.app.pro.annual
+      ANDROID_SIGNING_CERT_SHA256: ${{ secrets.ANDROID_SIGNING_CERT_SHA256 }}
+      EXPECTED_SIGNING_CERT_SHA256: ${{ secrets.ANDROID_SIGNING_CERT_SHA256 }}
+      ARCHIVEME_PROTECTED_RELEASE: "true"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@ac793fdd38cc468a4dd57246fa9d0e868aba9085 # v1.270.0
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Fastlane
+        run: gem install fastlane --version "$FASTLANE_VERSION" --no-document
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Configure Android release signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${ANDROID_KEYSTORE_BASE64:?Missing ANDROID_KEYSTORE_BASE64}"
+          : "${ANDROID_KEYSTORE_PASSWORD:?Missing ANDROID_KEYSTORE_PASSWORD}"
+          : "${ANDROID_KEY_ALIAS:?Missing ANDROID_KEY_ALIAS}"
+          : "${ANDROID_KEY_PASSWORD:?Missing ANDROID_KEY_PASSWORD}"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storeFile=upload-keystore.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+
+      - name: Build release app bundle
+        run: |
+          (cd android && fastlane verify)
+          flutter build appbundle --release \
+            --dart-define=VOICE_MEMORY_API_BASE_URL="$VOICE_MEMORY_API_BASE_URL" \
+            --dart-define=REVENUECAT_PURCHASES_ENABLED=true \
+            --dart-define=REVENUECAT_ANDROID_API_KEY="$REVENUECAT_ANDROID_API_KEY" \
+            --dart-define=REVENUECAT_ENTITLEMENT_ID="$REVENUECAT_ENTITLEMENT_ID" \
+            --dart-define=REVENUECAT_MONTHLY_PRODUCT_ID="$REVENUECAT_MONTHLY_PRODUCT_ID" \
+            --dart-define=REVENUECAT_YEARLY_PRODUCT_ID="$REVENUECAT_YEARLY_PRODUCT_ID"
+
+      - name: Audit signed Android release
+        run: |
+          bash tool/audit_v1_permissions.sh
+          bash tool/verify_android_release_artifact.sh \
+            build/app/outputs/bundle/release/app-release.aab
+
+      - name: Preserve Android artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: archiveme-android-${{ github.run_number }}
+          path: apps/voicememory_mobile/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Upload to Google Play Internal Testing
+        working-directory: apps/voicememory_mobile/android
+        run: fastlane internal
+
+      - name: Remove Android signing material
+        if: always()
+        run: rm -f android/key.properties android/app/upload-keystore.jks
+
+  build_ios:
+    name: Build and upload iOS
+    needs: validation
+    runs-on: macos-15
+    environment: production
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    env:
+      # Required GitHub Secrets:
+      # IOS_DISTRIBUTION_CERTIFICATE_BASE64 and IOS_CERTIFICATE_PASSWORD.
+      # IOS_PROVISIONING_PROFILE_BASE64 plus IOS_PROVISIONING_PROFILE_NAME.
+      # APP_STORE_CONNECT_API_KEY is the base64-encoded .p8 API key; also set
+      # APP_STORE_CONNECT_KEY_ID and APP_STORE_CONNECT_ISSUER_ID.
+      # VOICE_MEMORY_API_BASE_URL and REVENUECAT_IOS_API_KEY.
+      IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_PROVISIONING_PROFILE_NAME: ${{ secrets.IOS_PROVISIONING_PROFILE_NAME }}
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      VOICE_MEMORY_API_BASE_URL: ${{ secrets.VOICE_MEMORY_API_BASE_URL }}
+      REVENUECAT_IOS_API_KEY: ${{ secrets.REVENUECAT_IOS_API_KEY }}
+      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+      REVENUECAT_PURCHASES_ENABLED: "true"
+      REVENUECAT_ENTITLEMENT_ID: archive_loop_pro
+      REVENUECAT_MONTHLY_PRODUCT_ID: com.voicememory.app.pro.monthly
+      REVENUECAT_YEARLY_PRODUCT_ID: com.voicememory.app.pro.annual
+      ARCHIVEME_PROTECTED_RELEASE: "true"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: 26.1.1
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@ac793fdd38cc468a4dd57246fa9d0e868aba9085 # v1.270.0
+        with:
+          ruby-version: "3.3"
+
+      - name: Install Fastlane
+        run: gem install fastlane --version "$FASTLANE_VERSION" --no-document
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Import Apple signing certificate and profiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${IOS_DISTRIBUTION_CERTIFICATE_BASE64:?Missing IOS_DISTRIBUTION_CERTIFICATE_BASE64}"
+          : "${IOS_CERTIFICATE_PASSWORD:?Missing IOS_CERTIFICATE_PASSWORD}"
+          : "${IOS_PROVISIONING_PROFILE_BASE64:?Missing IOS_PROVISIONING_PROFILE_BASE64}"
+          : "${IOS_KEYCHAIN_PASSWORD:?Missing IOS_KEYCHAIN_PASSWORD}"
+
+          KEYCHAIN_PATH="$RUNNER_TEMP/archiveme-signing.keychain-db"
+          CERTIFICATE_PATH="$RUNNER_TEMP/distribution.p12"
+          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILE_DIR"
+
+          printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_BASE64" | base64 -D > "$CERTIFICATE_PATH"
+          printf '%s' "$IOS_PROVISIONING_PROFILE_BASE64" | base64 -D > "$PROFILE_DIR/archiveme.mobileprovision"
+
+          security create-keychain -p "$IOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$IOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$IOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$IOS_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+      - name: Create App Store export options
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${IOS_PROVISIONING_PROFILE_NAME:?Missing IOS_PROVISIONING_PROFILE_NAME}"
+          cat > ios/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>teamID</key><string>4D9MAHRDS3</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.voicememory.mobile</key><string>$IOS_PROVISIONING_PROFILE_NAME</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Build signed IPA
+        run: |
+          (cd ios && fastlane verify)
+          flutter build ipa --release \
+            --export-options-plist=ios/ExportOptions.plist \
+            --dart-define=VOICE_MEMORY_API_BASE_URL="$VOICE_MEMORY_API_BASE_URL" \
+            --dart-define=REVENUECAT_PURCHASES_ENABLED=true \
+            --dart-define=REVENUECAT_IOS_API_KEY="$REVENUECAT_IOS_API_KEY" \
+            --dart-define=REVENUECAT_ENTITLEMENT_ID="$REVENUECAT_ENTITLEMENT_ID" \
+            --dart-define=REVENUECAT_MONTHLY_PRODUCT_ID="$REVENUECAT_MONTHLY_PRODUCT_ID" \
+            --dart-define=REVENUECAT_YEARLY_PRODUCT_ID="$REVENUECAT_YEARLY_PRODUCT_ID"
+
+      - name: Preserve iOS artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: archiveme-ios-${{ github.run_number }}
+          path: apps/voicememory_mobile/build/ios/ipa/*.ipa
+          if-no-files-found: error
+
+      - name: Upload to Apple TestFlight
+        working-directory: apps/voicememory_mobile/ios
+        run: fastlane beta
+
+      - name: Remove Apple signing material
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain "$RUNNER_TEMP/archiveme-signing.keychain-db" || true
+          rm -f ios/ExportOptions.plist
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/archiveme.mobileprovision"

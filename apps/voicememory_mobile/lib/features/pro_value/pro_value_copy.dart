@@ -2,8 +2,7 @@
 abstract final class ProValueCopy {
   ProValueCopy._();
 
-  static const headline =
-      'You saw the first useful repeat.';
+  static const headline = 'You saw the first useful repeat.';
 
   static const subheadline =
       'Free shows the first useful proof. Pro keeps the longer trail.';

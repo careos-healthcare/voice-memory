@@ -1,3 +1,5 @@
+> Historical, non-authoritative. Superseded and retained for context only. Do not use for release decisions.
+
 # Unified Primary Theory Selection — Plan
 
 **Date:** 2026-06-03  
@@ -110,3 +112,4 @@ flutter test test/archive_primary_theory_validation_test.dart
 flutter test test/archive_quality_validation_test.dart
 dart run tool/analyze_archive_v2_validation.dart
 ```
+

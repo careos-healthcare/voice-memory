@@ -29,7 +29,29 @@ void main() {
     final ex = ApiErrorMapper.fromResponse(
       http.Response('{"error":"Too big","code":"PAYLOAD_TOO_LARGE"}', 413),
     );
+    expect(ex, isA<PayloadTooLargeException>());
     expect(ex.statusCode, 413);
     expect(ex.code, 'PAYLOAD_TOO_LARGE');
+  });
+
+  test('maps no speech, service, and billing responses to domain errors', () {
+    expect(
+      ApiErrorMapper.fromResponse(
+        http.Response('{"error":"internal detail","code":"NO_SPEECH"}', 422),
+      ),
+      isA<NoSpeechException>(),
+    );
+    expect(
+      ApiErrorMapper.fromResponse(
+        http.Response('{"error":"database detail"}', 503),
+      ),
+      isA<ServiceUnavailableException>(),
+    );
+    expect(
+      ApiErrorMapper.fromResponse(
+        http.Response('{"error":"sdk detail","code":"BILLING_DISABLED"}', 503),
+      ),
+      isA<BillingUnavailableException>(),
+    );
   });
 }

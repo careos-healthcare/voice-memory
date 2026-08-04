@@ -22,13 +22,15 @@ void main() {
   final rate = relevance['relevanceRate'] as num;
   final targetMet = relevance['targetMet'] == true;
 
-  print('--- Topical counter relevance (from validation harness) ---');
-  print('Relevant: $relevant / $total (${(rate * 100).toStringAsFixed(1)}%)');
-  print('Target > 85%: ${targetMet ? 'PASS' : 'FAIL'}');
+  stdout.writeln('--- Topical counter relevance (from validation harness) ---');
+  stdout.writeln(
+    'Relevant: $relevant / $total (${(rate * 100).toStringAsFixed(1)}%)',
+  );
+  stdout.writeln('Target > 85%: ${targetMet ? 'PASS' : 'FAIL'}');
 
   final out = File('tool/output/topical_counter_relevance.json');
   out.writeAsStringSync(const JsonEncoder.withIndent('  ').convert(relevance));
-  print('Written: ${out.path}');
+  stdout.writeln('Written: ${out.path}');
 
   if (!targetMet) exit(1);
 }

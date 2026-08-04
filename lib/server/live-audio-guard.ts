@@ -11,6 +11,9 @@ import {
 import { checkAndRecordLiveAudioUsage } from "@/lib/live-audio/usage-limits";
 import { isGeminiConfigured, isGeminiKillSwitchActive } from "@/lib/gemini";
 import { ipHashFromRequest } from "@/lib/server/request-identity";
+import { requireMonetizedAccess } from "@/lib/server/monetized-access-guard";
+import type { ApiGuardContext } from "@/lib/server/api-guard";
+import { releaseUsageReservation } from "@/lib/server/usage-reservation-store";
 
 export { resetLiveAudioUsageForTest } from "@/lib/live-audio/usage-limits";
 
@@ -37,7 +40,7 @@ export function geminiNotConfiguredResponse(): NextResponse {
 export async function guardLiveAudioSessionRoute(
   request: Request,
 ): Promise<
-  | { ok: true; ctx: { subject: string; via: "session" | "capture"; userId?: string; deviceId?: string } }
+  | { ok: true; ctx: ApiGuardContext }
   | { ok: false; response: NextResponse }
 > {
   if (isGeminiKillSwitchActive()) {
@@ -58,8 +61,25 @@ export async function guardLiveAudioSessionRoute(
     return { ok: false, response: apiUnauthorized(code, message) };
   }
 
-  const usage = checkAndRecordLiveAudioUsage(ctx.subject);
+  const monetized = await requireMonetizedAccess({
+    userId: ctx.userId,
+    capabilityId: "ongoingComparisons",
+    idempotencyKey: request.headers.get("x-vm-idempotency-key"),
+    requestedUnits: 1,
+  });
+  if (!monetized.ok) return monetized;
+  ctx.monetization = monetized.ctx;
+  const reservationId = monetized.ctx.reservation?.reservationId;
+
+  let usage: ReturnType<typeof checkAndRecordLiveAudioUsage>;
+  try {
+    usage = checkAndRecordLiveAudioUsage(ctx.subject);
+  } catch (error) {
+    if (reservationId) await releaseUsageReservation(reservationId);
+    throw error;
+  }
   if (!usage.allowed) {
+    if (reservationId) await releaseUsageReservation(reservationId);
     return {
       ok: false,
       response:
@@ -79,8 +99,15 @@ export async function guardLiveAudioSessionRoute(
     };
   }
 
-  const ipUsage = checkAndRecordLiveAudioUsage(`ip:${ipHashFromRequest(request)}`);
+  let ipUsage: ReturnType<typeof checkAndRecordLiveAudioUsage>;
+  try {
+    ipUsage = checkAndRecordLiveAudioUsage(`ip:${ipHashFromRequest(request)}`);
+  } catch (error) {
+    if (reservationId) await releaseUsageReservation(reservationId);
+    throw error;
+  }
   if (!ipUsage.allowed) {
+    if (reservationId) await releaseUsageReservation(reservationId);
     return {
       ok: false,
       response:

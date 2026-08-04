@@ -1,0 +1,1 @@
+A private change ledger that shows exactly what repeated, what changed, the words proving it, and lets you correct the record.

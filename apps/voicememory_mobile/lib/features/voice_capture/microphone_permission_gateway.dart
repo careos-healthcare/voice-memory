@@ -4,14 +4,24 @@ import 'package:permission_handler/permission_handler.dart';
 abstract class MicrophonePermissionGateway {
   Future<PermissionStatus> get status;
   Future<PermissionStatus> request();
+
+  /// Recorder-package permission when the gateway can model it.
+  ///
+  /// Production returns `null` and lets the recording adapter perform the
+  /// check. Test gateways return a deterministic value without global flags.
+  Future<bool?> recorderPermission({bool request = false}) async => null;
 }
 
-class PermissionHandlerMicrophoneGateway implements MicrophonePermissionGateway {
+class PermissionHandlerMicrophoneGateway
+    implements MicrophonePermissionGateway {
   @override
   Future<PermissionStatus> get status => Permission.microphone.status;
 
   @override
   Future<PermissionStatus> request() => Permission.microphone.request();
+
+  @override
+  Future<bool?> recorderPermission({bool request = false}) async => null;
 }
 
 /// Test double — simulates permission_handler + optional recorder mismatch.
@@ -43,4 +53,7 @@ class FakeMicrophonePermissionGateway implements MicrophonePermissionGateway {
     statusValue = next;
     return next;
   }
+
+  @override
+  Future<bool?> recorderPermission({bool request = false}) async => hasRecorder;
 }

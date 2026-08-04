@@ -1,38 +1,51 @@
 # App Store listing copy (draft)
 
+Canonical source: `apps/voicememory_mobile/lib/product/auditable_change_positioning.dart`.
+The category, promise, and positioning sentence below are copied from it verbatim
+and must not be reworded here.
+
+## Category
+
+Auditable personal change.
+
 ## App name
 
 ArchiveMe
 
 ## Subtitle
 
-When it repeats, save it
+Auditable personal change
 
 ## Short description
 
-No daily journal. No streak. No dashboard to maintain.
+See what repeated. See what changed. Verify it in your own words.
 
 ## Long description
 
-When it repeats, save it.
+A private change ledger that shows exactly what repeated, what changed, the words proving it, and lets you correct the record.
 
-When something repeats, save one real moment. ArchiveMe compares it later. Not a diary. Not ChatGPT. Not homework.
+Record or type one real moment. ArchiveMe saves the editable transcript and may
+show one cautious observation with the exact source words and date.
 
-Start with one pattern — saying yes when you have no capacity. Catch the yes before it costs you — before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
+Return with a related moment and Changes can compare Then with Now. Every
+comparison opens its source moments and explains its uncertainty.
 
 Save one real moment when something repeats — in your own words on this device.
 
 Come back when it repeats. No daily streak required.
 
-After a few saves, see what appeared, returned, changed, faded, or got corrected.
+Correct any interpretation with Accurate, Wrong angle, Too generic, or Hide.
 
-Free shows the first useful proof. Pro keeps the longer proof trail.
+Free includes the first useful observation and comparison. Existing results
+stay readable; Pro enables new ongoing comparison generation.
 
-ArchiveMe is built for useful reflection over time — not endless note-taking.
+ArchiveMe uses AI for transcription and for drafting each observation. That is a
+processing detail, not the product: every observation it drafts is shown with the
+exact saved words and dates behind it, and you can correct the record.
 
 ## Privacy note
 
-Your reflections are personal. The journal file on this device is encrypted. Archive metadata and prefs remain in plaintext JSON. Some features send audio or text for transcription or analysis when you use them. Do not claim everything stays on device.
+Your saved moments are personal. The entry file on this device is encrypted. Archive metadata and prefs remain in plaintext JSON. Some features send audio or text for transcription or analysis when you use them. Do not claim everything stays on device.
 
 ## Release identity (listing prep)
 
@@ -41,15 +54,18 @@ Your reflections are personal. The journal file on this device is encrypted. Arc
 
 ## Screenshot storyboard (draft)
 
-1. Onboarding — "When it repeats, save it"
+1. Onboarding — "See what repeated. See what changed. Verify it in your own words."
 2. Record — save one real moment
-3. Archive — first useful proof
-4. Pro — longer proof trail
+3. Receipt — check the exact words and date
+4. Changes — compare Then with Now
+5. Pro — continue generating new comparisons
 
 ## Do not include
 
+- AI journal, AI that remembers you, or personalised insights as the lead
+- Life operating system, memory assistant, or second brain framing
 - Therapy, diagnosis, or mental health assessment claims
+- Personality analysis or hidden-truth claims
 - Guaranteed transformation
 - Cloud backup guarantee
-- More AI positioning
 - Share-to-unlock growth loops

@@ -20,7 +20,7 @@ export const BLIND_SPOT_FIRST_REVIEW = {
   notVerdict:
     "This is not a verdict. It is the first theory your archive can support.",
   mayChange:
-    "As you add more reflections, this may strengthen, weaken, or disappear.",
+    "As you add more moments, this may strengthen, weaken, or disappear.",
   archiveView:
     "ArchiveMe is starting to build an evidence-based view of what keeps repeating.",
 } as const;
@@ -32,7 +32,7 @@ export const BLIND_SPOT_PAGE = {
   mostExpensiveBelief: "First working theory",
   sinceLastTimeTitle: "What changed since last time",
   sinceLastTimeNoChange:
-    "No major change yet. More reflections may make this clearer.",
+    "No major change yet. More moments may make this clearer.",
   sinceLastTimeLead:
     "ArchiveMe may be refining its read of you — early signals only, not conclusions.",
   disclaimer:
@@ -83,10 +83,10 @@ export const BLIND_SPOT_PAGE = {
   emergingTitle: "Possible emerging patterns",
   emergingDisclaimer: "Hypotheses only — not conclusions. Low confidence until more evidence builds.",
   costEvidenceTitle: "What may have followed",
-  costEvidenceLead: "Counts from reflections after this pattern — may suggest cost, not proof.",
+  costEvidenceLead: "Counts from moments after this pattern — may suggest cost, not proof.",
   predictionTitle: "Predictions vs reality",
   predictionLead:
-    "Where your expectations and later reflections may have diverged — not a score about you.",
+    "Where your expectations and later moments may have diverged — not a score about you.",
   predictionQuoteLabel: "Prediction",
   predictionLaterLabel: "Later evidence",
   observationTitle: "Observation",

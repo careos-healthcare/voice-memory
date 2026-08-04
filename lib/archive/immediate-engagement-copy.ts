@@ -21,7 +21,7 @@ export const IMMEDIATE_FOLLOWUP_BY_KIND: Record<ImmediateNoticeKind, string> = {
   contradiction:
     "Your archive now has evidence pointing in two directions. Does that match how it felt?",
   new_evidence:
-    "This reflection adds to what your archive already tracks. Does that connection feel fair?",
+    "This moment adds to what your archive already tracks. Does that connection feel fair?",
 };
 
 import { ARCHIVE_VOICE_FORBIDDEN_UNIFIED } from "@/lib/archive/archive-voice";

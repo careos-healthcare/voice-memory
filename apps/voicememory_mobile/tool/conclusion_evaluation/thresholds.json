@@ -1,0 +1,29 @@
+{
+  "_comment": [
+    "CI thresholds for the conclusion evaluation harness.",
+    "PROVISIONAL. These numbers are engineering guard-rails against regression",
+    "on a synthetic fixture set. They are NOT evidence for any product claim and",
+    "none of them has been validated against human-labelled data.",
+    "Product priority is precision over recall: the claim-safety thresholds",
+    "(unsupported-claim rate, wrong-domain rate, generic-output rate,",
+    "conclusion-kind precision, exact-evidence validity) are absolute, while the",
+    "recall-shaped thresholds are deliberately permissive because refusing to",
+    "conclude is an acceptable outcome and asserting something unsupported is not."
+  ],
+  "enforced": {
+    "minRelatedPairPrecision": 0.95,
+    "minConclusionKindPrecision": 1.0,
+    "minChangeDirectionAccuracy": 0.9,
+    "maxUnsupportedClaimRate": 0.0,
+    "maxWrongDomainRate": 0.0,
+    "maxGenericOutputRate": 0.0,
+    "minExactEvidenceValidity": 1.0
+  },
+  "advisory": {
+    "minRelatedPairRecall": 0.3,
+    "minDimensionAccuracy": 0.6,
+    "minSupportedConclusionAcceptance": 0.8,
+    "minSuppressionReasonMatch": 0.6
+  },
+  "informational": ["suppressionRate", "changeEmissionRate"]
+}

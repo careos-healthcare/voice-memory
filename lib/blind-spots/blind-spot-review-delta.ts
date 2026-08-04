@@ -59,21 +59,21 @@ export function buildBlindSpotReviewChanges(
     }
     if (newEntryIds.length > 0) {
       parts.push(
-        `${newEntryIds.length} new reflection${newEntryIds.length === 1 ? "" : "s"} may support this`,
+        `${newEntryIds.length} new saved moment${newEntryIds.length === 1 ? "" : "s"} may support this`,
       );
     }
     if (archiveGrew && differentPattern) {
       parts.push("your archive has grown — a different thread may be surfacing");
     }
     if (archiveGrew && sameReview && newEntryIds.length > 0) {
-      parts.push("new reflections may be sharpening this thread");
+      parts.push("new saved moments may be sharpening this thread");
     }
     if (longerSpan && parts.length === 0) {
       parts.push(`the time span may have widened (${facts.richSpanLabel})`);
     }
     lines.push({
       kind: "stronger_evidence",
-      text: parts.join("; ") || "Supporting reflections may have accumulated.",
+      text: parts.join("; ") || "Supporting moments may have accumulated.",
     });
   }
 
@@ -117,7 +117,7 @@ export function buildBlindSpotReviewChanges(
     lines.push({
       kind: "softened_resolved",
       text: strengthDown
-        ? "This thread may be softening — or the archive may need more recent reflections."
+        ? "This thread may be softening — or the archive may need more recent saved moments."
         : "Contradiction signals may have eased since the last review.",
     });
   }

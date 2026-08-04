@@ -22,7 +22,7 @@ export function ArchiveBeliefEvidenceSection({ evidence }: ArchiveBeliefEvidence
   if (!hasSupporting && !hasContradictions && !hasLifeAreas && !hasCost && !hasPrediction) {
     return (
       <p className="text-sm text-zinc-500">
-        More reflections may link dated quotes to this belief.
+        More moments may link dated quotes to this belief.
       </p>
     );
   }

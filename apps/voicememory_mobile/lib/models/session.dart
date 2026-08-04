@@ -10,13 +10,19 @@ class UserSession {
   final DateTime? signedInAt;
 
   factory UserSession.fromJson(Map<String, dynamic> json) {
-    final user = json['user'] as Map<String, dynamic>? ?? {};
+    final rawUser = json['user'];
+    final user = rawUser is Map
+        ? Map<String, dynamic>.from(rawUser)
+        : const <String, dynamic>{};
+    final rawSignedInAt = json['signedInAt'];
     return UserSession(
-      userId: user['id'] as String? ?? '',
-      email: user['email'] as String? ?? '',
-      signedInAt: json['signedInAt'] != null
-          ? DateTime.tryParse(json['signedInAt'] as String)
+      userId: _profileString(user['id']),
+      email: _profileString(user['email']),
+      signedInAt: rawSignedInAt is String
+          ? DateTime.tryParse(rawSignedInAt)
           : null,
     );
   }
 }
+
+String _profileString(Object? value) => value is String ? value.trim() : '';

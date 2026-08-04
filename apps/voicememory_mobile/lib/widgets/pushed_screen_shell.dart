@@ -56,7 +56,7 @@ class PushedScreenShell extends StatelessWidget {
         title: Text(title),
         actions: actions,
       ),
-      body: body,
+      body: SafeArea(top: false, bottom: !showBottomDone, child: body),
       bottomNavigationBar: showBottomDone
           ? SafeArea(
               child: Padding(

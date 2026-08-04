@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/ggml-org/llama.cpp",
+  "commit": "c0bc8591e8815c63cb01dd3f051a8b0df02501c9",
+  "archive": "https://github.com/ggml-org/llama.cpp/archive/c0bc8591e8815c63cb01dd3f051a8b0df02501c9.tar.gz",
+  "archiveSha256": "53d80e3337aba09ce37ee6dfe3cf345b274194922a62f38984cb212c8266cf25",
+  "license": "MIT",
+  "licenseFile": "llama.cpp/LICENSE",
+  "vendoredPaths": [
+    "AUTHORS",
+    "CMakeLists.txt",
+    "LICENSE",
+    "README.md",
+    "cmake",
+    "ggml",
+    "include",
+    "licenses",
+    "src"
+  ]
+}

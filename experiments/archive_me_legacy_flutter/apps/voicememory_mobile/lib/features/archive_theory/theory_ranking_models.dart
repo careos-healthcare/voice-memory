@@ -1,0 +1,44 @@
+import '../../models/journal_entry.dart';
+
+/// Result of unified primary theory ranking.
+class TheoryRankingResult {
+  const TheoryRankingResult({
+    required this.primaryTheory,
+    required this.secondaryTheories,
+    required this.rejectedCandidates,
+    required this.eligibleCandidateCount,
+  });
+
+  final RankedTheory? primaryTheory;
+  final List<RankedTheory> secondaryTheories;
+  final int rejectedCandidates;
+  final int eligibleCandidateCount;
+
+  String? get primaryStatement => primaryTheory?.statement;
+  String? get primaryCandidateId => primaryTheory?.candidateId;
+}
+
+/// One scored belief hypothesis.
+class RankedTheory {
+  const RankedTheory({
+    required this.candidateId,
+    required this.statement,
+    required this.source,
+    required this.confidencePercent,
+    required this.evidenceCount,
+    required this.counterEvidenceCount,
+    required this.rankScore,
+    required this.supportingEntries,
+    required this.lastUpdated,
+  });
+
+  final String candidateId;
+  final String statement;
+  final String source;
+  final int confidencePercent;
+  final int evidenceCount;
+  final int counterEvidenceCount;
+  final int rankScore;
+  final List<JournalEntry> supportingEntries;
+  final DateTime? lastUpdated;
+}

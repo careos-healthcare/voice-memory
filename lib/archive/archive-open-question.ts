@@ -57,7 +57,7 @@ export function buildArchiveOpenQuestions(
     questions.push({
       id: lineId(),
       lead: "The archive still does not know:",
-      text: "How recent reflections change this belief.",
+      text: "How recent saved moments change this belief.",
     });
   }
 

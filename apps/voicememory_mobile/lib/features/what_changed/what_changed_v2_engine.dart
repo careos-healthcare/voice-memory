@@ -2,10 +2,8 @@ import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
-import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
-import '../early_archive/early_first_signal_engine.dart';
+import '../explainable_conclusion/auditable_personal_change_engine.dart';
 import '../record_capture_modes/record_capture_mode_engine.dart';
-import '../repeat_return_check/repeat_return_check_gates.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_store.dart';
 import '../weekly_review/weekly_archive_review_copy.dart';
@@ -18,7 +16,7 @@ import 'what_changed_v2_store.dart';
 abstract final class WhatChangedV2Engine {
   WhatChangedV2Engine._();
 
-  static const minEntryCount = 4;
+  static const minEntryCount = 2;
   static const _maxSnippetChars = 72;
   static const _minSnippetChars = 12;
 
@@ -37,8 +35,9 @@ abstract final class WhatChangedV2Engine {
     if (!_allowsPrompt(entries)) return null;
 
     final latestEntryId = RepeatReturnCheckStore.latestSavedEntryId(entries);
-    if (WhatChangedV2Store.cached
-        .any((record) => record.entryId == latestEntryId)) {
+    if (WhatChangedV2Store.cached.any(
+      (record) => record.entryId == latestEntryId,
+    )) {
       return null;
     }
 
@@ -149,30 +148,17 @@ abstract final class WhatChangedV2Engine {
 
   static bool _hasGroundedRepeatContext(List<JournalEntry> entries) {
     if (entries.length < minEntryCount) return false;
-    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) {
-      return false;
-    }
-    if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {
-      return false;
-    }
     if (ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries)) {
       return false;
     }
     if (ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries)) {
       return false;
     }
-    return true;
+    return _comparisonFromEligible(entries) != null;
   }
 
   static bool _allowsPrompt(List<JournalEntry> entries) {
     if (entries.length < minEntryCount) return false;
-    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) {
-      return false;
-    }
-    if (!RepeatReturnCheckGates.hasRelatedRepeatSave(entries)) return false;
-    if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {
-      return false;
-    }
     if (ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries)) {
       return false;
     }
@@ -182,12 +168,6 @@ abstract final class WhatChangedV2Engine {
     if (ArchiveEvidenceQualityGate.usableCount(entries) == 0) return false;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
-    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
-    if (!evidence.isStrong) return false;
-
     final latest = eligible.lastOrNull ?? entries.last;
     final text = ComparableEvidenceText.userText(latest);
     if (text.trim().isEmpty) return false;
@@ -199,20 +179,16 @@ abstract final class WhatChangedV2Engine {
   static WhatChangedV2Comparison? _comparisonFromEligible(
     List<JournalEntry> entries,
   ) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (eligible.length < 4) return null;
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries)
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    if (eligible.length < 2) return null;
 
     final prior = eligible[eligible.length - 2];
     final latest = eligible.last;
-    final phrases = ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
-      ConfirmedRepeatEvidencePhraseEngine.extract(
-        eligible.sublist(0, 3),
-      ).phrases,
-      eligible.sublist(0, 3),
-    );
+    if (!AuditablePersonalChangeEngine.areRelated(prior, latest)) return null;
 
-    final thenSnippet = _snippetForEntry(prior, phrases);
-    final nowSnippet = _snippetForEntry(latest, phrases);
+    final thenSnippet = _snippetForEntry(prior, const []);
+    final nowSnippet = _snippetForEntry(latest, const []);
     if (thenSnippet == null || nowSnippet == null) return null;
     if (thenSnippet.toLowerCase().trim() == nowSnippet.toLowerCase().trim()) {
       return null;

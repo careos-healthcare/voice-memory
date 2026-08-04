@@ -21,6 +21,8 @@ abstract final class DelayedPaywallProofStore {
   @visibleForTesting
   static bool bypassGateForTest = false;
 
+  static bool get isGateBypassed => bypassGateForTest;
+
   static bool get hasSeenFirstRepeat => _hasSeenFirstRepeat;
   static bool get hasOpenedEvidenceTrail => _hasOpenedEvidenceTrail;
 

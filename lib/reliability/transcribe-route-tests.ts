@@ -2,6 +2,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
+import {
+  REMOTE_TRANSCRIPTION_DISCLOSURE_HEADER,
+  REMOTE_TRANSCRIPTION_DISCLOSURE_VERSION,
+  requireRemoteTranscriptionDisclosure,
+} from "@/lib/server/remote-transcription-disclosure";
+
 const ROOT = process.cwd();
 const ROUTE_PATH = path.join(ROOT, "app/api/transcribe/route.ts");
 
@@ -42,6 +48,59 @@ export async function runTranscribeRouteTests(): Promise<{ failures: string[] }>
     assert.match(source, /Audio file is required/);
     assert.match(source, /AUDIO_REQUIRED/);
     assert.match(source, /status: 400/);
+  });
+
+  await check("disclosure is enforced before multipart audio parsing", () => {
+    const source = readRouteSource();
+    const disclosureIndex = source.indexOf(
+      "requireRemoteTranscriptionDisclosure(request)",
+    );
+    const formDataIndex = source.indexOf("request.formData()");
+    assert.ok(disclosureIndex >= 0);
+    assert.ok(formDataIndex > disclosureIndex);
+  });
+
+  await check("missing, malformed, and unsupported versions are typed", async () => {
+    const missing = requireRemoteTranscriptionDisclosure(
+      new Request("https://example.test/api/transcribe", { method: "POST" }),
+    );
+    assert.equal(missing?.status, 428);
+    assert.equal((await missing?.json())?.code, "remoteDisclosureRequired");
+
+    const malformed = requireRemoteTranscriptionDisclosure(
+      new Request("https://example.test/api/transcribe", {
+        method: "POST",
+        headers: { [REMOTE_TRANSCRIPTION_DISCLOSURE_HEADER]: "1.0" },
+      }),
+    );
+    assert.equal(malformed?.status, 400);
+    assert.equal(
+      (await malformed?.json())?.code,
+      "remoteDisclosureVersionMalformed",
+    );
+
+    const unsupported = requireRemoteTranscriptionDisclosure(
+      new Request("https://example.test/api/transcribe", {
+        method: "POST",
+        headers: { [REMOTE_TRANSCRIPTION_DISCLOSURE_HEADER]: "999" },
+      }),
+    );
+    assert.equal(unsupported?.status, 428);
+    assert.equal(
+      (await unsupported?.json())?.code,
+      "remoteDisclosureVersionUnsupported",
+    );
+
+    const accepted = requireRemoteTranscriptionDisclosure(
+      new Request("https://example.test/api/transcribe", {
+        method: "POST",
+        headers: {
+          [REMOTE_TRANSCRIPTION_DISCLOSURE_HEADER]:
+            REMOTE_TRANSCRIPTION_DISCLOSURE_VERSION,
+        },
+      }),
+    );
+    assert.equal(accepted, null);
   });
 
   await check("POST errors return JSON with code", () => {

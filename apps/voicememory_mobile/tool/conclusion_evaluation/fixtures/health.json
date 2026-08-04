@@ -1,0 +1,188 @@
+{
+  "$schema": "../schema.json",
+  "note": "SYNTHETIC ONLY. No real user journal content, and no diagnosis language in any transcript. Expectations are author-written intent, not human-validated ground truth.",
+  "cases": [
+    {
+      "caseId": "health_001_sleep_state_change",
+      "entryA": {
+        "id": "health_001_a",
+        "transcript": "I slept badly before the appointment and felt anxious.",
+        "capturedAt": "2026-01-05T06:00:00Z"
+      },
+      "entryB": {
+        "id": "health_001_b",
+        "transcript": "I slept well before the appointment and felt calm.",
+        "capturedAt": "2026-02-16T06:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["emotionalState:replaced"],
+      "supportedConclusion": "Appointment — how you felt looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You have a sleep disorder.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "You felt calm because you slept well.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "health_002_coping_scrolled_to_walked",
+      "entryA": {
+        "id": "health_002_a",
+        "transcript": "I scrolled on my phone when my back hurt.",
+        "capturedAt": "2026-01-06T14:00:00Z"
+      },
+      "entryB": {
+        "id": "health_002_b",
+        "transcript": "I walked around the block when my back hurt.",
+        "capturedAt": "2026-02-17T14:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["copingResponse:replaced"],
+      "supportedConclusion": "Back — how you handled it looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You are a person who cannot sit with pain.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "The relationship with your partner may have changed.",
+          "violation": "wrongDomain"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "health_003_intensity_down_no_diagnosis",
+      "entryA": {
+        "id": "health_003_a",
+        "transcript": "I felt very anxious about the test results.",
+        "capturedAt": "2026-01-07T10:00:00Z"
+      },
+      "entryB": {
+        "id": "health_003_b",
+        "transcript": "I felt less anxious about the test results.",
+        "capturedAt": "2026-02-18T10:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["emotionalIntensity:decreased"],
+      "supportedConclusion": "Results — how strongly you felt it looks less across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "You may be experiencing an anxiety disorder.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "Your test results confirm a diagnosis.",
+          "violation": "identityOrTrait"
+        },
+        {
+          "statement": "The anxious feeling eased because the results arrived.",
+          "violation": "causal"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "health_004_duration_headache",
+      "entryA": {
+        "id": "health_004_a",
+        "transcript": "The headache lingered all day after the meeting.",
+        "capturedAt": "2026-01-08T18:00:00Z"
+      },
+      "entryB": {
+        "id": "health_004_b",
+        "transcript": "The headache went quickly after the meeting.",
+        "capturedAt": "2026-02-19T18:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "change",
+      "expectedChangedDimensions": ["duration:decreased"],
+      "supportedConclusion": "Headache — how long it lasted looks different across these two saved moments.",
+      "prohibitedConclusions": [
+        {
+          "statement": "The headache went quickly because the meeting was shorter.",
+          "violation": "causal"
+        },
+        {
+          "statement": "There may be a medical cause.",
+          "violation": "generic"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "medium",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "health_005_repeat_tired",
+      "entryA": {
+        "id": "health_005_a",
+        "transcript": "I felt tired after the appointment and rested at home.",
+        "capturedAt": "2026-01-09T16:00:00Z"
+      },
+      "entryB": {
+        "id": "health_005_b",
+        "transcript": "I felt tired again after the appointment and rested at home.",
+        "capturedAt": "2026-02-20T16:00:00Z"
+      },
+      "relatedExpected": true,
+      "expectedKind": "repeat",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "These saved moments repeated how you handled the appointment.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How you handled the appointment looks different across these saved moments.",
+          "violation": "overclaim"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    },
+    {
+      "caseId": "health_006_single_moment_observation",
+      "entryA": {
+        "id": "health_006_a",
+        "transcript": "I walked around the block when my back hurt and felt calm.",
+        "capturedAt": "2026-01-10T15:00:00Z"
+      },
+      "entryB": null,
+      "relatedExpected": false,
+      "expectedKind": "observation",
+      "expectedChangedDimensions": [],
+      "supportedConclusion": "You walked around the block when your back hurt in this saved moment.",
+      "prohibitedConclusions": [
+        {
+          "statement": "How you handled it looks different across these saved moments.",
+          "violation": "overclaim"
+        },
+        {
+          "statement": "You always walk when you are in pain.",
+          "violation": "identityOrTrait"
+        }
+      ],
+      "expectedSuppressionReason": null,
+      "sourceDomain": "health",
+      "difficulty": "easy",
+      "humanLabelStatus": "unlabelled"
+    }
+  ]
+}

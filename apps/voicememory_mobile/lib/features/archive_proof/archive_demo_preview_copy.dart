@@ -30,8 +30,7 @@ abstract final class ArchiveDemoPreviewCopy {
   static const oneEntryRecordNextHint =
       'Record one more moment when something feels familiar — even loosely.';
 
-  static const twoEntryNoRepeatHint =
-      VisibleArchiveProofCopy.earlyRepeatBody;
+  static const twoEntryNoRepeatHint = VisibleArchiveProofCopy.earlyRepeatBody;
 
   static const twoEntryRepeatHint =
       VisibleArchiveProofCopy.earlyRepeatEvidenceLine;

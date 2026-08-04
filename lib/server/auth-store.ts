@@ -142,3 +142,21 @@ export async function getUserById(userId: string): Promise<StoredUser | null> {
 
   return getUserByIdLocal(userId);
 }
+
+export function deleteLocalAuthUser(userId: string, email: string): number {
+  const normalized = normalizeEmail(email);
+  const store = readAuthStore();
+  const existed = store.usersByEmail[normalized]?.id === userId;
+  if (existed) delete store.usersByEmail[normalized];
+  const before = store.pendingCodes.length;
+  store.pendingCodes = store.pendingCodes.filter((row) => row.email !== normalized);
+  writeAuthStore(store);
+  return (existed ? 1 : 0) + (before - store.pendingCodes.length);
+}
+
+export function localAuthUserExists(userId: string, email: string): boolean {
+  const store = readAuthStore();
+  const normalized = normalizeEmail(email);
+  return store.usersByEmail[normalized]?.id === userId ||
+    store.pendingCodes.some((row) => row.email === normalized);
+}
