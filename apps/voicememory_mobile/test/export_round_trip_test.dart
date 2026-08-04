@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/changes/change_thread_projection.dar
 import 'package:voicememory_mobile/features/explainable_conclusion/change_dimensions.dart';
 import 'package:voicememory_mobile/features/explainable_conclusion/explainable_conclusion.dart';
 import 'package:voicememory_mobile/features/monetization/domain/access_policy_engine.dart';
+import 'package:voicememory_mobile/features/weekly_review/weekly_review.dart';
 import 'package:voicememory_mobile/features/monetization/domain/contextual_paywall_policy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -378,6 +379,49 @@ void main() {
         contains('threads[].events[].evidence[].quote'),
       );
     });
+
+    test('includes retained weekly review history and exact evidence', () {
+      final review = WeeklyReview(
+        reviewId: 'week-2026-03-01',
+        windowStart: DateTime.utc(2026, 3, 1),
+        windowEnd: DateTime.utc(2026, 3, 7),
+        generatedAt: DateTime.utc(2026, 3, 8),
+        items: [
+          WeeklyReviewItem(
+            kind: WeeklyReviewItemKind.possibleChange,
+            threadId: 'thread-1',
+            threadLabel: 'Putting the evening task off',
+            eventId: 'event-2',
+            statement: 'The delay showed up less often than before.',
+            evidence: [
+              _citation(
+                entryId: 'moment-a',
+                quote: 'putting it off',
+                start: 7,
+                end: 21,
+              ),
+            ],
+            occurredAt: DateTime.utc(2026, 3, 5, 12),
+          ),
+        ],
+      );
+      final weeklyBundle = CompleteArchiveExportBuilder.build(
+        archiveId: 'local',
+        entries: [_richEntry()],
+        changes: _changes(),
+        weeklyReviews: [review],
+      );
+      final weeklyParsed =
+          jsonDecode(weeklyBundle.machineReadableJson) as Map<String, Object?>;
+      final reviews = (weeklyParsed['weeklyReviews'] as List)
+          .cast<Map<String, Object?>>();
+
+      expect(reviews.single['reviewId'], 'week-2026-03-01');
+      expect(weeklyBundle.manifest.weeklyReviewCount, 1);
+      expect(weeklyBundle.readableDocument, contains('Weekly review history'));
+      expect(weeklyBundle.readableDocument, contains('putting it off'));
+      expect(weeklyBundle.readableDocument, contains('week-2026-03-01'));
+    });
   });
 
   group('determinism', () {
@@ -427,7 +471,13 @@ void main() {
       // Only archive-derived 2026 timestamps may appear; a clock reading of
       // "now" would betray itself as a different year in later test runs.
       expect(bundle.machineReadableJson, isNot(contains('exportedAt')));
-      expect(bundle.machineReadableJson, isNot(contains('generatedAt')));
+      final parsed =
+          jsonDecode(bundle.machineReadableJson) as Map<String, Object?>;
+      expect(parsed, isNot(contains('generatedAt')));
+      expect(
+        parsed['manifest'] as Map<String, Object?>,
+        isNot(contains('generatedAt')),
+      );
       if (thisYear != '2026') {
         expect(bundle.machineReadableJson, isNot(contains(thisYear)));
         expect(bundle.readableDocument, isNot(contains(thisYear)));

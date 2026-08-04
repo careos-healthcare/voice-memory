@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../features/archive_export/complete_archive_export.dart';
+import '../features/archive_export/full_archive_export.dart';
 import '../features/changes/change_thread_projection.dart';
+import '../features/weekly_review/weekly_review.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../models/journal_entry.dart';
 import '../services/privacy/audio_vault_service.dart';
@@ -331,8 +333,44 @@ class PrivateDataService {
   /// Changes history the caller passes in. No entitlement is consulted.
   Future<ArchiveExportBundle> buildCompleteExport({
     ChangeThreadProjection changes = const ChangeThreadProjection.empty(),
-  }) =>
-      CompleteArchiveExportBuilder.fromJournalStore(_journal, changes: changes);
+    Iterable<WeeklyReview> weeklyReviews = const [],
+  }) => CompleteArchiveExportBuilder.fromJournalStore(
+    _journal,
+    changes: changes,
+    weeklyReviews: weeklyReviews,
+  );
+
+  Future<FullArchiveExportResult> buildFullExport({
+    required ChangeThreadProjection changes,
+    required Iterable<WeeklyReview> weeklyReviews,
+    required String appVersion,
+    required bool audioExportConfirmed,
+    ArchiveExportCancellation? cancellation,
+  }) async {
+    final vault = _audioVault;
+    if (vault == null) {
+      throw StateError('Audio vault is unavailable.');
+    }
+    final readable = await buildCompleteExport(
+      changes: changes,
+      weeklyReviews: weeklyReviews,
+    );
+    final entries = await _journal.loadAll(includeDeleted: true);
+    final temp = await _resolveTempDirectory();
+    if (temp == null) {
+      throw StateError('A private temporary directory is unavailable.');
+    }
+    return FullArchiveExportBuilder(
+      audioVault: vault,
+      temporaryRoot: temp,
+      appVersion: appVersion,
+    ).build(
+      readable: readable,
+      entries: entries,
+      audioExportConfirmed: audioExportConfirmed,
+      cancellation: cancellation,
+    );
+  }
 
   Future<ArchiveExportPayload> buildSanitizedExport() async {
     final all = await _journal.loadAll();

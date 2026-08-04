@@ -71,11 +71,12 @@ abstract final class ArchivePrivacySummary {
   static const ArchivePrivacyFact export = ArchivePrivacyFact(
     title: 'Export',
     body:
-        'Export produces a readable document and a machine-readable file '
-        'together. Both carry your original timestamps, your text, your '
-        'corrections, evidence links, Changes history, and a reference for each '
-        'recording, with a manifest that names every field. After sharing, the '
-        'destination you choose controls those readable files.',
+        'Readable export carries your original timestamps, text, corrections, '
+        'evidence, Changes history and weekly review history in readable and '
+        'machine-readable files, but explicitly excludes audio bytes. Full '
+        'export creates one ZIP with those files, available original '
+        'recordings, checksums, and a versioned manifest. After sharing, the '
+        'destination you choose controls the plaintext files.',
   );
 
   static const ArchivePrivacyFact deletion = ArchivePrivacyFact(

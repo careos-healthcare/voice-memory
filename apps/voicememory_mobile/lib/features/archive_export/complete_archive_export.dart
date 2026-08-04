@@ -7,6 +7,7 @@ import '../../storage/journal_store.dart';
 import '../changes/change_thread.dart';
 import '../changes/change_thread_projection.dart';
 import '../explainable_conclusion/explainable_conclusion.dart';
+import '../weekly_review/weekly_review.dart';
 import 'archive_ownership_copy.dart';
 
 /// What the export says about itself: counts, field list, and the promises the
@@ -24,23 +25,24 @@ class ArchiveExportManifest {
     required this.changeThreadCount,
     required this.changeEventCount,
     required this.unplacedChangeEventCount,
+    required this.weeklyReviewCount,
   });
 
   static const String app = 'ArchiveMe';
 
   /// Bumped whenever the shape below changes in a way a reader must notice.
-  static const int formatVersion = 2;
+  static const int formatVersion = 3;
 
-  static const String audioPolicy = 'reference_only';
+  static const String audioPolicy = 'bytes_excluded';
 
   static const String accessNote =
       'No subscription is required for any part of this export. Exporting your '
       'own moments is user-owned and is never metered or gated.';
 
   static const String audioNote =
-      'Recordings stay in the encrypted vault on this device rather than being '
-      'copied out as plaintext files. Every entry carries its own audio '
-      'reference so a recording can be matched back to the vault object.';
+      'Audio bytes are excluded from this readable export. Every entry carries '
+      'an audio reference so it can be matched back to the vault object. After '
+      'handoff, the destination you choose controls these plaintext files.';
 
   static const String determinismNote =
       'The same archive state always produces byte-identical output. Entries, '
@@ -112,6 +114,21 @@ class ArchiveExportManifest {
     'unplacedEvents[]',
   ];
 
+  static const List<String> weeklyReviewFields = [
+    'weeklyReviews[].reviewId',
+    'weeklyReviews[].windowStart',
+    'weeklyReviews[].windowEnd',
+    'weeklyReviews[].generatedAt',
+    'weeklyReviews[].policyVersion',
+    'weeklyReviews[].items[].kind',
+    'weeklyReviews[].items[].threadId',
+    'weeklyReviews[].items[].threadLabel',
+    'weeklyReviews[].items[].eventId',
+    'weeklyReviews[].items[].statement',
+    'weeklyReviews[].items[].evidence',
+    'weeklyReviews[].items[].occurredAt',
+  ];
+
   final String archiveId;
   final int entryCount;
   final int activeEntryCount;
@@ -123,6 +140,7 @@ class ArchiveExportManifest {
   final int changeThreadCount;
   final int changeEventCount;
   final int unplacedChangeEventCount;
+  final int weeklyReviewCount;
 
   Map<String, Object?> toJson() => {
     'app': app,
@@ -139,6 +157,7 @@ class ArchiveExportManifest {
       'changeThreads': changeThreadCount,
       'changeEvents': changeEventCount,
       'unplacedChangeEvents': unplacedChangeEventCount,
+      'weeklyReviews': weeklyReviewCount,
     },
     'audioPolicy': audioPolicy,
     'audioNote': audioNote,
@@ -148,6 +167,7 @@ class ArchiveExportManifest {
     'ownershipPromises': ArchiveOwnershipCopy.all,
     'entryFields': entryFields,
     'changeFields': changeFields,
+    'weeklyReviewFields': weeklyReviewFields,
   };
 
   List<String> get readableLines => [
@@ -161,12 +181,14 @@ class ArchiveExportManifest {
     'Audio references: $audioReferenceCount',
     'Changes threads: $changeThreadCount '
         '(events $changeEventCount, unplaced $unplacedChangeEventCount)',
+    'Weekly reviews: $weeklyReviewCount',
     'Audio: $audioPolicy — $audioNote',
     'Access: $accessNote',
     'Determinism: $determinismNote',
     'Deleted moments: $tombstoneNote',
     'Moment fields: ${entryFields.join(', ')}',
     'Changes fields: ${changeFields.join(', ')}',
+    'Weekly review fields: ${weeklyReviewFields.join(', ')}',
   ];
 }
 
@@ -203,10 +225,16 @@ abstract final class CompleteArchiveExportBuilder {
     required String archiveId,
     required List<JournalEntry> entries,
     ChangeThreadProjection changes = const ChangeThreadProjection.empty(),
+    Iterable<WeeklyReview> weeklyReviews = const [],
   }) {
     final ordered = _orderedEntries(entries);
     final threads = _orderedThreads(changes);
     final unplaced = _orderedEvents(changes.ungroupedEvents);
+    final reviews = weeklyReviews.toList()
+      ..sort((a, b) {
+        final byDate = a.generatedAt.toUtc().compareTo(b.generatedAt.toUtc());
+        return byDate != 0 ? byDate : a.reviewId.compareTo(b.reviewId);
+      });
 
     final manifest = ArchiveExportManifest(
       archiveId: archiveId,
@@ -235,6 +263,7 @@ abstract final class CompleteArchiveExportBuilder {
         (total, view) => total + view.events.length,
       ),
       unplacedChangeEventCount: unplaced.length,
+      weeklyReviewCount: reviews.length,
     );
 
     return ArchiveExportBundle(
@@ -245,12 +274,14 @@ abstract final class CompleteArchiveExportBuilder {
         threads: threads,
         unplaced: unplaced,
         policyVersion: changes.policyVersion,
+        weeklyReviews: reviews,
       ),
       readableDocument: _readable(
         manifest: manifest,
         entries: ordered,
         threads: threads,
         unplaced: unplaced,
+        weeklyReviews: reviews,
       ),
     );
   }
@@ -259,10 +290,12 @@ abstract final class CompleteArchiveExportBuilder {
   static Future<ArchiveExportBundle> fromJournalStore(
     JournalStore journalStore, {
     ChangeThreadProjection changes = const ChangeThreadProjection.empty(),
+    Iterable<WeeklyReview> weeklyReviews = const [],
   }) async => build(
     archiveId: journalStore.ownerArchiveId,
     entries: await journalStore.loadAll(includeDeleted: true),
     changes: changes,
+    weeklyReviews: weeklyReviews,
   );
 
   // ——— Ordering ———
@@ -315,6 +348,7 @@ abstract final class CompleteArchiveExportBuilder {
     required List<ChangeThreadView> threads,
     required List<ChangeEvent> unplaced,
     required String policyVersion,
+    required List<WeeklyReview> weeklyReviews,
   }) => const JsonEncoder.withIndent('  ').convert({
     'manifest': manifest.toJson(),
     'savedMoments': entries.map(_entryJson).toList(growable: false),
@@ -323,6 +357,9 @@ abstract final class CompleteArchiveExportBuilder {
       'threads': threads.map(_threadJson).toList(growable: false),
       'unplacedEvents': unplaced.map(_eventJson).toList(growable: false),
     },
+    'weeklyReviews': weeklyReviews
+        .map((review) => review.toJson())
+        .toList(growable: false),
   });
 
   static Map<String, Object?> _entryJson(JournalEntry entry) {
@@ -466,6 +503,7 @@ abstract final class CompleteArchiveExportBuilder {
     required List<JournalEntry> entries,
     required List<ChangeThreadView> threads,
     required List<ChangeEvent> unplaced,
+    required List<WeeklyReview> weeklyReviews,
   }) {
     final lines = <String>[
       '# ArchiveMe archive export',
@@ -617,6 +655,40 @@ abstract final class CompleteArchiveExportBuilder {
         lines.add(
           '- ${_iso(event.occurredAt)}: ${_singleLine(event.statement)}',
         );
+      }
+    }
+
+    lines
+      ..add('')
+      ..add('## Weekly review history');
+    if (weeklyReviews.isEmpty) {
+      lines
+        ..add('')
+        ..add('No weekly reviews have been retained.');
+    } else {
+      for (final review in weeklyReviews) {
+        lines
+          ..add('')
+          ..add('### ${_iso(review.windowStart)} to ${_iso(review.windowEnd)}')
+          ..add('')
+          ..add('- Review id: ${review.reviewId}')
+          ..add('- Generated: ${_iso(review.generatedAt)}')
+          ..add('- Policy: ${review.policyVersion}');
+        for (final item in review.items) {
+          lines
+            ..add(
+              '- ${item.kind.label}: ${_singleLine(item.statement)} '
+              '(thread ${item.threadLabel})',
+            )
+            ..add('  - Event: ${item.eventId}; at ${_iso(item.occurredAt)}');
+          for (final citation in item.evidence) {
+            lines.add(
+              '  - Evidence from ${citation.entryId} '
+              '[${citation.startUtf16}–${citation.endUtf16}]: '
+              '${_singleLine(citation.quote)}',
+            );
+          }
+        }
       }
     }
 
