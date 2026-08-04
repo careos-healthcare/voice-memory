@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "2026-08-01",
+  "policyVersion": "2026-08-04",
   "valueTypes": [
     "boolean",
     "bounded_count",
@@ -157,6 +157,134 @@
     {
       "id": "playback_completed",
       "properties": ["source_type", "ui_origin", "duration_seconds_bucket"]
+    },
+    {
+      "id": "original_save_started",
+      "properties": ["operation_source"]
+    },
+    {
+      "id": "original_save_completed",
+      "properties": ["operation_source", "performance_duration_band"]
+    },
+    {
+      "id": "original_save_failed",
+      "properties": ["operation_source", "failure_reason_band"]
+    },
+    {
+      "id": "transcription_started",
+      "properties": ["operation_source"]
+    },
+    {
+      "id": "transcription_completed",
+      "properties": ["performance_duration_band"]
+    },
+    {
+      "id": "transcription_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "interpretation_started",
+      "properties": []
+    },
+    {
+      "id": "interpretation_completed",
+      "properties": ["performance_duration_band"]
+    },
+    {
+      "id": "interpretation_suppressed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "interpretation_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "retry_scheduled",
+      "properties": ["attempt_band"]
+    },
+    {
+      "id": "retry_started",
+      "properties": ["attempt_band"]
+    },
+    {
+      "id": "retry_completed",
+      "properties": ["attempt_band"]
+    },
+    {
+      "id": "retry_exhausted",
+      "properties": ["attempt_band", "failure_reason_band"]
+    },
+    {
+      "id": "vault_write_started",
+      "properties": []
+    },
+    {
+      "id": "vault_write_completed",
+      "properties": ["performance_duration_band"]
+    },
+    {
+      "id": "vault_write_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "sync_started",
+      "properties": []
+    },
+    {
+      "id": "sync_completed",
+      "properties": []
+    },
+    {
+      "id": "sync_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "recovery_started",
+      "properties": []
+    },
+    {
+      "id": "recovery_completed",
+      "properties": []
+    },
+    {
+      "id": "recovery_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "purchase_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "restore_completed",
+      "properties": []
+    },
+    {
+      "id": "restore_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "deletion_started",
+      "properties": []
+    },
+    {
+      "id": "deletion_completed",
+      "properties": []
+    },
+    {
+      "id": "deletion_failed",
+      "properties": ["failure_reason_band"]
+    },
+    {
+      "id": "export_started",
+      "properties": ["format"]
+    },
+    {
+      "id": "export_completed",
+      "properties": ["format", "item_count_bucket"]
+    },
+    {
+      "id": "export_failed",
+      "properties": ["format", "failure_reason_band"]
     }
   ],
   "prohibitedKeyFragments": [

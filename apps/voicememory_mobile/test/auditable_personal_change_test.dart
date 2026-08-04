@@ -404,6 +404,36 @@ void main() {
       },
     );
 
+    test(
+      'wrong angle suppresses a semantic-equivalent rewording on old evidence',
+      () {
+        final feedback = InsightFeedbackRecord(
+          insightId: 'original',
+          insightType: InsightFeedbackType.auditableConclusion,
+          choice: InsightFeedbackChoice.wrongAngle,
+          createdAt: DateTime.utc(2026, 7, 2),
+          sourceRoute: 'test',
+          templateId: 'work_template',
+          evidenceEntryIds: const ['work-1'],
+          correctionNote: 'The deadline was the issue.',
+        );
+        final equivalent = _observation(
+          id: 'reworded',
+          statement: 'Urgency showed up around work pressure.',
+          evidence: [citation],
+        );
+
+        expect(
+          AuditableConclusionTrustPolicy.rankBest(
+            candidates: [equivalent],
+            canonicalTranscripts: transcripts,
+            feedback: [feedback],
+          ),
+          isNull,
+        );
+      },
+    );
+
     test('too generic suppresses the same template without new evidence', () {
       final original = _observation(
         id: 'generic-old',

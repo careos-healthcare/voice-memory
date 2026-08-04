@@ -50,9 +50,9 @@ class ProductAnalytics {
       await _analytics!.setAnalyticsCollectionEnabled(true);
       _provider = _firebaseProvider;
       await _flushPendingEvents();
-    } catch (e) {
+    } catch (_) {
       if (kDebugMode) {
-        debugPrint('ProductAnalytics: Firebase Analytics unavailable — $e');
+        debugPrint('ProductAnalytics: Firebase Analytics unavailable');
       }
       _analytics = null;
       _provider = null;
@@ -65,6 +65,20 @@ class ProductAnalytics {
     Map<String, Object?>? parameters,
   }) async {
     await _trackCatalogued(AnalyticsCatalog.v1Event(event), parameters);
+  }
+
+  /// Typed operational boundary used by privacy-reviewed feature facades.
+  ///
+  /// Callers cannot supply an event name. Payloads are validated here and
+  /// again in [_dispatch] immediately before crossing the provider boundary.
+  static Future<void> trackOperational(
+    OperationalAnalyticsEvent event, {
+    Map<String, Object?>? parameters,
+  }) async {
+    await _trackCatalogued(
+      AnalyticsCatalog.operationalEvent(event),
+      parameters,
+    );
   }
 
   /// Compatibility boundary for [ActivationFunnelAnalytics].
@@ -224,10 +238,10 @@ class ProductAnalytics {
     if (checked == null) return;
     try {
       await provider(checked.event.value, checked.parameters);
-    } catch (e) {
+    } catch (_) {
       if (kDebugMode) {
         debugPrint(
-          'ProductAnalytics: provider failed for ${checked.event.value} — $e',
+          'ProductAnalytics: provider failed for ${checked.event.value}',
         );
       }
     }
@@ -287,9 +301,9 @@ class ProductAnalytics {
     if (analytics != null) {
       try {
         await analytics.resetAnalyticsData();
-      } catch (e) {
+      } catch (_) {
         if (kDebugMode) {
-          debugPrint('ProductAnalytics: analytics identity reset failed — $e');
+          debugPrint('ProductAnalytics: analytics identity reset failed');
         }
       }
     }

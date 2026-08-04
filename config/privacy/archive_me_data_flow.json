@@ -99,8 +99,24 @@
       "tests": ["apps/voicememory_mobile/test/saved_moment_encrypted_sync_test.dart"]
     },
     {
+      "id": "sync_recovery",
+      "dataCategory": "encrypted_sync_key_wrapping",
+      "origin": "device_held_sync_key_and_user_held_recovery_code",
+      "destination": "account_scoped_sync_recovery_api",
+      "storageLocation": "server_encrypted_envelope_and_device_secure_storage",
+      "encryptionState": "argon2id_derived_aes_gcm_wrapping",
+      "ownerScope": "archive_and_authenticated_account",
+      "retention": "until_replaced_disabled_or_account_deletion",
+      "deletionHandler": "sync_recovery_disable_and_account_deletion",
+      "consentOrDisclosure": "explicit_opt_in_and_exact_code_reentry",
+      "analyticsProhibited": true,
+      "externalProcessor": "ArchiveMe_backend",
+      "productionCapability": "encrypted_account_sync",
+      "tests": ["apps/voicememory_mobile/test/sync_recovery_service_test.dart", "apps/voicememory_mobile/test/sync_recovery_leakage_test.dart", "apps/voicememory_mobile/integration_test/core_v1_integration_test.dart"]
+    },
+    {
       "id": "analytics",
-      "dataCategory": "allowlisted_structural_metadata",
+      "dataCategory": "allowlisted_product_and_operational_structural_metadata",
       "origin": "typed_analytics_facade",
       "destination": "configured_analytics_provider",
       "storageLocation": "provider_event_store",
@@ -112,7 +128,7 @@
       "analyticsProhibited": false,
       "externalProcessor": "Firebase_Analytics",
       "productionCapability": "metadata_only_analytics",
-      "tests": ["apps/voicememory_mobile/test/product_analytics_test.dart"]
+      "tests": ["apps/voicememory_mobile/test/product_analytics_test.dart", "apps/voicememory_mobile/test/operational_analytics_test.dart", "apps/voicememory_mobile/test/privacy_safe_crash_reporting_test.dart"]
     },
     {
       "id": "billing",
@@ -132,7 +148,7 @@
     },
     {
       "id": "export",
-      "dataCategory": "user_selected_archive_content",
+      "dataCategory": "user_selected_archive_content_and_structural_completion_metadata",
       "origin": "canonical_saved_moment_store",
       "destination": "user_selected_share_target",
       "storageLocation": "temporary_app_private_export_then_share_sheet",
@@ -141,10 +157,12 @@
       "retention": "temporary_file_deleted_best_effort_after_handoff",
       "deletionHandler": "export_cleanup",
       "consentOrDisclosure": "explicit_user_export",
-      "analyticsProhibited": true,
+      "analyticsProhibited": false,
+      "contentAnalyticsProhibited": true,
+      "allowedAnalytics": ["export_lifecycle_with_bounded_format_count_and_failure_bands"],
       "externalProcessor": "user_selected",
       "productionCapability": "user_initiated_export",
-      "tests": []
+      "tests": ["apps/voicememory_mobile/test/export_round_trip_test.dart", "apps/voicememory_mobile/test/full_archive_export_test.dart", "apps/voicememory_mobile/test/operational_analytics_test.dart", "apps/voicememory_mobile/integration_test/core_v1_integration_test.dart"]
     },
     {
       "id": "account_deletion",

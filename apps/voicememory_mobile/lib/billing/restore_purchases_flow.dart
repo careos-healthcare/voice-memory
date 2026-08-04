@@ -1,5 +1,6 @@
 import '../subscriptions/domain/subscription_models.dart';
 import '../subscriptions/domain/subscription_repository.dart';
+import '../services/analytics/operational_analytics.dart';
 import 'restore_purchases_copy.dart';
 import 'subscription_purchase_coordinator.dart';
 
@@ -59,24 +60,35 @@ class RestorePurchasesFlow {
     }
     try {
       final state = await _coordinator.restore();
-      return RestorePurchasesResult(
-        outcome: state.verification == SubscriptionVerification.cached
-            ? RestorePurchasesOutcome.cachedAccessRetained
-            : state.isPro
-            ? RestorePurchasesOutcome.restored
-            : RestorePurchasesOutcome.noPurchase,
-        subscriptionState: state,
-      );
+      final outcome = state.verification == SubscriptionVerification.cached
+          ? RestorePurchasesOutcome.cachedAccessRetained
+          : state.isPro
+          ? RestorePurchasesOutcome.restored
+          : RestorePurchasesOutcome.noPurchase;
+      if (outcome == RestorePurchasesOutcome.cachedAccessRetained) {
+        await CommerceOperationalAnalytics.restoreFailed(
+          OperationalFailureCategory.providerUnavailable,
+        );
+      } else {
+        await CommerceOperationalAnalytics.restoreCompleted();
+      }
+      return RestorePurchasesResult(outcome: outcome, subscriptionState: state);
     } on SubscriptionOperationInProgressException {
       return const RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.skippedBusy,
       );
     } on SubscriptionRestoreException catch (e) {
+      await CommerceOperationalAnalytics.restoreFailed(
+        OperationalFailureCategory.providerUnavailable,
+      );
       return RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.unavailable,
         error: e,
       );
     } catch (e) {
+      await CommerceOperationalAnalytics.restoreFailed(
+        OperationalFailureCategory.unknown,
+      );
       return RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.error,
         error: e,

@@ -37,6 +37,46 @@ enum V1AnalyticsEvent {
   playbackCompleted,
 }
 
+/// Privacy-reviewed structural operations. These values describe that a
+/// lifecycle boundary was crossed, never which archive, entry, file, person,
+/// or provider was involved.
+enum OperationalAnalyticsEvent {
+  originalSaveStarted,
+  originalSaveCompleted,
+  originalSaveFailed,
+  transcriptionStarted,
+  transcriptionCompleted,
+  transcriptionFailed,
+  interpretationStarted,
+  interpretationCompleted,
+  interpretationSuppressed,
+  interpretationFailed,
+  retryScheduled,
+  retryStarted,
+  retryCompleted,
+  retryExhausted,
+  vaultWriteStarted,
+  vaultWriteCompleted,
+  vaultWriteFailed,
+  syncStarted,
+  syncCompleted,
+  syncFailed,
+  recoveryStarted,
+  recoveryCompleted,
+  recoveryFailed,
+  purchaseStarted,
+  purchaseCompleted,
+  purchaseFailed,
+  restoreCompleted,
+  restoreFailed,
+  deletionStarted,
+  deletionCompleted,
+  deletionFailed,
+  exportStarted,
+  exportCompleted,
+  exportFailed,
+}
+
 enum CatalogPricingValidationEvent {
   seen,
   valueStateSelected,
@@ -95,6 +135,49 @@ abstract final class AnalyticsCatalog {
     V1AnalyticsEvent.purchaseCompleted => 'purchase_completed',
     V1AnalyticsEvent.playbackStarted => 'playback_started',
     V1AnalyticsEvent.playbackCompleted => 'playback_completed',
+  });
+
+  static AnalyticsEventId operationalEvent(
+    OperationalAnalyticsEvent event,
+  ) => AnalyticsEventId._(switch (event) {
+    OperationalAnalyticsEvent.originalSaveStarted => 'original_save_started',
+    OperationalAnalyticsEvent.originalSaveCompleted =>
+      'original_save_completed',
+    OperationalAnalyticsEvent.originalSaveFailed => 'original_save_failed',
+    OperationalAnalyticsEvent.transcriptionStarted => 'transcription_started',
+    OperationalAnalyticsEvent.transcriptionCompleted =>
+      'transcription_completed',
+    OperationalAnalyticsEvent.transcriptionFailed => 'transcription_failed',
+    OperationalAnalyticsEvent.interpretationStarted => 'interpretation_started',
+    OperationalAnalyticsEvent.interpretationCompleted =>
+      'interpretation_completed',
+    OperationalAnalyticsEvent.interpretationSuppressed =>
+      'interpretation_suppressed',
+    OperationalAnalyticsEvent.interpretationFailed => 'interpretation_failed',
+    OperationalAnalyticsEvent.retryScheduled => 'retry_scheduled',
+    OperationalAnalyticsEvent.retryStarted => 'retry_started',
+    OperationalAnalyticsEvent.retryCompleted => 'retry_completed',
+    OperationalAnalyticsEvent.retryExhausted => 'retry_exhausted',
+    OperationalAnalyticsEvent.vaultWriteStarted => 'vault_write_started',
+    OperationalAnalyticsEvent.vaultWriteCompleted => 'vault_write_completed',
+    OperationalAnalyticsEvent.vaultWriteFailed => 'vault_write_failed',
+    OperationalAnalyticsEvent.syncStarted => 'sync_started',
+    OperationalAnalyticsEvent.syncCompleted => 'sync_completed',
+    OperationalAnalyticsEvent.syncFailed => 'sync_failed',
+    OperationalAnalyticsEvent.recoveryStarted => 'recovery_started',
+    OperationalAnalyticsEvent.recoveryCompleted => 'recovery_completed',
+    OperationalAnalyticsEvent.recoveryFailed => 'recovery_failed',
+    OperationalAnalyticsEvent.purchaseStarted => 'purchase_started',
+    OperationalAnalyticsEvent.purchaseCompleted => 'purchase_completed',
+    OperationalAnalyticsEvent.purchaseFailed => 'purchase_failed',
+    OperationalAnalyticsEvent.restoreCompleted => 'restore_completed',
+    OperationalAnalyticsEvent.restoreFailed => 'restore_failed',
+    OperationalAnalyticsEvent.deletionStarted => 'deletion_started',
+    OperationalAnalyticsEvent.deletionCompleted => 'deletion_completed',
+    OperationalAnalyticsEvent.deletionFailed => 'deletion_failed',
+    OperationalAnalyticsEvent.exportStarted => 'export_started',
+    OperationalAnalyticsEvent.exportCompleted => 'export_completed',
+    OperationalAnalyticsEvent.exportFailed => 'export_failed',
   });
 
   static const AnalyticsEventId _pricingValidationSeen = AnalyticsEventId._(
@@ -291,6 +374,36 @@ abstract final class AnalyticsCatalog {
     'biometric_unlock_attempted',
     'biometric_unlock_succeeded',
     'biometric_unlock_failed',
+    'original_save_started',
+    'original_save_completed',
+    'original_save_failed',
+    'transcription_started',
+    'transcription_completed',
+    'transcription_failed',
+    'interpretation_started',
+    'interpretation_completed',
+    'interpretation_suppressed',
+    'interpretation_failed',
+    'retry_scheduled',
+    'retry_started',
+    'retry_completed',
+    'retry_exhausted',
+    'vault_write_started',
+    'vault_write_completed',
+    'vault_write_failed',
+    'sync_started',
+    'sync_completed',
+    'sync_failed',
+    'recovery_started',
+    'recovery_completed',
+    'recovery_failed',
+    'purchase_failed',
+    'restore_failed',
+    'deletion_started',
+    'deletion_completed',
+    'deletion_failed',
+    'export_started',
+    'export_failed',
   };
 
   /// Legacy funnel events remain accepted through one constrained compatibility
@@ -404,6 +517,7 @@ abstract final class AnalyticsCatalog {
     'evidence_count_band',
     'evidence_recording_count_bucket',
     'milestone_count_bucket',
+    'item_count_bucket',
     'phrase_count_bucket',
     'position_seconds_bucket',
     'record_count_bucket',
@@ -540,6 +654,18 @@ abstract final class AnalyticsCatalog {
           AnalyticsValueKind.bucket,
           allowedValues: subscriptionStates,
         ),
+        'failure_reason_band': const AnalyticsPropertySpec(
+          AnalyticsValueKind.bucket,
+          allowedValues: failureCategories,
+        ),
+        'attempt_band': const AnalyticsPropertySpec(
+          AnalyticsValueKind.bucket,
+          allowedValues: attemptBands,
+        ),
+        'operation_source': const AnalyticsPropertySpec(
+          AnalyticsValueKind.bucket,
+          allowedValues: operationSources,
+        ),
       });
 
   /// Coarse latency bands. Callers pass a band, never a raw duration.
@@ -582,6 +708,30 @@ abstract final class AnalyticsCatalog {
     'pro_grace',
   };
 
+  static const Set<String> failureCategories = {
+    'offline',
+    'timeout',
+    'provider_unavailable',
+    'permission_denied',
+    'authentication',
+    'validation',
+    'storage_unavailable',
+    'quota',
+    'cancelled',
+    'unknown',
+  };
+
+  static const Set<String> attemptBands = {'first', 'second', 'third_or_more'};
+
+  static const Set<String> operationSources = {
+    'voice',
+    'text',
+    'import',
+    'manual',
+    'background',
+    'system',
+  };
+
   /// Maps a measured duration onto a band. Kept beside the allowlist so the
   /// two cannot drift apart.
   static String durationBand(Duration value) {
@@ -597,14 +747,19 @@ abstract final class AnalyticsCatalog {
   static final RegExp _safeId = RegExp(r'^[a-z][a-z0-9_]{0,39}$');
   static final RegExp _sensitiveKey = RegExp(
     r'(?:^|_)(?:email|token|secret|password|customer_id|user_id|account_id|'
-    r'entry_id|memory_id|product_id|transcript|prompt_text|theme|topic_label|'
-    r'title|category|hash|timestamp)(?:_|$)',
+    r'entry_id|archive_id|memory_id|product_id|transcript|'
+    r'evidence_(?:text|quote|content)|conclusion_(?:text|statement|content)|'
+    r'correction_note|question|prompt|prompt_text|theme|topic_label|title|'
+    r'filename|file_name|filepath|file_path|path|raw_error|provider_error|'
+    r'error_message|stack|stack_trace|recovery_code|sync_key|category|hash|'
+    r'timestamp)(?:_|$)',
   );
   static final RegExp _contentMarker = RegExp(
     r'(?:sentinel|private|content|transcript|reflection|@|'
     r'bearer|token|secret|password|sha(?:1|256|512)|md5|journal|quote|'
-    r'correction|question|health|relationship|money|work_pressure|anxiety|'
-    r'mood|belief|trait)',
+    r'correction|question|filename|filepath|exception|stacktrace|recovery_code|'
+    r'sync_key|health|relationship|money|work_pressure|anxiety|mood|belief|'
+    r'trait)',
     caseSensitive: false,
   );
   static final RegExp _hashLike = RegExp(r'^[a-f0-9]{16,}$');
@@ -637,7 +792,8 @@ abstract final class AnalyticsCatalog {
   static String _normalizeLegacyCoreLoop(String id) =>
       id == 'First Core Loop Completed' ? 'first_core_loop_completed' : id;
 
-  static bool isSensitiveKey(String key) => _sensitiveKey.hasMatch(key);
+  static bool isSensitiveKey(String key) =>
+      key == 'evidence' || key == 'conclusion' || _sensitiveKey.hasMatch(key);
 
   static bool isSafeToken(String value) =>
       _safeId.hasMatch(value) &&

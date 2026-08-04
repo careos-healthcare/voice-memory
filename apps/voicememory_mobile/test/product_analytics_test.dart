@@ -28,12 +28,26 @@ void main() {
 
   test('sensitive keys and values fail before provider', () async {
     for (final key in const [
+      'transcript',
+      'evidence',
+      'conclusion',
+      'correction_note',
+      'question',
+      'prompt',
       'memory_id',
       'entry_id',
+      'archive_id',
+      'user_id',
       'email',
       'auth_token',
+      'token',
       'customer_id',
       'product_id',
+      'filename',
+      'file_path',
+      'raw_provider_error',
+      'recovery_code',
+      'sync_key',
       'timestamp',
       'topic_label',
       'prompt_text',
@@ -83,6 +97,16 @@ void main() {
       () => ProductAnalytics.track(
         V1AnalyticsEvent.auditableConclusionShown,
         parameters: withNull,
+      ),
+      throwsStateError,
+    );
+  });
+
+  test('unbounded numbers fail loudly', () async {
+    expect(
+      () => ProductAnalytics.track(
+        V1AnalyticsEvent.auditableConclusionShown,
+        parameters: const {'score_band': 42},
       ),
       throwsStateError,
     );

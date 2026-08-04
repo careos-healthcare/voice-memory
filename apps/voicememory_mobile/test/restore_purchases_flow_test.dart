@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
+import 'package:voicememory_mobile/services/product_analytics.dart';
 import 'package:voicememory_mobile/subscriptions/domain/subscription_models.dart';
 
 import 'subscriptions/fake_subscription_repository.dart';
@@ -14,6 +15,8 @@ const _pro = SubscriptionState(
 );
 
 void main() {
+  setUp(ProductAnalytics.resetForTest);
+
   test('returns restored when repository verifies Pro', () async {
     final repository = FakeSubscriptionRepository(state: _pro);
     final result = await RestorePurchasesFlow(repository: repository).restore();
@@ -21,6 +24,10 @@ void main() {
     expect(result.outcome, RestorePurchasesOutcome.restored);
     expect(result.subscriptionState, same(_pro));
     expect(repository.restoreCalls, 1);
+    expect(
+      ProductAnalytics.eventsForTest.map((event) => event.event),
+      contains('restore_completed'),
+    );
   });
 
   test('returns no purchase for verified free state', () async {
@@ -40,6 +47,9 @@ void main() {
     final result = await RestorePurchasesFlow(repository: repository).restore();
 
     expect(result.outcome, RestorePurchasesOutcome.cachedAccessRetained);
+    final event = ProductAnalytics.eventsForTest.single;
+    expect(event.event, 'restore_failed');
+    expect(event.parameters['failure_reason_band'], 'provider_unavailable');
   });
 
   test('restore does not depend on store package availability', () async {
