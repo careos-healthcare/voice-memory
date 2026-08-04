@@ -92,8 +92,8 @@ abstract final class WeeklyReviewEngine {
     );
   }
 
-  /// At most one item per kind, so the review stays a summary rather than a
-  /// second copy of the Changes list.
+  /// At most one recurrence, one change, and one unresolved tension, so the
+  /// review stays a summary rather than a second copy of the Changes list.
   static List<WeeklyReviewItem> _selectItems({
     required ChangeThreadProjection projection,
     required ChangeResurfacingContext archive,
@@ -122,21 +122,21 @@ abstract final class WeeklyReviewEngine {
             .putIfAbsent(kind, () => [])
             .add(_itemFor(kind: kind, view: view, event: event));
       }
-
-      final correctionKind = _correctionKindFor(view.thread.correctionState);
-      if (correctionKind != null) {
-        candidates
-            .putIfAbsent(correctionKind, () => [])
-            .add(
-              _itemFor(kind: correctionKind, view: view, event: eligible.last),
-            );
-      }
     }
 
+    final changed = <WeeklyReviewItem>[
+      ...?candidates[WeeklyReviewItemKind.possibleChange],
+      ...?candidates[WeeklyReviewItemKind.weakened],
+      ...?candidates[WeeklyReviewItemKind.strengthened],
+    ];
     return [
-      for (final kind in WeeklyReviewItemKind.values)
-        if (candidates[kind] case final list? when list.isNotEmpty)
-          _strongest(list),
+      if (candidates[WeeklyReviewItemKind.repeated] case final repeated?
+          when repeated.isNotEmpty)
+        _strongest(repeated),
+      if (changed.isNotEmpty) _strongest(changed),
+      if (candidates[WeeklyReviewItemKind.unresolved] case final unresolved?
+          when unresolved.isNotEmpty)
+        _strongest(unresolved),
     ];
   }
 
@@ -204,14 +204,4 @@ abstract final class WeeklyReviewEngine {
         // A first sighting is not yet something that repeated or changed.
         ChangeThreadStatus.firstObserved => null,
       };
-
-  static WeeklyReviewItemKind? _correctionKindFor(
-    ChangeThreadCorrectionState state,
-  ) => switch (state) {
-    ChangeThreadCorrectionState.none => null,
-    // A hidden thread is not in the projection, and a hidden framing is not
-    // something to advertise back to the user.
-    ChangeThreadCorrectionState.framingSuppressed => null,
-    _ => WeeklyReviewItemKind.correction,
-  };
 }

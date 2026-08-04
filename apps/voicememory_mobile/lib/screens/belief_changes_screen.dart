@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/changes/change_correction_admission.dart';
+import '../features/changes/change_customer_presentation.dart';
 import '../features/changes/change_date_format.dart';
 import '../features/changes/change_evidence_navigation.dart';
 import '../features/changes/change_evidence_visibility.dart';
@@ -12,6 +14,7 @@ import '../features/changes/change_review_history.dart';
 import '../features/changes/change_structured_markers.dart';
 import '../features/changes/change_thread.dart';
 import '../features/changes/change_thread_correction.dart';
+import '../features/changes/change_thread_identity.dart';
 import '../features/changes/change_thread_projection.dart';
 import '../features/changes/change_thread_repository.dart';
 import '../features/changes/changes_analytics.dart';
@@ -156,6 +159,9 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
   }
 
   void _reportViewed() {
+    // Preview fixtures are test/demo data and must never enter product
+    // analytics as if they were a customer's archive.
+    if (_isPreview) return;
     final changed = _projection.threads
         .where((view) => _isChange(view.thread.currentStatus))
         .toList(growable: false);
@@ -247,6 +253,7 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
             view.thread.threadId,
             _snapshot.corrections,
           ),
+          availableThreads: _projection.threads,
           onCorrection: _isPreview ? null : _applyCorrection,
         ),
       ),
@@ -471,10 +478,12 @@ class ChangeThreadSummaryCard extends StatelessWidget {
   /// Everything the row says, in the order it should be announced.
   String get accessibilityLabel {
     final thread = view.thread;
+    final presentation = ChangeCustomerPresentationMapper.forThread(thread);
     final moments = view.savedMomentCount;
     return [
       thread.userEditableLabel,
-      thread.currentStatus.label,
+      presentation.primaryStatus,
+      ?presentation.secondaryExplanation,
       '$moments saved ${moments == 1 ? 'moment' : 'moments'}',
       formatDateRange(thread.firstObservedAt, thread.latestObservedAt),
       if (excerpt != null) 'Strongest evidence: $excerpt',
@@ -487,6 +496,7 @@ class ChangeThreadSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final thread = view.thread;
+    final presentation = ChangeCustomerPresentationMapper.forThread(thread);
     final moments = view.savedMomentCount;
     final correction = view.correctionMarker;
     return Semantics(
@@ -512,12 +522,24 @@ class ChangeThreadSummaryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  thread.currentStatus.label,
+                  presentation.primaryStatus,
                   key: ValueKey('change_thread_status_${thread.threadId}'),
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: theme.colorScheme.primary,
                   ),
                 ),
+                if (presentation.secondaryExplanation != null) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    presentation.secondaryExplanation!,
+                    key: ValueKey(
+                      'change_thread_status_detail_${thread.threadId}',
+                    ),
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   '$moments saved ${moments == 1 ? 'moment' : 'moments'} · '
@@ -584,7 +606,9 @@ class _UngroupedEventTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              ChangeThreadStatus.unresolved.label,
+              ChangeCustomerPresentationMapper.forStatus(
+                ChangeThreadStatus.unresolved,
+              ).primaryStatus,
               style: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -616,6 +640,7 @@ class ChangeThreadDetailScreen extends StatelessWidget {
     this.resurfacing,
     this.reviewHistory = const [],
     this.structuredMarkers,
+    this.availableThreads = const [],
   });
 
   final ChangeThreadView view;
@@ -632,6 +657,9 @@ class ChangeThreadDetailScreen extends StatelessWidget {
   /// Optional marker store. When absent, this screen renders without markers
   /// rather than reserving space for something that may never arrive.
   final ChangeStructuredMarkerLookup? structuredMarkers;
+
+  /// Current archive threads offered as merge destinations.
+  final List<ChangeThreadView> availableThreads;
 
   List<ChangeStructuredMarker> get _markers {
     final lookup = structuredMarkers;
@@ -678,6 +706,28 @@ class ChangeThreadDetailScreen extends StatelessWidget {
   }
 
   Future<void> _suppress(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hide this framing?'),
+        content: const Text(
+          'The saved moments stay in your archive. This reading will stop '
+          'appearing in Changes, and the choice remains in its review history.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('change_thread_hide_confirm'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Hide framing'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
     await onCorrection?.call(
       SuppressChangeThreadFraming(
         threadId: view.thread.threadId,
@@ -687,10 +737,238 @@ class ChangeThreadDetailScreen extends StatelessWidget {
     if (context.mounted) Navigator.of(context).maybePop();
   }
 
+  Future<void> _split(BuildContext context) async {
+    if (view.events.length < 2) return;
+    final selected = <String>{view.events.last.eventId};
+    final labelController = TextEditingController();
+    final eventIds = await showDialog<Set<String>>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Split this thread'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Choose the findings that should move into a separate '
+                  'thread. Nothing is deleted.',
+                ),
+                for (final event in view.events)
+                  CheckboxListTile(
+                    key: ValueKey('change_split_event_${event.eventId}'),
+                    value: selected.contains(event.eventId),
+                    title: Text(formatFullDate(event.occurredAt)),
+                    subtitle: Text('“${event.nowEvidence.quote}”'),
+                    onChanged: (checked) => setDialogState(() {
+                      if (checked == true) {
+                        selected.add(event.eventId);
+                      } else {
+                        selected.remove(event.eventId);
+                      }
+                    }),
+                  ),
+                TextField(
+                  key: const Key('change_split_label'),
+                  controller: labelController,
+                  decoration: const InputDecoration(
+                    labelText: 'New thread label (optional)',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: const Key('change_split_preview'),
+              onPressed:
+                  selected.isEmpty || selected.length == view.events.length
+                  ? null
+                  : () => Navigator.of(
+                      dialogContext,
+                    ).pop(Set<String>.from(selected)),
+              child: const Text('Review split'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (eventIds == null || !context.mounted) {
+      labelController.dispose();
+      return;
+    }
+    final moved = view.events
+        .where((event) => eventIds.contains(event.eventId))
+        .toList(growable: false);
+    final movedSubject = {
+      for (final event in moved)
+        ...ChangeDimensionReader.subjectMarkers(event.nowEvidence.quote),
+    };
+    final enteredLabel = labelController.text.trim();
+    final resultingLabel = enteredLabel.isNotEmpty
+        ? enteredLabel
+        : ChangeThreadIdentity.labelFor(movedSubject, fallback: 'New thread');
+    labelController.dispose();
+    final confirmed = await _confirmCorrection(
+      context,
+      title: 'Apply this split?',
+      resultLines: [
+        'Keeps: ${view.thread.userEditableLabel}',
+        'Creates: $resultingLabel',
+      ],
+      eventGroups: [
+        ('Moving to $resultingLabel', moved),
+        (
+          'Staying in ${view.thread.userEditableLabel}',
+          view.events
+              .where((event) => !eventIds.contains(event.eventId))
+              .toList(growable: false),
+        ),
+      ],
+      confirmKey: const Key('change_split_confirm'),
+      confirmLabel: 'Apply split',
+    );
+    if (!confirmed || !context.mounted) return;
+    await onCorrection?.call(
+      SplitChangeThread(
+        threadId: view.thread.threadId,
+        eventIds: eventIds,
+        newLabel: enteredLabel.isEmpty ? null : enteredLabel,
+        at: DateTime.now().toUtc(),
+      ),
+    );
+    if (context.mounted) Navigator.of(context).maybePop();
+  }
+
+  Future<void> _merge(BuildContext context) async {
+    final candidates = availableThreads
+        .where((candidate) => candidate.thread.threadId != view.thread.threadId)
+        .toList(growable: false);
+    if (candidates.isEmpty) return;
+    final into = await showDialog<ChangeThreadView>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Merge into which thread?'),
+        children: [
+          for (final candidate in candidates)
+            SimpleDialogOption(
+              key: ValueKey('change_merge_target_${candidate.thread.threadId}'),
+              onPressed: () => Navigator.of(dialogContext).pop(candidate),
+              child: Text(candidate.thread.userEditableLabel),
+            ),
+        ],
+      ),
+    );
+    if (into == null || !context.mounted) return;
+    final admission = ChangeCorrectionAdmission.merge(view.thread, into.thread);
+    if (!admission.allowed) {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('These threads cannot be merged'),
+          content: Text(admission.refusalMessage!),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    if (!context.mounted) return;
+    final confirmed = await _confirmCorrection(
+      context,
+      title: 'Apply this merge?',
+      resultLines: [
+        'Combines: ${view.thread.userEditableLabel}',
+        'With: ${into.thread.userEditableLabel}',
+        'Result: ${admission.resultingLabel}',
+      ],
+      eventGroups: [
+        (view.thread.userEditableLabel, view.events),
+        (into.thread.userEditableLabel, into.events),
+      ],
+      confirmKey: const Key('change_merge_confirm'),
+      confirmLabel: 'Apply merge',
+    );
+    if (!confirmed || !context.mounted) return;
+    await onCorrection?.call(
+      MergeChangeThreads(
+        threadId: view.thread.threadId,
+        intoThreadId: into.thread.threadId,
+        at: DateTime.now().toUtc(),
+      ),
+    );
+    if (context.mounted) Navigator.of(context).maybePop();
+  }
+
+  Future<bool> _confirmCorrection(
+    BuildContext context, {
+    required String title,
+    required List<String> resultLines,
+    required List<(String, List<ChangeEvent>)> eventGroups,
+    required Key confirmKey,
+    required String confirmLabel,
+  }) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final line in resultLines) Text(line),
+                const SizedBox(height: AppSpacing.md),
+                for (final group in eventGroups) ...[
+                  Text(
+                    group.$1,
+                    style: Theme.of(dialogContext).textTheme.labelLarge,
+                  ),
+                  for (final event in group.$2) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text('Event · ${formatFullDate(event.occurredAt)}'),
+                    for (final citation in event.exactEvidence)
+                      Text(
+                        '${citation.sourceCapturedAt == null ? 'Source date unavailable' : 'Source · ${formatFullDate(citation.sourceCapturedAt!)}'}\n'
+                        '“${citation.quote}”',
+                      ),
+                  ],
+                  const SizedBox(height: AppSpacing.sm),
+                ],
+                const Text(
+                  'Original findings and this action remain in review history.',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: confirmKey,
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(confirmLabel),
+            ),
+          ],
+        ),
+      ) ??
+      false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final thread = view.thread;
+    final presentation = ChangeCustomerPresentationMapper.forThread(thread);
     final correction = view.correctionMarker;
     final markers = _markers;
     return Scaffold(
@@ -705,6 +983,18 @@ class ChangeThreadDetailScreen extends StatelessWidget {
                   onTap: () => _rename(context),
                   child: const Text('Rename this thread'),
                 ),
+                if (view.events.length > 1)
+                  PopupMenuItem<void>(
+                    onTap: () => _split(context),
+                    child: const Text('Split this thread'),
+                  ),
+                if (availableThreads.any(
+                  (candidate) => candidate.thread.threadId != thread.threadId,
+                ))
+                  PopupMenuItem<void>(
+                    onTap: () => _merge(context),
+                    child: const Text('Merge with another thread'),
+                  ),
                 PopupMenuItem<void>(
                   onTap: () => _suppress(context),
                   child: const Text('Hide this framing'),
@@ -727,13 +1017,23 @@ class ChangeThreadDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              '${thread.currentStatus.label} · '
+              '${presentation.primaryStatus} · '
               '${formatDateRange(thread.firstObservedAt, thread.latestObservedAt)}',
               key: const Key('change_thread_detail_meta'),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
+            if (presentation.secondaryExplanation != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                presentation.secondaryExplanation!,
+                key: const Key('change_thread_detail_status_explanation'),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             if (correction != null) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
@@ -799,7 +1099,8 @@ class _ChangeEventTile extends StatelessWidget {
     final then = event.thenEvidence;
     final now = event.nowEvidence;
     final isComparison = !identical(then, now);
-    final correction = event.correctionState.marker;
+    final presentation = ChangeCustomerPresentationMapper.forEvent(event);
+    final correction = presentation.correctionMarker;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -807,12 +1108,22 @@ class _ChangeEventTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              event.status.label,
+              presentation.primaryStatus,
               key: ValueKey('change_event_status_${event.eventId}'),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.primary,
               ),
             ),
+            if (presentation.secondaryExplanation != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                presentation.secondaryExplanation!,
+                key: ValueKey('change_event_status_detail_${event.eventId}'),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             if (event.statement.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(event.statement, style: theme.textTheme.bodyLarge),
@@ -824,6 +1135,16 @@ class _ChangeEventTile extends StatelessWidget {
               _EvidenceBlock(label: 'Now', citation: now),
             ] else
               _EvidenceBlock(label: 'Saved', citation: now),
+            if (event.contradictingEvidence.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              for (final citation in event.contradictingEvidence) ...[
+                _EvidenceBlock(
+                  label: 'Contradicting evidence',
+                  citation: citation,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
+            ],
             if (event.changedDimensions.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
               Text(

@@ -1,4 +1,6 @@
 import '../changes/change_copy_numbers.dart';
+import '../changes/change_customer_presentation.dart';
+import '../changes/change_thread.dart';
 import '../explainable_conclusion/explainable_conclusion.dart';
 
 /// The only things a weekly review is allowed to say.
@@ -15,23 +17,33 @@ enum WeeklyReviewItemKind {
 }
 
 extension WeeklyReviewItemKindLabel on WeeklyReviewItemKind {
-  String get label => switch (this) {
-    WeeklyReviewItemKind.repeated => 'Came up again',
-    WeeklyReviewItemKind.possibleChange => 'Something may have changed',
-    WeeklyReviewItemKind.weakened => 'May be easing off',
-    WeeklyReviewItemKind.strengthened => 'May be growing stronger',
-    WeeklyReviewItemKind.unresolved => 'Still unsettled',
-    WeeklyReviewItemKind.correction => 'You corrected this',
+  ChangeThreadStatus get internalStatus => switch (this) {
+    WeeklyReviewItemKind.repeated => ChangeThreadStatus.repeated,
+    WeeklyReviewItemKind.possibleChange => ChangeThreadStatus.changed,
+    WeeklyReviewItemKind.weakened => ChangeThreadStatus.weakened,
+    WeeklyReviewItemKind.strengthened => ChangeThreadStatus.strengthened,
+    WeeklyReviewItemKind.unresolved => ChangeThreadStatus.unresolved,
+    WeeklyReviewItemKind.correction => ChangeThreadStatus.changed,
+  };
+
+  ChangeCustomerPresentation get presentation =>
+      ChangeCustomerPresentationMapper.forStatus(internalStatus);
+
+  String get label => presentation.primaryStatus;
+
+  String? get secondaryExplanation => switch (this) {
+    WeeklyReviewItemKind.correction => 'Corrected by you',
+    _ => presentation.secondaryExplanation,
   };
 
   /// The clause this kind contributes to the review's one-line summary.
   String get headlineClause => switch (this) {
-    WeeklyReviewItemKind.repeated => 'one pattern repeated',
-    WeeklyReviewItemKind.possibleChange => 'one may have changed',
-    WeeklyReviewItemKind.weakened => 'one may be weakening',
-    WeeklyReviewItemKind.strengthened => 'one may be strengthening',
-    WeeklyReviewItemKind.unresolved => 'one is still unsettled',
-    WeeklyReviewItemKind.correction => 'you corrected one',
+    WeeklyReviewItemKind.repeated => 'one is showing up again',
+    WeeklyReviewItemKind.possibleChange ||
+    WeeklyReviewItemKind.weakened ||
+    WeeklyReviewItemKind.strengthened => 'one changed',
+    WeeklyReviewItemKind.unresolved => 'one change is mixed or uncertain',
+    WeeklyReviewItemKind.correction => 'one was corrected by you',
   };
 }
 
@@ -134,6 +146,26 @@ class WeeklyReview {
   final List<WeeklyReviewItem> items;
   final String policyVersion;
 
+  bool get hasShowingUpAgain =>
+      items.any((item) => item.kind == WeeklyReviewItemKind.repeated);
+
+  bool get hasChanged => items.any(
+    (item) =>
+        item.kind == WeeklyReviewItemKind.possibleChange ||
+        item.kind == WeeklyReviewItemKind.weakened ||
+        item.kind == WeeklyReviewItemKind.strengthened,
+  );
+
+  bool get hasUnresolvedTension =>
+      items.any((item) => item.kind == WeeklyReviewItemKind.unresolved);
+
+  /// Explicit absences stop the review implying that every section existed.
+  List<String> get absentSectionExplanations => [
+    if (!hasShowingUpAgain) 'Nothing was selected as Showing up again.',
+    if (!hasChanged) 'Nothing was selected as Changed.',
+    if (!hasUnresolvedTension) 'No mixed or uncertain change was selected.',
+  ];
+
   /// Every thread this review points at, in display order.
   List<String> get threadIds =>
       {for (final item in items) item.threadId}.toList(growable: false);
@@ -141,9 +173,19 @@ class WeeklyReview {
   /// The one restrained line at the top. Built only from kinds that are
   /// actually present, so it can never claim more than the evidence shows.
   String get headline {
-    final clauses = [
-      for (final kind in WeeklyReviewItemKind.values)
-        if (items.any((item) => item.kind == kind)) kind.headlineClause,
+    final clauses = <String>[
+      if (hasShowingUpAgain) WeeklyReviewItemKind.repeated.headlineClause,
+      if (hasChanged)
+        items
+            .firstWhere(
+              (item) =>
+                  item.kind == WeeklyReviewItemKind.possibleChange ||
+                  item.kind == WeeklyReviewItemKind.weakened ||
+                  item.kind == WeeklyReviewItemKind.strengthened,
+            )
+            .kind
+            .headlineClause,
+      if (hasUnresolvedTension) WeeklyReviewItemKind.unresolved.headlineClause,
     ];
     final shown = clauses.take(_maximumHeadlineClauses).toList(growable: false);
     if (shown.length == 1) return 'This week, ${shown.single}.';

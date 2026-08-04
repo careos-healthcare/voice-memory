@@ -4,6 +4,7 @@ import '../explainable_conclusion/auditable_personal_change_engine.dart';
 import '../explainable_conclusion/change_dimensions.dart';
 import '../explainable_conclusion/explainable_conclusion.dart';
 import '../insight_feedback/insight_feedback_models.dart';
+import 'change_correction_admission.dart';
 import 'change_thread.dart';
 import 'change_thread_correction.dart';
 import 'change_thread_identity.dart';
@@ -209,7 +210,9 @@ abstract final class ChangeThreadProjector {
         : _sharedSubjectOf(supporting.values);
     return _EventDraft(
       conclusion: conclusion,
-      evidence: supporting.values.toList(growable: false),
+      // Keep contradicting citations attached. They are part of the finding's
+      // exact audit record and must remain visible in Changes and reviews.
+      evidence: conclusion.evidence,
       subjectMarkers: subject,
       changedDimensions: ranked.dimensions.changed
           .map((movement) => movement.dimension)
@@ -345,12 +348,8 @@ abstract final class ChangeThreadProjector {
         case MergeChangeThreads(:final intoThreadId):
           final into = working[intoThreadId];
           if (into == null || into.threadId == target.threadId) break;
-          // Only merge threads that genuinely share a subject. A mis-tap must
-          // not be able to fuse two unrelated histories into one card.
-          final shared = into.subjectRepresentation.intersection(
-            target.subjectRepresentation,
-          );
-          if (shared.isEmpty) break;
+          final admission = ChangeCorrectionAdmission.merge(target, into);
+          if (!admission.allowed) break;
           final combined =
               [...?byThread[intoThreadId], ...?byThread[target.threadId]]
                   .map((event) => event.copyWith(threadId: intoThreadId))
@@ -364,11 +363,14 @@ abstract final class ChangeThreadProjector {
           working.remove(target.threadId);
           working[intoThreadId] = _resummarised(
             into.copyWith(
+              userEditableLabel: admission.resultingLabel,
               subjectRepresentation: {
                 ...into.subjectRepresentation,
                 ...target.subjectRepresentation,
               },
               correctionState: ChangeThreadCorrectionState.merged,
+              labelIsUserConfirmed:
+                  into.labelIsUserConfirmed || target.labelIsUserConfirmed,
             ),
             combined,
           );

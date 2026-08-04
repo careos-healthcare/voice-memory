@@ -70,7 +70,8 @@ void main() {
     // Both findings share one subject, so they read as one continuing thread
     // rather than two unrelated cards.
     expect(find.byType(ChangeThreadSummaryCard), findsOneWidget);
-    expect(find.text('Grew stronger'), findsOneWidget);
+    expect(find.text('Changed'), findsOneWidget);
+    expect(find.text('The signal appears stronger.'), findsOneWidget);
     expect(find.textContaining('2 saved moments'), findsOneWidget);
     expect(find.textContaining('1 July 2026 — 8 July 2026'), findsOneWidget);
     expect(find.text('“$nowText”'), findsOneWidget);
@@ -92,8 +93,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ChangeThreadDetailScreen), findsOneWidget);
-    expect(find.text('First observed'), findsOneWidget);
-    expect(find.text('Grew stronger'), findsOneWidget);
+    expect(find.text('First noticed'), findsOneWidget);
+    expect(find.text('Changed'), findsOneWidget);
+    expect(find.text('The signal appears stronger.'), findsNWidgets(2));
     expect(find.textContaining('Then · 1 July 2026'), findsOneWidget);
     expect(find.textContaining('Now · 8 July 2026'), findsOneWidget);
     expect(find.text('“$thenText”'), findsNWidgets(2));
@@ -101,8 +103,8 @@ void main() {
     expect(find.text('Open exact moment'), findsNWidgets(3));
     expect(find.textContaining('What moved:'), findsOneWidget);
     expect(
-      tester.getTopLeft(find.text('First observed')).dy,
-      lessThan(tester.getTopLeft(find.text('Grew stronger')).dy),
+      tester.getTopLeft(find.text('First noticed')).dy,
+      lessThan(tester.getTopLeft(find.text('Changed')).dy),
     );
     expect(tester.takeException(), isNull);
   });

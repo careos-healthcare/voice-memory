@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/changes/change_customer_presentation.dart';
 import 'package:voicememory_mobile/features/changes/change_evidence_visibility.dart';
 import 'package:voicememory_mobile/features/changes/change_resurfacing.dart';
 import 'package:voicememory_mobile/features/changes/change_review_history.dart';
@@ -10,6 +11,8 @@ import 'package:voicememory_mobile/features/explainable_conclusion/change_dimens
 import 'package:voicememory_mobile/features/explainable_conclusion/explainable_conclusion.dart';
 import 'package:voicememory_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:voicememory_mobile/screens/belief_changes_screen.dart';
+
+import 'support/accessibility_matrix.dart';
 
 void main() {
   const thenText = 'I answered the work message immediately.';
@@ -93,6 +96,77 @@ void main() {
 
   tearDown(() => ChangeStructuredMarkers.install(null));
 
+  testWidgets('2x Changes card keeps semantic order and a 48dp target', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    final view = threadView();
+    await pumpUnderProfile(
+      tester,
+      const AccessibilityProfile(
+        name: 'Changes 2x',
+        size: Size(390, 844),
+        brightness: Brightness.light,
+        textScale: 2,
+      ),
+      child: SingleChildScrollView(
+        child: ChangeThreadSummaryCard(
+          view: view,
+          excerpt: nowText,
+          onOpen: () {},
+        ),
+      ),
+    );
+
+    expectNoOverflow(tester);
+    expectTapTargets(tester, minimum: 48);
+    final order = semanticReadingOrder(tester);
+    expect(
+      order.any(
+        (label) =>
+            label.contains('Answering work messages') &&
+            label.contains('Changed') &&
+            label.contains('Strongest evidence'),
+      ),
+      isTrue,
+    );
+    semantics.dispose();
+  });
+
+  test('customer presentation exposes only the canonical primary statuses', () {
+    final presentations = [
+      for (final status in ChangeThreadStatus.values)
+        ChangeCustomerPresentationMapper.forStatus(
+          status,
+          correction: ChangeThreadCorrectionState.correctedByUser,
+        ),
+    ];
+
+    expect(presentations.map((item) => item.primaryStatus).toSet(), {
+      ChangeCustomerPresentationMapper.firstNoticed,
+      ChangeCustomerPresentationMapper.showingUpAgain,
+      ChangeCustomerPresentationMapper.changed,
+    });
+    expect(
+      presentations.every(
+        (item) => item.correctionMarker == 'Corrected by you',
+      ),
+      isTrue,
+    );
+    expect(
+      ChangeCustomerPresentationMapper.forStatus(
+        ChangeThreadStatus.unresolved,
+      ).primaryStatus,
+      ChangeCustomerPresentationMapper.showingUpAgain,
+    );
+    expect(
+      ChangeCustomerPresentationMapper.forStatus(
+        ChangeThreadStatus.unresolved,
+      ).secondaryExplanation,
+      contains('mixed or uncertain'),
+    );
+  });
+
   group('the default list row', () {
     testWidgets('carries every fact that justifies it, and stays compact', (
       tester,
@@ -117,7 +191,7 @@ void main() {
       );
 
       expect(find.text('Answering work messages'), findsOneWidget);
-      expect(find.text('Something changed'), findsOneWidget);
+      expect(find.text('Changed'), findsOneWidget);
       expect(
         find.textContaining('2 saved moments · 1 July 2026 — 8 July 2026'),
         findsOneWidget,
@@ -158,7 +232,7 @@ void main() {
 
       final label = card.accessibilityLabel;
       expect(label, startsWith('Answering work messages'));
-      expect(label, contains('Something changed'));
+      expect(label, contains('Changed'));
       expect(label, contains('2 saved moments'));
       expect(label, contains('1 July 2026 — 8 July 2026'));
       expect(label, contains('Strongest evidence: $nowText'));
@@ -342,14 +416,14 @@ void main() {
       );
 
       expect(find.text('Answering work messages'), findsOneWidget);
-      expect(find.textContaining('Something changed · 1 July 2026'), findsOne);
+      expect(find.textContaining('Changed · 1 July 2026'), findsOne);
 
       // Chronological history, oldest first.
-      expect(find.text('First observed'), findsOneWidget);
-      expect(find.text('Something changed'), findsOneWidget);
+      expect(find.text('First noticed'), findsOneWidget);
+      expect(find.text('Changed'), findsOneWidget);
       expect(
-        tester.getTopLeft(find.text('First observed')).dy,
-        lessThan(tester.getTopLeft(find.text('Something changed')).dy),
+        tester.getTopLeft(find.text('First noticed')).dy,
+        lessThan(tester.getTopLeft(find.text('Changed')).dy),
       );
 
       // Then/Now evidence, changed dimensions, uncertainty, source navigation.
@@ -395,6 +469,115 @@ void main() {
       await pump(tester, ChangeThreadDetailScreen(view: threadView()));
 
       expect(find.text('Where: at the office'), findsOneWidget);
+    });
+
+    testWidgets('hide is not applied until its confirmation', (tester) async {
+      final applied = <ChangeThreadCorrection>[];
+      await pump(
+        tester,
+        ChangeThreadDetailScreen(
+          view: threadView(),
+          onCorrection: (correction) async => applied.add(correction),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('change_thread_corrections')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Hide this framing'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hide this framing?'), findsOneWidget);
+      expect(applied, isEmpty);
+      await tester.tap(find.byKey(const Key('change_thread_hide_confirm')));
+      await tester.pumpAndSettle();
+
+      expect(applied.single, isA<SuppressChangeThreadFraming>());
+    });
+
+    testWidgets('split previews dates, evidence, and resulting labels', (
+      tester,
+    ) async {
+      final applied = <ChangeThreadCorrection>[];
+      await pump(
+        tester,
+        ChangeThreadDetailScreen(
+          view: threadView(),
+          onCorrection: (correction) async => applied.add(correction),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('change_thread_corrections')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Split this thread'));
+      await tester.pumpAndSettle();
+      expect(applied, isEmpty);
+
+      await tester.tap(find.byKey(const Key('change_split_preview')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply this split?'), findsOneWidget);
+      expect(find.textContaining('Keeps: Answering work messages'), findsOne);
+      expect(find.textContaining('Creates:'), findsOne);
+      expect(find.textContaining('Event · 8 July 2026'), findsOne);
+      expect(find.text('“$nowText”'), findsWidgets);
+      expect(applied, isEmpty);
+
+      await tester.tap(find.byKey(const Key('change_split_confirm')));
+      await tester.pumpAndSettle();
+      expect(applied.single, isA<SplitChangeThread>());
+    });
+
+    testWidgets('merge previews both originals before it is applied', (
+      tester,
+    ) async {
+      final source = threadView();
+      final targetEvent = _event(
+        id: 'target-event',
+        status: ChangeThreadStatus.repeated,
+        citations: [_citation('then', thenText, thenAt)],
+        occurredAt: thenAt,
+      );
+      final target = ChangeThreadView(
+        thread: ChangeThread(
+          threadId: 'work-message-target',
+          archiveId: 'local',
+          userEditableLabel: 'Work reply pattern',
+          subjectRepresentation: const {'work', 'message'},
+          firstObservedAt: thenAt,
+          latestObservedAt: thenAt,
+          currentStatus: ChangeThreadStatus.repeated,
+          evidenceEventIds: const ['target-event'],
+          policyVersion: 'change_threads_v1',
+        ),
+        events: [targetEvent],
+      );
+      final applied = <ChangeThreadCorrection>[];
+      await pump(
+        tester,
+        ChangeThreadDetailScreen(
+          view: source,
+          availableThreads: [source, target],
+          onCorrection: (correction) async => applied.add(correction),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('change_thread_corrections')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Merge with another thread'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Work reply pattern'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply this merge?'), findsOneWidget);
+      expect(find.text('Combines: Answering work messages'), findsOneWidget);
+      expect(find.text('With: Work reply pattern'), findsOneWidget);
+      expect(find.text('Result: Work reply pattern'), findsOneWidget);
+      expect(find.textContaining('Event · 1 July 2026'), findsWidgets);
+      expect(applied, isEmpty);
+
+      await tester.tap(find.byKey(const Key('change_merge_confirm')));
+      await tester.pumpAndSettle();
+      expect(applied.single, isA<MergeChangeThreads>());
     });
 
     testWidgets('survives a marker store that throws', (tester) async {

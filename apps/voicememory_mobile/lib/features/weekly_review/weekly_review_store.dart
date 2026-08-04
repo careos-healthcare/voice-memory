@@ -9,6 +9,7 @@ import 'weekly_review_notification.dart';
 class WeeklyReviewState {
   const WeeklyReviewState({
     this.review,
+    this.reviews = const [],
     this.notificationOptedIn = WeeklyReviewNotificationPolicy.defaultOptedIn,
     this.lastNotifiedReviewId,
   });
@@ -18,16 +19,21 @@ class WeeklyReviewState {
   /// The most recent generated review. It stays readable regardless of what
   /// happens to the subscription afterwards.
   final WeeklyReview? review;
+  final List<WeeklyReview> reviews;
+
+  List<WeeklyReview> get history => reviews.isNotEmpty ? reviews : [?review];
 
   final bool notificationOptedIn;
   final String? lastNotifiedReviewId;
 
   WeeklyReviewState copyWith({
     WeeklyReview? review,
+    List<WeeklyReview>? reviews,
     bool? notificationOptedIn,
     String? lastNotifiedReviewId,
   }) => WeeklyReviewState(
     review: review ?? this.review,
+    reviews: reviews ?? this.reviews,
     notificationOptedIn: notificationOptedIn ?? this.notificationOptedIn,
     lastNotifiedReviewId: lastNotifiedReviewId ?? this.lastNotifiedReviewId,
   );
@@ -58,7 +64,14 @@ class WeeklyReviewStore {
   Future<WeeklyReviewState> saveReview(WeeklyReview review) =>
       _serialized(() async {
         final current = await _readOwned();
-        final next = current.copyWith(review: review);
+        final history = [
+          ...current.history.where((item) => item.reviewId != review.reviewId),
+          review,
+        ]..sort((a, b) => a.generatedAt.compareTo(b.generatedAt));
+        final next = current.copyWith(
+          review: history.last,
+          reviews: List.unmodifiable(history),
+        );
         await _writeOwned(next);
         return next;
       });
@@ -68,6 +81,7 @@ class WeeklyReviewStore {
         final current = await _readOwned();
         final next = WeeklyReviewState(
           review: current.review,
+          reviews: current.reviews,
           notificationOptedIn: optedIn,
           lastNotifiedReviewId: current.lastNotifiedReviewId,
         );
@@ -112,8 +126,18 @@ class WeeklyReviewStore {
     final mine = archives[archiveId];
     if (mine is! Map) return const WeeklyReviewState.empty();
     final json = Map<String, dynamic>.from(mine);
+    final reviews =
+        (json['reviews'] as List? ?? const [])
+            .map(WeeklyReview.fromJson)
+            .whereType<WeeklyReview>()
+            .toList()
+          ..sort((a, b) => a.generatedAt.compareTo(b.generatedAt));
+    final legacyReview = WeeklyReview.fromJson(json['review']);
     return WeeklyReviewState(
-      review: WeeklyReview.fromJson(json['review']),
+      review: reviews.isNotEmpty ? reviews.last : legacyReview,
+      reviews: List.unmodifiable(
+        reviews.isNotEmpty ? reviews : [?legacyReview],
+      ),
       notificationOptedIn: json['notificationOptedIn'] == true,
       lastNotifiedReviewId: json['lastNotifiedReviewId']?.toString(),
     );
@@ -123,6 +147,7 @@ class WeeklyReviewStore {
     final archives = await _readEnvelope();
     archives[archiveId] = {
       if (state.review != null) 'review': state.review!.toJson(),
+      'reviews': state.history.map((review) => review.toJson()).toList(),
       'notificationOptedIn': state.notificationOptedIn,
       if (state.lastNotifiedReviewId != null)
         'lastNotifiedReviewId': state.lastNotifiedReviewId,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/changes/change_correction_admission.dart';
 import 'package:voicememory_mobile/features/changes/change_thread.dart';
 import 'package:voicememory_mobile/features/changes/change_thread_correction.dart';
 import 'package:voicememory_mobile/features/changes/change_thread_projection.dart';
@@ -291,6 +292,45 @@ void main() {
       expect(projection.ungroupedEvents, isEmpty);
     });
 
+    test('contradicting evidence survives the durable event record', () {
+      final then = _entry(
+        'then',
+        'I answered the work message immediately.',
+        1,
+      );
+      final now = _entry(
+        'now',
+        'I paused before answering the work message.',
+        2,
+      );
+      final contradiction = _entry(
+        'counter',
+        'I still answered one work message immediately.',
+        3,
+      );
+      final event = ChangeEvent(
+        eventId: 'change-with-counterevidence',
+        threadId: 'work',
+        conclusionKind: ExplainableInsightKind.change,
+        status: ChangeThreadStatus.changed,
+        changedDimensions: const [],
+        exactEvidence: [
+          _citation(then, temporalRole: EvidenceTemporalRole.then),
+          _citation(now, temporalRole: EvidenceTemporalRole.now),
+          _citation(contradiction, role: TranscriptEvidenceRole.contradicting),
+        ],
+        occurredAt: now.createdAt,
+        confidenceBand: EvidenceConfidenceBand.earlyObservation,
+        uncertainty: 'The evidence includes a contradiction.',
+        alternativeExplanation: '',
+      );
+
+      final restored = ChangeEvent.fromJson(event.toJson())!;
+      expect(restored.exactEvidence, hasLength(3));
+      expect(restored.contradictingEvidence.single.entryId, 'counter');
+      expect(restored.nowEvidence.entryId, 'now');
+    });
+
     test('threads are archive scoped', () {
       final then = _entry(
         'then',
@@ -501,6 +541,63 @@ void main() {
       expect(merged.threads, hasLength(2));
     });
 
+    test('merge admission preserves a user-confirmed source label', () {
+      final admission = ChangeCorrectionAdmission.merge(
+        _thread(
+          id: 'source',
+          label: 'My work replies',
+          subject: const {'work', 'reply'},
+          labelIsUserConfirmed: true,
+        ),
+        _thread(
+          id: 'into',
+          label: 'Reply work',
+          subject: const {'work', 'reply', 'email'},
+        ),
+      );
+
+      expect(admission.allowed, isTrue);
+      expect(admission.resultingLabel, 'My work replies');
+    });
+
+    test('merge admission names every durable refusal', () {
+      final visible = _thread(
+        id: 'visible',
+        label: 'Work replies',
+        subject: const {'work', 'reply'},
+      );
+
+      expect(
+        ChangeCorrectionAdmission.merge(
+          visible,
+          _thread(
+            id: 'other-archive',
+            archiveId: 'other',
+            label: 'Work replies',
+            subject: const {'work', 'reply'},
+          ),
+        ).refusal,
+        ChangeMergeRefusal.archiveMismatch,
+      );
+      expect(
+        ChangeCorrectionAdmission.merge(
+          visible.copyWith(
+            visibilityState: ChangeThreadVisibility.suppressed,
+            correctionState: ChangeThreadCorrectionState.framingSuppressed,
+          ),
+          visible,
+        ).refusal,
+        ChangeMergeRefusal.incompatibleSuppression,
+      );
+      expect(
+        ChangeCorrectionAdmission.merge(
+          visible,
+          _thread(id: 'garden', label: 'Garden', subject: const {'garden'}),
+        ).refusal,
+        ChangeMergeRefusal.noSubjectOverlap,
+      );
+    });
+
     test('suppressing a framing hides the thread without touching moments', () {
       final then = _entry(
         'then',
@@ -630,6 +727,25 @@ void main() {
   });
 }
 
+ChangeThread _thread({
+  required String id,
+  required String label,
+  required Set<String> subject,
+  String archiveId = 'local',
+  bool labelIsUserConfirmed = false,
+}) => ChangeThread(
+  threadId: id,
+  archiveId: archiveId,
+  userEditableLabel: label,
+  subjectRepresentation: subject,
+  firstObservedAt: DateTime.utc(2026, 7, 1),
+  latestObservedAt: DateTime.utc(2026, 7, 2),
+  currentStatus: ChangeThreadStatus.changed,
+  evidenceEventIds: const ['event'],
+  policyVersion: ChangeThreadProjector.policyVersion,
+  labelIsUserConfirmed: labelIsUserConfirmed,
+);
+
 ChangeThreadProjection _projectChange(JournalEntry then, JournalEntry now) =>
     ChangeThreadProjector.project(
       archiveId: 'local',
@@ -667,12 +783,13 @@ JournalEntry _entry(String id, String transcript, int day) => JournalEntry(
 TranscriptEvidenceCitation _citation(
   JournalEntry entry, {
   EvidenceTemporalRole temporalRole = EvidenceTemporalRole.single,
+  TranscriptEvidenceRole role = TranscriptEvidenceRole.supporting,
 }) => TranscriptEvidenceCitation(
   entryId: entry.id,
   quote: entry.transcript,
   startUtf16: 0,
   endUtf16: entry.transcript.length,
-  role: TranscriptEvidenceRole.supporting,
+  role: role,
   sourceCapturedAt: entry.createdAt,
   sourceType: EvidenceSourceType.text,
   temporalRole: temporalRole,

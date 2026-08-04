@@ -62,6 +62,17 @@ class WeeklyReviewScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
             ],
+            if (review.absentSectionExplanations.isNotEmpty) ...[
+              Text('Not selected this week', style: theme.textTheme.labelLarge),
+              const SizedBox(height: AppSpacing.xs),
+              for (final explanation in review.absentSectionExplanations)
+                Text(
+                  explanation,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
           ],
         ),
       ),
@@ -96,6 +107,16 @@ class _WeeklyReviewItemCard extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
+            if (item.kind.secondaryExplanation != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                item.kind.secondaryExplanation!,
+                key: ValueKey('weekly_review_item_detail_${item.kind.name}'),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.xs),
             Text(item.threadLabel, style: theme.textTheme.titleMedium),
             if (item.statement.isNotEmpty) ...[
@@ -111,6 +132,13 @@ class _WeeklyReviewItemCard extends StatelessWidget {
             ),
             for (final citation in item.evidence) ...[
               const SizedBox(height: AppSpacing.xs),
+              if (citation.role == TranscriptEvidenceRole.contradicting)
+                Text(
+                  'Contradicting evidence',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
               Text('“${citation.quote}”', style: theme.textTheme.bodyMedium),
               Align(
                 alignment: Alignment.centerLeft,

@@ -19,6 +19,8 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/storage/private_data_encryption_key_store.dart';
 
+import 'support/accessibility_matrix.dart';
+
 const _pro = EntitlementSnapshot(
   plan: PlanKind.pro,
   status: EntitlementStatus.active,
@@ -156,7 +158,7 @@ void main() {
       expect(review, isNotNull);
       expect(
         review!.headline,
-        'This week, one pattern repeated and one may be weakening.',
+        'This week, one is showing up again and one changed.',
       );
       expect(review.items.map((item) => item.kind), [
         WeeklyReviewItemKind.repeated,
@@ -182,6 +184,64 @@ void main() {
           expect(citation.sourceCapturedAt, isNotNull);
         }
       }
+    });
+
+    test('selects at most one item from each customer-facing category', () {
+      final friendWorried = _entry(
+        'f1',
+        'My friend response felt worried and uncertain.',
+        2,
+      );
+      final friendCalm = _entry(
+        'f2',
+        'My friend response felt calm and certain.',
+        7,
+      );
+      final allEntries = [...entries, friendWorried, friendCalm];
+      final projection = ChangeThreadProjector.project(
+        archiveId: 'local',
+        entries: allEntries,
+        conclusions: [
+          ...conclusions,
+          _conclusion(
+            id: 'friend-strengthen',
+            kind: ExplainableInsightKind.change,
+            statement:
+                'Your friend response wording moved from worried to calm.',
+            evidence: [
+              _citation(friendWorried, temporalRole: EvidenceTemporalRole.then),
+              _citation(friendCalm, temporalRole: EvidenceTemporalRole.now),
+            ],
+          ),
+        ],
+      );
+
+      final review = WeeklyReviewEngine.build(
+        projection: projection,
+        archive: archiveOf(allEntries),
+        entitlement: _pro,
+        usage: _serverMetered,
+      ).review!;
+      final changed = review.items.where(
+        (item) =>
+            item.kind == WeeklyReviewItemKind.possibleChange ||
+            item.kind == WeeklyReviewItemKind.weakened ||
+            item.kind == WeeklyReviewItemKind.strengthened,
+      );
+
+      expect(changed, hasLength(1));
+      expect(
+        review.items.where(
+          (item) => item.kind == WeeklyReviewItemKind.repeated,
+        ),
+        hasLength(1),
+      );
+      expect(
+        review.items.where(
+          (item) => item.kind == WeeklyReviewItemKind.unresolved,
+        ),
+        hasLength(lessThanOrEqualTo(1)),
+      );
     });
 
     test('withholds a review when only one thread has anything to say', () {
@@ -388,6 +448,27 @@ void main() {
       );
     });
 
+    test('review history survives later generation for export', () async {
+      final first = build().review!;
+      final second = WeeklyReview(
+        reviewId: '${first.reviewId}_later',
+        windowStart: first.windowStart.add(const Duration(days: 7)),
+        windowEnd: first.windowEnd.add(const Duration(days: 7)),
+        generatedAt: first.generatedAt.add(const Duration(days: 7)),
+        items: first.items,
+      );
+
+      await open().saveReview(first);
+      await open().saveReview(second);
+      final reopened = await open().read();
+
+      expect(reopened.review?.reviewId, second.reviewId);
+      expect(reopened.history.map((review) => review.reviewId), [
+        first.reviewId,
+        second.reviewId,
+      ]);
+    });
+
     test('the opt-in is remembered and archive scoped', () async {
       await open().setNotificationOptIn(true);
       await open().saveReview(build().review!);
@@ -422,7 +503,7 @@ void main() {
       );
 
       expect(
-        find.text('This week, one pattern repeated and one may be weakening.'),
+        find.text('This week, one is showing up again and one changed.'),
         findsOneWidget,
       );
       expect(find.byType(BottomNavigationBar), findsNothing);
@@ -449,8 +530,13 @@ void main() {
         ),
       );
 
-      expect(find.text('Came up again'), findsOneWidget);
-      expect(find.text('May be easing off'), findsOneWidget);
+      expect(find.text('Showing up again'), findsOneWidget);
+      expect(find.text('Changed'), findsOneWidget);
+      expect(find.text('The signal appears weaker.'), findsOneWidget);
+      expect(
+        find.text('No mixed or uncertain change was selected.'),
+        findsOneWidget,
+      );
       expect(find.text('“${calm.transcript}”'), findsOneWidget);
       expect(find.text('“${worried.transcript}”'), findsOneWidget);
       expect(
@@ -468,6 +554,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(openedMoments, isNotEmpty);
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('2x text keeps semantics ordered and targets at least 48dp', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      await pumpUnderProfile(
+        tester,
+        const AccessibilityProfile(
+          name: 'weekly review 2x',
+          size: Size(390, 2400),
+          brightness: Brightness.light,
+          textScale: 2,
+        ),
+        child: WeeklyReviewScreen(
+          review: build().review!,
+          onOpenThread: (_) {},
+          onOpenMoment: (_) {},
+        ),
+      );
+
+      expectNoOverflow(tester);
+      expectTapTargets(tester, minimum: 48);
+      final order = semanticReadingOrder(tester);
+      expectAnnouncedBefore(order, 'This week', 'The words behind this');
+      expectAnnouncedBefore(
+        order,
+        'The words behind this',
+        WeeklyReviewCopy.openThreadCta,
+      );
+      semantics.dispose();
     });
   });
 }

@@ -87,17 +87,39 @@ class ChangeEvent {
   Set<String> get sourceEntryIds =>
       exactEvidence.map((citation) => citation.entryId).toSet();
 
+  List<TranscriptEvidenceCitation> get supportingEvidence => exactEvidence
+      .where((citation) => citation.role == TranscriptEvidenceRole.supporting)
+      .toList(growable: false);
+
+  List<TranscriptEvidenceCitation> get contradictingEvidence => exactEvidence
+      .where(
+        (citation) => citation.role == TranscriptEvidenceRole.contradicting,
+      )
+      .toList(growable: false);
+
   /// The Then side of a comparison, or the single cited moment.
-  TranscriptEvidenceCitation get thenEvidence => exactEvidence.firstWhere(
-    (item) => item.temporalRole == EvidenceTemporalRole.then,
-    orElse: () => exactEvidence.first,
-  );
+  TranscriptEvidenceCitation get thenEvidence =>
+      (supportingEvidence.isEmpty ? exactEvidence : supportingEvidence)
+          .firstWhere(
+            (item) => item.temporalRole == EvidenceTemporalRole.then,
+            orElse: () =>
+                (supportingEvidence.isEmpty
+                        ? exactEvidence
+                        : supportingEvidence)
+                    .first,
+          );
 
   /// The Now side of a comparison, or the single cited moment.
-  TranscriptEvidenceCitation get nowEvidence => exactEvidence.lastWhere(
-    (item) => item.temporalRole == EvidenceTemporalRole.now,
-    orElse: () => exactEvidence.last,
-  );
+  TranscriptEvidenceCitation get nowEvidence =>
+      (supportingEvidence.isEmpty ? exactEvidence : supportingEvidence)
+          .lastWhere(
+            (item) => item.temporalRole == EvidenceTemporalRole.now,
+            orElse: () =>
+                (supportingEvidence.isEmpty
+                        ? exactEvidence
+                        : supportingEvidence)
+                    .last,
+          );
 
   ChangeEvent copyWith({
     String? threadId,
