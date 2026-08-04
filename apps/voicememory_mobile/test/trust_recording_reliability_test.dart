@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/features/support/support_feedback_copy.dart';
 import 'package:voicememory_mobile/features/trust/capture_recovery_copy.dart';
 import 'package:voicememory_mobile/features/trust/capture_recovery_gates.dart';
 import 'package:voicememory_mobile/features/trust/trust_reliability_copy.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
@@ -36,7 +37,7 @@ class _RecoveryFailingAnalyzeApi extends ApiClient {
   }
 
   @override
-  Future<Reflection> postAnalyze({
+  Future<RawModelResponse> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],

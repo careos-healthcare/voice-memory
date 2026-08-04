@@ -4,6 +4,9 @@ import 'package:uuid/uuid.dart';
 
 import '../api/api_exceptions.dart';
 import '../features/timeline/timeline_entry_display.dart';
+import '../features/proof_admission/proof_admission_models.dart';
+import '../features/proof_admission/proof_admission_service.dart';
+import '../features/proof_admission/archive_correction_store.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
 import '../features/voice_capture/transcription/transcription_log.dart';
 import '../features/voice_capture/transcription/transcription_service.dart';
@@ -72,6 +75,10 @@ class CapturePipelineService {
   final JournalStore _journalStore;
   final ApiUsageGuard _usageGuard;
   final _uuid = const Uuid();
+  final CanonicalProofAdmissionService _proofAdmission =
+      CanonicalProofAdmissionService(
+        correctionPolicy: ArchiveCorrectionStore.instance,
+      );
 
   Future<CapturePipelineResult> run({
     required File audioFile,
@@ -165,10 +172,7 @@ class CapturePipelineService {
       );
       if (!analyzeCheck.allowed) {
         final reason = analyzeCheck.reason ?? 'blocked';
-        RecordPipelineLog.apiGuardBlocked(
-          operation: 'analyze',
-          reason: reason,
-        );
+        RecordPipelineLog.apiGuardBlocked(operation: 'analyze', reason: reason);
         return _saveAfterAnalysisFailure(
           audioFile: audioFile,
           durationSeconds: durationSeconds,
@@ -178,16 +182,19 @@ class CapturePipelineService {
         );
       }
 
-      Reflection reflection;
+      final entryId = _uuid.v4();
+      VerifiedProof verifiedProof;
       final analyzeIdempotency = _usageGuard.idempotencyKey(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
       );
       try {
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmedTranscript,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -196,10 +203,12 @@ class CapturePipelineService {
         );
       } on AuthRequiredException {
         token = await _attest.ensureCaptureToken(forceRefresh: true);
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmedTranscript,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -224,28 +233,31 @@ class CapturePipelineService {
       RecordPipelineLog.transcriptLengths(
         transcriptLength: trimmedTranscript.length,
         bodyLength: trimmedTranscript.length,
-        observationLength: reflection.concreteObservation.trim().length,
-        exactLanguageLength: reflection.exactLanguagePattern.trim().length,
+        observationLength: verifiedProof.reflection.concreteObservation
+            .trim()
+            .length,
+        exactLanguageLength: verifiedProof.reflection.exactLanguagePattern
+            .trim()
+            .length,
       );
 
       onStage?.call(PipelineStage.saving);
       final finalTranscript =
           resolveFinalCaptureTranscript(
             transcript: trimmedTranscript,
-            body: reflection.concreteObservation,
-            exactLanguage: reflection.exactLanguagePattern,
-            observation: reflection.concreteObservation,
+            body: verifiedProof.reflection.concreteObservation,
+            exactLanguage: verifiedProof.reflection.exactLanguagePattern,
+            observation: verifiedProof.reflection.concreteObservation,
           ) ??
           trimmedTranscript;
-      RecordPipelineLog.preSaveFinalTranscript(
-        length: finalTranscript.length,
-      );
+      RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
       final template = JournalEntry(
-        id: _uuid.v4(),
+        id: entryId,
         createdAt: DateTime.now().toUtc(),
         transcript: trimmedTranscript,
         durationSeconds: durationSeconds,
-        reflection: reflection,
+        reflection: verifiedProof.reflection,
+        verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
         localAudioPath: audioFile.path,
       );
@@ -346,7 +358,8 @@ class CapturePipelineService {
     String? reason,
     void Function(PipelineStage stage)? onStage,
   }) async {
-    final resolvedReason = reason ??
+    final resolvedReason =
+        reason ??
         (error == null
             ? 'analysis_unavailable'
             : TranscriptionService.failureReason(error));
@@ -397,16 +410,18 @@ class CapturePipelineService {
         );
       }
 
-      Reflection reflection;
+      VerifiedProof verifiedProof;
       final analyzeIdempotency = _usageGuard.idempotencyKey(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
       );
       try {
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entry.id,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -415,10 +430,12 @@ class CapturePipelineService {
         );
       } on AuthRequiredException {
         token = await _attest.ensureCaptureToken(forceRefresh: true);
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entry.id,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -437,20 +454,19 @@ class CapturePipelineService {
       final finalTranscript =
           resolveFinalCaptureTranscript(
             transcript: trimmed,
-            body: reflection.concreteObservation,
-            exactLanguage: reflection.exactLanguagePattern,
-            observation: reflection.concreteObservation,
+            body: verifiedProof.reflection.concreteObservation,
+            exactLanguage: verifiedProof.reflection.exactLanguagePattern,
+            observation: verifiedProof.reflection.concreteObservation,
           ) ??
           trimmed;
-      RecordPipelineLog.preSaveFinalTranscript(
-        length: finalTranscript.length,
-      );
+      RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
       final template = JournalEntry(
         id: entry.id,
         createdAt: entry.createdAt,
         transcript: trimmed,
         durationSeconds: entry.durationSeconds,
-        reflection: reflection,
+        reflection: verifiedProof.reflection,
+        verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
         localAudioPath: entry.localAudioPath,
         treatAsNew: entry.treatAsNew,
@@ -581,8 +597,7 @@ class CapturePipelineService {
       displayTextLength: resolution.text.length,
     );
     final hasUsableDisplay =
-        resolution.text.isNotEmpty ||
-        hasPersistedCaptureText(entry);
+        resolution.text.isNotEmpty || hasPersistedCaptureText(entry);
     if (hasUsableDisplay) {
       RecordPipelineLog.voiceSavedTranscriptPresent();
     } else {
@@ -624,7 +639,8 @@ class CapturePipelineService {
         entry: entry,
         localSaved: true,
         syncSucceeded: false,
-        analysisSucceeded: analysisFailureReason == null &&
+        analysisSucceeded:
+            analysisFailureReason == null &&
             _hasUsableTranscript(partialTranscript),
         syncNote: syncNote,
         lowQualityTranscript: lowQualityTranscript,
@@ -715,21 +731,26 @@ class CapturePipelineService {
       if (!analyzeCheck.allowed) {
         return _saveTextLocalOnly(
           transcript: trimmed,
-          syncNote: analyzeCheck.reason ?? VoiceCaptureCopy.transcriptionFailedDegraded,
+          syncNote:
+              analyzeCheck.reason ??
+              VoiceCaptureCopy.transcriptionFailedDegraded,
           onStage: onStage,
         );
       }
 
-      Reflection reflection;
+      final entryId = _uuid.v4();
+      VerifiedProof verifiedProof;
       final analyzeIdempotency = _usageGuard.idempotencyKey(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
       );
       try {
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userTyped,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -738,10 +759,12 @@ class CapturePipelineService {
         );
       } on AuthRequiredException {
         token = await _attest.ensureCaptureToken(forceRefresh: true);
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userTyped,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -759,11 +782,12 @@ class CapturePipelineService {
 
       onStage?.call(PipelineStage.saving);
       final entry = JournalEntry(
-        id: _uuid.v4(),
+        id: entryId,
         createdAt: DateTime.now().toUtc(),
         transcript: trimmed,
         durationSeconds: _estimatedDurationSeconds(trimmed),
-        reflection: reflection,
+        reflection: verifiedProof.reflection,
+        verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
       );
       await _journalStore.save(entry, first25Source: 'text_capture');
@@ -832,21 +856,25 @@ class CapturePipelineService {
           transcript: trimmed,
           durationSeconds: durationSeconds,
           syncNote:
-              analyzeCheck.reason ?? VoiceCaptureCopy.transcriptionFailedDegraded,
+              analyzeCheck.reason ??
+              VoiceCaptureCopy.transcriptionFailedDegraded,
           onStage: onStage,
         );
       }
 
-      Reflection reflection;
+      final entryId = _uuid.v4();
+      VerifiedProof verifiedProof;
       final analyzeIdempotency = _usageGuard.idempotencyKey(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
       );
       try {
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -855,10 +883,12 @@ class CapturePipelineService {
         );
       } on AuthRequiredException {
         token = await _attest.ensureCaptureToken(forceRefresh: true);
-        reflection = await _api.postAnalyze(
+        verifiedProof = await _postAndAdmit(
           transcript: trimmed,
           captureToken: token,
           idempotencyKey: analyzeIdempotency,
+          entryId: entryId,
+          sourceType: ProofSourceType.userVoiceTranscript,
         );
         _usageGuard.recordAttempt(
           scopeKey: scopeKey,
@@ -876,11 +906,12 @@ class CapturePipelineService {
 
       onStage?.call(PipelineStage.saving);
       final entry = JournalEntry(
-        id: _uuid.v4(),
+        id: entryId,
         createdAt: DateTime.now().toUtc(),
         transcript: trimmed,
         durationSeconds: durationSeconds.clamp(1, 999999),
-        reflection: reflection,
+        reflection: verifiedProof.reflection,
+        verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
         captureContextTag: 'live_voice_capture',
       );
@@ -932,7 +963,7 @@ class CapturePipelineService {
   /// Saves a journal entry from a server-recovered offline live-audio vault.
   Future<CapturePipelineResult> saveRecoveredVaultEntry({
     required String transcript,
-    required Reflection reflection,
+    required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     void Function(PipelineStage stage)? onStage,
   }) async {
@@ -942,12 +973,44 @@ class CapturePipelineService {
     }
 
     onStage?.call(PipelineStage.saving);
+    final entryId = _uuid.v4();
+    final raw = RawModelResponse(
+      payload: {'reflection': reflectionJson},
+      receivedAt: DateTime.now().toUtc(),
+    );
+    final revision = UserContentSafety.privacyHash(trimmed);
+    final admission = _proofAdmission.admit(
+      raw: raw,
+      sourceEntries: [
+        ProofSourceEntry(
+          entryId: entryId,
+          archiveScope: 'local_archive_v1',
+          ownerScope: 'local_owner_v1',
+          transcript: trimmed,
+          transcriptRevision: revision,
+          createdAt: raw.receivedAt,
+          sourceType: ProofSourceType.userVoiceTranscript,
+        ),
+      ],
+      activeArchiveScope: 'local_archive_v1',
+      activeOwnerScope: 'local_owner_v1',
+      primarySourceEntryId: entryId,
+    );
+    if (admission is! ProofAdmitted) {
+      final rejected = admission as ProofNotAdmitted;
+      throw FormatException(
+        'Recovered analysis was not admitted '
+        '(${rejected.outcome.name}:${rejected.reason}).',
+      );
+    }
+    final verifiedProof = admission.proof;
     final entry = JournalEntry(
-      id: _uuid.v4(),
+      id: entryId,
       createdAt: DateTime.now().toUtc(),
       transcript: trimmed,
       durationSeconds: durationSeconds.clamp(1, 999999),
-      reflection: reflection,
+      reflection: verifiedProof.reflection,
+      verifiedProof: verifiedProof,
       syncStatus: SyncStatus.pendingUpload,
       captureContextTag: 'live_voice_vault_recovery',
     );
@@ -993,6 +1056,43 @@ class CapturePipelineService {
       localSaved: true,
       syncSucceeded: false,
       syncNote: syncNote,
+    );
+  }
+
+  Future<VerifiedProof> _postAndAdmit({
+    required String transcript,
+    required String captureToken,
+    required String idempotencyKey,
+    required String entryId,
+    required ProofSourceType sourceType,
+  }) async {
+    final revision = UserContentSafety.privacyHash(transcript);
+    final raw = await _api.postAnalyzeRaw(
+      transcript: transcript,
+      captureToken: captureToken,
+      idempotencyKey: idempotencyKey,
+    );
+    final result = _proofAdmission.admit(
+      raw: raw,
+      sourceEntries: [
+        ProofSourceEntry(
+          entryId: entryId,
+          archiveScope: 'local_archive_v1',
+          ownerScope: 'local_owner_v1',
+          transcript: transcript,
+          transcriptRevision: revision,
+          createdAt: raw.receivedAt,
+          sourceType: sourceType,
+        ),
+      ],
+      activeArchiveScope: 'local_archive_v1',
+      activeOwnerScope: 'local_owner_v1',
+      primarySourceEntryId: entryId,
+    );
+    if (result case ProofAdmitted(:final proof)) return proof;
+    final rejected = result as ProofNotAdmitted;
+    throw FormatException(
+      'Analysis was not admitted (${rejected.outcome.name}:${rejected.reason}).',
     );
   }
 

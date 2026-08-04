@@ -9,6 +9,7 @@ import '../config/trial_mode.dart';
 import '../features/activation/activation_tracker.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/objective/current_objective_widget_refresh_service.dart';
+import '../features/proof_admission/archive_correction_store.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import '../features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
@@ -22,8 +23,13 @@ import '../theme/app_colors.dart';
 Future<void> completeArchiveMeStartup() async {
   await AppStoragePaths.configureFromDeviceInfo();
   await AppServices.initialize();
+  ArchiveCorrectionStore.instance.configure(AppServices.instance.prefs);
+  await ArchiveCorrectionStore.instance.ensureLoaded();
+  await ArchiveCorrectionStore.instance.migrateLegacyArchiveFeedback();
   await OfflineVaultRecoveryLaunchController.prepareScan();
-  unawaited(AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery());
+  unawaited(
+    AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery(),
+  );
   PrivateStorageAudit.logAuditReport();
   await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
   await CheckInReminderService.ensureInitialized();

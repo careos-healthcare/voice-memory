@@ -8,10 +8,11 @@ ArchiveMomentRecord _moment({
   required String id,
   required String words,
   PatternState alignmentState = PatternState.earlySignal,
+  DateTime? createdAt,
 }) =>
     ArchiveMomentRecord(
       id: id,
-      createdAt: DateTime.utc(2026, 6, 10),
+      createdAt: createdAt ?? DateTime.utc(2026, 6, 10),
       savedWords: words,
       alignmentState: alignmentState,
     );
@@ -109,20 +110,24 @@ void main() {
       final plan = executor.buildComparisonPlan(
         currentMoment: _moment(
           id: 'current',
-          words: 'said yes again',
+          words: 'I said yes at work without thinking.',
           alignmentState: PatternState.earlySignal,
+          createdAt: DateTime.utc(2026, 7, 10),
         ),
         historicalMoments: [
-          _moment(id: '1', words: 'first yes'),
+          _moment(
+            id: '1',
+            words: 'I said yes again before I checked my calendar.',
+          ),
         ],
         isPro: false,
         hasDismissedProTrailPrompt: false,
       );
       final parsed = executor.parseModelOutput(_sampleModelOutput);
 
-      final viewState = executor.buildEvidenceViewState(
+      final viewState = executor.buildEvidenceViewStateFromRawOutput(
         plan: plan,
-        parsed: parsed,
+        rawModelOutput: _sampleModelOutput,
       );
 
       expect(parsed.state, PatternState.clearRepeat);
@@ -141,11 +146,15 @@ void main() {
       final plan = executor.buildComparisonPlan(
         currentMoment: _moment(
           id: 'current',
-          words: 'said yes again',
+          words: 'I said yes at work without thinking.',
           alignmentState: PatternState.earlySignal,
+          createdAt: DateTime.utc(2026, 7, 10),
         ),
         historicalMoments: [
-          _moment(id: '1', words: 'first yes'),
+          _moment(
+            id: '1',
+            words: 'I said yes again before I checked my calendar.',
+          ),
         ],
         isPro: false,
         hasDismissedProTrailPrompt: false,

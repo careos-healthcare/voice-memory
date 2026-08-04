@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import '../../../models/reflection.dart';
 import '../../../services/capture_attest_service.dart';
 import '../../../services/capture_pipeline_service.dart';
 import '../../../api/api_client.dart';
@@ -16,10 +15,10 @@ class OfflineVaultRecoveryService {
     required ApiClient api,
     required CaptureAttestService attest,
     required CapturePipelineService pipeline,
-  })  : _store = store,
-        _api = api,
-        _attest = attest,
-        _pipeline = pipeline;
+  }) : _store = store,
+       _api = api,
+       _attest = attest,
+       _pipeline = pipeline;
 
   final OfflineVaultRecoveryStore _store;
   final ApiClient _api;
@@ -60,7 +59,9 @@ class OfflineVaultRecoveryService {
       throw StateError('Vault file is missing.');
     }
 
-    LiveAudioPipelineLog.offlineVaultRecoveryStarted(sessionId: manifest.sessionId);
+    LiveAudioPipelineLog.offlineVaultRecoveryStarted(
+      sessionId: manifest.sessionId,
+    );
     await _store.markUploading(manifest);
 
     try {
@@ -76,7 +77,7 @@ class OfflineVaultRecoveryService {
 
       final pipelineResult = await _pipeline.saveRecoveredVaultEntry(
         transcript: serverResult.transcript,
-        reflection: Reflection.fromJson(serverResult.reflectionJson),
+        reflectionJson: serverResult.reflectionJson,
         durationSeconds: serverResult.durationSeconds,
         onStage: onStage,
       );
@@ -114,7 +115,9 @@ class OfflineVaultRecoveryService {
     required int fallbackSeconds,
   }) {
     if (frameCount > 0) {
-      return LocalAudioVaultReader.estimateDurationSeconds(frameCount: frameCount);
+      return LocalAudioVaultReader.estimateDurationSeconds(
+        frameCount: frameCount,
+      );
     }
     return fallbackSeconds.clamp(1, 999999);
   }

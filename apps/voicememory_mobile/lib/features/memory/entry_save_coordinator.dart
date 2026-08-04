@@ -153,6 +153,7 @@ abstract class EntrySaveCoordinator {
     transcript: entry.transcript,
     durationSeconds: entry.durationSeconds,
     reflection: entry.reflection,
+    verifiedProof: entry.verifiedProof,
     syncStatus: entry.syncStatus,
     localAudioPath: entry.localAudioPath,
     treatAsNew: treatAsNew ?? entry.treatAsNew,

@@ -169,6 +169,7 @@ abstract final class LocalBackupBuilder {
         transcript: entry.transcript,
         durationSeconds: entry.durationSeconds,
         reflection: entry.reflection,
+        verifiedProof: entry.verifiedProof,
         syncStatus: entry.syncStatus,
         treatAsNew: entry.treatAsNew,
         connectionApproved: entry.connectionApproved,

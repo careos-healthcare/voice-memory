@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:voicememory_mobile/features/voice_capture/transcription/transcript_quality.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_post_save.dart';
@@ -42,7 +43,7 @@ class _VoicePipelineFakeApi extends ApiClient {
       transcript;
 
   @override
-  Future<Reflection> postAnalyze({
+  Future<RawModelResponse> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
@@ -50,13 +51,18 @@ class _VoicePipelineFakeApi extends ApiClient {
   }) async {
     final error = analyzeError;
     if (error != null) throw error;
-    return Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 1,
-      recurringThemes: const [],
-      exactLanguagePattern: '',
-      concreteObservation: transcript,
-      repeatedSignal: '',
+    return RawModelResponse(
+      payload: {
+        'reflection': {
+          'mood': 'neutral',
+          'emotionalIntensity': 1,
+          'recurringThemes': <String>[],
+          'exactLanguagePattern': transcript,
+          'concreteObservation': transcript,
+          'repeatedSignal': '',
+        },
+      },
+      receivedAt: DateTime.utc(2026, 8, 4),
     );
   }
 }

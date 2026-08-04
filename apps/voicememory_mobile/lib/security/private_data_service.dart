@@ -176,6 +176,7 @@ abstract class TempRecordingCleanup {
         transcript: entry.transcript,
         durationSeconds: entry.durationSeconds,
         reflection: entry.reflection,
+        verifiedProof: entry.verifiedProof,
         syncStatus: entry.syncStatus,
         treatAsNew: entry.treatAsNew,
         connectionApproved: entry.connectionApproved,

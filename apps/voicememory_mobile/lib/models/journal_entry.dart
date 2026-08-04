@@ -1,4 +1,5 @@
 import '../features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
+import '../features/proof_admission/proof_admission_models.dart';
 import 'reflection.dart';
 import 'sync_status.dart';
 
@@ -28,6 +29,7 @@ class JournalEntry {
     this.biomarkers,
     this.parentHookId,
     this.wasGrounded = false,
+    this.verifiedProof,
   });
 
   final String id;
@@ -100,12 +102,20 @@ class JournalEntry {
   /// True when the user completed a grounding cycle before submitting a hook response.
   final bool wasGrounded;
 
+  /// The only model-derived proof object approved for customer-facing use.
+  /// Legacy entries may be null and must be revalidated before resurfacing.
+  final VerifiedProof? verifiedProof;
+
   String get reflectionSummary => reflection.concreteObservation.isNotEmpty
       ? reflection.concreteObservation
       : reflection.exactLanguagePattern;
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
     final reflectionJson = json['reflection'] as Map<String, dynamic>? ?? {};
+    final proofJson = json['verifiedProof'];
+    final verifiedProof = proofJson is Map
+        ? VerifiedProof.fromJson(Map<String, dynamic>.from(proofJson))
+        : null;
     return JournalEntry(
       id: json['id'] as String? ?? '',
       createdAt:
@@ -113,7 +123,8 @@ class JournalEntry {
           DateTime.now().toUtc(),
       transcript: json['transcript'] as String? ?? '',
       durationSeconds: (json['durationSeconds'] as num?)?.toInt() ?? 0,
-      reflection: Reflection.fromJson(reflectionJson),
+      reflection:
+          verifiedProof?.reflection ?? Reflection.fromJson(reflectionJson),
       syncStatus: _parseSync(json['_syncStatus'] as String?),
       localAudioPath: json['localAudioPath'] as String?,
       treatAsNew: json['treatAsNew'] == true,
@@ -141,6 +152,7 @@ class JournalEntry {
           ? json['parentHookId'] as String
           : null,
       wasGrounded: json['wasGrounded'] == true,
+      verifiedProof: verifiedProof,
     );
   }
 
@@ -169,6 +181,7 @@ class JournalEntry {
     if (biomarkers != null) 'biomarkers': biomarkers!.toJson(),
     if (parentHookId != null) 'parentHookId': parentHookId,
     if (wasGrounded) 'wasGrounded': true,
+    if (verifiedProof != null) 'verifiedProof': verifiedProof!.toJson(),
   };
 
   JournalEntry copyWith({
@@ -176,32 +189,34 @@ class JournalEntry {
     CognitiveBiomarkers? biomarkers,
     String? parentHookId,
     bool? wasGrounded,
+    VerifiedProof? verifiedProof,
   }) => JournalEntry(
-        id: id,
-        createdAt: createdAt,
-        transcript: transcript,
-        durationSeconds: durationSeconds,
-        reflection: reflection,
-        syncStatus: syncStatus,
-        localAudioPath: localAudioPath,
-        treatAsNew: treatAsNew,
-        connectionApproved: connectionApproved,
-        keepExactDetails: keepExactDetails,
-        keepSeparate: keepSeparate,
-        archiveThreadId: archiveThreadId,
-        archivePackId: archivePackId,
-        isPinned: isPinned,
-        pinnedAt: pinnedAt,
-        isArchived: isArchived,
-        archivedAt: archivedAt,
-        entryAboutness: entryAboutness,
-        memorySurfacing: memorySurfacing,
-        preserveOriginal: preserveOriginal,
-        captureContextTag: captureContextTag ?? this.captureContextTag,
-        biomarkers: biomarkers ?? this.biomarkers,
-        parentHookId: parentHookId ?? this.parentHookId,
-        wasGrounded: wasGrounded ?? this.wasGrounded,
-      );
+    id: id,
+    createdAt: createdAt,
+    transcript: transcript,
+    durationSeconds: durationSeconds,
+    reflection: reflection,
+    syncStatus: syncStatus,
+    localAudioPath: localAudioPath,
+    treatAsNew: treatAsNew,
+    connectionApproved: connectionApproved,
+    keepExactDetails: keepExactDetails,
+    keepSeparate: keepSeparate,
+    archiveThreadId: archiveThreadId,
+    archivePackId: archivePackId,
+    isPinned: isPinned,
+    pinnedAt: pinnedAt,
+    isArchived: isArchived,
+    archivedAt: archivedAt,
+    entryAboutness: entryAboutness,
+    memorySurfacing: memorySurfacing,
+    preserveOriginal: preserveOriginal,
+    captureContextTag: captureContextTag ?? this.captureContextTag,
+    biomarkers: biomarkers ?? this.biomarkers,
+    parentHookId: parentHookId ?? this.parentHookId,
+    wasGrounded: wasGrounded ?? this.wasGrounded,
+    verifiedProof: verifiedProof ?? this.verifiedProof,
+  );
 
   static SyncStatus _parseSync(String? raw) {
     switch (raw) {

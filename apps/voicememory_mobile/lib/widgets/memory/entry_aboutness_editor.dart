@@ -27,6 +27,7 @@ class EntryAboutnessEditor extends StatelessWidget {
       transcript: entry.transcript,
       durationSeconds: entry.durationSeconds,
       reflection: entry.reflection,
+      verifiedProof: entry.verifiedProof,
       syncStatus: entry.syncStatus,
       localAudioPath: entry.localAudioPath,
       treatAsNew: entry.treatAsNew,

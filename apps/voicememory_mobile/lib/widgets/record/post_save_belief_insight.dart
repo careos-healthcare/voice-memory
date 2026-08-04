@@ -9,6 +9,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../../theme/voicememory_typography.dart';
+import '../proof/verified_proof_correction_controls.dart';
 
 /// Single post-save belief insight — one card, one next action.
 class PostSaveBeliefInsight extends StatelessWidget {
@@ -20,14 +21,18 @@ class PostSaveBeliefInsight extends StatelessWidget {
   Widget build(BuildContext context) {
     if (entries.isEmpty) return const SizedBox.shrink();
 
-    final last = entries.last;
+    final verifiedEntries = entries
+        .where((entry) => entry.verifiedProof != null)
+        .toList();
+    if (verifiedEntries.isEmpty) return const SizedBox.shrink();
+    final last = verifiedEntries.last;
     final signals = ArchiveBeliefsPresenter.potentialSignalsFromEntry(last);
     final possible = signals.isNotEmpty
         ? signals.first
         : _beliefFromObservation(last);
     if (possible == null) return const SizedBox.shrink();
 
-    final refs = _recurringReferenceCount(entries, possible);
+    final refs = _recurringReferenceCount(verifiedEntries, possible);
     final confidence = refs >= 3 ? 'Medium' : 'Low';
 
     return Column(
@@ -64,6 +69,10 @@ class PostSaveBeliefInsight extends StatelessWidget {
             ],
           ),
         ),
+        VerifiedProofCorrectionControls(
+          proof: last.verifiedProof!,
+          sourceSurface: 'post_save_belief',
+        ),
         const SizedBox(height: AppSpacing.sm),
         OutlinedButton(
           onPressed: () => context.go('/record'),
@@ -87,7 +96,7 @@ class PostSaveBeliefInsight extends StatelessWidget {
 
   String? _beliefFromObservation(JournalEntry entry) {
     final obs = ConsumerCopyGuard.userFacingObservation(
-      entry.reflection.concreteObservation,
+      entry.verifiedProof!.reflection.concreteObservation,
     );
     if (obs == null) return null;
     if (obs.length >= 16) {
@@ -100,10 +109,11 @@ class PostSaveBeliefInsight extends StatelessWidget {
     final n = needle.toLowerCase();
     var count = 0;
     for (final e in entries) {
+      final reflection = e.verifiedProof!.reflection;
       final blob =
-          '${e.transcript} ${e.reflection.concreteObservation} '
-                  '${e.reflection.repeatedSignal} '
-                  '${e.reflection.recurringThemes.join(' ')}'
+          '${e.transcript} ${reflection.concreteObservation} '
+                  '${reflection.repeatedSignal} '
+                  '${reflection.recurringThemes.join(' ')}'
               .toLowerCase();
       if (blob.contains(n.split(' ').first)) count++;
     }

@@ -3,10 +3,10 @@ import '../features/insight_feedback/insight_feedback_store.dart';
 import '../features/review_ritual/view_ritual_store.dart';
 import '../features/activation/archive_workspace_hint_store.dart';
 import '../features/helped_tracking/helped_tracking_store.dart';
-import '../features/helped_tracking/helped_tracking_store.dart';
 import '../features/archive_controls/archive_exclusion_store.dart';
 import '../features/entry_importance/entry_importance_store.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/proof_admission/archive_correction_store.dart';
 import '../features/what_changed/what_changed_v2_store.dart';
 import '../services/app_services.dart';
 import 'private_data_service.dart';
@@ -34,6 +34,7 @@ class LocalPrivacyDataControls {
     await WhatChangedV2Store.clearAll();
     await ArchiveInsightFeedbackStore.clearAll();
     await InsightFeedbackStore.clearAll();
+    await ArchiveCorrectionStore.instance.clearAll();
     await ReviewRitualStore.clearAll();
     await ArchiveWorkspaceHintStore.resetDismissedTips();
   }

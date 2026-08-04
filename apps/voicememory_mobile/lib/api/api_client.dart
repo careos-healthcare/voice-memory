@@ -13,6 +13,7 @@ import '../features/voice_capture/transcription/transcription_log.dart';
 import '../models/entitlement.dart';
 import '../models/journal_entry.dart';
 import '../models/reflection.dart';
+import '../features/proof_admission/proof_admission_models.dart';
 import '../models/session.dart';
 import '../features/archive_synthesis/archive_synthesis_models.dart';
 import '../features/live_audio/domain/models/live_audio_session_config.dart';
@@ -210,10 +211,10 @@ class ApiClient {
     request.headers[idempotencyHeader] = idempotencyKey;
     if (_sessionCookie != null) request.headers['Cookie'] = _sessionCookie!;
     request.fields['session_id'] = sessionId;
-    if (recoverySecretKeyBytes != null &&
-        recoverySecretKeyBytes.length == 32) {
-      request.fields['recovery_secret'] =
-          base64Url.encode(recoverySecretKeyBytes);
+    if (recoverySecretKeyBytes != null && recoverySecretKeyBytes.length == 32) {
+      request.fields['recovery_secret'] = base64Url.encode(
+        recoverySecretKeyBytes,
+      );
     }
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -292,10 +293,10 @@ class ApiClient {
     if (_sessionCookie != null) request.headers['Cookie'] = _sessionCookie!;
     request.fields['durationSeconds'] = durationSeconds.toString();
     final fileName = _audioFilename(audioFile.path);
-    final uploadBytes =
-        audioFile.existsSync() ? audioFile.lengthSync() : 0;
-    final contentTypeString =
-        AudioCaptureDiagnostics.uploadContentTypeForPath(audioFile.path);
+    final uploadBytes = audioFile.existsSync() ? audioFile.lengthSync() : 0;
+    final contentTypeString = AudioCaptureDiagnostics.uploadContentTypeForPath(
+      audioFile.path,
+    );
     final contentType = MediaType.parse(contentTypeString);
     AudioDiagLog.upload(
       fileName: fileName,
@@ -338,20 +339,9 @@ class ApiClient {
     return sanitized;
   }
 
-  Future<Reflection> analyzeTranscript({
-    required String transcript,
-    required String captureToken,
-    List<Map<String, dynamic>> priorEvidence = const [],
-  }) async => postAnalyze(
-    transcript: transcript,
-    captureToken: captureToken,
-    priorEvidence: priorEvidence,
-  );
-
-  /// Prompt Context Contract: prior entries travel as references only
-  /// (safe id + timestamp). The server builds a structured evidence
-  /// packet; raw entry text is never sent as prompt context.
-  Future<Reflection> postAnalyze({
+  /// Raw provider boundary. Only the canonical proof-admission service may
+  /// turn this DTO into customer-facing or persistable model output.
+  Future<RawModelResponse> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
@@ -412,7 +402,12 @@ class ApiClient {
     AnalysisLog.success(
       observationLength: parsed.concreteObservation.trim().length,
     );
-    return parsed;
+    return RawModelResponse(
+      payload: body,
+      receivedAt: DateTime.now().toUtc(),
+      providerResponseId:
+          response.headers['x-request-id'] ?? response.headers['request-id'],
+    );
   }
 
   // ——— Journal ———
