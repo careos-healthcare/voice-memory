@@ -40,15 +40,26 @@ export function decidePrecisionMarketingClaims(input: {
   const humanById = new Map(
     input.humanCases.map((researchCase) => [researchCase.caseId, researchCase]),
   );
-  const eligible = input.evaluations.filter((evaluation) => {
+  const candidates = input.evaluations.filter((evaluation) => {
     const researchCase = humanById.get(evaluation.caseId);
     return (
       evaluation.reviewerCount >= 2 &&
+      evaluation.reviewerCount === evaluation.labelSets.length &&
       evaluation.caseProvenance === input.policy.eligibleProvenance &&
       researchCase !== undefined &&
       evaluation.consentReceiptId === researchCase.consent.receiptId
     );
   });
+  const byCase = new Map<string, CompletedEvaluationRecord[]>();
+  for (const evaluation of candidates) {
+    byCase.set(evaluation.caseId, [
+      ...(byCase.get(evaluation.caseId) ?? []),
+      evaluation,
+    ]);
+  }
+  const eligible = [...byCase.values()].flatMap((records) =>
+    records.length === 1 ? records : [],
+  );
   const summary = summarizeAgreement(
     eligible.map((evaluation) => evaluation.labelSets),
   );

@@ -44,6 +44,7 @@ export function buildResearchExportBundle(input: {
     .filter(
       (record) =>
         record.reviewerCount >= 2 &&
+        record.reviewerCount === record.labelSets.length &&
         ((record.caseProvenance === "synthetic" &&
           syntheticIds.has(record.caseId)) ||
           (record.caseProvenance === "consented_human_submission" &&

@@ -115,6 +115,9 @@ function assertNoIngestionMarkers(value: unknown, path = "case"): void {
     const normalized = normalizedKey(key);
     if (
       normalized.includes("automaticimport") ||
+      (normalized.startsWith("automatic") && normalized.includes("import")) ||
+      (normalized.startsWith("auto") &&
+        (normalized.includes("import") || normalized.includes("upload"))) ||
       normalized.includes("autoupload") ||
       normalized.includes("journalupload") ||
       normalized.includes("archiveupload")

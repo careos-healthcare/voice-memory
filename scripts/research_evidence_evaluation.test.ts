@@ -382,6 +382,20 @@ test("precision claims gate ignores synthetic scores and defaults blocked", () =
   });
   assert.equal(oneHuman.precisionMarketingClaimsAllowed, false);
   assert.ok(oneHuman.blockedReasons.includes("insufficient_human_cases"));
+
+  const duplicateHumanRecord = decidePrecisionMarketingClaims({
+    policy: { ...TEST_POLICY, thresholds: {
+      ...TEST_POLICY.thresholds,
+      minimumHumanReviewedCases: 1,
+    } },
+    humanCases: [humanA],
+    evaluations: [
+      completedEvaluation(humanA),
+      completedEvaluation(humanA),
+    ],
+  });
+  assert.equal(duplicateHumanRecord.eligibleHumanReviewedCases, 0);
+  assert.equal(duplicateHumanRecord.precisionMarketingClaimsAllowed, false);
 });
 
 test("precision claims require human agreement across every threshold", () => {
