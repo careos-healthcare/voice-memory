@@ -92,6 +92,26 @@ jobs:
             test/archive_intelligence_presentation_test.dart \
             test/capture_pipeline_test.dart \
             test/capture_pipeline_audio_vault_test.dart \
+            test/entry_detail_interpretation_handoff_test.dart \
+            test/evidence_card_test.dart \
+            test/post_capture_disposition_test.dart \
+            test/post_save_experience_coordinator_test.dart \
+            test/weekly_review_test.dart \
+            test/change_thread_ui_test.dart \
+            test/export_round_trip_test.dart \
+            test/export_screen_choices_test.dart \
+            test/full_archive_export_test.dart \
+            test/sync_recovery_crypto_test.dart \
+            test/sync_recovery_leakage_test.dart \
+            test/sync_recovery_service_test.dart \
+            test/sync_recovery_screen_test.dart \
+            test/product_analytics_test.dart \
+            test/operational_analytics_test.dart \
+            test/privacy_safe_crash_reporting_test.dart \
+            test/product_validation_metrics_catalog_test.dart \
+            test/accessibility_matrix_test.dart \
+            test/capture_performance_test.dart \
+            test/archive_scale_performance_test.dart \
             test/services/privacy/audio_vault_service_test.dart
 
       - name: Validate V1 permission audit fixtures
@@ -136,6 +156,55 @@ jobs:
 
       - name: Run Flutter test shard
         run: flutter test --total-shards 2 --shard-index ${{ matrix.shard }}
+
+  core-integration-ios:
+    name: Core V1 integration (iOS simulator)
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: "26.1.1"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: |
+          flutter pub get --enforce-lockfile
+          pod install --project-directory=ios
+
+      - name: Boot supported iOS simulator
+        id: simulator
+        run: |
+          device_id="$(
+            xcrun simctl list devices available --json |
+              python3 -c 'import json,sys
+data=json.load(sys.stdin)["devices"]
+ios=[device for runtime, devices in data.items() if "iOS" in runtime for device in devices if device.get("isAvailable")]
+print(ios[0]["udid"] if ios else "")'
+          )"
+          test -n "$device_id"
+          xcrun simctl bootstatus "$device_id" -b || {
+            xcrun simctl boot "$device_id"
+            xcrun simctl bootstatus "$device_id" -b
+          }
+          echo "device_id=$device_id" >> "$GITHUB_OUTPUT"
+
+      - name: Run twelve deterministic core scenarios
+        run: bash tool/run_core_integration_tests.sh --device "${{ steps.simulator.outputs.device_id }}"
 
   ios-release-no-codesign:
     name: iOS Release compile and permission audit

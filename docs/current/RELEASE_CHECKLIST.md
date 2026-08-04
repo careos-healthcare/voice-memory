@@ -24,7 +24,14 @@ Run from the repository root unless noted.
 - `npm run monetization:verify` — as above plus deployment-owned production
   usage allowances. Requires the configured release environment.
 - Flutter: dependencies resolve, `flutter analyze` is clean, and the retained V1
-  test suite passes.
+  test suite passes. Release-critical CI also runs the analytics catalog and
+  rejection boundary, accessibility matrix, capture-performance budgets,
+  evidence card, weekly review, export round trip, and recovery crypto/service
+  tests.
+- Core integration: `tool/run_core_integration_tests.sh` passes the deterministic
+  Capture → Observation → Return → Comparison scenarios plus weekly review,
+  export, recovery, and content-free observability. The diff-aware mapper marks
+  changes to any of those surfaces as requiring this device-backed gate.
 - iOS: Pods resolve; plugin registrant, Info.plist, entitlements, privacy
   manifest, and a no-codesign build are inspected.
 - Android: dependency graph and merged release manifest contain only the
@@ -79,6 +86,9 @@ Every item below is `BLOCKED_EXTERNAL`. None has been performed.
 - [ ] Run every real-device script in `ACCESSIBILITY_DEVICE_VERIFICATION.md`
       (VoiceOver, TalkBack, microphone permission, background recording,
       keyboard navigation, maximum Dynamic Type, reduced motion).
+- [ ] Record release-mode startup, large-archive projection/rendering, and full
+      audio export measurements required by `PERFORMANCE_REPORT.md`; host/widget
+      measurements are not physical-device evidence.
 - [ ] Verify recording interruption, 24-hour temporary-audio recovery,
       remote-transcription disclosure, export, and account deletion on supported
       physical devices.

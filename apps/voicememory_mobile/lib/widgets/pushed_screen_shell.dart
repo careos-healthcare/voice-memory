@@ -49,6 +49,10 @@ class PushedScreenShell extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         leading: IconButton(
+          style: IconButton.styleFrom(
+            minimumSize: const Size(48, 48),
+            tapTargetSize: MaterialTapTargetSize.padded,
+          ),
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Back',
           onPressed: () => _goBack(context),

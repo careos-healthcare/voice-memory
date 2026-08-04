@@ -149,6 +149,42 @@ Each measured span prints a `MEASURED <span> n=… p50=… p95=… max=… raw=[
 line. Numbers will differ on other hardware; state your own environment if you
 record them.
 
+## Deterministic archive scale pipeline
+
+`test/archive_scale_performance_test.dart` adds a synthetic host-VM guard for
+the retained archive pipeline. It builds 1,000 owned entries, projects 100
+validated change events, renders/serializes an explicit 100-thread Changes
+projection into readable and machine-readable exports, and builds a full ZIP
+from 50 encrypted audio references.
+
+Local host-VM measurement on 2026-08-04, using the same machine, Flutter, Dart,
+and debug `flutter test` environment named above:
+
+- production change projection over 1,000 entries / 100 findings: **71 ms**;
+- readable + machine-readable rendering for 1,000 entries / 100 threads:
+  **66 ms**;
+- full ZIP pipeline for 50 encrypted audio references: **250 ms**;
+- maximum simultaneous plaintext audio leases observed: **1**;
+- plaintext lease files after completion: **0**.
+
+The CI budgets are intentionally generous host guards: 15 seconds for
+projection, 15 seconds for readable rendering/serialization, and 30 seconds for
+the full archive. They detect pathological regressions without presenting a
+shared-runner timing as a product latency promise. The audio assertion is
+structural: each reference is decrypted, consumed, and cleaned before the next
+reference, rather than loading all recordings into memory or plaintext storage.
+
+Reproduce the scale result with:
+
+```bash
+cd apps/voicememory_mobile
+flutter test test/archive_scale_performance_test.dart
+```
+
+The test prints one `SCALE_MEASURED` line. Physical-device scale and export
+measurements remain **`BLOCKED_EXTERNAL`**; these host values are not device
+evidence and must not be relabeled as such.
+
 ## Gaps
 
 - **Physical device: `BLOCKED_EXTERNAL`.** No physical-device measurement was

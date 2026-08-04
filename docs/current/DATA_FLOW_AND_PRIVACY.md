@@ -149,14 +149,33 @@ conclusions, corrections, prompts, topics, identifiers, email, tokens, and
 billing customer IDs are prohibited. Confidence reaches analytics as a band
 name, never as a number.
 
+The catalog includes structural save, transcription, interpretation, retry,
+vault, sync/recovery, commerce, deletion, and export lifecycle events. Typed
+facades accept only enums and pre-bucketed counts; the payload is validated
+when built and again immediately before provider dispatch. A crash-reporting
+adapter accepts only app/build/platform/channel plus fixed category and timing
+bands. No crash provider is configured in this release, so its production
+status is disabled and raw errors, stack details, breadcrumbs, content, paths,
+and identifiers cannot be sent.
+
 ## Billing, export, deletion
 
 Billing receives store identifiers and entitlement state through the canonical
-RevenueCat adapter. Export is an explicit user action into a temporary
-app-private file handed to the share sheet and then cleaned up on a best-effort
-basis. The exported file is readable content and its protection after handoff
-depends on the destination the user chooses. Recovery codes are explicitly
-excluded from export.
+RevenueCat adapter. Export is an explicit user action. Readable export contains
+text, metadata, evidence, corrections, Changes, weekly-review history, and audio
+references but no audio bytes. Full export creates one archive containing that
+readable document, machine-readable JSON, available original audio, and a
+versioned checksummed manifest. Audio is decrypted one file at a time into an
+opaque app-private temporary directory. Temporary material is cleaned after
+handoff, cancellation, or failure. Exported plaintext and audio are controlled
+by the destination after handoff. Recovery codes, sync keys, credentials,
+tokens, absolute device paths, and provider identifiers are explicitly
+excluded.
+
+Only the structural `export_completed` event may describe an export, using
+bounded format and result tokens. Exported content, filenames, paths, archive
+identifiers, checksums, entry identifiers, and errors remain prohibited
+analytics data.
 
 Account switching closes or pauses account-scoped work and opens the separately
 partitioned archive; processing preferences and disclosure acceptances are
@@ -168,8 +187,9 @@ recover a lost sync key or retract data already exported to another app.
 
 ## Not verified here
 
-`config/privacy/archive_me_data_flow.json` lists no test for the `export` and
-`account_deletion` flows. Provider-side retention and deletion for
+`config/privacy/archive_me_data_flow.json` links the export flow to round-trip
+and analytics-boundary tests. It still lists no automated end-to-end test for
+the `account_deletion` flow. Provider-side retention and deletion for
 transcription and analysis are contractual matters that cannot be verified from
 this repository. Local/account deletion must not be described as proof that a
 provider has deleted its copy.

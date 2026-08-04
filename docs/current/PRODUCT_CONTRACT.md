@@ -53,10 +53,12 @@ flow, or a `PageView` onboarding is describing a surface that no longer exists.
 2. ArchiveMe saves typed words or encrypted audio before optional AI.
    Transcription consent never implies interpretation consent; declining either
    choice still archives the original.
-3. The post-save screen shows, in order: Saved, editable transcript, **at most
-   one** validated interpretation, inline exact evidence, correction controls,
-   then one next action. No paywall, reminder, streak, or second interpretation
-   participates in this render decision.
+3. The post-save screen shows, in order: Saved, the original words (or an
+   honest audio-only state), **at most one** validated interpretation, inline
+   exact evidence with source and date, why ArchiveMe noticed it, what the
+   evidence does not establish, correction controls, then one grounded next
+   action. No paywall, reminder, streak, or second interpretation participates
+   in this render decision.
    `apps/voicememory_mobile/lib/widgets/record/focused_auditable_post_save_section.dart:25`
    holds a single nullable `conclusion`; when it is absent the screen renders the
    `focused_auditable_no_conclusion` card instead.
@@ -64,15 +66,23 @@ flow, or a `PageView` onboarding is describing a surface that no longer exists.
 5. Two related, distinct moments can produce a possible repeat or possible
    change. Unrelated moments produce no comparison.
 6. Changes is the repeat-use surface. It presents validated history
-   chronologically with Then/Now evidence and source navigation. Its supported
-   statuses are first observed, repeated, changed, weakened, strengthened,
-   unresolved, and corrected.
+   chronologically with Then/Now evidence and source navigation. Its only
+   primary customer statuses are **First noticed**, **Showing up again**, and
+   **Changed**. Stronger, weaker, mixed, and uncertain are secondary
+   explanations; **Corrected by you** is a separate user-authored marker.
+   A restrained weekly review lives inside Changes and may contain at most one
+   Showing up again item, one Changed item, and one unresolved tension.
 7. Every interpretation can be marked Accurate, Wrong angle, Too generic, or
    Hide. Correction text remains private and is never analytics data.
-8. Account provides export, privacy, subscription management, restore, and
-   idempotent account deletion. Deletion clears remote account data and local
-   journal, audio, derived interpretations, corrections, credentials, and
-   queued work before returning to the promise screen.
+8. Account provides readable and full archive export, privacy, subscription
+   management, restore, optional sync-key recovery, and idempotent account
+   deletion. Readable export excludes audio bytes. Full export is a single
+   archive containing readable content, machine-readable JSON, available
+   original audio, and a checksummed manifest. Recovery is opt-in, requires
+   the signed-in account plus the complete user-held code, and never sends or
+   stores that code. Deletion clears remote account data and local journal,
+   audio, derived interpretations, corrections, recovery envelope,
+   credentials, and queued work before returning to the promise screen.
 
 ## Confidence is a band, never a number
 
@@ -192,3 +202,11 @@ Product analytics accepts only allowlisted metadata such as conclusion kind,
 count bands, confidence bands, source type, surface, and feedback choice. It
 must never receive transcripts, quotes, conclusions, correction text, entry
 IDs, dates, filenames, or audio.
+
+Operational visibility uses the same typed catalog and two-stage validation.
+It may record only bounded lifecycle, timing, attempt, source, count, format,
+and failure bands for save, transcription, interpretation, retry, vault, sync,
+recovery, commerce, deletion, and export. Raw provider errors and identifiers
+are prohibited. Crash reporting has a privacy-reviewed bounded adapter but no
+configured production provider; it therefore reports `disabled` and fails
+closed rather than forwarding an exception or breadcrumb.

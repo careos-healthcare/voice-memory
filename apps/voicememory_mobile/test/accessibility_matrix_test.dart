@@ -253,6 +253,7 @@ void main() {
       );
 
       expectNoOverflow(tester);
+      expectTapTargets(tester, minimum: 48);
       final quote = tester.widget<Text>(
         find.byKey(const Key('post_save_strongest_quote')),
       );

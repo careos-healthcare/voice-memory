@@ -29,7 +29,7 @@ void main() {
           _statement,
         );
         expect(find.text('“$_nowQuote”'), findsOneWidget);
-        expect(find.text('31 July 2026'), findsOneWidget);
+        expect(find.text('Text · 31 July 2026'), findsOneWidget);
         expect(
           find.text(
             'Based on 2 saved moments · Repeated across several moments',
@@ -66,7 +66,7 @@ void main() {
       final date = tester
           .widget<Text>(find.byKey(const Key('post_save_evidence_date')))
           .data;
-      expect(date, '31 July 2026');
+      expect(date, 'Text · 31 July 2026');
       for (final vague in const ['ago', 'Yesterday', 'Today', 'Last week']) {
         expect(find.textContaining(vague), findsNothing, reason: vague);
       }
