@@ -9,6 +9,10 @@ import 'package:voicememory_mobile/router/record_navigation_activity_controller.
 import 'package:voicememory_mobile/router/route_catalog.dart';
 import 'package:voicememory_mobile/widgets/main_shell.dart';
 
+/// A root route outside the four-branch shell, used to prove that secondary
+/// destinations render without the primary navigation and keep their query.
+const _secondaryRoute = '/secondary-detail';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -24,10 +28,7 @@ void main() {
         PrimaryDestination.values.map((destination) => destination.route),
         RouteCatalog.primaryRoutes,
       );
-      expect(
-        RouteCatalog.primaryRoutes,
-        isNot(contains(RouteCatalog.graphHome)),
-      );
+      expect(RouteCatalog.primaryRoutes, isNot(contains(_secondaryRoute)));
     });
   });
 
@@ -181,11 +182,11 @@ void main() {
       expect(find.text('Account branch'), findsOneWidget);
     });
 
-    testWidgets('graph is a root secondary route and keeps query values', (
+    testWidgets('a root secondary route keeps its query values', (
       tester,
     ) async {
       final harness = _ShellHarness(
-        initialLocation: '${RouteCatalog.graphHome}?view=evidence&nodeId=test',
+        initialLocation: '$_secondaryRoute?view=evidence&nodeId=test',
       );
       addTearDown(harness.dispose);
       await _pumpHarness(tester, harness);
@@ -278,14 +279,14 @@ void main() {
       },
     );
 
-    test('router owns four typed branches and graph remains outside them', () {
+    test('router owns exactly four typed primary branches', () {
       final source = File('lib/router/app_router.dart').readAsStringSync();
-      final shell = source.substring(
-        source.indexOf('StatefulShellRoute.indexedStack'),
-        source.indexOf('GoRoute(\n      path: RouteCatalog.graphHome'),
+      expect(
+        RegExp(r'StatefulShellRoute\.indexedStack').allMatches(source),
+        hasLength(1),
       );
       expect(
-        RegExp(r'StatefulShellBranch\s*\(').allMatches(shell),
+        RegExp(r'StatefulShellBranch\s*\(').allMatches(source),
         hasLength(4),
       );
       for (final route in [
@@ -297,9 +298,9 @@ void main() {
         expect(
           RegExp('path: RouteCatalog\\.$route').allMatches(source),
           hasLength(1),
+          reason: route,
         );
       }
-      expect(shell, isNot(contains('RouteCatalog.graphHome')));
       expect(source, contains('initialLocation: RouteCatalog.recordHome'));
     });
 
@@ -395,7 +396,7 @@ class _ShellHarness {
               const Scaffold(body: Center(child: Text('Settings page'))),
         ),
         GoRoute(
-          path: RouteCatalog.graphHome,
+          path: _secondaryRoute,
           parentNavigatorKey: rootKey,
           builder: (_, state) => Scaffold(
             body: Center(

@@ -1,4 +1,9 @@
 import '../../models/reflection.dart';
+import 'proof_quality.dart';
+
+// The receipt's own field types travel with it, so a caller never needs to know
+// which file inside this feature declared them.
+export 'proof_quality.dart';
 
 enum ProofClaimKind {
   mainObservation,
@@ -247,63 +252,206 @@ class VerifiedProofClaim {
       );
 }
 
+/// The one immutable proof-quality object. Dimensions the evidence could not
+/// establish stay explicitly absent rather than defaulting to a flattering
+/// value: absent occurrences are null and unestablished states carry an
+/// explicit `insufficientEvidence` member.
 class ProofQualityReceipt {
   const ProofQualityReceipt({
-    required this.repeatFrequency,
-    required this.trend,
+    required this.proofType,
     required this.confidenceBand,
-    required this.counterexamples,
-    required this.missingEvidence,
+    required this.frequency,
+    required this.trend,
     required this.strengthOverTime,
+    required this.supportingEvidence,
+    required this.counterexamples,
+    required this.contradictions,
+    required this.missingEvidence,
     required this.firstOccurrence,
     required this.lastOccurrence,
-    required this.contradictions,
-    this.schemaVersion = 1,
+    required this.generatedAt,
+    this.thenEvidence,
+    this.nowEvidence,
+    this.unsupportedClaims = const [],
+    this.userConfirmedWording,
+    this.verifierVersion = 1,
+    this.scorerVersion = 1,
+    this.configVersion = 1,
+    this.schemaVersion = 2,
   });
 
-  final int repeatFrequency;
-  final String trend;
+  final ProofType proofType;
   final ProofConfidenceBand confidenceBand;
-  final int counterexamples;
-  final List<ProofClaimKind> missingEvidence;
-  final String strengthOverTime;
-  final DateTime firstOccurrence;
-  final DateTime lastOccurrence;
-  final int contradictions;
+  final ProofFrequency frequency;
+  final ProofTrend trend;
+  final ProofStrengthOverTime strengthOverTime;
+  final List<VerifiedEvidenceSnapshot> supportingEvidence;
+  final List<VerifiedEvidenceSnapshot> counterexamples;
+
+  /// Never trimmed to make a proof look cleaner than its evidence.
+  final List<VerifiedEvidenceSnapshot> contradictions;
+
+  final List<MissingEvidenceReason> missingEvidence;
+  final DateTime? firstOccurrence;
+  final DateTime? lastOccurrence;
+  final DateTime generatedAt;
+  final VerifiedEvidenceSnapshot? thenEvidence;
+  final VerifiedEvidenceSnapshot? nowEvidence;
+
+  /// Claims the model asserted that verification could not support. Retained so
+  /// the detail surface can say what is still missing.
+  final List<ProofClaimKind> unsupportedClaims;
+
+  /// Set when a correction gave this framing a user-preferred label.
+  final String? userConfirmedWording;
+
+  final int verifierVersion;
+  final int scorerVersion;
+  final int configVersion;
   final int schemaVersion;
 
   Map<String, dynamic> toJson() => {
-    'repeatFrequency': repeatFrequency,
-    'trend': trend,
+    'proofType': proofType.name,
     'confidenceBand': confidenceBand.name,
-    'counterexamples': counterexamples,
+    'frequency': frequency.toJson(),
+    'trend': trend.name,
+    'strengthOverTime': strengthOverTime.name,
+    'supportingEvidence': supportingEvidence
+        .map((item) => item.toJson())
+        .toList(),
+    'counterexamples': counterexamples.map((item) => item.toJson()).toList(),
+    'contradictions': contradictions.map((item) => item.toJson()).toList(),
     'missingEvidence': missingEvidence.map((item) => item.name).toList(),
-    'strengthOverTime': strengthOverTime,
-    'firstOccurrence': firstOccurrence.toUtc().toIso8601String(),
-    'lastOccurrence': lastOccurrence.toUtc().toIso8601String(),
-    'contradictions': contradictions,
+    'firstOccurrence': firstOccurrence?.toUtc().toIso8601String(),
+    'lastOccurrence': lastOccurrence?.toUtc().toIso8601String(),
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    'thenEvidence': thenEvidence?.toJson(),
+    'nowEvidence': nowEvidence?.toJson(),
+    'unsupportedClaims': unsupportedClaims.map((item) => item.name).toList(),
+    'userConfirmedWording': userConfirmedWording,
+    'verifierVersion': verifierVersion,
+    'scorerVersion': scorerVersion,
+    'configVersion': configVersion,
     'schemaVersion': schemaVersion,
   };
 
+  /// Schema 1 stored bare counts and free-text trend labels. Those dimensions
+  /// are restored as explicitly unestablished rather than guessed, so an old
+  /// receipt can never claim a trend that was never computed from dated
+  /// evidence.
   factory ProofQualityReceipt.fromJson(Map<String, dynamic> json) =>
       ProofQualityReceipt(
-        repeatFrequency: json['repeatFrequency'] as int? ?? 0,
-        trend: json['trend'] as String? ?? 'not_established',
+        proofType: _enumOrDefault(
+          ProofType.values,
+          json['proofType'],
+          ProofType.currentObservation,
+        ),
         confidenceBand: ProofConfidenceBand.values.byName(
           json['confidenceBand'] as String,
         ),
-        counterexamples: json['counterexamples'] as int? ?? 0,
+        frequency: json['frequency'] is Map
+            ? ProofFrequency.fromJson(
+                Map<String, dynamic>.from(json['frequency'] as Map),
+              )
+            : const ProofFrequency.none(),
+        trend: _enumOrDefault(
+          ProofTrend.values,
+          json['trend'],
+          ProofTrend.insufficientEvidence,
+        ),
+        strengthOverTime: _enumOrDefault(
+          ProofStrengthOverTime.values,
+          json['strengthOverTime'],
+          ProofStrengthOverTime.insufficientEvidence,
+        ),
+        supportingEvidence: _snapshots(json['supportingEvidence']),
+        counterexamples: _snapshots(json['counterexamples']),
+        contradictions: _snapshots(json['contradictions']),
         missingEvidence: (json['missingEvidence'] as List<dynamic>? ?? const [])
             .whereType<String>()
-            .map(ProofClaimKind.values.byName)
+            .map(
+              (name) => MissingEvidenceReason.values
+                  .where((item) => item.name == name)
+                  .firstOrNull,
+            )
+            .nonNulls
             .toList(),
-        strengthOverTime:
-            json['strengthOverTime'] as String? ?? 'not_established',
-        firstOccurrence: DateTime.parse(json['firstOccurrence'] as String),
-        lastOccurrence: DateTime.parse(json['lastOccurrence'] as String),
-        contradictions: json['contradictions'] as int? ?? 0,
-        schemaVersion: json['schemaVersion'] as int? ?? 1,
+        firstOccurrence: _dateOrNull(json['firstOccurrence']),
+        lastOccurrence: _dateOrNull(json['lastOccurrence']),
+        generatedAt:
+            _dateOrNull(json['generatedAt']) ??
+            DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+        thenEvidence: _snapshotOrNull(json['thenEvidence']),
+        nowEvidence: _snapshotOrNull(json['nowEvidence']),
+        unsupportedClaims:
+            (json['unsupportedClaims'] as List<dynamic>? ?? const [])
+                .whereType<String>()
+                .map(
+                  (name) => ProofClaimKind.values
+                      .where((item) => item.name == name)
+                      .firstOrNull,
+                )
+                .nonNulls
+                .toList(),
+        userConfirmedWording: json['userConfirmedWording'] as String?,
+        verifierVersion: json['verifierVersion'] as int? ?? 1,
+        scorerVersion: json['scorerVersion'] as int? ?? 1,
+        configVersion: json['configVersion'] as int? ?? 1,
+        schemaVersion: json['schemaVersion'] as int? ?? 2,
       );
+
+  ProofQualityReceipt withUserConfirmedWording(String? wording) =>
+      wording == null || wording.trim().isEmpty
+      ? this
+      : ProofQualityReceipt(
+          proofType: proofType,
+          confidenceBand: confidenceBand,
+          frequency: frequency,
+          trend: trend,
+          strengthOverTime: strengthOverTime,
+          supportingEvidence: supportingEvidence,
+          counterexamples: counterexamples,
+          contradictions: contradictions,
+          missingEvidence: missingEvidence,
+          firstOccurrence: firstOccurrence,
+          lastOccurrence: lastOccurrence,
+          generatedAt: generatedAt,
+          thenEvidence: thenEvidence,
+          nowEvidence: nowEvidence,
+          unsupportedClaims: unsupportedClaims,
+          userConfirmedWording: wording.trim(),
+          verifierVersion: verifierVersion,
+          scorerVersion: scorerVersion,
+          configVersion: configVersion,
+          schemaVersion: schemaVersion,
+        );
+
+  /// Schema 1 stored counterexamples and contradictions as bare counts, so a
+  /// non-list here is an old receipt rather than corruption. It restores with no
+  /// evidence instead of throwing.
+  static List<VerifiedEvidenceSnapshot> _snapshots(Object? value) =>
+      (value is List ? value : const [])
+          .whereType<Map>()
+          .map(
+            (item) => VerifiedEvidenceSnapshot.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .toList();
+
+  static T _enumOrDefault<T extends Enum>(
+    List<T> values,
+    Object? raw,
+    T fallback,
+  ) => values.where((item) => item.name == raw).firstOrNull ?? fallback;
+
+  static DateTime? _dateOrNull(Object? value) =>
+      value is String && value.isNotEmpty ? DateTime.parse(value) : null;
+
+  static VerifiedEvidenceSnapshot? _snapshotOrNull(Object? value) =>
+      value is Map
+      ? VerifiedEvidenceSnapshot.fromJson(Map<String, dynamic>.from(value))
+      : null;
 }
 
 class VerifiedProof {

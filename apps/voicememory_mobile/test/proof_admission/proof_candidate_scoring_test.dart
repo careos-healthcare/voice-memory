@@ -82,7 +82,10 @@ void main() {
     });
 
     test('exposes the validated config with every required weight', () {
-      expect(generatedProofAdmissionConfig.schema, ProofAdmissionConfig.schemaName);
+      expect(
+        generatedProofAdmissionConfig.schema,
+        ProofAdmissionConfig.schemaName,
+      );
       expect(
         generatedProofAdmissionConfig.version,
         ProofAdmissionConfig.supportedVersion,
@@ -91,7 +94,10 @@ void main() {
         generatedProofAdmissionConfig.weights.keys.toSet(),
         ProofAdmissionConfig.requiredWeightKeys,
       );
-      expect(generatedProofAdmissionConfig.modelConfidenceCap, inInclusiveRange(0, 1));
+      expect(
+        generatedProofAdmissionConfig.modelConfidenceCap,
+        inInclusiveRange(0, 1),
+      );
     });
   });
 
@@ -122,7 +128,10 @@ void main() {
       );
 
       final badCap = _baseConfigJson()..['modelConfidenceCap'] = 1.5;
-      expect(() => ProofAdmissionConfig.fromJson(badCap), throwsFormatException);
+      expect(
+        () => ProofAdmissionConfig.fromJson(badCap),
+        throwsFormatException,
+      );
 
       final badVersion = _baseConfigJson()..['version'] = 2;
       expect(
@@ -136,7 +145,10 @@ void main() {
     test('rejects out-of-range ratios and negative counts', () {
       expect(() => _features(coverage: 1.4), throwsArgumentError);
       expect(() => _features(citationCount: -1), throwsArgumentError);
-      expect(() => _features(negativeCorrectionHistory: -2), throwsArgumentError);
+      expect(
+        () => _features(negativeCorrectionHistory: -2),
+        throwsArgumentError,
+      );
     });
 
     test('clamps model confidence and stays free of raw text', () {
@@ -191,13 +203,16 @@ void main() {
       );
     });
 
-    test('contradiction lowers the score below an otherwise equal candidate', () {
-      final scorer = ProofCandidateScorer();
-      final clean = scorer.score(_candidate('clean'));
-      final conflicted = scorer.score(
-        _candidate('conflicted', features: _features(contradiction: 1)),
-      );
-      expect(clean, greaterThan(conflicted));
-    });
+    test(
+      'contradiction lowers the score below an otherwise equal candidate',
+      () {
+        final scorer = ProofCandidateScorer();
+        final clean = scorer.score(_candidate('clean'));
+        final conflicted = scorer.score(
+          _candidate('conflicted', features: _features(contradiction: 1)),
+        );
+        expect(clean, greaterThan(conflicted));
+      },
+    );
   });
 }

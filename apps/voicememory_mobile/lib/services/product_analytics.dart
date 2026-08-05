@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/creator_demo_mode.dart';
 import '../push/firebase_bootstrap.dart';
+import 'proof_analytics_guard.dart';
 
 /// Production analytics — Firebase Analytics when configured, debug log in dev.
 class ProductAnalytics {
@@ -39,7 +40,11 @@ class ProductAnalytics {
     String event, {
     Map<String, Object>? parameters,
   }) async {
-    final sanitized = _sanitizeParameters(parameters);
+    // Fail-closed privacy guard: runs before anything else touches the
+    // payload, so content-bearing attributes never reach the provider.
+    final sanitized = _sanitizeParameters(
+      ProofAnalyticsGuard.sanitize(event, parameters),
+    );
     // Creator demo mode: events are demo-marked in the debug log only and
     // never sent to production analytics.
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {

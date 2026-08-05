@@ -34,6 +34,14 @@ class EvidenceVerificationResult {
 class CanonicalEvidenceVerifier {
   const CanonicalEvidenceVerifier({this.verifierSchemaVersion = 1});
 
+  /// The content fingerprint stored on an evidence snapshot.
+  ///
+  /// Display-time revalidation recomputes this and compares, so admission and
+  /// revalidation must derive it identically or every stored proof would read
+  /// as stale. It is one function for that reason.
+  static String transcriptFingerprint(String transcript) =>
+      sha256.convert(utf8.encode(transcript)).toString();
+
   final int verifierSchemaVersion;
 
   EvidenceVerificationResult verify({
@@ -128,9 +136,7 @@ class CanonicalEvidenceVerifier {
           archiveScope: source.archiveScope,
           ownerScope: source.ownerScope,
           transcriptRevision: source.transcriptRevision,
-          transcriptFingerprint: sha256
-              .convert(utf8.encode(transcript))
-              .toString(),
+          transcriptFingerprint: transcriptFingerprint(transcript),
           sourceDate: sourceDate,
           sourceType: source.sourceType,
           quote: citation.quote,

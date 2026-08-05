@@ -1,19 +1,14 @@
 part of '../../screens/record_screen.dart';
 
 class _RecordingStatusCard extends StatelessWidget {
-  const _RecordingStatusCard({
-    required this.seconds,
-    required this.stageLabel,
-    required this.audioDecibels,
-  });
+  const _RecordingStatusCard({required this.seconds, required this.stageLabel});
 
   final int seconds;
   final String stageLabel;
-  final Stream<double> audioDecibels;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = appLocalizationsOf(context);
+    final l10n = AppLocalizations.of(context);
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
     final timer =
@@ -42,8 +37,6 @@ class _RecordingStatusCard extends StatelessWidget {
           children: [
             Icon(Icons.mic, size: 44, color: VoiceMemoryColors.primaryIndigo),
             const SizedBox(height: 14),
-            AudioVisualizer(decibels: audioDecibels),
-            const SizedBox(height: 12),
             RecordingTranscriptionView(
               text: stageLabel.isEmpty ? l10n.recordingStatus : stageLabel,
               isLive: true,
@@ -76,35 +69,6 @@ class _RecordingStatusCard extends StatelessWidget {
 
 /// Screen actions owned by the audio responsibility.
 extension _RecordingAudioStateActions on _RecordScreenState {
-  Future<bool> _hasRecordingSubscriptionAccess() async {
-    final service =
-        widget.subscriptionService ??
-        (AppServices.isInitialized
-            ? AppServices.instance.subscriptionService
-            : null);
-    if (service == null || !service.canOfferWebCheckout) return true;
-
-    try {
-      if (await service.hasActiveSubscription()) return true;
-    } on Object {
-      if (AppServices.isInitialized &&
-          AppServices.instance.subscriptionRepository.currentState?.isPro ==
-              true) {
-        return true;
-      }
-    }
-
-    if (!mounted) return false;
-    await context.push(
-      '/subscription',
-      extra: PaywallRouteArgs(
-        source: PaywallSource.generalPro,
-        sourceRoute: '/record',
-      ),
-    );
-    return false;
-  }
-
   Future<void> _beginRecording() async {
     if (AppConfig.enableLiveVoiceCapture && _liveVoice != null) {
       await _openLiveVoiceSession();
@@ -114,19 +78,7 @@ extension _RecordingAudioStateActions on _RecordScreenState {
     _stopAndProcessInFlight = false;
     _navigationActivity.update(RecordNavigationActivity.recording);
     try {
-      var isPro = false;
-      try {
-        isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
-      } on Object {
-        // Fail closed to the free duration when billing is unavailable.
-      }
-      _activeRecordingMaxSeconds = RecordingDurationPolicy.maxSecondsFor(
-        isPro: isPro,
-      );
-      await _recording.startRecording(
-        permissionVerified: true,
-        maxDurationSeconds: _activeRecordingMaxSeconds,
-      );
+      await _recording.startRecording(permissionVerified: true);
       if (!mounted) return;
       _setRecordingState(() {
         _ui = RecordUiState.recording;
@@ -176,7 +128,7 @@ extension _RecordingAudioStateActions on _RecordScreenState {
       );
 
   String _statusTextFor(RecordUiState ui, String? localSaveTitle) {
-    final l10n = appLocalizationsOf(context);
+    final l10n = AppLocalizations.of(context);
     switch (ui) {
       case RecordUiState.permissionBlocked:
         return MicrophonePermissionCopy.statusBlocked;

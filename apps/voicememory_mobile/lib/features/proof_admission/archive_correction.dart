@@ -33,6 +33,8 @@ class ArchiveCorrection {
     required this.updatedAt,
     required this.sourceSurface,
     this.qualifier,
+    this.disputedEvidenceRefs = const [],
+    this.preferredWording,
     this.schemaVersion = currentSchemaVersion,
     this.superseded = false,
   });
@@ -46,6 +48,16 @@ class ArchiveCorrection {
   final String semanticFramingFingerprint;
   final String wordingFingerprint;
   final List<String> affectedEvidenceRefs;
+
+  /// The subset of [affectedEvidenceRefs] the user named as wrong evidence.
+  /// Empty means the whole citation set was disputed.
+  final List<String> disputedEvidenceRefs;
+
+  /// A label the user chose in place of generated wording. It is the user's own
+  /// words about their own archive: it stays archive-scoped, never reaches
+  /// analytics or logs, and is never treated as evidence for anything.
+  final String? preferredWording;
+
   final ArchiveCorrectionChoice choice;
   final ArchiveCorrectionQualifier? qualifier;
   final DateTime createdAt;
@@ -63,6 +75,8 @@ class ArchiveCorrection {
       semanticFramingFingerprint: semanticFramingFingerprint,
       wordingFingerprint: wordingFingerprint,
       affectedEvidenceRefs: affectedEvidenceRefs,
+      disputedEvidenceRefs: disputedEvidenceRefs,
+      preferredWording: preferredWording,
       choice: choice,
       qualifier: qualifier,
       createdAt: createdAt,
@@ -81,6 +95,9 @@ class ArchiveCorrection {
     'semanticFramingFingerprint': semanticFramingFingerprint,
     'wordingFingerprint': wordingFingerprint,
     'affectedEvidenceRefs': List<String>.of(affectedEvidenceRefs),
+    if (disputedEvidenceRefs.isNotEmpty)
+      'disputedEvidenceRefs': List<String>.of(disputedEvidenceRefs),
+    if (preferredWording != null) 'preferredWording': preferredWording,
     'choice': choice.name,
     if (qualifier != null) 'qualifier': qualifier!.name,
     'createdAt': createdAt.toUtc().toIso8601String(),
@@ -100,6 +117,10 @@ class ArchiveCorrection {
       semanticFramingFingerprint: _string(json['semanticFramingFingerprint']),
       wordingFingerprint: _string(json['wordingFingerprint']),
       affectedEvidenceRefs: _stringList(json['affectedEvidenceRefs']),
+      disputedEvidenceRefs: _stringList(json['disputedEvidenceRefs']),
+      preferredWording: json['preferredWording'] is String
+          ? json['preferredWording'] as String
+          : null,
       choice: _enumByName(
         ArchiveCorrectionChoice.values,
         json['choice'],

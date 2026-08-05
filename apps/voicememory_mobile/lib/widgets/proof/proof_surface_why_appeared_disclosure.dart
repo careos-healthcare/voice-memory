@@ -34,8 +34,7 @@ class _ProofSurfaceWhyAppearedDisclosureState
   bool get _isControlled =>
       widget.expanded != null && widget.onExpandedChanged != null;
 
-  bool get _expanded =>
-      _isControlled ? widget.expanded! : _internalExpanded;
+  bool get _expanded => _isControlled ? widget.expanded! : _internalExpanded;
 
   void _toggle() {
     final next = !_expanded;
@@ -50,16 +49,12 @@ class _ProofSurfaceWhyAppearedDisclosureState
   Widget build(BuildContext context) {
     if (widget.body.trim().isEmpty) return const SizedBox.shrink();
 
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.4,
-    );
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 13,
-      height: 1.45,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.4);
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 13, height: 1.45);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,7 +76,9 @@ class _ProofSurfaceWhyAppearedDisclosureState
               ProofSurfaceWhyAppearedCopy.linkLabel,
               style: helperStyle.copyWith(
                 decoration: TextDecoration.underline,
-                decorationColor: AppColors.textSecondary.withValues(alpha: 0.45),
+                decorationColor: AppColors.textSecondary.withValues(
+                  alpha: 0.45,
+                ),
               ),
             ),
           ),

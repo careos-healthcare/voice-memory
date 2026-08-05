@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
-import 'package:voicememory_mobile/router/legacy_route_aliases.dart';
 import 'package:voicememory_mobile/router/route_catalog.dart';
 
 void main() {
@@ -14,13 +13,11 @@ void main() {
       '/account',
     ]);
     expect(RouteCatalog.primaryRoutes, hasLength(4));
-    expect(RouteCatalog.primaryRoutes, isNot(contains(RouteCatalog.graphHome)));
-    expect(RouteCatalog.graphHome, '/life-os/graph');
   });
 
   test('every retired deep link uses the shared compatibility registry', () {
     expect(
-      LegacyRouteAliases.redirects.keys,
+      DeveloperRouteGuard.legacyRedirects.keys,
       containsAll({
         '/memory',
         '/discover',
@@ -28,10 +25,9 @@ void main() {
         '/search',
         '/discover-changes',
         '/archive-detail',
-        '/discover-yourself',
       }),
     );
-    for (final alias in LegacyRouteAliases.redirects.entries) {
+    for (final alias in DeveloperRouteGuard.legacyRedirects.entries) {
       expect(alias.value, RouteCatalog.archiveHome, reason: alias.key);
       expect(
         DeveloperRouteGuard.redirectFor('${alias.key}?source=old-build'),
@@ -49,7 +45,7 @@ void main() {
 
   test('retired paths are not declared as GoRouter records', () {
     final router = File('lib/router/app_router.dart').readAsStringSync();
-    for (final path in LegacyRouteAliases.redirects.keys) {
+    for (final path in DeveloperRouteGuard.legacyRedirects.keys) {
       expect(router.contains("'$path'"), isFalse, reason: path);
     }
   });
@@ -68,10 +64,5 @@ void main() {
       router.indexOf('const startPaths'),
     );
     expect(onboardingPaths, isNot(contains('/cold-start/seed')));
-    expect(
-      router,
-      contains("path: '/cold-start/seed'"),
-      reason: 'optional context remains reachable from post-save and Settings',
-    );
   });
 }

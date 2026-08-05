@@ -98,6 +98,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     });
   }
 
+  JournalEntry? get _lastSavedEntry =>
+      _entriesAfterSave.isNotEmpty ? _entriesAfterSave.first : null;
+
   bool get _auditDegradedVoicePostSave {
     if (!VisualAuditOverrides.active) return false;
     return VisualAuditOverrides.peekRecordPresentation()
@@ -138,39 +141,28 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       if (!recordingExists ||
           await result.file.length() < VoiceCaptureQuality.minAudioBytes) {
         if (recordingExists) {
-          final vault = AppServices.instance.journalAudioVault;
-          if (vault != null) {
-            await vault.secureDeletePlaintext(result.file);
-          } else {
-            await result.file.delete();
-          }
+          await result.file.delete();
         }
         throw CapturePipelineFailure(VoiceCaptureCopy.notEnoughAudio);
       }
-      _setRecordingState(() => _stageLabel = 'Saving audio safely…');
-      final job = await AppServices.instance.transcriptionLedger.enqueue(
-        result.file,
+      final pipelineResult = await AppServices.instance.pipeline.run(
+        audioFile: result.file,
         durationSeconds: result.durationSeconds,
+        onStage: (stage) {
+          if (!mounted) return;
+          _setRecordingState(() {
+            _stageLabel = switch (stage) {
+              PipelineStage.attesting => 'Uploading audio…',
+              PipelineStage.transcribing => 'Transcribing…',
+              PipelineStage.analyzing => 'Finding patterns…',
+              PipelineStage.saving => 'Saving…',
+              PipelineStage.done => 'Done',
+            };
+          });
+        },
       );
-      _pendingForegroundEntryIds.add(job.entryId);
-      _pendingForegroundMedia[job.entryId] = List.of(_captureAttachments);
       if (!mounted) return;
-      _setRecordingState(() {
-        _captureAttachments = const [];
-        _ui = RecordUiState.ready;
-        _recordingState.resetTimer();
-        _stageLabel = '';
-        _error = null;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            appLocalizationsOf(context).recordingSavedBackgroundTranscription,
-          ),
-        ),
-      );
-      unawaited(AppServices.instance.transcriptionQueueExecutor.drain());
-      unawaited(AppServices.instance.transcriptionWorkScheduler.schedule());
+      await _finishSuccessfulCapture(pipelineResult);
     } on CapturePipelineFailure catch (e) {
       if (e.message == VoiceCaptureCopy.notEnoughAudio) {
         _setRecordingState(() {
@@ -206,39 +198,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     }
   }
 
-  Future<void> _handleForegroundTranscriptionCompletion(
-    TranscriptionQueueCompletion completion,
-  ) async {
-    if (!_pendingForegroundEntryIds.remove(completion.job.entryId) ||
-        !mounted) {
-      return;
-    }
-    final attachments = _pendingForegroundMedia.remove(completion.job.entryId);
-    if (_ui != RecordUiState.ready) {
-      if (attachments?.isNotEmpty == true) {
-        await AppServices.instance.journalStore.save(
-          completion.result.entry.copyWith(
-            mediaAttachments: [
-              ...completion.result.entry.mediaAttachments,
-              ...attachments!,
-            ],
-          ),
-          first25Source: 'record_media_attachment',
-        );
-      }
-      await _loadJournalEntryCount();
-      return;
-    }
-    await _finishSuccessfulCapture(
-      completion.result,
-      mediaAttachments: attachments,
-    );
-  }
-
   Future<void> _finishSuccessfulCapture(
-    CapturePipelineResult pipelineResult, {
-    List<MediaAttachment>? mediaAttachments,
-  }) async {
+    CapturePipelineResult pipelineResult,
+  ) async {
     final savedFromTriggerPrompt = ConfirmedRepeatTriggerCapture.resolveSave(
       capturePrompt: _selectedPromptLine,
     );
@@ -248,27 +210,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
             capturePrompt: _selectedPromptLine,
           );
     final cloudOk = pipelineResult.syncSucceeded;
-    var savedEntry = pipelineResult.entry;
-    final pendingAttachments = List<MediaAttachment>.of(
-      mediaAttachments ?? _captureAttachments,
-    );
-    if (pendingAttachments.isNotEmpty) {
-      savedEntry = savedEntry.copyWith(
-        mediaAttachments: [
-          ...savedEntry.mediaAttachments,
-          ...pendingAttachments,
-        ],
-      );
-      await AppServices.instance.journalStore.save(
-        savedEntry,
-        first25Source: 'record_media_attachment',
-      );
-      if (mediaAttachments == null && mounted) {
-        _setRecordingState(() => _captureAttachments = const []);
-      } else if (mediaAttachments == null) {
-        _captureAttachments = const [];
-      }
-    }
+    final savedEntry = pipelineResult.entry;
     final all = await AppServices.instance.journal.loadAll();
     final hasSavedTranscript = VoiceCaptureQuality.hasUsableSpokenText(
       savedEntry,
@@ -505,11 +447,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
       );
-      if (firstPattern != null) {
-        await FirstLoopActivationCoordinator.markFirstPatternShown(
-          firstPattern.title,
-        );
-      }
+      await FirstLoopActivationCoordinator.markFirstPatternShown(
+        firstPattern.title,
+      );
     }
 
     ReturnComparison? comparison;

@@ -4,21 +4,81 @@ import 'package:crypto/crypto.dart';
 
 import '../../models/reflection.dart';
 import 'evidence_verifier.dart';
+import 'proof_admission_cache.dart';
 import 'proof_admission_models.dart';
 import 'proof_candidate.dart';
 import 'proof_candidate_scorer.dart';
+import 'proof_fingerprints.dart';
 
-abstract interface class ProofCorrectionAdmissionPolicy {
-  bool suppresses({
-    required String archiveScope,
-    required String proofFingerprint,
-    required String semanticFramingFingerprint,
+/// Everything the correction memory needs to judge one candidate proof.
+class ProofCorrectionQuery {
+  const ProofCorrectionQuery({
+    required this.archiveScope,
+    required this.proofFingerprint,
+    required this.semanticFramingFingerprint,
+    required this.wordingFingerprint,
+    required this.evidenceSourceIds,
   });
 
-  int positiveHistory(String semanticFramingFingerprint);
-  int negativeHistory(String semanticFramingFingerprint);
-  int wordingRejectionHistory(String wordingFingerprint);
-  int evidenceRejectionHistory(String proofFingerprint);
+  final String archiveScope;
+  final String proofFingerprint;
+  final String semanticFramingFingerprint;
+  final String wordingFingerprint;
+
+  /// Distinct verified sources behind the candidate. Used to decide whether
+  /// materially new evidence has appeared since a rejection.
+  final Set<String> evidenceSourceIds;
+}
+
+/// How correction memory changes the admission of one candidate.
+class ProofCorrectionDecision {
+  const ProofCorrectionDecision({
+    this.suppressed = false,
+    this.suppressionReason,
+    this.disallowedEvidenceSourceIds = const {},
+    this.confidenceCap,
+    this.preferredWording,
+  });
+
+  static const ProofCorrectionDecision none = ProofCorrectionDecision();
+
+  final bool suppressed;
+  final String? suppressionReason;
+
+  /// Citations the user marked as wrong evidence. They are removed before the
+  /// claim thresholds are re-checked, so a proof that only held together
+  /// because of disputed evidence stops being admissible.
+  final Set<String> disallowedEvidenceSourceIds;
+
+  /// Set by "Partly right": the relationship may fit, but it cannot present as
+  /// settled until materially stronger evidence appears.
+  final ProofConfidenceBand? confidenceCap;
+
+  /// A label the user supplied through "Wrong wording". It renames the proof
+  /// and is never treated as evidence for it.
+  final String? preferredWording;
+}
+
+abstract interface class ProofCorrectionAdmissionPolicy {
+  ProofCorrectionDecision decide(ProofCorrectionQuery query);
+
+  /// Correction history that may influence soft scoring.
+  ///
+  /// The archive scope is part of the key, not ambient state: one archive's
+  /// feedback must never move the confidence of a proof in another.
+  int positiveHistory(
+    String semanticFramingFingerprint, {
+    String? archiveScope,
+  });
+  int negativeHistory(
+    String semanticFramingFingerprint, {
+    String? archiveScope,
+  });
+  int wordingRejectionHistory(
+    String wordingFingerprint, {
+    String? archiveScope,
+  });
+  int evidenceRejectionHistory(String proofFingerprint, {String? archiveScope});
 }
 
 class NoProofCorrectionAdmissionPolicy
@@ -26,23 +86,32 @@ class NoProofCorrectionAdmissionPolicy
   const NoProofCorrectionAdmissionPolicy();
 
   @override
-  int evidenceRejectionHistory(String proofFingerprint) => 0;
+  ProofCorrectionDecision decide(ProofCorrectionQuery query) =>
+      ProofCorrectionDecision.none;
 
   @override
-  int negativeHistory(String semanticFramingFingerprint) => 0;
+  int evidenceRejectionHistory(
+    String proofFingerprint, {
+    String? archiveScope,
+  }) => 0;
 
   @override
-  int positiveHistory(String semanticFramingFingerprint) => 0;
+  int negativeHistory(
+    String semanticFramingFingerprint, {
+    String? archiveScope,
+  }) => 0;
 
   @override
-  bool suppresses({
-    required String archiveScope,
-    required String proofFingerprint,
-    required String semanticFramingFingerprint,
-  }) => false;
+  int positiveHistory(
+    String semanticFramingFingerprint, {
+    String? archiveScope,
+  }) => 0;
 
   @override
-  int wordingRejectionHistory(String wordingFingerprint) => 0;
+  int wordingRejectionHistory(
+    String wordingFingerprint, {
+    String? archiveScope,
+  }) => 0;
 }
 
 class CanonicalProofAdmissionService {
@@ -53,6 +122,8 @@ class CanonicalProofAdmissionService {
         const NoProofCorrectionAdmissionPolicy(),
     DateTime Function()? clock,
     ProofCandidateScorer? scorer,
+    ProofQualityCalculator qualityCalculator = const ProofQualityCalculator(),
+    ProofAdmissionCache? cache,
     // Private fields cannot be named initializing formals, so the analyzer's
     // suggestion does not apply here.
     // ignore: prefer_initializing_formals
@@ -60,12 +131,17 @@ class CanonicalProofAdmissionService {
        // ignore: prefer_initializing_formals
        _correctionPolicy = correctionPolicy,
        _clock = clock ?? DateTime.now,
-       _scorer = scorer ?? ProofCandidateScorer();
+       _scorer = scorer ?? ProofCandidateScorer(),
+       // ignore: prefer_initializing_formals
+       _qualityCalculator = qualityCalculator,
+       _cache = cache ?? ProofAdmissionCache();
 
   final CanonicalEvidenceVerifier _evidenceVerifier;
   final ProofCorrectionAdmissionPolicy _correctionPolicy;
   final DateTime Function() _clock;
   final ProofCandidateScorer _scorer;
+  final ProofQualityCalculator _qualityCalculator;
+  final ProofAdmissionCache _cache;
 
   ProofAdmissionResult admit({
     required RawModelResponse raw,
@@ -94,13 +170,9 @@ class CanonicalProofAdmissionService {
     final missingEvidence = <ProofClaimKind>[];
 
     for (final claim in candidate.claims) {
+      // Causal language is never admissible under the product contract, so it is
+      // dropped as an unsupported claim before any evidence work is attempted.
       if (claim.kind == ProofClaimKind.causalRelationship) {
-        if (claim.kind == ProofClaimKind.mainObservation) {
-          return const ProofNotAdmitted(
-            ProofAdmissionOutcome.rejected,
-            reason: 'causal_claim_prohibited',
-          );
-        }
         missingEvidence.add(claim.kind);
         continue;
       }
@@ -154,6 +226,57 @@ class CanonicalProofAdmissionService {
         reason: 'main_observation_not_supported',
       );
     }
+
+    final statement = admittedClaims
+        .firstWhere((claim) => claim.kind == ProofClaimKind.mainObservation)
+        .text;
+    final semanticFingerprint = ProofFingerprints.semanticFraming(
+      statement: statement,
+      proofType: _provisionalProofType(admittedClaims).name,
+    );
+    final wordingFingerprint = ProofFingerprints.wording(statement);
+    final decision = _correctionPolicy.decide(
+      ProofCorrectionQuery(
+        archiveScope: activeArchiveScope,
+        proofFingerprint: _evidenceFingerprint(
+          candidate.candidateId,
+          admittedClaims,
+        ),
+        semanticFramingFingerprint: semanticFingerprint,
+        wordingFingerprint: wordingFingerprint,
+        evidenceSourceIds: admittedClaims
+            .expand((claim) => claim.evidence)
+            .map((item) => item.sourceEntryId)
+            .toSet(),
+      ),
+    );
+    if (decision.suppressed) {
+      return ProofNotAdmitted(
+        ProofAdmissionOutcome.correctionSuppressed,
+        reason: decision.suppressionReason ?? 'correction_policy_suppressed',
+      );
+    }
+
+    // Evidence the user disputed is removed and the claim thresholds are then
+    // re-checked, so a proof that only held together because of that evidence
+    // stops being admissible rather than quietly shrinking.
+    if (decision.disallowedEvidenceSourceIds.isNotEmpty) {
+      final revalidated = _withoutDisallowedEvidence(
+        admittedClaims,
+        decision.disallowedEvidenceSourceIds,
+        missingEvidence,
+      );
+      if (revalidated == null) {
+        return const ProofNotAdmitted(
+          ProofAdmissionOutcome.insufficientEvidence,
+          reason: 'remaining_evidence_insufficient_after_correction',
+        );
+      }
+      admittedClaims
+        ..clear()
+        ..addAll(revalidated);
+    }
+
     final allEvidence = admittedClaims
         .expand((claim) => claim.evidence)
         .toList();
@@ -170,41 +293,29 @@ class CanonicalProofAdmissionService {
       );
     }
 
-    final proofFingerprint = _fingerprint(
-      '${candidate.candidateId}|${allEvidence.map((item) => '${item.sourceEntryId}:${item.transcriptRevision}:${item.startUtf16}:${item.endUtf16}').join('|')}',
+    final proofFingerprint = _evidenceFingerprint(
+      candidate.candidateId,
+      admittedClaims,
     );
-    final semanticFingerprint = _fingerprint(
-      admittedClaims.map((claim) => claim.kind.name).join('|'),
-    );
-    final wordingFingerprint = _fingerprint(
-      admittedClaims.map((claim) => claim.text).join('|'),
-    );
-    if (_correctionPolicy.suppresses(
-      archiveScope: activeArchiveScope,
-      proofFingerprint: proofFingerprint,
-      semanticFramingFingerprint: semanticFingerprint,
-    )) {
-      return const ProofNotAdmitted(
-        ProofAdmissionOutcome.correctionSuppressed,
-        reason: 'correction_policy_suppressed',
-      );
-    }
-
     final distinctSources = allEvidence
         .map((item) => item.sourceEntryId)
         .toSet()
         .length;
     final positiveHistory = _correctionPolicy.positiveHistory(
       semanticFingerprint,
+      archiveScope: activeArchiveScope,
     );
     final negativeHistory = _correctionPolicy.negativeHistory(
       semanticFingerprint,
+      archiveScope: activeArchiveScope,
     );
     final wordingRejectionHistory = _correctionPolicy.wordingRejectionHistory(
       wordingFingerprint,
+      archiveScope: activeArchiveScope,
     );
     final evidenceRejectionHistory = _correctionPolicy.evidenceRejectionHistory(
       proofFingerprint,
+      archiveScope: activeArchiveScope,
     );
     final confidence = _confidence(
       candidateId: candidate.candidateId,
@@ -225,6 +336,7 @@ class CanonicalProofAdmissionService {
         reason: 'confidence_below_surface_threshold',
       );
     }
+    final cappedConfidence = _cap(confidence, decision.confidenceCap);
 
     allEvidence.sort((a, b) => a.sourceDate.compareTo(b.sourceDate));
     final admittedKinds = admittedClaims.map((claim) => claim.kind).toSet();
@@ -252,24 +364,15 @@ class CanonicalProofAdmissionService {
       ownerScope: activeOwnerScope,
       reflection: verifiedReflection,
       claims: List.unmodifiable(admittedClaims),
-      confidenceBand: confidence,
-      qualityReceipt: ProofQualityReceipt(
-        repeatFrequency: distinctSources,
-        trend: admittedKinds.contains(ProofClaimKind.trend)
-            ? 'supported'
-            : 'not_established',
-        confidenceBand: confidence,
-        counterexamples: allEvidence
-            .where((item) => item.role == ProofEvidenceRole.counterexample)
-            .length,
-        missingEvidence: List.unmodifiable(missingEvidence),
-        strengthOverTime: admittedKinds.contains(ProofClaimKind.strength)
-            ? 'comparable_windows_supported'
-            : 'not_established',
-        firstOccurrence: allEvidence.first.sourceDate,
-        lastOccurrence: allEvidence.last.sourceDate,
-        contradictions: contradictions,
-      ),
+      confidenceBand: cappedConfidence,
+      qualityReceipt: _qualityCalculator
+          .build(
+            claims: admittedClaims,
+            confidenceBand: cappedConfidence,
+            unsupportedClaims: missingEvidence.toSet(),
+            now: now,
+          )
+          .withUserConfirmedWording(decision.preferredWording),
       verifiedAt: now,
       sourceRevisionFingerprint: _fingerprint(
         allEvidence
@@ -319,8 +422,13 @@ class CanonicalProofAdmissionService {
           reason: 'proof_source_scope_changed',
         );
       }
+      // Cached because this recomputes a hash of the whole transcript for every
+      // citation, on every rebuild of the surface showing the proof. The cache
+      // compares the transcript itself before reusing a fingerprint, so an edit
+      // still reads as stale.
       if (source.transcriptRevision != evidence.transcriptRevision ||
-          _fingerprint(source.transcript) != evidence.transcriptFingerprint) {
+          _cache.revisionFor(source).transcriptFingerprint !=
+              evidence.transcriptFingerprint) {
         return const ProofNotAdmitted(
           ProofAdmissionOutcome.stale,
           reason: 'proof_source_revision_changed',
@@ -451,6 +559,74 @@ class CanonicalProofAdmissionService {
       citations: citations,
     );
   }
+
+  /// The proof type as it looks before correction memory runs. It only feeds the
+  /// framing fingerprint, so a rejected observation and a rejected repeat about
+  /// the same subject stay distinguishable.
+  ProofType _provisionalProofType(List<VerifiedProofClaim> claims) {
+    final kinds = claims.map((claim) => claim.kind).toSet();
+    if (kinds.contains(ProofClaimKind.directionOfChange)) {
+      return ProofType.change;
+    }
+    if (kinds.contains(ProofClaimKind.repeated)) {
+      return ProofType.repeatedSignal;
+    }
+    return ProofType.currentObservation;
+  }
+
+  String _evidenceFingerprint(
+    String candidateId,
+    List<VerifiedProofClaim> claims,
+  ) {
+    final citations =
+        claims
+            .expand((claim) => claim.evidence)
+            .map(
+              (item) =>
+                  '${item.sourceEntryId}:${item.transcriptRevision}:${item.startUtf16}:${item.endUtf16}',
+            )
+            .toList()
+          ..sort();
+    return _fingerprint('$candidateId|${citations.join('|')}');
+  }
+
+  /// Returns null when the remaining evidence no longer supports the proof.
+  List<VerifiedProofClaim>? _withoutDisallowedEvidence(
+    List<VerifiedProofClaim> claims,
+    Set<String> disallowed,
+    List<ProofClaimKind> unsupported,
+  ) {
+    final kept = <VerifiedProofClaim>[];
+    for (final claim in claims) {
+      final evidence = claim.evidence
+          .where((item) => !disallowed.contains(item.sourceEntryId))
+          .toList();
+      final failure = evidence.isEmpty
+          ? 'no_remaining_evidence'
+          : _claimAdmissionFailure(claim.kind, evidence);
+      if (failure != null) {
+        if (claim.kind == ProofClaimKind.mainObservation) return null;
+        unsupported.add(claim.kind);
+        continue;
+      }
+      kept.add(
+        VerifiedProofClaim(
+          claimId: claim.claimId,
+          kind: claim.kind,
+          text: claim.text,
+          evidence: evidence,
+        ),
+      );
+    }
+    return kept.any((claim) => claim.kind == ProofClaimKind.mainObservation)
+        ? kept
+        : null;
+  }
+
+  static ProofConfidenceBand _cap(
+    ProofConfidenceBand band,
+    ProofConfidenceBand? cap,
+  ) => cap == null || band.index <= cap.index ? band : cap;
 
   String? _claimAdmissionFailure(
     ProofClaimKind kind,

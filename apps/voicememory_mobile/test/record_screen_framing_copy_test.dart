@@ -192,10 +192,7 @@ void _expectNoBannedFirstImpressionCopy(WidgetTester tester) {
 
 void main() {
   setUpAll(installMockAudioplayers);
-  tearDownAll(() async {
-    await AppServices.disposeForTest();
-    uninstallMockAudioplayers();
-  });
+  tearDownAll(uninstallMockAudioplayers);
 
   group('RecordScreenFramingCopy', () {
     test('uses concrete first-recording guidance', () {

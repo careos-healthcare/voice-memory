@@ -10,7 +10,6 @@ export '../features/voice_capture/record_microphone_permission_ui.dart'
 part '../features/recording/recording_state_controller.dart';
 part '../features/recording/recording_audio_visualizer.dart';
 part '../features/recording/recording_transcription_view.dart';
-part '../features/recording/recording_metadata_sheet.dart';
 
 void _recordLog(String message) {
   debugPrint('RECORD: $message');
@@ -43,13 +42,10 @@ class RecordScreen extends StatefulWidget {
     this.purchaseIntentStore,
     this.inviteAttributionStore,
     this.paywallPresenter,
-    this.subscriptionService,
     this.liveVoiceCapture,
     this.microphonePermissionGateway,
     this.onboardingMicStateStore,
     this.openAppSettings,
-    this.encryptedImageEngine,
-    this.mediaPicker,
     this.navigationActivityController,
   });
 
@@ -76,7 +72,6 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live RevenueCat UI presenter.
   final RevenueCatPaywallPresenter? paywallPresenter;
-  final SubscriptionService? subscriptionService;
 
   /// Injectable live voice service; defaults from [AppServices] when enabled.
   final LiveVoiceCaptureService? liveVoiceCapture;
@@ -89,10 +84,6 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable settings launcher; defaults to permission_handler.
   final Future<bool> Function()? openAppSettings;
-
-  /// Injectable encrypted media boundaries; production falls back to AppServices.
-  final EncryptedImageEngine? encryptedImageEngine;
-  final MediaPickerGateway? mediaPicker;
 
   /// Shared with the primary shell to prevent hidden active capture.
   final RecordNavigationActivityController? navigationActivityController;

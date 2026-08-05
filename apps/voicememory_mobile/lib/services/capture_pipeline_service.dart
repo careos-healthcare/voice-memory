@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:uuid/uuid.dart';
 
 import '../api/api_exceptions.dart';
 import '../features/timeline/timeline_entry_display.dart';
+import '../features/proof_admission/proof_admission_analytics.dart';
 import '../features/proof_admission/proof_admission_models.dart';
 import '../features/proof_admission/proof_admission_service.dart';
+import '../features/proof_admission/proof_display_gate.dart';
+import '../features/proof_admission/related_source_resolver.dart';
 import '../features/proof_admission/archive_correction_store.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
 import '../features/voice_capture/transcription/transcription_log.dart';
@@ -24,6 +28,7 @@ import '../storage/journal_store.dart';
 import 'capture_attest_service.dart';
 import 'capture_save_messages.dart';
 import '../api/api_client.dart';
+import 'product_analytics.dart';
 import 'record_pipeline_log.dart';
 
 class CapturePipelineFailure implements Exception {
@@ -74,6 +79,11 @@ class CapturePipelineService {
   final CaptureAttestService _attest;
   final JournalStore _journalStore;
   final ApiUsageGuard _usageGuard;
+  /// Kept in step with [ProofDisplayGate]'s defaults: a proof admitted under
+  /// one scope and revalidated under another is discarded at display time.
+  static const String _archiveScope = ProofDisplayGate.defaultArchiveScope;
+  static const String _ownerScope = ProofDisplayGate.defaultOwnerScope;
+
   final _uuid = const Uuid();
   final CanonicalProofAdmissionService _proofAdmission =
       CanonicalProofAdmissionService(
@@ -984,16 +994,16 @@ class CapturePipelineService {
       sourceEntries: [
         ProofSourceEntry(
           entryId: entryId,
-          archiveScope: 'local_archive_v1',
-          ownerScope: 'local_owner_v1',
+          archiveScope: _archiveScope,
+          ownerScope: _ownerScope,
           transcript: trimmed,
           transcriptRevision: revision,
           createdAt: raw.receivedAt,
           sourceType: ProofSourceType.userVoiceTranscript,
         ),
       ],
-      activeArchiveScope: 'local_archive_v1',
-      activeOwnerScope: 'local_owner_v1',
+      activeArchiveScope: _archiveScope,
+      activeOwnerScope: _ownerScope,
       primarySourceEntryId: entryId,
     );
     if (admission is! ProofAdmitted) {
@@ -1072,28 +1082,76 @@ class CapturePipelineService {
       captureToken: captureToken,
       idempotencyKey: idempotencyKey,
     );
+    final startedAt = DateTime.now();
+    final subject = ProofSourceEntry(
+      entryId: entryId,
+      archiveScope: _archiveScope,
+      ownerScope: _ownerScope,
+      transcript: transcript,
+      transcriptRevision: revision,
+      createdAt: raw.receivedAt,
+      sourceType: sourceType,
+    );
     final result = _proofAdmission.admit(
       raw: raw,
-      sourceEntries: [
-        ProofSourceEntry(
-          entryId: entryId,
-          archiveScope: 'local_archive_v1',
-          ownerScope: 'local_owner_v1',
-          transcript: transcript,
-          transcriptRevision: revision,
-          createdAt: raw.receivedAt,
-          sourceType: sourceType,
-        ),
-      ],
-      activeArchiveScope: 'local_archive_v1',
-      activeOwnerScope: 'local_owner_v1',
+      sourceEntries: [subject, ...await _relatedSources(subject)],
+      activeArchiveScope: _archiveScope,
+      activeOwnerScope: _ownerScope,
       primarySourceEntryId: entryId,
     );
-    if (result case ProofAdmitted(:final proof)) return proof;
+    final admitted = result is ProofAdmitted ? result.proof : null;
+    unawaited(
+      ProductAnalytics.track(
+        ProofAdmissionAnalytics.eventName,
+        parameters: ProofAdmissionAnalytics.payload(
+          result: result,
+          distinctSourceCount:
+              admitted?.qualityReceipt.frequency.distinctMoments ?? 0,
+          contradictionCount:
+              admitted?.qualityReceipt.contradictions.length ?? 0,
+          duration: DateTime.now().difference(startedAt),
+        ),
+      ),
+    );
+    if (admitted != null) return admitted;
     final rejected = result as ProofNotAdmitted;
     throw FormatException(
       'Analysis was not admitted (${rejected.outcome.name}:${rejected.reason}).',
     );
+  }
+
+  /// The earlier moments offered alongside [subject] for this admission.
+  ///
+  /// Without these the pipeline only ever sees the entry just saved, so every
+  /// claim needing two distinct sources — a repeat, a change — fails its source
+  /// minimum and the archive can produce nothing but single-moment
+  /// observations. Supplying candidates does not make a claim provable: the
+  /// verifier still has to find its exact quotes inside them.
+  ///
+  /// Failure here is deliberately silent. Related sources widen what *may* be
+  /// proved; losing them costs a possible repeat, never the saved original, so
+  /// a read failure must not take the admission down with it.
+  Future<List<ProofSourceEntry>> _relatedSources(
+    ProofSourceEntry subject,
+  ) async {
+    try {
+      final archive = await _journalStore.loadAll();
+      final resolver = RelatedSourceResolver(
+        archiveScope: _archiveScope,
+        ownerScope: _ownerScope,
+      )..sync(archive);
+      // The entry being saved is usually not in the journal yet, so it has to
+      // be indexed explicitly or it would have no terms to match against.
+      resolver.index.upsertEntry(subject);
+      return resolver.index
+          .relatedSources(subject.entryId)
+          .map((id) => archive.where((entry) => entry.id == id).firstOrNull)
+          .whereType<JournalEntry>()
+          .map(resolver.sourceFor)
+          .toList();
+    } catch (_) {
+      return const [];
+    }
   }
 
   int _estimatedDurationSeconds(String transcript) {

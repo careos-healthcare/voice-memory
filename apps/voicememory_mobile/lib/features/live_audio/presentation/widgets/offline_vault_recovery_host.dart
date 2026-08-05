@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../services/app_services.dart';
+import '../../../../services/app_services.dart';
 import '../offline_vault_recovery_launch_controller.dart';
 
 /// Prompts for pending offline vault recovery after startup and on app resume.

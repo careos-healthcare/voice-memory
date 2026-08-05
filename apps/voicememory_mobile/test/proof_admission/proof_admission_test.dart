@@ -233,8 +233,14 @@ void main() {
       expect(proof.reflection.repeatedSignal, isEmpty);
       expect(proof.reflection.nextSmallAction, isNull);
       expect(proof.confidenceBand, ProofConfidenceBand.medium);
-      expect(proof.qualityReceipt.repeatFrequency, 1);
-      expect(proof.qualityReceipt.missingEvidence, isEmpty);
+      expect(proof.qualityReceipt.frequency.distinctMoments, 1);
+      expect(proof.qualityReceipt.frequency.established, isFalse);
+      expect(proof.qualityReceipt.proofType, ProofType.currentObservation);
+      expect(proof.qualityReceipt.unsupportedClaims, isEmpty);
+      expect(
+        proof.qualityReceipt.missingEvidence,
+        contains(MissingEvidenceReason.needsAnotherDistinctSource),
+      );
       expect(proof.claims.single.kind, ProofClaimKind.mainObservation);
     });
 
@@ -292,7 +298,7 @@ void main() {
         isNot(contains(ProofClaimKind.trend)),
       );
       expect(
-        result.proof.qualityReceipt.missingEvidence,
+        result.proof.qualityReceipt.unsupportedClaims,
         contains(ProofClaimKind.trend),
       );
     });
@@ -346,7 +352,7 @@ void main() {
         restored.qualityReceipt.confidenceBand,
         ProofConfidenceBand.medium,
       );
-      expect(view.observation, contains('agreeing'));
+      expect(view.statement, contains('agreeing'));
       expect(
         jsonEncode(view.evidence.first.quote),
         isNot(contains('revision-')),
@@ -408,16 +414,17 @@ void main() {
     test('clearing the local archive removes correction memory', () async {
       ArchiveCorrectionStore.resetForTest();
       final source = _source();
-      ProofAdmissionResult admit() => CanonicalProofAdmissionService(
-        correctionPolicy: ArchiveCorrectionStore.instance,
-        clock: () => DateTime.utc(2026, 7, 2),
-      ).admit(
-        raw: _legacyRaw(),
-        sourceEntries: [source],
-        activeArchiveScope: _archive,
-        activeOwnerScope: _owner,
-        primarySourceEntryId: source.entryId,
-      );
+      ProofAdmissionResult admit() =>
+          CanonicalProofAdmissionService(
+            correctionPolicy: ArchiveCorrectionStore.instance,
+            clock: () => DateTime.utc(2026, 7, 2),
+          ).admit(
+            raw: _legacyRaw(),
+            sourceEntries: [source],
+            activeArchiveScope: _archive,
+            activeOwnerScope: _owner,
+            primarySourceEntryId: source.entryId,
+          );
 
       await ArchiveCorrectionStore.instance.recordForProof(
         proof: (admit() as ProofAdmitted).proof,

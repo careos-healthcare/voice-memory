@@ -33,16 +33,108 @@ void main() {
       expect(find.text(label), findsOneWidget);
     }
 
-    await tester.tap(find.text('Wrong evidence'));
+    await tester.tap(find.text('Partly right'));
     await tester.pump();
     expect(find.byKey(const Key('proof_correction_saved')), findsOneWidget);
     expect(ArchiveCorrectionStore.instance.records, hasLength(1));
     expect(
       ArchiveCorrectionStore.instance.records.single.choice,
-      ArchiveCorrectionChoice.wrongEvidence,
+      ArchiveCorrectionChoice.partlyRight,
     );
   });
+
+  testWidgets('ignore forever cannot be committed by a single tap', (
+    tester,
+  ) async {
+    ArchiveCorrectionStore.resetForTest();
+    await _pumpControls(tester);
+
+    await tester.tap(find.text('Ignore forever'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('proof_correction_ignore_confirm')),
+      findsOneWidget,
+    );
+    expect(ArchiveCorrectionStore.instance.records, isEmpty);
+
+    await tester.tap(find.byKey(const Key('proof_correction_ignore_cancel')));
+    await tester.pumpAndSettle();
+
+    expect(
+      ArchiveCorrectionStore.instance.records,
+      isEmpty,
+      reason: 'cancelling must leave no durable suppression behind',
+    );
+  });
+
+  testWidgets('confirming ignore forever records the suppression', (
+    tester,
+  ) async {
+    ArchiveCorrectionStore.resetForTest();
+    await _pumpControls(tester);
+
+    await tester.tap(find.text('Ignore forever'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('proof_correction_ignore_accept')));
+    await tester.pumpAndSettle();
+
+    expect(
+      ArchiveCorrectionStore.instance.records.single.choice,
+      ArchiveCorrectionChoice.ignoreForever,
+    );
+  });
+
+  testWidgets('wrong evidence records only the citations the user named', (
+    tester,
+  ) async {
+    ArchiveCorrectionStore.resetForTest();
+    await _pumpControls(tester);
+
+    await tester.tap(find.text('Wrong evidence'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('proof_correction_evidence_picker')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const Key('proof_correction_evidence_entry-1')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('proof_correction_evidence_save')));
+    await tester.pumpAndSettle();
+
+    final saved = ArchiveCorrectionStore.instance.records.single;
+    expect(saved.choice, ArchiveCorrectionChoice.wrongEvidence);
+    expect(saved.disputedEvidenceRefs, ['entry-1']);
+  });
+
+  testWidgets('backing out of the evidence picker saves nothing', (
+    tester,
+  ) async {
+    ArchiveCorrectionStore.resetForTest();
+    await _pumpControls(tester);
+
+    await tester.tap(find.text('Wrong evidence'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('proof_correction_evidence_cancel')));
+    await tester.pumpAndSettle();
+
+    expect(ArchiveCorrectionStore.instance.records, isEmpty);
+  });
 }
+
+Future<void> _pumpControls(WidgetTester tester) => tester.pumpWidget(
+  MaterialApp(
+    home: Scaffold(
+      body: VerifiedProofCorrectionControls(
+        proof: _proof(),
+        sourceSurface: 'test_surface',
+      ),
+    ),
+  ),
+);
 
 VerifiedProof _proof() {
   final at = DateTime.utc(2026, 8, 4);
@@ -83,15 +175,22 @@ VerifiedProof _proof() {
     ],
     confidenceBand: ProofConfidenceBand.medium,
     qualityReceipt: ProofQualityReceipt(
-      repeatFrequency: 1,
-      trend: 'not_established',
+      proofType: ProofType.currentObservation,
       confidenceBand: ProofConfidenceBand.medium,
-      counterexamples: 0,
+      frequency: ProofFrequency(
+        distinctMoments: 1,
+        windowStart: at,
+        windowEnd: at,
+      ),
+      trend: ProofTrend.insufficientEvidence,
+      strengthOverTime: ProofStrengthOverTime.insufficientEvidence,
+      supportingEvidence: [evidence],
+      counterexamples: const [],
+      contradictions: const [],
       missingEvidence: const [],
-      strengthOverTime: 'not_established',
       firstOccurrence: at,
       lastOccurrence: at,
-      contradictions: 0,
+      generatedAt: at,
     ),
     verifiedAt: at,
     sourceRevisionFingerprint: 'source-revision-fingerprint',

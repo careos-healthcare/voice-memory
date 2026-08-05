@@ -9,8 +9,6 @@ import '../screens/belief_changes_screen.dart';
 import '../screens/belief_evidence_screen.dart';
 import '../screens/weekly_archive_review_screen.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
-import '../features/onboarding_future_value/future_preview_screen.dart';
-import '../features/onboarding_future_value/onboarding_future_value_copy.dart';
 import '../screens/beliefs_screen.dart';
 import '../screens/belief_detail_screen.dart';
 import '../screens/weekly_story_screen.dart';
@@ -68,11 +66,9 @@ import '../screens/key_moment_detail_screen.dart';
 import '../screens/archive_compression_screen.dart';
 import '../screens/pattern_profile_screen.dart';
 import '../screens/pattern_map_screen.dart';
-import '../screens/pattern_recognition_dashboard_screen.dart';
 import '../screens/archive_evolution_timeline_screen.dart';
 import '../screens/archive_range_review_screen.dart';
 import '../screens/ask_archive_screen.dart';
-import '../screens/archive_semantic_search_screen.dart';
 import '../features/moments/key_moment_model.dart';
 import '../features/objective/objective_widget_pending_route_store.dart';
 import '../screens/archive_belief_screen.dart';
@@ -87,9 +83,6 @@ import '../features/archive_change_feed/archive_change_feed_models.dart';
 import '../features/archive_surprises/archive_surprises_models.dart';
 import '../features/belief_lifecycle/belief_lifecycle_models.dart';
 import '../screens/archive_tool_screen.dart';
-import '../screens/archive_tools_screen.dart';
-import '../screens/life_os_screen.dart';
-import '../ui/screens/life_os/life_os_graph_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/loop_start_screen.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
@@ -110,7 +103,6 @@ import '../screens/signal_evidence_screen.dart';
 import '../screens/signal_journey_screen.dart';
 import '../screens/signal_review_screen.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
-import '../features/cold_start/cold_start_seed_survey.dart';
 import '../features/live_audio/application/live_voice_capture_service.dart';
 import '../screens/live_voice_session_screen.dart';
 import '../screens/record_screen.dart';
@@ -119,7 +111,6 @@ import '../record/quick_text_capture_presentation.dart';
 import '../screens/pressure_check_in_screen.dart';
 import '../screens/pressure_insights_screen.dart';
 // Timeline/Search screens unreachable — global redirect to Patterns.
-import '../screens/self_discovery_center_screen.dart';
 import '../screens/native_push_verification_screen.dart';
 import '../screens/revenuecat_verification_screen.dart';
 import '../screens/offline_sync_verification_screen.dart';
@@ -285,7 +276,6 @@ final GoRouter appRouter = GoRouter(
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
         path != '/pro-preview' &&
-        path != OnboardingFutureValueCopy.route &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -304,11 +294,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const OnboardingScreen(),
     ),
     GoRoute(
-      path: '/cold-start/seed',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ColdStartSeedSurvey(),
-    ),
-    GoRoute(
       path: '/onboarding-intent',
       parentNavigatorKey: _rootNavigatorKey,
       redirect: (context, state) => '/onboarding',
@@ -317,20 +302,6 @@ final GoRouter appRouter = GoRouter(
       path: '/onboarding-loop',
       parentNavigatorKey: _rootNavigatorKey,
       redirect: (context, state) => '/onboarding',
-    ),
-    GoRoute(
-      path: OnboardingFutureValueCopy.route,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => FuturePreviewScreen(
-        onExit: () {
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.go(onboardingGate.complete ? '/record' : '/onboarding');
-          }
-        },
-        onStart: () => context.go('/record'),
-      ),
     ),
     GoRoute(
       path: '/start',
@@ -438,27 +409,9 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
     GoRoute(
-      path: RouteCatalog.graphHome,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => LifeOsGraphScreen(
-        view: state.uri.queryParameters['view'],
-        nodeId: state.uri.queryParameters['nodeId'],
-      ),
-    ),
-    GoRoute(
       path: '/security',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SecuritySettingsScreen(),
-    ),
-    GoRoute(
-      path: ArchiveToolsScreen.route,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ArchiveToolsScreen(),
-    ),
-    GoRoute(
-      path: LifeOsScreen.route,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LifeOsScreen(),
     ),
     GoRoute(
       path: '/account/create',
@@ -593,25 +546,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/archive-identity',
-      parentNavigatorKey: _rootNavigatorKey,
-      redirect: (context, state) => '/self-discovery?tab=identity',
-    ),
-    GoRoute(
-      path: '/archive-life-chapters',
-      parentNavigatorKey: _rootNavigatorKey,
-      redirect: (context, state) => '/self-discovery?tab=life-chapters',
-    ),
-    GoRoute(
-      path: SelfDiscoveryCenterScreen.route,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => SelfDiscoveryCenterScreen(
-        initialTab: SelfDiscoveryCenterScreen.tabIndexFor(
-          state.uri.queryParameters['tab'],
-        ),
-      ),
-    ),
-    GoRoute(
       path: '/archive-tool/:tool',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) =>
@@ -635,7 +569,6 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra;
         String? initialText;
         String? entryId;
-        String? queueJobId;
         String? promptHint;
         String? helperText;
         String? captureModeId;
@@ -647,7 +580,6 @@ final GoRouter appRouter = GoRouter(
         } else if (extra is Map) {
           initialText = extra['initialText'] as String?;
           entryId = extra['entryId'] as String?;
-          queueJobId = extra['queueJobId'] as String?;
           promptHint = extra['prompt'] as String?;
           helperText = extra['helper'] as String?;
           captureModeId = extra['captureModeId'] as String?;
@@ -659,7 +591,6 @@ final GoRouter appRouter = GoRouter(
         return QuickTextCaptureScreen(
           initialText: initialText,
           entryId: entryId,
-          queueJobId: queueJobId,
           promptHint: promptHint,
           helperText: helperText,
           captureModeId: captureModeId,
@@ -743,11 +674,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const PatternMapScreen(),
     ),
     GoRoute(
-      path: '/pattern-recognition',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const PatternRecognitionDashboard(),
-    ),
-    GoRoute(
       path: '/archive-timeline',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ArchiveEvolutionTimelineScreen(),
@@ -756,11 +682,6 @@ final GoRouter appRouter = GoRouter(
       path: '/archive-review',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ArchiveRangeReviewScreen(),
-    ),
-    GoRoute(
-      path: '/archive-search',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ArchiveSemanticSearchScreen(),
     ),
     GoRoute(
       path: '/ask-archive',
@@ -777,11 +698,6 @@ final GoRouter appRouter = GoRouter(
         }
         return KeyMomentDetailScreen(moment: extra);
       },
-    ),
-    GoRoute(
-      path: '/blind-spots',
-      parentNavigatorKey: _rootNavigatorKey,
-      redirect: (context, state) => '/self-discovery?tab=blind-spots',
     ),
     GoRoute(
       path: '/updates',
@@ -943,9 +859,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/quick-yes-capture',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => LowEffortYesCaptureScreen(
-        instantMode: state.uri.queryParameters['instant'] == '1',
-      ),
+      builder: (context, state) => const LowEffortYesCaptureScreen(),
     ),
     GoRoute(
       path: '/capacity-beta-mission',

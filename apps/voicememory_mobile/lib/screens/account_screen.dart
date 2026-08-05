@@ -26,20 +26,12 @@ import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/accessibility/accessible_primary_surface.dart';
-import '../widgets/llm/llama_model_download_card.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({
-    super.key,
-    this.weeklyGrowthPreviewCard,
-    this.modelDownloadCard,
-  });
+  const AccountScreen({super.key, this.weeklyGrowthPreviewCard});
 
   /// Test hook to inject a fixed weekly growth preview card.
   final Widget? weeklyGrowthPreviewCard;
-
-  /// Test and composition hook for the shared model download surface.
-  final Widget? modelDownloadCard;
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -168,9 +160,6 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],
-                widget.modelDownloadCard ??
-                    const LlamaModelDownloadCard(source: 'account'),
-                const SizedBox(height: AppSpacing.md),
                 widget.weeklyGrowthPreviewCard ??
                     const WeeklyGrowthPreviewCard(),
                 const SizedBox(height: AppSpacing.md),

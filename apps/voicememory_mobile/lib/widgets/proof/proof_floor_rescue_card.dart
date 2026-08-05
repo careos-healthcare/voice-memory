@@ -37,9 +37,9 @@ class ProofFloorRescueCard extends StatefulWidget {
     this.store,
     bool answered = false,
     BetaProofFeedbackType? answerType,
-  })  : skipPrefsLoad = true,
-        initialAnswered = answered,
-        initialAnswerType = answerType;
+  }) : skipPrefsLoad = true,
+       initialAnswered = answered,
+       initialAnswerType = answerType;
 
   final ProofFloorRescueResult result;
   final VoidCallback? onPrimaryCta;
@@ -75,8 +75,9 @@ class _ProofFloorRescueCardState extends State<ProofFloorRescueCard> {
     await BetaProofFeedbackStore.ensureLoaded();
     if (!mounted) return;
     setState(() {
-      _feedbackAnswered =
-          BetaProofFeedbackStore.isAnsweredToday(widget.result.surface);
+      _feedbackAnswered = BetaProofFeedbackStore.isAnsweredToday(
+        widget.result.surface,
+      );
     });
   }
 
@@ -142,15 +143,16 @@ class _ProofFloorRescueCardState extends State<ProofFloorRescueCard> {
       return const SizedBox.shrink(key: Key('proof_floor_rescue_card_hidden'));
     }
     if (widget.result.showFeedbackOptions && _feedbackAnswered) {
-      return const SizedBox.shrink(key: Key('proof_floor_rescue_card_answered'));
+      return const SizedBox.shrink(
+        key: Key('proof_floor_rescue_card_answered'),
+      );
     }
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: Key('proof_floor_rescue_card_${widget.result.state.analyticsValue}'),
@@ -179,7 +181,9 @@ class _ProofFloorRescueCardState extends State<ProofFloorRescueCard> {
               children: [
                 for (final type in BetaProofFeedbackType.values)
                   ActionChip(
-                    key: Key('proof_floor_rescue_feedback_${type.storageValue}'),
+                    key: Key(
+                      'proof_floor_rescue_feedback_${type.storageValue}',
+                    ),
                     label: Text(BetaProofFeedbackCopy.labelFor(type)),
                     onPressed: () => unawaited(_selectFeedback(type)),
                   ),
