@@ -49,6 +49,16 @@ class JournalStore {
 
   List<JournalEntry>? _cache;
 
+  /// Currently signed-in account id, used to stamp newly created entries.
+  /// Null while signed out (guest) — see [JournalOwnershipGuard].
+  String? _activeOwnerKey;
+
+  /// Updates which account newly-saved entries are stamped with. Does not
+  /// retroactively change existing entries.
+  void setActiveOwnerKey(String? ownerKey) {
+    _activeOwnerKey = ownerKey;
+  }
+
   void configureSaveInterceptorPipeline(
     JournalSaveInterceptorPipeline pipeline,
   ) {
@@ -172,6 +182,9 @@ class JournalStore {
       );
     }
     toPersist = _cognitiveAnalyzer.enrichEntry(toPersist);
+    if (isNew && toPersist.ownerKey == null && _activeOwnerKey != null) {
+      toPersist = toPersist.copyWith(ownerKey: _activeOwnerKey);
+    }
     final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
     if (isNew && next.length == 1) {
@@ -255,6 +268,9 @@ class JournalStore {
     preserveOriginal: entry.preserveOriginal,
     captureContextTag: captureContextTag ?? entry.captureContextTag,
     biomarkers: entry.biomarkers,
+    parentHookId: entry.parentHookId,
+    wasGrounded: entry.wasGrounded,
+    ownerKey: entry.ownerKey,
   );
 
   Future<List<JournalEntry>> loadEligible() async {
@@ -309,6 +325,9 @@ class JournalStore {
         preserveOriginal: entry.preserveOriginal,
         captureContextTag: entry.captureContextTag,
         biomarkers: entry.biomarkers,
+        parentHookId: entry.parentHookId,
+        wasGrounded: entry.wasGrounded,
+        ownerKey: entry.ownerKey,
       ),
     );
   }
@@ -345,6 +364,10 @@ class JournalStore {
               r.preserveOriginal || (existing?.preserveOriginal ?? false),
           captureContextTag: r.captureContextTag ?? existing?.captureContextTag,
           biomarkers: r.biomarkers ?? existing?.biomarkers,
+          parentHookId: r.parentHookId ?? existing?.parentHookId,
+          wasGrounded: r.wasGrounded || (existing?.wasGrounded ?? false),
+          verifiedProof: r.verifiedProof ?? existing?.verifiedProof,
+          ownerKey: r.ownerKey ?? existing?.ownerKey,
         );
       }
     }

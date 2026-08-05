@@ -61,4 +61,62 @@ void main() {
     expect(json, contains('"id": "b"'));
     expect(json, isNot(contains('"id": "a"')));
   });
+
+  test('new entries are stamped with the active owner key', () async {
+    store.setActiveOwnerKey('user-a');
+    await store.save(sample(id: 'a'));
+
+    final saved = await store.getById('a');
+    expect(saved?.ownerKey, 'user-a');
+  });
+
+  test('re-saving an existing entry never overwrites its owner key', () async {
+    store.setActiveOwnerKey('user-a');
+    await store.save(sample(id: 'a'));
+
+    store.setActiveOwnerKey('user-b');
+    await store.update((await store.getById('a'))!);
+
+    final saved = await store.getById('a');
+    expect(saved?.ownerKey, 'user-a');
+  });
+
+  test('entries created while signed out stay unowned', () async {
+    store.setActiveOwnerKey(null);
+    await store.save(sample(id: 'a'));
+
+    final saved = await store.getById('a');
+    expect(saved?.ownerKey, isNull);
+  });
+
+  test('markSynced preserves the owner key', () async {
+    store.setActiveOwnerKey('user-a');
+    await store.save(sample(id: 'a'));
+
+    await store.markSynced('a');
+
+    final saved = await store.getById('a');
+    expect(saved?.ownerKey, 'user-a');
+    expect(saved?.syncStatus, SyncStatus.synced);
+  });
+
+  test('mergeRemote preserves the local owner key for existing entries', () async {
+    store.setActiveOwnerKey('user-a');
+    await store.save(sample(id: 'a'));
+
+    await store.mergeRemote([
+      JournalEntry(
+        id: 'a',
+        createdAt: DateTime.utc(2026, 1, 5),
+        transcript: 'Updated remotely',
+        durationSeconds: 10,
+        reflection: sampleReflection(),
+        syncStatus: SyncStatus.synced,
+      ),
+    ]);
+
+    final saved = await store.getById('a');
+    expect(saved?.transcript, 'Updated remotely');
+    expect(saved?.ownerKey, 'user-a');
+  });
 }

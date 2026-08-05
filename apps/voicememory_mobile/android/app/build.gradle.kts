@@ -1,8 +1,23 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// P0 fix — Android production signing was not configured: release builds were
+// silently signed with the debug key, so a real Play Store upload was never
+// possible. Load a real upload keystore from android/key.properties when
+// present (see key.properties.example + docs/ANDROID_RELEASE_CHECKLIST.md);
+// this file is gitignored and must never be committed.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val hasReleaseKeystore = keystorePropertiesFile.exists()
+val keystoreProperties = Properties()
+if (hasReleaseKeystore) {
+    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
 }
 
 android {
@@ -29,11 +44,36 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storePassword = keystoreProperties["storePassword"] as String
+                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (hasReleaseKeystore) {
+                signingConfigs.getByName("release")
+            } else {
+                // No android/key.properties on this machine: fall back to the
+                // debug key so `flutter run --release` still works locally,
+                // but make this impossible to miss in build output — this
+                // build CANNOT be uploaded to the Play Store.
+                logger.warn(
+                    "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
+                        "! android/key.properties not found — release build is signed  !\n" +
+                        "! with the DEBUG key and CANNOT be uploaded to the Play Store. !\n" +
+                        "! See android/key.properties.example and                      !\n" +
+                        "! docs/ANDROID_RELEASE_CHECKLIST.md to configure real signing. !\n" +
+                        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+                )
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

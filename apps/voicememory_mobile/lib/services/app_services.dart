@@ -70,6 +70,7 @@ import '../billing/billing_service.dart';
 import '../billing/revenuecat_service.dart';
 import 'capture_attest_service.dart';
 import 'capture_pipeline_service.dart';
+import 'journal_ownership_guard.dart';
 import 'journal_service.dart';
 import 'sync_service.dart';
 import 'product_analytics.dart';
@@ -211,10 +212,21 @@ class AppServices {
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
     await s.auth.loadPersistedSession();
+    final resumedSession = s.auth.currentSession;
+    if (resumedSession != null) {
+      await _reconcileJournalOwnership(s, resumedSession.userId);
+    }
     await GuestFirstAuth(
       s.prefs,
     ).markGuestModeStartedIfNeeded(isSignedIn: s.auth.currentSession != null);
     await RevenueCatService.instance.initialize();
+    if (resumedSession != null) {
+      // P0 fix — RevenueCat was never told which account is active, so a
+      // returning signed-in user's entitlements were evaluated against
+      // whatever anonymous RevenueCat app-user-id the SDK generated locally,
+      // not their real account. Align the two on every cold start.
+      await RevenueCatService.instance.logIn(resumedSession.userId);
+    }
     s.billing = BillingService(
       s.api,
       s.entitlementCache,
@@ -258,8 +270,27 @@ class AppServices {
       await s.billing.resetCachedEntitlementsForAuthChange();
     }
 
-    s.auth.onSignedOut = resetEntitlementsForAuthChange;
+    s.auth.onSignedOut = () async {
+      // Local reflections stay on-device after sign-out by design, but stop
+      // stamping any newly-created (guest) entries with the outgoing
+      // account's id so they aren't mistakenly claimed by it later.
+      s.journalStore.setActiveOwnerKey(null);
+      // P0 fix — RevenueCat login/logout was never connected to account
+      // lifecycle. Without this, entitlements for the outgoing account keep
+      // being reported to the RevenueCat SDK (and could leak to whichever
+      // account signs in next) instead of reverting to an anonymous user.
+      await RevenueCatService.instance.logOut();
+      await resetEntitlementsForAuthChange();
+    };
     s.auth.onSignedIn = () async {
+      final userId = s.auth.currentSession?.userId;
+      if (userId != null) {
+        await _reconcileJournalOwnership(s, userId);
+        // P0 fix — see onSignedOut: identify RevenueCat as this account
+        // *before* refreshing entitlements below, so the refresh reflects
+        // this user's real purchase history rather than an anonymous id.
+        await RevenueCatService.instance.logIn(userId);
+      }
       await resetEntitlementsForAuthChange();
       await s.billing.loadEntitlements(forceRefresh: true);
       await GuestFirstAuth(
@@ -347,6 +378,41 @@ class AppServices {
     _configureJournalSaveInterceptors(s);
   }
 
+  /// P0 fix — cross-account archive leakage. See [JournalOwnershipGuard].
+  /// Runs whenever an account becomes active on this device (fresh sign-in
+  /// or a persisted session resumed at startup) so a shared/reused device
+  /// never uploads one account's local-only entries under another
+  /// account's session.
+  static Future<void> _reconcileJournalOwnership(
+    AppServices s,
+    String userId,
+  ) async {
+    if (userId.isEmpty) return;
+    const guard = JournalOwnershipGuard();
+    final storedOwnerKey = await s.prefs.readString(
+      JournalOwnershipGuard.ownerKeyPrefsKey,
+    );
+    final migrationPending =
+        await s.prefs.readBool(JournalOwnershipGuard.migrationPendingPrefsKey) ??
+        false;
+    final result = guard.reconcile(
+      storedOwnerKey: storedOwnerKey,
+      migrationPending: migrationPending,
+      signedInUserId: userId,
+    );
+    if (result.ownerKey != null) {
+      await s.prefs.writeString(
+        JournalOwnershipGuard.ownerKeyPrefsKey,
+        result.ownerKey!,
+      );
+    }
+    await s.prefs.writeBool(
+      JournalOwnershipGuard.migrationPendingPrefsKey,
+      result.migrationPending,
+    );
+    s.journalStore.setActiveOwnerKey(userId);
+  }
+
   static Future<String> _resolveDocumentsBasePath() async {
     try {
       final dir = await AppStoragePaths.applicationDocumentsDirectory();
@@ -366,6 +432,30 @@ class AppServices {
     }
   }
 
+  /// Where a relative store path handed to [resetForTest] actually lands.
+  ///
+  /// `flutter test` runs with the package root as its working directory, so a
+  /// suite asking for `journal.json` writes into the checkout and leaves the
+  /// file behind — hundreds of stray `*_journal.json` and `*_prefs.json`
+  /// artifacts accumulated this way. Rebasing relative paths onto a temporary
+  /// directory keeps that pollution out of the repository without every suite
+  /// having to remember to build a temp path itself.
+  ///
+  /// Absolute paths pass through untouched: a test that deliberately built one
+  /// may also read it back, and silently relocating it would break that.
+  static Directory? _testStorageRoot;
+
+  static String _sandboxedTestPath(String candidate) {
+    // Only POSIX absolute paths need recognising here; this runs under the
+    // Dart test host, never on a device.
+    if (candidate.startsWith('/')) return candidate;
+    final root =
+        _testStorageRoot ??= Directory.systemTemp.createTempSync(
+          'archiveme_test_storage_',
+        );
+    return '${root.path}/$candidate';
+  }
+
   static Future<void> resetForTest({
     required String journalPath,
     String? prefsPath,
@@ -374,6 +464,7 @@ class AppServices {
     RecordingService? recording,
   }) async {
     _initialized = false;
+    final resolvedJournalPath = _sandboxedTestPath(journalPath);
     final s = AppServices._();
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
@@ -385,16 +476,20 @@ class AppServices {
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    final file = File(journalPath);
+    final file = File(resolvedJournalPath);
     if (await file.exists()) await file.delete();
-    final encryptedFile = File(JournalStore.encryptedPathFor(journalPath));
+    final encryptedFile = File(
+      JournalStore.encryptedPathFor(resolvedJournalPath),
+    );
     if (await encryptedFile.exists()) await encryptedFile.delete();
     s.journalStore = await JournalStore.open(
-      journalPath,
+      resolvedJournalPath,
       encryptAtRest: false,
     );
     s.prefs = await MobilePrefsStore.open(
-      prefsPath ?? '${file.parent.path}/test_prefs.json',
+      prefsPath == null
+          ? '${file.parent.path}/test_prefs.json'
+          : _sandboxedTestPath(prefsPath),
     );
     s.entitlementCache = await EntitlementCache.open(
       '${file.parent.path}/test_entitlements.json',

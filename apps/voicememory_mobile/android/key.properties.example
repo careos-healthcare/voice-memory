@@ -1,0 +1,10 @@
+# Copy this file to android/key.properties (same directory) and fill in your
+# real upload keystore details. android/key.properties is gitignored and must
+# never be committed.
+#
+# See https://flutter.dev/to/reference-keystore for how to generate a
+# keystore, and docs/ANDROID_RELEASE_CHECKLIST.md for the full release flow.
+storePassword=REPLACE_WITH_KEYSTORE_PASSWORD
+keyPassword=REPLACE_WITH_KEY_PASSWORD
+keyAlias=upload
+storeFile=/absolute/path/to/upload-keystore.jks

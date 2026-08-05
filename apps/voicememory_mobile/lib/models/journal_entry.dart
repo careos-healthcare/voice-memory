@@ -30,6 +30,7 @@ class JournalEntry {
     this.parentHookId,
     this.wasGrounded = false,
     this.verifiedProof,
+    this.ownerKey,
   });
 
   final String id;
@@ -106,6 +107,13 @@ class JournalEntry {
   /// Legacy entries may be null and must be revalidated before resurfacing.
   final VerifiedProof? verifiedProof;
 
+  /// The signed-in account (userId) this entry is stamped with, set once at
+  /// creation time. Null means "unowned" — either created before this field
+  /// existed, or created while signed out. Used by [JournalOwnershipGuard] to
+  /// stop entries from one account being uploaded under a different
+  /// account's session when a device is shared or reused.
+  final String? ownerKey;
+
   String get reflectionSummary => reflection.concreteObservation.isNotEmpty
       ? reflection.concreteObservation
       : reflection.exactLanguagePattern;
@@ -153,6 +161,7 @@ class JournalEntry {
           : null,
       wasGrounded: json['wasGrounded'] == true,
       verifiedProof: verifiedProof,
+      ownerKey: json['ownerKey'] is String ? json['ownerKey'] as String : null,
     );
   }
 
@@ -182,6 +191,7 @@ class JournalEntry {
     if (parentHookId != null) 'parentHookId': parentHookId,
     if (wasGrounded) 'wasGrounded': true,
     if (verifiedProof != null) 'verifiedProof': verifiedProof!.toJson(),
+    if (ownerKey != null) 'ownerKey': ownerKey,
   };
 
   JournalEntry copyWith({
@@ -190,6 +200,7 @@ class JournalEntry {
     String? parentHookId,
     bool? wasGrounded,
     VerifiedProof? verifiedProof,
+    String? ownerKey,
   }) => JournalEntry(
     id: id,
     createdAt: createdAt,
@@ -216,6 +227,7 @@ class JournalEntry {
     parentHookId: parentHookId ?? this.parentHookId,
     wasGrounded: wasGrounded ?? this.wasGrounded,
     verifiedProof: verifiedProof ?? this.verifiedProof,
+    ownerKey: ownerKey ?? this.ownerKey,
   );
 
   static SyncStatus _parseSync(String? raw) {

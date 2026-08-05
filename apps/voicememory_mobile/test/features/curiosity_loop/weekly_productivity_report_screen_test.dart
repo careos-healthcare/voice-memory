@@ -53,8 +53,10 @@ void main() {
 
   setUp(() async {
     await AppServices.resetForTest(
-      journalPath: '${Directory.systemTemp.createTempSync('weekly_report_j_')}/journal.json',
-      prefsPath: '${Directory.systemTemp.createTempSync('weekly_report_p_')}/prefs.json',
+      journalPath:
+          '${Directory.systemTemp.createTempSync('weekly_report_j_').path}/journal.json',
+      prefsPath:
+          '${Directory.systemTemp.createTempSync('weekly_report_p_').path}/prefs.json',
       skipRevenueCat: true,
     );
   });

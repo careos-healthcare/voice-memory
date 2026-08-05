@@ -1148,12 +1148,25 @@ void main() {
       );
     });
 
-    testWidgets('zero and one entry ready screens hide two-day activation card', (
+    // Seeding always happens before the screen is mounted. A journal save
+    // awaited inside `runAsync` while RecordScreen is mounted never completes:
+    // the save resolves against work the mounted screen owns in the fake-async
+    // zone, which only advances while frames are pumped, and `runAsync` pumps
+    // none. The test then dies on the binding's ten-minute real-time timeout
+    // and leaves `runAsync` occupied, so every later test in the file fails
+    // with "Reentrant call to runAsync() denied" and the suite never
+    // terminates — which used to hang the whole `flutter test` run.
+    testWidgets('a zero entry ready screen hides two-day activation card', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
 
+    testWidgets('a one entry ready screen hides two-day activation card', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await seedEntries([DateTime.now()]);
       });

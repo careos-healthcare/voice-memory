@@ -563,6 +563,7 @@ class ApiClient {
     final response = await _http.post(
       _uri('/api/account/delete'),
       headers: _jsonHeaders,
+      body: jsonEncode({'confirm': true}),
     );
     if (response.statusCode == 401) throw AuthRequiredException();
     if (!response.statusCode.toString().startsWith('2')) {

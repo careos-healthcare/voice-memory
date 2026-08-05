@@ -14,12 +14,24 @@
 ## SDK
 
 - **minSdk:** 24 (see `android/app/build.gradle.kts`)
-- **Release signing:** replace debug signing in `buildTypes.release` before Play production
+- **Release signing:** `android/app/build.gradle.kts` loads a real upload
+  keystore from `android/key.properties` when present, and signs `release`
+  builds with it. Without that file it falls back to the debug key **and
+  prints a loud warning in the Gradle build log** — that fallback build
+  cannot be uploaded to the Play Store.
 
-```kotlin
-// TODO: signingConfigs { create("release") { ... } }
-// release { signingConfig = signingConfigs.getByName("release") }
-```
+To configure real signing:
+
+1. Generate an upload keystore if you don't already have one:
+   `keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload`
+   (see https://flutter.dev/to/reference-keystore).
+2. Copy `android/key.properties.example` to `android/key.properties` (this
+   file is gitignored — never commit it) and fill in the real
+   `storePassword`, `keyPassword`, `keyAlias`, and `storeFile` path.
+3. Build with `flutter build appbundle --release` and confirm the Gradle
+   output does **not** print the debug-signing warning above.
+4. Verify with `jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.aab`
+   that the signer is your upload key, not the Flutter debug key.
 
 ## Play Console
 

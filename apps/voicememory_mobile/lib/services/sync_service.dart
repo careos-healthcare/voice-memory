@@ -3,10 +3,12 @@ import '../api/api_exceptions.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/creator_demo_mode.dart';
+import '../models/journal_entry.dart';
 import '../product/consumer_ui_copy.dart';
 import '../storage/journal_store.dart';
 import '../storage/mobile_prefs_store.dart';
 import 'capture_save_messages.dart';
+import 'journal_ownership_guard.dart';
 
 class SyncResult {
   const SyncResult({
@@ -28,11 +30,46 @@ class SyncResult {
 }
 
 class SyncService {
-  SyncService(this._api, this._journal, this._prefs);
+  SyncService(
+    this._api,
+    this._journal,
+    this._prefs, {
+    JournalOwnershipGuard ownershipGuard = const JournalOwnershipGuard(),
+  }) : _ownershipGuard = ownershipGuard;
 
   final ApiClient _api;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
+  final JournalOwnershipGuard _ownershipGuard;
+
+  /// Splits [pending] into entries safe to upload under the currently
+  /// signed-in account and entries that must stay on-device because they
+  /// belong to a different (or not-yet-reconciled) account. See
+  /// [JournalOwnershipGuard] — P0 fix for cross-account archive leakage.
+  Future<({List<JournalEntry> eligible, int blocked})> _partitionByOwnership(
+    List<JournalEntry> pending,
+  ) async {
+    final currentOwnerKey =
+        await _prefs.readString(JournalOwnershipGuard.ownerKeyPrefsKey) ?? '';
+    final migrationPending =
+        await _prefs.readBool(JournalOwnershipGuard.migrationPendingPrefsKey) ??
+        false;
+    final eligible = <JournalEntry>[];
+    var blocked = 0;
+    for (final entry in pending) {
+      final ok = _ownershipGuard.isEligibleForSync(
+        entryOwnerKey: entry.ownerKey,
+        currentUserId: currentOwnerKey,
+        migrationPending: migrationPending,
+      );
+      if (ok) {
+        eligible.add(entry);
+      } else {
+        blocked++;
+      }
+    }
+    return (eligible: eligible, blocked: blocked);
+  }
 
   Future<SyncResult> syncNow() async {
     // Creator demo mode: nothing syncs — no backend call is ever made and
@@ -56,9 +93,12 @@ class SyncService {
     }
     try {
       final pending = await _journal.pendingSyncQueue();
-      if (pending.isNotEmpty) {
-        await _api.createJournalEntry(pending);
-        for (final e in pending) {
+      final partitioned = await _partitionByOwnership(pending);
+      final eligible = partitioned.eligible;
+      final blocked = partitioned.blocked;
+      if (eligible.isNotEmpty) {
+        await _api.createJournalEntry(eligible);
+        for (final e in eligible) {
           await _journal.markSynced(e.id);
         }
       }
@@ -71,7 +111,12 @@ class SyncService {
         cloudSyncSucceeded: true,
         message:
             'Sync complete. If anything looks duplicated, newer copies were kept.',
-        pushed: pending.length,
+        syncNote: blocked > 0
+            ? '$blocked entr${blocked == 1 ? 'y' : 'ies'} from a different '
+                  'account stayed private on this device and were not '
+                  'uploaded.'
+            : null,
+        pushed: eligible.length,
         pulled: remote.length,
       );
     } on AuthRequiredException {
