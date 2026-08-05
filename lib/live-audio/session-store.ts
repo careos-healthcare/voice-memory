@@ -67,3 +67,20 @@ export async function consumeLiveAudioSession(input: {
 export function resetLiveAudioSessionStoreForTest(): void {
   store().clear();
 }
+
+/**
+ * Removes every registered live-audio session for a subject (e.g.
+ * `user:<id>`, matching `ApiGuardContext.subject`). Ephemeral/in-memory
+ * only, but included in the account-deletion contract for audit
+ * completeness. Idempotent.
+ */
+export function deleteLiveAudioSessionsForSubject(subject: string): number {
+  let removed = 0;
+  for (const [jti, row] of store()) {
+    if (row.subject === subject) {
+      store().delete(jti);
+      removed += 1;
+    }
+  }
+  return removed;
+}

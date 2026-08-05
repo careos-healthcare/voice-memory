@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../screens/account_auth_screen.dart';
 import '../screens/account_screen.dart';
 import '../screens/security_settings_screen.dart';
+import '../features/account_migration/guest_data_migration_screen.dart';
 import '../screens/delete_account_screen.dart';
 import '../screens/belief_changes_screen.dart';
 import '../screens/belief_evidence_screen.dart';
@@ -424,6 +425,11 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) =>
           const AccountAuthScreen(intent: AccountAuthIntent.signIn),
+    ),
+    GoRoute(
+      path: '/account/guest-data-migration',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const GuestDataMigrationScreen(),
     ),
     GoRoute(
       path: '/archive-debug',

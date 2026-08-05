@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart' show visibleForTesting;
+
 import '../../models/journal_entry.dart';
 import 'archive_correction.dart';
 import 'proof_admission_cache.dart';
 import 'proof_admission_models.dart';
 import 'proof_admission_service.dart';
+import 'proof_scope_provider.dart';
 import 'verified_proof_view_model.dart';
 
 /// Re-verifies a persisted proof against the archive as it exists *now*,
@@ -30,6 +33,27 @@ class ProofDisplayGate {
        // ignore: prefer_initializing_formals
        _cache = cache;
 
+  /// Resolves [activeArchiveScope]/[activeOwnerScope] from [scopeProvider] at
+  /// construction time instead of defaulting to the fixed guest literals.
+  ///
+  /// This is the constructor production call sites should use so a gate
+  /// built while one account is active is never accidentally scoped to a
+  /// different one. It cannot be `const` — the whole point is that the
+  /// scope is read live, not baked in at compile time — so it exists
+  /// alongside the original const constructor rather than replacing it:
+  /// existing call sites (including a widget's const default field value)
+  /// keep compiling and behaving exactly as before.
+  ProofDisplayGate.forCurrentAccount({
+    ProofScopeProvider scopeProvider = const AppServicesProofScopeProvider(),
+    CanonicalProofAdmissionService? service,
+    ProofAdmissionCache? cache,
+  }) : this(
+         service: service,
+         cache: cache,
+         activeArchiveScope: scopeProvider.activeArchiveScope,
+         activeOwnerScope: scopeProvider.activeOwnerScope,
+       );
+
   static const String defaultArchiveScope = 'local_archive_v1';
   static const String defaultOwnerScope = 'local_owner_v1';
 
@@ -39,9 +63,37 @@ class ProofDisplayGate {
   /// only moment it could have paid for itself. The default service shares the
   /// same cache and is itself shared, for the same reason: building a service
   /// per call would hand it an empty cache every time.
+  ///
+  /// This is also the one proof cache that outlives an account switch (every
+  /// other cache-holding object — `CapturePipelineService` and the
+  /// `CanonicalProofAdmissionService` it privately owns — is reconstructed
+  /// fresh by `AppServices` on every switch, so it never sees stale data).
+  /// [invalidateForAccountSwitch] exists to drop this one's memory of the
+  /// outgoing account too.
   static final ProofAdmissionCache _sharedCache = ProofAdmissionCache();
   static final CanonicalProofAdmissionService _sharedService =
       CanonicalProofAdmissionService(cache: _sharedCache);
+
+  /// Drops every cached revision and feature vector in the process-wide
+  /// shared cache. Call this whenever the active account namespace changes —
+  /// see `AppServices._switchToNamespace` — so a proof or evidence fact
+  /// memoized for one account can never answer for another.
+  ///
+  /// Uses [ProofAdmissionCache.invalidateAll] rather than
+  /// [ProofAdmissionCache.invalidateArchive] for a specific old/new scope:
+  /// the cache is bounded at 128 entries per sub-cache, account switches are
+  /// rare, and dropping everything is simpler and strictly safer than
+  /// tracking exactly which scopes might have stale entries.
+  static void invalidateForAccountSwitch() => _sharedCache.invalidateAll();
+
+  /// The shared cache's current revision-entry count. Test-only: lets a test
+  /// prove [invalidateForAccountSwitch] (and therefore an account switch)
+  /// actually emptied the process-wide cache, rather than only inferring it
+  /// indirectly from scope-keyed lookups still happening to miss.
+  @visibleForTesting
+  static int get debugSharedCacheRevisionCount =>
+      // ignore: invalid_use_of_visible_for_testing_member
+      _sharedCache.revisionCount;
 
   final CanonicalProofAdmissionService? _service;
   final ProofAdmissionCache? _cache;

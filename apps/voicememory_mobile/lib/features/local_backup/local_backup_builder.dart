@@ -163,29 +163,13 @@ abstract final class LocalBackupBuilder {
     return json;
   }
 
-  static JournalEntry entryForRestore(JournalEntry entry) => JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        verifiedProof: entry.verifiedProof,
-        syncStatus: entry.syncStatus,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
-        captureContextTag: entry.captureContextTag,
-      );
+  // Local audio never ships in a backup payload (see the `localAudioPath`
+  // rejection in `validateMap` above), so the restored entry must never
+  // carry one over even if the decoded JSON somehow smuggled one in.
+  // Every other field — including biomarkers, parentHookId, wasGrounded,
+  // ownerKey and all sync metadata — passes through untouched.
+  static JournalEntry entryForRestore(JournalEntry entry) =>
+      entry.clearLocalAudioPath();
 
   static Future<Map<String, Map<String, dynamic>>> _readIncludedPrefs(
     MobilePrefsStore prefs,

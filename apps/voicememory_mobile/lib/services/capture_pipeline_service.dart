@@ -8,9 +8,10 @@ import '../features/timeline/timeline_entry_display.dart';
 import '../features/proof_admission/proof_admission_analytics.dart';
 import '../features/proof_admission/proof_admission_models.dart';
 import '../features/proof_admission/proof_admission_service.dart';
-import '../features/proof_admission/proof_display_gate.dart';
+import '../features/proof_admission/proof_scope_provider.dart';
 import '../features/proof_admission/related_source_resolver.dart';
 import '../features/proof_admission/archive_correction_store.dart';
+import '../features/proof_admission/remote_processing_consent_store.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
 import '../features/voice_capture/transcription/transcription_log.dart';
 import '../features/voice_capture/transcription/transcription_service.dart';
@@ -25,6 +26,7 @@ import '../security/api_usage_guard.dart';
 import '../security/private_data_service.dart';
 import '../security/user_content_safety.dart';
 import '../storage/journal_store.dart';
+import 'app_services.dart';
 import 'capture_attest_service.dart';
 import 'capture_save_messages.dart';
 import '../api/api_client.dart';
@@ -70,19 +72,53 @@ class CapturePipelineService {
     required CaptureAttestService attest,
     required JournalStore journalStore,
     ApiUsageGuard? usageGuard,
+    ProofScopeProvider scopeProvider = const AppServicesProofScopeProvider(),
+    RemoteProcessingConsentStore? consentStore,
   }) : _api = api,
        _attest = attest,
        _journalStore = journalStore,
-       _usageGuard = usageGuard ?? ApiUsageGuard.shared;
+       _usageGuard = usageGuard ?? ApiUsageGuard.shared,
+       _scopeProvider = scopeProvider,
+       _consentStoreOverride = consentStore;
 
   final ApiClient _api;
   final CaptureAttestService _attest;
   final JournalStore _journalStore;
   final ApiUsageGuard _usageGuard;
-  /// Kept in step with [ProofDisplayGate]'s defaults: a proof admitted under
-  /// one scope and revalidated under another is discarded at display time.
-  static const String _archiveScope = ProofDisplayGate.defaultArchiveScope;
-  static const String _ownerScope = ProofDisplayGate.defaultOwnerScope;
+
+  /// Which account/guest namespace and archive newly-admitted proofs and
+  /// resolved related sources are stamped with. Read live on every access
+  /// (never cached at construction) — see [ProofScopeProvider] — so an
+  /// account switch is reflected immediately rather than only after this
+  /// service is rebuilt. In production `AppServices` does rebuild this
+  /// service fresh on every switch anyway (see `_wireAccountScopedServices`),
+  /// but nothing here should depend on that to be correct.
+  final ProofScopeProvider _scopeProvider;
+  String get _archiveScope => _scopeProvider.activeArchiveScope;
+  String get _ownerScope => _scopeProvider.activeOwnerScope;
+
+  /// Injected for tests; production resolves this lazily against whichever
+  /// account/guest namespace's prefs are currently active, so a decision
+  /// made as one account is never read back for a different one.
+  final RemoteProcessingConsentStore? _consentStoreOverride;
+  RemoteProcessingConsentStore get _consentStore =>
+      _consentStoreOverride ??
+      RemoteProcessingConsentStore(AppServices.instance.prefs);
+
+  /// The live gate on a *new* remote-processing attempt: whether the account
+  /// or guest namespace active right now has said yes to sending a
+  /// transcript to the backend for AI reflection/analysis. Checked
+  /// immediately before that network call is made (see call sites below),
+  /// not after the fact — a withdrawal must stop the next attempt, not just
+  /// be noticed once evidence is later re-verified. Fails closed: a read
+  /// error is treated as "not consented" rather than silently proceeding.
+  Future<bool> _remoteProcessingConsented() async {
+    try {
+      return await _consentStore.isConsentedNow();
+    } catch (_) {
+      return false;
+    }
+  }
 
   final _uuid = const Uuid();
   final CanonicalProofAdmissionService _proofAdmission =
@@ -176,6 +212,18 @@ class CapturePipelineService {
       }
 
       onStage?.call(PipelineStage.analyzing);
+      if (!await _remoteProcessingConsented()) {
+        const reason = 'remote_processing_consent_missing';
+        RecordPipelineLog.apiGuardBlocked(operation: 'analyze', reason: reason);
+        return _saveAfterAnalysisFailure(
+          audioFile: audioFile,
+          durationSeconds: durationSeconds,
+          transcript: trimmedTranscript,
+          reason: reason,
+          syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
+          onStage: onStage,
+        );
+      }
       final analyzeCheck = _usageGuard.checkAttempt(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
@@ -366,6 +414,7 @@ class CapturePipelineService {
     required String transcript,
     Object? error,
     String? reason,
+    String syncNote = VoiceCaptureCopy.analysisUnavailableNote,
     void Function(PipelineStage stage)? onStage,
   }) async {
     final resolvedReason =
@@ -387,7 +436,7 @@ class CapturePipelineService {
       audioFile: audioFile,
       durationSeconds: durationSeconds,
       partialTranscript: transcript,
-      syncNote: VoiceCaptureCopy.analysisUnavailableNote,
+      syncNote: syncNote,
       analysisFailureReason: resolvedReason,
       onStage: onStage,
     );
@@ -410,6 +459,11 @@ class CapturePipelineService {
     try {
       var token = await _attest.ensureCaptureToken();
 
+      if (!await _remoteProcessingConsented()) {
+        throw CapturePipelineFailure(
+          VoiceCaptureCopy.remoteProcessingConsentPausedNote,
+        );
+      }
       final analyzeCheck = _usageGuard.checkAttempt(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
@@ -470,28 +524,11 @@ class CapturePipelineService {
           ) ??
           trimmed;
       RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
-      final template = JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
+      final template = entry.copyWith(
         transcript: trimmed,
-        durationSeconds: entry.durationSeconds,
         reflection: verifiedProof.reflection,
         verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
       );
       final updated = applyFinalTranscriptToVoiceEntry(
         template,
@@ -533,34 +570,17 @@ class CapturePipelineService {
     RecordPipelineLog.preSaveFinalTranscript(
       length: finalTranscript?.length ?? 0,
     );
-    final template = JournalEntry(
-      id: entry.id,
-      createdAt: entry.createdAt,
+    final template = entry.copyWith(
       transcript: trimmed,
-      durationSeconds: entry.durationSeconds,
-      reflection: Reflection(
+      reflection: const Reflection(
         mood: 'neutral',
         emotionalIntensity: 0,
-        recurringThemes: const [],
+        recurringThemes: [],
         exactLanguagePattern: '',
         concreteObservation: '',
         repeatedSignal: '',
       ),
       syncStatus: SyncStatus.pendingUpload,
-      localAudioPath: entry.localAudioPath,
-      treatAsNew: entry.treatAsNew,
-      connectionApproved: entry.connectionApproved,
-      keepExactDetails: entry.keepExactDetails,
-      keepSeparate: entry.keepSeparate,
-      archiveThreadId: entry.archiveThreadId,
-      archivePackId: entry.archivePackId,
-      isPinned: entry.isPinned,
-      pinnedAt: entry.pinnedAt,
-      isArchived: entry.isArchived,
-      archivedAt: entry.archivedAt,
-      entryAboutness: entry.entryAboutness,
-      memorySurfacing: entry.memorySurfacing,
-      preserveOriginal: entry.preserveOriginal,
     );
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
@@ -734,6 +754,13 @@ class CapturePipelineService {
       var token = await _attest.ensureCaptureToken();
 
       onStage?.call(PipelineStage.analyzing);
+      if (!await _remoteProcessingConsented()) {
+        return _saveTextLocalOnly(
+          transcript: trimmed,
+          syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
+          onStage: onStage,
+        );
+      }
       final analyzeCheck = _usageGuard.checkAttempt(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
@@ -857,6 +884,14 @@ class CapturePipelineService {
       var token = await _attest.ensureCaptureToken();
 
       onStage?.call(PipelineStage.analyzing);
+      if (!await _remoteProcessingConsented()) {
+        return _saveLiveVoiceLocalOnly(
+          transcript: trimmed,
+          durationSeconds: durationSeconds,
+          syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
+          onStage: onStage,
+        );
+      }
       final analyzeCheck = _usageGuard.checkAttempt(
         scopeKey: scopeKey,
         operation: ApiUsageOperation.analyze,
@@ -1000,6 +1035,16 @@ class CapturePipelineService {
           transcriptRevision: revision,
           createdAt: raw.receivedAt,
           sourceType: ProofSourceType.userVoiceTranscript,
+          // This entry's remote analysis already happened — a completed
+          // offline-vault recovery round trip (`postVaultRecovery`) is what
+          // produced `reflectionJson` before this method was ever called —
+          // so there is no "new remote call" left to gate here. A live
+          // consent gate for *this* mechanism belongs at the point the
+          // recovery upload itself is attempted
+          // (`OfflineVaultRecoveryService`/`LiveVoiceRecoveryGateway`), which
+          // is out of scope for this pass; tracked as a known gap rather than
+          // silently defaulting.
+          remoteProcessingConsented: true,
         ),
       ],
       activeArchiveScope: _archiveScope,
@@ -1082,6 +1127,16 @@ class CapturePipelineService {
       captureToken: captureToken,
       idempotencyKey: idempotencyKey,
     );
+    // Every caller already checked `_remoteProcessingConsented()` live
+    // before it was willing to make the `postAnalyzeRaw` call above — that is
+    // the actual capture-time gate. This is checked again, here, at the
+    // moment the resulting `ProofSourceEntry` is stamped, so a withdrawal
+    // that happens to land in the network round trip above is reflected in
+    // what gets stamped rather than trusting a now-stale answer: a
+    // withdrawal mid-flight fails this admission (`evidence_verifier.dart`
+    // rejects an unconsented source) rather than quietly stamping it as
+    // consented after the fact.
+    final consentedNow = await _remoteProcessingConsented();
     final startedAt = DateTime.now();
     final subject = ProofSourceEntry(
       entryId: entryId,
@@ -1091,6 +1146,7 @@ class CapturePipelineService {
       transcriptRevision: revision,
       createdAt: raw.receivedAt,
       sourceType: sourceType,
+      remoteProcessingConsented: consentedNow,
     );
     final result = _proofAdmission.admit(
       raw: raw,

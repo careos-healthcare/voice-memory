@@ -163,14 +163,15 @@ export function feedbackWeightForKind(kind: ResurfacingFeedbackKind): number {
   return kind === "that_fits" ? Math.abs(w) : w;
 }
 
-export async function deleteResurfacingFeedbackForUser(userId: string): Promise<void> {
+export async function deleteResurfacingFeedbackForUser(userId: string): Promise<number> {
   if (shouldUsePostgresStorage()) {
-    await dbQuery(`DELETE FROM resurfacing_feedback WHERE user_id = $1`, [userId]);
-    return;
+    const result = await dbQuery(`DELETE FROM resurfacing_feedback WHERE user_id = $1`, [userId]);
+    return result.rowCount ?? 0;
   }
-  if (memoryRows.__vmResurfacingFeedback) {
-    memoryRows.__vmResurfacingFeedback = memoryRows.__vmResurfacingFeedback.filter(
-      (r) => r.userId !== userId,
-    );
-  }
+  if (!memoryRows.__vmResurfacingFeedback) return 0;
+  const before = memoryRows.__vmResurfacingFeedback.length;
+  memoryRows.__vmResurfacingFeedback = memoryRows.__vmResurfacingFeedback.filter(
+    (r) => r.userId !== userId,
+  );
+  return before - memoryRows.__vmResurfacingFeedback.length;
 }

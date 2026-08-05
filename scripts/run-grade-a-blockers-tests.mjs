@@ -2,6 +2,7 @@
 import { runApiGuardTests } from "../lib/reliability/api-guard-tests.ts";
 import { runBillingTestsAsync } from "../lib/reliability/billing-tests.ts";
 import { runJournalServerTests } from "../lib/reliability/journal-server-tests.ts";
+import { runJournalSyncTests } from "../lib/reliability/journal-sync-tests.ts";
 import { runJournalPersistenceTests } from "../lib/reliability/journal-persistence-tests.ts";
 import { runOpenAiBudgetTests } from "../lib/reliability/openai-budget-tests.ts";
 import { runRateLimitTests } from "../lib/reliability/rate-limit-tests.ts";
@@ -18,6 +19,7 @@ failures.push(...(await runBillingTestsAsync()).failures);
 failures.push(...(await runRateLimitTests()).failures);
 failures.push(...(await runOpenAiBudgetTests()).failures);
 failures.push(...(await runJournalServerTests()).failures);
+failures.push(...(await runJournalSyncTests()).failures);
 
 const journal = runJournalPersistenceTests();
 failures.push(...journal.failures);

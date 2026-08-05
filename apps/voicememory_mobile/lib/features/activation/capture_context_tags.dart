@@ -16,10 +16,7 @@ abstract final class CaptureContextTagIds {
 
 /// One optional capture context tag.
 class CaptureContextTag {
-  const CaptureContextTag({
-    required this.id,
-    required this.label,
-  });
+  const CaptureContextTag({required this.id, required this.label});
 
   final String id;
   final String label;
@@ -76,30 +73,10 @@ abstract final class CaptureContextTags {
       updateTag(entry, tagId);
 
   static JournalEntry updateTag(JournalEntry entry, String? tagId) =>
-      JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        verifiedProof: entry.verifiedProof,
-        syncStatus: entry.syncStatus,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
-        captureContextTag: tagId,
-      );
+      // tagId is always passed explicitly (even when null, from clearTag),
+      // so this correctly clears captureContextTag rather than leaving it
+      // untouched — see the sentinel contract on JournalEntry.copyWith.
+      entry.copyWith(captureContextTag: tagId);
 
   static JournalEntry clearTag(JournalEntry entry) => updateTag(entry, null);
 

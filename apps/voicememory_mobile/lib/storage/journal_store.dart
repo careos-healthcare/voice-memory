@@ -8,9 +8,7 @@ import '../features/activation/capture_context_tags.dart';
 import '../features/curiosity_loop/domain/services/cognitive_analyzer.dart';
 import '../features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import '../features/first25/first25_journal_hooks.dart';
-import '../features/memory/entry_memory_mode.dart';
 import '../features/memory/entry_save_coordinator.dart';
-import '../features/memory/entry_thread_scope.dart';
 import '../features/first_session/first_recording_sample.dart';
 import '../features/first_session/first_save_rescue.dart';
 import '../features/referral/invite_funnel_metrics.dart';
@@ -79,6 +77,7 @@ class JournalStore {
     SecureStorageService? secureStorage,
     CognitiveAnalyzer? cognitiveAnalyzer,
     JournalSaveInterceptorPipeline? saveInterceptorPipeline,
+    String? keyAlias,
   }) async {
     final legacyFile = File(filePath);
     if (!await legacyFile.parent.exists()) {
@@ -99,7 +98,8 @@ class JournalStore {
       return store;
     }
 
-    final resolvedKeyStore = keyStore ?? _defaultKeyStore(secureStorage);
+    final resolvedKeyStore =
+        keyStore ?? _defaultKeyStore(secureStorage, keyAlias: keyAlias);
     final encryptedFile = File(encryptedPathFor(filePath));
     final encryptedStore = EncryptedJsonFileStore(
       file: encryptedFile,
@@ -125,38 +125,6 @@ class JournalStore {
     return store;
   }
 
-  Future<List<JournalEntry>> loadAll() async {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
-    }
-    if (CreatorDemoMode.isActive) {
-      return CreatorDemoMode.demoJournalEntries();
-    }
-    if (_encryptAtRest && _encrypted != null) {
-      _cache = await _loadEntriesFromEncrypted();
-      return List<JournalEntry>.from(_cache!);
-    }
-    return loadAllSync();
-  }
-
-  /// Same as [loadAll] but synchronous — uses the in-memory cache after [open].
-  List<JournalEntry> loadAllSync() {
-    if (ArchiveMeDemoState.isActive) {
-      return ArchiveMeDemoArchive.journalEntries();
-    }
-    if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
-    if (_cache != null) {
-      return List<JournalEntry>.from(_cache!);
-    }
-
-    final source = _encryptAtRest ? file : (_plaintextLegacy ?? file);
-    if (!source.existsSync()) return [];
-    final raw = source.readAsStringSync();
-    if (raw.trim().isEmpty) return [];
-    _cache = _decodeEntries(raw);
-    return List<JournalEntry>.from(_cache!);
-  }
-
   Future<void> clearAll() async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
@@ -172,22 +140,29 @@ class JournalStore {
     String first25Source = 'journal_save',
   }) async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
-    final all = await loadAll();
+    // Must include tombstones here: this list is used to rebuild the
+    // entire on-disk file below, and using the tombstone-filtered
+    // `loadAll()` would silently erase every other pending tombstone on
+    // every save.
+    final all = await loadAllIncludingTombstones();
+    final activeCountBefore = all.where((e) => !e.isDeleted).length;
     final isNew = !all.any((e) => e.id == entry.id);
     var toPersist = entry;
     if (isNew) {
       toPersist = await EntrySaveCoordinator.applyNewEntryOptions(
         entry,
-        entryCount: all.length + 1,
+        entryCount: activeCountBefore + 1,
       );
     }
-    toPersist = _cognitiveAnalyzer.enrichEntry(toPersist);
+    if (!toPersist.isDeleted) {
+      toPersist = _cognitiveAnalyzer.enrichEntry(toPersist);
+    }
     if (isNew && toPersist.ownerKey == null && _activeOwnerKey != null) {
       toPersist = toPersist.copyWith(ownerKey: _activeOwnerKey);
     }
     final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
-    if (isNew && next.length == 1) {
+    if (isNew && activeCountBefore + 1 == 1 && !toPersist.isDeleted) {
       ActivationFunnelAnalytics.track(
         ActivationFunnelAnalytics.firstRecordingSaved,
         entryCount: 1,
@@ -230,48 +205,71 @@ class JournalStore {
 
   Future<void> update(JournalEntry entry) async => save(entry);
 
+  /// Persists a genuine content/metadata edit: bumps revision/updatedAt/
+  /// changeId via [JournalEntry.markEdited] before saving, so the change
+  /// is visible to sync. Prefer this over [save] for user-initiated edits;
+  /// [save] itself does not version-bump, since it is also used for
+  /// non-edit bookkeeping (sync acknowledgement, ownership stamping).
+  Future<void> saveEdit(
+    JournalEntry entry, {
+    String first25Source = 'journal_save',
+  }) async {
+    await save(entry.markEdited(), first25Source: first25Source);
+  }
+
   Future<void> updateCaptureContextTag(String id, {String? tagId}) async {
     final entry = await getById(id);
     if (entry == null) return;
-    await save(CaptureContextTags.updateTag(entry, tagId));
+    await saveEdit(CaptureContextTags.updateTag(entry, tagId));
   }
 
-  static JournalEntry _withMemoryFlags(
-    JournalEntry entry, {
-    bool? treatAsNew,
-    bool? connectionApproved,
-    bool? keepSeparate,
-    String? archiveThreadId,
-    String? archivePackId,
-    String? captureContextTag,
-  }) => JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
-    transcript: entry.transcript,
-    durationSeconds: entry.durationSeconds,
-    reflection: entry.reflection,
-    verifiedProof: entry.verifiedProof,
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: treatAsNew ?? entry.treatAsNew,
-    connectionApproved: connectionApproved ?? entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: keepSeparate ?? entry.keepSeparate,
-    archiveThreadId: archiveThreadId ?? entry.archiveThreadId,
-    archivePackId: archivePackId ?? entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entry.entryAboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: captureContextTag ?? entry.captureContextTag,
-    biomarkers: entry.biomarkers,
-    parentHookId: entry.parentHookId,
-    wasGrounded: entry.wasGrounded,
-    ownerKey: entry.ownerKey,
-  );
+  /// All entries excluding tombstones (locally deleted entries pending
+  /// server acknowledgement / retention). This is the query every normal
+  /// UI/eligibility path should use.
+  Future<List<JournalEntry>> loadAll() async {
+    return (await loadAllIncludingTombstones())
+        .where((e) => !e.isDeleted)
+        .toList();
+  }
+
+  /// Same as [loadAll] but synchronous — uses the in-memory cache after [open].
+  List<JournalEntry> loadAllSync() {
+    return loadAllIncludingTombstonesSync().where((e) => !e.isDeleted).toList();
+  }
+
+  /// Every entry including tombstones. Used by sync (to propagate/pull
+  /// deletions) and by [compactTombstones]. Normal UI code must not call
+  /// this directly — use [loadAll].
+  Future<List<JournalEntry>> loadAllIncludingTombstones() async {
+    if (ArchiveMeDemoState.isActive) {
+      return ArchiveMeDemoArchive.journalEntries();
+    }
+    if (CreatorDemoMode.isActive) {
+      return CreatorDemoMode.demoJournalEntries();
+    }
+    if (_encryptAtRest && _encrypted != null) {
+      _cache = await _loadEntriesFromEncrypted();
+      return List<JournalEntry>.from(_cache!);
+    }
+    return loadAllIncludingTombstonesSync();
+  }
+
+  List<JournalEntry> loadAllIncludingTombstonesSync() {
+    if (ArchiveMeDemoState.isActive) {
+      return ArchiveMeDemoArchive.journalEntries();
+    }
+    if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
+    if (_cache != null) {
+      return List<JournalEntry>.from(_cache!);
+    }
+
+    final source = _encryptAtRest ? file : (_plaintextLegacy ?? file);
+    if (!source.existsSync()) return [];
+    final raw = source.readAsStringSync();
+    if (raw.trim().isEmpty) return [];
+    _cache = _decodeEntries(raw);
+    return List<JournalEntry>.from(_cache!);
+  }
 
   Future<List<JournalEntry>> loadEligible() async {
     final all = await loadAll();
@@ -297,90 +295,68 @@ class JournalStore {
         .toList();
   }
 
-  Future<void> markSynced(String id) async {
-    final entry = await getById(id);
-    if (entry == null) return;
-    await save(
-      JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        verifiedProof: entry.verifiedProof,
-        syncStatus: SyncStatus.synced,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
-        captureContextTag: entry.captureContextTag,
-        biomarkers: entry.biomarkers,
-        parentHookId: entry.parentHookId,
-        wasGrounded: entry.wasGrounded,
-        ownerKey: entry.ownerKey,
-      ),
-    );
+  /// Tombstones not yet acknowledged by the server — these must be pushed
+  /// on the next sync so other devices learn about the deletion.
+  Future<List<JournalEntry>> pendingTombstones() async {
+    final all = await loadAllIncludingTombstones();
+    return all
+        .where(
+          (e) =>
+              e.isDeleted &&
+              (e.syncStatus == SyncStatus.pendingUpload ||
+                  e.syncStatus == SyncStatus.localOnly),
+        )
+        .toList();
   }
 
+  Future<void> markSynced(String id) async {
+    final entry = await getByIdIncludingTombstones(id);
+    if (entry == null) return;
+    await save(entry.markSyncAcknowledged());
+  }
+
+  /// Merges entries pulled from the server, including tombstones, using
+  /// the shared [JournalSyncCompare] conflict comparator so mobile and
+  /// server agree on which revision wins. A remote tombstone always
+  /// overwrites a lower-priority local copy — it never resurrects a
+  /// separately-deleted local entry, and a winning remote non-tombstone
+  /// never un-deletes a higher-priority local tombstone.
   Future<void> mergeRemote(List<JournalEntry> remote) async {
-    final local = await loadAll();
+    final local = await loadAllIncludingTombstones();
     final byId = {for (final e in local) e.id: e};
     for (final r in remote) {
       final existing = byId[r.id];
-      if (existing == null || r.createdAt.isAfter(existing.createdAt)) {
-        byId[r.id] = JournalEntry(
-          id: r.id,
-          createdAt: r.createdAt,
-          transcript: r.transcript,
-          durationSeconds: r.durationSeconds,
-          reflection: r.reflection,
-          syncStatus: SyncStatus.synced,
+      if (existing == null || JournalSyncCompare.compare(r, existing) > 0) {
+        // The remote copy wins outright, but device-local-only bookkeeping
+        // (the local audio file path, and the owning-account stamp used by
+        // JournalOwnershipGuard) is never something the server's revision
+        // comparison should override, so both are preserved from the
+        // existing local copy when present.
+        byId[r.id] = r.copyWith(
           localAudioPath: existing?.localAudioPath,
-          treatAsNew: r.treatAsNew || (existing?.treatAsNew ?? false),
-          connectionApproved:
-              r.connectionApproved || (existing?.connectionApproved ?? false),
-          keepExactDetails:
-              r.keepExactDetails || (existing?.keepExactDetails ?? false),
-          keepSeparate: r.keepSeparate || (existing?.keepSeparate ?? false),
-          archiveThreadId: r.archiveThreadId ?? existing?.archiveThreadId,
-          archivePackId: r.archivePackId ?? existing?.archivePackId,
-          isPinned: r.isPinned || (existing?.isPinned ?? false),
-          pinnedAt: r.pinnedAt ?? existing?.pinnedAt,
-          isArchived: r.isArchived || (existing?.isArchived ?? false),
-          archivedAt: r.archivedAt ?? existing?.archivedAt,
-          entryAboutness: r.entryAboutness,
-          memorySurfacing: r.memorySurfacing,
-          preserveOriginal:
-              r.preserveOriginal || (existing?.preserveOriginal ?? false),
-          captureContextTag: r.captureContextTag ?? existing?.captureContextTag,
-          biomarkers: r.biomarkers ?? existing?.biomarkers,
-          parentHookId: r.parentHookId ?? existing?.parentHookId,
-          wasGrounded: r.wasGrounded || (existing?.wasGrounded ?? false),
-          verifiedProof: r.verifiedProof ?? existing?.verifiedProof,
           ownerKey: r.ownerKey ?? existing?.ownerKey,
+          syncStatus: SyncStatus.synced,
         );
       }
     }
-    final merged = byId.values
-        .map(_cognitiveAnalyzer.enrichEntry)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final merged =
+        byId.values
+            .map((e) => e.isDeleted ? e : _cognitiveAnalyzer.enrichEntry(e))
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     await _writeAll(merged);
   }
 
+  /// Soft local delete: creates a tombstone rather than forgetting the
+  /// entry existed, so the deletion can propagate to other devices and
+  /// never resurrects there. The entry disappears from [loadAll] / normal
+  /// UI queries immediately. Use [compactTombstones] to physically purge
+  /// tombstones once they are safe to forget. For a full account wipe
+  /// (hard purge, no propagation), use [clearAll] instead.
   Future<void> delete(String id) async {
-    final all = await loadAll();
-    await _writeAll(all.where((e) => e.id != id).toList());
+    final entry = await getByIdIncludingTombstones(id);
+    if (entry == null || entry.isDeleted) return;
+    await save(entry.markDeleted());
   }
 
   Future<JournalEntry?> getById(String id) async {
@@ -389,6 +365,46 @@ class JournalStore {
       if (e.id == id) return e;
     }
     return null;
+  }
+
+  /// Like [getById] but also returns tombstoned entries — needed by sync
+  /// and by [markSynced]/[delete] themselves, which must operate on
+  /// tombstones too.
+  Future<JournalEntry?> getByIdIncludingTombstones(String id) async {
+    final all = await loadAllIncludingTombstones();
+    for (final e in all) {
+      if (e.id == id) return e;
+    }
+    return null;
+  }
+
+  /// Permanently removes tombstones that the server has acknowledged
+  /// ([SyncStatus.synced]) and whose retention window has elapsed. This is
+  /// the only place a tombstone is ever physically forgotten short of a
+  /// full account wipe. Returns the number of tombstones purged.
+  Future<int> compactTombstones({
+    Duration retention = const Duration(days: 30),
+    DateTime Function() now = DateTime.now,
+  }) async {
+    final all = await loadAllIncludingTombstones();
+    final cutoff = now().toUtc().subtract(retention);
+    final kept = <JournalEntry>[];
+    var purged = 0;
+    for (final e in all) {
+      final shouldPurge =
+          e.isDeleted &&
+          e.syncStatus == SyncStatus.synced &&
+          e.deletedAt!.isBefore(cutoff);
+      if (shouldPurge) {
+        purged++;
+      } else {
+        kept.add(e);
+      }
+    }
+    if (purged > 0) {
+      await _writeAll(kept);
+    }
+    return purged;
   }
 
   Future<String> exportJson() async {
@@ -435,11 +451,15 @@ class JournalStore {
   }
 
   static PrivateDataEncryptionKeyStore _defaultKeyStore(
-    SecureStorageService? secureStorage,
-  ) {
+    SecureStorageService? secureStorage, {
+    String? keyAlias,
+  }) {
     if (Platform.environment.containsKey('FLUTTER_TEST')) {
       return InMemoryPrivateDataEncryptionKeyStore();
     }
-    return SecurePrivateDataEncryptionKeyStore(secure: secureStorage);
+    return SecurePrivateDataEncryptionKeyStore(
+      secure: secureStorage,
+      keyAlias: keyAlias,
+    );
   }
 }

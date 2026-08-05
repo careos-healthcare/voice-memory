@@ -127,29 +127,10 @@ abstract class EntryMemoryModeSession {
     bool? treatAsNew,
     bool? keepSeparate,
     bool? connectionApproved,
-  }) => JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
-    transcript: entry.transcript,
-    durationSeconds: entry.durationSeconds,
-    reflection: entry.reflection,
-    verifiedProof: entry.verifiedProof,
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: treatAsNew ?? entry.treatAsNew,
-    connectionApproved: connectionApproved ?? entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: keepSeparate ?? entry.keepSeparate,
-    archiveThreadId: entry.archiveThreadId,
-    archivePackId: entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entry.entryAboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: entry.captureContextTag,
+  }) => entry.copyWith(
+    treatAsNew: treatAsNew,
+    connectionApproved: connectionApproved,
+    keepSeparate: keepSeparate,
   );
 
   @visibleForTesting

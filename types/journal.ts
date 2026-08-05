@@ -46,6 +46,23 @@ export interface JournalEntry {
   photo?: EntryPhotoMeta;
   /** Optional abstract atmosphere — user-initiated, stored locally. */
   atmosphere?: EntryAtmosphereMeta;
+  /**
+   * Sync-versioning metadata — mirrors the mobile `JournalEntry` model
+   * (apps/voicememory_mobile/lib/models/journal_entry.dart). Optional here
+   * so legacy/pre-migration clients that don't send these yet are never
+   * rejected; the server treats a missing value as schema v1 and defaults
+   * it the same way mobile's migration does (updatedAt=createdAt, revision=1).
+   */
+  /** Mutable, UTC. Updated on every meaningful edit — the primary sync-conflict input alongside `revision`. */
+  updatedAt?: string;
+  /** Positive, monotonically-increasing per-entry edit counter. Starts at 1. */
+  revision?: number;
+  /** Deterministic conflict tie-breaker string; lexically-greater wins when revision+updatedAt tie. */
+  changeId?: string;
+  /** Tombstone marker — non-null means this entry was deleted and the deletion must propagate to other devices. */
+  deletedAt?: string;
+  /** Schema version this entry was constructed/migrated against. */
+  schemaVersion?: number;
 }
 
 export type ProcessingStage = "transcribing" | "analyzing" | "saving";

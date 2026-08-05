@@ -48,6 +48,19 @@ export function hashSessionToken(token: string): string {
   return createHash("sha256").update(`session:${token}:${authSecret()}`).digest("hex");
 }
 
+/**
+ * Short, one-way hash of a userId for structured audit logs (e.g. account
+ * deletion). Never reversible to the original id in practice, and never the
+ * same value as `userIdFromEmail`'s output space (distinct salt prefix), so
+ * it can't be replayed as a session/user lookup key.
+ */
+export function hashUserIdForAudit(userId: string): string {
+  return createHash("sha256")
+    .update(`audit:${userId}:${authSecret()}`)
+    .digest("hex")
+    .slice(0, 12);
+}
+
 export function signSessionToken(payload: Omit<SessionTokenPayload, "exp">): string {
   const body: SessionTokenPayload = {
     ...payload,

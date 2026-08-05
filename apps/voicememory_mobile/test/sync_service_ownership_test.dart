@@ -68,8 +68,17 @@ void main() {
           if (request.method == 'POST' && request.url.path == '/api/journal') {
             final body = jsonDecode(request.body) as Map<String, dynamic>;
             final entries = body['entries'] as List<dynamic>;
-            uploadedIds.addAll(entries.map((e) => (e as Map)['id'] as String));
-            return http.Response(jsonEncode({'ok': true}), 200);
+            final ids = entries.map((e) => (e as Map)['id'] as String).toList();
+            uploadedIds.addAll(ids);
+            return http.Response(
+              jsonEncode({
+                'ok': true,
+                'accepted': ids,
+                'rejected': [],
+                'upserted': ids.length,
+              }),
+              200,
+            );
           }
           if (request.method == 'GET' && request.url.path == '/api/journal') {
             return http.Response(jsonEncode({'entries': []}), 200);
@@ -95,52 +104,55 @@ void main() {
     },
   );
 
-  test(
-    'syncNow uploads unowned legacy entries normally when no account switch '
-    'has ever been detected on this device',
-    () async {
-      final dir = Directory.systemTemp.createTempSync('vm_sync_ownership_');
-      final journal = await JournalStore.open(
-        '${dir.path}/journal.json',
-        encryptAtRest: false,
-      );
-      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+  test('syncNow uploads unowned legacy entries normally when no account switch '
+      'has ever been detected on this device', () async {
+    final dir = Directory.systemTemp.createTempSync('vm_sync_ownership_');
+    final journal = await JournalStore.open(
+      '${dir.path}/journal.json',
+      encryptAtRest: false,
+    );
+    final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
 
-      // Entry created before owner tagging existed — no ownerKey at all.
-      await journal.save(_entry(id: 'legacy'));
+    // Entry created before owner tagging existed — no ownerKey at all.
+    await journal.save(_entry(id: 'legacy'));
 
-      await prefs.writeString(
-        JournalOwnershipGuard.ownerKeyPrefsKey,
-        'user-a',
-      );
-      await prefs.writeBool(
-        JournalOwnershipGuard.migrationPendingPrefsKey,
-        false,
-      );
+    await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-a');
+    await prefs.writeBool(
+      JournalOwnershipGuard.migrationPendingPrefsKey,
+      false,
+    );
 
-      final uploadedIds = <String>[];
-      final api = ApiClient(
-        httpClient: MockClient((request) async {
-          if (request.method == 'POST' && request.url.path == '/api/journal') {
-            final body = jsonDecode(request.body) as Map<String, dynamic>;
-            final entries = body['entries'] as List<dynamic>;
-            uploadedIds.addAll(entries.map((e) => (e as Map)['id'] as String));
-            return http.Response(jsonEncode({'ok': true}), 200);
-          }
-          if (request.method == 'GET' && request.url.path == '/api/journal') {
-            return http.Response(jsonEncode({'entries': []}), 200);
-          }
-          return http.Response('not found', 404);
-        }),
-        baseUrl: 'https://voice-memory-iota.vercel.app',
-      );
-      api.setSessionCookie('session=user-a');
+    final uploadedIds = <String>[];
+    final api = ApiClient(
+      httpClient: MockClient((request) async {
+        if (request.method == 'POST' && request.url.path == '/api/journal') {
+          final body = jsonDecode(request.body) as Map<String, dynamic>;
+          final entries = body['entries'] as List<dynamic>;
+          final ids = entries.map((e) => (e as Map)['id'] as String).toList();
+          uploadedIds.addAll(ids);
+          return http.Response(
+            jsonEncode({
+              'ok': true,
+              'accepted': ids,
+              'rejected': [],
+              'upserted': ids.length,
+            }),
+            200,
+          );
+        }
+        if (request.method == 'GET' && request.url.path == '/api/journal') {
+          return http.Response(jsonEncode({'entries': []}), 200);
+        }
+        return http.Response('not found', 404);
+      }),
+      baseUrl: 'https://voice-memory-iota.vercel.app',
+    );
+    api.setSessionCookie('session=user-a');
 
-      final sync = SyncService(api, journal, prefs);
-      final result = await sync.syncNow();
+    final sync = SyncService(api, journal, prefs);
+    final result = await sync.syncNow();
 
-      expect(uploadedIds, ['legacy']);
-      expect(result.syncNote, isNull);
-    },
-  );
+    expect(uploadedIds, ['legacy']);
+    expect(result.syncNote, isNull);
+  });
 }

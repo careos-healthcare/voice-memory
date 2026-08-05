@@ -17,6 +17,7 @@ class SyncResult {
     this.syncNote,
     required this.pushed,
     required this.pulled,
+    this.rejected = 0,
   });
 
   final bool cloudSyncSucceeded;
@@ -24,6 +25,12 @@ class SyncResult {
   final String? syncNote;
   final int pushed;
   final int pulled;
+
+  /// Count of outgoing entries the server refused this cycle (stale
+  /// revisions and shape/validation errors alike) — see
+  /// [SyncService.syncNow]. Always 0 for legacy short-circuit results
+  /// (demo mode, backend not configured, auth required, etc.).
+  final int rejected;
 
   /// Legacy alias — cloud sync only.
   bool get ok => cloudSyncSucceeded;
@@ -41,6 +48,12 @@ class SyncService {
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
   final JournalOwnershipGuard _ownershipGuard;
+
+  /// Mirrors the server's `JOURNAL_SYNC_BATCH_LIMIT` (`POST /api/journal`
+  /// rejects a larger `entries` array with `400 BATCH_TOO_LARGE`) — defined
+  /// once here so a backlog built up over a long offline period is always
+  /// chunked before upload instead of failing outright.
+  static const int _batchLimit = 200;
 
   /// Splits [pending] into entries safe to upload under the currently
   /// signed-in account and entries that must stay on-device because they
@@ -71,6 +84,15 @@ class SyncService {
     return (eligible: eligible, blocked: blocked);
   }
 
+  List<List<JournalEntry>> _chunk(List<JournalEntry> entries, int size) {
+    final batches = <List<JournalEntry>>[];
+    for (var i = 0; i < entries.length; i += size) {
+      final end = (i + size < entries.length) ? i + size : entries.length;
+      batches.add(entries.sublist(i, end));
+    }
+    return batches;
+  }
+
   Future<SyncResult> syncNow() async {
     // Creator demo mode: nothing syncs — no backend call is ever made and
     // no demo content can reach an account.
@@ -91,20 +113,53 @@ class SyncService {
         pulled: 0,
       );
     }
+    // Tracked outside the try block so a mid-batch failure still reports
+    // exactly how much of the outgoing set actually made it to the server
+    // before the failure — those entries were already marked synced as
+    // each batch's response came back, so a retry never re-sends them.
+    var pushed = 0;
+    var rejected = 0;
     try {
-      final pending = await _journal.pendingSyncQueue();
-      final partitioned = await _partitionByOwnership(pending);
+      // Edits/new entries and not-yet-acknowledged local deletes both go
+      // through the exact same conditional-upsert path server-side — a
+      // tombstone is just another revision, so it rides in the same
+      // outgoing batch as everything else.
+      final pendingEdits = await _journal.pendingSyncQueue();
+      final pendingDeletes = await _journal.pendingTombstones();
+      final outgoing = <JournalEntry>[...pendingEdits, ...pendingDeletes];
+      final partitioned = await _partitionByOwnership(outgoing);
       final eligible = partitioned.eligible;
       final blocked = partitioned.blocked;
-      if (eligible.isNotEmpty) {
-        await _api.createJournalEntry(eligible);
-        for (final e in eligible) {
-          await _journal.markSynced(e.id);
+
+      for (final batch in _chunk(eligible, _batchLimit)) {
+        final pushResult = await _api.createJournalEntry(batch);
+        // Marked synced immediately per-batch (not after the whole loop)
+        // so that if a later batch throws, everything already accepted
+        // stays marked synced and is never re-pushed on the next
+        // syncNow() call.
+        for (final id in pushResult.accepted) {
+          await _journal.markSynced(id);
+          pushed++;
+        }
+        for (final rejection in pushResult.rejected) {
+          rejected++;
+          final winning = rejection.winning;
+          if (winning != null) {
+            // The server's revision beat (or tied) ours — reconcile the
+            // local copy right away via the same conflict-resolution path
+            // a normal pull uses, rather than leaving it wrong until the
+            // next full pull happens to also carry this id.
+            await _journal.mergeRemote([winning]);
+          }
+          // No `winning` means a shape/validation error, not a conflict —
+          // leave the local entry's sync status untouched (still pending)
+          // so it is retried on the next sync rather than silently dropped.
         }
       }
 
       final remote = await _api.listJournal();
       await _journal.mergeRemote(remote);
+      await _journal.compactTombstones();
 
       await _prefs.setLastSyncAt(DateTime.now());
       return SyncResult(
@@ -116,31 +171,35 @@ class SyncService {
                   'account stayed private on this device and were not '
                   'uploaded.'
             : null,
-        pushed: eligible.length,
+        pushed: pushed,
         pulled: remote.length,
+        rejected: rejected,
       );
     } on AuthRequiredException {
-      return const SyncResult(
+      return SyncResult(
         cloudSyncSucceeded: false,
         message: 'Sign in to sync your archive to the server.',
-        pushed: 0,
+        pushed: pushed,
         pulled: 0,
+        rejected: rejected,
       );
     } on BackendNotConfiguredException {
-      return const SyncResult(
+      return SyncResult(
         cloudSyncSucceeded: false,
         message: 'Your moments stay on this device.',
         syncNote: CaptureSaveMessages.syncNotAvailableTestFlight,
-        pushed: 0,
+        pushed: pushed,
         pulled: 0,
+        rejected: rejected,
       );
     } catch (e) {
       return SyncResult(
         cloudSyncSucceeded: false,
         message: 'Sync did not complete.',
         syncNote: CaptureSaveMessages.syncNoteFor(e),
-        pushed: 0,
+        pushed: pushed,
         pulled: 0,
+        rejected: rejected,
       );
     }
   }

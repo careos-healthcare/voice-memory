@@ -122,6 +122,18 @@ export async function revokeSessionPostgres(token: string): Promise<void> {
   await dbQuery(`DELETE FROM sessions WHERE token_hash = $1`, [hashSessionToken(token)]);
 }
 
+export async function deleteSessionsForUserPostgres(userId: string): Promise<number> {
+  const result = await dbQuery(`DELETE FROM sessions WHERE user_id = $1`, [userId]);
+  return result.rowCount ?? 0;
+}
+
+export async function deleteAuthCodesForEmailPostgres(email: string): Promise<number> {
+  const result = await dbQuery(`DELETE FROM auth_codes WHERE email = $1`, [
+    email.trim().toLowerCase(),
+  ]);
+  return result.rowCount ?? 0;
+}
+
 export async function sessionExistsPostgres(token: string): Promise<boolean> {
   const result = await dbQuery<{ token_hash: string }>(
     `SELECT token_hash

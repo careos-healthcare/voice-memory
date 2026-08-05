@@ -11,7 +11,8 @@ abstract class PrivacyScreenCopy {
       'default. Some features send audio or text for transcription or analysis '
       'when you use them.';
 
-  static const String privateByDefaultTitle = PrivacyCopyPolicy.privateByDefault;
+  static const String privateByDefaultTitle =
+      PrivacyCopyPolicy.privateByDefault;
   static const String privateByDefaultBody =
       PrivacyCopyPolicy.journalEncryptedAtRest;
 
@@ -52,6 +53,21 @@ abstract class PrivacyScreenCopy {
 
   static const String fullPolicyLink = 'Full privacy policy online';
 
+  static const String remoteProcessingSectionTitle = 'Remote analysis';
+  static const String remoteProcessingSwitchLabel =
+      'Send new moments for reflection';
+  static const String remoteProcessingSwitchBodyOn =
+      "On — a new moment's transcript is sent to compare it against what "
+      "you've said before. Turn this off any time; anything already saved "
+      'stays exactly as it is.';
+  static const String remoteProcessingSwitchBodyOff =
+      'Off — new moments are saved on this device only. Turn this on to '
+      'get a reflection for what you record next.';
+  static const String remoteProcessingConsentedAtPrefix = 'Last turned on ';
+  static const String remoteProcessingWithdrawnFootnote =
+      'Withdrawing here only changes what happens next — moments already '
+      'analyzed keep their existing reflection.';
+
   static const List<PrivacySection> sections = [
     PrivacySection(title: privateByDefaultTitle, body: privateByDefaultBody),
     PrivacySection(title: onDeviceTitle, body: onDeviceBody),
@@ -79,6 +95,12 @@ abstract class PrivacyScreenCopy {
     processingProvidersTitle,
     processingProvidersBody,
     fullPolicyLink,
+    remoteProcessingSectionTitle,
+    remoteProcessingSwitchLabel,
+    remoteProcessingSwitchBodyOn,
+    remoteProcessingSwitchBodyOff,
+    remoteProcessingConsentedAtPrefix,
+    remoteProcessingWithdrawnFootnote,
   ];
 }
 

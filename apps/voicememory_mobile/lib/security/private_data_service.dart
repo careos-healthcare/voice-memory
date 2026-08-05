@@ -170,29 +170,7 @@ abstract class TempRecordingCleanup {
   }
 
   static JournalEntry _entryWithoutLocalAudioPath(JournalEntry entry) =>
-      JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        verifiedProof: entry.verifiedProof,
-        syncStatus: entry.syncStatus,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: entry.preserveOriginal,
-        captureContextTag: entry.captureContextTag,
-      );
+      entry.clearLocalAudioPath();
 
   static Future<bool> _deleteFileIfExists(String path) async {
     try {
@@ -260,6 +238,36 @@ class PrivateDataService {
       throw ArgumentError('Confirmation phrase did not match.');
     }
     await clearLocalArchiveData();
+  }
+
+  /// Destructive, device-wide wipe distinct from [wipeAllLocalArchive]/
+  /// [clearLocalArchiveData]: deletes every account namespace directory
+  /// under `accounts/` — including the guest namespace and every signed-in
+  /// account that has ever used this device, not just whichever one is
+  /// currently active.
+  ///
+  /// This is a `static` method rather than an instance method because it
+  /// necessarily operates on namespaces this [PrivateDataService] (bound to
+  /// one specific [JournalStore]) has no open handle to — it works directly
+  /// against the filesystem instead of going through any `JournalStore`/
+  /// `MobilePrefsStore` instance.
+  static Future<int> wipeAllAccountsOnDevice({
+    required String documentsBasePath,
+    required String confirmationPhrase,
+  }) async {
+    if (confirmationPhrase.trim() != wipeConfirmationPhrase) {
+      throw ArgumentError('Confirmation phrase did not match.');
+    }
+    final accountsDir = Directory('$documentsBasePath/accounts');
+    if (!await accountsDir.exists()) return 0;
+    var wipedCount = 0;
+    for (final entity in accountsDir.listSync()) {
+      if (entity is Directory) {
+        await entity.delete(recursive: true);
+        wipedCount++;
+      }
+    }
+    return wipedCount;
   }
 
   Future<void> clearLocalArchiveData() async {

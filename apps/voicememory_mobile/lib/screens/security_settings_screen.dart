@@ -8,6 +8,7 @@ import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
+import '../features/account_migration/account_data_migration_coordinator.dart';
 import '../product/consumer_ui_copy.dart';
 import '../security/app_lock_service.dart';
 import '../security/app_lock_settings.dart';
@@ -60,6 +61,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   RestorePurchasesFlow? _restoreFlow;
   bool _hideInAppSwitcher = false;
   bool _wipeBusy = false;
+  bool _hasMigratableGuestData = false;
 
   @override
   void initState() {
@@ -86,12 +88,25 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
     } catch (_) {
       hideSwitcher = false;
     }
+    var hasMigratableGuestData = false;
+    if (signedIn) {
+      try {
+        hasMigratableGuestData =
+            await AccountDataMigrationCoordinator.forActiveAccount().then(
+              (coordinator) => coordinator.hasMigratableGuestData(),
+            );
+      } catch (_) {
+        hasMigratableGuestData = false;
+      }
+    }
+    if (!mounted) return;
     setState(() {
       _appLockEnabled = lockEnabled;
       _biometricsAvailable = available;
       _biometricsEnabled = biometricsOn;
       _signedIn = signedIn;
       _hideInAppSwitcher = hideSwitcher;
+      _hasMigratableGuestData = hasMigratableGuestData;
     });
   }
 
@@ -327,6 +342,15 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
 
   List<Widget> _dataTiles() {
     return [
+      if (_hasMigratableGuestData)
+        _tile(
+          key: const Key('security_guest_data_migration'),
+          title: 'Data from before you signed in',
+          subtitle:
+              'Move, keep separate, or export the reflections you saved '
+              'while signed out.',
+          onTap: () => _openRoute('/account/guest-data-migration'),
+        ),
       SwitchListTile(
         key: const Key('security_hide_app_switcher'),
         contentPadding: EdgeInsets.zero,
@@ -367,9 +391,9 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
           ),
           child: Text(
             _restoreFeedback!,
-            style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.listSubtitle(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ),
       _tile(

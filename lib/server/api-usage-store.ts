@@ -216,6 +216,31 @@ export function getDailyLimits(): typeof DAILY_LIMITS {
   return { ...DAILY_LIMITS };
 }
 
+/** Removes every usage row for a subject (e.g. `user:<id>`), across day and minute tables. Idempotent. */
+export async function deleteApiUsageForSubject(subject: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const day = await dbQuery(`DELETE FROM api_usage WHERE subject_key = $1`, [subject]);
+    const minute = await dbQuery(`DELETE FROM api_minute_usage WHERE subject_key = $1`, [subject]);
+    return (day.rowCount ?? 0) + (minute.rowCount ?? 0);
+  }
+
+  let removed = 0;
+  const prefix = `${subject}:`;
+  for (const key of [...dayMap().keys()]) {
+    if (key.startsWith(prefix)) {
+      dayMap().delete(key);
+      removed += 1;
+    }
+  }
+  for (const key of [...minuteMap().keys()]) {
+    if (key.startsWith(prefix)) {
+      minuteMap().delete(key);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
 export function usesDurableRateLimits(): boolean {
   return shouldUsePostgresStorage();
 }

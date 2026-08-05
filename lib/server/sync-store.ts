@@ -3,8 +3,9 @@ import "server-only";
 import path from "node:path";
 
 import { shouldUseFilesystemStorage, shouldUsePostgresStorage } from "@/lib/server/db";
-import { ensureDataDir, readJsonFile, writeJsonFile } from "@/lib/server/data-path";
+import { ensureDataDir, readJsonFile, removeDataPath, writeJsonFile } from "@/lib/server/data-path";
 import {
+  deleteSyncBlobsForUserPostgres,
   readEncryptedBlobsPostgres,
   readSyncManifestPostgres,
   upsertEncryptedBlobsPostgres,
@@ -144,4 +145,28 @@ export async function readEncryptedBlobs(userId: string): Promise<StoredSyncBlob
   }
 
   return readUserStore(userId).blobs;
+}
+
+/**
+ * Deletes every encrypted sync blob for a user, across whichever mode is
+ * currently active. Idempotent — a second call finds nothing and returns 0.
+ */
+export async function deleteSyncDataForUser(
+  userId: string,
+): Promise<{ mode: SyncStorageMode; count: number }> {
+  if (shouldUsePostgresStorage()) {
+    const count = await deleteSyncBlobsForUserPostgres(userId);
+    return { mode: "database", count };
+  }
+
+  if (shouldUseFilesystemStorage()) {
+    const removed = removeDataPath("sync", userId);
+    return { mode: "filesystem", count: removed ? 1 : 0 };
+  }
+
+  const existed = Boolean(globalForSync.__voicememorySyncStores?.[userId]);
+  if (globalForSync.__voicememorySyncStores) {
+    delete globalForSync.__voicememorySyncStores[userId];
+  }
+  return { mode: "memory", count: existed ? 1 : 0 };
 }

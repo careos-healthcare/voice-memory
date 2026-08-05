@@ -100,6 +100,11 @@ export async function readSyncManifestPostgres(userId: string): Promise<SyncMani
   };
 }
 
+export async function deleteSyncBlobsForUserPostgres(userId: string): Promise<number> {
+  const result = await dbQuery(`DELETE FROM sync_blobs WHERE user_id = $1`, [userId]);
+  return result.rowCount ?? 0;
+}
+
 export async function readEncryptedBlobsPostgres(userId: string): Promise<StoredSyncBlob[]> {
   const result = await dbQuery<{
     blob_id: string;

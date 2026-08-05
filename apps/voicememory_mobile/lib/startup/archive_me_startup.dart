@@ -10,6 +10,7 @@ import '../features/activation/activation_tracker.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/objective/current_objective_widget_refresh_service.dart';
 import '../features/proof_admission/archive_correction_store.dart';
+import '../features/proof_admission/proof_scope_provider.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import '../features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
@@ -24,6 +25,16 @@ Future<void> completeArchiveMeStartup() async {
   await AppStoragePaths.configureFromDeviceInfo();
   await AppServices.initialize();
   ArchiveCorrectionStore.instance.configure(AppServices.instance.prefs);
+  // A resumed signed-in session (see `AppServices.initialize`, which opens
+  // that account's own namespace before this line ever runs) must load its
+  // own corrections under its own archive scope, not silently under the
+  // guest default `switchArchive`'s constructor seed leaves it at — this is
+  // the same reconciliation `AppServices._switchToNamespace` performs on a
+  // live account switch, just also needed once here for the namespace that
+  // was already active before the very first `ensureLoaded` call.
+  await ArchiveCorrectionStore.instance.switchArchive(
+    const AppServicesProofScopeProvider().activeArchiveScope,
+  );
   await ArchiveCorrectionStore.instance.ensureLoaded();
   await ArchiveCorrectionStore.instance.migrateLegacyArchiveFeedback();
   await OfflineVaultRecoveryLaunchController.prepareScan();

@@ -143,3 +143,30 @@ export function writeAuthStore(store: AuthStoreShape): void {
 export function authStorageUsesFilesystemInProduction(): boolean {
   return isProduction() && getAuthStorageMode() === "filesystem";
 }
+
+/**
+ * Removes a user's local (memory/filesystem) auth identity — the
+ * `usersByEmail` entry plus any pending login codes for their email. No-op
+ * (and safe to call) when Postgres storage is active, since this backend is
+ * unused in that mode. Idempotent — a second call finds nothing to remove.
+ */
+export function deleteLocalAuthIdentity(userId: string, email: string): number {
+  if (shouldUsePostgresStorage()) return 0;
+
+  const normalized = email.trim().toLowerCase();
+  const store = readAuthStore();
+  let removed = 0;
+
+  const user = store.usersByEmail[normalized];
+  if (user && user.id === userId) {
+    delete store.usersByEmail[normalized];
+    removed += 1;
+  }
+
+  const beforePending = store.pendingCodes.length;
+  store.pendingCodes = store.pendingCodes.filter((row) => row.email !== normalized);
+  removed += beforePending - store.pendingCodes.length;
+
+  writeAuthStore(store);
+  return removed;
+}

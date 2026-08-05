@@ -117,12 +117,17 @@ export async function revokeServerBilling(userId: string): Promise<void> {
   });
 }
 
-export async function deleteServerBilling(userId: string): Promise<void> {
+export async function deleteServerBilling(userId: string): Promise<number> {
   if (shouldUsePostgresStorage()) {
-    await dbQuery(`DELETE FROM billing_entitlements WHERE user_id = $1`, [userId]);
-    return;
+    const result = await dbQuery(`DELETE FROM billing_entitlements WHERE user_id = $1`, [userId]);
+    return result.rowCount ?? 0;
   }
-  memoryMap().delete(userId);
+  return memoryMap().delete(userId) ? 1 : 0;
+}
+
+/** Non-Postgres billing has no filesystem persistence — always memory. */
+export function currentBillingStorageMode(): "postgres" | "memory" {
+  return shouldUsePostgresStorage() ? "postgres" : "memory";
 }
 
 export async function resolveServerEntitlements(userId: string): Promise<{

@@ -14,41 +14,20 @@ class PostSaveMomentDetailService {
     required JournalEntry parentEntry,
     required PostSaveMomentDetailType detailType,
     required String detailText,
-  }) =>
-      _pipeline.savePostSaveMomentDetail(
-        parentEntry: parentEntry,
-        detailType: detailType,
-        detailText: detailText,
-      );
+  }) => _pipeline.savePostSaveMomentDetail(
+    parentEntry: parentEntry,
+    detailType: detailType,
+    detailText: detailText,
+  );
 }
 
 JournalEntry buildLinkedDetailEntry({
   required JournalEntry existing,
   required String detailText,
-}) =>
-    JournalEntry(
-      id: existing.id,
-      createdAt: existing.createdAt,
-      transcript: detailText.trim(),
-      durationSeconds: existing.durationSeconds,
-      reflection: existing.reflection,
-      syncStatus: SyncStatus.localOnly,
-      localAudioPath: existing.localAudioPath,
-      treatAsNew: existing.treatAsNew,
-      connectionApproved: existing.connectionApproved,
-      keepExactDetails: existing.keepExactDetails,
-      keepSeparate: existing.keepSeparate,
-      archiveThreadId: existing.archiveThreadId,
-      archivePackId: existing.archivePackId,
-      isPinned: existing.isPinned,
-      pinnedAt: existing.pinnedAt,
-      isArchived: existing.isArchived,
-      archivedAt: existing.archivedAt,
-      entryAboutness: existing.entryAboutness,
-      memorySurfacing: existing.memorySurfacing,
-      preserveOriginal: existing.preserveOriginal,
-      captureContextTag: existing.captureContextTag,
-    );
+}) => existing.copyWith(
+  transcript: detailText.trim(),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry buildNewLinkedDetailEntry({
   required String id,
@@ -56,24 +35,23 @@ JournalEntry buildNewLinkedDetailEntry({
   required PostSaveMomentDetailType detailType,
   required String detailText,
   required int durationSeconds,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime.now().toUtc(),
-      transcript: detailText.trim(),
-      durationSeconds: durationSeconds,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-      captureContextTag: PostSaveMomentDetailType.linkedCaptureContextTag(
-        type: detailType,
-        parentEntryId: parentEntryId,
-      ),
-      keepSeparate: true,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime.now().toUtc(),
+  transcript: detailText.trim(),
+  durationSeconds: durationSeconds,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+  captureContextTag: PostSaveMomentDetailType.linkedCaptureContextTag(
+    type: detailType,
+    parentEntryId: parentEntryId,
+  ),
+  keepSeparate: true,
+);

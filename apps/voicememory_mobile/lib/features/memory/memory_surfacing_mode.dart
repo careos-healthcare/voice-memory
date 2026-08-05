@@ -111,30 +111,7 @@ abstract class MemorySurfacingSession {
   static JournalEntry _copy(
     JournalEntry entry, {
     required String memorySurfacing,
-  }) => JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
-    transcript: entry.transcript,
-    durationSeconds: entry.durationSeconds,
-    reflection: entry.reflection,
-    verifiedProof: entry.verifiedProof,
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: entry.treatAsNew,
-    connectionApproved: entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: entry.keepSeparate,
-    archiveThreadId: entry.archiveThreadId,
-    archivePackId: entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entry.entryAboutness,
-    memorySurfacing: memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: entry.captureContextTag,
-  );
+  }) => entry.copyWith(memorySurfacing: memorySurfacing);
 
   static void resetAfterSave() {
     selected = MemorySurfacingMode.normal;

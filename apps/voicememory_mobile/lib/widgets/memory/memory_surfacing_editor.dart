@@ -29,28 +29,7 @@ class MemorySurfacingEditor extends StatelessWidget {
 
   Future<void> _update(BuildContext context, MemorySurfacingMode mode) async {
     if (mode.id == entry.memorySurfacing) return;
-    final updated = JournalEntry(
-      id: entry.id,
-      createdAt: entry.createdAt,
-      transcript: entry.transcript,
-      durationSeconds: entry.durationSeconds,
-      reflection: entry.reflection,
-      verifiedProof: entry.verifiedProof,
-      syncStatus: entry.syncStatus,
-      localAudioPath: entry.localAudioPath,
-      treatAsNew: entry.treatAsNew,
-      connectionApproved: entry.connectionApproved,
-      keepExactDetails: entry.keepExactDetails,
-      keepSeparate: entry.keepSeparate,
-      archiveThreadId: entry.archiveThreadId,
-      archivePackId: entry.archivePackId,
-      isPinned: entry.isPinned,
-      pinnedAt: entry.pinnedAt,
-      isArchived: entry.isArchived,
-      archivedAt: entry.archivedAt,
-      entryAboutness: entry.entryAboutness,
-      memorySurfacing: mode.id,
-    );
+    final updated = entry.copyWith(memorySurfacing: mode.id);
     await AppServices.instance.journalStore.update(updated);
     await PressureCheckInStore.instance().syncFromJournalEntry(updated);
     ActivationFunnelAnalytics.track(
