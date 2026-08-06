@@ -7,7 +7,6 @@ import 'package:voicememory_mobile/features/context_trail_clarity/context_trail_
 import 'package:voicememory_mobile/features/core_archive_journey/core_archive_journey.dart';
 import 'package:voicememory_mobile/features/feature_noise_reduction/feature_noise_reduction.dart';
 import 'package:voicememory_mobile/features/feature_noise_reduction/feature_noise_reduction_copy.dart';
-import 'package:voicememory_mobile/features/low_effort_archive_capture/low_effort_archive_capture.dart';
 import 'package:voicememory_mobile/features/positive_archive_reinforcement/positive_archive_reinforcement.dart';
 import 'package:voicememory_mobile/features/preserved_proof_value/preserved_proof_value.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';

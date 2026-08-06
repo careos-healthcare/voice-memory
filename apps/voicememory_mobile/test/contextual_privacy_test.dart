@@ -27,6 +27,7 @@ import 'package:voicememory_mobile/widgets/common/contextual_privacy_reassurance
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -106,16 +107,20 @@ PatternDetailResult _patternDetailFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ContextualPrivacyAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ContextualPrivacyCopy', () {
     test('copy avoids encryption and cloud claims', () {
       for (final line in ContextualPrivacyCopy.allVisibleStrings()) {

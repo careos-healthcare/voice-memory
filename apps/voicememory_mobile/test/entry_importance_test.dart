@@ -7,8 +7,6 @@ import 'package:voicememory_mobile/features/archive_history/archive_history_engi
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/entry_importance/entry_importance_analytics.dart';
-import 'package:voicememory_mobile/features/entry_importance/entry_importance_copy.dart';
-import 'package:voicememory_mobile/features/entry_importance/entry_importance_engine.dart';
 import 'package:voicememory_mobile/features/entry_importance/entry_importance_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -16,8 +14,8 @@ import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_history/archive_history_sheet.dart';
-import 'package:voicememory_mobile/widgets/record/entry_importance_button.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _realMoment =
     'I felt pressure to say yes again before checking my capacity today.';
@@ -43,16 +41,20 @@ JournalEntry _textEntry({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     EntryImportanceAnalytics.resetForTest();
     await EntryImportanceStore.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('EntryImportanceStore', () {
     test('marks entry by id', () async {
       await EntryImportanceStore.instance().mark('e1');

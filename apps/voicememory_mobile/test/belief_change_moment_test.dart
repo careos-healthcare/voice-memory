@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/belief_change/belief_change_moment_m
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_engine.dart';
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_model.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
-import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_engine.dart'
     as weeklyReviewSurface;
@@ -21,10 +20,10 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/patterns/archive_change_timeline_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -123,17 +122,21 @@ RepeatReturnCheckRecord _answeredRecord({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     BeliefChangeMomentAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await WhatChangedV2Store.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('BeliefChangeMomentEngine', () {
     test('hidden with no repeated pattern foundation', () {
       expect(

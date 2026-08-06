@@ -6,7 +6,6 @@ import 'package:voicememory_mobile/features/android_after_ios_proof/android_afte
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
 import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate.dart';
-import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate_copy.dart';
 import 'package:voicememory_mobile/features/single_launch_checklist/single_launch_checklist.dart';
 
 const _docsPath = 'docs/ANDROID_AFTER_IOS_PROOF.md';

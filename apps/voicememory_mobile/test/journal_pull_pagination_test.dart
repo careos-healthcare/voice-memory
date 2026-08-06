@@ -59,7 +59,7 @@ void main() {
           return http.Response(
             jsonEncode({
               'entries': page.map(_serverEntry).toList(),
-              if (nextCursor != null) 'nextCursor': nextCursor,
+              'nextCursor': ?nextCursor,
             }),
             200,
           );

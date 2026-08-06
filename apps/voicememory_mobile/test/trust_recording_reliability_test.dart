@@ -152,6 +152,7 @@ void main() {
   });
 
   group('Recording and save failure copy', () {
+    late Directory tempDir;
     test('recording failure offers text fallback path', () {
       expect(
         VoiceCaptureCopy.recordingFailed,

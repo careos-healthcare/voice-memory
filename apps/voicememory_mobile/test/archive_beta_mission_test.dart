@@ -24,6 +24,7 @@ import 'package:voicememory_mobile/widgets/beta/archive_beta_mission_card.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
@@ -41,6 +42,7 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 void main() {
+
   group('ArchiveBetaMissionCopy', () {
     test('copy matches beta tester onboarding brief', () {
       expect(ArchiveBetaMissionCopy.title, TesterMissionCopy.title);
@@ -231,12 +233,14 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_archive_beta_mission_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       await ArchiveBetaMissionStore.resetForTest();
@@ -245,6 +249,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       ArchiveBetaMissionGate.resetForTest();

@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
-import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.dart';
 
 JournalEntry _entry({String id = 'e1'}) => JournalEntry(
   id: id,
@@ -135,8 +134,6 @@ void main() {
     testWidgets('one-entry cards render neutral copy without share proof', (
       tester,
     ) async {
-      const doneEngine = DoneForTodayReceiptEngine();
-      final doneReceipt = doneEngine.build(saved: true, entryCount: 1);
       const shareEngine = ShareableArchiveProofEngine();
       final shareProof = shareEngine.build(
         [_pressureRecord()],

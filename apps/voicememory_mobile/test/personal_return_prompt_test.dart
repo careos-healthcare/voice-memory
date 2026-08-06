@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +10,7 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/consumer_record_prompts_section.dart';
+import 'support/test_storage_sandbox.dart';
 
 PressureCheckInRecord _record({
   required String id,
@@ -90,6 +90,7 @@ final _edgeQuestion = RegExp(
 
 void main() {
   const engine = PersonalReturnPromptEngine();
+
 
   group('Personal return prompt engine', () {
     test('no evidence returns generic prompts with a fallback line', () {
@@ -339,17 +340,21 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_personal_prompts_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

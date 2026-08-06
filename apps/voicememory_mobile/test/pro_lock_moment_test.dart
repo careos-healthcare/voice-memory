@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_card.dart';
-import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -100,26 +100,27 @@ ProLockMomentContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     ProLockMomentAnalytics.resetForTest();
     ProLockMomentAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/pro_lock_moment/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/pro_lock_moment/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await ProLockMomentDismissStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ProLockMomentAnalytics.resetForTest();
     analyticsEvents.clear();

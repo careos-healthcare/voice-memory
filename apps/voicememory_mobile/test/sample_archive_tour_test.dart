@@ -192,6 +192,7 @@ void main() {
   });
 
   group('Sample archive tour isolation', () {
+    late Directory tempDir;
     test('tour does not write to JournalStore', () async {
       final tempDir = Directory.systemTemp.createTempSync('sample_tour_');
       addTearDown(() => tempDir.deleteSync(recursive: true));

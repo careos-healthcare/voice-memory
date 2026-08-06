@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/curiosity_hook.dart'
     as domain;
-import 'package:voicememory_mobile/features/curiosity_loop/presentation/models/curiosity_hook_presentation.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/presentation/widgets/curiosity_hook_card.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/presentation/widgets/grounding_breath_spacer.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/repositories/cognitive_baseline_store.dart';

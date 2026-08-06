@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/proof_specificity_boost_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
@@ -121,16 +122,16 @@ Future<void> _pumpBoostCard(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/proof_too_vague_fix/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/proof_too_vague_fix/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ProofSpecificityBoostAnalytics.resetForTest();
@@ -144,6 +145,7 @@ void main() {
     await CurrentRelevanceStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ProofSpecificityBoostAnalytics.resetForTest();
   });

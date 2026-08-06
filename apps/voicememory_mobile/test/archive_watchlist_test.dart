@@ -114,6 +114,7 @@ void main() {
   });
 
   group('Archive watchlist store', () {
+    late Directory tempDir;
     test('persists preset and custom watch themes locally', () async {
       final tempDir = Directory.systemTemp.createTempSync('watchlist_store_');
       final store = await ArchiveWatchlistStore.open(

@@ -15,8 +15,8 @@ void main() {
       primaryCta: 'Record',
       hasGroundedEvidence: true,
       hasChange: false,
-      evidenceTerms: const ['said yes'],
-      evidenceEntryIds: const ['a', 'b'],
+      evidenceTerms: ['said yes'],
+      evidenceEntryIds: ['a', 'b'],
     );
 
     test('suppresses noisy stack for grounded possible loop discovery', () {
@@ -68,8 +68,8 @@ void main() {
             primaryCta: 'Record',
             hasGroundedEvidence: true,
             hasChange: true,
-            evidenceTerms: const [],
-            evidenceEntryIds: const [],
+            evidenceTerms: [],
+            evidenceEntryIds: [],
           ),
         ),
         isFalse,

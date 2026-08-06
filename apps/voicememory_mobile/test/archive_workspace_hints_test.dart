@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/archive_workspace_hint_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -114,16 +115,20 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveInsightFeedbackStore.resetForTest();
     ArchiveWorkspaceHintStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ArchiveWorkspaceHintsEngine', () {
     test('intro hint appears when workspace is visible', () {
       final hints = ArchiveWorkspaceHintsEngine.build(
@@ -183,8 +188,8 @@ void main() {
         layout: _layoutForEntries(_distinctWorkEntries(5)),
       );
       _expectNoBannedCopy([
-        if (hints.introHint?.title case final title?) title,
-        if (hints.introHint?.body case final body?) body,
+        ?hints.introHint?.title,
+        ?hints.introHint?.body,
         ...hints.sectionHints.map((hint) => hint.body),
         VisibleArchiveProofCopy.archiveWorkspaceHintIntroTitle,
         VisibleArchiveProofCopy.archiveWorkspaceHintIntroBody,

@@ -27,6 +27,7 @@ import 'package:voicememory_mobile/widgets/activation/third_session_archive_usef
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/pro_archive_continuity_card.dart';
 import 'package:voicememory_mobile/widgets/record/second_session_comparison_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id, String transcript) {
   return JournalEntry(
@@ -46,14 +47,18 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('FirstThreeSessionGates', () {
     test(
       'early archive proof stays hidden until grounded repeat at two entries',

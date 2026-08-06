@@ -30,6 +30,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -101,18 +102,21 @@ void _expectNoVoiceMemoryBranding(Iterable<String> visible) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     DeveloperSettingsGate.resetForTest();
     DeveloperSettingsGate.suppressDebugBuildForTests = true;
     ArchiveInsightFeedbackStore.resetForTest();
     ArchiveWorkspaceHintStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     DeveloperSettingsGate.suppressDebugBuildForTests = false;
   });

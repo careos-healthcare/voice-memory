@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/recording/v1/microphone_permission_c
 import 'package:voicememory_mobile/features/recording/v1/post_save_result_controller.dart';
 import 'package:voicememory_mobile/features/recording/v1/record_view_state.dart';
 import 'package:voicememory_mobile/features/recording/v1/record_view_state_mapper.dart';
-import 'package:voicememory_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 
 void main() {

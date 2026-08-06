@@ -263,9 +263,9 @@ ArchiveStateSnapshot? _simulatedReviewBaseline(List<JournalEntry> entries) {
   if (eligible.length < 20) return null;
   final idx = (eligible.length * 0.45).floor().clamp(8, eligible.length - 8);
   final pivot = eligible[idx];
-  final obs = pivot.reflection?.concreteObservation.trim();
+  final obs = pivot.reflection.concreteObservation.trim();
   return ArchiveStateSnapshot(
-    belief: (obs != null && obs.isNotEmpty) ? obs : pivot.transcript,
+    belief: (obs.isNotEmpty) ? obs : pivot.transcript,
     confidence: 55,
     reputation: 'developing',
     evidenceCount: idx + 1,

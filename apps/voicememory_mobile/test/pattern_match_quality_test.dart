@@ -26,6 +26,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
@@ -94,15 +95,6 @@ List<JournalEntry> _triggerAndBehaviourEntries() => [
   ),
 ];
 
-List<JournalEntry> _softeningEntries() => [
-  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-  _entry(
-    '4',
-    'Same capacity pressure came back but it felt easier to stop this time.',
-    createdAt: _now.subtract(const Duration(days: 1)),
-  ),
-];
-
 PatternMatchQualityResult _qualityFor(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = true,
@@ -139,10 +131,12 @@ Future<void> _saveCorrection(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     PatternMatchQualityAnalytics.resetForTest();
@@ -150,10 +144,8 @@ void main() {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/pattern_match_quality/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/pattern_match_quality/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -162,6 +154,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     PatternMatchQualityAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();

@@ -29,6 +29,7 @@ import 'package:voicememory_mobile/widgets/memory/memory_scope_settings_section.
 import 'package:voicememory_mobile/widgets/memory/why_memory_appeared_sheet.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
 const _weeklyEngine = WeeklyThreadReviewEngine();
@@ -194,6 +195,7 @@ void main() {
   });
 
   group('Persistent setting', () {
+    late Directory tempDir;
     test('default memory scope is automatic', () async {
       final store = _fileBackedScopeStore(_tempDir());
       expect(await store.load(), MemoryScope.automatic);
@@ -239,14 +241,18 @@ void main() {
   });
 
   group('Memory off saves as fresh', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_scope_journal_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('journal entries saved while off carry fresh metadata', () async {
       MemoryScopePolicy.scope = MemoryScope.off;

@@ -16,6 +16,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/evidence_context_tag_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -69,6 +70,7 @@ Future<void> _pumpCard(
 }
 
 void main() {
+
   group('Evidence context tag card', () {
     testWidgets('renders one optional question with the short tag list', (
       tester,
@@ -290,17 +292,21 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_context_tag_screen_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

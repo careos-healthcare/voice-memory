@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +15,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/third_entry_belief_payoff_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -119,6 +119,7 @@ void _expectNoBannedCopy(Iterable<String> visible, List<String> banned) {
 }
 
 void main() {
+
   group('ThirdEntryBeliefPayoffEngine', () {
     test('returns null unless exactly three eligible entries', () {
       expect(
@@ -307,15 +308,19 @@ void main() {
   });
 
   group('RecordScreen third-entry payoff', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_third_entry_belief_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

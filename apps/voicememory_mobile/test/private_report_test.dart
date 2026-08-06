@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/private_report/private_report_builde
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
-import 'package:voicememory_mobile/features/transcript_correction/transcript_correction_controller.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
@@ -21,9 +20,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/private_report/private_report_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/private_archive_report_card.dart';
-
-const _placeholder =
-    '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -105,17 +102,20 @@ RepeatReturnCheckRecord _answeredRecord({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     PrivateReportAnalytics.resetForTest();
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();

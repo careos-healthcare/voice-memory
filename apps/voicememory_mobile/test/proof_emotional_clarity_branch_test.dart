@@ -1,17 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
-import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_model.dart';
-import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
 import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_engine.dart';
-import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_model.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 
 BetaTesterOutcome _proofClarityOutcome() => BetaTesterOutcome(
   testerId: 'proof',

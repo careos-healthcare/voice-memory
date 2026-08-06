@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,6 +61,7 @@ import 'package:voicememory_mobile/widgets/record/first_run_positioning_card.dar
 
 import 'support/memory_pressure_stores.dart';
 import 'helpers/mock_audioplayers.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -194,6 +194,7 @@ void main() {
   setUpAll(installMockAudioplayers);
   tearDownAll(uninstallMockAudioplayers);
 
+
   group('RecordScreenFramingCopy', () {
     test('uses concrete first-recording guidance', () {
       expect(
@@ -286,12 +287,14 @@ void main() {
   });
 
   group('RecordScreen framing UI', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_record_framing_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       await LowFrictionReturnStore.instance().dismissForDay();
@@ -300,6 +303,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -787,12 +792,14 @@ void main() {
   });
 
   group('Record screen unified CTA policy', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_record_cta_ui_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
@@ -800,6 +807,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

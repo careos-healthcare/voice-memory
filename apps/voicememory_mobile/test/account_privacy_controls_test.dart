@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +12,7 @@ import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({required String id}) => JournalEntry(
   id: id,
@@ -31,15 +30,17 @@ JournalEntry _entry({required String id}) => JournalEntry(
 );
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_account_controls_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> pumpAccount(
     WidgetTester tester, {
@@ -63,7 +64,7 @@ void main() {
         path: '/support-feedback',
         builder: (context, state) => const SupportFeedbackScreen(),
       ),
-      if (extraRoutes != null) ...extraRoutes,
+      ...?extraRoutes,
     ];
 
     final router = GoRouter(initialLocation: '/', routes: routes);
@@ -79,6 +80,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
   }
 
+
+  tearDown(() => sandbox.dispose());
   group('Account standard controls section', () {
     testWidgets('shows the six standard control buttons', (tester) async {
       await pumpAccount(tester);

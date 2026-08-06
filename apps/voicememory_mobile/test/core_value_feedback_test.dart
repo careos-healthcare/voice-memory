@@ -21,6 +21,7 @@ import 'package:voicememory_mobile/widgets/beta/core_value_feedback_card.dart';
 import 'package:voicememory_mobile/widgets/debug/beta_metrics_decision_card.dart';
 import 'package:voicememory_mobile/widgets/debug/beta_release_qa_card.dart';
 import 'package:voicememory_mobile/config/developer_settings_gate.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
@@ -252,18 +253,22 @@ void main() {
   });
 
   group('CoreValueFeedbackStore', () {
+
+  late TestStorageSandbox sandbox;
+
     late _MemoryPrefs prefs;
-    late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_core_value_feedback_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       prefs = _MemoryPrefs();
       await CoreValueFeedbackStore.resetForTest();
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('Yes answer persists locally', () async {
       final store = CoreValueFeedbackStore(prefs);
@@ -460,6 +465,7 @@ void main() {
   });
 
   group('Developer diagnostics', () {
+    late Directory tempDir;
     test('beta release QA surfaces answer state', () async {
       final tempDir = Directory.systemTemp.createTempSync(
         'vm_core_value_diag_',

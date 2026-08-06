@@ -110,12 +110,12 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
+              builder: (_, _) =>
                   SignalJourneyCard(journey: _journey(), compact: true),
             ),
             GoRoute(
               path: '/record',
-              builder: (_, __) => const Scaffold(body: Text('Record tab')),
+              builder: (_, _) => const Scaffold(body: Text('Record tab')),
             ),
           ],
         ),

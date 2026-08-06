@@ -7,8 +7,6 @@ import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture
 import 'package:voicememory_mobile/features/demo/sample_archive_copy.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
 import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
-import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
-import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 
 const _bannedPhrases = [

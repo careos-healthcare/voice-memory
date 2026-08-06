@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_valu
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_model.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_copy.dart';
-import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_engine.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -27,6 +26,7 @@ import 'package:voicememory_mobile/widgets/pro/pro_evidence_value_card.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_evidence_value_sheet.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_card.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -93,18 +93,20 @@ ArchiveBackupBridgeContext _backupContext({bool isPro = false}) =>
     );
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/pro_conversion_path/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/pro_conversion_path/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ProConversionAuditCopy', () {
     test('core paid reason is defined', () {
       expect(

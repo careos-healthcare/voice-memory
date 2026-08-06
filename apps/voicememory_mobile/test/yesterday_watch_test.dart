@@ -69,27 +69,13 @@ JournalEntry _voiceEntry({
   reflection: const Reflection(
     mood: 'neutral',
     emotionalIntensity: 2,
-    recurringThemes: const [],
+    recurringThemes: [],
     exactLanguagePattern: '',
     concreteObservation: '',
     repeatedSignal: '',
   ),
   syncStatus: SyncStatus.localOnly,
 );
-
-List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
-  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-  _entry(
-    '2',
-    'Same thing — said yes when I had no capacity for one more thing.',
-    createdAt: DateTime(2026, 6, 11, 12),
-  ),
-  _entry(
-    '3',
-    'I said yes again even though I had no capacity for one more ask.',
-    createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
-  ),
-];
 
 void main() {
   tearDown(() async {

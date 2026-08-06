@@ -15,7 +15,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capacity_return_trigger_card.dart';
-import 'package:voicememory_mobile/widgets/capacity_three_moment_card.dart';
 
 const _bannedWords = [
   'diagnosis',

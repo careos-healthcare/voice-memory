@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,6 +14,7 @@ import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/moment_quality_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_moment_detail_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _mediumText =
     'I noticed I kept checking my phone during dinner with my partner tonight.';
@@ -78,6 +78,7 @@ Future<void> _openSheet(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+
   group('PostSaveMomentDetailCopy', () {
     test('each detail type has correct prompt and helper', () {
       expect(
@@ -114,22 +115,22 @@ void main() {
   });
 
   group('CapturePipelineService.savePostSaveMomentDetail', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
     late JournalStore journal;
     late CapturePipelineService pipeline;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('post_save_detail_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       journal = AppServices.instance.journalStore;
       pipeline = AppServices.instance.pipeline;
     });
 
-    tearDown(() {
-      tempDir.deleteSync(recursive: true);
-    });
+    tearDown(() => sandbox.dispose());
 
     test('saves linked detail without overwriting parent transcript', () async {
       final parent = _parentEntry();

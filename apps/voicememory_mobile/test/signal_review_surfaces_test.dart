@@ -29,7 +29,7 @@ SignalReview _review({SignalReviewStatus status = SignalReviewStatus.ready}) {
 }
 
 void main() {
-  Future<void> _largeSurface(WidgetTester tester, Widget child) async {
+  Future<void> largeSurface(WidgetTester tester, Widget child) async {
     tester.view.physicalSize = const Size(1080, 1920);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -39,7 +39,7 @@ void main() {
 
   testWidgets('review card renders', (tester) async {
     var confirmed = false;
-    await _largeSurface(
+    await largeSurface(
       tester,
       MaterialApp(
         home: Scaffold(
@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('full review screen renders', (tester) async {
-    await _largeSurface(
+    await largeSurface(
       tester,
       MaterialApp(home: SignalReviewScreen(initialReview: _review())),
     );
@@ -97,7 +97,7 @@ void main() {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, __) => Scaffold(
+          builder: (context, _) => Scaffold(
             body: SingleChildScrollView(
               child: SignalReviewCard(
                 review: _review(),
@@ -111,11 +111,11 @@ void main() {
         ),
         GoRoute(
           path: '/signal-review',
-          builder: (_, __) => SignalReviewScreen(initialReview: _review()),
+          builder: (_, _) => SignalReviewScreen(initialReview: _review()),
         ),
       ],
     );
-    await _largeSurface(tester, MaterialApp.router(routerConfig: router));
+    await largeSurface(tester, MaterialApp.router(routerConfig: router));
 
     await tester.ensureVisible(find.text(ConsumerUiCopy.signalReviewViewFull));
     await tester.tap(find.text(ConsumerUiCopy.signalReviewViewFull));

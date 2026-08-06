@@ -51,12 +51,12 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
+              builder: (_, _) =>
                   Scaffold(body: FirstThreeJourneyCard(model: model)),
             ),
             GoRoute(
               path: '/record',
-              builder: (_, __) => const Scaffold(body: Text('record tab')),
+              builder: (_, _) => const Scaffold(body: Text('record tab')),
             ),
           ],
         ),
@@ -77,12 +77,12 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
+              builder: (_, _) =>
                   Scaffold(body: FirstThreeJourneyCard(model: model)),
             ),
             GoRoute(
               path: '/archive-belief',
-              builder: (_, __) => const Scaffold(body: Text('patterns tab')),
+              builder: (_, _) => const Scaffold(body: Text('patterns tab')),
             ),
           ],
         ),

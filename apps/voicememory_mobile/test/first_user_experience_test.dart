@@ -6,12 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_gates.dart';
-import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:voicememory_mobile/features/trust/terms_screen_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -26,6 +23,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 /// Consumer-visible copy sources scanned for internal deployment wording.
 const _consumerVisibleCopyFiles = [
@@ -74,6 +72,7 @@ List<String> _stringLiteralViolations(String path, String source) {
 }
 
 void main() {
+
   group('FirstUserExperienceGates', () {
     test('empty first-run hides returning session survey', () {
       expect(
@@ -108,18 +107,22 @@ void main() {
   });
 
   group('empty first-run record screen', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first_user_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

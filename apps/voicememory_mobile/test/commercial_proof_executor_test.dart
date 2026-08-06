@@ -39,11 +39,6 @@ CommercialProofExecutorInput _input({
   secretsRotationRepoSafe: secretsRotationRepoSafe,
 );
 
-CommercialProofExecutorCheck _check(
-  CommercialProofExecutorResult result,
-  CommercialProofExecutorCheckId id,
-) => result.checks.firstWhere((check) => check.id == id);
-
 void main() {
   group('CommercialProofExecutor.build', () {
     test('executor has twelve canonical checklist items', () {

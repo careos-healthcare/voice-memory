@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 /// iPhone 17 Pro logical size — tight enough to reproduce fallback overflow.
 const _iphone17Pro = Size(402, 874);
@@ -40,15 +41,17 @@ JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
 );
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_quick_text_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> pumpScreen(
     WidgetTester tester, {
@@ -81,6 +84,8 @@ void main() {
 
   final saveButton = find.byKey(const Key('quick_text_capture_save_button'));
 
+
+  tearDown(() => sandbox.dispose());
   group('QuickTextCaptureScreen prompt handling', () {
     testWidgets('opens with empty text field', (tester) async {
       await pumpScreen(tester);

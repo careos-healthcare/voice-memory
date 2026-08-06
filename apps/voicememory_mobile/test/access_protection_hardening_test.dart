@@ -19,12 +19,12 @@ import 'package:voicememory_mobile/security/archive_privacy_controls_copy.dart';
 import 'package:voicememory_mobile/security/pin_hash.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/security/security_settings_copy.dart';
-import 'package:voicememory_mobile/security/security_settings_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/auth_service.dart';
 import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _FakeApi extends ApiClient {
   _FakeApi() : super(baseUrl: 'http://test.invalid');
@@ -77,6 +77,7 @@ void main() {
     appLockStoreSource = File(_appLockStorePath).readAsStringSync();
     pinHashSource = File(_pinHashPath).readAsStringSync();
   });
+
 
   group('ACCESS_PROTECTION_AUDIT.md', () {
     test('exists and documents passwordless auth and anti-sharing limits', () {
@@ -229,14 +230,16 @@ void main() {
   });
 
   group('Settings / Security routing', () {
+
+  late TestStorageSandbox sandbox;
+
     late AppLockService appLock;
     late AuthService auth;
-    late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_access_protection_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       final memory = MemoryAppLockStore();
@@ -247,6 +250,8 @@ void main() {
       final secure = _MemorySecure();
       auth = AuthService(_FakeApi(), secure, SessionCookieStore(secure));
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('Settings exposes Security route', (tester) async {
       tester.view.physicalSize = const Size(800, 2400);

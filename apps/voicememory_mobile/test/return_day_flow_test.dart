@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/record_capture_modes/record_capture_
 import 'package:voicememory_mobile/features/retention/first_week_progress_engine.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_engine.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_analytics.dart';
-import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_copy.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_model.dart';
@@ -73,7 +72,7 @@ JournalEntry _voiceEntry({
   reflection: const Reflection(
     mood: 'neutral',
     emotionalIntensity: 2,
-    recurringThemes: const [],
+    recurringThemes: [],
     exactLanguagePattern: '',
     concreteObservation: '',
     repeatedSignal: '',

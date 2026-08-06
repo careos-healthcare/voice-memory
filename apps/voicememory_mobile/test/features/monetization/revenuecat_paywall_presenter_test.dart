@@ -59,7 +59,7 @@ void main() {
         presentPaywallOverride: ({offering, displayCloseButton = false}) async {
           return purchases_ui.PaywallResult.error;
         },
-        openFallbackRouteOverride: (_, __) async {
+        openFallbackRouteOverride: (_, _) async {
           fallbackCalls++;
         },
       );

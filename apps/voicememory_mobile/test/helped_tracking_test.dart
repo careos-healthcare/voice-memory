@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_history/archive_history_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_analytics.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_copy.dart';
@@ -21,7 +20,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/helped_tracking_card.dart';
-import 'package:voicememory_mobile/widgets/record/helped_tracking_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -103,16 +102,20 @@ HelpedTrackingPrompt _promptFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await HelpedTrackingStore.resetForTest();
     HelpedTrackingAnalytics.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('HelpedTrackingEngine gates', () {
     test('prompt shows after first proof confirmed repeat', () {
       final entries = _threeSaidYesEntries();

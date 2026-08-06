@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,14 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_quality.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_quality_gate.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_model.dart';
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_engine.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_analytics.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_gate.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
-import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';

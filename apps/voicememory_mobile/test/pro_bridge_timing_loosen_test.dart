@@ -16,53 +16,7 @@ import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_c
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_bridge_visibility_card.dart';
-
-const _strongRepeat =
-    'I had no capacity but I said yes again to the extra meeting today.';
-final _now = DateTime(2026, 6, 12, 12);
-
-JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
-
-List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
-  final base = anchor ?? _now;
-  return [
-    _entry(
-      '1',
-      _strongRepeat,
-      createdAt: base.subtract(const Duration(days: 2)),
-    ),
-    _entry(
-      '2',
-      'Same thing — said yes when I had no capacity for one more thing.',
-      createdAt: base.subtract(const Duration(days: 1)),
-    ),
-    _entry(
-      '3',
-      'I said yes again even though I had no capacity for one more ask.',
-      createdAt: base,
-    ),
-  ];
-}
 
 ProBridgeVisibilityInput _input({
   bool hasFirstProof = true,
@@ -266,13 +220,13 @@ void main() {
             input: ProBridgeTimingLoosenEngine.fromVisibilityInput(
               _input(
                 hasTimelineProofVisible: true,
-                isRecording: override['isRecording'] as bool? ?? false,
+                isRecording: override['isRecording'] ?? false,
                 isDegradedTranscriptState:
-                    override['isDegradedTranscriptState'] as bool? ?? false,
+                    override['isDegradedTranscriptState'] ?? false,
                 whatChangedQuestionActive:
-                    override['whatChangedQuestionActive'] as bool? ?? false,
+                    override['whatChangedQuestionActive'] ?? false,
                 patternReviewInboxHasActiveItems:
-                    override['patternReviewInboxHasActiveItems'] as bool? ??
+                    override['patternReviewInboxHasActiveItems'] ??
                     false,
               ),
             ),

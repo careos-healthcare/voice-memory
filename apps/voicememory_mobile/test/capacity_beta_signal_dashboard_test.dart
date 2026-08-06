@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outc
 import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_models.dart';
 import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_copy.dart';
 import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_models.dart';
-import 'package:voicememory_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';

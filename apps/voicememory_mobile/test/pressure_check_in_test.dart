@@ -28,7 +28,7 @@ Future<_Stores> _openStores(String stamp) async {
   for (final path in [
     journalPath,
     prefsPath,
-    '${journalPath.replaceFirst(RegExp(r'\.json$'), '.enc')}',
+    (journalPath.replaceFirst(RegExp(r'\.json$'), '.enc')),
   ]) {
     final file = File(path);
     if (await file.exists()) await file.delete();

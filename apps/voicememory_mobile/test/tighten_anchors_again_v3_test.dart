@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_model.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_engine.dart';
@@ -26,6 +25,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
@@ -161,22 +161,23 @@ BetaRepairLabVisibilityInput _repairInput({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     await BetaRepairLabStore.resetForTest(prefs);
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/tighten_anchors_again_v3/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/tighten_anchors_again_v3/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ArchiveBetaMissionGate.enabledOverride = true;
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     await BetaRepairLabStore.resetForTest(prefs);

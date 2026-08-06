@@ -6,7 +6,6 @@ import 'package:voicememory_mobile/features/archive_controls/archive_control_ana
 import 'package:voicememory_mobile/features/archive_controls/archive_control_copy.dart';
 import 'package:voicememory_mobile/features/archive_controls/archive_control_engine.dart';
 import 'package:voicememory_mobile/features/archive_history/archive_history_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_engine.dart';
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_model.dart';
@@ -19,6 +18,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_controls/archive_moment_actions_sheet.dart';
 import 'package:voicememory_mobile/widgets/archive_history/archive_history_sheet.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -62,17 +62,19 @@ List<JournalEntry> _threeRelatedEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveControlAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/archive_controls/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/archive_controls/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> seedEntries(List<JournalEntry> entries) async {
     for (final entry in entries) {
@@ -91,6 +93,8 @@ void main() {
     });
   }
 
+
+  tearDown(() => sandbox.dispose());
   group('ArchiveControlEngine', () {
     test('wasUsedAsEvidence identifies evidence moments', () {
       final entries = _threeRelatedEntries();

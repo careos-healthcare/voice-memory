@@ -4,7 +4,6 @@ import 'package:voicememory_mobile/features/aha/aha_moment_engine.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_entry_search_engine.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_search_query.dart';
 import 'package:voicememory_mobile/features/export/selected_archive_export.dart';
-import 'package:voicememory_mobile/features/memory/entry_save_coordinator.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
 import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope.dart';
@@ -25,7 +24,6 @@ import 'package:voicememory_mobile/widgets/memory/entry_options_section.dart';
 
 import 'support/expand_advanced_save_options.dart';
 import 'package:voicememory_mobile/widgets/memory/memory_surfacing_editor.dart';
-import 'package:voicememory_mobile/widgets/memory/memory_surfacing_picker.dart';
 import 'package:voicememory_mobile/widgets/memory/sensitive_surfacing_receipt.dart';
 
 class _Event {
@@ -167,7 +165,7 @@ void main() {
   });
 
   group('Save persistence', () {
-    JournalEntry _saveWith(MemorySurfacingMode mode) {
+    JournalEntry saveWith(MemorySurfacingMode mode) {
       MemorySurfacingSession.select(mode, entryCount: 2);
       return MemorySurfacingSession.applyToNewEntry(
         _entry(id: 'save1'),
@@ -176,12 +174,12 @@ void main() {
     }
 
     test('selecting Sensitive persists on save', () {
-      final saved = _saveWith(MemorySurfacingMode.sensitive);
+      final saved = saveWith(MemorySurfacingMode.sensitive);
       expect(saved.memorySurfacing, 'sensitive');
     });
 
     test('selecting Do not surface persists on save', () {
-      final saved = _saveWith(MemorySurfacingMode.doNotSurface);
+      final saved = saveWith(MemorySurfacingMode.doNotSurface);
       expect(saved.memorySurfacing, 'do_not_surface');
     });
   });

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +27,7 @@ import 'package:voicememory_mobile/widgets/patterns/archive_belief_surface_card.
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_lifecycle_badge.dart';
 import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -98,16 +98,6 @@ List<JournalEntry> _fourWithDifferentLatestPhrase() => [
   ),
 ];
 
-List<JournalEntry> _fourWithSofterLatestPhrase() => [
-  ..._threeRelatedRepeatEntries(),
-  _entry(
-    id: 'e4',
-    transcript:
-        'The ask came in and it felt less urgent than before, so I paused before answering.',
-    createdAt: DateTime(2026, 6, 13, 12),
-  ),
-];
-
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
@@ -119,17 +109,21 @@ RepeatReturnCheckRecord _answeredRecord({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await WhatChangedV2Store.resetForTest();
     await ComeBackTomorrowV2Store.resetForTest(null);
     PatternLifecycleAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('PatternLifecycleEngine', () {
     test('2 related entries resolve Forming', () {
       final lifecycle = PatternLifecycleEngine.build(

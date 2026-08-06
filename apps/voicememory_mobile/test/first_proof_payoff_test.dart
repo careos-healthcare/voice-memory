@@ -16,7 +16,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
-import 'package:voicememory_mobile/widgets/record/chat_differentiation_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
 
 const _placeholder =

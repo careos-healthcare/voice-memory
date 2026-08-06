@@ -13,12 +13,10 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/patterns/current_relevance_card.dart';
 import 'dart:io';
+import 'support/test_storage_sandbox.dart';
 
-const _placeholder =
-    '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
@@ -64,24 +62,25 @@ CurrentRelevanceState _stateForEntries(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     CurrentRelevanceAnalytics.resetForTest();
     CurrentRelevanceAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/current_relevance/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/current_relevance/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     CurrentRelevanceAnalytics.resetForTest();
     await CurrentRelevanceStore.resetForTest();
@@ -247,7 +246,7 @@ void main() {
   });
 
   group('CurrentRelevanceCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       CurrentRelevanceState state,
     ) async {
@@ -261,7 +260,7 @@ void main() {
       await tester.pump();
     }
 
-    CurrentRelevanceState _answeredState(CurrentRelevanceAnswer answer) {
+    CurrentRelevanceState answeredState(CurrentRelevanceAnswer answer) {
       final entries = _threeRelatedEntries();
       final base = _stateForEntries(entries);
       return CurrentRelevanceState(
@@ -273,7 +272,7 @@ void main() {
     }
 
     testWidgets('copy renders question and options', (tester) async {
-      await _pumpCard(tester, _stateForEntries(_threeRelatedEntries()));
+      await pumpCard(tester, _stateForEntries(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('current_relevance_card')), findsOneWidget);
       expect(find.text(CurrentRelevanceCopy.title), findsOneWidget);
@@ -285,7 +284,7 @@ void main() {
     });
 
     testWidgets('answer yes shows current response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.yes));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.yes));
 
       expect(
         find.byKey(const Key('current_relevance_response_card')),
@@ -302,7 +301,7 @@ void main() {
     });
 
     testWidgets('answer a little shows soft signal response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.little));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.little));
 
       expect(
         find.text(
@@ -313,7 +312,7 @@ void main() {
     });
 
     testWidgets('answer not really shows not urgent response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.notReally));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.notReally));
 
       expect(
         find.text(
@@ -324,7 +323,7 @@ void main() {
     });
 
     testWidgets('answer not sure shows watch lightly response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.notSure));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.notSure));
 
       expect(
         find.text(
@@ -335,7 +334,7 @@ void main() {
     });
 
     testWidgets('differentiation line appears after answer', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.yes));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.yes));
 
       expect(
         find.byKey(const Key('current_relevance_differentiation_line')),

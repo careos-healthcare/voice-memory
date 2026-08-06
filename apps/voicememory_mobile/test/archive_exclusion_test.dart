@@ -20,6 +20,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_controls/archive_pattern_exclusion_actions.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -63,18 +64,20 @@ List<JournalEntry> _threeRelatedEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveControlAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await ArchiveExclusionStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/archive_exclusion/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/archive_exclusion/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> seedEntries(List<JournalEntry> entries) async {
     for (final entry in entries) {
@@ -93,6 +96,8 @@ void main() {
     });
   }
 
+
+  tearDown(() => sandbox.dispose());
   group('ArchiveExclusionEngine', () {
     test('exclude confirmation stores exclusion', () async {
       await seedEntries(_threeRelatedEntries());

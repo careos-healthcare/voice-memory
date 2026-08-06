@@ -23,7 +23,6 @@ import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/action_items/action_item_editor_sheet.dart';
-import 'package:voicememory_mobile/widgets/action_items/remember_this_button.dart';
 
 class _Event {
   const _Event(this.name, this.properties);

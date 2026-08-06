@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_copy.dart';
 import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_engine.dart';
-import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_model.dart';
 
 void main() {
   group('RevenueValueCopy', () {

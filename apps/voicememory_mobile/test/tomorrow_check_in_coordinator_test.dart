@@ -137,7 +137,7 @@ void main() {
     expect(events.patternMemoryCreated, 1);
   });
 
-  TomorrowCheckIn _completed(String optionId, int day) => TomorrowCheckIn(
+  TomorrowCheckIn completed0(String optionId, int day) => TomorrowCheckIn(
     id: 'tci_$day',
     createdAt: DateTime(2026, 6, day),
     targetDate: '2026-06-0$day',
@@ -157,19 +157,19 @@ void main() {
       final progressStore = PatternProgressStore(AppServices.instance.prefs);
 
       await PatternMemoryCoordinator.recordCheckInCompletion(
-        completed: _completed('showed_up_again', 1),
+        completed: completed0('showed_up_again', 1),
         now: DateTime(2026, 6, 1),
       );
       expect(await progressStore.loadLatest(), isNull);
 
       await PatternMemoryCoordinator.recordCheckInCompletion(
-        completed: _completed('showed_up_again', 2),
+        completed: completed0('showed_up_again', 2),
         now: DateTime(2026, 6, 2),
       );
       expect(await progressStore.loadLatest(), isNull);
 
       await PatternMemoryCoordinator.recordCheckInCompletion(
-        completed: _completed('showed_up_again', 3),
+        completed: completed0('showed_up_again', 3),
         now: DateTime(2026, 6, 3),
       );
       final latest = await progressStore.loadLatest();
@@ -197,7 +197,7 @@ void main() {
 
       for (var day = 1; day <= 3; day++) {
         await PatternMemoryCoordinator.recordCheckInCompletion(
-          completed: _completed('showed_up_again', day),
+          completed: completed0('showed_up_again', day),
           now: DateTime(2026, 6, day),
         );
       }

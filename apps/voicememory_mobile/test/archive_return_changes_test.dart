@@ -240,6 +240,7 @@ void main() {
   });
 
   group('Archive return changes snapshot', () {
+    late Directory tempDir;
     test('does not store raw entry text', () async {
       final entries = _fourWorkEntries();
       final snapshot = ArchiveReturnSnapshot.fromEntries(entries);

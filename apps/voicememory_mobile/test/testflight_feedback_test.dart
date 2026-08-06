@@ -26,23 +26,23 @@ void main() {
       expect(uri.path, TestFlightFeedbackCopy.emailTo);
       expect(uri.query, isNotNull);
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('subject=ArchiveMe TestFlight feedback'),
       );
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('Hi ArchiveMe team'),
       );
-      expect(Uri.decodeQueryComponent(uri.query!), contains('What felt clear'));
+      expect(Uri.decodeQueryComponent(uri.query), contains('What felt clear'));
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('What felt confusing'),
       );
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('What I expected to happen'),
       );
-      expect(Uri.decodeQueryComponent(uri.query!), contains('Device'));
+      expect(Uri.decodeQueryComponent(uri.query), contains('Device'));
     });
 
     test('openFeedbackEmail uses injected launcher', () async {
@@ -61,7 +61,7 @@ void main() {
   });
 
   group('SettingsScreen TestFlight feedback', () {
-    GoRouter _router() => GoRouter(
+    GoRouter router() => GoRouter(
       routes: [
         GoRoute(path: '/', builder: (context, state) => const SettingsScreen()),
         GoRoute(
@@ -72,7 +72,7 @@ void main() {
     );
 
     Future<void> pumpSettings(WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp.router(routerConfig: _router()));
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router()));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
     }
@@ -149,11 +149,11 @@ void main() {
         expect(captured!.scheme, 'mailto');
         expect(captured!.path, TestFlightFeedbackCopy.emailTo);
         expect(
-          Uri.decodeQueryComponent(captured!.query ?? ''),
+          Uri.decodeQueryComponent(captured!.query),
           contains(TestFlightFeedbackCopy.emailSubject),
         );
         expect(
-          Uri.decodeQueryComponent(captured!.query ?? ''),
+          Uri.decodeQueryComponent(captured!.query),
           contains('What felt confusing'),
         );
       },

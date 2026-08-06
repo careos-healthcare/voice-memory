@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
@@ -15,7 +14,6 @@ import 'package:voicememory_mobile/features/beta/tester_mission_engine.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_gates.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_model.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_store.dart';
-import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -29,6 +27,7 @@ import 'package:voicememory_mobile/widgets/beta/tester_mission_card.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/tester_mission/unused.json'));
@@ -84,6 +83,7 @@ List<JournalEntry> _relatedThree() => [
 ];
 
 void main() {
+
   group('TesterMissionCopy canonical onboarding', () {
     test('title mission steps and feedback question match brief', () {
       expect(TesterMissionCopy.title, 'Testing ArchiveMe?');
@@ -386,18 +386,22 @@ void main() {
   });
 
   group('TesterMissionStore', () {
+
+  late TestStorageSandbox sandbox;
+
     late _MemoryPrefs prefs;
-    late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_tester_mission_store_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       prefs = _MemoryPrefs();
       await TesterMissionStore.resetForTest();
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() async {
       await TesterMissionStore.resetForTest();
@@ -472,12 +476,14 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_tester_mission_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       await TesterMissionStore.resetForTest();
@@ -486,6 +492,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() async {
       ArchiveBetaMissionGate.resetForTest();

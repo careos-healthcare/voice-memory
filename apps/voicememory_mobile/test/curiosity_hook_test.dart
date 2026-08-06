@@ -15,7 +15,6 @@ import 'package:voicememory_mobile/features/curiosity_loop/services/curiosity_no
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 JournalEntry _entry({
   required String id,

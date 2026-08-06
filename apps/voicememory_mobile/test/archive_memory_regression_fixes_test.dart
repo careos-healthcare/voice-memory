@@ -159,6 +159,7 @@ void main() {
   tearDown(ActivationFunnelAnalytics.resetForTest);
 
   group('A. Vague summary protection', () {
+    late Directory tempDir;
     test('raw entries are never replaced by summaries', () async {
       final tempDir = Directory.systemTemp.createTempSync('vm_regression_');
       addTearDown(() => tempDir.deleteSync(recursive: true));

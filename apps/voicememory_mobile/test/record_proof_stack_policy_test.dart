@@ -61,13 +61,6 @@ List<JournalEntry> _threeRelatedRepeatEntries() => [
   ),
 ];
 
-RepeatReturnCheckRecord _strongerRecord() => RepeatReturnCheckRecord(
-  entryId: 'e4',
-  choice: RepeatReturnCheckChoice.stronger,
-  entryCountAtCapture: 4,
-  createdAt: DateTime(2026, 6, 13),
-);
-
 void main() {
   group('RecordProofStackPolicy', () {
     test('entry 1–2 allows at most one early proof card', () {

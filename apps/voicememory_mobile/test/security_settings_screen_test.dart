@@ -15,7 +15,7 @@ import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
 
 class _FakeBiometrics implements BiometricAuthenticator {
-  _FakeBiometrics({this.isAvailable = false});
+  _FakeBiometrics() : isAvailable = false;
 
   bool isAvailable;
 
@@ -27,7 +27,7 @@ class _FakeBiometrics implements BiometricAuthenticator {
 }
 
 class _FakeApi extends ApiClient {
-  _FakeApi({this.session}) : super(baseUrl: 'http://test.invalid');
+  _FakeApi() : session = null, super(baseUrl: 'http://test.invalid');
 
   UserSession? session;
   int signOutCalls = 0;
@@ -68,7 +68,7 @@ void main() {
 
   setUp(() {
     ActivationFunnelAnalytics.resetForTest();
-    ActivationFunnelAnalytics.captureForTest((_, __) {});
+    ActivationFunnelAnalytics.captureForTest((_, _) {});
     memory = MemoryAppLockStore();
     biometrics = _FakeBiometrics();
     appLock = AppLockService(

@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_pages.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_visuals.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/onboarding_screen.dart';
 import 'package:voicememory_mobile/theme/app_colors.dart';
 import 'package:voicememory_mobile/theme/app_spacing.dart';
 

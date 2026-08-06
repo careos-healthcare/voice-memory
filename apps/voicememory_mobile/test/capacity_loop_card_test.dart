@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.d
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_gates.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_models.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
@@ -229,7 +228,7 @@ void main() {
 
     test('generic users see card with enough capacity evidence', () {
       final entries = _realCapacityEntries(3);
-      final result = engine.buildFromJournal(
+      engine.buildFromJournal(
         entries: entries,
         capacityLoopActive: false,
         capacityCohortActive: false,

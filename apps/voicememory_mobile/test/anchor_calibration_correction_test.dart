@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/archive_timeline_spine/archive_timeline_spine_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
@@ -11,8 +10,6 @@ import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_mode
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_analytics.dart';
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_copy.dart';
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_engine.dart';
-import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_model.dart';
-import 'package:voicememory_mobile/features/correction_memory/correction_memory_model.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_copy.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_engine.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_model.dart';
@@ -28,6 +25,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/anchor_calibration/unused.json'));
@@ -140,10 +138,12 @@ Future<void> _saveFeedback(BetaProofFeedbackType type) async {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     AnchorCalibrationAnalytics.resetForTest();
@@ -152,15 +152,14 @@ void main() {
     };
     analyticsEvents.clear();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/anchor_calibration/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/anchor_calibration/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaProofFeedbackStore.resetForTest(prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     AnchorCalibrationAnalytics.resetForTest();

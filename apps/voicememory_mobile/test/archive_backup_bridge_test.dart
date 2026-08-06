@@ -9,10 +9,10 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro/archive_backup_bridge_card.dart';
 import 'package:voicememory_mobile/widgets/pro/archive_backup_bridge_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -57,23 +57,6 @@ List<JournalEntry> _threeRelatedEntries() => [
   ),
 ];
 
-JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-  id: id,
-  createdAt: DateTime(2026, 6, 12, 12),
-  transcript:
-      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-  durationSeconds: 20,
-  localAudioPath: '/tmp/$id.m4a',
-  reflection: const Reflection(
-    mood: 'neutral',
-    emotionalIntensity: 0,
-    recurringThemes: [],
-    exactLanguagePattern: '',
-    concreteObservation: '',
-    repeatedSignal: '',
-  ),
-);
-
 ArchiveBackupBridgeContext _context({
   List<JournalEntry> entries = const [],
   int entryCount = 0,
@@ -107,26 +90,27 @@ ArchiveBackupBridgeContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     ArchiveBackupBridgeAnalytics.resetForTest();
     ArchiveBackupBridgeAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/archive_backup_bridge/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/archive_backup_bridge/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await ArchiveBackupBridgeDismissStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ArchiveBackupBridgeAnalytics.resetForTest();
     analyticsEvents.clear();

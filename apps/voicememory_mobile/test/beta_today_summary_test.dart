@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_today_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -109,9 +110,11 @@ BetaTodaySummaryResult _buildSummary(
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveBetaMissionGate.resetForTest();
     BetaTodaySummaryAnalytics.resetForTest();
     BetaTodaySummaryAnalytics.captureForTest = (event, props) {
@@ -119,16 +122,15 @@ void main() {
     };
     analyticsEvents.clear();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_today_summary/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_today_summary/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
     await CorrectionMemoryStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ArchiveBetaMissionGate.resetForTest();
     BetaTodaySummaryAnalytics.resetForTest();

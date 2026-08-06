@@ -6,7 +6,6 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/memory/clean_slate_prompt_store.dart';
 import 'package:voicememory_mobile/features/memory/entry_thread_scope.dart';
-import 'package:voicememory_mobile/features/memory/memory_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';

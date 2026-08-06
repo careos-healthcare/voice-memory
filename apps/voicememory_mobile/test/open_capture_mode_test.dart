@@ -204,7 +204,7 @@ void main() {
   });
 
   group('OpenCapturePromptChips', () {
-    Future<void> _pumpChips(
+    Future<void> pumpChips(
       WidgetTester tester, {
       bool usePromptPrefill = true,
     }) async {
@@ -235,7 +235,7 @@ void main() {
     }
 
     testWidgets('renders "Save anything you notice."', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       expect(find.text(OpenCaptureCopy.header), findsOneWidget);
     });
@@ -243,13 +243,13 @@ void main() {
     testWidgets('renders "It does not have to be a pattern yet."', (
       tester,
     ) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       expect(find.text(OpenCaptureCopy.subline), findsOneWidget);
     });
 
     testWidgets('all chips render', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       for (final chip in OpenCaptureChip.all) {
         expect(find.text(chip.label), findsOneWidget);
@@ -259,7 +259,7 @@ void main() {
     testWidgets(
       'tapping chip shows "Start anywhere. ArchiveMe looks for the pattern later."',
       (tester) async {
-        await _pumpChips(tester);
+        await pumpChips(tester);
 
         await tester.tap(find.text(OpenCaptureCopy.thoughtLabel));
         await tester.pump();
@@ -271,7 +271,7 @@ void main() {
     testWidgets('tapping chip prefills prompt starter without routing away', (
       tester,
     ) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       await tester.tap(find.text(OpenCaptureCopy.decisionLabel));
       await tester.pump();
@@ -281,7 +281,7 @@ void main() {
     });
 
     testWidgets('without prompt prefill shows fallback helper', (tester) async {
-      await _pumpChips(tester, usePromptPrefill: false);
+      await pumpChips(tester, usePromptPrefill: false);
 
       await tester.tap(find.text(OpenCaptureCopy.worryLabel));
       await tester.pump();
@@ -299,7 +299,7 @@ void main() {
       );
       final before = ArchiveEvidenceQuality.assess(entry);
 
-      await _pumpChips(tester);
+      await pumpChips(tester);
       await tester.tap(find.text(OpenCaptureCopy.pressureLabel));
       await tester.pump();
 
@@ -309,7 +309,7 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       await tester.tap(find.text(OpenCaptureCopy.winLabel));
       await tester.pump();
@@ -331,7 +331,7 @@ void main() {
     });
 
     testWidgets('no therapy/medical copy', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       final blob = OpenCaptureCopy.allVisibleStrings().join(' ').toLowerCase();
       expect(blob, isNot(contains('therapy')));

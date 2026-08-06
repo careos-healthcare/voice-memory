@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/archive_milestones/archive_milestone
 import 'package:voicememory_mobile/features/archive_milestones/archive_milestones_gates.dart';
 import 'package:voicememory_mobile/features/archive_milestones/archive_milestones_models.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
-import 'package:voicememory_mobile/features/return_ritual/return_ritual_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';

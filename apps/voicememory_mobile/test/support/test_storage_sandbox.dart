@@ -1,5 +1,19 @@
 import 'dart:io';
 
+/// Fixed clock for deterministic test fixtures.
+class TestClock {
+  TestClock([DateTime? fixed]) : now = fixed ?? DateTime.utc(2026, 1, 15, 12);
+
+  final DateTime now;
+}
+
+/// Monotonic test identifiers.
+class TestIds {
+  int _next = 0;
+
+  String next([String prefix = 'test-id']) => '$prefix-${_next++}';
+}
+
 /// Isolated on-disk storage for a single Flutter test.
 ///
 /// Owns a uniquely named directory under the system temp folder and exposes
@@ -7,14 +21,22 @@ import 'dart:io';
 /// accepts absolute paths verbatim, so each suite gets a private namespace with
 /// no timestamped JSON files in the checkout.
 class TestStorageSandbox {
-  TestStorageSandbox._(this.root);
+  TestStorageSandbox._(this.root, {TestClock? clock, TestIds? ids})
+    : clock = clock ?? TestClock(),
+      ids = ids ?? TestIds();
 
   final Directory root;
+  final TestClock clock;
+  final TestIds ids;
 
   /// Creates a fresh sandbox directory. Call [dispose] in tearDown.
-  static TestStorageSandbox create({String prefix = 'archiveme_test_'}) {
+  static TestStorageSandbox create({
+    String prefix = 'archiveme_test_',
+    TestClock? clock,
+    TestIds? ids,
+  }) {
     final dir = Directory.systemTemp.createTempSync(prefix);
-    return TestStorageSandbox._(dir);
+    return TestStorageSandbox._(dir, clock: clock, ids: ids);
   }
 
   String get journalPath => _path('journal.json');
@@ -29,7 +51,9 @@ class TestStorageSandbox {
   String path(String relative) => _path(relative);
 
   String _path(String relative) {
-    if (relative.isEmpty || relative.startsWith('/') || relative.contains('..')) {
+    if (relative.isEmpty ||
+        relative.startsWith('/') ||
+        relative.contains('..')) {
       throw ArgumentError.value(
         relative,
         'relative',

@@ -17,29 +17,31 @@ import 'package:voicememory_mobile/features/transcript_correction/transcript_cor
 import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _sampleTranscript =
     'I felt pressure at work before saying yes again even when I was tired today.';
 const _samplePatternName = 'Saying yes when already tired';
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     BetaActivationSummaryTracker.resetSessionForTest();
     BetaActivationLoopTracker.resetSessionForTest();
     EarlyArchiveProofAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     ReturnDayFlowAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_activation_summary/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_activation_summary/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaActivationSummaryTracker.clearExtension();
     await BetaActivationLoopTracker.clearCounts();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(

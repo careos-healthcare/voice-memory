@@ -17,9 +17,8 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_history/archive_history_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
-const _realMoment =
-    'I felt pressure to say yes again before checking my capacity today.';
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
 
@@ -129,15 +128,19 @@ Future<void> _selectFilter(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await HelpedTrackingStore.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ArchiveHistoryFilterEngine', () {
     test('all filter shows every row most recent first', () {
       final content = _mixedContent();

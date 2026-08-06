@@ -15,6 +15,7 @@ import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -71,6 +72,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+
   group('Moment quality engine', () {
     const engine = MomentQualityEngine();
 
@@ -126,6 +128,7 @@ void main() {
   });
 
   group('Moment quality isolation', () {
+    late Directory tempDir;
     test('not included in share-safe proof or export pack', () {
       final entries = [
         _entry('e1', transcript: _detailedText),
@@ -159,18 +162,17 @@ void main() {
   });
 
   group('Moment quality UI', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('moment_quality_ui_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
     });
 
-    tearDown(() {
-      tempDir.deleteSync(recursive: true);
-    });
+    tearDown(() => sandbox.dispose());
 
     testWidgets('hidden when no draft text on quick capture', (tester) async {
       await tester.binding.setSurfaceSize(const Size(402, 874));

@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
 import 'package:voicememory_mobile/features/record/returning_record_watch_target_ui_gates.dart';
-import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';

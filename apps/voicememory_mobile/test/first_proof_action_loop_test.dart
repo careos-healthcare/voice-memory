@@ -19,6 +19,7 @@ import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_action_loop_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -66,20 +67,22 @@ List<JournalEntry> _threeRelatedEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     FirstProofActionLoopAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/first_proof_action_loop/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/first_proof_action_loop/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await FirstProofTruthStore.resetForTest(AppServices.instance.prefs);
     await BetaActivationSummaryTracker.clearExtension();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('FirstProofActionLoopEngine', () {
     test('Yes answer shows watch this next and view pattern details', () {
       final entries = _threeRelatedEntries();
@@ -340,7 +343,6 @@ void main() {
 
         var corrected = false;
         var removed = false;
-        var keptRecording = false;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -351,7 +353,7 @@ void main() {
                 onWatchThisNext: () {},
                 onCorrectTranscript: () => corrected = true,
                 onRemoveFromPattern: () => removed = true,
-                onKeepRecording: () => keptRecording = true,
+                onKeepRecording: () {},
               ),
             ),
           ),

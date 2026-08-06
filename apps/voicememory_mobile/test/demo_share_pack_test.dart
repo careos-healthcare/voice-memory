@@ -68,6 +68,7 @@ void main() {
   });
 
   group('Demo share pack engine', () {
+    late Directory tempDir;
     test('builds deterministic summary from sample entries only', () {
       final pack = DemoSharePackEngine.build(now: DateTime(2026, 6, 15, 12));
 

@@ -61,14 +61,14 @@ Widget _routerShell(Widget child) {
     routerConfig: GoRouter(
       initialLocation: '/',
       routes: [
-        GoRoute(path: '/', builder: (_, __) => child),
+        GoRoute(path: '/', builder: (_, _) => child),
         GoRoute(
           path: '/record',
-          builder: (_, __) => const Scaffold(body: Text('Record tab')),
+          builder: (_, _) => const Scaffold(body: Text('Record tab')),
         ),
         GoRoute(
           path: '/signal-detail',
-          builder: (_, __) => const SignalDetailScreen(),
+          builder: (_, _) => const SignalDetailScreen(),
         ),
       ],
     ),

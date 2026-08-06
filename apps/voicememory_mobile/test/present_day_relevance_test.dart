@@ -230,7 +230,7 @@ void main() {
   });
 
   group('PresentDayRelevanceCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       PresentDayRelevanceResult result,
     ) async {
@@ -245,7 +245,7 @@ void main() {
     }
 
     testWidgets('renders title "Why this may matter now"', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('present_day_relevance_card')),
@@ -257,7 +257,7 @@ void main() {
     testWidgets('renders "not important just because it happened before"', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.textContaining('not important just because it happened before'),
@@ -268,13 +268,13 @@ void main() {
     testWidgets('renders "Your past is context, not a verdict."', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(PresentDayRelevanceCopy.footer), findsOneWidget);
     });
 
     testWidgets('renders ChatGPT differentiation line', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('present_day_relevance_differentiation_line')),
@@ -287,7 +287,7 @@ void main() {
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -295,7 +295,7 @@ void main() {
     });
 
     testWidgets('does not include Pro CTA', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining('See Pro'), findsNothing);
       expect(find.textContaining('Subscribe'), findsNothing);
@@ -303,7 +303,7 @@ void main() {
     });
 
     testWidgets('analytics metadata only', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

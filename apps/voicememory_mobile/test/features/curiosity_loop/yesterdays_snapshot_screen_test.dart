@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/curiosity_loop/yesterdays_snapshot_r
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import '../../support/test_storage_sandbox.dart';
 
 CuriosityHook _hook() => CuriosityHook(
   id: 'hook_1',
@@ -43,10 +44,12 @@ class _StubPromptResolver extends CuriosityPromptResolver {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await LocalCuriosityHookRepository.resetForTest(AppServices.instance.prefs);
@@ -55,6 +58,8 @@ void main() {
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('YesterdaysSnapshotScreen', () {
     testWidgets('shows hook prompt and three micro-review bullets', (
       tester,

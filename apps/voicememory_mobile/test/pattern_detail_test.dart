@@ -8,7 +8,6 @@ import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface
 import 'package:voicememory_mobile/features/archive_proof/archive_current_belief_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_engine.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_model.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_copy.dart';
@@ -19,7 +18,6 @@ import 'package:voicememory_mobile/features/pattern_naming/pattern_name_store.da
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_engine.dart'
     as weeklyReviewSurface;
-import 'package:voicememory_mobile/features/what_changed/what_changed_v2_engine.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -29,6 +27,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_belief_surface_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -109,10 +108,12 @@ PatternDetailResult _detailFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     PatternNameStore.resetForTest();
@@ -120,6 +121,8 @@ void main() {
     await WhatChangedV2Store.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('PatternDetailEngine gates', () {
     test('builds detail for grounded confirmed repeat', () {
       final entries = _threeSaidYesEntries();

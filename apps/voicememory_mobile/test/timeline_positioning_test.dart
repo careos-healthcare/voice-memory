@@ -142,7 +142,7 @@ void main() {
   });
 
   group('TimelinePositioningCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       TimelinePositioningResult result, {
       bool compact = false,
@@ -162,7 +162,7 @@ void main() {
     }
 
     testWidgets('renders "Not a chat. A timeline."', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(
         find.byKey(const Key('timeline_positioning_card')),
@@ -172,7 +172,7 @@ void main() {
     });
 
     testWidgets('renders ChatGPT differentiation line', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(
         find.byKey(const Key('timeline_positioning_differentiation_line')),
@@ -185,7 +185,7 @@ void main() {
     });
 
     testWidgets('renders timeline bullets', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       for (final bullet in TimelinePositioningCopy.timelineBullets) {
         expect(
@@ -196,7 +196,7 @@ void main() {
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -204,7 +204,7 @@ void main() {
     });
 
     testWidgets('does not include subscription CTA', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(find.textContaining('Subscribe'), findsNothing);
       expect(find.byKey(const Key('pro_evidence_value_cta')), findsNothing);
@@ -212,7 +212,7 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

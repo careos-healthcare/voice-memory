@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_confidence_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -167,13 +168,15 @@ PatternConfidenceExplanationResult _manualExplanation(
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await WhatChangedV2Store.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     PatternConfidenceAnalytics.resetForTest();
@@ -183,8 +186,12 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
+
   tearDown(PatternConfidenceAnalytics.resetForTest);
 
+
+  tearDown(() => sandbox.dispose());
   group('PatternConfidenceEngine badge labels', () {
     test('two related moments show Early signal', () {
       final confidence = PatternConfidenceEngine.build(
@@ -429,7 +436,7 @@ void main() {
   });
 
   group('PatternConfidenceCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       PatternConfidenceExplanationResult result, {
       bool compact = false,
@@ -449,7 +456,7 @@ void main() {
     }
 
     testWidgets('renders "Why ArchiveMe is showing this"', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.byKey(const Key('pattern_confidence_card')), findsOneWidget);
       expect(find.text(PatternConfidenceCopy.explanationTitle), findsOneWidget);
@@ -458,7 +465,7 @@ void main() {
     testWidgets('renders "saved evidence, not a single answer"', (
       tester,
     ) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(
         find.textContaining('saved evidence, not a single answer'),
@@ -467,13 +474,13 @@ void main() {
     });
 
     testWidgets('early signal says clue not conclusion', (tester) async {
-      await _pumpCard(tester, _explanationFor(_twoRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_twoRelatedRepeatEntries()));
 
       expect(find.textContaining('clue, not a conclusion'), findsOneWidget);
     });
 
     testWidgets('repeated says returned across saved moments', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.repeated),
       );
@@ -485,13 +492,13 @@ void main() {
     });
 
     testWidgets('current says appeared recently', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.textContaining('appeared recently'), findsOneWidget);
     });
 
     testWidgets('fading says less weight', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.fading),
       );
@@ -500,7 +507,7 @@ void main() {
     });
 
     testWidgets('softened says less force or urgency', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.softened),
       );
@@ -509,7 +516,7 @@ void main() {
     });
 
     testWidgets('changed says returned differently', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.changed),
       );
@@ -520,7 +527,7 @@ void main() {
     testWidgets('needs fresh proof says needs newer saved moment', (
       tester,
     ) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.needsFreshProof),
       );
@@ -529,14 +536,14 @@ void main() {
     });
 
     testWidgets('no percentage confidence', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.textContaining('%'), findsNothing);
       expect(find.textContaining('percent'), findsNothing);
     });
 
     testWidgets('no transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -544,7 +551,7 @@ void main() {
     });
 
     testWidgets('no Pro CTA', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(find.textContaining('See Pro'), findsNothing);
       expect(find.textContaining('Subscribe'), findsNothing);
@@ -554,7 +561,7 @@ void main() {
     testWidgets('compact mode hides intro footer and differentiation', (
       tester,
     ) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _explanationFor(_threeRelatedRepeatEntries()),
         compact: true,
@@ -569,7 +576,7 @@ void main() {
     });
 
     testWidgets('analytics metadata only', (tester) async {
-      await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
+      await pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

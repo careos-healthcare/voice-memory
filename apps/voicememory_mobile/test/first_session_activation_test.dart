@@ -8,17 +8,14 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
-import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
@@ -51,6 +48,7 @@ import 'package:voicememory_mobile/widgets/referral/invited_day_two_return_card.
 import 'package:voicememory_mobile/widgets/referral/invited_user_welcome_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/invited_welcome/unused.json'));
@@ -112,6 +110,7 @@ Future<void> _pumpInsights(
 }
 
 void main() {
+
   group('First-session explanation card', () {
     test('shows only for a brand-new user', () {
       expect(FirstSessionExplanationCard.shouldShow(0), isTrue);
@@ -525,9 +524,11 @@ void main() {
   });
 
   group('Record screen first-session ladder', () {
-    late Directory tempDir;
 
-    JournalEntry _usableEntry({String id = 'e1'}) => JournalEntry(
+  late TestStorageSandbox sandbox;
+
+
+    JournalEntry usableEntry({String id = 'e1'}) => JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 12),
       transcript:
@@ -544,7 +545,7 @@ void main() {
       ),
     );
 
-    JournalEntry _degradedEntry({String id = 'v1'}) => JournalEntry(
+    JournalEntry degradedEntry({String id = 'v1'}) => JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 12),
       transcript: '[draft] Recording saved locally — transcribe when connected',
@@ -561,13 +562,15 @@ void main() {
     );
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first_session_ladder_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(null);
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -578,7 +581,7 @@ void main() {
       await tester.runAsync(() async {
         for (var i = 0; i < count; i++) {
           await AppServices.instance.journalStore.save(
-            _usableEntry(id: 'seed_$i'),
+            usableEntry(id: 'seed_$i'),
           );
         }
       });
@@ -814,7 +817,7 @@ void main() {
     testWidgets('first save post-save shows one calm saved card', (
       tester,
     ) async {
-      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+      await pumpDoneState(tester, entriesAfterSave: [usableEntry()]);
 
       expect(
         find.byKey(const Key('first_entry_saved_receipt_card')),
@@ -846,7 +849,7 @@ void main() {
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: [_degradedEntry()],
+        entriesAfterSave: [degradedEntry()],
         degradedVoicePostSave: true,
       );
 
@@ -866,7 +869,7 @@ void main() {
     testWidgets('good transcript post-save hides degraded recovery', (
       tester,
     ) async {
-      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+      await pumpDoneState(tester, entriesAfterSave: [usableEntry()]);
 
       expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
       expect(
@@ -1127,17 +1130,21 @@ void main() {
   });
 
   group('Record screen return-path gates', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_return_path_gates_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -1537,12 +1544,14 @@ void main() {
   });
 
   group('Invited user welcome on the record screen', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_invited_welcome_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
@@ -1551,6 +1560,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -1946,12 +1957,14 @@ void main() {
   });
 
   group('Invited Day 2 return copy on the record screen', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_invited_day2_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
@@ -1961,6 +1974,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

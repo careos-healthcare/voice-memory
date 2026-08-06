@@ -210,13 +210,13 @@ void main() {
           ReturnAfterProofEngine.shouldShowOnRecordReady(
             result: result,
             isReady: true,
-            isRecording: override['isRecording'] as bool? ?? false,
+            isRecording: override['isRecording'] ?? false,
             isDegradedTranscriptState:
-                override['isDegradedTranscriptState'] as bool? ?? false,
+                override['isDegradedTranscriptState'] ?? false,
             whatChangedQuestionActive:
-                override['whatChangedQuestionActive'] as bool? ?? false,
+                override['whatChangedQuestionActive'] ?? false,
             patternReviewInboxHasActiveItems:
-                override['patternReviewInboxHasActiveItems'] as bool? ?? false,
+                override['patternReviewInboxHasActiveItems'] ?? false,
             firstProofSeen: true,
             timelineProofVisible: false,
             betaTesterReportVisible: false,

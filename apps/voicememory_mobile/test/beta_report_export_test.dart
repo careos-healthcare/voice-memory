@@ -55,6 +55,7 @@ void main() {
   });
 
   group('BetaReportExportEngine', () {
+    late Directory tempDir;
     test('copied report includes tester loop counts', () {
       final report = BetaReportExportEngine.build(betaCounts: _loopCounts());
       final text = report.formattedText;

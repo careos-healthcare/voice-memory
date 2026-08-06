@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
-import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/purchase_intent_return_cue.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
@@ -297,12 +296,10 @@ void main() {
   group('Record screen integration', () {
     late Directory tempDir;
     late _MemoryPrefs prefs;
-    PaywallRouteArgs? capturedArgs;
 
     setUp(() async {
       tempDir = Directory.systemTemp.createTempSync('vm_purchase_intent_');
       prefs = _MemoryPrefs();
-      capturedArgs = null;
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
         skipRevenueCat: true,
@@ -337,7 +334,6 @@ void main() {
           GoRoute(
             path: '/subscription',
             builder: (context, state) {
-              capturedArgs = state.extra as PaywallRouteArgs?;
               return const Scaffold(
                 body: Center(child: Text('SUBSCRIPTION_MARKER')),
               );

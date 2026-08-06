@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_entry_search_engine.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_search_query.dart';
-import 'package:voicememory_mobile/features/memory/archive_thread.dart';
 import 'package:voicememory_mobile/features/memory/archive_thread_store.dart';
 import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
-import 'package:voicememory_mobile/features/memory/entry_save_coordinator.dart';
 import 'package:voicememory_mobile/features/memory/entry_thread_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_authority_framing_engine.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
@@ -183,6 +181,7 @@ void main() {
   });
 
   group('Save integration', () {
+    late Directory tempDir;
     test('Treat as new sets fresh metadata', () async {
       final tempDir = Directory.systemTemp.createTempSync('vm_entry_mode_');
       addTearDown(() => tempDir.deleteSync(recursive: true));

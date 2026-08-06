@@ -45,8 +45,8 @@ void main() {
       primaryCta: 'Record',
       hasGroundedEvidence: true,
       hasChange: false,
-      evidenceTerms: const ['said yes', 'no capacity'],
-      evidenceEntryIds: const ['a', 'b'],
+      evidenceTerms: ['said yes', 'no capacity'],
+      evidenceEntryIds: ['a', 'b'],
     );
 
     testWidgets('shows calm repeat proof card with one primary CTA', (

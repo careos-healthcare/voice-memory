@@ -15,7 +15,6 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 
 JournalEntry _voiceEntry({
   required String id,

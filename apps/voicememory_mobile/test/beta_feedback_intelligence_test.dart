@@ -10,10 +10,10 @@ import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payof
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_feedback_intelligence_card.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_feedback_intelligence_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -91,11 +91,13 @@ BetaFeedbackIntelligenceContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     BetaFeedbackIntelligenceAnalytics.captureForTest = (event, props) {
@@ -103,15 +105,14 @@ void main() {
     };
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_feedback_intelligence/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_feedback_intelligence/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaFeedbackIntelligenceStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();

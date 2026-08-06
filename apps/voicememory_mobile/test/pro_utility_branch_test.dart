@@ -8,9 +8,6 @@ import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_pa
 import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import 'package:voicememory_mobile/features/beta_improvement/pro_utility_branch_engine.dart';
 import 'package:voicememory_mobile/features/beta_improvement/pro_utility_copy_fix.dart';
-import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
-import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
-import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/v1_interface/v1_expansion_gate_copy.dart';
 
 BetaTesterOutcome _outcome(Set<BetaDecisionSignal> signals) =>
@@ -45,39 +42,6 @@ List<BetaTesterOutcome> _proUtilityOutcomes() => [
     BetaDecisionSignal.askedForReport,
   }),
 ];
-
-ProBridgeVisibilityInput _bridgeInput({
-  required int entryCount,
-  required bool hasTimelineProof,
-}) => ProBridgeVisibilityInput(
-  entryCount: entryCount,
-  source: 'test',
-  surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
-  isPro: false,
-  postProofProBridgeEnabled: true,
-  hasTimelineProofVisible: hasTimelineProof,
-  hasFirstProofPayoffVisible: hasTimelineProof,
-  proSlotAvailable: true,
-  isRecording: false,
-  isZeroEntryState: entryCount == 0,
-  isFirstRecordingState: entryCount <= 1,
-  isPostSaveDegradedState: false,
-  isDegradedTranscriptState: false,
-  hasFirstProof: entryCount >= 3,
-  hasBetaTesterReportVisible: false,
-  hasCorrectionMemoryVisible: false,
-  hasMonthlyPrivateReportPreviewVisible: false,
-  hasBetaProofLiftVisible: false,
-  hasReturnAfterProofStrengthenedVisible: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  feedbackState: ProofQualityFeedbackState.none,
-  confidenceLevel: null,
-  hasSafeAnchor: hasTimelineProof,
-  hasFreshReturnAfterCorrection: false,
-  hasSolidStrongPatternWithSafeAnchors: hasTimelineProof,
-  compact: false,
-);
 
 void main() {
   final utilityOutcomes = _proUtilityOutcomes();

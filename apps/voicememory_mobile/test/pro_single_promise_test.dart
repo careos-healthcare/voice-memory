@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/first_five_minutes/first_five_minute
 import 'package:voicememory_mobile/features/post_save_reinforcement/post_save_reinforcement_placement.dart';
 import 'package:voicememory_mobile/features/preserved_proof_value/preserved_proof_value.dart';
 import 'package:voicememory_mobile/features/pricing_offer_validation/pricing_offer_validation_v2.dart';
-import 'package:voicememory_mobile/features/pricing_offer_validation/pricing_offer_validation_v2_copy.dart';
 import 'package:voicememory_mobile/features/pricing_validation/pricing_validation_copy.dart';
 import 'package:voicememory_mobile/features/prompt_assist_visibility/prompt_assist_visibility.dart';
 import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise.dart';
@@ -20,8 +19,6 @@ import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_rep
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
-
-const _safePhrase = 'said yes when I had no capacity';
 
 ProSinglePromiseInput _input({
   bool userUnderstandsFirstProof = true,

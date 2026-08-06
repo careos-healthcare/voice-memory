@@ -160,12 +160,12 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, __) =>
+            builder: (_, _) =>
                 ArchivePrivateReceiptCard(entryCount: 1, onDismiss: () {}),
           ),
           GoRoute(
             path: '/settings',
-            builder: (_, __) =>
+            builder: (_, _) =>
                 const Scaffold(body: Text('Settings memory controls')),
           ),
         ],

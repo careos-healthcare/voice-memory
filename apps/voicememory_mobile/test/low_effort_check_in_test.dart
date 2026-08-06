@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,9 +13,9 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/low_effort_check_in_card.dart';
-import 'package:voicememory_mobile/widgets/record/one_small_recording_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -62,6 +61,7 @@ List<PressureCheckInRecord> _wordThread2() => [
 
 void main() {
   const engine = LowEffortCheckInEngine();
+
 
   group('Low-effort check-in engine', () {
     test('"It returned" carries the tracked thread context', () {
@@ -244,18 +244,22 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_low_effort_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

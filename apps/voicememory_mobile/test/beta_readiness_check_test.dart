@@ -6,11 +6,9 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/beta_readiness/beta_readiness_analytics.dart';
 import 'package:voicememory_mobile/features/beta_readiness/beta_readiness_copy.dart';
 import 'package:voicememory_mobile/features/beta_readiness/beta_readiness_engine.dart';
-import 'package:voicememory_mobile/features/beta_readiness/beta_readiness_model.dart';
 import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/account/beta_readiness_check_sheet.dart';
 
 import 'support/test_storage_sandbox.dart';
 
@@ -31,6 +29,8 @@ void main() {
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   tearDown(() {
     sandbox.dispose();

@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/first_proof_success_beta/first_proof_success_beta_guard.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
-import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/single_launch_checklist/single_launch_checklist.dart';
 import 'package:voicememory_mobile/features/three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import 'package:voicememory_mobile/features/three_day_proof_challenge/three_day_proof_challenge_gate.dart';
@@ -18,11 +17,6 @@ ThreeDayProofChallengeGateInput _input({
   paidIntentBetaComplete: paidIntentBetaComplete,
   usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
 );
-
-ThreeDayProofChallengeRule _rule(
-  ThreeDayProofChallengeGateResult result,
-  ThreeDayProofChallengeRuleId id,
-) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('ThreeDayProofChallengeGate.build', () {

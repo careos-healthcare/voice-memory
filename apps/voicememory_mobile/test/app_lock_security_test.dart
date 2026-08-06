@@ -6,11 +6,10 @@ import 'package:voicememory_mobile/security/app_lock_settings.dart';
 import 'package:voicememory_mobile/security/app_lock_store.dart';
 import 'package:voicememory_mobile/security/pin_hash.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/widgets/security/app_lock_screen.dart';
 import 'package:voicememory_mobile/widgets/security/setup_pin_screen.dart';
 
 class _FakeBiometrics implements BiometricAuthenticator {
-  _FakeBiometrics({this.isAvailable = false, this.result = false});
+  _FakeBiometrics() : result = false, isAvailable = false;
 
   bool isAvailable;
   bool result;

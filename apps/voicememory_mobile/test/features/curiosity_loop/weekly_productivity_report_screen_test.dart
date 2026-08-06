@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/curiosity_loop/services/productivity
 import 'package:voicememory_mobile/features/curiosity_loop/weekly_productivity_report_copy.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/yesterdays_snapshot_reaction.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/journal_service.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 
 class _SpyCuriosityDataExporter extends CuriosityDataExporter {

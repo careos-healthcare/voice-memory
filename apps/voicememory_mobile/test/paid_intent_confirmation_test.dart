@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation
 import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/paid_intent_confirmation_card.dart';

@@ -20,6 +20,7 @@ import 'package:voicememory_mobile/widgets/memory/treat_as_new_control.dart';
 
 import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
 const _weeklyEngine = WeeklyThreadReviewEngine();
@@ -226,14 +227,18 @@ void main() {
   });
 
   group('Save metadata', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_treat_save_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('selected save writes the safe metadata flag only', () async {
       final store = AppServices.instance.journalStore;

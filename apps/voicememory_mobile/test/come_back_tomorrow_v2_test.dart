@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_quality.dart';
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_quality_gate.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_analytics.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_copy.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_engine.dart';
@@ -80,7 +78,7 @@ JournalEntry _voiceEntry({
   reflection: const Reflection(
     mood: 'neutral',
     emotionalIntensity: 2,
-    recurringThemes: const [],
+    recurringThemes: [],
     exactLanguagePattern: '',
     concreteObservation: '',
     repeatedSignal: '',

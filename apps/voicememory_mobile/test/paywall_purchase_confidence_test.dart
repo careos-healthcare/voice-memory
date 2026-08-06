@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 const _bannedTerms = [
   'diagnosis',

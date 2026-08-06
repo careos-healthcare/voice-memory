@@ -23,7 +23,6 @@ import 'package:voicememory_mobile/widgets/record/post_save_return_handoff_card.
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_gates.dart';
-import 'package:voicememory_mobile/features/early_archive/first_proof_moment_analytics.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gates.dart';
@@ -623,7 +622,7 @@ void main() {
   });
 
   group('FirstProofMomentEngine', () {
-    List<JournalEntry> _threeRelated() => [
+    List<JournalEntry> threeRelated() => [
       _entry(
         '1',
         'I had no capacity but I said yes again to the extra meeting today.',
@@ -639,7 +638,7 @@ void main() {
     ];
 
     test('third related post-save builds first repeat title', () {
-      final moment = FirstProofMomentEngine.build(entries: _threeRelated());
+      final moment = FirstProofMomentEngine.build(entries: threeRelated());
       expect(moment!.title, FirstProofMomentCopy.title);
       expect(moment.usesPhraseBody, isTrue);
       expect(moment.body, FirstProofMomentCopy.bodyStrong);
@@ -647,7 +646,7 @@ void main() {
     });
 
     test('evidence chips come from user words', () {
-      final moment = FirstProofMomentEngine.build(entries: _threeRelated());
+      final moment = FirstProofMomentEngine.build(entries: threeRelated());
       expect(moment!.evidencePhrases, isNotEmpty);
       for (final phrase in moment.evidencePhrases) {
         expect(phrase.split(RegExp(r'\s+')).length, lessThanOrEqualTo(6));

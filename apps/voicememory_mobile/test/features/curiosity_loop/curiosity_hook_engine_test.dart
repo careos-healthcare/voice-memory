@@ -3,6 +3,7 @@ import 'package:voicememory_mobile/features/curiosity_loop/models/curiosity_hook
 import 'package:voicememory_mobile/features/curiosity_loop/repositories/curiosity_hook_repository.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/services/curiosity_hook_engine.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import '../../support/test_storage_sandbox.dart';
 
 const _anchor = 'said yes again';
 
@@ -73,15 +74,19 @@ CuriosityHook _hook({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await LocalCuriosityHookRepository.resetForTest(AppServices.instance.prefs);
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('CuriosityHookEngine', () {
     test('test_notification_payload_generation_excludes_forbidden_loops', () {
       final prompts = <String>[];

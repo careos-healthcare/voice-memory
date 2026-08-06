@@ -10,6 +10,7 @@ import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/purchase_smoke_test_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 PurchaseSmokeTestSnapshot _snapshotFrom(PurchaseSmokeTestInput input) =>
     PurchaseSmokeTestEngine.buildFromInput(input);
@@ -42,23 +43,24 @@ Future<void> _pumpCard(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     PurchaseSmokeTestAnalytics.resetForTest();
     PurchaseSmokeTestAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/purchase_smoke_test/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/purchase_smoke_test/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     PurchaseSmokeTestAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();

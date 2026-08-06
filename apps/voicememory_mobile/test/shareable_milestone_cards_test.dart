@@ -79,11 +79,6 @@ List<JournalEntry> _entries(
   ),
 );
 
-List<JournalEntry> _entriesAcrossDays(int count) => List.generate(
-  count,
-  (i) => _entry('d$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
-);
-
 MilestoneShareInput _input({
   int realSavedMomentCount = 0,
   int usableEvidenceCount = 0,

@@ -4,7 +4,6 @@ import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cogniti
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/curiosity_hook.dart'
     as domain;
 import 'package:voicememory_mobile/features/curiosity_loop/domain/services/curiosity_prompt_generator.dart';
-import 'package:voicememory_mobile/features/curiosity_loop/presentation/models/curiosity_hook_presentation.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';

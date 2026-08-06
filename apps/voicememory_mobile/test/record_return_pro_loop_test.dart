@@ -6,15 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_store.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:archiveme_research/screens/journal_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/change_starts_card.dart';
-import 'package:voicememory_mobile/widgets/onboarding/first_archive_value_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/pro_archive_continuity_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/record_once_intro_card.dart';
@@ -32,23 +27,6 @@ class _MemoryPrefs extends MobilePrefsStore {
   Future<void> writeMap(String key, Map<String, dynamic> value) async {
     maps[key] = value;
   }
-}
-
-JournalEntry _entry({String id = 'e1', DateTime? createdAt}) {
-  return JournalEntry(
-    id: id,
-    createdAt: createdAt ?? DateTime(2026, 6, 11, 12),
-    transcript: 'A long enough transcript to count as a saved reflection.',
-    durationSeconds: 30,
-    reflection: const Reflection(
-      mood: 'thoughtful',
-      emotionalIntensity: 2,
-      recurringThemes: ['work'],
-      exactLanguagePattern: 'pattern',
-      concreteObservation: 'Work pressure showed up again today.',
-      repeatedSignal: 'signal',
-    ),
-  );
 }
 
 const _bannedWords = [

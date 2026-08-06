@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_model.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_model.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_analytics.dart';
@@ -11,16 +10,15 @@ import 'package:voicememory_mobile/features/monthly_private_report/monthly_priva
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_engine.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_model.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
-import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro/monthly_private_report_preview_card.dart';
 import 'package:voicememory_mobile/widgets/pro/monthly_private_report_preview_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -75,33 +73,6 @@ List<JournalEntry> _fourRelatedEntries() => [
   ),
 ];
 
-JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-  id: id,
-  createdAt: DateTime(2026, 6, 12, 12),
-  transcript:
-      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-  durationSeconds: 20,
-  localAudioPath: '/tmp/$id.m4a',
-  reflection: const Reflection(
-    mood: 'neutral',
-    emotionalIntensity: 0,
-    recurringThemes: [],
-    exactLanguagePattern: '',
-    concreteObservation: '',
-    repeatedSignal: '',
-  ),
-);
-
-RepeatReturnCheckRecord _answeredRecord({
-  required String entryId,
-  required RepeatReturnCheckChoice choice,
-}) => RepeatReturnCheckRecord(
-  entryId: entryId,
-  choice: choice,
-  entryCountAtCapture: 5,
-  createdAt: DateTime(2026, 6, 14),
-);
-
 void _seedWatch({required String createdDateKey}) {
   ComeBackTomorrowV2Store.seedForTest(
     ActiveWatchTarget(
@@ -143,7 +114,6 @@ MonthlyPrivateReportContext _context({
   bool isPostSaveDegradedState = false,
   bool firstProofTruthQuestionActive = false,
   bool whatChangedQuestionActive = false,
-  bool patternReviewInboxHasActiveItems = false,
   bool proLockMomentVisible = false,
   bool proEvidenceValueVisible = false,
   MonthlyPrivateReportPreview? preview,
@@ -167,11 +137,13 @@ MonthlyPrivateReportContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     MonthlyPrivateReportAnalytics.resetForTest();
     MonthlyPrivateReportAnalytics.captureForTest = (event, props) {
@@ -181,15 +153,14 @@ void main() {
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/monthly_private_report/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/monthly_private_report/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await MonthlyPrivateReportDismissStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     MonthlyPrivateReportAnalytics.resetForTest();
     analyticsEvents.clear();

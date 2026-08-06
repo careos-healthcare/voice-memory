@@ -438,7 +438,6 @@ void main() {
         final review = WeeklyArchiveReviewEngine.build(
           entries: _journalEntries(5),
         );
-        final shareProof = engine.buildFromJournal(entries: _journalEntries(5));
 
         await tester.binding.setSurfaceSize(const Size(390, 2200));
         addTearDown(() => tester.binding.setSurfaceSize(null));

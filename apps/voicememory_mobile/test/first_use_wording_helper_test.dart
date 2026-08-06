@@ -19,8 +19,8 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/first_use_wording_helper_card.dart';
-import 'package:voicememory_mobile/widgets/record/navigate_to_capture_mode.dart';
 import 'package:voicememory_mobile/widgets/record/record_capture_modes_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -64,15 +64,18 @@ List<JournalEntry> _threeRelatedRepeatEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     FirstUseWordingAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     VisualAuditOverrides.setRecordPresentation(null);
   });

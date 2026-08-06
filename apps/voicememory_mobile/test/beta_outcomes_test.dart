@@ -263,6 +263,7 @@ void main() {
   });
 
   group('Beta outcomes privacy', () {
+    late Directory tempDir;
     test('dashboard engine does not write to JournalStore', () async {
       final tempDir = await Directory.systemTemp.createTemp('beta_outcomes_');
       addTearDown(() async {

@@ -4,7 +4,6 @@ import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_g
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_copy.dart';
 import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
-import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
@@ -12,6 +11,7 @@ import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/revenue_readiness_dashboard_v2_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _privateTranscript =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -469,15 +469,17 @@ void main() {
   });
 
   group('TestingArchiveMeScreen', () {
+    late TestStorageSandbox sandbox;
     setUp(() async {
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath:
-            'test/tmp/revenue_readiness_v2/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-        prefsPath:
-            'test/tmp/revenue_readiness_v2/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('testing screen includes the card', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;

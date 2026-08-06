@@ -20,7 +20,6 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/beta_proof_lift_card.dart';
-import 'package:voicememory_mobile/widgets/patterns/timeline_proof_moment_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/beta_proof_lift/unused.json'));
@@ -243,14 +242,14 @@ void main() {
             parentVisible: true,
             timelineProofVisible: true,
             firstProofPayoffVisible: false,
-            isRecording: override['isRecording'] as bool? ?? false,
+            isRecording: override['isRecording'] ?? false,
             isDegradedTranscriptState:
-                override['isDegradedTranscriptState'] as bool? ?? false,
+                override['isDegradedTranscriptState'] ?? false,
             isPostSaveDegradedState: false,
             whatChangedQuestionActive:
-                override['whatChangedQuestionActive'] as bool? ?? false,
+                override['whatChangedQuestionActive'] ?? false,
             patternReviewInboxHasActiveItems:
-                override['patternReviewInboxHasActiveItems'] as bool? ?? false,
+                override['patternReviewInboxHasActiveItems'] ?? false,
           ),
           isFalse,
         );

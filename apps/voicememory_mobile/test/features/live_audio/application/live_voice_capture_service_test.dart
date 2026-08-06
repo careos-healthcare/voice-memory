@@ -8,7 +8,6 @@ import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
-import 'package:voicememory_mobile/features/live_audio/domain/models/live_server_event.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_voice_error_state.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_voice_session_fault.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm16_capture_source.dart';

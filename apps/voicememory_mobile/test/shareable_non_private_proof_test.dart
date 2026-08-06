@@ -256,7 +256,7 @@ void main() {
   });
 
   group('ShareableProofCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester, {
       required ShareableProofResult result,
       Future<void> Function(String text)? onCopy,
@@ -279,7 +279,7 @@ void main() {
     }
 
     testWidgets('renders title and privacy warning', (tester) async {
-      await _pumpCard(tester, result: _visibleResult());
+      await pumpCard(tester, result: _visibleResult());
       expect(find.text('Share the idea, not your archive'), findsOneWidget);
       expect(
         find.text('Your saved moments are never included.'),
@@ -288,7 +288,7 @@ void main() {
     });
 
     testWidgets('hidden when engine says not to show', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: ShareableProofEngine.build(input: _input()),
       );
@@ -301,7 +301,7 @@ void main() {
     testWidgets('copy and share require explicit tap', (tester) async {
       String? copied;
       String? shared;
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: _visibleResult(),
         onCopy: (text) async {
@@ -346,7 +346,7 @@ void main() {
       tester,
     ) async {
       String? shared;
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: _visibleResult(),
         onShare: (text) async {

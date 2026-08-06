@@ -232,7 +232,7 @@ void main() {
         (i) => _voiceEntry(id: 'p$i', transcript: _placeholder),
       );
       final question = AdaptiveDailyQuestionEngine.build(entries: entries);
-      expect(question?.usesPhrase, isNot(true));
+      expect(question.usesPhrase, isNot(true));
     });
 
     test('shows weak evidence fallback state', () {

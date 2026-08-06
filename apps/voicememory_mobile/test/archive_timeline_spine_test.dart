@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/correction_memory/correction_memory_
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
-import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
@@ -20,6 +19,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_timeline_spine_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -158,19 +158,19 @@ bool _hasRow(ArchiveTimelineSpineResult result, ArchiveTimelineSpineRowId id) =>
     result.rows.any((row) => row.id == id);
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveTimelineSpineAnalytics.resetForTest();
     ArchiveTimelineSpineAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     analyticsEvents.clear();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/archive_timeline_spine/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/archive_timeline_spine/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -178,6 +178,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveTimelineSpineAnalytics.resetForTest();
     await CorrectionMemoryStore.resetForTest();
@@ -342,7 +343,7 @@ void main() {
   });
 
   group('ArchiveTimelineSpineCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       ArchiveTimelineSpineResult result,
     ) async {
@@ -362,7 +363,7 @@ void main() {
     }
 
     testWidgets('renders "Archive timeline"', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(ArchiveTimelineSpineCopy.title), findsOneWidget);
     });
@@ -370,13 +371,13 @@ void main() {
     testWidgets('renders "Not a chat. A record of what changed over time."', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(ArchiveTimelineSpineCopy.subtitle), findsOneWidget);
     });
 
     testWidgets('renders first seen row', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.text(ArchiveTimelineSpineCopy.firstSeenLabel),
@@ -387,13 +388,13 @@ void main() {
     testWidgets('renders returned row when confirmed repeat exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(ArchiveTimelineSpineCopy.returnedLabel), findsOneWidget);
     });
 
     testWidgets('renders corrected row when correction exists', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualResult(
           weight: ArchiveTimelineSpineCurrentWeight.corrected,
@@ -414,7 +415,7 @@ void main() {
     testWidgets('renders weight changed row for softened signals', (
       tester,
     ) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualResult(
           weight: ArchiveTimelineSpineCurrentWeight.light,
@@ -435,7 +436,7 @@ void main() {
     testWidgets('renders needs fresh proof row for stale evidence', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+      await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
       expect(
         find.text(ArchiveTimelineSpineCopy.needsFreshProofLabel),
@@ -444,7 +445,7 @@ void main() {
     });
 
     testWidgets('renders current weight strong', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.text(ArchiveTimelineSpineCopy.currentWeightStrong),
@@ -453,7 +454,7 @@ void main() {
     });
 
     testWidgets('renders current weight light', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualResult(weight: ArchiveTimelineSpineCurrentWeight.light),
       );
@@ -465,7 +466,7 @@ void main() {
     });
 
     testWidgets('renders current weight fading', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualResult(weight: ArchiveTimelineSpineCurrentWeight.fading),
       );
@@ -477,7 +478,7 @@ void main() {
     });
 
     testWidgets('renders current weight corrected', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         _manualResult(
           weight: ArchiveTimelineSpineCurrentWeight.corrected,
@@ -495,7 +496,7 @@ void main() {
     });
 
     testWidgets('renders current weight needs fresh proof', (tester) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+      await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
       expect(
         find.text(ArchiveTimelineSpineCopy.currentWeightNeedsFreshProof),
@@ -504,7 +505,7 @@ void main() {
     });
 
     testWidgets('renders ChatGPT differentiation line', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.text(ArchiveTimelineSpineCopy.differentiationLine),
@@ -515,13 +516,13 @@ void main() {
     testWidgets('renders "Your past is context, not a verdict."', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(ArchiveTimelineSpineCopy.footer), findsOneWidget);
     });
 
     testWidgets('no transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -529,7 +530,7 @@ void main() {
     });
 
     testWidgets('no Pro CTA inside card', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining('See Pro'), findsNothing);
       expect(find.textContaining('Subscribe'), findsNothing);
@@ -537,7 +538,7 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

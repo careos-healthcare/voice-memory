@@ -18,7 +18,7 @@ JournalEntry _entry({
   reflection: const Reflection(
     mood: 'neutral',
     emotionalIntensity: 2,
-    recurringThemes: const [],
+    recurringThemes: [],
     exactLanguagePattern: '',
     concreteObservation: '',
     repeatedSignal: '',

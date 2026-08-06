@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engi
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/first_session_proof_repair/first_session_proof_repair_engine.dart';
-import 'package:voicememory_mobile/features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_model.dart';

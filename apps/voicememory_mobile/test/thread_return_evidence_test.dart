@@ -879,7 +879,7 @@ void main() {
       });
       // The quote never appears in any analytics payload.
       for (final e in captured) {
-        expect('${e.properties.values.join(' ')}', isNot(contains('worry')));
+        expect(e.properties.values.join(' '), isNot(contains('worry')));
       }
     });
 

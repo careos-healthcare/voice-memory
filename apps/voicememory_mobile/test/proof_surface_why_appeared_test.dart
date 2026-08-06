@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/early_archive/return_check_payoff_mo
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_model.dart';
 import 'package:voicememory_mobile/features/early_archive/helpful_action_appeared_copy.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/widgets/patterns/what_changed_since_last_time_card.dart';
 import 'package:voicememory_mobile/widgets/proof/proof_surface_why_appeared_disclosure.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_moment_card.dart';

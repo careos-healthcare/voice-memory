@@ -11,6 +11,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/first_session_onboarding_card.dart';
 import 'package:voicememory_mobile/widgets/record/record_capture_modes_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -54,15 +55,19 @@ List<JournalEntry> _threeRelatedRepeatEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await FirstSessionOnboardingStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('FirstSessionOnboardingCopy', () {
     test('spec copy is stable', () {
       expect(FirstSessionOnboardingCopy.title, 'When it repeats, save it');

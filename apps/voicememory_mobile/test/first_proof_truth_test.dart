@@ -17,6 +17,7 @@ import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_truth_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -64,20 +65,21 @@ List<JournalEntry> _threeRelatedEntries() => [
 ];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     FirstProofTruthAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/first_proof_truth/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/first_proof_truth/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await FirstProofTruthStore.resetForTest(AppServices.instance.prefs);
     await BetaActivationSummaryTracker.clearExtension();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     await AppServices.resetForTest(
       journalPath:

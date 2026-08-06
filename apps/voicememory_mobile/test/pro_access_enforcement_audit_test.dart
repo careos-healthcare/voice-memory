@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_en
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
-import 'package:voicememory_mobile/features/release_candidate_freeze/release_candidate_freeze.dart';
 import 'package:voicememory_mobile/features/release_candidate_freeze/release_candidate_freeze_copy.dart';
 import 'package:voicememory_mobile/features/revenuecat_sandbox_proof/revenuecat_sandbox_proof_copy.dart';
 import 'package:voicememory_mobile/features/store_readiness_single_source/store_readiness_single_source.dart';
@@ -393,7 +392,7 @@ void main() {
   });
 
   group('ProAccessEnforcementAuditV3', () {
-    StoreReadinessSingleSourceInput _storeInput({
+    StoreReadinessSingleSourceInput storeInput0({
       bool revenueCatConfigured = true,
       bool productsLoaded = true,
       bool purchaseFlowReachable = true,
@@ -426,7 +425,7 @@ void main() {
 
     test('fromStoreReadiness tags four billing store steps', () {
       final bridge = ProAccessEnforcementAuditV3.fromStoreReadiness(
-        _storeInput(),
+        storeInput0(),
       );
 
       expect(bridge.tags.length, 4);
@@ -435,7 +434,7 @@ void main() {
 
     test('misaligned when store billing passes but enforcement blocks', () {
       final bridge = ProAccessEnforcementAuditV3.fromStoreReadiness(
-        _storeInput(),
+        storeInput0(),
         localCachePreventsStalePro: false,
       );
 

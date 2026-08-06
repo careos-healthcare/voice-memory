@@ -571,7 +571,7 @@ void main() {
                   controller: BetaFeedbackController(
                     loadAppVersion: _fixedVersion,
                     launchEmail: (_) async => false,
-                    copyText: (_, __) async => ArchiveShareOutcome.copied,
+                    copyText: (_, _) async => ArchiveShareOutcome.copied,
                   ),
                 ),
                 child: const Text('open'),

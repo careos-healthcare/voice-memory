@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/early_archive/private_archive_report
 import 'package:voicememory_mobile/features/interpretation/interpretation_quality_engine.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
@@ -181,10 +180,10 @@ void main() {
           (i) => _voicePlaceholder(observation: _aiObservation),
         );
         final question = AdaptiveDailyQuestionEngine.build(entries: entries);
-        expect(question?.usesPhrase, isNot(true));
-        expect(question?.questionText.contains('[draft]'), isNot(true));
+        expect(question.usesPhrase, isNot(true));
+        expect(question.questionText.contains('[draft]'), isNot(true));
         expect(
-          question?.questionText.contains('transcribe when connected'),
+          question.questionText.contains('transcribe when connected'),
           isNot(true),
         );
       },

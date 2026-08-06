@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +18,7 @@ import 'package:voicememory_mobile/widgets/record/consumer_record_prompts_sectio
 import 'package:voicememory_mobile/widgets/record/one_small_recording_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -75,6 +75,7 @@ String _allCopy(OneSmallRecording recording) => [
 
 void main() {
   const engine = OneSmallRecordingEngine();
+
 
   group('One small recording engine', () {
     test('no card without enough evidence', () {
@@ -260,17 +261,21 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_one_small_recording_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

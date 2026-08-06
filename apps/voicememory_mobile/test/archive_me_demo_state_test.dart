@@ -118,7 +118,7 @@ void main() {
           reflection: const Reflection(
             mood: 'neutral',
             emotionalIntensity: 1,
-            recurringThemes: const [],
+            recurringThemes: [],
             exactLanguagePattern: '',
             concreteObservation: '',
             repeatedSignal: '',

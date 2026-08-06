@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
@@ -13,6 +12,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   String id = 'v1',
@@ -52,15 +52,20 @@ bool firstSavePayoffEligible({
     entryCount == 1 && !VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry);
 
 void main() {
+
   group('degraded voice first save recovery', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_degraded_first_save_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('degraded voice draft does not count as archive evidence', () {
       final entries = [_degradedVoiceEntry()];

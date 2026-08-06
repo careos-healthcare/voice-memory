@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/patterns/evidence_weighting_card.dart';
 
 const _strongRepeat =
@@ -250,7 +249,7 @@ void main() {
   });
 
   group('EvidenceWeightingCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       EvidenceWeightingResult result,
     ) async {
@@ -265,7 +264,7 @@ void main() {
     }
 
     testWidgets('renders title, body, and footer', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('evidence_weighting_card')), findsOneWidget);
       expect(find.text(EvidenceWeightingCopy.title), findsOneWidget);
@@ -274,14 +273,14 @@ void main() {
     });
 
     testWidgets('renders Fresh state for recent evidence', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelFresh), findsOneWidget);
       expect(find.text(EvidenceWeightingCopy.explanationFresh), findsOneWidget);
     });
 
     testWidgets('renders Repeated state for confirmed repeat', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelRepeated), findsOneWidget);
       expect(
@@ -293,7 +292,7 @@ void main() {
     testWidgets('renders Fading state when quiet or stale signal exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+      await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelFading), findsOneWidget);
       expect(
@@ -305,7 +304,7 @@ void main() {
     testWidgets('renders Softened state when softening signal exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_softeningEntries()));
+      await pumpCard(tester, _resultFor(_softeningEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelSoftened), findsOneWidget);
       expect(
@@ -317,7 +316,7 @@ void main() {
     testWidgets(
       'renders Needs fresh proof for older repeat without recent save',
       (tester) async {
-        await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+        await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
         expect(
           find.text(EvidenceWeightingCopy.labelNeedsFreshProof),
@@ -331,7 +330,7 @@ void main() {
     );
 
     testWidgets('differentiation line appears', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('evidence_weighting_differentiation_line')),
@@ -344,7 +343,7 @@ void main() {
     });
 
     testWidgets('does not include Pro CTA', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byType(FilledButton), findsNothing);
       expect(find.text(ConsumerUiCopy.paywallPrimaryCta), findsNothing);

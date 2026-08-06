@@ -46,7 +46,7 @@ JournalEntry _voiceEntry({required String id, String transcript = ''}) =>
       reflection: const Reflection(
         mood: 'neutral',
         emotionalIntensity: 2,
-        recurringThemes: const [],
+        recurringThemes: [],
         exactLanguagePattern: '',
         concreteObservation: '',
         repeatedSignal: '',

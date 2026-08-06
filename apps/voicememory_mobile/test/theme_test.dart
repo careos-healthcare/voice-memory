@@ -21,7 +21,7 @@ void main() {
 
     test('scaffold background is warm light not black', () {
       final theme = AppTheme.light();
-      final bg = theme.scaffoldBackgroundColor ?? AppColors.backgroundPrimary;
+      final bg = theme.scaffoldBackgroundColor;
       expect(bg, AppColors.backgroundPrimary);
       expect(bg.computeLuminance(), greaterThan(0.85));
       expect(bg, isNot(Colors.black));

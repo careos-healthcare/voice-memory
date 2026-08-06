@@ -16,10 +16,10 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/navigate_to_capture_mode.dart';
 import 'package:voicememory_mobile/widgets/record/record_capture_modes_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -42,14 +42,18 @@ JournalEntry _entry({
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('RecordCaptureModeCopy', () {
     test('spec copy is stable', () {
       expect(RecordCaptureModeCopy.cardTitle, 'Start with anything real');
@@ -128,7 +132,7 @@ void main() {
   });
 
   group('QuickTextCaptureScreen capture modes', () {
-    Future<void> _pumpCaptureScreen(WidgetTester tester, Widget child) async {
+    Future<void> pumpCaptureScreen(WidgetTester tester, Widget child) async {
       await tester.binding.setSurfaceSize(const Size(420, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -148,7 +152,7 @@ void main() {
         prompt: RecordCaptureModeCopy.somethingHappenedPrompt,
       );
 
-      await _pumpCaptureScreen(
+      await pumpCaptureScreen(
         tester,
         QuickTextCaptureScreen(
           promptHint: mode.prompt,
@@ -183,7 +187,7 @@ void main() {
     testWidgets('quiet-day mode shows save-as-quiet-day action', (
       tester,
     ) async {
-      await _pumpCaptureScreen(
+      await pumpCaptureScreen(
         tester,
         const QuickTextCaptureScreen(
           promptHint: RecordCaptureModeCopy.nothingMuchTodayPrompt,

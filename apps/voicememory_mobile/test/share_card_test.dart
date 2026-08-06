@@ -20,6 +20,7 @@ import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_action_card.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_image.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_preview_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -103,16 +104,20 @@ ShareCardModel _modelFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ShareCardAnalytics.resetForTest();
     PatternNameStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ShareCardCopy', () {
     test('defines privacy-safe share card copy', () {
       expect(ShareCardCopy.headline, 'ArchiveMe found a repeat');

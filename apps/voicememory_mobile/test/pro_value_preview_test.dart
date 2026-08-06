@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro_value_preview_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -50,6 +51,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
 
   group('Pro value preview copy', () {
     test('uses ArchiveMe branding and avoids banned language', () {
@@ -169,15 +171,19 @@ void main() {
   });
 
   group('Pro value preview settings', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_pro_value_preview_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('settings shows ArchiveMe Pro row', (tester) async {
       final router = GoRouter(

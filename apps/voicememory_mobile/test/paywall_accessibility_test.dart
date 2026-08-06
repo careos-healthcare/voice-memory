@@ -51,6 +51,7 @@ Future<void> _pumpUnavailablePaywall(
 }
 
 void main() {
+  late Directory tempDir;
   setUp(() async {
     final tempDir = await Directory.systemTemp.createTemp(
       'paywall_accessibility_test',

@@ -17,7 +17,6 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigge
 import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';

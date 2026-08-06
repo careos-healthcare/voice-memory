@@ -1,8 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
 import 'package:voicememory_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:voicememory_mobile/features/activation/archive_insight_feedback_adaptation.dart';
@@ -14,6 +12,7 @@ import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _privateNote = 'This is not about work - it is more about family.';
 
@@ -45,17 +44,19 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_insight_quality_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
     ArchiveInsightFeedbackStore.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('InsightQualityDashboardEngine', () {
     test('summary counts feels-right feedback', () {
       ArchiveInsightFeedbackStore.record(

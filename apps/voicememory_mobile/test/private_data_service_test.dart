@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 Reflection _reflection() => const Reflection(
   mood: 'neutral',
   emotionalIntensity: 0,
-  recurringThemes: const [],
+  recurringThemes: [],
   exactLanguagePattern: '',
   concreteObservation: 'You sounded tired.',
   repeatedSignal: '',

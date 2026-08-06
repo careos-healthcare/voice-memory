@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart
 import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/billing/value_moment_pro_bridge.dart';
@@ -49,12 +48,6 @@ List<PressureCheckInRecord> _workThread3() => [
 List<PressureCheckInRecord> _workThread2() => [
   _record(id: 'a', daysAgo: 5, contextIds: const ['work']),
   _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
-];
-
-/// Two entries with repeated belief-like language and no shared context.
-List<PressureCheckInRecord> _checkingBelief2() => [
-  _record(id: 'd0', daysAgo: 4, fear: 'I have to keep checking messages'),
-  _record(id: 'd1', daysAgo: 0, fear: 'Checking messages again tonight'),
 ];
 
 /// Enough archive depth for governance, without a 3-entry thread return.

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_milestone_store.dart';
-import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_insight_why_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_insight_feedback_analytics.dart';
@@ -28,7 +27,6 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thoug
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_gates.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_models.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_store.dart';
-import 'package:voicememory_mobile/features/beta/archive_beta_mission_gates.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -52,13 +50,13 @@ import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payof
 import 'package:voicememory_mobile/widgets/record/early_archive_insight_feedback_row.dart';
 import 'package:voicememory_mobile/widgets/record/early_archive_return_reminder_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_evidence_timeline_card.dart';
-import 'package:voicememory_mobile/widgets/record/early_archive_insight_why_section.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_why_matters_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_thought_map_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -414,7 +412,7 @@ void main() {
 
       expect(EarlyFirstSignalEngine.build(entries: entries), isNull);
       expect(
-        '${entries.map((e) => e.transcript).join(' ')}',
+        entries.map((e) => e.transcript).join(' '),
         isNot(contains('confirmed repeat')),
       );
     });
@@ -1266,13 +1264,17 @@ void main() {
   });
 
   group('FirstUserJourney hardening', () {
+    late TestStorageSandbox sandbox;
     setUp(() async {
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-        prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     Future<void> saveRelatedRepeatEntries() async {
       for (final entry in _threeRelatedRepeatEntries()) {
@@ -1485,9 +1487,11 @@ void main() {
     });
 
     test('demo preview does not write journal entries', () async {
+      final sandbox = TestStorageSandbox.create();
+      addTearDown(sandbox.dispose);
       await AppServices.resetForTest(
-        journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-        prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
 
@@ -1501,9 +1505,11 @@ void main() {
   });
 
   group('EarlyArchiveProofAnalytics', () {
+    late TestStorageSandbox sandbox;
     late List<({String event, Map<String, Object> properties})> captured;
 
     setUp(() {
+      sandbox = TestStorageSandbox.create();
       captured = [];
       ActivationFunnelAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.resetForTest();
@@ -1513,6 +1519,7 @@ void main() {
       );
     });
 
+    tearDown(() => sandbox.dispose());
     tearDown(ActivationFunnelAnalytics.resetForTest);
 
     List<String> eventsNamed(String name) =>

@@ -9,8 +9,6 @@ import 'package:voicememory_mobile/features/correction_memory/correction_memory_
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
-import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
-import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_analytics.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_engine.dart';
@@ -20,6 +18,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/patterns/timeline_proof_moment_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -98,18 +97,18 @@ TimelineProofMomentResult _resultFor(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     TimelineProofMomentAnalytics.resetForTest();
     TimelineProofMomentAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/timeline_proof_moment/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/timeline_proof_moment/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -117,6 +116,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     TimelineProofMomentAnalytics.resetForTest();
     await CorrectionMemoryStore.resetForTest();
@@ -248,7 +248,7 @@ void main() {
   });
 
   group('TimelineProofMomentCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       TimelineProofMomentResult result,
     ) async {
@@ -268,13 +268,13 @@ void main() {
     }
 
     testWidgets('renders "This pattern has a timeline now."', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(TimelineProofMomentCopy.title), findsOneWidget);
     });
 
     testWidgets('renders first seen row', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(TimelineProofMomentCopy.firstSeenRow), findsOneWidget);
     });
@@ -282,13 +282,13 @@ void main() {
     testWidgets('renders returned row when confirmed repeat exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(TimelineProofMomentCopy.returnedRow), findsOneWidget);
     });
 
     testWidgets('renders current weight row', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.text(TimelineProofMomentCopy.currentWeightStrong),
@@ -297,13 +297,13 @@ void main() {
     });
 
     testWidgets('renders footer "past as a verdict"', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining('past as a verdict'), findsOneWidget);
     });
 
     testWidgets('renders ChatGPT differentiation', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.text(TimelineProofMomentCopy.differentiationLine),
@@ -312,7 +312,7 @@ void main() {
     });
 
     testWidgets('renders Pro line without CTA', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(TimelineProofMomentCopy.proLine), findsOneWidget);
       expect(find.textContaining('See Pro'), findsNothing);
@@ -320,7 +320,7 @@ void main() {
     });
 
     testWidgets('no transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -328,7 +328,7 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

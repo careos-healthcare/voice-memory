@@ -190,7 +190,7 @@ void main() {
   });
 
   group('ProofSpecificityCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       ProofSpecificityResult result,
     ) async {
@@ -203,20 +203,20 @@ void main() {
     }
 
     testWidgets('renders title "Why ArchiveMe noticed this"', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('proof_specificity_card')), findsOneWidget);
       expect(find.text(ProofSpecificityCopy.title), findsOneWidget);
     });
 
     testWidgets('renders "What repeated"', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(ProofSpecificityCopy.evidenceHeading), findsOneWidget);
     });
 
     testWidgets('renders boundary line', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('proof_specificity_boundary_line')),
@@ -226,7 +226,7 @@ void main() {
     });
 
     testWidgets('renders correction line', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('proof_specificity_correction_line')),
@@ -236,7 +236,7 @@ void main() {
     });
 
     testWidgets('renders ChatGPT differentiation', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('proof_specificity_differentiation_line')),
@@ -249,7 +249,7 @@ void main() {
     });
 
     testWidgets('does not include Pro CTA', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining('See Pro'), findsNothing);
       expect(find.textContaining('Subscribe'), findsNothing);
@@ -257,7 +257,7 @@ void main() {
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -280,7 +280,7 @@ void main() {
         correctionLine: ProofSpecificityCopy.correctionLine,
         differentiationLine: ProofSpecificityCopy.differentiationLine,
       );
-      await _pumpCard(tester, result);
+      await pumpCard(tester, result);
 
       expect(
         find.byKey(const Key('proof_specificity_fallback_evidence')),
@@ -293,7 +293,7 @@ void main() {
     });
 
     testWidgets('analytics metadata only', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
@@ -318,7 +318,7 @@ void main() {
   });
 
   group('CaptureFreedomLine', () {
-    Future<void> _pumpLine(
+    Future<void> pumpLine(
       WidgetTester tester, {
       required int entryCount,
       bool compact = false,
@@ -338,13 +338,13 @@ void main() {
     }
 
     testWidgets('appears for zero-entry user', (tester) async {
-      await _pumpLine(tester, entryCount: 0);
+      await pumpLine(tester, entryCount: 0);
 
       expect(find.byKey(const Key('capture_freedom_line')), findsOneWidget);
     });
 
     testWidgets('appears for early ready user', (tester) async {
-      await _pumpLine(tester, entryCount: 3, compact: true);
+      await pumpLine(tester, entryCount: 3, compact: true);
 
       expect(find.byKey(const Key('capture_freedom_line')), findsOneWidget);
       expect(
@@ -354,7 +354,7 @@ void main() {
     });
 
     testWidgets('says user can record anything', (tester) async {
-      await _pumpLine(tester, entryCount: 0);
+      await pumpLine(tester, entryCount: 0);
 
       expect(
         find.text(ProofSpecificityCopy.captureFreedomLine),
@@ -364,8 +364,8 @@ void main() {
     });
 
     testWidgets('does not mention therapy/diagnosis/treatment', (tester) async {
-      await _pumpLine(tester, entryCount: 0);
-      await _pumpLine(tester, entryCount: 2, compact: true);
+      await pumpLine(tester, entryCount: 0);
+      await pumpLine(tester, entryCount: 2, compact: true);
 
       final blob = [
         ProofSpecificityCopy.captureFreedomLine,
@@ -377,7 +377,7 @@ void main() {
     });
 
     testWidgets('capture freedom analytics metadata only', (tester) async {
-      await _pumpLine(tester, entryCount: 0);
+      await pumpLine(tester, entryCount: 0);
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

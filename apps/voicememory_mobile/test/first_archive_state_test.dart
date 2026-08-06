@@ -299,6 +299,7 @@ void main() {
   });
 
   group('App restart persistence', () {
+    late Directory tempDir;
     test('saved entry persists across journal store reopen', () async {
       final tempDir = Directory.systemTemp.createTempSync('vm_restart_');
       addTearDown(() => tempDir.deleteSync(recursive: true));

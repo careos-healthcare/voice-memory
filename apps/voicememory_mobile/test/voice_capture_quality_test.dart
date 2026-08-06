@@ -21,9 +21,8 @@ const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
 class _VoicePipelineFakeApi extends ApiClient {
   _VoicePipelineFakeApi({
-    this.transcript = _spokenTranscript,
     this.analyzeError,
-  }) : super(baseUrl: 'http://test.invalid');
+  }) : transcript = _spokenTranscript, super(baseUrl: 'http://test.invalid');
 
   final String transcript;
   final Object? analyzeError;
@@ -318,7 +317,7 @@ void main() {
   });
 
   group('voice capture pipeline', () {
-    Future<File> _usableAudioFile() async {
+    Future<File> usableAudioFile() async {
       final dir = Directory.systemTemp.createTempSync('vm_audio_pipeline_');
       return File('${dir.path}/voice.m4a')
         ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
@@ -332,7 +331,7 @@ void main() {
             analyzeError: FormatException('Unexpected HTML'),
           ),
         );
-        final audio = await _usableAudioFile();
+        final audio = await usableAudioFile();
 
         final result = await AppServices.instance.pipeline.run(
           audioFile: audio,
@@ -377,7 +376,7 @@ void main() {
           analyzeError: ApiException('Not found', statusCode: 404),
         ),
       );
-      final audio = await _usableAudioFile();
+      final audio = await usableAudioFile();
 
       final result = await AppServices.instance.pipeline.run(
         audioFile: audio,

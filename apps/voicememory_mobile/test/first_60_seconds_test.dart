@@ -25,6 +25,7 @@ import 'package:voicememory_mobile/widgets/onboarding/pro_continuity_bridge_card
 import 'package:voicememory_mobile/widgets/onboarding/tomorrow_return_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/first60/unused.json'));
@@ -101,6 +102,7 @@ void main() {
   });
 
   tearDown(ActivationFunnelAnalytics.resetForTest);
+
 
   group('Copy guardrails', () {
     test('intro copy is exact', () {
@@ -600,19 +602,22 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first60_record_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-        prefsPath: '${tempDir.path}/prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -708,16 +713,19 @@ void main() {
   });
 
   group('First archive view', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first60_journal_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-        prefsPath: '${tempDir.path}/prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     Future<void> pumpJournal(WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 1600));

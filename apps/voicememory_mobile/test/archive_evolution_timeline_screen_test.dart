@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/archive_memory/archive_evolution_model.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_research/screens/archive_evolution_timeline_screen.dart';
 
 ArchiveEvolutionTimeline _timeline() => ArchiveEvolutionTimeline(

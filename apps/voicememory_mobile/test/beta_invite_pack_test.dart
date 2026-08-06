@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/beta_invite/beta_invite_copy.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_engine.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_models.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_store.dart';
-import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_engine.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_models.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -307,7 +306,7 @@ void main() {
       expect(screen, contains('beta_invite_copy_task'));
       expect(screen, contains('beta_invite_pack_privacy_reminder'));
       for (final variant in BetaInviteVariantId.values) {
-        expect(screen, contains('beta_invite_variant_\${variant.name}'));
+        expect(screen, contains('beta_invite_variant_${variant.name}'));
       }
     });
 

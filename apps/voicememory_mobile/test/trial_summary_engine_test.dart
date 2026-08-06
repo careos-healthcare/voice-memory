@@ -20,7 +20,6 @@ import 'package:voicememory_mobile/features/trial/hook_rescue_decision_model.dar
 import 'package:voicememory_mobile/features/trial/trial_summary_engine.dart';
 import 'package:voicememory_mobile/features/trial/trial_summary_model.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
@@ -353,14 +352,14 @@ void main() {
     );
   });
 
-  HookDiagnosisEvent _missed(String reason, String id) => HookDiagnosisEvent(
+  HookDiagnosisEvent missed(String reason, String id) => HookDiagnosisEvent(
     id: id,
     createdAt: DateTime(2026, 5, 26),
     type: HookDiagnosisEventType.checkInMissedReason,
     reason: reason,
   );
 
-  HookDiagnosisEvent _questionRated(String rating, String id) =>
+  HookDiagnosisEvent questionRated(String rating, String id) =>
       HookDiagnosisEvent(
         id: id,
         createdAt: DateTime(2026, 5, 26),
@@ -378,8 +377,8 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_missed(HookDiagnosisMissedReason.confusing, 'c1'));
-    await hook.append(_missed(HookDiagnosisMissedReason.confusing, 'c2'));
+    await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c1'));
+    await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c2'));
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.reminderReadiness, ReminderReadiness.notReady);
@@ -396,8 +395,8 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
-    await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
+    await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
+    await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.reminderReadiness, ReminderReadiness.notReady);
@@ -422,8 +421,8 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_missed(HookDiagnosisMissedReason.forgot, 'f1'));
-    await hook.append(_questionRated(HookDiagnosisRating.yes, 'q1'));
+    await hook.append(missed(HookDiagnosisMissedReason.forgot, 'f1'));
+    await hook.append(questionRated(HookDiagnosisRating.yes, 'q1'));
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.reminderReadiness, ReminderReadiness.maybe);
@@ -440,8 +439,8 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_questionRated(HookDiagnosisRating.yes, 'q1'));
-    await hook.append(_questionRated(HookDiagnosisRating.sortOf, 'q2'));
+    await hook.append(questionRated(HookDiagnosisRating.yes, 'q1'));
+    await hook.append(questionRated(HookDiagnosisRating.sortOf, 'q2'));
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.reminderReadiness, ReminderReadiness.ready);
@@ -460,8 +459,8 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_missed(HookDiagnosisMissedReason.confusing, 'c1'));
-    await hook.append(_missed(HookDiagnosisMissedReason.confusing, 'c2'));
+    await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c1'));
+    await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c2'));
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.hookRescuePrimaryAction.id, 'guidedCheckIn');
@@ -481,8 +480,8 @@ void main() {
         ),
       );
       final hook = HookDiagnosisStore(AppServices.instance.prefs);
-      await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
-      await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
+      await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
+      await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
 
       final summary = await const TrialSummaryEngine().build();
       expect(summary.sharperQuestionIntensity, HookRescueIntensity.aggressive);

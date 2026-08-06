@@ -130,7 +130,7 @@ void main() {
         fail('PNG export failed for ${s.$1}');
       }
       await File(
-        '${outDir}/${s.$1}.png',
+        '$outDir/${s.$1}.png',
       ).writeAsBytes(bytes.buffer.asUint8List());
     }
 

@@ -91,6 +91,7 @@ void main() {
   });
 
   group('Sample archive data isolation', () {
+    late Directory tempDir;
     test('sample entries are excluded from share-safe proof', () {
       final proof = const ShareableArchiveProofEngine().buildFromJournal(
         entries: SampleArchiveEntries.build(),

@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_name_confirmation_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/rename_pattern_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -94,16 +95,20 @@ JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
 );
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     PatternNameStore.resetForTest();
     PatternNameAnalytics.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('PatternNameEngine gates', () {
     test('prompt shows only when grounded repeat exists', () {
       final entries = _threeSaidYesEntries();

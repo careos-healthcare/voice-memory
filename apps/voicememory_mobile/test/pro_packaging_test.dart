@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/features/belief_change/belief_change_moment_engine.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_tester_outcome_store.dart';
@@ -32,6 +31,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/archive_me_pro_value_section.dart';
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
   id: id,
@@ -105,15 +105,19 @@ Future<void> _pumpPaywall(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaTesterOutcomeStore.resetForTest(AppServices.instance.prefs);
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ProPackagingCopy', () {
     test('defines longer proof trail Pro positioning', () {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');

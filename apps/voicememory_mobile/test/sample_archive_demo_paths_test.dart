@@ -76,6 +76,7 @@ void main() {
   });
 
   group('Sample archive demo paths wiring', () {
+    late Directory tempDir;
     test('router registers sample context route', () {
       final src = File('lib/router/app_router.dart').readAsStringSync();
       expect(src, contains('SampleArchiveDemoPaths.sampleContextRoute'));

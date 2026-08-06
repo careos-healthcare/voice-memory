@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
@@ -15,6 +14,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import '../../support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -123,15 +123,15 @@ class _FakePromptGenerator implements CuriosityPromptGenerator {
 }
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
   late MobilePrefsStore prefs;
   late LocalCuriosityLoopRepository curiosityLoopRepository;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_memory_recall_hook_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
-      prefsPath: '${tempDir.path}/prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     prefs = AppServices.instance.prefs;
@@ -142,6 +142,8 @@ void main() {
     CuriosityNotificationScheduler.resetForTest();
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('CuriosityMemoryRecallHookEnricher', () {
     test('applies pending seed to a later hook and clears it', () async {
       final enricher = CuriosityMemoryRecallHookEnricher(

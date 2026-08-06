@@ -9,13 +9,10 @@ import 'package:voicememory_mobile/features/archive_search/archive_search_query.
 import 'package:voicememory_mobile/features/export/selected_archive_export.dart';
 import 'package:voicememory_mobile/features/memory/entry_aboutness.dart';
 import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
-import 'package:voicememory_mobile/features/memory/entry_save_coordinator.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
 import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart';
 import 'package:voicememory_mobile/features/memory/memory_reliability_check.dart';
-import 'package:voicememory_mobile/features/memory/memory_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
-import 'package:voicememory_mobile/features/memory/not_about_me_policy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/thread_return_evidence_engine.dart';
@@ -151,29 +148,29 @@ void main() {
   });
 
   group('Save persistence', () {
-    Future<JournalEntry> _saveWith(EntryAboutness aboutness) async {
+    Future<JournalEntry> saveWith(EntryAboutness aboutness) async {
       EntryAboutnessSession.select(aboutness, entryCount: 2);
       final entry = _entry(id: 'save1');
       return EntryAboutnessSession.applyToNewEntry(entry, entryCount: 2);
     }
 
     test('selecting Hypothetical persists on save', () async {
-      final saved = await _saveWith(EntryAboutness.hypothetical);
+      final saved = await saveWith(EntryAboutness.hypothetical);
       expect(saved.entryAboutness, 'hypothetical');
     });
 
     test('selecting Not about me persists on save', () async {
-      final saved = await _saveWith(EntryAboutness.notAboutMe);
+      final saved = await saveWith(EntryAboutness.notAboutMe);
       expect(saved.entryAboutness, 'not_about_me');
     });
 
     test('selecting Project material persists on save', () async {
-      final saved = await _saveWith(EntryAboutness.projectMaterial);
+      final saved = await saveWith(EntryAboutness.projectMaterial);
       expect(saved.entryAboutness, 'project_material');
     });
 
     test('selecting Research note persists on save', () async {
-      final saved = await _saveWith(EntryAboutness.researchNote);
+      final saved = await saveWith(EntryAboutness.researchNote);
       expect(saved.entryAboutness, 'research_note');
     });
   });

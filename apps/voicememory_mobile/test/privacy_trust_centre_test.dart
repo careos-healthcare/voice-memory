@@ -13,19 +13,21 @@ import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'support/test_storage_sandbox.dart';
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/privacy_trust_centre/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/privacy_trust_centre/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ArchiveBetaMissionGate.resetForTest();
   });

@@ -14,7 +14,6 @@ import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_model.
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_copy.dart';
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
-import 'package:voicememory_mobile/features/pro_packaging/pro_value_engine.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -26,6 +25,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_paywall/pro_memory_upgrade_bridge.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
@@ -154,14 +154,18 @@ Future<void> _pumpPaywall(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+
+  tearDown(() => sandbox.dispose());
   group('ProMemoryBoundaryCopy', () {
     test('defines upgrade bridge and fallback copy', () {
       expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'ArchiveMe Pro');

@@ -61,11 +61,6 @@ void main() {
     final entries = [...priorMonth, ...thisMonth];
 
     const engine = DailyDiscoveryEngine();
-    final baseline = engine.detectDiscovery(
-      entries: priorMonth,
-      baseline: null,
-      viewedIds: {},
-    );
 
     final workingBelief = 'Quiet evening walk and journaling about the day';
 

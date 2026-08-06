@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/current_relevance/current_relevance_
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/evidence_weighting/evidence_weighting_engine.dart';
-import 'package:voicememory_mobile/features/evidence_weighting/evidence_weighting_model.dart';
 import 'package:voicememory_mobile/features/present_day_relevance/present_day_relevance_engine.dart';
 import 'package:voicememory_mobile/features/present_day_relevance/present_day_relevance_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -19,6 +18,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/patterns/correction_memory_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -85,18 +85,18 @@ Future<void> _saveCorrection(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     CorrectionMemoryAnalytics.resetForTest();
     CorrectionMemoryAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/correction_memory/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/correction_memory/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -104,6 +104,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     CorrectionMemoryAnalytics.resetForTest();
     await CorrectionMemoryStore.resetForTest();
@@ -243,7 +244,7 @@ void main() {
   });
 
   group('CorrectionMemoryCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       CorrectionMemoryResult result,
     ) async {
@@ -257,7 +258,7 @@ void main() {
       await tester.pump();
     }
 
-    CorrectionMemoryResult _resultForState(CorrectionMemoryState state) =>
+    CorrectionMemoryResult resultForState(CorrectionMemoryState state) =>
         CorrectionMemoryResult(
           shouldShow: true,
           proofKey: '1|2|3',
@@ -273,9 +274,9 @@ void main() {
         );
 
     testWidgets('renders "Archive correction saved"', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
-        _resultForState(CorrectionMemoryState.stillCurrent),
+        resultForState(CorrectionMemoryState.stillCurrent),
       );
       expect(find.text(CorrectionMemoryCopy.title), findsOneWidget);
     });
@@ -283,23 +284,23 @@ void main() {
     testWidgets('still current copy says fresh returns stronger evidence', (
       tester,
     ) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
-        _resultForState(CorrectionMemoryState.stillCurrent),
+        resultForState(CorrectionMemoryState.stillCurrent),
       );
       expect(find.textContaining('fresh returns'), findsOneWidget);
     });
 
     testWidgets('partly copy says not the whole story', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
-        _resultForState(CorrectionMemoryState.partlyCurrent),
+        resultForState(CorrectionMemoryState.partlyCurrent),
       );
       expect(find.textContaining('whole story'), findsOneWidget);
     });
 
     testWidgets('faded copy says background unless it returns', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.faded));
+      await pumpCard(tester, resultForState(CorrectionMemoryState.faded));
       expect(
         find.textContaining('background unless it returns'),
         findsOneWidget,
@@ -307,23 +308,23 @@ void main() {
     });
 
     testWidgets('unsure copy says lightly in view', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.unsure));
+      await pumpCard(tester, resultForState(CorrectionMemoryState.unsure));
       expect(find.textContaining('lightly in view'), findsOneWidget);
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
-        _resultForState(CorrectionMemoryState.stillCurrent),
+        resultForState(CorrectionMemoryState.stillCurrent),
       );
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('transcript'), findsNothing);
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
-        _resultForState(CorrectionMemoryState.stillCurrent),
+        resultForState(CorrectionMemoryState.stillCurrent),
       );
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;

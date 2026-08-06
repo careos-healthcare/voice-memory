@@ -255,7 +255,7 @@ void main() {
   });
 
   group('CommercialReadinessGate.buildFromSources', () {
-    PaidIntentBetaProofInput _paidIntentInput({
+    PaidIntentBetaProofInput paidIntentInput({
       bool purchaseCompleted = true,
       bool purchaseMechanicsBlocked = false,
       PaidIntentBetaWouldPay? testerWouldPay = PaidIntentBetaWouldPay.yes,
@@ -271,7 +271,7 @@ void main() {
       testerWouldPay: testerWouldPay,
     );
 
-    RevenueCatSandboxProofInput _sandboxInput({
+    RevenueCatSandboxProofInput sandboxInput({
       bool sandboxPurchaseSucceeds = true,
       bool restorePurchasesSucceeds = true,
       bool entitlementPersistsAfterRestart = true,
@@ -288,8 +288,8 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(),
+          sandbox: sandboxInput(),
+          paidIntent: paidIntentInput(),
         ),
       );
       expect(result.status, CommercialReadinessGateStatus.commerciallyReady);
@@ -299,7 +299,7 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(),
-          sandbox: _sandboxInput(sandboxPurchaseSucceeds: false),
+          sandbox: sandboxInput(sandboxPurchaseSucceeds: false),
         ),
       );
       expect(result.status, CommercialReadinessGateStatus.purchaseBlocked);
@@ -313,8 +313,8 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(paidIntentBetaComplete: false),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(
+          sandbox: sandboxInput(),
+          paidIntent: paidIntentInput(
             purchaseCompleted: false,
             purchaseMechanicsBlocked: true,
           ),
@@ -327,8 +327,8 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(paidIntentBetaComplete: false),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(
+          sandbox: sandboxInput(),
+          paidIntent: paidIntentInput(
             purchaseCompleted: false,
             testerWouldPay: PaidIntentBetaWouldPay.no,
           ),
@@ -341,7 +341,7 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(),
-          sandbox: _sandboxInput(),
+          sandbox: sandboxInput(),
           productPromiseClear: false,
         ),
       );
@@ -356,8 +356,8 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(),
+          sandbox: sandboxInput(),
+          paidIntent: paidIntentInput(),
           secretsRotation: _secretsRotationInput(),
         ),
       );
@@ -370,8 +370,8 @@ void main() {
         final result = CommercialReadinessGate.buildFromSources(
           CommercialReadinessGateSources(
             store: _storeInput(secretsRotationDone: true),
-            sandbox: _sandboxInput(),
-            paidIntent: _paidIntentInput(),
+            sandbox: sandboxInput(),
+            paidIntent: paidIntentInput(),
             secretsRotation: _secretsRotationInput(
               stripeSecretKeyRotated: null,
               stripeWebhookSecretRotated: null,
@@ -399,8 +399,8 @@ void main() {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
           store: _storeInput(),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(),
+          sandbox: sandboxInput(),
+          paidIntent: paidIntentInput(),
           secretsRotation: _secretsRotationInput(
             noSecretValuesCommitted: false,
           ),

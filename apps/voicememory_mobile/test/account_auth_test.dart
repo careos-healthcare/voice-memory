@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +15,7 @@ import 'package:voicememory_mobile/services/auth_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _testEmail = 'person@example.com';
 
@@ -116,6 +116,7 @@ void main() {
     await tester.tap(find.byKey(const Key('account_auth_primary_cta')));
     await tester.pump();
   }
+
 
   group('Email validation', () {
     test('accepts plausible emails, rejects malformed input', () {
@@ -351,15 +352,19 @@ void main() {
   });
 
   group('Restore purchases stays available', () {
-    late Directory tempDir;
+
+  late TestStorageSandbox sandbox;
+
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_account_auth_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('settings still offers Restore purchases', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));

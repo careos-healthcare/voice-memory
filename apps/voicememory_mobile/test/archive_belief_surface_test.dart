@@ -21,7 +21,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_belief_surface_card.dart';
-import 'package:voicememory_mobile/widgets/patterns/archive_demo_preview_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_timeline_truth_feedback_card.dart';
 
 JournalEntry _entry({
@@ -353,7 +352,7 @@ void main() {
   });
 
   group('Pattern screen back navigation', () {
-    ArchiveBeliefCardModel _detailBelief() => ArchiveBeliefCardModel(
+    ArchiveBeliefCardModel detailBelief() => ArchiveBeliefCardModel(
       id: 'belief-test',
       statement: 'Work pressure keeps showing up before you agree.',
       confidencePercent: 72,
@@ -367,7 +366,7 @@ void main() {
     testWidgets('BeliefDetailScreen shows back control and pattern copy', (
       tester,
     ) async {
-      final belief = _detailBelief();
+      final belief = detailBelief();
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),

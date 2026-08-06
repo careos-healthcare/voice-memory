@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/archive_home/archive_home_priority_m
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/before_yes_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/before_yes_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';

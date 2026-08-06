@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/activation/weekly_archive_review.dar
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/archive_home_summary_card.dart';
