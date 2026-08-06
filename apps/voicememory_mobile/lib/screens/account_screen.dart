@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../billing/revenuecat_configuration.dart';
 import '../config/app_config.dart';
-import '../core/config/v1_feature_flags.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../product/consumer_ui_copy.dart';
@@ -16,17 +15,13 @@ import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
-import '../widgets/account/pro_utility_expansion_section.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/accessibility/accessible_primary_surface.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key, this.weeklyGrowthPreviewCard});
-
-  /// Test hook to inject a fixed weekly growth preview card.
-  final Widget? weeklyGrowthPreviewCard;
+  const AccountScreen({super.key});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -38,20 +33,11 @@ class _AccountScreenState extends State<AccountScreen> {
   String _status = '';
   bool _busy = false;
   bool _showSignIn = false;
-  int _entryCount = 0;
 
   @override
   void initState() {
     super.initState();
     _refresh();
-    _loadEntryCount();
-  }
-
-  Future<void> _loadEntryCount() async {
-    if (ScreenshotMode.enabled || !AppServices.isInitialized) return;
-    final entries = await AppServices.instance.journal.loadAll();
-    if (!mounted) return;
-    setState(() => _entryCount = entries.length);
   }
 
   Future<void> _refresh() async {
@@ -145,19 +131,6 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                     compact: true,
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  if (!V1FeatureFlags.enableV1Only)
-                    ProUtilityExpansionSection(
-                      entryCount: _entryCount,
-                      hasMeaningfulProof: _entryCount >= 3,
-                      compact: true,
-                    ),
-                  if (!V1FeatureFlags.enableV1Only)
-                    const SizedBox(height: AppSpacing.md),
-                ],
-                if (!V1FeatureFlags.enableV1Only &&
-                    widget.weeklyGrowthPreviewCard != null) ...[
-                  widget.weeklyGrowthPreviewCard!,
                   const SizedBox(height: AppSpacing.md),
                 ],
                 if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)

@@ -32,8 +32,17 @@ grep -q 'AI Accuracy' "$ACCOUNT" && fail "account still shows AI Accuracy copy"
 echo "==> startup uses staged coordinator"
 grep -q 'V1StartupCoordinator' "$ROOT/lib/startup/archive_me_startup.dart" || fail "bootstrap missing coordinator"
 
-echo "==> curiosity snapshot not launched on V1-only cold start"
-grep -q '!V1FeatureFlags.enableV1Only' "$ROOT/lib/router/app_router.dart" || \
-  fail "router must gate curiosity notification redirect for V1"
+echo "==> production screens must not import quarantined surfaces"
+for pair in \
+  "lib/screens/account_screen.dart:WeeklyGrowthPreviewCard" \
+  "lib/screens/account_screen.dart:AiAccuracyFeedbackStore" \
+  "lib/screens/entry_detail_screen.dart:RememberThisButton" \
+  "lib/screens/paywall_screen.dart:BetaFeedbackCaptureCard" \
+  "lib/router/app_router.dart:CuriosityNotificationLaunchController" \
+  "lib/router/app_router.dart:ObjectiveWidgetPendingRouteStore"; do
+  file="${pair%%:*}"
+  symbol="${pair##*:}"
+  grep -q "$symbol" "$ROOT/$file" && fail "$file still references $symbol"
+done
 
 echo "OK — launch product audit passed"

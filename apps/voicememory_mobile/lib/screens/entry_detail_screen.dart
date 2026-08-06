@@ -6,22 +6,12 @@ import 'package:go_router/go_router.dart';
 
 import '../design/user_facing_date.dart';
 import '../core/di/v1_account_dependencies.dart';
-import '../features/collections/archive_collection.dart';
-import '../features/collections/archive_collection_store.dart';
-import '../core/config/v1_feature_flags.dart';
 import '../features/entry_detail/entry_detail_copy.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
-import '../features/pins/pinned_evidence_store.dart';
 import '../models/journal_entry.dart';
 import '../security/private_data_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/collections/add_to_collection_sheet.dart';
-import '../features/action_items/action_item_store.dart';
-import '../features/fact_ledger/fact_ledger_store.dart';
-import '../widgets/action_items/remember_this_button.dart';
-import '../widgets/fact_ledger/save_as_fact_button.dart';
-import '../widgets/pins/pin_entry_button.dart';
 import '../widgets/memory/entry_aboutness_editor.dart';
 import '../widgets/memory/memory_surfacing_editor.dart';
 import '../widgets/memory/preserve_original_control.dart';
@@ -142,13 +132,6 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                         ),
                       ),
                     ),
-                    if (!V1FeatureFlags.enableV1Only)
-                      PinEntryButton(
-                        entryId: e.id,
-                        isPinned: e.isPinned,
-                        store: PinnedEvidenceStore.instance(),
-                        onChanged: (_) => _load(),
-                      ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -181,14 +164,6 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                   onChanged: _load,
                 ),
                 const SizedBox(height: 16),
-                if (!V1FeatureFlags.enableV1Only) ...[
-                  RememberThisButton(
-                    entry: e,
-                    store: ActionItemStore.instance(),
-                    source: 'entry_detail',
-                  ),
-                  const SizedBox(height: 12),
-                ],
                 SizedBox(
                   width: double.infinity,
                   height: 44,
@@ -223,31 +198,6 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                             MemorySurfacingEditor(entry: e, onChanged: _load),
                             const SizedBox(height: 16),
                             PreserveOriginalEditor(entry: e, onChanged: _load),
-                            if (!V1FeatureFlags.enableV1Only) ...[
-                              const SizedBox(height: 16),
-                              SaveAsFactButton(
-                                entry: e,
-                                store: FactLedgerStore.instance(),
-                                source: 'entry_detail',
-                              ),
-                              const SizedBox(height: 12),
-                              OutlinedButton.icon(
-                                key: const Key('entry_add_to_collection'),
-                                onPressed: () => showAddToCollectionSheet(
-                                  context,
-                                  store: ArchiveCollectionStore.instance(),
-                                  entryId: e.id,
-                                  source: 'entry_detail',
-                                ),
-                                icon: const Icon(
-                                  Icons.bookmark_add_outlined,
-                                  size: 18,
-                                ),
-                                label: const Text(
-                                  ArchiveCollectionsCopy.addToCollection,
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       ),

@@ -37,9 +37,6 @@ import '../screens/onboarding_screen.dart';
 import '../screens/archive_belief_screen.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/referral/invite_attribution.dart';
-import '../features/objective/objective_widget_pending_route_store.dart';
-import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
-import '../features/curiosity_loop/yesterdays_snapshot_copy.dart';
 import '../config/screenshot_mode.dart';
 import '../config/trial_mode.dart';
 import '../config/production_navigation.dart';
@@ -59,9 +56,6 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Root navigator for app-wide prompts (offline vault recovery, etc.).
 GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
-
-bool _widgetLaunchRouteConsumed = false;
-bool _curiosityNotificationLaunchConsumed = false;
 
 const instantCapturePaths = {
   '/quick-capture',
@@ -97,28 +91,6 @@ final GoRouter appRouter = GoRouter(
     if (instantCaptureTarget != null) return instantCaptureTarget;
 
     final path = state.uri.path;
-
-    if (!_widgetLaunchRouteConsumed) {
-      _widgetLaunchRouteConsumed = true;
-      if (!V1FeatureFlags.enableV1Only) {
-        final pending = await ObjectiveWidgetPendingRouteStore.instance()
-            .loadPendingRoute();
-        if (pending != null && pending.isNotEmpty && path != pending) {
-          await ObjectiveWidgetPendingRouteStore.instance().clear();
-          return pending;
-        }
-      }
-    }
-
-    if (!_curiosityNotificationLaunchConsumed) {
-      _curiosityNotificationLaunchConsumed = true;
-      if (!V1FeatureFlags.enableV1Only &&
-          CuriosityNotificationLaunchController.hasPendingHook &&
-          path != YesterdaysSnapshotCopy.route &&
-          V1NavigationGuard.isAllowed(YesterdaysSnapshotCopy.route)) {
-        return YesterdaysSnapshotCopy.route;
-      }
-    }
 
     final v1Redirect = V1NavigationGuard.redirectFor(path);
     if (v1Redirect != null) return v1Redirect;

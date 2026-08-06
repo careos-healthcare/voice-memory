@@ -365,11 +365,13 @@ class _RecordScreenState extends State<RecordScreen>
         if (mounted) setState(() {});
       }),
     );
-    unawaited(
-      BetaActivationLoopTracker.readCounts().then((counts) {
-        if (mounted) setState(() => _betaActivationLoopCounts = counts);
-      }),
-    );
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(
+        BetaActivationLoopTracker.readCounts().then((counts) {
+          if (mounted) setState(() => _betaActivationLoopCounts = counts);
+        }),
+      );
+    }
     unawaited(
       FirstProofTruthStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});

@@ -21,21 +21,26 @@ void main() {
     );
   });
 
-  test('production screens do not embed quarantined widgets when V1-only', () {
-    final checks = <(String file, String widget)>[
+  test('production screens do not reference quarantined widgets', () {
+    final checks = <(String file, String symbol)>[
       ('lib/screens/account_screen.dart', 'WeeklyGrowthPreviewCard'),
       ('lib/screens/account_screen.dart', 'AiAccuracyFeedbackStore'),
       ('lib/screens/account_screen.dart', 'BetaFeedbackSheet'),
+      ('lib/screens/account_screen.dart', 'ProUtilityExpansionSection'),
       ('lib/screens/entry_detail_screen.dart', 'RememberThisButton'),
+      ('lib/screens/entry_detail_screen.dart', 'SaveAsFactButton'),
+      ('lib/screens/entry_detail_screen.dart', 'PinEntryButton'),
       ('lib/screens/paywall_screen.dart', 'BetaFeedbackCaptureCard'),
+      ('lib/screens/paywall_screen.dart', 'BetaFeedbackCaptureStore'),
+      ('lib/router/app_router.dart', 'CuriosityNotificationLaunchController'),
+      ('lib/router/app_router.dart', 'ObjectiveWidgetPendingRouteStore'),
     ];
 
     final violations = <String>[];
-    for (final (file, widget) in checks) {
+    for (final (file, symbol) in checks) {
       final content = File(file).readAsStringSync();
-      if (content.contains(widget) &&
-          !content.contains('V1FeatureFlags.enableV1Only')) {
-        violations.add('$file renders $widget without V1 gate');
+      if (content.contains(symbol)) {
+        violations.add('$file still references quarantined $symbol');
       }
     }
     expect(violations, isEmpty, reason: violations.join('\n'));
