@@ -26,6 +26,7 @@ import '../storage/secure_storage.dart';
 import '../storage/session_cookie_store.dart';
 import '../auth/guest_first_auth.dart';
 import '../security/private_data_service.dart';
+import '../security/account_session_scope.dart';
 import '../features/native_push/native_push_service.dart';
 import '../features/native_push/native_push_verification.dart';
 import '../features/proof_admission/archive_correction_store.dart';
@@ -613,6 +614,10 @@ class AppServices {
       billing.startListening();
     }
     _activeNamespace = target;
+    AccountSessionRegistry.instance.activate(
+      namespace: target,
+      userId: ownerUserId,
+    );
     await _reconcileProofScopedCachesForSwitch(this, oldArchiveScope);
   }
 
