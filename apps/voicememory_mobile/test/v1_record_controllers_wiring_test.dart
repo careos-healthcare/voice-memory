@@ -3,6 +3,9 @@ import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/features/recording/v1/capture_processing_controller.dart';
 import 'package:voicememory_mobile/features/recording/v1/microphone_permission_controller.dart';
 import 'package:voicememory_mobile/features/recording/v1/post_save_result_controller.dart';
+import 'package:voicememory_mobile/features/recording/v1/record_screen_view_model.dart';
+import 'package:voicememory_mobile/features/recording/v1/recording_recovery_controller.dart';
+import 'package:voicememory_mobile/features/recording/v1/recording_session_controller.dart';
 import 'package:voicememory_mobile/features/recording/v1/record_view_state.dart';
 import 'package:voicememory_mobile/features/recording/v1/record_view_state_mapper.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
@@ -50,5 +53,45 @@ void main() {
     );
     expect(view.phase, RecordViewPhase.verifiedResultAvailable);
     expect(view.showsPostSave, isTrue);
+  });
+
+  test('record screen view model aggregates controller state', () {
+    final session = RecordingSessionController();
+
+    final capture = CaptureProcessingController();
+    capture.begin(stage: 'Saving…');
+
+    final postSave = PostSaveResultController();
+    postSave.markLocallySaved(entryId: 'entry-42', title: 'Saved');
+
+    final viewModel = RecordScreenViewModel(
+      session: session,
+      microphone: MicrophonePermissionController(),
+      capture: capture,
+      postSave: postSave,
+      recovery: RecordingRecoveryController(),
+      ui: RecordUiState.processing,
+    );
+
+    expect(viewModel.viewState.statusMessage, 'Saving…');
+    expect(viewModel.viewState.savedEntryId, 'entry-42');
+    expect(viewModel.viewState.phase, RecordViewPhase.processing);
+  });
+
+  test('recovery controller tracks transcript recovery visibility', () {
+    final recovery = RecordingRecoveryController();
+    expect(recovery.pendingTranscriptRecoveryVisible, isFalse);
+
+    recovery.showPendingTranscriptRecovery();
+    expect(recovery.pendingTranscriptRecoveryVisible, isTrue);
+
+    recovery.hidePendingTranscriptRecovery();
+    expect(recovery.pendingTranscriptRecoveryVisible, isFalse);
+
+    recovery.markInterruptedCapture();
+    recovery.markVaultRecoveryScheduled();
+    recovery.resetSession();
+    expect(recovery.interruptedCapture, isFalse);
+    expect(recovery.vaultRecoveryScheduled, isFalse);
   });
 }

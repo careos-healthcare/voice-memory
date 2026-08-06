@@ -3,6 +3,9 @@ import '../features/recording/v1/recording_session_controller.dart';
 import '../features/recording/v1/microphone_permission_controller.dart';
 import '../features/recording/v1/capture_processing_controller.dart';
 import '../features/recording/v1/post_save_result_controller.dart';
+import '../features/recording/v1/recording_recovery_controller.dart';
+import '../features/recording/v1/record_screen_view_model.dart';
+import '../features/recording/v1/record_view_state.dart';
 import '../features/weekly_review/weekly_archive_review_engine.dart'
     as weekly_review_surface;
 import '../widgets/weekly_review/weekly_archive_review_card.dart'

@@ -11,11 +11,14 @@ class _RecordScreenState extends State<RecordScreen>
   }
 
   void _syncNavigationActivity() {
-    final activity = switch (_ui) {
-      RecordUiState.requestingPermission =>
+    _recordView.ui = _ui;
+    _recordView.errorMessage = _error;
+    final phase = _recordView.viewState.phase;
+    final activity = switch (phase) {
+      RecordViewPhase.requestingPermission =>
         RecordNavigationActivity.requestingPermission,
-      RecordUiState.recording => RecordNavigationActivity.recording,
-      RecordUiState.processing => RecordNavigationActivity.processing,
+      RecordViewPhase.recording => RecordNavigationActivity.recording,
+      RecordViewPhase.processing => RecordNavigationActivity.processing,
       _ when _stopAndProcessInFlight => RecordNavigationActivity.processing,
       _ => RecordNavigationActivity.idle,
     };
@@ -33,6 +36,15 @@ class _RecordScreenState extends State<RecordScreen>
   final CaptureProcessingController _captureProcessing =
       CaptureProcessingController();
   final PostSaveResultController _postSaveResult = PostSaveResultController();
+  final RecordingRecoveryController _recoveryController =
+      RecordingRecoveryController();
+  late final RecordScreenViewModel _recordView = RecordScreenViewModel(
+    session: _recordingState,
+    microphone: _micPermission,
+    capture: _captureProcessing,
+    postSave: _postSaveResult,
+    recovery: _recoveryController,
+  );
 
   RecordingPhase get _mic => _micPermission.phase;
   set _mic(RecordingPhase value) => _micPermission.phase = value;

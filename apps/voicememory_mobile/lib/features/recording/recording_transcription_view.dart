@@ -40,6 +40,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
 
   Future<void> _openPendingTranscriptRecoveryForLastVoiceEntry() async {
     if (_entriesAfterSave.isEmpty) return;
+    _recoveryController.showPendingTranscriptRecovery();
     final entry = _lastSavedEntry!;
     final result = await PendingTranscriptRecovery.open(
       context,
@@ -47,6 +48,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       source: 'record_post_save',
       entryCount: _entriesAfterSave.length,
     );
+    _recoveryController.hidePendingTranscriptRecovery();
     if (result == null || !mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(PendingTranscriptRecoveryCopy.savedSuccess)),
