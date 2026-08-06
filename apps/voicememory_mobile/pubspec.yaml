@@ -45,6 +45,8 @@ dev_dependencies:
   archiveme_research:
     path: ../../packages/archiveme_research
 
+  path_provider_platform_interface: any
+  plugin_platform_interface: any
 flutter:
   uses-material-design: true
   assets:

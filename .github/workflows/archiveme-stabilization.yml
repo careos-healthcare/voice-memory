@@ -27,6 +27,8 @@ jobs:
         run: npm run lint
       - name: Server build
         run: npm run build:server
+      - name: Server tests
+        run: npm test --if-present
       - name: Privacy log validation
         run: npm run validate:privacy-logs || node scripts/validate-privacy-logs.mjs
 
@@ -49,12 +51,15 @@ jobs:
         run: bash tool/validate_analyzer_baseline.sh
       - name: research import guard
         run: bash tool/validate_no_research_imports.sh
-      - name: focused V1 and privacy tests
+      - name: release evidence regression
+        run: flutter test test/release_evidence_pack_test.dart test/single_launch_checklist_test.dart
+      - name: focused V1 privacy and delete-account tests
         run: |
           flutter test \
             test/delete_account_confirmation_test.dart \
             test/privacy_contract_test.dart \
             test/privacy_copy_policy_test.dart \
+            test/test_storage_sandbox_test.dart \
             test/v1_navigation_guard_test.dart \
             test/v1_router_graph_reduction_test.dart \
             test/v1_record_controllers_wiring_test.dart \
@@ -64,6 +69,21 @@ jobs:
         run: bash tool/validate_repository_cleanliness.sh
       - name: validate core subset
         run: bash tool/validate_core.sh
+
+  flutter-full-test:
+    runs-on: ubuntu-latest
+    needs: flutter-gates
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: full flutter test
+        run: flutter test
 
   flutter-android:
     runs-on: ubuntu-latest
@@ -111,3 +131,16 @@ jobs:
         run: |
           ! git grep -nE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk_live_|AKIA[0-9A-Z]{16})' \
             -- ':!*.md' ':!package-lock.json' ':!pubspec.lock'
+
+  migration-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - name: no timestamp journal paths in tests
+        run: |
+          ! grep -r "microsecondsSinceEpoch}_journal" test/ || (echo "timestamp journal paths remain" && exit 1)
+      - name: mobile clean working tree script
+        run: bash ../../scripts/validate-mobile-clean-working-tree.sh
