@@ -15,7 +15,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/delayed_paywall_proof/unused.json'));
+    : super(file: File('test/tmp/delayed_paywall_proof/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -29,19 +29,19 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 JournalEntry _entry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10),
-      transcript: 'Saved moment $id with enough words to count.',
-      durationSeconds: 20,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10),
+  transcript: 'Saved moment $id with enough words to count.',
+  durationSeconds: 20,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up.',
+    repeatedSignal: '',
+  ),
+);
 
 Future<void> _seedTwoMoments() async {
   await AppServices.instance.journalStore.save(_entry('e1'));
@@ -52,18 +52,17 @@ ProBridgeVisibilityInput _allowedInput({
   bool hasSeenFirstRepeat = true,
   bool hasOpenedEvidenceTrail = true,
   int entryCount = 2,
-}) =>
-    ProBridgeVisibilityInput(
-      surface: ProBridgeVisibilitySurface.recordReady,
-      source: 'test',
-      entryCount: entryCount,
-      isPro: false,
-      postProofProBridgeEnabled: true,
-      hasFirstProof: true,
-      hasTimelineProofVisible: true,
-      hasSeenFirstRepeat: hasSeenFirstRepeat,
-      hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
-    );
+}) => ProBridgeVisibilityInput(
+  surface: ProBridgeVisibilitySurface.recordReady,
+  source: 'test',
+  entryCount: entryCount,
+  isPro: false,
+  postProofProBridgeEnabled: true,
+  hasFirstProof: true,
+  hasTimelineProofVisible: true,
+  hasSeenFirstRepeat: hasSeenFirstRepeat,
+  hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
+);
 
 void main() {
   setUp(() async {
@@ -179,9 +178,8 @@ void main() {
           ),
           GoRoute(
             path: '/subscription',
-            builder: (context, state) => PaywallScreen(
-              billingReadyOverride: () => false,
-            ),
+            builder: (context, state) =>
+                PaywallScreen(billingReadyOverride: () => false),
           ),
         ],
       );

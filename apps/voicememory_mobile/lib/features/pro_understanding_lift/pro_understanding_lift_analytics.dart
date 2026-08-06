@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../services/activation_funnel_analytics.dart';
-import 'pro_understanding_lift_copy.dart';
 import 'pro_understanding_lift_model.dart';
 
 abstract final class ProUnderstandingLiftAnalytics {
@@ -13,7 +12,7 @@ abstract final class ProUnderstandingLiftAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required ProUnderstandingLiftResult result}) {
     _emit(seenEvent, result: result);

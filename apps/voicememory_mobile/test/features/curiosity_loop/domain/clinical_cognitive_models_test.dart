@@ -87,7 +87,8 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 12, 12),
         primaryAnchor: 'said yes again',
         hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'What got in the way before "said yes again" showed up again?',
+        dynamicPrompt:
+            'What got in the way before "said yes again" showed up again?',
         sourceEntryId: 'entry_0',
         isMemoryRecallCheck: true,
       );

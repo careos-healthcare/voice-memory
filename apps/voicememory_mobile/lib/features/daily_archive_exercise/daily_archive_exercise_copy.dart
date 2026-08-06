@@ -30,10 +30,8 @@ abstract final class DailyArchiveExerciseCopy {
       'Open beta feedback and mark whether your archive has been useful so far.';
   static const patternRepeatedPrompt =
       'Record what happened just before this showed up again.';
-  static const feltDifferentPrompt =
-      'Record what felt different this time.';
-  static const checkConcernPrompt =
-      'Map the moment before you said yes.';
+  static const feltDifferentPrompt = 'Record what felt different this time.';
+  static const checkConcernPrompt = 'Map the moment before you said yes.';
   static const saveUsefulPrompt =
       'Add one real moment to your private mind map.';
 
@@ -43,8 +41,7 @@ abstract final class DailyArchiveExerciseCopy {
       'A few real moments help ArchiveMe notice what connects.';
   static const watchThemeHint =
       'Capture what was happening when this thread showed up again.';
-  static const betaFeedbackHint =
-      'Your feedback stays on this device only.';
+  static const betaFeedbackHint = 'Your feedback stays on this device only.';
   static const varietyHint =
       'One useful moment keeps your private mind map clearer.';
 
@@ -56,52 +53,52 @@ abstract final class DailyArchiveExerciseCopy {
 
   /// Strings shown on the Record tab daily map prompt card.
   static List<String> get recordVisibleStrings => [
-        recordLabel,
-        saveMomentCta,
-        firstMomentPrompt,
-        comparisonPrompt,
-        watchThemePrompt,
-        patternRepeatedPrompt,
-        feltDifferentPrompt,
-        checkConcernPrompt,
-        saveUsefulPrompt,
-        firstMomentHint,
-        comparisonHint,
-        watchThemeHint,
-        varietyHint,
-        firstMomentTitle,
-        comparisonTitle,
-        watchThemeTitle,
-        varietyTitle,
-      ];
+    recordLabel,
+    saveMomentCta,
+    firstMomentPrompt,
+    comparisonPrompt,
+    watchThemePrompt,
+    patternRepeatedPrompt,
+    feltDifferentPrompt,
+    checkConcernPrompt,
+    saveUsefulPrompt,
+    firstMomentHint,
+    comparisonHint,
+    watchThemeHint,
+    varietyHint,
+    firstMomentTitle,
+    comparisonTitle,
+    watchThemeTitle,
+    varietyTitle,
+  ];
 
   static List<String> get allVisibleStrings => [
-        screenTitle,
-        cardLabel,
-        recordLabel,
-        saveMomentCta,
-        openExerciseCta,
-        openBetaFeedbackCta,
-        viewFullExerciseCta,
-        screenshotTitle,
-        screenshotPrompt,
-        firstMomentPrompt,
-        comparisonPrompt,
-        watchThemePrompt,
-        betaFeedbackPrompt,
-        patternRepeatedPrompt,
-        feltDifferentPrompt,
-        checkConcernPrompt,
-        saveUsefulPrompt,
-        firstMomentHint,
-        comparisonHint,
-        watchThemeHint,
-        betaFeedbackHint,
-        varietyHint,
-        firstMomentTitle,
-        comparisonTitle,
-        watchThemeTitle,
-        betaFeedbackTitle,
-        varietyTitle,
-      ];
+    screenTitle,
+    cardLabel,
+    recordLabel,
+    saveMomentCta,
+    openExerciseCta,
+    openBetaFeedbackCta,
+    viewFullExerciseCta,
+    screenshotTitle,
+    screenshotPrompt,
+    firstMomentPrompt,
+    comparisonPrompt,
+    watchThemePrompt,
+    betaFeedbackPrompt,
+    patternRepeatedPrompt,
+    feltDifferentPrompt,
+    checkConcernPrompt,
+    saveUsefulPrompt,
+    firstMomentHint,
+    comparisonHint,
+    watchThemeHint,
+    betaFeedbackHint,
+    varietyHint,
+    firstMomentTitle,
+    comparisonTitle,
+    watchThemeTitle,
+    betaFeedbackTitle,
+    varietyTitle,
+  ];
 }

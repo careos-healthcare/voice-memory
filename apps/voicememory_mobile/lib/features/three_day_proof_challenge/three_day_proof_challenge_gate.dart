@@ -44,7 +44,8 @@ abstract final class ThreeDayProofChallengeGate {
     final rulesPass = rules.every(
       (rule) => rule.status == ThreeDayProofChallengeRuleStatus.pass,
     );
-    final v1SurfacingAllowed = rulesPass &&
+    final v1SurfacingAllowed =
+        rulesPass &&
         (input.paidIntentBetaComplete ?? false) &&
         (input.usersNeedThreeDayChallenge ?? false);
     final decision = v1SurfacingAllowed
@@ -70,15 +71,14 @@ abstract final class ThreeDayProofChallengeGate {
 
   static ThreeDayProofChallengeGateReport report(
     ThreeDayProofChallengeGateResult result,
-  ) =>
-      ThreeDayProofChallengeGateReport(
-        headline: ThreeDayProofChallengeCopy.headline,
-        body: ThreeDayProofChallengeCopy.body,
-        promise: ThreeDayProofChallengeCopy.promise,
-        orderLine: ThreeDayProofChallengeCopy.orderLine,
-        guardrail: ThreeDayProofChallengeCopy.guardrail,
-        result: result,
-      );
+  ) => ThreeDayProofChallengeGateReport(
+    headline: ThreeDayProofChallengeCopy.headline,
+    body: ThreeDayProofChallengeCopy.body,
+    promise: ThreeDayProofChallengeCopy.promise,
+    orderLine: ThreeDayProofChallengeCopy.orderLine,
+    guardrail: ThreeDayProofChallengeCopy.guardrail,
+    result: result,
+  );
 
   static ThreeDayProofChallengeGateInput composeInput({
     bool? paidIntentBetaComplete,
@@ -86,28 +86,28 @@ abstract final class ThreeDayProofChallengeGate {
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
     FirstProofSuccessBetaResult? firstProofSuccessBeta,
-  }) =>
-      ThreeDayProofChallengeGateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        usersNeedThreeDayChallenge: usersNeedThreeDayChallenge ??
-            _usersNeedFromFirstProof(firstProofSuccessBeta) ??
-            _usersNeedFromPaidIntent(paidIntentBeta),
-      );
+  }) => ThreeDayProofChallengeGateInput(
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    usersNeedThreeDayChallenge:
+        usersNeedThreeDayChallenge ??
+        _usersNeedFromFirstProof(firstProofSuccessBeta) ??
+        _usersNeedFromPaidIntent(paidIntentBeta),
+  );
 
   static ThreeDayProofChallengeGateInput fromRepoSignals({
     required String threeDayProofChallengeDocSource,
     required String gateCopySource,
     bool? paidIntentBetaComplete,
     bool? usersNeedThreeDayChallenge,
-  }) =>
-      ThreeDayProofChallengeGateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
-        docListsPromise: detectDocListsPromise(threeDayProofChallengeDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => ThreeDayProofChallengeGateInput(
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
+    docListsPromise: detectDocListsPromise(threeDayProofChallengeDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsPromise(String docSource) =>
       docSource.contains(canonicalPromise);
@@ -152,9 +152,9 @@ abstract final class ThreeDayProofChallengeGate {
     return [
       _rule(
         id: ThreeDayProofChallengeRuleId.futureAcquisitionOnly,
-        passes: ThreeDayProofChallengeCopy.guardrail
-            .toLowerCase()
-            .contains('future acquisition'),
+        passes: ThreeDayProofChallengeCopy.guardrail.toLowerCase().contains(
+          'future acquisition',
+        ),
       ),
       _rule(
         id: ThreeDayProofChallengeRuleId.noStreaks,
@@ -183,17 +183,16 @@ abstract final class ThreeDayProofChallengeGate {
   static ThreeDayProofChallengeRule _rule({
     required ThreeDayProofChallengeRuleId id,
     required bool passes,
-  }) =>
-      ThreeDayProofChallengeRule(
-        id: id,
-        label: ThreeDayProofChallengeCopy.ruleLabelFor(id),
-        status: passes
-            ? ThreeDayProofChallengeRuleStatus.pass
-            : ThreeDayProofChallengeRuleStatus.fail,
-        detailLabel: passes
-            ? ThreeDayProofChallengeCopy.detailPass
-            : ThreeDayProofChallengeCopy.detailFail,
-      );
+  }) => ThreeDayProofChallengeRule(
+    id: id,
+    label: ThreeDayProofChallengeCopy.ruleLabelFor(id),
+    status: passes
+        ? ThreeDayProofChallengeRuleStatus.pass
+        : ThreeDayProofChallengeRuleStatus.fail,
+    detailLabel: passes
+        ? ThreeDayProofChallengeCopy.detailPass
+        : ThreeDayProofChallengeCopy.detailFail,
+  );
 }
 
 class ThreeDayProofChallengeGateInput {

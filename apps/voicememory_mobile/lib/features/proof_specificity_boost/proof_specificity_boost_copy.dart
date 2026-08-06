@@ -65,21 +65,16 @@ abstract final class ProofSpecificityBoostCopy {
   ];
 }
 
-enum ProofSpecificityBoostAnswerType {
-  yes,
-  aLittle,
-  tooVague,
-  notRelevant,
-}
+enum ProofSpecificityBoostAnswerType { yes, aLittle, tooVague, notRelevant }
 
 extension ProofSpecificityBoostAnswerTypeStorage
     on ProofSpecificityBoostAnswerType {
   String get storageValue => switch (this) {
-        ProofSpecificityBoostAnswerType.yes => 'yes',
-        ProofSpecificityBoostAnswerType.aLittle => 'a_little',
-        ProofSpecificityBoostAnswerType.tooVague => 'too_vague',
-        ProofSpecificityBoostAnswerType.notRelevant => 'not_relevant',
-      };
+    ProofSpecificityBoostAnswerType.yes => 'yes',
+    ProofSpecificityBoostAnswerType.aLittle => 'a_little',
+    ProofSpecificityBoostAnswerType.tooVague => 'too_vague',
+    ProofSpecificityBoostAnswerType.notRelevant => 'not_relevant',
+  };
 
   String get analyticsValue => storageValue;
 }

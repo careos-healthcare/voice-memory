@@ -210,7 +210,9 @@ class FirstSessionPatternEngine {
       watchForText: '',
       chips: const [],
       confidenceLabel: FirstSessionConfidenceLabel.early,
-      sourceTextPreview: preview.length <= 80 ? preview : '${preview.substring(0, 77)}…',
+      sourceTextPreview: preview.length <= 80
+          ? preview
+          : '${preview.substring(0, 77)}…',
       matchReason: 'generic_test_blocked',
       confidenceScore: 0,
       categoryId: 'blocked',

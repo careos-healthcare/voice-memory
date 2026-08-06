@@ -61,10 +61,7 @@ void main() {
       final report = BetaReleaseQaEngine.build();
       expect(report.readyForTesterBuild, isFalse);
       expect(report.summary, BetaReleaseQaCopy.summaryNeedsAttention);
-      expect(
-        report.rows.first.status,
-        BetaReleaseQaStatus.missing,
-      );
+      expect(report.rows.first.status, BetaReleaseQaStatus.missing);
     });
 
     test('missing config shows Missing not crash', () {
@@ -100,8 +97,9 @@ void main() {
     });
 
     test('visible copy avoids transcript and user entry text', () {
-      final joined =
-          BetaReleaseQaEngine.build().visibleCopyBlocks.join('\n').toLowerCase();
+      final joined = BetaReleaseQaEngine.build().visibleCopyBlocks
+          .join('\n')
+          .toLowerCase();
       expect(joined, isNot(contains('transcript')));
       expect(joined, isNot(contains('said yes again')));
       expect(joined, isNot(contains('journal entry')));
@@ -164,10 +162,7 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(BetaReleaseQaCopy.manualChecklistTitle),
-        findsOneWidget,
-      );
+      expect(find.text(BetaReleaseQaCopy.manualChecklistTitle), findsOneWidget);
       for (var i = 0; i < BetaReleaseQaCopy.manualChecklistSteps.length; i++) {
         expect(
           find.text('${i + 1}. ${BetaReleaseQaCopy.manualChecklistSteps[i]}'),
@@ -183,10 +178,7 @@ void main() {
 
     test('includes core beta value question for tester feedback', () {
       final report = BetaReleaseQaEngine.build();
-      expect(
-        report.coreValueQuestion,
-        BetaReleaseQaCopy.coreValueQuestion,
-      );
+      expect(report.coreValueQuestion, BetaReleaseQaCopy.coreValueQuestion);
     });
 
     testWidgets('row statuses render without secrets', (tester) async {

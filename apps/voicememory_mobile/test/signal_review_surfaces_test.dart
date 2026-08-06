@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/signal_review/signal_review_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/signal_review_screen.dart';
+import 'package:archiveme_research/screens/signal_review_screen.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_review_card.dart';
 
 SignalReview _review({SignalReviewStatus status = SignalReviewStatus.ready}) {

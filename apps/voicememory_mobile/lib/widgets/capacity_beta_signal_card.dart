@@ -9,10 +9,7 @@ import '../theme/voicememory_cards.dart';
 
 /// Compact beta link card for invite/support surfaces.
 class CapacityBetaSignalCard extends StatelessWidget {
-  const CapacityBetaSignalCard({
-    super.key,
-    this.onOpen,
-  });
+  const CapacityBetaSignalCard({super.key, this.onOpen});
 
   final VoidCallback? onOpen;
 
@@ -42,7 +39,8 @@ class CapacityBetaSignalCard extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton(
               key: const Key('capacity_beta_signal_card_open'),
-              onPressed: onOpen ?? () => context.push(CapacityBetaSignalCopy.route),
+              onPressed:
+                  onOpen ?? () => context.push(CapacityBetaSignalCopy.route),
               child: const Text(CapacityBetaSignalCopy.openDashboardButton),
             ),
           ),

@@ -3,7 +3,6 @@ import '../archive_timeline_spine/archive_timeline_spine_engine.dart';
 import '../archive_timeline_spine/archive_timeline_spine_model.dart';
 import '../beta/archive_beta_mission_gate.dart';
 import '../correction_memory/correction_memory_engine.dart';
-import '../correction_memory/correction_memory_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
@@ -26,15 +25,14 @@ abstract final class BetaTesterReportSurfacePriorityAudit {
     required bool openCapturePromptChipsVisible,
     required bool timelineProofMomentVisible,
     required bool archiveTimelineSpineVisible,
-  }) =>
-      SurfacePriorityEngine.allowsBetaTesterReportOnRecordLegacy(
-        lowFrictionReturnVisible: lowFrictionReturnVisible,
-        betaTodaySummaryVisible: betaTodaySummaryVisible,
-        whatToNoticeNextVisible: whatToNoticeNextVisible,
-        openCapturePromptChipsVisible: openCapturePromptChipsVisible,
-        timelineProofMomentVisible: timelineProofMomentVisible,
-        archiveTimelineSpineVisible: archiveTimelineSpineVisible,
-      );
+  }) => SurfacePriorityEngine.allowsBetaTesterReportOnRecordLegacy(
+    lowFrictionReturnVisible: lowFrictionReturnVisible,
+    betaTodaySummaryVisible: betaTodaySummaryVisible,
+    whatToNoticeNextVisible: whatToNoticeNextVisible,
+    openCapturePromptChipsVisible: openCapturePromptChipsVisible,
+    timelineProofMomentVisible: timelineProofMomentVisible,
+    archiveTimelineSpineVisible: archiveTimelineSpineVisible,
+  );
 }
 
 /// Builds a beta-first report from existing safe signals only.
@@ -53,7 +51,8 @@ abstract final class BetaTesterReportEngine {
     final entryCount = entries.length;
     final hasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
-    final spine = timelineSpine ??
+    final spine =
+        timelineSpine ??
         (entryCount >= minEntryCount
             ? ArchiveTimelineSpineEngine.build(
                 entries: entries,
@@ -129,8 +128,9 @@ abstract final class BetaTesterReportEngine {
     if (evidenceWeighting?.primaryState == EvidenceWeightState.fading) {
       return true;
     }
-    return evidenceWeighting?.secondaryStates
-            .contains(EvidenceWeightState.fading) ??
+    return evidenceWeighting?.secondaryStates.contains(
+          EvidenceWeightState.fading,
+        ) ??
         false;
   }
 
@@ -157,16 +157,15 @@ abstract final class BetaTesterReportEngine {
   static bool shouldShowOnPatterns({
     required BetaTesterReportResult? result,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isReady: true,
-        isRecording: false,
-        isDegradedTranscriptState: false,
-        firstProofPayoffVisible: false,
-        whatChangedQuestionActive: false,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isReady: true,
+    isRecording: false,
+    isDegradedTranscriptState: false,
+    firstProofPayoffVisible: false,
+    whatChangedQuestionActive: false,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool shouldShowOnRecord({
     required BetaTesterReportResult? result,
@@ -206,9 +205,8 @@ abstract final class BetaTesterReportEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      OpenCaptureEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => OpenCaptureEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

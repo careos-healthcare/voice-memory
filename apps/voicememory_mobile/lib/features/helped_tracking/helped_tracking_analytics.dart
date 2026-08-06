@@ -12,12 +12,9 @@ abstract final class HelpedTrackingAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void promptSeen({
-    required String source,
-    required int entryCount,
-  }) {
+  static void promptSeen({required String source, required int entryCount}) {
     _emit(
       promptSeenEvent,
       source: source,
@@ -53,7 +50,7 @@ abstract final class HelpedTrackingAnalytics {
       'source': source,
       'entry_count': entryCount,
       'has_free_text': hasFreeText ? 1 : 0,
-      if (optionType != null) 'option_type': optionType,
+      'option_type': ?optionType,
     };
     captureForTest?.call(event, props);
     ActivationFunnelAnalytics.track(

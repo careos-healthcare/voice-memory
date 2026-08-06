@@ -16,7 +16,8 @@ abstract final class ProPackagingCopy {
   static const proSectionTitle = 'Pro';
   static const proBullets = PaywallAlignmentCopy.benefitBullets;
 
-  static const bridgeAfterFirstProof = PaywallAlignmentCopy.secondaryReassurance;
+  static const bridgeAfterFirstProof =
+      PaywallAlignmentCopy.secondaryReassurance;
 
   static const bridgeAfterBeliefChange =
       'Seeing change over time is the reason to keep your archive.';

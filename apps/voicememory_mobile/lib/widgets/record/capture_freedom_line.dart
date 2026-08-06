@@ -56,10 +56,9 @@ class _CaptureFreedomLineState extends State<CaptureFreedomLine> {
       child: Text(
         text,
         key: Key('capture_freedom_line_${widget.compact ? 'compact' : 'full'}'),
-        style: ArchiveMobileTypography.explanationBody(context).copyWith(
-          color: AppColors.textSecondary,
-          height: 1.4,
-        ),
+        style: ArchiveMobileTypography.explanationBody(
+          context,
+        ).copyWith(color: AppColors.textSecondary, height: 1.4),
         textAlign: TextAlign.center,
       ),
     );

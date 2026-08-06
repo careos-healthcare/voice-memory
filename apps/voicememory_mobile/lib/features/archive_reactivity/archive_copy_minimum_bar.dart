@@ -139,14 +139,13 @@ abstract class ArchiveCopyMinimumBar {
     bool allowShortLabel = false,
     bool requireSpecificity = true,
     bool allowGenericFallback = false,
-  }) =>
-      validateNormalized(
-        field: field,
-        normalizedText: ArchiveCopyNormalizer.normalize(text),
-        allowShortLabel: allowShortLabel,
-        requireSpecificity: requireSpecificity,
-        allowGenericFallback: allowGenericFallback,
-      );
+  }) => validateNormalized(
+    field: field,
+    normalizedText: ArchiveCopyNormalizer.normalize(text),
+    allowShortLabel: allowShortLabel,
+    requireSpecificity: requireSpecificity,
+    allowGenericFallback: allowGenericFallback,
+  );
 
   static ArchiveCopyMinimumResult validateNormalized({
     required String field,
@@ -218,14 +217,13 @@ abstract class ArchiveCopyMinimumBar {
     bool allowShortLabel = false,
     bool requireSpecificity = true,
     bool allowGenericFallback = false,
-  }) =>
-      validate(
-        field: field,
-        text: text,
-        allowShortLabel: allowShortLabel,
-        requireSpecificity: requireSpecificity,
-        allowGenericFallback: allowGenericFallback,
-      ).approved;
+  }) => validate(
+    field: field,
+    text: text,
+    allowShortLabel: allowShortLabel,
+    requireSpecificity: requireSpecificity,
+    allowGenericFallback: allowGenericFallback,
+  ).approved;
 
   static String displayOrEmpty({
     required String field,
@@ -250,14 +248,13 @@ abstract class ArchiveCopyMinimumBar {
     bool allowShortLabel = false,
     bool requireSpecificity = true,
     bool allowGenericFallback = false,
-  }) =>
-      validate(
-        field: field,
-        text: text,
-        allowShortLabel: allowShortLabel,
-        requireSpecificity: requireSpecificity,
-        allowGenericFallback: allowGenericFallback,
-      ).approved;
+  }) => validate(
+    field: field,
+    text: text,
+    allowShortLabel: allowShortLabel,
+    requireSpecificity: requireSpecificity,
+    allowGenericFallback: allowGenericFallback,
+  ).approved;
 
   static String? _bannedPhraseIssue(String normalized) {
     final lower = normalized.toLowerCase();
@@ -345,22 +342,23 @@ abstract class ArchiveCopyMinimumBar {
   }
 
   static PatternDisplayField _grammarFieldFor(String field) => switch (field) {
-    'hero' || 'precisionLine' || 'shortSummary' || 'returnHookTitle' =>
-      PatternDisplayField.hero,
+    'hero' ||
+    'precisionLine' ||
+    'shortSummary' ||
+    'returnHookTitle' => PatternDisplayField.hero,
     'evidence' ||
     'contrastBefore' ||
     'contrastNow' ||
-    'returnHookLine' =>
-      PatternDisplayField.evidence,
+    'returnHookLine' => PatternDisplayField.evidence,
     'whatChanged' || 'contrastShift' => PatternDisplayField.whatChanged,
-    'currentBelief' || 'insightLine' || 'insight' =>
-      PatternDisplayField.currentBelief,
+    'currentBelief' ||
+    'insightLine' ||
+    'insight' => PatternDisplayField.currentBelief,
     'whatToTest' ||
     'nextQuestion' ||
     'returnHookQuestion' ||
     'returnHookCta' ||
-    'whatToNotice' =>
-      PatternDisplayField.whatToTest,
+    'whatToNotice' => PatternDisplayField.whatToTest,
     _ => PatternDisplayField.hero,
   };
 
@@ -395,7 +393,9 @@ abstract class ArchiveCopyMinimumBar {
 
   static void _logApproved(String field, String text) {
     final phrase = ArchiveLogHygiene.normalizedLogPhrase(text);
-    final clipped = phrase.length <= 96 ? phrase : '${phrase.substring(0, 93)}…';
+    final clipped = phrase.length <= 96
+        ? phrase
+        : '${phrase.substring(0, 93)}…';
     debugPrint(
       'ARCHIVEME_COPY_MINIMUM_BAR approved=true field=$field '
       'reason=approved textHash=${_textHash(phrase)} phrase="$clipped"',

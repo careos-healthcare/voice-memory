@@ -17,13 +17,13 @@ class ArchiveFirstComparisonDisplay {
   });
 
   const ArchiveFirstComparisonDisplay.hidden()
-      : show = false,
-        title = '',
-        body = '',
-        evidenceLine = null,
-        whatChangedLine = null,
-        primaryIsViewEvidence = false,
-        hasGroundedPattern = false;
+    : show = false,
+      title = '',
+      body = '',
+      evidenceLine = null,
+      whatChangedLine = null,
+      primaryIsViewEvidence = false,
+      hasGroundedPattern = false;
 
   final bool show;
   final String title;
@@ -37,7 +37,8 @@ class ArchiveFirstComparisonDisplay {
 
   static ArchiveFirstComparisonDisplay resolve(List<JournalEntry> entries) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (eligible.length != 2) return const ArchiveFirstComparisonDisplay.hidden();
+    if (eligible.length != 2)
+      return const ArchiveFirstComparisonDisplay.hidden();
 
     final comparison = _signalEngine.build(entries);
     if (!comparison.hasEnoughData) {
@@ -69,7 +70,8 @@ class ArchiveFirstComparisonDisplay {
       );
     }
 
-    final change = _usableLine(comparison.whatChanged) ??
+    final change =
+        _usableLine(comparison.whatChanged) ??
         'ArchiveMe is still comparing your saved words.';
 
     return ArchiveFirstComparisonDisplay(

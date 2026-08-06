@@ -119,14 +119,12 @@ class _ShareableProofCardState extends State<ShareableProofCard> {
     if (!widget.result.shouldShow) return const SizedBox.shrink();
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final warningStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final warningStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('shareable_non_private_proof_card'),
@@ -168,7 +166,9 @@ class _ShareableProofCardState extends State<ShareableProofCard> {
             children: [
               for (final template in ShareableProofTemplate.values)
                 ChoiceChip(
-                  key: Key('shareable_non_private_proof_template_${template.id}'),
+                  key: Key(
+                    'shareable_non_private_proof_template_${template.id}',
+                  ),
                   label: Text(template.label),
                   selected: _selectedTemplate == template,
                   onSelected: (selected) {

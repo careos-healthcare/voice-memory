@@ -6,12 +6,12 @@ enum BetaReadinessItemStatus {
   notAvailable;
 
   String get label => switch (this) {
-        BetaReadinessItemStatus.pass => BetaReadinessCopy.statusPass,
-        BetaReadinessItemStatus.needsManualCheck =>
-          BetaReadinessCopy.statusNeedsManualCheck,
-        BetaReadinessItemStatus.notAvailable =>
-          BetaReadinessCopy.statusNotAvailable,
-      };
+    BetaReadinessItemStatus.pass => BetaReadinessCopy.statusPass,
+    BetaReadinessItemStatus.needsManualCheck =>
+      BetaReadinessCopy.statusNeedsManualCheck,
+    BetaReadinessItemStatus.notAvailable =>
+      BetaReadinessCopy.statusNotAvailable,
+  };
 }
 
 enum BetaReadinessItemId {
@@ -95,15 +95,12 @@ class BetaReadinessReport {
       sections.expand((section) => section.items).toList();
 
   List<String> get visibleCopyBlocks => [
-        title,
-        intro,
-        for (final section in sections) ...[
-          section.title,
-          for (final item in section.items) ...[
-            item.label,
-            item.status.label,
-          ],
-        ],
-        for (final warning in warnings) warning.text,
-      ];
+    title,
+    intro,
+    for (final section in sections) ...[
+      section.title,
+      for (final item in section.items) ...[item.label, item.status.label],
+    ],
+    for (final warning in warnings) warning.text,
+  ];
 }

@@ -13,11 +13,9 @@ abstract final class FirstMomentCaptureAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required FirstMomentCaptureResult result,
-  }) {
+  static void seen({required FirstMomentCaptureResult result}) {
     _emit(
       seenEvent,
       source: result.source,

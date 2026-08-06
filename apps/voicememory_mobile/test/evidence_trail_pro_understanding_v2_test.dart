@@ -23,30 +23,28 @@ EvidenceTrailProUnderstandingSummary _summary({
   int wantedRankingCount = 2,
   int paywallCtaTapCount = 2,
   int wouldPayYesMaybeCount = 4,
-}) =>
-    EvidenceTrailProUnderstandingSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      understoodFirstProofCount: understoodFirstProofCount,
-      understoodLongerTrailCount: understoodLongerTrailCount,
-      understoodProKeepsChangesCount: understoodProKeepsChangesCount,
-      thoughtProWasMoreAiCount: thoughtProWasMoreAiCount,
-      wantedRankingCount: wantedRankingCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-    );
+}) => EvidenceTrailProUnderstandingSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  understoodFirstProofCount: understoodFirstProofCount,
+  understoodLongerTrailCount: understoodLongerTrailCount,
+  understoodProKeepsChangesCount: understoodProKeepsChangesCount,
+  thoughtProWasMoreAiCount: thoughtProWasMoreAiCount,
+  wantedRankingCount: wantedRankingCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+);
 
 EvidenceTrailProUnderstandingSummary _productionPassingSummary({
   int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      usefulProofCount: totalTesters == 20 ? 5 : 7,
-      understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
-      understoodProKeepsChangesCount: totalTesters == 20 ? 4 : 6,
-      paywallCtaTapCount: 1,
-      wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
-    );
+}) => _summary(
+  totalTesters: totalTesters,
+  usefulProofCount: totalTesters == 20 ? 5 : 7,
+  understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
+  understoodProKeepsChangesCount: totalTesters == 20 ? 4 : 6,
+  paywallCtaTapCount: 1,
+  wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
+);
 
 BetaRepairLabVisibilityInput _strongEvidenceTrailInput() =>
     BetaRepairLabVisibilityInput(
@@ -67,24 +65,23 @@ BetaRepairLabVisibilityInput _strongEvidenceTrailInput() =>
       betaMissionEnabled: true,
     );
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('EvidenceTrailProUnderstanding thresholds', () {
@@ -137,9 +134,7 @@ void main() {
 
     test('weak useful proof returns repairProofFirst', () {
       expect(
-        EvidenceTrailProUnderstanding.resolve(
-          _summary(usefulProofCount: 6),
-        ),
+        EvidenceTrailProUnderstanding.resolve(_summary(usefulProofCount: 6)),
         EvidenceTrailProUnderstandingDecision.repairProofFirst,
       );
     });
@@ -240,10 +235,7 @@ void main() {
 
   group('EvidenceTrailProUnderstandingCopy', () {
     test('copy says Keep the longer trail', () {
-      expect(
-        EvidenceTrailProUnderstandingCopy.title,
-        'Keep the longer trail',
-      );
+      expect(EvidenceTrailProUnderstandingCopy.title, 'Keep the longer trail');
     });
 
     test('copy says Free shows first proof', () {
@@ -260,15 +252,18 @@ void main() {
       );
     });
 
-    test('copy includes returns changes softens strengthens fades corrected', () {
-      final body = EvidenceTrailProUnderstandingCopy.body.toLowerCase();
-      expect(body, contains('returns'));
-      expect(body, contains('changes'));
-      expect(body, contains('softens'));
-      expect(body, contains('strengthens'));
-      expect(body, contains('fades'));
-      expect(body, contains('corrected'));
-    });
+    test(
+      'copy includes returns changes softens strengthens fades corrected',
+      () {
+        final body = EvidenceTrailProUnderstandingCopy.body.toLowerCase();
+        expect(body, contains('returns'));
+        expect(body, contains('changes'));
+        expect(body, contains('softens'));
+        expect(body, contains('strengthens'));
+        expect(body, contains('fades'));
+        expect(body, contains('corrected'));
+      },
+    );
 
     test('copy does not say ranking as a product claim', () {
       for (final text in [
@@ -295,7 +290,8 @@ void main() {
     });
 
     test('copy does not say therapy diagnosis or coaching', () {
-      for (final text in EvidenceTrailProUnderstandingCopy.allVisibleStrings()) {
+      for (final text
+          in EvidenceTrailProUnderstandingCopy.allVisibleStrings()) {
         expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
         final lower = text.toLowerCase();
         expect(lower.contains('therapy'), isFalse, reason: text);
@@ -316,14 +312,11 @@ void main() {
     });
 
     test('clarity options include Yes Not yet and I need more proof first', () {
-      expect(
-        EvidenceTrailProUnderstandingCopy.clarityOptions,
-        [
-          'Yes',
-          'Not yet',
-          'I need more proof first',
-        ],
-      );
+      expect(EvidenceTrailProUnderstandingCopy.clarityOptions, [
+        'Yes',
+        'Not yet',
+        'I need more proof first',
+      ]);
     });
   });
 
@@ -366,7 +359,10 @@ void main() {
 
     test('proof selection principle still blocks ranking', () {
       expect(ProofSelectionPrinciple.allowsRankingUi(), isFalse);
-      expect(ProofDetailRepairCopy.whyThisOneLine, contains('clearest specific repeat'));
+      expect(
+        ProofDetailRepairCopy.whyThisOneLine,
+        contains('clearest specific repeat'),
+      );
     });
   });
 }

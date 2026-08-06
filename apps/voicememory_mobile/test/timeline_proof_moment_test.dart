@@ -25,11 +25,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -180,7 +176,9 @@ void main() {
     test('renders returned row when confirmed repeat exists', () {
       final result = _resultFor(_threeRelatedEntries());
       expect(
-        result.rows.any((row) => row.label == TimelineProofMomentCopy.returnedRow),
+        result.rows.any(
+          (row) => row.label == TimelineProofMomentCopy.returnedRow,
+        ),
         isTrue,
       );
     });
@@ -190,7 +188,8 @@ void main() {
       final without = _resultFor(entries);
       expect(
         without.rows.any(
-          (row) => row.label.startsWith(TimelineProofMomentCopy.correctedRowPrefix),
+          (row) =>
+              row.label.startsWith(TimelineProofMomentCopy.correctedRowPrefix),
         ),
         isFalse,
       );
@@ -198,9 +197,7 @@ void main() {
       await _saveCorrection(entries, CurrentRelevanceAnswer.little);
       final withCorrection = _resultFor(entries);
       expect(
-        withCorrection.rows.any(
-          (row) => row.label.contains('partly current'),
-        ),
+        withCorrection.rows.any((row) => row.label.contains('partly current')),
         isTrue,
       );
     });
@@ -302,10 +299,7 @@ void main() {
     testWidgets('renders footer "past as a verdict"', (tester) async {
       await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
-      expect(
-        find.textContaining('past as a verdict'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('past as a verdict'), findsOneWidget);
     });
 
     testWidgets('renders ChatGPT differentiation', (tester) async {
@@ -339,21 +333,25 @@ void main() {
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, TimelineProofMomentAnalytics.seenEvent);
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_correction',
-        'current_weight_state',
-        'row_count',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_correction',
+          'current_weight_state',
+          'row_count',
+        ]),
+      );
     });
   });
 
   group('Timeline proof moment placement', () {
     test('appears before ArchiveTimelineSpineCard on patterns', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final proofIndex = source.indexOf('TimelineProofMomentCard(');
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');
       expect(proofIndex, greaterThan(0));
@@ -363,8 +361,9 @@ void main() {
 
   group('Timeline proof moment copy guard', () {
     test('no therapy/diagnosis/treatment claims', () {
-      final blob =
-          TimelineProofMomentCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = TimelineProofMomentCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));

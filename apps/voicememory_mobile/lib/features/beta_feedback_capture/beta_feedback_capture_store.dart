@@ -12,12 +12,13 @@ class BetaFeedbackCaptureStore {
 
   final MobilePrefsStore _prefs;
 
-  static final Map<BetaFeedbackCaptureMoment, BetaFeedbackCaptureRecord> _cached =
-      {};
+  static final Map<BetaFeedbackCaptureMoment, BetaFeedbackCaptureRecord>
+  _cached = {};
   static bool _loaded = false;
 
-  static BetaFeedbackCaptureRecord recordFor(BetaFeedbackCaptureMoment moment) =>
-      _cached[moment] ?? BetaFeedbackCaptureRecord.empty;
+  static BetaFeedbackCaptureRecord recordFor(
+    BetaFeedbackCaptureMoment moment,
+  ) => _cached[moment] ?? BetaFeedbackCaptureRecord.empty;
 
   static bool isAnsweredToday(BetaFeedbackCaptureMoment moment) {
     final record = recordFor(moment);
@@ -45,8 +46,7 @@ class BetaFeedbackCaptureStore {
     BetaFeedbackCaptureRecord? latest;
     for (final record in _cached.values) {
       if (!record.answered || record.answeredAt == null) continue;
-      if (latest == null ||
-          record.answeredAt!.isAfter(latest.answeredAt!)) {
+      if (latest == null || record.answeredAt!.isAfter(latest.answeredAt!)) {
         latest = record;
       }
     }
@@ -78,8 +78,9 @@ class BetaFeedbackCaptureStore {
       if (entry is Map<String, dynamic>) {
         _cached[moment] = BetaFeedbackCaptureRecord.fromJson(entry);
       } else if (entry is Map) {
-        _cached[moment] =
-            BetaFeedbackCaptureRecord.fromJson(Map<String, dynamic>.from(entry));
+        _cached[moment] = BetaFeedbackCaptureRecord.fromJson(
+          Map<String, dynamic>.from(entry),
+        );
       }
     }
   }

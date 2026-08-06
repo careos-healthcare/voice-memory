@@ -37,43 +37,42 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 PatternDetailResult _detailFor(List<JournalEntry> entries) {
   final signal = EarlyFirstSignalEngine.build(entries: entries);
@@ -103,10 +102,8 @@ Future<void> _openSheet(
       home: Builder(
         builder: (context) => Scaffold(
           body: TextButton(
-            onPressed: () => PatternCorrectionSheet.show(
-              context,
-              contextData: contextData,
-            ),
+            onPressed: () =>
+                PatternCorrectionSheet.show(context, contextData: contextData),
             child: const Text('open'),
           ),
         ),
@@ -123,7 +120,9 @@ Future<void> _selectReason(
 ) async {
   await tester.tap(
     find.byKey(
-      Key('pattern_correction_reason_${PatternCorrectionAnalytics.reasonKey(reason)}'),
+      Key(
+        'pattern_correction_reason_${PatternCorrectionAnalytics.reasonKey(reason)}',
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -163,9 +162,7 @@ void main() {
         ],
       );
       expect(
-        PatternCorrectionEngine.actionsFor(
-          PatternCorrectionReason.tooPersonal,
-        ),
+        PatternCorrectionEngine.actionsFor(PatternCorrectionReason.tooPersonal),
         [
           PatternCorrectionAction.deleteMoment,
           PatternCorrectionAction.removeFromPattern,
@@ -182,9 +179,7 @@ void main() {
         ],
       );
       expect(
-        PatternCorrectionEngine.actionsFor(
-          PatternCorrectionReason.notUseful,
-        ),
+        PatternCorrectionEngine.actionsFor(PatternCorrectionReason.notUseful),
         [
           PatternCorrectionAction.betaFeedback,
           PatternCorrectionAction.keepRecording,
@@ -252,11 +247,14 @@ void main() {
         action: PatternCorrectionAction.renamePattern,
       );
 
-      expect(events.keys, containsAll([
-        PatternCorrectionAnalytics.openedEvent,
-        PatternCorrectionAnalytics.reasonSelectedEvent,
-        PatternCorrectionAnalytics.actionSelectedEvent,
-      ]));
+      expect(
+        events.keys,
+        containsAll([
+          PatternCorrectionAnalytics.openedEvent,
+          PatternCorrectionAnalytics.reasonSelectedEvent,
+          PatternCorrectionAnalytics.actionSelectedEvent,
+        ]),
+      );
       expect(
         events[PatternCorrectionAnalytics.openedEvent]!.keys,
         containsAll(['source', 'entry_count']),
@@ -285,16 +283,25 @@ void main() {
 
       expect(find.byKey(const Key('pattern_correction_sheet')), findsOneWidget);
       expect(find.text(PatternCorrectionCopy.sheetTitle), findsOneWidget);
-      expect(find.text(PatternCorrectionCopy.wrongPatternReason), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.wrongPatternReason),
+        findsOneWidget,
+      );
 
       await _selectReason(tester, PatternCorrectionReason.wrongPattern);
 
-      expect(find.text(PatternCorrectionCopy.renamePatternAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.renamePatternAction),
+        findsOneWidget,
+      );
       expect(
         find.text(PatternCorrectionCopy.removeFromPatternAction),
         findsOneWidget,
       );
-      expect(find.text(PatternCorrectionCopy.betaFeedbackAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.betaFeedbackAction),
+        findsOneWidget,
+      );
       expect(
         find.text(PatternCorrectionCopy.correctTranscriptAction),
         findsNothing,
@@ -307,7 +314,10 @@ void main() {
       await _openSheet(tester, _contextForDetail(_threeRelatedEntries()));
       await _selectReason(tester, PatternCorrectionReason.wrongWording);
 
-      expect(find.text(PatternCorrectionCopy.renamePatternAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.renamePatternAction),
+        findsOneWidget,
+      );
       expect(
         find.text(PatternCorrectionCopy.correctTranscriptAction),
         findsOneWidget,
@@ -320,12 +330,18 @@ void main() {
       await _openSheet(tester, _contextForDetail(_threeRelatedEntries()));
       await _selectReason(tester, PatternCorrectionReason.tooPersonal);
 
-      expect(find.text(PatternCorrectionCopy.deleteMomentAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.deleteMomentAction),
+        findsOneWidget,
+      );
       expect(
         find.text(PatternCorrectionCopy.removeFromPatternAction),
         findsOneWidget,
       );
-      expect(find.text(PatternCorrectionCopy.privacyCentreAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.privacyCentreAction),
+        findsOneWidget,
+      );
     });
 
     testWidgets('does not belong shows remove and delete', (tester) async {
@@ -336,7 +352,10 @@ void main() {
         find.text(PatternCorrectionCopy.removeFromPatternAction),
         findsOneWidget,
       );
-      expect(find.text(PatternCorrectionCopy.deleteMomentAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.deleteMomentAction),
+        findsOneWidget,
+      );
     });
 
     testWidgets('not useful shows beta feedback and keep recording', (
@@ -350,17 +369,21 @@ void main() {
       await _openSheet(tester, contextData);
       await _selectReason(tester, PatternCorrectionReason.notUseful);
 
-      expect(find.text(PatternCorrectionCopy.betaFeedbackAction), findsOneWidget);
-      expect(find.text(PatternCorrectionCopy.keepRecordingAction), findsOneWidget);
+      expect(
+        find.text(PatternCorrectionCopy.betaFeedbackAction),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PatternCorrectionCopy.keepRecordingAction),
+        findsOneWidget,
+      );
     });
 
     testWidgets('rename action opens existing rename sheet', (tester) async {
       await _openSheet(tester, _contextForDetail(_threeRelatedEntries()));
       await _selectReason(tester, PatternCorrectionReason.wrongPattern);
       await tester.tap(
-        find.byKey(
-          const Key('pattern_correction_action_rename_pattern'),
-        ),
+        find.byKey(const Key('pattern_correction_action_rename_pattern')),
       );
       await tester.pumpAndSettle();
 
@@ -400,18 +423,14 @@ void main() {
           ),
           GoRoute(
             path: '/privacy-trust-centre',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('PRIVACY CENTRE')),
-            ),
+            builder: (context, state) =>
+                const Scaffold(body: Center(child: Text('PRIVACY CENTRE'))),
           ),
         ],
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
@@ -472,7 +491,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('pattern_correction_control')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_correction_control')),
+        findsOneWidget,
+      );
       expect(find.text(PatternCorrectionCopy.controlLabel), findsOneWidget);
     });
 
@@ -502,7 +524,10 @@ void main() {
       await tester.pump();
 
       expect(content.canShowPatternCorrection, isTrue);
-      expect(find.byKey(const Key('pattern_correction_control')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_correction_control')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hidden in pattern detail without grounded entries', (
@@ -518,7 +543,10 @@ void main() {
         viewingConfirmedRepeatOrTimeline: true,
       );
       if (detail == null) {
-        expect(find.byKey(const Key('pattern_correction_control')), findsNothing);
+        expect(
+          find.byKey(const Key('pattern_correction_control')),
+          findsNothing,
+        );
         return;
       }
 
@@ -579,10 +607,7 @@ void main() {
         PatternCorrectionCopy.correctTranscriptAction,
         TranscriptCorrectionCopy.actionLabel,
       );
-      expect(
-        PatternCorrectionCopy.privacyCentreAction,
-        PrivacyTrustCopy.title,
-      );
+      expect(PatternCorrectionCopy.privacyCentreAction, PrivacyTrustCopy.title);
     });
   });
 }

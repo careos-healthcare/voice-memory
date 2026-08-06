@@ -15,7 +15,10 @@ void main() {
       expect(FutureRevenueScopeCopy.futureDirections, contains('referrals'));
       expect(FutureRevenueScopeCopy.futureDirections, contains('safe sharing'));
       expect(FutureRevenueScopeCopy.futureDirections, contains('annual plan'));
-      expect(FutureRevenueScopeCopy.futureDirections, contains('premium tiers'));
+      expect(
+        FutureRevenueScopeCopy.futureDirections,
+        contains('premium tiers'),
+      );
       expect(FutureRevenueScopeCopy.futureDirections, contains('b2b'));
       expect(
         FutureRevenueScopeCopy.futureDirections,
@@ -56,7 +59,10 @@ void main() {
         AudienceWedgeHabitCopy.saveLine,
         contains('ArchiveMe compares it later'),
       );
-      expect(AudienceWedgeHabitCopy.notesLine, contains('Notes store what happened'));
+      expect(
+        AudienceWedgeHabitCopy.notesLine,
+        contains('Notes store what happened'),
+      );
       expect(
         AudienceWedgeHabitCopy.chatLine,
         contains('ChatGPT can suggest what to do'),

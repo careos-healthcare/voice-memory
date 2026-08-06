@@ -45,9 +45,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (!captureOnly) ...[
-            RecordFirstUsePromptBlock(
-              hideLeadCopy: showFirstProofJourneyStrip,
-            ),
+            RecordFirstUsePromptBlock(hideLeadCopy: showFirstProofJourneyStrip),
             if (showFirstProofJourneyStrip) ...[
               const SizedBox(height: AppSpacing.xs),
               const FirstProofJourneyStripCard(),
@@ -61,7 +59,8 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
             typeCapturePrompt: typeCapturePrompt,
             onTextThoughtSaved: onTextThoughtSaved,
             onLogPressureMoment: onLogPressureMoment,
-            pressureMomentPresentation: CapturePressureMomentPresentation.textLink,
+            pressureMomentPresentation:
+                CapturePressureMomentPresentation.textLink,
             onHowItWorks: () => showArchiveDataFlowSheet(context),
           ),
           if (onViewSampleExample != null) ...[

@@ -27,9 +27,8 @@ class ReturnDayFlowCard extends StatelessWidget {
     this.onAnswered,
     this.onCameBack,
     this.onDifferent,
-    ReturnDayFlowAnswer? initialAnswer,
-  })  : skipPrefsLoad = true,
-        initialAnswer = initialAnswer;
+    this.initialAnswer,
+  }) : skipPrefsLoad = true;
 
   final ReturnDayFlow flow;
   final int entryCount;
@@ -40,7 +39,8 @@ class ReturnDayFlowCard extends StatelessWidget {
   final VoidCallback? onCameBack;
   final VoidCallback? onDifferent;
 
-  ComeBackTomorrowReturnQuestion get _question => ComeBackTomorrowReturnQuestion(
+  ComeBackTomorrowReturnQuestion get _question =>
+      ComeBackTomorrowReturnQuestion(
         title: flow.title,
         body: flow.body,
         groundedPhrase: flow.watchingPhrase ?? '',
@@ -49,11 +49,11 @@ class ReturnDayFlowCard extends StatelessWidget {
       );
 
   ComeBackTomorrowAnswerType? get _initialAnswer => switch (initialAnswer) {
-        ReturnDayFlowAnswer.cameBack => ComeBackTomorrowAnswerType.cameBack,
-        ReturnDayFlowAnswer.notToday => ComeBackTomorrowAnswerType.notToday,
-        ReturnDayFlowAnswer.different => ComeBackTomorrowAnswerType.different,
-        null => null,
-      };
+    ReturnDayFlowAnswer.cameBack => ComeBackTomorrowAnswerType.cameBack,
+    ReturnDayFlowAnswer.notToday => ComeBackTomorrowAnswerType.notToday,
+    ReturnDayFlowAnswer.different => ComeBackTomorrowAnswerType.different,
+    null => null,
+  };
 
   @override
   Widget build(BuildContext context) {

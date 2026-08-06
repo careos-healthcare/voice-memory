@@ -37,7 +37,8 @@ class FirstProofTruthStore {
   static bool hasAnswered(String proofKey) =>
       proofKey.isNotEmpty && _answered.containsKey(proofKey);
 
-  static FirstProofTruthAnswer? answerFor(String proofKey) => _answered[proofKey];
+  static FirstProofTruthAnswer? answerFor(String proofKey) =>
+      _answered[proofKey];
 
   /// Stable id from the three eligible entries — never pattern or transcript text.
   static String proofKeyForFirstProof(List<JournalEntry> entries) {
@@ -63,17 +64,17 @@ class FirstProofTruthStore {
   }
 
   static FirstProofTruthAnswer? _parseAnswer(Object? raw) => switch (raw) {
-        'yes' => FirstProofTruthAnswer.yes,
-        'sort_of' => FirstProofTruthAnswer.sortOf,
-        'no' => FirstProofTruthAnswer.no,
-        _ => null,
-      };
+    'yes' => FirstProofTruthAnswer.yes,
+    'sort_of' => FirstProofTruthAnswer.sortOf,
+    'no' => FirstProofTruthAnswer.no,
+    _ => null,
+  };
 
   static String _answerKey(FirstProofTruthAnswer answer) => switch (answer) {
-        FirstProofTruthAnswer.yes => 'yes',
-        FirstProofTruthAnswer.sortOf => 'sort_of',
-        FirstProofTruthAnswer.no => 'no',
-      };
+    FirstProofTruthAnswer.yes => 'yes',
+    FirstProofTruthAnswer.sortOf => 'sort_of',
+    FirstProofTruthAnswer.no => 'no',
+  };
 
   Future<void> saveAnswer({
     required String proofKey,
@@ -97,16 +98,26 @@ class FirstProofTruthStore {
     await BetaActivationSummaryTracker.trackFirstProofTruthAnswer(answer);
   }
 
+  static void invalidateAfterRestore() => invalidateCache();
+
   @visibleForTesting
   static void invalidateCache() {
     _answered.clear();
     _loaded = false;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest(MobilePrefsStore? prefs) async {
-    invalidateCache();
+  static Future<void> clearBeforeRestore(MobilePrefsStore prefs) async {
+    invalidateAfterRestore();
+    await prefs.writeMap(answeredPrefsKey, {});
+  }
+
+  static Future<void> resetPersistedState(MobilePrefsStore? prefs) async {
+    invalidateAfterRestore();
     if (prefs == null) return;
     await prefs.writeMap(answeredPrefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest(MobilePrefsStore? prefs) =>
+      resetPersistedState(prefs);
 }

@@ -66,45 +66,45 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourWithDifferentLatestPhrase() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I walked outside for five minutes before I replied to the message.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I walked outside for five minutes before I replied to the message.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/pattern_changed/unused.json'));
@@ -146,7 +146,8 @@ void main() {
   setUp(() async {
     PatternChangedAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_pattern_changed.json',
+      journalPath:
+          '${DateTime.now().microsecondsSinceEpoch}_pattern_changed.json',
       prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
       skipRevenueCat: true,
     );
@@ -180,14 +181,20 @@ void main() {
         isRecording: false,
         isPostSave: false,
         records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.stronger),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.stronger,
+          ),
         ],
       );
       expect(
         PatternChangedEngine.build(
           changeProof: proof,
           records: [
-            _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.stronger),
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.stronger,
+            ),
           ],
           entries: _fourRelatedRepeatEntries(),
         ),
@@ -195,27 +202,36 @@ void main() {
       );
     });
 
-    test('does not trigger for softer only without meaningful phrase evidence', () {
-      final proof = RepeatReturnCheckEngine.changeProofForReady(
-        entryCount: 4,
-        viewingConfirmedRepeat: true,
-        isRecording: false,
-        isPostSave: false,
-        records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
-      );
-      expect(
-        PatternChangedEngine.build(
-          changeProof: proof,
+    test(
+      'does not trigger for softer only without meaningful phrase evidence',
+      () {
+        final proof = RepeatReturnCheckEngine.changeProofForReady(
+          entryCount: 4,
+          viewingConfirmedRepeat: true,
+          isRecording: false,
+          isPostSave: false,
           records: [
-            _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.softer,
+            ),
           ],
-          entries: _fourRelatedRepeatEntries(),
-        ),
-        isNull,
-      );
-    });
+        );
+        expect(
+          PatternChangedEngine.build(
+            changeProof: proof,
+            records: [
+              _answeredRecord(
+                entryId: 'e4',
+                choice: RepeatReturnCheckChoice.softer,
+              ),
+            ],
+            entries: _fourRelatedRepeatEntries(),
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('shows softer when phrase evidence meaningfully differs', () {
       final entries = _fourWithDifferentLatestPhrase();
@@ -225,13 +241,19 @@ void main() {
         isRecording: false,
         isPostSave: false,
         records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ],
       );
       final result = PatternChangedEngine.build(
         changeProof: proof,
         records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ],
         entries: entries,
       );
@@ -255,13 +277,19 @@ void main() {
         isRecording: false,
         isPostSave: false,
         records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
         ],
       );
       final result = PatternChangedEngine.build(
         changeProof: proof,
         records: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
         ],
         entries: _fourRelatedRepeatEntries(),
       );
@@ -276,7 +304,12 @@ void main() {
       final proof = _proofForChoice(RepeatReturnCheckChoice.changed);
       final result = PatternChangedEngine.build(
         changeProof: proof,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourRelatedRepeatEntries(),
       );
       expect(result, isNotNull);
@@ -290,12 +323,19 @@ void main() {
         viewingConfirmedRepeat: true,
         isRecording: false,
         isPostSave: false,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+        records: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same),
+        ],
       );
       expect(
         PatternChangedEngine.build(
           changeProof: proof,
-          records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+          records: [
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.same,
+            ),
+          ],
           entries: _fourRelatedRepeatEntries(),
         ),
         isNull,
@@ -329,7 +369,12 @@ void main() {
     test('hidden during first-three activation', () {
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e3', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e3',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _threeRelatedRepeatEntries(),
       );
       expect(
@@ -350,7 +395,12 @@ void main() {
     test('hidden while recording', () {
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourRelatedRepeatEntries(),
       );
       expect(
@@ -408,7 +458,12 @@ void main() {
     testWidgets('shows phrase evidence rows when grounded', (tester) async {
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourWithDifferentLatestPhrase(),
       )!;
 
@@ -432,10 +487,17 @@ void main() {
       expect(find.text(PatternChangedCopy.recordIfReturnsCta), findsOneWidget);
     });
 
-    testWidgets('shows fallback body when phrase evidence is weak', (tester) async {
+    testWidgets('shows fallback body when phrase evidence is weak', (
+      tester,
+    ) async {
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourRelatedRepeatEntries(),
       )!;
 
@@ -458,7 +520,12 @@ void main() {
     testWidgets('CTA triggers record callback', (tester) async {
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourRelatedRepeatEntries(),
       )!;
       var tapped = false;
@@ -485,7 +552,12 @@ void main() {
       final store = PatternChangedStore(prefs);
       final result = PatternChangedEngine.build(
         changeProof: _proofForChoice(RepeatReturnCheckChoice.changed),
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+          ),
+        ],
         entries: _fourRelatedRepeatEntries(),
       )!;
 
@@ -506,7 +578,10 @@ void main() {
       await tester.tap(find.byKey(const Key('pattern_changed_dismiss')));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('pattern_changed_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_changed_card_hidden')),
+        findsOneWidget,
+      );
       expect(
         PatternChangedStore.isDismissed(
           entryId: result.entryId,
@@ -541,42 +616,56 @@ void main() {
   });
 
   group('Pattern changed dedup', () {
-    test('no duplicate change proof copy when pattern changed replaces proof', () {
-      final proof = _proofForChoice(RepeatReturnCheckChoice.changed);
-      final patternChanged = PatternChangedEngine.build(
-        changeProof: proof,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed)],
-        entries: _fourRelatedRepeatEntries(),
-      )!;
+    test(
+      'no duplicate change proof copy when pattern changed replaces proof',
+      () {
+        final proof = _proofForChoice(RepeatReturnCheckChoice.changed);
+        final patternChanged = PatternChangedEngine.build(
+          changeProof: proof,
+          records: [
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.changed,
+            ),
+          ],
+          entries: _fourRelatedRepeatEntries(),
+        )!;
 
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: true,
-        timelineVisible: false,
-        changeProofVisible: true,
-        proBridgeVisible: false,
-        patternChangedVisible: true,
-      );
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: true,
+          timelineVisible: false,
+          changeProofVisible: true,
+          proBridgeVisible: false,
+          patternChangedVisible: true,
+        );
 
-      expect(layout.effectiveChangeProofVisible, isFalse);
-      expect(layout.effectivePatternChangedVisible, isTrue);
+        expect(layout.effectiveChangeProofVisible, isFalse);
+        expect(layout.effectivePatternChangedVisible, isTrue);
 
-      final blocks = ArchiveProofSurfaceCopy.patternsStack(
-        layout: layout,
-        changeProof: proof,
-        patternChanged: patternChanged,
-      );
+        final blocks = ArchiveProofSurfaceCopy.patternsStack(
+          layout: layout,
+          changeProof: proof,
+          patternChanged: patternChanged,
+        );
 
-      expect(blocks, contains(PatternChangedCopy.title));
-      expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofTitle)));
-      expect(blocks, isNot(contains(RepeatReturnCheckCopy.trendSofterThanBefore)));
-      expect(
-        blocks.where((block) => block == PatternChangedCopy.title),
-        hasLength(1),
-      );
-    });
+        expect(blocks, contains(PatternChangedCopy.title));
+        expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofTitle)));
+        expect(
+          blocks,
+          isNot(contains(RepeatReturnCheckCopy.trendSofterThanBefore)),
+        );
+        expect(
+          blocks.where((block) => block == PatternChangedCopy.title),
+          hasLength(1),
+        );
+      },
+    );
 
     test('title differs from WhatChangedSinceLastTime on Patterns', () {
-      expect(PatternChangedCopy.title, isNot(WhatChangedSinceLastTimeCopy.title));
+      expect(
+        PatternChangedCopy.title,
+        isNot(WhatChangedSinceLastTimeCopy.title),
+      );
       expect(
         PatternChangedCopy.title,
         isNot(WhatChangedSinceLastTimeCopy.changedSummary),
@@ -597,21 +686,24 @@ void main() {
       expect(layout.effectivePatternChangedVisible, isFalse);
     });
 
-    test('folds into Archive Summary without duplicate pattern changed card', () {
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: false,
-        timelineVisible: false,
-        changeProofVisible: true,
-        proBridgeVisible: false,
-        patternChangedVisible: true,
-        archiveSummaryVisible: true,
-      );
+    test(
+      'folds into Archive Summary without duplicate pattern changed card',
+      () {
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: false,
+          timelineVisible: false,
+          changeProofVisible: true,
+          proBridgeVisible: false,
+          patternChangedVisible: true,
+          archiveSummaryVisible: true,
+        );
 
-      expect(layout.effectivePatternChangedVisible, isFalse);
-      final blocks = ArchiveProofSurfaceCopy.patternsStack(layout: layout);
-      expect(blocks, isNot(contains(PatternChangedCopy.title)));
-      expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofTitle)));
-    });
+        expect(layout.effectivePatternChangedVisible, isFalse);
+        final blocks = ArchiveProofSurfaceCopy.patternsStack(layout: layout);
+        expect(blocks, isNot(contains(PatternChangedCopy.title)));
+        expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofTitle)));
+      },
+    );
   });
 
   group('Record proof stack priority', () {

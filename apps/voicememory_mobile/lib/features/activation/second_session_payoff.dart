@@ -16,7 +16,8 @@ abstract final class SecondSessionPayoffCopy {
 
   static const secondaryCta = VisibleArchiveProofCopy.twoEntryViewArchiveCta;
 
-  static const analysisDeferredFootnote = VoiceCaptureCopy.analysisUnavailableNote;
+  static const analysisDeferredFootnote =
+      VoiceCaptureCopy.analysisUnavailableNote;
 }
 
 /// Cautious payoff when the archive reaches exactly two usable moments.

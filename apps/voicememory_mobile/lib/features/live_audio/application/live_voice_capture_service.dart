@@ -22,24 +22,17 @@ import '../infrastructure/offline_vault_recovery_store.dart';
 import '../live_audio_constants.dart';
 import '../presentation/controllers/live_audio_session_controller.dart';
 
-typedef IsolateAudioPipelineFactory = IsolateAudioPipeline Function(
-  PipelineConfig config,
-);
+typedef IsolateAudioPipelineFactory =
+    IsolateAudioPipeline Function(PipelineConfig config);
 
 /// High-level capture lifecycle for live voice mic + isolate processing.
-enum LiveVoiceCaptureState {
-  idle,
-  starting,
-  active,
-  paused,
-  failure,
-}
+enum LiveVoiceCaptureState { idle, starting, active, paused, failure }
 
 /// Record-screen orchestration: live mic → proxy → playback + journal transcript.
 class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   LiveVoiceCaptureService({
-    required LiveAudioSessionController controller,
-    required CapturePipelineService pipeline,
+    required this._controller,
+    required this._pipeline,
     LivePcm24PlaybackEngine? playback,
     LiveAudioTranscriptCollector? transcriptCollector,
     IsolateAudioPipelineFactory? pipelineFactory,
@@ -47,14 +40,12 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
     OfflineVaultRecoveryStore? recoveryStore,
     this.useIsolateAudioPipeline = false,
     this.maxReconnectAttempts = 1,
-  })  : _controller = controller,
-        _pipeline = pipeline,
-        _playback = playback ?? LivePcm24PlaybackEngine(),
-        _transcripts = transcriptCollector ?? LiveAudioTranscriptCollector(),
-        _pipelineFactory =
-            pipelineFactory ?? ((config) => IsolateAudioPipeline(config)),
-        _localVault = offlineAudioVault ?? LocalAudioVault(),
-        _recoveryStore = recoveryStore ?? OfflineVaultRecoveryStore() {
+  }) : _playback = playback ?? LivePcm24PlaybackEngine(),
+       _transcripts = transcriptCollector ?? LiveAudioTranscriptCollector(),
+       _pipelineFactory =
+           pipelineFactory ?? ((config) => IsolateAudioPipeline(config)),
+       _localVault = offlineAudioVault ?? LocalAudioVault(),
+       _recoveryStore = recoveryStore ?? OfflineVaultRecoveryStore() {
     _controller.addListener(_emitDiagnostics);
   }
 
@@ -126,6 +117,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
       _sessionFaultController.stream;
   Stream<LiveVoiceErrorState> get errorStateChanges =>
       _errorStateController.stream;
+  @override
   Stream<LiveVoiceDiagnosticsSnapshot> get diagnosticsStream =>
       _diagnosticsController.stream;
   Stream<String> get transcriptUpdates => _transcriptController.stream;
@@ -135,9 +127,11 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   bool get isPausedByAudioFocus => _pausedByAudioFocus;
   bool get isPipelineActive => _pipelineActive;
   bool get isOfflineVaultActive => _localVault.isActive;
-  File? get offlineVaultFile => _closedOfflineVaultFile ?? _localVault.activeFile;
+  File? get offlineVaultFile =>
+      _closedOfflineVaultFile ?? _localVault.activeFile;
   int get vaultedFrameCount => _localVault.frameCount;
   int get hardwareSampleRate => _hardwareSampleRate;
+  @override
   LiveVoiceCaptureState get captureState {
     if (hasError && !_localVault.isActive) return LiveVoiceCaptureState.failure;
     if (_starting) return LiveVoiceCaptureState.starting;
@@ -153,15 +147,16 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   int get reconnectAttemptsUsed => _reconnectAttempts;
   String get accumulatedTranscript => _transcripts.bestTranscript;
 
+  @override
   LiveVoiceDiagnosticsSnapshot get diagnostics => LiveVoiceDiagnosticsSnapshot(
-        pcmChunksSent: _controller.pcmChunksSent,
-        audioChunksReceived: _audioChunksReceived,
-        audioBytesReceived: _audioBytesReceived,
-        reconnectAttempts: _reconnectAttempts,
-        sessionFaults: _sessionFaultCount,
-        firstAudioLatencyMs: _firstAudioLatencyMs,
-        playbackQueueDepth: _playback.activeQueueDepth,
-      );
+    pcmChunksSent: _controller.pcmChunksSent,
+    audioChunksReceived: _audioChunksReceived,
+    audioBytesReceived: _audioBytesReceived,
+    reconnectAttempts: _reconnectAttempts,
+    sessionFaults: _sessionFaultCount,
+    firstAudioLatencyMs: _firstAudioLatencyMs,
+    playbackQueueDepth: _playback.activeQueueDepth,
+  );
 
   Future<void> start({
     int hardwareSampleRate = liveInputSampleRateHz,
@@ -174,9 +169,9 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
     _starting = true;
     _notifyListeners();
     _hardwareSampleRate = hardwareSampleRate;
-    final shouldUsePipeline = enableIsolatePipeline ??
-        useIsolateAudioPipeline ||
-            hardwareSampleRate != liveInputSampleRateHz;
+    final shouldUsePipeline =
+        enableIsolatePipeline ??
+        useIsolateAudioPipeline || hardwareSampleRate != liveInputSampleRateHz;
 
     try {
       _resetDiagnostics();
@@ -185,8 +180,9 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
         _transcriptController.add('');
       }
       await _playback.prepare();
-      _serverEventsSubscription ??=
-          _controller.serverEvents.listen(_handleServerEvent);
+      _serverEventsSubscription ??= _controller.serverEvents.listen(
+        _handleServerEvent,
+      );
 
       _controller.setPcmCaptureHandler(_onCapturePcmBytes);
       await _controller.connect();
@@ -586,8 +582,9 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
       _audioChunksReceived++;
       _audioBytesReceived += event.pcmBytes.length;
       if (_firstAudioLatencyMs == null && _firstAudioSentAt != null) {
-        _firstAudioLatencyMs =
-            DateTime.now().difference(_firstAudioSentAt!).inMilliseconds;
+        _firstAudioLatencyMs = DateTime.now()
+            .difference(_firstAudioSentAt!)
+            .inMilliseconds;
       }
       LiveAudioPipelineLog.audioChunkReceived(
         byteLength: event.pcmBytes.length,
@@ -614,7 +611,9 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
       try {
         await _controller.reconnectSession(reason: reason);
         _handlingFault = false;
-        LiveAudioPipelineLog.diagnostics('reconnect ok ${diagnostics.toString()}');
+        LiveAudioPipelineLog.diagnostics(
+          'reconnect ok ${diagnostics.toString()}',
+        );
         return;
       } catch (error) {
         LiveAudioPipelineLog.failure('reconnect', error);
@@ -706,9 +705,6 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   }
 
   static Uint8List _int16FrameToBytes(Int16List frame) {
-    return frame.buffer.asUint8List(
-      frame.offsetInBytes,
-      frame.lengthInBytes,
-    );
+    return frame.buffer.asUint8List(frame.offsetInBytes, frame.lengthInBytes);
   }
 }

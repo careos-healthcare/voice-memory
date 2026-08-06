@@ -25,11 +25,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -69,18 +65,18 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 Future<void> _saveCorrection(
   List<JournalEntry> entries,
@@ -96,8 +92,9 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
@@ -107,42 +104,40 @@ ArchiveTimelineSpineResult _manualResult({
   List<ArchiveTimelineSpineRowId> rowIds = const [
     ArchiveTimelineSpineRowId.firstSeen,
   ],
-}) =>
-    ArchiveTimelineSpineResult(
-      shouldShow: true,
-      entryCount: 3,
-      source: 'test',
-      hasConfirmedRepeat: true,
-      hasCorrection: rowIds.contains(ArchiveTimelineSpineRowId.correctedByYou),
-      currentWeight: weight,
-      rows: rowIds
-          .map(
-            (id) => ArchiveTimelineSpineRow(
-              id: id,
-              label: ArchiveTimelineSpineCopy.labelFor(id),
-              detail: ArchiveTimelineSpineCopy.detailFor(id),
-            ),
-          )
-          .toList(),
-      title: ArchiveTimelineSpineCopy.title,
-      subtitle: ArchiveTimelineSpineCopy.subtitle,
-      explanation: ArchiveTimelineSpineCopy.explanation,
-      currentWeightLabel:
-          ArchiveTimelineSpineCopy.currentWeightLabelFor(weight),
-      footer: ArchiveTimelineSpineCopy.footer,
-      differentiationLine: ArchiveTimelineSpineCopy.differentiationLine,
-      proBridgeCopy: ArchiveTimelineSpineCopy.proBridgeCopy,
-      evidenceAnchors: const [],
-      hasSafeAnchor: false,
-      patternMatchQuality: PatternMatchQualityResult.hidden(
-        source: 'test',
-        entryCount: 3,
-      ),
-      proofConfidenceCalibration: ProofConfidenceCalibrationResult.hidden(
-        source: 'test',
-        entryCount: 3,
-      ),
-    );
+}) => ArchiveTimelineSpineResult(
+  shouldShow: true,
+  entryCount: 3,
+  source: 'test',
+  hasConfirmedRepeat: true,
+  hasCorrection: rowIds.contains(ArchiveTimelineSpineRowId.correctedByYou),
+  currentWeight: weight,
+  rows: rowIds
+      .map(
+        (id) => ArchiveTimelineSpineRow(
+          id: id,
+          label: ArchiveTimelineSpineCopy.labelFor(id),
+          detail: ArchiveTimelineSpineCopy.detailFor(id),
+        ),
+      )
+      .toList(),
+  title: ArchiveTimelineSpineCopy.title,
+  subtitle: ArchiveTimelineSpineCopy.subtitle,
+  explanation: ArchiveTimelineSpineCopy.explanation,
+  currentWeightLabel: ArchiveTimelineSpineCopy.currentWeightLabelFor(weight),
+  footer: ArchiveTimelineSpineCopy.footer,
+  differentiationLine: ArchiveTimelineSpineCopy.differentiationLine,
+  proBridgeCopy: ArchiveTimelineSpineCopy.proBridgeCopy,
+  evidenceAnchors: const [],
+  hasSafeAnchor: false,
+  patternMatchQuality: PatternMatchQualityResult.hidden(
+    source: 'test',
+    entryCount: 3,
+  ),
+  proofConfidenceCalibration: ProofConfidenceCalibrationResult.hidden(
+    source: 'test',
+    entryCount: 3,
+  ),
+);
 
 ArchiveTimelineSpineResult _resultFor(
   List<JournalEntry> entries, {
@@ -159,10 +154,7 @@ ArchiveTimelineSpineResult _resultFor(
   return built!;
 }
 
-bool _hasRow(
-  ArchiveTimelineSpineResult result,
-  ArchiveTimelineSpineRowId id,
-) =>
+bool _hasRow(ArchiveTimelineSpineResult result, ArchiveTimelineSpineRowId id) =>
     result.rows.any((row) => row.id == id);
 
 void main() {
@@ -241,43 +233,40 @@ void main() {
 
     test('current weight strong for recent confirmed repeat', () {
       final result = _resultFor(_threeRelatedEntries());
-      expect(
-        result.currentWeight,
-        ArchiveTimelineSpineCurrentWeight.strong,
-      );
+      expect(result.currentWeight, ArchiveTimelineSpineCurrentWeight.strong);
     });
 
-    test('current weight light for belief surface without confirmed repeat', () {
-      final entries = [
-        _entry(
-          '1',
-          'Work felt heavy today and I stayed late again.',
-          createdAt: DateTime(2026, 6, 8, 12),
-        ),
-        _entry(
-          '2',
-          'Still thinking about work pressure and saying yes too often.',
-          createdAt: DateTime(2026, 6, 10, 12),
-        ),
-        _entry(
-          '3',
-          'Another long day at work with the same tired feeling.',
-          createdAt: DateTime(2026, 6, 11, 12),
-        ),
-      ];
-      final result = _resultFor(entries, beliefSurfaceVisible: true);
-      expect(result.currentWeight, ArchiveTimelineSpineCurrentWeight.light);
-    });
+    test(
+      'current weight light for belief surface without confirmed repeat',
+      () {
+        final entries = [
+          _entry(
+            '1',
+            'Work felt heavy today and I stayed late again.',
+            createdAt: DateTime(2026, 6, 8, 12),
+          ),
+          _entry(
+            '2',
+            'Still thinking about work pressure and saying yes too often.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          _entry(
+            '3',
+            'Another long day at work with the same tired feeling.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+        ];
+        final result = _resultFor(entries, beliefSurfaceVisible: true);
+        expect(result.currentWeight, ArchiveTimelineSpineCurrentWeight.light);
+      },
+    );
 
     test('current weight corrected when user corrected', () async {
       final entries = _threeRelatedEntries();
       await _saveCorrection(entries, CurrentRelevanceAnswer.yes);
 
       final result = _resultFor(entries);
-      expect(
-        result.currentWeight,
-        ArchiveTimelineSpineCurrentWeight.corrected,
-      );
+      expect(result.currentWeight, ArchiveTimelineSpineCurrentWeight.corrected);
     });
 
     test('current weight needs fresh proof for stale evidence', () {
@@ -389,7 +378,10 @@ void main() {
     testWidgets('renders first seen row', (tester) async {
       await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
-      expect(find.text(ArchiveTimelineSpineCopy.firstSeenLabel), findsOneWidget);
+      expect(
+        find.text(ArchiveTimelineSpineCopy.firstSeenLabel),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders returned row when confirmed repeat exists', (
@@ -413,10 +405,15 @@ void main() {
         ),
       );
 
-      expect(find.text(ArchiveTimelineSpineCopy.correctedLabel), findsOneWidget);
+      expect(
+        find.text(ArchiveTimelineSpineCopy.correctedLabel),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('renders weight changed row for softened signals', (tester) async {
+    testWidgets('renders weight changed row for softened signals', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         _manualResult(
@@ -545,14 +542,17 @@ void main() {
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, ArchiveTimelineSpineAnalytics.seenEvent);
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_correction',
-        'current_weight_state',
-        'row_count',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_correction',
+          'current_weight_state',
+          'row_count',
+        ]),
+      );
       for (final value in record.props.values) {
         final text = value.toString().toLowerCase();
         expect(text, isNot(contains('transcript')));
@@ -563,8 +563,9 @@ void main() {
 
   group('Archive timeline spine placement', () {
     test('patterns card sits below ArchiveBeliefSurfaceCard', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final beliefIndex = source.indexOf('ArchiveBeliefSurfaceCard(');
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');
       expect(beliefIndex, greaterThan(0));
@@ -572,8 +573,9 @@ void main() {
     });
 
     test('patterns suppresses legacy education cards when spine visible', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('suppressLegacyEducationCardsForSpine'));
       expect(source, contains('!suppressLegacyEducationCardsForSpine'));
       expect(source, contains('showCurrentRelevanceOnPatterns'));
@@ -590,8 +592,9 @@ void main() {
 
   group('Archive timeline spine copy guard', () {
     test('no therapy/diagnosis/treatment claims', () {
-      final blob =
-          ArchiveTimelineSpineCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ArchiveTimelineSpineCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));

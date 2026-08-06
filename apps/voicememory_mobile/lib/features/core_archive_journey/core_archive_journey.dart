@@ -11,18 +11,18 @@ enum CoreArchiveJourneyStep {
 
 extension CoreArchiveJourneyStepCopy on CoreArchiveJourneyStep {
   String get copy => switch (this) {
-        CoreArchiveJourneyStep.firstProof => CoreArchiveJourneyCopy.firstProof,
-        CoreArchiveJourneyStep.whyThisProofAppeared =>
-          CoreArchiveJourneyCopy.whyThisProofAppeared,
-        CoreArchiveJourneyStep.confirmOrCorrect =>
-          CoreArchiveJourneyCopy.confirmOrCorrect,
-        CoreArchiveJourneyStep.longerEvidenceTrail =>
-          CoreArchiveJourneyCopy.longerEvidenceTrail,
-        CoreArchiveJourneyStep.returnsChangesFadesCorrected =>
-          CoreArchiveJourneyCopy.returnsChangesFadesCorrected,
-        CoreArchiveJourneyStep.proKeepsTheTrail =>
-          CoreArchiveJourneyCopy.proKeepsTheTrail,
-      };
+    CoreArchiveJourneyStep.firstProof => CoreArchiveJourneyCopy.firstProof,
+    CoreArchiveJourneyStep.whyThisProofAppeared =>
+      CoreArchiveJourneyCopy.whyThisProofAppeared,
+    CoreArchiveJourneyStep.confirmOrCorrect =>
+      CoreArchiveJourneyCopy.confirmOrCorrect,
+    CoreArchiveJourneyStep.longerEvidenceTrail =>
+      CoreArchiveJourneyCopy.longerEvidenceTrail,
+    CoreArchiveJourneyStep.returnsChangesFadesCorrected =>
+      CoreArchiveJourneyCopy.returnsChangesFadesCorrected,
+    CoreArchiveJourneyStep.proKeepsTheTrail =>
+      CoreArchiveJourneyCopy.proKeepsTheTrail,
+  };
 }
 
 /// Central ArchiveMe product journey — archive over voice assistant.

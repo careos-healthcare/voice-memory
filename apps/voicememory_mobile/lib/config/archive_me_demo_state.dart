@@ -63,10 +63,12 @@ abstract class ArchiveMeDemoState {
     _debugSessionEnabled = false;
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void resetPersistedState() {
     debugForceEnabledForTest = false;
     _debugSessionEnabled = false;
     _reviewDemoUnlocked = false;
   }
+
+  @visibleForTesting
+  static void resetForTest() => resetPersistedState();
 }

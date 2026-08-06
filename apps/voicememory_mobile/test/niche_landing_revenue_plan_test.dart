@@ -12,27 +12,31 @@ NicheLandingRevenuePlanInput _input({
   bool? medicalTherapyClaimRequested,
   bool? landingPageMissingCorePromise,
   bool? landingPageMissingPaidPromise,
-}) =>
-    NicheLandingRevenuePlanInput(
-      appV1SurfaceRequested: appV1SurfaceRequested,
-      medicalTherapyClaimRequested: medicalTherapyClaimRequested,
-      landingPageMissingCorePromise: landingPageMissingCorePromise,
-      landingPageMissingPaidPromise: landingPageMissingPaidPromise,
-    );
+}) => NicheLandingRevenuePlanInput(
+  appV1SurfaceRequested: appV1SurfaceRequested,
+  medicalTherapyClaimRequested: medicalTherapyClaimRequested,
+  landingPageMissingCorePromise: landingPageMissingCorePromise,
+  landingPageMissingPaidPromise: landingPageMissingPaidPromise,
+);
 
 NicheLandingRevenueRule _rule(
   NicheLandingRevenuePlanResult result,
   NicheLandingRevenueRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('NicheLandingRevenuePlan.build', () {
     test('plan tracks six landing pages and four rules in order', () {
       final result = NicheLandingRevenuePlan.build(_input());
-      expect(result.landingPages.length, NicheLandingRevenuePlan.landingPageCount);
+      expect(
+        result.landingPages.length,
+        NicheLandingRevenuePlan.landingPageCount,
+      );
       expect(result.rules.length, NicheLandingRevenuePlan.ruleCount);
-      expect(result.landingPageOrder, NicheLandingRevenuePlan.canonicalLandingPageOrder);
+      expect(
+        result.landingPageOrder,
+        NicheLandingRevenuePlan.canonicalLandingPageOrder,
+      );
       expect(result.ruleOrder, NicheLandingRevenuePlan.canonicalRuleOrder);
     });
 
@@ -80,10 +84,7 @@ void main() {
         _input(medicalTherapyClaimRequested: true),
       );
       expect(
-        _rule(
-          result,
-          NicheLandingRevenueRuleId.noMedicalTherapyClaims,
-        ).status,
+        _rule(result, NicheLandingRevenueRuleId.noMedicalTherapyClaims).status,
         NicheLandingRevenueRuleStatus.fail,
       );
     });
@@ -106,10 +107,7 @@ void main() {
         _input(landingPageMissingPaidPromise: true),
       );
       expect(
-        _rule(
-          result,
-          NicheLandingRevenueRuleId.paidPromiseDocumented,
-        ).status,
+        _rule(result, NicheLandingRevenueRuleId.paidPromiseDocumented).status,
         NicheLandingRevenueRuleStatus.fail,
       );
     });
@@ -117,7 +115,11 @@ void main() {
     test('canonical rules pass for documented plan', () {
       final result = NicheLandingRevenuePlan.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, NicheLandingRevenueRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          NicheLandingRevenueRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -176,10 +178,7 @@ void main() {
     });
 
     test('detectDocListsRules matches docs', () {
-      expect(
-        NicheLandingRevenuePlan.detectDocListsRules(docsSource),
-        isTrue,
-      );
+      expect(NicheLandingRevenuePlan.detectDocListsRules(docsSource), isTrue);
     });
 
     test('detectGuardrailPresentInCopy matches copy', () {
@@ -240,7 +239,10 @@ void main() {
       expect(guardrail, contains('marketing/web acquisition pages only'));
       expect(guardrail, contains('not app v1 feature surfaces'));
       expect(guardrail, contains('avoid medical or wellness-treatment claims'));
-      expect(guardrail, contains('save one repeat. archiveme compares it later'));
+      expect(
+        guardrail,
+        contains('save one repeat. archiveme compares it later'),
+      );
       expect(guardrail, contains('pro keeps the longer proof trail'));
     });
 

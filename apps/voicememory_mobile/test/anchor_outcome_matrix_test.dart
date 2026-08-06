@@ -15,22 +15,19 @@ AnchorOutcomeSummary _summary({
   int understandsProCount = 6,
   int paywallCtaTapCount = 2,
   int wouldPayYesMaybeCount = 4,
-}) =>
-    AnchorOutcomeSummary(
-      totalTesters: totalTesters,
-      firstSessionSaveCount: firstSessionSaveCount,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      specificProofExampleRememberedCount: specificProofExampleRememberedCount,
-      sawProCount: sawProCount,
-      understandsProCount: understandsProCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-    );
+}) => AnchorOutcomeSummary(
+  totalTesters: totalTesters,
+  firstSessionSaveCount: firstSessionSaveCount,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  specificProofExampleRememberedCount: specificProofExampleRememberedCount,
+  sawProCount: sawProCount,
+  understandsProCount: understandsProCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+);
 
-AnchorOutcomeSummary _productionPassingSummary({
-  int totalTesters = 30,
-}) =>
+AnchorOutcomeSummary _productionPassingSummary({int totalTesters = 30}) =>
     _summary(
       totalTesters: totalTesters,
       usefulProofCount: totalTesters == 20 ? 5 : 7,
@@ -110,21 +107,18 @@ void main() {
       },
     );
 
-    test(
-      'all proof and value targets pass returns productionCandidate',
-      () {
-        expect(
-          AnchorOutcomeMatrix.resolve(_productionPassingSummary()),
-          AnchorOutcomeDecision.productionCandidate,
-        );
-        expect(
-          AnchorOutcomeMatrix.resolve(
-            _productionPassingSummary(totalTesters: 20),
-          ),
-          AnchorOutcomeDecision.productionCandidate,
-        );
-      },
-    );
+    test('all proof and value targets pass returns productionCandidate', () {
+      expect(
+        AnchorOutcomeMatrix.resolve(_productionPassingSummary()),
+        AnchorOutcomeDecision.productionCandidate,
+      );
+      expect(
+        AnchorOutcomeMatrix.resolve(
+          _productionPassingSummary(totalTesters: 20),
+        ),
+        AnchorOutcomeDecision.productionCandidate,
+      );
+    });
 
     test('vague high beats useful proof pro and value signals', () {
       expect(

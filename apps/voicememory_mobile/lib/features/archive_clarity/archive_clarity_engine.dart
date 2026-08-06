@@ -38,7 +38,9 @@ class ArchiveClarityEngine {
       primaryRoute: copy.route,
       isReviewReady: stage == ArchiveClarityStageId.reviewReady,
       isEmpty: count <= 0,
-      showOnArchiveHome: ArchiveClarityGates.showOnArchiveHome(sampleMode: false),
+      showOnArchiveHome: ArchiveClarityGates.showOnArchiveHome(
+        sampleMode: false,
+      ),
     );
   }
 

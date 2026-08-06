@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_tour.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
-import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
+import 'package:archiveme_research/screens/sample_archive_screen.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/demo/sample_archive_tour_card.dart';
@@ -72,15 +72,17 @@ void main() {
 
   group('Sample archive tour wiring', () {
     test('real Archive/Patterns does not include sample tour card', () {
-      final src =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, isNot(contains('SampleArchiveTourCard')));
       expect(src, isNot(contains('SampleArchiveTour')));
     });
 
     test('sample archive screen includes tour card', () {
-      final src =
-          File('lib/screens/sample_archive_screen.dart').readAsStringSync();
+      final src = File(
+        'packages/archiveme_research/lib/screens/sample_archive_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('SampleArchiveTourCard'));
     });
   });
@@ -91,10 +93,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SampleArchiveScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SampleArchiveScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -105,7 +104,9 @@ void main() {
       expect(find.text(SampleArchiveCopy.tourStep5Title), findsOneWidget);
     });
 
-    testWidgets('tour is clearly labelled as example data only', (tester) async {
+    testWidgets('tour is clearly labelled as example data only', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 900));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -113,15 +114,16 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: const Scaffold(
-            body: SingleChildScrollView(
-              child: SampleArchiveTourCard(),
-            ),
+            body: SingleChildScrollView(child: SampleArchiveTourCard()),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('sample_archive_tour_label')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_tour_label')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.tourLabel), findsOneWidget);
     });
 
@@ -133,9 +135,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: const Scaffold(
-            body: SingleChildScrollView(
-              child: SampleArchiveTourCard(),
-            ),
+            body: SingleChildScrollView(child: SampleArchiveTourCard()),
           ),
         ),
       );
@@ -150,7 +150,10 @@ void main() {
 
       expect(SampleArchiveTour.collapsedForSession, isTrue);
       expect(find.text(SampleArchiveCopy.tourStep1Title), findsNothing);
-      expect(find.byKey(const Key('sample_archive_tour_expand')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_tour_expand')),
+        findsOneWidget,
+      );
 
       final expand = find.byKey(const Key('sample_archive_tour_expand'));
       await tester.ensureVisible(expand);
@@ -169,9 +172,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: const Scaffold(
-            body: SingleChildScrollView(
-              child: SampleArchiveTourCard(),
-            ),
+            body: SingleChildScrollView(child: SampleArchiveTourCard()),
           ),
         ),
       );
@@ -183,7 +184,10 @@ void main() {
       await tester.pump();
 
       expect(SampleArchiveTour.dismissedForSession, isTrue);
-      expect(find.byKey(const Key('sample_archive_tour_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_tour_hidden')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -209,7 +213,10 @@ void main() {
         entries: SampleArchiveEntries.build(),
       );
       expect(proof.hasProof, isFalse);
-      expect(SampleArchiveMode.isSampleEntry(SampleArchiveEntries.build().first), isTrue);
+      expect(
+        SampleArchiveMode.isSampleEntry(SampleArchiveEntries.build().first),
+        isTrue,
+      );
     });
   });
 }

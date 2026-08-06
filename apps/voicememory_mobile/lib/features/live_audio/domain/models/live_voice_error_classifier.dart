@@ -1,9 +1,6 @@
 import 'live_voice_error_state.dart';
 
-LiveVoiceErrorState classifyLiveVoiceFailure(
-  String reason, {
-  Object? error,
-}) {
+LiveVoiceErrorState classifyLiveVoiceFailure(String reason, {Object? error}) {
   final text = '$reason ${error ?? ''}'.toLowerCase();
 
   if (text.contains('token') ||

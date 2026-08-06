@@ -23,17 +23,18 @@ class ShareCardActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!model.canShare) return const SizedBox.shrink();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('share_card_action_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7F8FA)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7F8FA),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -66,9 +67,9 @@ class ShareCardActionCard extends StatelessWidget {
           Text(
             ShareCardCopy.footer,
             key: const Key('share_card_action_footer'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           Align(

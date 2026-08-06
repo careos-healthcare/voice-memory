@@ -12,42 +12,39 @@ abstract final class LocalBackupAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void exported({
     required String source,
     required bool hasEntries,
     required int schemaVersion,
-  }) =>
-      _track(
-        exportedEvent,
-        source: source,
-        hasEntries: hasEntries,
-        schemaVersion: schemaVersion,
-      );
+  }) => _track(
+    exportedEvent,
+    source: source,
+    hasEntries: hasEntries,
+    schemaVersion: schemaVersion,
+  );
 
   static void restored({
     required String source,
     required bool hasEntries,
     required int schemaVersion,
-  }) =>
-      _track(
-        restoredEvent,
-        source: source,
-        hasEntries: hasEntries,
-        schemaVersion: schemaVersion,
-      );
+  }) => _track(
+    restoredEvent,
+    source: source,
+    hasEntries: hasEntries,
+    schemaVersion: schemaVersion,
+  );
 
   static void restoreFailed({
     required String source,
     required int schemaVersion,
-  }) =>
-      _track(
-        restoreFailedEvent,
-        source: source,
-        hasEntries: false,
-        schemaVersion: schemaVersion,
-      );
+  }) => _track(
+    restoreFailedEvent,
+    source: source,
+    hasEntries: false,
+    schemaVersion: schemaVersion,
+  );
 
   static void _track(
     String event, {

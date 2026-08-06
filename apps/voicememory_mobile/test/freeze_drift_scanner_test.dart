@@ -19,22 +19,18 @@ FreezeDriftScannerInput _input({
   required FreezeDriftCategory category,
   bool fixesFirstJourneyComprehension = false,
   bool fixesCriticalProofTrust = false,
-}) =>
-    FreezeDriftScannerInput(
-      freezeActive: freezeActive,
-      category: category,
-      fixesFirstJourneyComprehension: fixesFirstJourneyComprehension,
-      fixesCriticalProofTrust: fixesCriticalProofTrust,
-    );
+}) => FreezeDriftScannerInput(
+  freezeActive: freezeActive,
+  category: category,
+  fixesFirstJourneyComprehension: fixesFirstJourneyComprehension,
+  fixesCriticalProofTrust: fixesCriticalProofTrust,
+);
 
 void main() {
   group('FreezeDriftScanner.scan', () {
     test('freeze inactive -> freezeInactive', () {
       final result = FreezeDriftScanner.scan(
-        _input(
-          freezeActive: false,
-          category: FreezeDriftCategory.newDashboard,
-        ),
+        _input(freezeActive: false, category: FreezeDriftCategory.newDashboard),
       );
       expect(result.decision, FreezeDriftDecision.freezeInactive);
       expect(result.freezeAllowed, isTrue);
@@ -74,20 +70,23 @@ void main() {
       expect(allowed.decision, FreezeDriftDecision.allowed);
     });
 
-    test('anchor threshold allowed only with critical proof trust fix flag', () {
-      final blocked = FreezeDriftScanner.scan(
-        _input(category: FreezeDriftCategory.anchorThresholdChange),
-      );
-      expect(blocked.decision, FreezeDriftDecision.blocked);
+    test(
+      'anchor threshold allowed only with critical proof trust fix flag',
+      () {
+        final blocked = FreezeDriftScanner.scan(
+          _input(category: FreezeDriftCategory.anchorThresholdChange),
+        );
+        expect(blocked.decision, FreezeDriftDecision.blocked);
 
-      final allowed = FreezeDriftScanner.scan(
-        _input(
-          category: FreezeDriftCategory.anchorThresholdChange,
-          fixesCriticalProofTrust: true,
-        ),
-      );
-      expect(allowed.decision, FreezeDriftDecision.allowed);
-    });
+        final allowed = FreezeDriftScanner.scan(
+          _input(
+            category: FreezeDriftCategory.anchorThresholdChange,
+            fixesCriticalProofTrust: true,
+          ),
+        );
+        expect(allowed.decision, FreezeDriftDecision.allowed);
+      },
+    );
   });
 
   group('FreezeDriftScanner integration', () {
@@ -143,10 +142,7 @@ void main() {
       final freezeInput = FreezeDriftScanner.toFreezeInput(
         _input(category: FreezeDriftCategory.storagePositioning),
       );
-      expect(
-        freezeInput.changeType,
-        ReleaseCandidateChangeType.newProBenefit,
-      );
+      expect(freezeInput.changeType, ReleaseCandidateChangeType.newProBenefit);
     });
 
     test('categoryForChangeType round-trips risky categories', () {
@@ -325,7 +321,8 @@ void main() {
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

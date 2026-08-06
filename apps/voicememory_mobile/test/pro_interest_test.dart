@@ -49,23 +49,25 @@ const _forbiddenPurchaseCtas = [
 ];
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _entries(int count) => List.generate(count, (i) => _entry('e$i'));
+List<JournalEntry> _entries(int count) =>
+    List.generate(count, (i) => _entry('e$i'));
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -86,20 +88,23 @@ void main() {
   const outcomesEngine = BetaOutcomesEngine();
 
   group('Pro interest copy', () {
-    test('explains purchases are not available and free archive remains usable', () {
-      expect(
-        ProInterestCopy.allVisibleCopy(),
-        contains(ProInterestCopy.purchasesUnavailableNote),
-      );
-      expect(
-        ProInterestCopy.allVisibleCopy(),
-        contains(ProInterestCopy.interestOnlyNote),
-      );
-      expect(
-        ProInterestCopy.purchasesUnavailableNote,
-        contains('free archive flow remains usable'),
-      );
-    });
+    test(
+      'explains purchases are not available and free archive remains usable',
+      () {
+        expect(
+          ProInterestCopy.allVisibleCopy(),
+          contains(ProInterestCopy.purchasesUnavailableNote),
+        );
+        expect(
+          ProInterestCopy.allVisibleCopy(),
+          contains(ProInterestCopy.interestOnlyNote),
+        );
+        expect(
+          ProInterestCopy.purchasesUnavailableNote,
+          contains('free archive flow remains usable'),
+        );
+      },
+    );
 
     test('uses ArchiveMe branding and avoids banned language', () {
       _expectNoBannedCopy(ProInterestCopy.allVisibleCopy());
@@ -147,45 +152,59 @@ void main() {
       if (await tempDir.exists()) await tempDir.delete(recursive: true);
     });
 
-    test('persists one and multiple Pro values with pricing signal and note', () async {
-      await store.saveInterest(
-        selectedValueIds: [ProInterestValueId.longerArchiveHistory],
-        pricingIntentId: ProInterestPricingIntentId.lowMonthly,
-        note: 'More history would help',
-        sourceRoute: '/pro-preview',
-      );
-      var loaded = await store.load();
-      expect(loaded.selectedValueIds, [ProInterestValueId.longerArchiveHistory]);
-      expect(loaded.pricingIntentId, ProInterestPricingIntentId.lowMonthly);
-      expect(loaded.note, 'More history would help');
-
-      await store.saveInterest(
-        selectedValueIds: [
+    test(
+      'persists one and multiple Pro values with pricing signal and note',
+      () async {
+        await store.saveInterest(
+          selectedValueIds: [ProInterestValueId.longerArchiveHistory],
+          pricingIntentId: ProInterestPricingIntentId.lowMonthly,
+          note: 'More history would help',
+          sourceRoute: '/pro-preview',
+        );
+        var loaded = await store.load();
+        expect(loaded.selectedValueIds, [
           ProInterestValueId.longerArchiveHistory,
-          ProInterestValueId.richerReviews,
-        ],
-        pricingIntentId: ProInterestPricingIntentId.yearly,
-        note: 'Updated note',
-        sourceRoute: '/pro-interest',
-      );
-      loaded = await store.load();
-      expect(loaded.selectedValueIds.length, 2);
-      expect(loaded.pricingIntentId, ProInterestPricingIntentId.yearly);
-    });
+        ]);
+        expect(loaded.pricingIntentId, ProInterestPricingIntentId.lowMonthly);
+        expect(loaded.note, 'More history would help');
 
-    test('does not write to JournalStore or include private entry text in prefs', () async {
-      await journalStore.save(_entry('j1', transcript: 'Private boss conversation'));
-      await store.saveInterest(
-        selectedValueIds: [ProInterestValueId.advancedExport],
-        pricingIntentId: ProInterestPricingIntentId.freeFirst,
-        note: 'Export packs matter',
-      );
-      final journalRaw = await File('${tempDir.path}/journal.json').readAsString();
-      final prefsRaw = await File('${tempDir.path}/prefs.json').readAsString();
-      expect(journalRaw, contains('Private boss conversation'));
-      expect(prefsRaw, isNot(contains('Private boss conversation')));
-      expect(prefsRaw, contains('archiveProInterestSignal'));
-    });
+        await store.saveInterest(
+          selectedValueIds: [
+            ProInterestValueId.longerArchiveHistory,
+            ProInterestValueId.richerReviews,
+          ],
+          pricingIntentId: ProInterestPricingIntentId.yearly,
+          note: 'Updated note',
+          sourceRoute: '/pro-interest',
+        );
+        loaded = await store.load();
+        expect(loaded.selectedValueIds.length, 2);
+        expect(loaded.pricingIntentId, ProInterestPricingIntentId.yearly);
+      },
+    );
+
+    test(
+      'does not write to JournalStore or include private entry text in prefs',
+      () async {
+        await journalStore.save(
+          _entry('j1', transcript: 'Private boss conversation'),
+        );
+        await store.saveInterest(
+          selectedValueIds: [ProInterestValueId.advancedExport],
+          pricingIntentId: ProInterestPricingIntentId.freeFirst,
+          note: 'Export packs matter',
+        );
+        final journalRaw = await File(
+          '${tempDir.path}/journal.json',
+        ).readAsString();
+        final prefsRaw = await File(
+          '${tempDir.path}/prefs.json',
+        ).readAsString();
+        expect(journalRaw, contains('Private boss conversation'));
+        expect(prefsRaw, isNot(contains('Private boss conversation')));
+        expect(prefsRaw, contains('archiveProInterestSignal'));
+      },
+    );
   });
 
   group('Pro interest safe summary', () {
@@ -328,10 +347,12 @@ void main() {
 
     test('route is sensitive and linked from Pro Preview and Support', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
-      final preview =
-          File('lib/screens/pro_value_preview_screen.dart').readAsStringSync();
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final preview = File(
+        'packages/archiveme_research/lib/screens/pro_value_preview_screen.dart',
+      ).readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(router, contains("path: '/pro-interest'"));
       expect(SensitiveRoutes.isSensitiveRoute('/pro-interest'), isTrue);
       expect(preview, contains("context.push('/pro-interest')"));
@@ -346,7 +367,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('support_feedback_pro_interest_row')), findsOneWidget);
+      expect(
+        find.byKey(const Key('support_feedback_pro_interest_row')),
+        findsOneWidget,
+      );
       expect(find.text(ProInterestCopy.supportTitle), findsOneWidget);
     });
 
@@ -363,7 +387,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('pro_interest_link_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pro_interest_link_card_hidden')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -378,8 +405,9 @@ void main() {
     });
 
     test('share-safe proof excludes Pro interest copy', () {
-      final proof = const ShareableArchiveProofEngine()
-          .buildFromJournal(entries: _entries(5));
+      final proof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: _entries(5),
+      );
       expect(proof.shareText, isNot(contains(ProInterestCopy.screenTitle)));
       expect(proof.shareText, isNot(contains('ArchiveMe Pro interest')));
     });

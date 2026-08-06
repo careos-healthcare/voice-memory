@@ -21,46 +21,41 @@ FirstProofFieldReadinessInput _input({
   bool? understoodWhatToSaveNext = true,
   bool proofThresholdStillThree = true,
   bool betaReadinessStillGuardsThree = true,
-}) =>
-    FirstProofFieldReadinessInput(
-      usableMomentCount: usableMomentCount,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      feedbackType: feedbackType,
-      truthAnswer: truthAnswer,
-      proofCorrected: proofCorrected,
-      understoodWhyAppeared: understoodWhyAppeared,
-      understoodWhatToSaveNext: understoodWhatToSaveNext,
-      proofThresholdStillThree: proofThresholdStillThree,
-      betaReadinessStillGuardsThree: betaReadinessStillGuardsThree,
-    );
+}) => FirstProofFieldReadinessInput(
+  usableMomentCount: usableMomentCount,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  feedbackType: feedbackType,
+  truthAnswer: truthAnswer,
+  proofCorrected: proofCorrected,
+  understoodWhyAppeared: understoodWhyAppeared,
+  understoodWhatToSaveNext: understoodWhatToSaveNext,
+  proofThresholdStillThree: proofThresholdStillThree,
+  betaReadinessStillGuardsThree: betaReadinessStillGuardsThree,
+);
 
 FirstProofFieldReadinessSignal _signal(
   FirstProofFieldReadinessResult result,
   FirstProofFieldReadinessSignalId id,
-) =>
-    result.signals.firstWhere((signal) => signal.id == id);
+) => result.signals.firstWhere((signal) => signal.id == id);
 
 void main() {
   group('FirstProofFieldReadiness.build', () {
     test('engine tracks ten canonical signals', () {
       final result = FirstProofFieldReadiness.build(_input());
       expect(result.signals.length, FirstProofFieldReadiness.signalCount);
-      expect(
-        result.signals.map((signal) => signal.id).toList(),
-        [
-          FirstProofFieldReadinessSignalId.userSavedThreeUsableMoments,
-          FirstProofFieldReadinessSignalId.strongProofAppeared,
-          FirstProofFieldReadinessSignalId.watchOnlyAppearedInstead,
-          FirstProofFieldReadinessSignalId.noSafeAnchor,
-          FirstProofFieldReadinessSignalId.proofAccepted,
-          FirstProofFieldReadinessSignalId.proofCorrected,
-          FirstProofFieldReadinessSignalId.proofTooVague,
-          FirstProofFieldReadinessSignalId.proofNotRelevant,
-          FirstProofFieldReadinessSignalId.userUnderstoodWhyAppeared,
-          FirstProofFieldReadinessSignalId.userUnderstoodWhatToSaveNext,
-        ],
-      );
+      expect(result.signals.map((signal) => signal.id).toList(), [
+        FirstProofFieldReadinessSignalId.userSavedThreeUsableMoments,
+        FirstProofFieldReadinessSignalId.strongProofAppeared,
+        FirstProofFieldReadinessSignalId.watchOnlyAppearedInstead,
+        FirstProofFieldReadinessSignalId.noSafeAnchor,
+        FirstProofFieldReadinessSignalId.proofAccepted,
+        FirstProofFieldReadinessSignalId.proofCorrected,
+        FirstProofFieldReadinessSignalId.proofTooVague,
+        FirstProofFieldReadinessSignalId.proofNotRelevant,
+        FirstProofFieldReadinessSignalId.userUnderstoodWhyAppeared,
+        FirstProofFieldReadinessSignalId.userUnderstoodWhatToSaveNext,
+      ]);
     });
 
     test('fewer than 3 usable moments -> insufficientCapture', () {
@@ -117,8 +112,10 @@ void main() {
         FirstProofFieldReadinessDecision.repairProofRelevance,
       );
       expect(
-        _signal(result, FirstProofFieldReadinessSignalId.proofNotRelevant)
-            .status,
+        _signal(
+          result,
+          FirstProofFieldReadinessSignalId.proofNotRelevant,
+        ).status,
         FirstProofFieldReadinessSignalStatus.concern,
       );
     });
@@ -139,8 +136,10 @@ void main() {
         FirstProofFieldReadinessSignalStatus.concern,
       );
       expect(
-        _signal(result, FirstProofFieldReadinessSignalId.strongProofAppeared)
-            .status,
+        _signal(
+          result,
+          FirstProofFieldReadinessSignalId.strongProofAppeared,
+        ).status,
         FirstProofFieldReadinessSignalStatus.concern,
       );
     });
@@ -157,10 +156,7 @@ void main() {
 
     test('did not understand why appeared -> repairWhyAppeared', () {
       final result = FirstProofFieldReadiness.build(
-        _input(
-          understoodWhatToSaveNext: true,
-          understoodWhyAppeared: false,
-        ),
+        _input(understoodWhatToSaveNext: true, understoodWhyAppeared: false),
       );
       expect(
         result.decision,
@@ -181,10 +177,7 @@ void main() {
 
     test('truth yes counts as proof accepted', () {
       final result = FirstProofFieldReadiness.build(
-        _input(
-          feedbackType: null,
-          truthAnswer: FirstProofTruthAnswer.yes,
-        ),
+        _input(feedbackType: null, truthAnswer: FirstProofTruthAnswer.yes),
       );
       expect(
         _signal(result, FirstProofFieldReadinessSignalId.proofAccepted).status,

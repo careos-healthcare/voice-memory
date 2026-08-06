@@ -45,9 +45,7 @@ abstract final class MomentQualityFeedbackGates {
 abstract final class MomentQualityFeedbackEngine {
   MomentQualityFeedbackEngine._();
 
-  static MomentQualityFeedbackResult? build({
-    required JournalEntry entry,
-  }) {
+  static MomentQualityFeedbackResult? build({required JournalEntry entry}) {
     if (RecordCaptureModeEngine.entryIsQuietDay(entry)) {
       return const MomentQualityFeedbackResult(
         kind: MomentQualityFeedbackKind.quietDay,

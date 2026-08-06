@@ -8,12 +8,12 @@ enum BetaTesterReportSectionId {
 
 extension BetaTesterReportSectionIdStorage on BetaTesterReportSectionId {
   String get analyticsValue => switch (this) {
-        BetaTesterReportSectionId.whatReturned => 'what_returned',
-        BetaTesterReportSectionId.whatChanged => 'what_changed',
-        BetaTesterReportSectionId.whatFaded => 'what_faded',
-        BetaTesterReportSectionId.whatYouCorrected => 'what_you_corrected',
-        BetaTesterReportSectionId.stillUnsure => 'still_unsure',
-      };
+    BetaTesterReportSectionId.whatReturned => 'what_returned',
+    BetaTesterReportSectionId.whatChanged => 'what_changed',
+    BetaTesterReportSectionId.whatFaded => 'what_faded',
+    BetaTesterReportSectionId.whatYouCorrected => 'what_you_corrected',
+    BetaTesterReportSectionId.stillUnsure => 'still_unsure',
+  };
 }
 
 class BetaTesterReportSection {

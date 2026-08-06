@@ -39,23 +39,22 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctEntries(int count) {
   final transcripts = [
@@ -91,27 +90,41 @@ void main() {
       expect(plist, contains('<key>CFBundleDisplayName</key>'));
       expect(plist, contains('<string>ArchiveMe</string>'));
 
-      final pbxproj =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
-      expect(pbxproj, contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile;'));
+      final pbxproj = File(
+        'ios/Runner.xcodeproj/project.pbxproj',
+      ).readAsStringSync();
+      expect(
+        pbxproj,
+        contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile;'),
+      );
     });
 
     test('pubspec build number is ready for next App Store upload', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      final match = RegExp(r'^version:\s*(\d+\.\d+\.\d+)\+(\d+)', multiLine: true)
-          .firstMatch(pubspec);
+      final match = RegExp(
+        r'^version:\s*(\d+\.\d+\.\d+)\+(\d+)',
+        multiLine: true,
+      ).firstMatch(pubspec);
       expect(match, isNotNull, reason: 'pubspec version line missing');
       final build = int.parse(match!.group(2)!);
       expect(build, greaterThanOrEqualTo(_minReleaseCandidateBuild));
     });
 
     test('Type instead label is canonical across capture surfaces', () {
-      expect(EmptyArchiveCopy.typeInsteadCta, VisibleArchiveProofCopy.typeInsteadCta);
-      expect(MicrophonePermissionCopy.typeInsteadCta, VisibleArchiveProofCopy.typeInsteadCta);
+      expect(
+        EmptyArchiveCopy.typeInsteadCta,
+        VisibleArchiveProofCopy.typeInsteadCta,
+      );
+      expect(
+        MicrophonePermissionCopy.typeInsteadCta,
+        VisibleArchiveProofCopy.typeInsteadCta,
+      );
       expect(VisibleArchiveProofCopy.typeInsteadCta, 'Type instead');
     });
 
-    testWidgets('typed capture path remains available on Record', (tester) async {
+    testWidgets('typed capture path remains available on Record', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -139,7 +152,10 @@ void main() {
       await tester.pump();
 
       expect(find.text(PrivacyDataControlsCopy.sectionTitle), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_stays_on_device_tile')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_data_stays_on_device_tile')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('clear local archive requires confirmation', (tester) async {
@@ -159,8 +175,14 @@ void main() {
       await tester.tap(find.text('clear'));
       await tester.pump();
 
-      expect(find.byKey(const Key('clear_local_archive_cancel')), findsOneWidget);
-      expect(find.byKey(const Key('clear_local_archive_confirm')), findsOneWidget);
+      expect(
+        find.byKey(const Key('clear_local_archive_cancel')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('clear_local_archive_confirm')),
+        findsOneWidget,
+      );
     });
 
     test('share-safe proof excludes private archive data', () {
@@ -195,30 +217,40 @@ void main() {
       expect(shareText, isNot(contains('map')));
       expect(shareText, isNot(contains('hurry')));
       expect(shareText, contains('no private entries shared.'));
-      expect(ArchiveShareText.includesBannedConsumerCopy(proof.shareText), isFalse);
+      expect(
+        ArchiveShareText.includesBannedConsumerCopy(proof.shareText),
+        isFalse,
+      );
     });
 
-    test('sensitive routes include insight quality and evidence map drilldowns', () {
-      expect(SensitiveRoutes.isSensitiveRoute('/insight-quality'), isTrue);
-      expect(
-        SensitiveRoutes.isSensitiveRoute(
-          ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),
-        ),
-        isTrue,
-      );
-      expect(
-        SensitiveRoutes.isSensitiveRoute(
-          ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
-        ),
-        isTrue,
-      );
-      expect(SensitiveRoutes.isSensitiveRoute('/about'), isFalse);
-      expect(InsightQualityNavigation.route, '/insight-quality');
-    });
+    test(
+      'sensitive routes include insight quality and evidence map drilldowns',
+      () {
+        expect(SensitiveRoutes.isSensitiveRoute('/insight-quality'), isTrue);
+        expect(
+          SensitiveRoutes.isSensitiveRoute(
+            ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),
+          ),
+          isTrue,
+        );
+        expect(
+          SensitiveRoutes.isSensitiveRoute(
+            ArchiveEvidenceMapNavigation.contextPath(
+              ArchiveEvidenceMapRowIds.untagged,
+            ),
+          ),
+          isTrue,
+        );
+        expect(SensitiveRoutes.isSensitiveRoute('/about'), isFalse);
+        expect(InsightQualityNavigation.route, '/insight-quality');
+      },
+    );
 
     test('0/1/2/3/5+ archive states stay calm and gated', () {
       for (final count in [0, 1, 2, 3, 5]) {
-        final entries = count == 0 ? const <JournalEntry>[] : _distinctEntries(count);
+        final entries = count == 0
+            ? const <JournalEntry>[]
+            : _distinctEntries(count);
         final home = ArchiveHomeSummaryEngine.build(entries: entries);
         final beliefHistory = count >= 5
             ? BeliefHistoryTimelineEngine.build(entries: entries)
@@ -229,7 +261,9 @@ void main() {
         final layout = ArchiveWorkspaceLayoutEngine.build(
           entries: entries,
           archiveHome: home,
-          attentionFilters: EvidenceAttentionFiltersEngine.build(entries: entries),
+          attentionFilters: EvidenceAttentionFiltersEngine.build(
+            entries: entries,
+          ),
           actionPlan: ArchiveHealthActionPlanEngine.build(entries: entries),
           archiveHealth: ArchiveHealthScoreEngine.build(entries: entries),
           contextInsights: ContextInsightsEngine.build(entries: entries),
@@ -254,7 +288,10 @@ void main() {
         }
         if (count == 3) {
           expect(layout.evidenceQuality.show, isTrue);
-          expect(home.body.toLowerCase(), contains('saved words suggest so far'));
+          expect(
+            home.body.toLowerCase(),
+            contains('saved words suggest so far'),
+          );
         }
         expect(home.title.toLowerCase(), isNot(contains('voicememory')));
       }
@@ -290,7 +327,9 @@ void main() {
         contains('not available'),
       );
 
-      final settings = File('lib/screens/settings_screen.dart').readAsStringSync();
+      final settings = File(
+        'lib/screens/settings_screen.dart',
+      ).readAsStringSync();
       expect(settings, contains('isConfigured'));
       expect(settings, contains('SubscriptionCopy.temporarilyUnavailable'));
     });

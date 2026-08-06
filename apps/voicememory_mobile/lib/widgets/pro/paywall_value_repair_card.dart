@@ -40,10 +40,9 @@ class _PaywallValueRepairCardState extends State<PaywallValueRepairCard> {
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('paywall_value_repair_card'),
@@ -71,7 +70,10 @@ class _PaywallValueRepairCardState extends State<PaywallValueRepairCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('• ', style: bodyStyle.copyWith(color: AppColors.textPrimary)),
+                  Text(
+                    '• ',
+                    style: bodyStyle.copyWith(color: AppColors.textPrimary),
+                  ),
                   Expanded(
                     child: Text(
                       bullet,

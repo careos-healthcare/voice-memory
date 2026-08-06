@@ -6,14 +6,11 @@ import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_decision_outcome_store.dart';
-import 'capacity_decision_outcome_store.dart';
 import 'capacity_loop_engine.dart';
 
 /// Builds later-cost check-in visibility and pending targets — local only.
 class CapacityCostEngine {
-  const CapacityCostEngine({
-    this.loopEngine = const CapacityLoopEngine(),
-  });
+  const CapacityCostEngine({this.loopEngine = const CapacityLoopEngine()});
 
   final CapacityLoopEngine loopEngine;
 
@@ -37,10 +34,11 @@ class CapacityCostEngine {
 
     return CapacityCostCheckinResult(
       hasCard: true,
-      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
-        capacityWedgeActive: input.capacityWedgeActive,
-        capacityMomentCount: input.capacityMomentCount,
-      ),
+      showOnArchiveHome:
+          CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+            capacityWedgeActive: input.capacityWedgeActive,
+            capacityMomentCount: input.capacityMomentCount,
+          ),
       title: CapacityCostCopy.cardTitle,
       body: CapacityCostCopy.cardBody,
       helperText: CapacityCostCopy.cardHelper,

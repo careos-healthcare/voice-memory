@@ -91,7 +91,9 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byKey(const Key('live_voice_error_retry_button')));
+        await tester.tap(
+          find.byKey(const Key('live_voice_error_retry_button')),
+        );
         await tester.pump();
 
         expect(retryCalled, isTrue);
@@ -133,9 +135,7 @@ void main() {
         final service = _FakeLiveVoiceService();
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: _LiveVoiceErrorBoundaryHost(service: service),
-          ),
+          MaterialApp(home: _LiveVoiceErrorBoundaryHost(service: service)),
         );
 
         expect(find.text('Active Canvas Content'), findsOneWidget);
@@ -157,15 +157,15 @@ void main() {
         );
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: _LiveVoiceErrorBoundaryHost(service: service),
-          ),
+          MaterialApp(home: _LiveVoiceErrorBoundaryHost(service: service)),
         );
         await tester.pumpAndSettle();
 
         expect(find.byType(BackdropFilter), findsOneWidget);
 
-        await tester.tap(find.byKey(const Key('live_voice_error_retry_button')));
+        await tester.tap(
+          find.byKey(const Key('live_voice_error_retry_button')),
+        );
         await tester.pumpAndSettle();
 
         expect(service.retryCalled, isTrue);
@@ -174,26 +174,23 @@ void main() {
       },
     );
 
-    testWidgets(
-      'Service-to-overlay loop: exit calls terminate handler hook',
-      (tester) async {
-        final service = _FakeLiveVoiceService(
-          initialErrorState: LiveVoiceErrorState.hardwareFailure,
-        );
+    testWidgets('Service-to-overlay loop: exit calls terminate handler hook', (
+      tester,
+    ) async {
+      final service = _FakeLiveVoiceService(
+        initialErrorState: LiveVoiceErrorState.hardwareFailure,
+      );
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: _LiveVoiceErrorBoundaryHost(service: service),
-          ),
-        );
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        MaterialApp(home: _LiveVoiceErrorBoundaryHost(service: service)),
+      );
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.byKey(const Key('live_voice_error_exit_button')));
-        await tester.pump();
+      await tester.tap(find.byKey(const Key('live_voice_error_exit_button')));
+      await tester.pump();
 
-        expect(service.terminateCalled, isTrue);
-      },
-    );
+      expect(service.terminateCalled, isTrue);
+    });
   });
 }
 

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/signal_journey/signal_journey_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/signal_journey_screen.dart';
+import 'package:archiveme_research/screens/signal_journey_screen.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_journey_card.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_journey_completion_card.dart';
 

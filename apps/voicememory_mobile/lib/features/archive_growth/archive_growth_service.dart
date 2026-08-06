@@ -1,4 +1,3 @@
-import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';
 import '../archive_evidence/archive_evidence.dart';
 import '../archive_v1/archive_v1_builder.dart';
@@ -25,8 +24,7 @@ class ArchiveGrowthSnapshot {
 
 /// Loads growth-loop views from journal + existing V1 engines.
 class ArchiveGrowthService {
-  ArchiveGrowthService({required ArchiveJourneyStore journeyStore})
-    : _journeyStore = journeyStore;
+  ArchiveGrowthService({required this._journeyStore});
 
   final ArchiveJourneyStore _journeyStore;
 

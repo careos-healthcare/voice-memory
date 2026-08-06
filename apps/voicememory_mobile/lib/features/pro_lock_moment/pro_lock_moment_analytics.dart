@@ -13,7 +13,7 @@ abstract final class ProLockMomentAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -75,7 +75,7 @@ abstract final class ProLockMomentAnalytics {
       'entry_count': entryCount,
       'has_first_proof': hasFirstProof ? 1 : 0,
       'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
-      if (actionType != null) 'action_type': actionType,
+      'action_type': ?actionType,
     };
 
     captureForTest?.call(event, props);

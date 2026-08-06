@@ -21,73 +21,72 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'Same yes pattern came back but I paused before replying this time.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'Same yes pattern came back but I paused before replying this time.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fiveWithSofterReturn() => [
-      ..._fourRelatedRepeatEntries(),
-      _entry(
-        id: 'e5',
-        transcript:
-            'Same yes pattern came back but it felt less urgent and easier to stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._fourRelatedRepeatEntries(),
+  _entry(
+    id: 'e5',
+    transcript:
+        'Same yes pattern came back but it felt less urgent and easier to stop.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 void main() {
   group('ArchiveChangeTimelineEngine', () {
@@ -121,10 +120,12 @@ void main() {
       expect(labels, contains(ArchiveChangeTimelineCopy.lookedSofterLabel));
       expect(labels.last, ArchiveChangeTimelineCopy.stillWatchingLabel);
       for (var i = 1; i < labels.length; i++) {
-        final currentIndex = ArchiveChangeTimeline.expectedLabelOrder
-            .indexOf(labels[i]);
-        final priorIndex =
-            ArchiveChangeTimeline.expectedLabelOrder.indexOf(labels[i - 1]);
+        final currentIndex = ArchiveChangeTimeline.expectedLabelOrder.indexOf(
+          labels[i],
+        );
+        final priorIndex = ArchiveChangeTimeline.expectedLabelOrder.indexOf(
+          labels[i - 1],
+        );
         expect(currentIndex, greaterThan(priorIndex));
       }
     });
@@ -135,21 +136,15 @@ void main() {
         viewingConfirmedRepeatOrTimeline: true,
       );
       expect(timeline, isNotNull);
-      expect(
-        timeline!.items.map((item) => item.kind).take(2).toList(),
-        [
-          ArchiveChangeTimelineItemKind.firstSeen,
-          ArchiveChangeTimelineItemKind.repeated,
-        ],
-      );
+      expect(timeline!.items.map((item) => item.kind).take(2).toList(), [
+        ArchiveChangeTimelineItemKind.firstSeen,
+        ArchiveChangeTimelineItemKind.repeated,
+      ]);
       expect(
         timeline.items.first.body,
         ArchiveChangeTimelineCopy.firstSeenBody,
       );
-      expect(
-        timeline.items[1].body,
-        ArchiveChangeTimelineCopy.repeatedBody,
-      );
+      expect(timeline.items[1].body, ArchiveChangeTimelineCopy.repeatedBody);
     });
 
     test('softer item appears when return-check evidence exists', () {
@@ -233,8 +228,14 @@ void main() {
         (item) => item.kind == ArchiveChangeTimelineItemKind.changedThisTime,
       );
       if (changed.isNotEmpty) {
-        expect(changed.first.label, ArchiveChangeTimelineCopy.changedThisTimeLabel);
-        expect(changed.first.body, ArchiveChangeTimelineCopy.changedThisTimeBody);
+        expect(
+          changed.first.label,
+          ArchiveChangeTimelineCopy.changedThisTimeLabel,
+        );
+        expect(
+          changed.first.body,
+          ArchiveChangeTimelineCopy.changedThisTimeBody,
+        );
         expect(changed.first.body, isNot(PatternChangedCopy.bodyFallback));
       }
     });
@@ -254,9 +255,13 @@ void main() {
       );
       expect(timeline, isNotNull);
       final helpful = timeline!.items.firstWhere(
-        (item) => item.kind == ArchiveChangeTimelineItemKind.helpfulActionAppeared,
+        (item) =>
+            item.kind == ArchiveChangeTimelineItemKind.helpfulActionAppeared,
       );
-      expect(helpful.label, ArchiveChangeTimelineCopy.helpfulActionAppearedLabel);
+      expect(
+        helpful.label,
+        ArchiveChangeTimelineCopy.helpfulActionAppearedLabel,
+      );
       expect(helpful.body, ArchiveChangeTimelineCopy.helpfulActionAppearedBody);
       expect(helpful.body, isNot(HelpfulActionAppearedCopy.bodyFallback));
     });
@@ -350,18 +355,21 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ArchiveChangeTimelineCard(
-              timeline: timeline!,
-              entryCount: 3,
-            ),
+            body: ArchiveChangeTimelineCard(timeline: timeline!, entryCount: 3),
           ),
         ),
       );
 
-      expect(find.byKey(const Key('archive_change_timeline_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_change_timeline_card')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveChangeTimelineCopy.title), findsOneWidget);
       expect(find.text(ArchiveChangeTimelineCopy.subtitle), findsOneWidget);
-      expect(find.byKey(const Key('archive_change_timeline_chain')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_change_timeline_chain')),
+        findsOneWidget,
+      );
       expect(
         find.text(ArchiveChangeTimelineCopy.stillWatchingLabel),
         findsOneWidget,
@@ -396,7 +404,9 @@ void main() {
       expect(joined, isNot(contains(HelpfulActionAppearedCopy.bodyFallback)));
       expect(
         joined,
-        isNot(contains(HelpfulActionAppearedCopy.bodyWithPhrase('walked outside'))),
+        isNot(
+          contains(HelpfulActionAppearedCopy.bodyWithPhrase('walked outside')),
+        ),
       );
       expect(joined, isNot(contains(ArchiveBeliefSurfaceCopy.headline)));
     });

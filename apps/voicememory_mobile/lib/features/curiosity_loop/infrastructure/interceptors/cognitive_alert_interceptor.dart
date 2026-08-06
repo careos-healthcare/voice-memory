@@ -2,7 +2,8 @@ import '../../../../models/journal_entry.dart';
 import '../../../journal/domain/interceptors/journal_save_interceptor.dart';
 import '../../services/clinical_cognitive_telemetry.dart';
 
-typedef ClinicalDriftWarningHandler = void Function(ClinicalDriftWarning warning);
+typedef ClinicalDriftWarningHandler =
+    void Function(ClinicalDriftWarning warning);
 
 /// Local warning payload for high clinical drift biomarkers.
 class ClinicalDriftWarning {
@@ -21,11 +22,9 @@ class ClinicalDriftWarning {
 class CognitiveAlertInterceptor implements JournalSaveInterceptor {
   CognitiveAlertInterceptor({
     ClinicalCognitiveTelemetry? telemetry,
-    ClinicalDriftWarningHandler? onWarning,
-    double threshold = 0.8,
-  })  : _telemetry = telemetry ?? const ClinicalCognitiveTelemetry(),
-        _onWarning = onWarning,
-        _threshold = threshold;
+    this._onWarning,
+    this._threshold = 0.8,
+  }) : _telemetry = telemetry ?? const ClinicalCognitiveTelemetry();
 
   static const emotionalVolatilityDriftType = 'emotional_volatility';
   static const cohesionDriftType = 'cohesion_drift';

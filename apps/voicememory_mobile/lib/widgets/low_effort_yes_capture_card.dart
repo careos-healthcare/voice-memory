@@ -31,9 +31,7 @@ class LowEffortYesCaptureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (sampleMode ||
-        ScreenshotMode.enabled ||
-        !result.showCard) {
+    if (sampleMode || ScreenshotMode.enabled || !result.showCard) {
       return const SizedBox.shrink(
         key: Key('low_effort_yes_capture_card_hidden'),
       );

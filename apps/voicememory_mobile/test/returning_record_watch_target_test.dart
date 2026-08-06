@@ -106,23 +106,35 @@ void main() {
       );
     });
 
-    test('beta record surfaces require beta mission and exclude app review', () {
-      ArchiveBetaMissionGate.enabledOverride = true;
-      ArchiveAppReviewAccessGate.enabledOverride = false;
-      addTearDown(() {
-        ArchiveBetaMissionGate.resetForTest();
-        ArchiveAppReviewAccessGate.resetForTest();
-      });
+    test(
+      'beta record surfaces require beta mission and exclude app review',
+      () {
+        ArchiveBetaMissionGate.enabledOverride = true;
+        ArchiveAppReviewAccessGate.enabledOverride = false;
+        addTearDown(() {
+          ArchiveBetaMissionGate.resetForTest();
+          ArchiveAppReviewAccessGate.resetForTest();
+        });
 
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isTrue);
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isTrue,
+        );
 
-      ArchiveBetaMissionGate.enabledOverride = false;
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
+        ArchiveBetaMissionGate.enabledOverride = false;
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isFalse,
+        );
 
-      ArchiveBetaMissionGate.enabledOverride = true;
-      ArchiveAppReviewAccessGate.enabledOverride = true;
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
-    });
+        ArchiveBetaMissionGate.enabledOverride = true;
+        ArchiveAppReviewAccessGate.enabledOverride = true;
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('DailyArchiveMemoryCard focused returning UI', () {
@@ -167,7 +179,10 @@ void main() {
       expect(find.text(DailyArchiveMemoryCopy.notTodayCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_title')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
-      expect(find.text(RecordCaptureModeCopy.somethingHappenedLabel), findsNothing);
+      expect(
+        find.text(RecordCaptureModeCopy.somethingHappenedLabel),
+        findsNothing,
+      );
       expect(find.text('Log pressure moment'), findsNothing);
 
       await tester.tap(find.text('Record what happened'));

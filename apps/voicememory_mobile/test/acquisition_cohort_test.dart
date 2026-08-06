@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/features/trial/trial_summary_engine.dart';
 import 'package:voicememory_mobile/features/trial/trial_summary_exporter.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
 import 'package:voicememory_mobile/router/app_router.dart';
-import 'package:voicememory_mobile/screens/loop_start_screen.dart';
+import 'package:archiveme_research/screens/loop_start_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/loop_mode/loop_paywall_teaser_card.dart';
 

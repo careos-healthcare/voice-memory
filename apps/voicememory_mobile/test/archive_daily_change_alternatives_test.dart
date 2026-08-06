@@ -55,36 +55,35 @@ JournalEntry _capacityEntry(
   String id, {
   DateTime? createdAt,
   String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 15, 12),
-      transcript: transcript ??
-          'I said yes again with no capacity left even though I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 15, 12),
+  transcript:
+      transcript ??
+      'I said yes again with no capacity left even though I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityPullReasonRecord _pullReason(
   String entryId,
   List<String> reasonIds, {
   DateTime? updatedAt,
-}) =>
-    CapacityPullReasonRecord(
-      sourceEntryId: entryId,
-      reasonIds: reasonIds,
-      status: CapacityPullReasonStatus.answered,
-      createdAt: updatedAt ?? DateTime(2026, 6, 15, 12),
-      updatedAt: updatedAt ?? DateTime(2026, 6, 15, 12),
-    );
+}) => CapacityPullReasonRecord(
+  sourceEntryId: entryId,
+  reasonIds: reasonIds,
+  status: CapacityPullReasonStatus.answered,
+  createdAt: updatedAt ?? DateTime(2026, 6, 15, 12),
+  updatedAt: updatedAt ?? DateTime(2026, 6, 15, 12),
+);
 
 CapacityCostRecord _laterCostRecord(String entryId, {DateTime? updatedAt}) =>
     CapacityCostRecord(
@@ -98,14 +97,13 @@ CapacityCostRecord _laterCostRecord(String entryId, {DateTime? updatedAt}) =>
 CapacityDecisionOutcomeRecord _outcomeRecord(
   String entryId,
   String outcomeId,
-) =>
-    CapacityDecisionOutcomeRecord(
-      sourceEntryId: entryId,
-      outcomeId: outcomeId,
-      status: CapacityDecisionOutcomeStatus.answered,
-      createdAt: DateTime(2026, 6, 15, 12),
-      updatedAt: DateTime(2026, 6, 15, 12),
-    );
+) => CapacityDecisionOutcomeRecord(
+  sourceEntryId: entryId,
+  outcomeId: outcomeId,
+  status: CapacityDecisionOutcomeStatus.answered,
+  createdAt: DateTime(2026, 6, 15, 12),
+  updatedAt: DateTime(2026, 6, 15, 12),
+);
 
 CapacityActivationFitRecord _fitRecord(String responseId) =>
     CapacityActivationFitRecord(
@@ -195,11 +193,9 @@ void main() {
         state: ArchiveDailyChangeState.empty,
         pullReasonRecords: [
           _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
-          _pullReason(
-            'real_1',
-            [CapacityPullReasonIds.soundedUrgent],
-            updatedAt: DateTime(2026, 6, 16, 13),
-          ),
+          _pullReason('real_1', [
+            CapacityPullReasonIds.soundedUrgent,
+          ], updatedAt: DateTime(2026, 6, 16, 13)),
         ],
         costRecords: [_laterCostRecord('real_0')],
         outcomeRecords: const [],
@@ -211,46 +207,61 @@ void main() {
         result.responseType,
         ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
       );
-      expect(result.changeLine, ArchiveDailyChangeCopy.urgencyWithLaterCostLine);
+      expect(
+        result.changeLine,
+        ArchiveDailyChangeCopy.urgencyWithLaterCostLine,
+      );
       expect(result.changeLine, contains('later cost'));
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayBeforeReplying);
       expect(
-        result.alternativeNextMove,
-        ArchiveDailyChangeCopy.altUrgency,
+        result.alternativeLabel,
+        ArchiveDailyChangeCopy.labelDelayBeforeReplying,
       );
+      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altUrgency);
     });
 
-    test('repeated responsibility + said yes produces sharper combined copy', () {
-      final entries = [
-        _capacityEntry('real_0'),
-        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
-        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
-      ];
-      final result = engine.buildFromJournal(
-        entries: entries,
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        state: ArchiveDailyChangeState.empty,
-        pullReasonRecords: [
-          _pullReason('real_0', [CapacityPullReasonIds.feltResponsible]),
-          _pullReason('real_1', [CapacityPullReasonIds.feltResponsible]),
-        ],
-        costRecords: const [],
-        outcomeRecords: [
-          _outcomeRecord('real_0', CapacityDecisionOutcomeIds.saidYes),
-        ],
-        boundarySelection: null,
-        weeklyReviewAvailable: false,
-      );
+    test(
+      'repeated responsibility + said yes produces sharper combined copy',
+      () {
+        final entries = [
+          _capacityEntry('real_0'),
+          _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+          _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
+        ];
+        final result = engine.buildFromJournal(
+          entries: entries,
+          capacityLoopActive: true,
+          capacityCohortActive: false,
+          state: ArchiveDailyChangeState.empty,
+          pullReasonRecords: [
+            _pullReason('real_0', [CapacityPullReasonIds.feltResponsible]),
+            _pullReason('real_1', [CapacityPullReasonIds.feltResponsible]),
+          ],
+          costRecords: const [],
+          outcomeRecords: [
+            _outcomeRecord('real_0', CapacityDecisionOutcomeIds.saidYes),
+          ],
+          boundarySelection: null,
+          weeklyReviewAvailable: false,
+        );
 
-      expect(
-        result.responseType,
-        ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
-      );
-      expect(result.changeLine, ArchiveDailyChangeCopy.responsibilityWithSaidYesLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelCheckCapacityBeforeAnswering);
-      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altResponsibility);
-    });
+        expect(
+          result.responseType,
+          ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
+        );
+        expect(
+          result.changeLine,
+          ArchiveDailyChangeCopy.responsibilityWithSaidYesLine,
+        );
+        expect(
+          result.alternativeLabel,
+          ArchiveDailyChangeCopy.labelCheckCapacityBeforeAnswering,
+        );
+        expect(
+          result.alternativeNextMove,
+          ArchiveDailyChangeCopy.altResponsibility,
+        );
+      },
+    );
 
     test('delayed/no outcome produces pattern changed copy', () {
       final entries = [
@@ -279,7 +290,10 @@ void main() {
         ArchiveDailyChangeResponseType.patternInterrupted,
       );
       expect(result.changeLine, ArchiveDailyChangeCopy.patternInterruptedLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayBeforeReplying);
+      expect(
+        result.alternativeLabel,
+        ArchiveDailyChangeCopy.labelDelayBeforeReplying,
+      );
       expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altUrgency);
     });
 
@@ -296,42 +310,62 @@ void main() {
         weeklyReviewAvailable: false,
       );
 
-      expect(result.responseType, ArchiveDailyChangeResponseType.waitingForNextMoment);
-      expect(result.changeLine, ArchiveDailyChangeCopy.waitingForNextMomentLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelMarkPullFirst);
-    });
-
-    test('fit/partly response produces partly fitting copy when new moment added', () {
-      final entries = [
-        _capacityEntry('real_0'),
-        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
-      ];
-      final result = engine.build(
-        ArchiveDailyChangeInput(
-          sampleMode: false,
-          capacityWedgeActive: true,
-          realSavedMomentCount: 2,
-          capacityMomentCount: 2,
-          capacityEvidenceCount: 2,
-          mostCommonPullReasonId: CapacityPullReasonIds.soundedUrgent,
-          pullReasonRecordCount: 1,
-          state: ArchiveDailyChangeState.empty,
-          entries: entries,
-          pullReasonRecords: [
-            _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
-          ],
-          costRecords: const [],
-          outcomeRecords: const [],
-          boundarySelection: null,
-          activationFitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
-          weeklyReviewAvailable: false,
-        ),
+      expect(
+        result.responseType,
+        ArchiveDailyChangeResponseType.waitingForNextMoment,
       );
-
-      expect(result.responseType, ArchiveDailyChangeResponseType.fitPartlyNewMoment);
-      expect(result.changeLine, ArchiveDailyChangeCopy.fitPartlyNewMomentLine);
-      expect(result.alternativeLabel, isNotEmpty);
+      expect(
+        result.changeLine,
+        ArchiveDailyChangeCopy.waitingForNextMomentLine,
+      );
+      expect(
+        result.alternativeLabel,
+        ArchiveDailyChangeCopy.labelMarkPullFirst,
+      );
     });
+
+    test(
+      'fit/partly response produces partly fitting copy when new moment added',
+      () {
+        final entries = [
+          _capacityEntry('real_0'),
+          _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+        ];
+        final result = engine.build(
+          ArchiveDailyChangeInput(
+            sampleMode: false,
+            capacityWedgeActive: true,
+            realSavedMomentCount: 2,
+            capacityMomentCount: 2,
+            capacityEvidenceCount: 2,
+            mostCommonPullReasonId: CapacityPullReasonIds.soundedUrgent,
+            pullReasonRecordCount: 1,
+            state: ArchiveDailyChangeState.empty,
+            entries: entries,
+            pullReasonRecords: [
+              _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
+            ],
+            costRecords: const [],
+            outcomeRecords: const [],
+            boundarySelection: null,
+            activationFitRecord: _fitRecord(
+              CapacityActivationFitResponseIds.partly,
+            ),
+            weeklyReviewAvailable: false,
+          ),
+        );
+
+        expect(
+          result.responseType,
+          ArchiveDailyChangeResponseType.fitPartlyNewMoment,
+        );
+        expect(
+          result.changeLine,
+          ArchiveDailyChangeCopy.fitPartlyNewMomentLine,
+        );
+        expect(result.alternativeLabel, isNotEmpty);
+      },
+    );
 
     test('selected boundary response is preferred in alternative', () {
       final entries = [
@@ -387,7 +421,10 @@ void main() {
         weeklyReviewAvailable: false,
       );
 
-      expect(result.responseType, ArchiveDailyChangeResponseType.noPullReasonYet);
+      expect(
+        result.responseType,
+        ArchiveDailyChangeResponseType.noPullReasonYet,
+      );
       expect(result.changeLine, ArchiveDailyChangeCopy.noPullReasonLine);
       expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelMarkPull);
     });
@@ -406,7 +443,8 @@ void main() {
         showOnWeeklyReview: false,
         responseType: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
         title: ArchiveDailyChangeCopy.title,
-        changeLine: 'Urgency has appeared more than once, and at least one yes moment had a later cost.',
+        changeLine:
+            'Urgency has appeared more than once, and at least one yes moment had a later cost.',
         repeatedLine: 'What repeated: urgency.',
         alternativeLabel: ArchiveDailyChangeCopy.labelDelayAnswer,
         alternativeNextMove: ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
@@ -419,14 +457,15 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveDailyChangeCard(result: result),
-          ),
+          home: Scaffold(body: ArchiveDailyChangeCard(result: result)),
         ),
       );
 
       expect(find.text('Your archive changed today'), findsOneWidget);
-      expect(find.text(ArchiveDailyChangeCopy.labelDelayAnswer), findsOneWidget);
+      expect(
+        find.text(ArchiveDailyChangeCopy.labelDelayAnswer),
+        findsOneWidget,
+      );
       expect(
         find.text(ArchiveDailyChangeCopy.bodyDelayBeforeReplying),
         findsOneWidget,
@@ -454,9 +493,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveDailyChangeCard(result: result),
-          ),
+          home: Scaffold(body: ArchiveDailyChangeCard(result: result)),
         ),
       );
 
@@ -498,7 +535,10 @@ void main() {
       );
 
       expect(plan.primarySections.first, ArchiveHomeSectionId.archiveSummary);
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.archiveDailyChange));
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.archiveDailyChange),
+      );
       expect(plan.primarySections.length, lessThanOrEqualTo(4));
     });
   });

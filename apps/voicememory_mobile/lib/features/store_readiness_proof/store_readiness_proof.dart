@@ -40,30 +40,30 @@ abstract final class StoreReadinessProof {
     bool restoreNoCrashVerified = false,
     bool purchasesUnavailableFallbackVerified = false,
     bool proStateCanBeRead = false,
-  }) =>
-      StoreReadinessProofInput(
-        revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-        revenueCatConfigured:
-            revenueCatConfigured || checklist.revenueCatProductsVerified,
-        productsLoaded: productsLoaded || checklist.revenueCatProductsVerified,
-        proEntitlementConfigured:
-            proEntitlementConfigured || checklist.revenueCatProductsVerified,
-        purchaseFlowReachable:
-            purchaseFlowReachable || checklist.revenueCatProductsVerified,
-        restorePurchasesReachable:
-            restorePurchasesReachable || checklist.restorePurchasesVerified,
-        restoreNoCrashVerified:
-            restoreNoCrashVerified || checklist.restorePurchasesVerified,
-        purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
-        proStateCanBeRead: proStateCanBeRead || checklist.revenueCatProductsVerified,
-        supportUrlSet: checklist.appStoreSupportUrlReady,
-        privacyUrlSet: checklist.privacyPolicyReady,
-        appStoreMetadataReady: checklist.appStoreMetadataReady,
-        screenshotsReady: checklist.appStoreScreenshotsReady,
-        physicalDeviceSmokePassed: checklist.physicalDeviceSmokeTestPassed,
-        testFlightUploadReady: checklist.testFlightBuildUploaded,
-        secretsRotated: checklist.productionSecretsRotated,
-      );
+  }) => StoreReadinessProofInput(
+    revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+    revenueCatConfigured:
+        revenueCatConfigured || checklist.revenueCatProductsVerified,
+    productsLoaded: productsLoaded || checklist.revenueCatProductsVerified,
+    proEntitlementConfigured:
+        proEntitlementConfigured || checklist.revenueCatProductsVerified,
+    purchaseFlowReachable:
+        purchaseFlowReachable || checklist.revenueCatProductsVerified,
+    restorePurchasesReachable:
+        restorePurchasesReachable || checklist.restorePurchasesVerified,
+    restoreNoCrashVerified:
+        restoreNoCrashVerified || checklist.restorePurchasesVerified,
+    purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
+    proStateCanBeRead:
+        proStateCanBeRead || checklist.revenueCatProductsVerified,
+    supportUrlSet: checklist.appStoreSupportUrlReady,
+    privacyUrlSet: checklist.privacyPolicyReady,
+    appStoreMetadataReady: checklist.appStoreMetadataReady,
+    screenshotsReady: checklist.appStoreScreenshotsReady,
+    physicalDeviceSmokePassed: checklist.physicalDeviceSmokeTestPassed,
+    testFlightUploadReady: checklist.testFlightBuildUploaded,
+    secretsRotated: checklist.productionSecretsRotated,
+  );
 
   static StoreReadinessProofInput fromStoreReadinessAudit(
     StoreReadinessAudit audit, {
@@ -76,30 +76,29 @@ abstract final class StoreReadinessProof {
     bool restoreNoCrashVerified = false,
     bool purchasesUnavailableFallbackVerified = false,
     bool proStateCanBeRead = false,
-  }) =>
-      StoreReadinessProofInput(
-        revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-        revenueCatConfigured:
-            revenueCatConfigured || audit.revenueCatProductsVerified,
-        productsLoaded: productsLoaded || audit.revenueCatProductsVerified,
-        proEntitlementConfigured:
-            proEntitlementConfigured || audit.revenueCatProductsVerified,
-        purchaseFlowReachable:
-            purchaseFlowReachable || audit.revenueCatProductsVerified,
-        restorePurchasesReachable:
-            restorePurchasesReachable || audit.restorePurchasesVerified,
-        restoreNoCrashVerified:
-            restoreNoCrashVerified || audit.restorePurchasesVerified,
-        purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
-        proStateCanBeRead: proStateCanBeRead || audit.revenueCatProductsVerified,
-        supportUrlSet: audit.appStoreSupportUrlReady,
-        privacyUrlSet: audit.privacyPolicyReady,
-        appStoreMetadataReady: audit.appStoreMetadataReady,
-        screenshotsReady: audit.appStoreScreenshotsReady,
-        physicalDeviceSmokePassed: audit.physicalDeviceSmokeTestPassed,
-        testFlightUploadReady: audit.testFlightBuildUploaded,
-        secretsRotated: audit.productionSecretsRotated,
-      );
+  }) => StoreReadinessProofInput(
+    revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+    revenueCatConfigured:
+        revenueCatConfigured || audit.revenueCatProductsVerified,
+    productsLoaded: productsLoaded || audit.revenueCatProductsVerified,
+    proEntitlementConfigured:
+        proEntitlementConfigured || audit.revenueCatProductsVerified,
+    purchaseFlowReachable:
+        purchaseFlowReachable || audit.revenueCatProductsVerified,
+    restorePurchasesReachable:
+        restorePurchasesReachable || audit.restorePurchasesVerified,
+    restoreNoCrashVerified:
+        restoreNoCrashVerified || audit.restorePurchasesVerified,
+    purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
+    proStateCanBeRead: proStateCanBeRead || audit.revenueCatProductsVerified,
+    supportUrlSet: audit.appStoreSupportUrlReady,
+    privacyUrlSet: audit.privacyPolicyReady,
+    appStoreMetadataReady: audit.appStoreMetadataReady,
+    screenshotsReady: audit.appStoreScreenshotsReady,
+    physicalDeviceSmokePassed: audit.physicalDeviceSmokeTestPassed,
+    testFlightUploadReady: audit.testFlightBuildUploaded,
+    secretsRotated: audit.productionSecretsRotated,
+  );
 
   static StoreReadinessProofStatus submissionBlocker(
     StoreReadinessProofInput input,

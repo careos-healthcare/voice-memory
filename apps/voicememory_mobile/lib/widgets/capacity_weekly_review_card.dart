@@ -72,8 +72,8 @@ class CapacityWeeklyReviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('capacity_weekly_review_card_primary_button'),
-            onPressed: onPrimaryAction ??
-                () => context.push(result.primaryRoute),
+            onPressed:
+                onPrimaryAction ?? () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
           ),
         ],

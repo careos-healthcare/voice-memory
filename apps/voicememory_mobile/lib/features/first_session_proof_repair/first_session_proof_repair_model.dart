@@ -1,6 +1,5 @@
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
-import 'first_session_proof_repair_copy.dart';
 
 enum FirstSessionProofRepairChipId {
   keptCheckingAgain,
@@ -17,10 +16,7 @@ enum FirstSessionProofRepairFocusId {
 }
 
 class FirstSessionProofRepairChip {
-  const FirstSessionProofRepairChip({
-    required this.id,
-    required this.text,
-  });
+  const FirstSessionProofRepairChip({required this.id, required this.text});
 
   final FirstSessionProofRepairChipId id;
   final String text;

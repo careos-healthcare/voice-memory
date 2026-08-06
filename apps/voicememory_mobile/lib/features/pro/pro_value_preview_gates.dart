@@ -5,6 +5,5 @@ abstract final class ProValuePreviewGates {
   static bool showArchivePromo({
     required int entryCount,
     required bool dismissed,
-  }) =>
-      entryCount >= 3 && !dismissed;
+  }) => entryCount >= 3 && !dismissed;
 }

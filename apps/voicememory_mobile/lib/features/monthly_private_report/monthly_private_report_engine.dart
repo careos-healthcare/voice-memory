@@ -128,13 +128,15 @@ abstract final class MonthlyPrivateReportEngine {
       sections: sections,
       hasConfirmedRepeat: hasConfirmedRepeat,
       hasChangeSignal: sections.any(
-        (section) => section.type == MonthlyPrivateReportSectionType.whatChanged,
+        (section) =>
+            section.type == MonthlyPrivateReportSectionType.whatChanged,
       ),
       hasHelpedSignal: sections.any(
         (section) => section.type == MonthlyPrivateReportSectionType.whatHelped,
       ),
       hasQuietSignal: sections.any(
-        (section) => section.type == MonthlyPrivateReportSectionType.whatWentQuiet,
+        (section) =>
+            section.type == MonthlyPrivateReportSectionType.whatWentQuiet,
       ),
     );
   }
@@ -159,7 +161,8 @@ abstract final class MonthlyPrivateReportEngine {
     bool proLockMomentVisible = false,
     bool proEvidenceValueVisible = false,
   }) {
-    final resolvedPreview = preview ??
+    final resolvedPreview =
+        preview ??
         build(
           entries: entries,
           returnChecks: returnChecks,
@@ -172,8 +175,9 @@ abstract final class MonthlyPrivateReportEngine {
       entryCount: entryCount,
       isPro: isPro,
       dismissed: dismissed,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
       preview: resolvedPreview,
       isZeroEntryState: isZeroEntryState,
       isFirstRecordingState: isFirstRecordingState,
@@ -183,9 +187,9 @@ abstract final class MonthlyPrivateReportEngine {
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems:
           ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      ),
+            entries: entries,
+            returnChecks: returnChecks,
+          ),
       proLockMomentVisible: proLockMomentVisible,
       proEvidenceValueVisible: proEvidenceValueVisible,
     );

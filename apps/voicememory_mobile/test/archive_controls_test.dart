@@ -24,43 +24,42 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -96,10 +95,7 @@ void main() {
     test('wasUsedAsEvidence identifies evidence moments', () {
       final entries = _threeRelatedEntries();
       expect(
-        ArchiveControlEngine.wasUsedAsEvidence(
-          entryId: 'e1',
-          entries: entries,
-        ),
+        ArchiveControlEngine.wasUsedAsEvidence(entryId: 'e1', entries: entries),
         isTrue,
       );
       expect(
@@ -150,10 +146,7 @@ void main() {
         ),
         isNull,
       );
-      expect(
-        FirstProofPayoffEngine.build(entries: remaining),
-        isNull,
-      );
+      expect(FirstProofPayoffEngine.build(entries: remaining), isNull);
     });
   });
 
@@ -274,18 +267,21 @@ void main() {
       expect(find.text(ArchiveControlCopy.deleteMomentButton), findsWidgets);
     });
 
-    test('deleting evidence shows safe fallback copy via rebuild input', () async {
-      await seedEntries(_threeRelatedEntries());
-      await ArchiveControlEngine.deleteMoment(entryId: 'e3', source: 'test');
-      final remaining = await AppServices.instance.journal.loadAll();
-      expect(
-        PatternDetailBuildInput(
-          entries: remaining,
-          viewingConfirmedRepeatOrTimeline: true,
-        ).buildDetail(),
-        isNull,
-      );
-    });
+    test(
+      'deleting evidence shows safe fallback copy via rebuild input',
+      () async {
+        await seedEntries(_threeRelatedEntries());
+        await ArchiveControlEngine.deleteMoment(entryId: 'e3', source: 'test');
+        final remaining = await AppServices.instance.journal.loadAll();
+        expect(
+          PatternDetailBuildInput(
+            entries: remaining,
+            viewingConfirmedRepeatOrTimeline: true,
+          ).buildDetail(),
+          isNull,
+        );
+      },
+    );
   });
 
   group('ArchiveControlAnalytics', () {
@@ -332,7 +328,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

@@ -46,13 +46,12 @@ class MonthlyPrivateReportPreviewSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final display = MonthlyPrivateReportEngine.buildDisplay();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final sectionTitleStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 16,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final sectionTitleStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 16);
 
     return SafeArea(
       child: Padding(
@@ -100,25 +99,33 @@ class MonthlyPrivateReportPreviewSheet extends StatelessWidget {
               ],
               Text(
                 MonthlyPrivateReportCopy.basedOnSavedMoments,
-                key: const Key('monthly_private_report_preview_based_on_moments'),
+                key: const Key(
+                  'monthly_private_report_preview_based_on_moments',
+                ),
                 style: bodyStyle,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 display.proReason,
-                key: const Key('monthly_private_report_preview_sheet_pro_reason'),
+                key: const Key(
+                  'monthly_private_report_preview_sheet_pro_reason',
+                ),
                 style: bodyStyle,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 display.chatDifferentiation,
-                key: const Key('monthly_private_report_preview_sheet_chat_line'),
+                key: const Key(
+                  'monthly_private_report_preview_sheet_chat_line',
+                ),
                 style: bodyStyle,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 display.proValueLine,
-                key: const Key('monthly_private_report_preview_sheet_pro_value'),
+                key: const Key(
+                  'monthly_private_report_preview_sheet_pro_value',
+                ),
                 style: bodyStyle,
               ),
               const SizedBox(height: AppSpacing.md),

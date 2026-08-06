@@ -27,31 +27,31 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 List<JournalEntry> get _confirmedThreeEntries => [
-      _entry(
-        '1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 List<JournalEntry> get _fiveRelatedEntries => [
-      ..._confirmedThreeEntries,
-      _entry(
-        '4',
-        'I said yes again even though I had no capacity for one more ask today.',
-      ),
-      _entry(
-        '5',
-        'Same yes pattern came back but it felt less urgent and easier to stop.',
-      ),
-    ];
+  ..._confirmedThreeEntries,
+  _entry(
+    '4',
+    'I said yes again even though I had no capacity for one more ask today.',
+  ),
+  _entry(
+    '5',
+    'Same yes pattern came back but it felt less urgent and easier to stop.',
+  ),
+];
 
 void main() {
   group('PaywallTimingGates.showFullArchiveHistoryProBoundary', () {
@@ -222,38 +222,40 @@ void main() {
   });
 
   group('Full archive history integration gates', () {
-    test('confirmed repeat at three entries qualifies archive summary and boundary',
-        () {
-      final entries = _confirmedThreeEntries;
-      expect(
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
-        isTrue,
-      );
-      expect(
-        ArchiveSummaryGates.shouldShow(
-          loaded: true,
-          entryCount: 3,
-          isReady: true,
-          isRecording: false,
-          viewingConfirmedRepeatOrTimeline: true,
-          hasSummary: true,
-        ),
-        isTrue,
-      );
-      expect(
-        PaywallTimingGates.showPostProofProBridge(
-          entryCount: 3,
-          resolved: false,
-          isPro: false,
-          hasArchiveProof: true,
-          viewingConfirmedRepeatOrTimeline: true,
-          hasChangeOverTimeProof: false,
-          hasArchiveSummary: true,
-          hasWeeklyArchiveReview: false,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'confirmed repeat at three entries qualifies archive summary and boundary',
+      () {
+        final entries = _confirmedThreeEntries;
+        expect(
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+          isTrue,
+        );
+        expect(
+          ArchiveSummaryGates.shouldShow(
+            loaded: true,
+            entryCount: 3,
+            isReady: true,
+            isRecording: false,
+            viewingConfirmedRepeatOrTimeline: true,
+            hasSummary: true,
+          ),
+          isTrue,
+        );
+        expect(
+          PaywallTimingGates.showPostProofProBridge(
+            entryCount: 3,
+            resolved: false,
+            isPro: false,
+            hasArchiveProof: true,
+            viewingConfirmedRepeatOrTimeline: true,
+            hasChangeOverTimeProof: false,
+            hasArchiveSummary: true,
+            hasWeeklyArchiveReview: false,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('weekly review gate can qualify boundary at five entries', () {
       expect(

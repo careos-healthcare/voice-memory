@@ -9,10 +9,7 @@ import '../theme/voicememory_cards.dart';
 
 /// Subtle archive-home promo for Pro value — dismissible, 3+ entries only.
 class ProValuePreviewPromoCard extends StatelessWidget {
-  const ProValuePreviewPromoCard({
-    super.key,
-    required this.onDismiss,
-  });
+  const ProValuePreviewPromoCard({super.key, required this.onDismiss});
 
   final VoidCallback onDismiss;
 

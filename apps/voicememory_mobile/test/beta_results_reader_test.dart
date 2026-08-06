@@ -23,25 +23,24 @@ BetaResultsSummary _summary({
   int price299Count = 0,
   int price499Count = 0,
   int price799Count = 0,
-}) =>
-    BetaResultsSummary(
-      totalTesters: totalTesters,
-      firstSessionSaveCount: firstSessionSaveCount,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      sawProCount: sawProCount,
-      understandsProCount: understandsProCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-      evidenceTrailClearCount: evidenceTrailClearCount,
-      wouldNotPayMonthlyCount: wouldNotPayMonthlyCount,
-      moreProofOverTimeCount: moreProofOverTimeCount,
-      clearerTimelineCount: clearerTimelineCount,
-      lowerPriceCount: lowerPriceCount,
-      price299Count: price299Count,
-      price499Count: price499Count,
-      price799Count: price799Count,
-    );
+}) => BetaResultsSummary(
+  totalTesters: totalTesters,
+  firstSessionSaveCount: firstSessionSaveCount,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  sawProCount: sawProCount,
+  understandsProCount: understandsProCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+  evidenceTrailClearCount: evidenceTrailClearCount,
+  wouldNotPayMonthlyCount: wouldNotPayMonthlyCount,
+  moreProofOverTimeCount: moreProofOverTimeCount,
+  clearerTimelineCount: clearerTimelineCount,
+  lowerPriceCount: lowerPriceCount,
+  price299Count: price299Count,
+  price499Count: price499Count,
+  price799Count: price799Count,
+);
 
 BetaResultsSummary _productionPassingSummary({int totalTesters = 30}) =>
     _summary(
@@ -96,9 +95,7 @@ void main() {
 
     test('too vague or not relevant high returns protectProof', () {
       expect(
-        BetaResultsReader.resolve(
-          _summary(tooVagueOrNotRelevantCount: 7),
-        ),
+        BetaResultsReader.resolve(_summary(tooVagueOrNotRelevantCount: 7)),
         BetaResultsDecision.protectProof,
       );
     });
@@ -110,13 +107,15 @@ void main() {
       );
     });
 
-    test('evidence trail clear below target returns improveTimelineExplanation',
-        () {
-      expect(
-        BetaResultsReader.resolve(_summary(evidenceTrailClearCount: 3)),
-        BetaResultsDecision.improveTimelineExplanation,
-      );
-    });
+    test(
+      'evidence trail clear below target returns improveTimelineExplanation',
+      () {
+        expect(
+          BetaResultsReader.resolve(_summary(evidenceTrailClearCount: 3)),
+          BetaResultsDecision.improveTimelineExplanation,
+        );
+      },
+    );
 
     test('sawPro below target returns proTooHidden', () {
       expect(
@@ -139,10 +138,7 @@ void main() {
     test('clarity passes but wouldPay weak returns pricingValidation', () {
       expect(
         BetaResultsReader.resolve(
-          _summary(
-            wouldPayYesMaybeCount: 2,
-            evidenceTrailClearCount: 5,
-          ),
+          _summary(wouldPayYesMaybeCount: 2, evidenceTrailClearCount: 5),
         ),
         BetaResultsDecision.pricingValidation,
       );
@@ -208,10 +204,7 @@ void main() {
     test('first-session issue beats Pro issue', () {
       expect(
         BetaResultsReader.resolve(
-          _summary(
-            firstSessionSaveCount: 7,
-            sawProCount: 1,
-          ),
+          _summary(firstSessionSaveCount: 7, sawProCount: 1),
         ),
         BetaResultsDecision.improveFirstSession,
       );

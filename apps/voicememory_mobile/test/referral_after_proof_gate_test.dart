@@ -17,22 +17,20 @@ ReferralAfterProofGateInput _input({
   bool? referralPromptRequested,
   bool existingReferralRoutePresent = true,
   bool referralRouteGated = true,
-}) =>
-    ReferralAfterProofGateInput(
-      proofValueReached: proofValueReached,
-      usefulProofAccepted: usefulProofAccepted,
-      proPromiseUnderstood: proPromiseUnderstood,
-      withinFirstFiveMinutes: withinFirstFiveMinutes,
-      referralPromptRequested: referralPromptRequested,
-      existingReferralRoutePresent: existingReferralRoutePresent,
-      referralRouteGated: referralRouteGated,
-    );
+}) => ReferralAfterProofGateInput(
+  proofValueReached: proofValueReached,
+  usefulProofAccepted: usefulProofAccepted,
+  proPromiseUnderstood: proPromiseUnderstood,
+  withinFirstFiveMinutes: withinFirstFiveMinutes,
+  referralPromptRequested: referralPromptRequested,
+  existingReferralRoutePresent: existingReferralRoutePresent,
+  referralRouteGated: referralRouteGated,
+);
 
 ReferralAfterProofRule _rule(
   ReferralAfterProofGateResult result,
   ReferralAfterProofRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('ReferralAfterProofGate.build', () {
@@ -48,10 +46,7 @@ void main() {
 
     test('default input without proof value -> referralBlocked', () {
       final result = ReferralAfterProofGate.build(_input());
-      expect(
-        result.decision,
-        ReferralAfterProofGateDecision.referralBlocked,
-      );
+      expect(result.decision, ReferralAfterProofGateDecision.referralBlocked);
       expect(result.proofValueReached, isFalse);
       expect(result.privateContentSharingBlocked, isTrue);
       expect(result.paidPromiseBlocked, isTrue);
@@ -60,10 +55,7 @@ void main() {
 
     test('proof value reached -> referralAfterProofAllowed', () {
       final result = ReferralAfterProofGate.build(
-        _input(
-          proofValueReached: true,
-          usefulProofAccepted: true,
-        ),
+        _input(proofValueReached: true, usefulProofAccepted: true),
       );
       expect(
         result.decision,
@@ -75,10 +67,7 @@ void main() {
 
     test('pro promise understood unlocks referral after proof', () {
       final result = ReferralAfterProofGate.build(
-        _input(
-          proofValueReached: true,
-          proPromiseUnderstood: true,
-        ),
+        _input(proofValueReached: true, proPromiseUnderstood: true),
       );
       expect(
         result.decision,
@@ -88,10 +77,7 @@ void main() {
 
     test('referral prompt before proof value fails onlyAfterProofValue', () {
       final result = ReferralAfterProofGate.build(
-        _input(
-          proofValueReached: false,
-          referralPromptRequested: true,
-        ),
+        _input(proofValueReached: false, referralPromptRequested: true),
       );
       expect(
         _rule(result, ReferralAfterProofRuleId.onlyAfterProofValue).status,
@@ -108,13 +94,13 @@ void main() {
         ),
       );
       expect(
-        _rule(result, ReferralAfterProofRuleId.notShownInFirstFiveMinutes).status,
+        _rule(
+          result,
+          ReferralAfterProofRuleId.notShownInFirstFiveMinutes,
+        ).status,
         ReferralAfterProofRuleStatus.fail,
       );
-      expect(
-        result.decision,
-        ReferralAfterProofGateDecision.referralBlocked,
-      );
+      expect(result.decision, ReferralAfterProofGateDecision.referralBlocked);
     });
 
     test('existing route without gating fails noLiveReferralUiUnlessGated', () {
@@ -126,8 +112,10 @@ void main() {
         ),
       );
       expect(
-        _rule(result, ReferralAfterProofRuleId.noLiveReferralUiUnlessGated)
-            .status,
+        _rule(
+          result,
+          ReferralAfterProofRuleId.noLiveReferralUiUnlessGated,
+        ).status,
         ReferralAfterProofRuleStatus.fail,
       );
       expect(result.v1LiveUiBlocked, isTrue);
@@ -138,7 +126,11 @@ void main() {
         _input(proofValueReached: true),
       );
       for (final rule in result.rules) {
-        expect(rule.status, ReferralAfterProofRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          ReferralAfterProofRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -229,10 +221,7 @@ void main() {
     });
 
     test('detectDocListsRules matches docs', () {
-      expect(
-        ReferralAfterProofGate.detectDocListsRules(docsSource),
-        isTrue,
-      );
+      expect(ReferralAfterProofGate.detectDocListsRules(docsSource), isTrue);
     });
 
     test('detectGuardrailPresentInCopy matches gate copy', () {
@@ -251,14 +240,17 @@ void main() {
       );
     });
 
-    test('detectReferralRouteGatedInImplementation matches after-value gate', () {
-      expect(
-        ReferralAfterProofGate.detectReferralRouteGatedInImplementation(
-          referralImplementationSource,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'detectReferralRouteGatedInImplementation matches after-value gate',
+      () {
+        expect(
+          ReferralAfterProofGate.detectReferralRouteGatedInImplementation(
+            referralImplementationSource,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('fromRepoSignals defaults to referralBlocked', () {
       final result = ReferralAfterProofGate.build(
@@ -269,10 +261,7 @@ void main() {
           referralImplementationSource: referralImplementationSource,
         ),
       );
-      expect(
-        result.decision,
-        ReferralAfterProofGateDecision.referralBlocked,
-      );
+      expect(result.decision, ReferralAfterProofGateDecision.referralBlocked);
       expect(result.existingReferralRoutePresent, isTrue);
       expect(result.referralRouteGated, isTrue);
     });

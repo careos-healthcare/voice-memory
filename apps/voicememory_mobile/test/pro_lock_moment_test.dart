@@ -20,42 +20,41 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 ProLockMomentContext _context({
   List<JournalEntry> entries = const [],
@@ -72,7 +71,8 @@ ProLockMomentContext _context({
   bool patternReviewInboxHasActiveItems = false,
   bool proEvidenceValueVisible = false,
 }) {
-  final hasFirstProof = firstProofPayoffVisible ||
+  final hasFirstProof =
+      firstProofPayoffVisible ||
       (entries.isNotEmpty &&
           ProLockMomentEngine.buildContext(
             entryCount: entryCount,
@@ -85,8 +85,9 @@ ProLockMomentContext _context({
     isPro: isPro,
     dismissed: dismissed,
     hasFirstProof: hasFirstProof,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     isZeroEntryState: isZeroEntryState,
     isFirstRecordingState: isFirstRecordingState,
     isDegradedTranscriptState: isDegradedTranscriptState,
@@ -128,13 +129,22 @@ void main() {
     test('defines required copy', () {
       expect(ProLockMomentCopy.title, 'This is the first proof.');
       expect(ProLockMomentCopy.paidReason, contains('longer proof trail'));
-      expect(ProLockMomentCopy.chatDifferentiation, contains('not a chat answer'));
+      expect(
+        ProLockMomentCopy.chatDifferentiation,
+        contains('not a chat answer'),
+      );
     });
 
     test('copy says Pro keeps the longer proof trail', () {
-      expect(ProLockMomentCopy.paidReason.toLowerCase(), contains('longer proof trail'));
+      expect(
+        ProLockMomentCopy.paidReason.toLowerCase(),
+        contains('longer proof trail'),
+      );
       expect(ProLockMomentCopy.paidReason.toLowerCase(), contains('corrected'));
-      expect(ProLockMomentCopy.paidReason.toLowerCase(), isNot(contains('more ai')));
+      expect(
+        ProLockMomentCopy.paidReason.toLowerCase(),
+        isNot(contains('more ai')),
+      );
     });
 
     test('copy differentiates from chat', () {
@@ -193,9 +203,7 @@ void main() {
 
     test('hidden for zero entries', () {
       expect(
-        ProLockMomentEngine.shouldShowCard(
-          _context(isZeroEntryState: true),
-        ),
+        ProLockMomentEngine.shouldShowCard(_context(isZeroEntryState: true)),
         isFalse,
       );
     });
@@ -359,10 +367,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(ProLockMomentCopy.sheetTitle), findsOneWidget);
-      expect(
-        find.text(ProLockMomentCopy.chatDifferentiation),
-        findsOneWidget,
-      );
+      expect(find.text(ProLockMomentCopy.chatDifferentiation), findsOneWidget);
     });
 
     testWidgets('dismiss fires analytics', (tester) async {
@@ -385,7 +390,9 @@ void main() {
       await tester.pump();
 
       expect(
-        analyticsEvents.any((e) => e.event == ProLockMomentAnalytics.dismissedEvent),
+        analyticsEvents.any(
+          (e) => e.event == ProLockMomentAnalytics.dismissedEvent,
+        ),
         isTrue,
       );
     });

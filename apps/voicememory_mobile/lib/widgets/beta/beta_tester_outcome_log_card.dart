@@ -145,9 +145,9 @@ class _BetaTesterOutcomeLogCardState extends State<BetaTesterOutcomeLogCard> {
           Text(
             BetaDecisionCopy.outcomeLogTitle,
             key: const Key('beta_tester_outcome_log_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -171,9 +171,9 @@ class _BetaTesterOutcomeLogCardState extends State<BetaTesterOutcomeLogCard> {
           for (final group in BetaDecisionCopy.signalGroups.entries) ...[
             Text(
               group.key,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             Wrap(
@@ -217,9 +217,9 @@ class _BetaTesterOutcomeLogCardState extends State<BetaTesterOutcomeLogCard> {
           const SizedBox(height: 12),
           Text(
             '${BetaDecisionCopy.outcomeLoggedCount}: ${outcomes.length}',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           for (var i = 0; i < outcomes.length; i++)
@@ -229,7 +229,10 @@ class _BetaTesterOutcomeLogCardState extends State<BetaTesterOutcomeLogCard> {
               contentPadding: EdgeInsets.zero,
               title: Text(
                 outcomes[i].testerId,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               subtitle: Text(
                 outcomes[i].signals

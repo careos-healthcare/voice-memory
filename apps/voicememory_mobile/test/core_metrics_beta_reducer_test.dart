@@ -67,7 +67,9 @@ void main() {
 
     for (final counter in diagnosticCounters) {
       test('$counter -> diagnosticOnly', () {
-        final result = CoreMetricsBetaReducer.classifyActivationCounter(counter);
+        final result = CoreMetricsBetaReducer.classifyActivationCounter(
+          counter,
+        );
         expect(result.diagnosticOnly, isTrue);
         expect(result.notDecisionMetric, isTrue);
         expect(result.notReleaseBlocking, isTrue);
@@ -76,7 +78,9 @@ void main() {
     }
 
     test('appOpened counter maps to decision metric', () {
-      final result = CoreMetricsBetaReducer.classifyActivationCounter('appOpened');
+      final result = CoreMetricsBetaReducer.classifyActivationCounter(
+        'appOpened',
+      );
       expect(result.isDecisionMetric, isTrue);
       expect(result.coreMetricId, CoreMetricsBetaMetricId.appOpened);
     });
@@ -90,23 +94,29 @@ void main() {
     });
 
     test('crash_blocker_reported -> releaseBlocking', () {
-      final result = CoreMetricsBetaReducer.classifyEvent('crash_blocker_reported');
+      final result = CoreMetricsBetaReducer.classifyEvent(
+        'crash_blocker_reported',
+      );
       expect(result.isReleaseBlocking, isTrue);
       expect(result.coreMetricId, CoreMetricsBetaMetricId.crashOrBlocker);
     });
 
     test('thread_return_evidence_seen -> diagnosticOnly', () {
-      final result =
-          CoreMetricsBetaReducer.classifyEvent('thread_return_evidence_seen');
+      final result = CoreMetricsBetaReducer.classifyEvent(
+        'thread_return_evidence_seen',
+      );
       expect(result.diagnosticOnly, isTrue);
       expect(result.notDecisionMetric, isTrue);
     });
 
-    test('restore_started stays diagnostic because restore tapped is not core', () {
-      final result = CoreMetricsBetaReducer.classifyEvent('restore_started');
-      expect(result.diagnosticOnly, isTrue);
-      expect(result.notDecisionMetric, isTrue);
-    });
+    test(
+      'restore_started stays diagnostic because restore tapped is not core',
+      () {
+        final result = CoreMetricsBetaReducer.classifyEvent('restore_started');
+        expect(result.diagnosticOnly, isTrue);
+        expect(result.notDecisionMetric, isTrue);
+      },
+    );
 
     test('restore_completed -> decision metric', () {
       final result = CoreMetricsBetaReducer.classifyEvent('restore_completed');
@@ -154,20 +164,14 @@ void main() {
         '.clearAnalytics(',
         '.stopAnalytics(',
       ];
-      expect(
-        forbiddenCalls.any(reducerSource.contains),
-        isFalse,
-      );
+      expect(forbiddenCalls.any(reducerSource.contains), isFalse);
       expect(
         CoreMetricsBetaReducer.detectMinimumClassifierPreserved(
           minimumSetSource,
         ),
         isTrue,
       );
-      expect(
-        CoreMetricsMinimumSet.classify('app_opened').isCoreBeta,
-        isTrue,
-      );
+      expect(CoreMetricsMinimumSet.classify('app_opened').isCoreBeta, isTrue);
     });
 
     test('all visible strings pass proof surface advice guard', () {

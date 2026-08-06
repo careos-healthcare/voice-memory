@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../services/activation_funnel_analytics.dart';
-import '../beta_repair_lab/beta_repair_lab_model.dart';
 import 'pricing_value_framing_model.dart';
 
 abstract final class PricingValueFramingAnalytics {
@@ -9,24 +8,19 @@ abstract final class PricingValueFramingAnalytics {
 
   static const seenEvent = 'pricing_value_framing_seen';
   static const ctaTappedEvent = 'pricing_value_framing_cta_tapped';
-  static const feedbackSelectedEvent = 'pricing_value_framing_feedback_selected';
+  static const feedbackSelectedEvent =
+      'pricing_value_framing_feedback_selected';
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required PricingValueFramingResult result}) {
-    _emit(
-      seenEvent,
-      result: result,
-    );
+    _emit(seenEvent, result: result);
   }
 
   static void ctaTapped({required PricingValueFramingResult result}) {
-    _emit(
-      ctaTappedEvent,
-      result: result,
-    );
+    _emit(ctaTappedEvent, result: result);
   }
 
   static void feedbackSelected({
@@ -57,10 +51,7 @@ abstract final class PricingValueFramingAnalytics {
     }
   }
 
-  static void _emit(
-    String event, {
-    required PricingValueFramingResult result,
-  }) {
+  static void _emit(String event, {required PricingValueFramingResult result}) {
     final props = <String, Object>{
       'source': result.source,
       'entry_count': result.entryCount,

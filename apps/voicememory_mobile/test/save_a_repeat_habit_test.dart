@@ -28,19 +28,18 @@ SaveARepeatHabitInput _input({
   bool userUnderstandsRepeatTrigger = true,
   bool wouldPayYes = true,
   bool wouldPayMaybe = false,
-}) =>
-    SaveARepeatHabitInput(
-      userUnderstandsSaveRepeat: userUnderstandsSaveRepeat,
-      userStillUsesChatGptByHabit: userStillUsesChatGptByHabit,
-      userStillUsesNotesByHabit: userStillUsesNotesByHabit,
-      userFeelsDailyPressure: userFeelsDailyPressure,
-      userFeelsDashboardMaintenance: userFeelsDashboardMaintenance,
-      userUnderstandsOneSentenceEnough: userUnderstandsOneSentenceEnough,
-      userUnderstandsArchiveComparesLater: userUnderstandsArchiveComparesLater,
-      userUnderstandsRepeatTrigger: userUnderstandsRepeatTrigger,
-      wouldPayYes: wouldPayYes,
-      wouldPayMaybe: wouldPayMaybe,
-    );
+}) => SaveARepeatHabitInput(
+  userUnderstandsSaveRepeat: userUnderstandsSaveRepeat,
+  userStillUsesChatGptByHabit: userStillUsesChatGptByHabit,
+  userStillUsesNotesByHabit: userStillUsesNotesByHabit,
+  userFeelsDailyPressure: userFeelsDailyPressure,
+  userFeelsDashboardMaintenance: userFeelsDashboardMaintenance,
+  userUnderstandsOneSentenceEnough: userUnderstandsOneSentenceEnough,
+  userUnderstandsArchiveComparesLater: userUnderstandsArchiveComparesLater,
+  userUnderstandsRepeatTrigger: userUnderstandsRepeatTrigger,
+  wouldPayYes: wouldPayYes,
+  wouldPayMaybe: wouldPayMaybe,
+);
 
 void main() {
   group('SaveARepeatHabit.resolve', () {
@@ -78,15 +77,17 @@ void main() {
       );
     });
 
-    test('weak archive compares later understanding -> clarifyArchiveComparesLater',
-        () {
-      expect(
-        SaveARepeatHabit.resolve(
-          _input(userUnderstandsArchiveComparesLater: false),
-        ).decision,
-        SaveARepeatHabitDecision.clarifyArchiveComparesLater,
-      );
-    });
+    test(
+      'weak archive compares later understanding -> clarifyArchiveComparesLater',
+      () {
+        expect(
+          SaveARepeatHabit.resolve(
+            _input(userUnderstandsArchiveComparesLater: false),
+          ).decision,
+          SaveARepeatHabitDecision.clarifyArchiveComparesLater,
+        );
+      },
+    );
 
     test('ChatGPT habit remains -> clarifyChatGptHabitDifference', () {
       expect(
@@ -175,29 +176,33 @@ void main() {
       );
     });
 
-    test('chatDifferenceLine distinguishes ChatGPT from ArchiveMe evidence trail',
-        () {
-      expect(
-        SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('ChatGPT can suggest what to do'),
-      );
-      expect(
-        SaveARepeatHabitCopy.chatDifferenceLine,
-        contains('ArchiveMe shows what you already said before'),
-      );
-    });
+    test(
+      'chatDifferenceLine distinguishes ChatGPT from ArchiveMe evidence trail',
+      () {
+        expect(
+          SaveARepeatHabitCopy.chatDifferenceLine,
+          contains('ChatGPT can suggest what to do'),
+        );
+        expect(
+          SaveARepeatHabitCopy.chatDifferenceLine,
+          contains('ArchiveMe shows what you already said before'),
+        );
+      },
+    );
 
-    test('notesDifferenceLine distinguishes notes storage from ArchiveMe comparing',
-        () {
-      expect(
-        SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('Notes store what happened'),
-      );
-      expect(
-        SaveARepeatHabitCopy.notesDifferenceLine,
-        contains('ArchiveMe checks what returns'),
-      );
-    });
+    test(
+      'notesDifferenceLine distinguishes notes storage from ArchiveMe comparing',
+      () {
+        expect(
+          SaveARepeatHabitCopy.notesDifferenceLine,
+          contains('Notes store what happened'),
+        );
+        expect(
+          SaveARepeatHabitCopy.notesDifferenceLine,
+          contains('ArchiveMe checks what returns'),
+        );
+      },
+    );
 
     test('proLine says Free shows first useful proof', () {
       expect(
@@ -214,10 +219,7 @@ void main() {
     });
 
     test('guardrail blocks daily habit tracker', () {
-      expect(
-        SaveARepeatHabitCopy.guardrail,
-        contains('daily habit tracker'),
-      );
+      expect(SaveARepeatHabitCopy.guardrail, contains('daily habit tracker'));
     });
 
     test('guardrail blocks chat app', () {
@@ -229,10 +231,7 @@ void main() {
     });
 
     test('guardrail blocks dashboard to maintain', () {
-      expect(
-        SaveARepeatHabitCopy.guardrail,
-        contains('dashboard to maintain'),
-      );
+      expect(SaveARepeatHabitCopy.guardrail, contains('dashboard to maintain'));
     });
 
     test('copy does not say better than ChatGPT', () {
@@ -376,39 +375,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -427,7 +429,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

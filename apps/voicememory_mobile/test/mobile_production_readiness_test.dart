@@ -36,36 +36,35 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-        captureContextTag: i.isEven
-            ? CaptureContextTagIds.work
-            : CaptureContextTagIds.home,
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+    captureContextTag: i.isEven
+        ? CaptureContextTagIds.work
+        : CaptureContextTagIds.home,
+  ),
+);
 
 const _bannedLaunchCopy = [
   'diagnosis',
@@ -130,12 +129,18 @@ void main() {
     test('bundle identifier is aligned across Flutter and iOS', () {
       expect(AppConfig.bundleId, 'com.voicememory.mobile');
 
-      final pbxproj =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
-      expect(pbxproj, contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile;'));
+      final pbxproj = File(
+        'ios/Runner.xcodeproj/project.pbxproj',
+      ).readAsStringSync();
       expect(
         pbxproj,
-        contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.RunnerTests;'),
+        contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile;'),
+      );
+      expect(
+        pbxproj,
+        contains(
+          'PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.RunnerTests;',
+        ),
       );
     });
 
@@ -147,11 +152,14 @@ void main() {
     test('developer diagnostics stay hidden until gate unlocks', () {
       expect(DeveloperSettingsGate.canShowDeveloperSettings, isFalse);
 
-      final settings =
-          File('lib/screens/settings_screen.dart').readAsStringSync();
+      final settings = File(
+        'lib/screens/settings_screen.dart',
+      ).readAsStringSync();
       expect(settings, contains('canShowDeveloperSettings'));
-      expect(settings.indexOf('Developer diagnostics'),
-          greaterThan(settings.indexOf('canShowDeveloperSettings')));
+      expect(
+        settings.indexOf('Developer diagnostics'),
+        greaterThan(settings.indexOf('canShowDeveloperSettings')),
+      );
       expect(settings, isNot(contains('API base URL')));
       expect(settings, isNot(contains('Backend health')));
       expect(settings, isNot(contains('revenuecat-verify')));
@@ -190,41 +198,47 @@ void main() {
   });
 
   group('Share-safe privacy', () {
-    test('share-safe proof excludes transcripts, tags, map/filter state, and notes', () {
-      const engine = ShareableArchiveProofEngine();
-      const sensitive =
-          'Maria told me about the divorce paperwork at the hospital again';
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        'beliefEvidence',
-        'This felt more about hurry than pressure.',
-      );
+    test(
+      'share-safe proof excludes transcripts, tags, map/filter state, and notes',
+      () {
+        const engine = ShareableArchiveProofEngine();
+        const sensitive =
+            'Maria told me about the divorce paperwork at the hospital again';
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          'beliefEvidence',
+          'This felt more about hurry than pressure.',
+        );
 
-      final entries = List.generate(
-        5,
-        (i) => _voiceEntry(
-          id: 'e$i',
-          transcript: sensitive,
-          createdAt: DateTime(2026, 6, 9 + i, 12),
-          captureContextTag: CaptureContextTagIds.work,
-        ),
-      );
-      final proof = engine.buildFromJournal(entries: entries);
-      final shareText = proof.shareText.toLowerCase();
+        final entries = List.generate(
+          5,
+          (i) => _voiceEntry(
+            id: 'e$i',
+            transcript: sensitive,
+            createdAt: DateTime(2026, 6, 9 + i, 12),
+            captureContextTag: CaptureContextTagIds.work,
+          ),
+        );
+        final proof = engine.buildFromJournal(entries: entries);
+        final shareText = proof.shareText.toLowerCase();
 
-      expect(proof.hasProof, isTrue);
-      expect(shareText, contains('archiveme'));
-      expect(shareText, isNot(contains('voicememory')));
-      expect(shareText, isNot(contains('maria')));
-      expect(shareText, isNot(contains('divorce')));
-      expect(shareText, isNot(contains('hospital')));
-      expect(shareText, isNot(contains('work')));
-      expect(shareText, isNot(contains('untagged')));
-      expect(shareText, isNot(contains('filter')));
-      expect(shareText, isNot(contains('map')));
-      expect(shareText, isNot(contains('hurry')));
-      expect(shareText, contains('no private entries shared.'));
-      expect(ArchiveShareText.includesBannedConsumerCopy(proof.shareText), isFalse);
-    });
+        expect(proof.hasProof, isTrue);
+        expect(shareText, contains('archiveme'));
+        expect(shareText, isNot(contains('voicememory')));
+        expect(shareText, isNot(contains('maria')));
+        expect(shareText, isNot(contains('divorce')));
+        expect(shareText, isNot(contains('hospital')));
+        expect(shareText, isNot(contains('work')));
+        expect(shareText, isNot(contains('untagged')));
+        expect(shareText, isNot(contains('filter')));
+        expect(shareText, isNot(contains('map')));
+        expect(shareText, isNot(contains('hurry')));
+        expect(shareText, contains('no private entries shared.'));
+        expect(
+          ArchiveShareText.includesBannedConsumerCopy(proof.shareText),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('Sensitive routes and navigation safety', () {
@@ -238,7 +252,9 @@ void main() {
       );
       expect(
         SensitiveRoutes.isSensitiveRoute(
-          ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+          ArchiveEvidenceMapNavigation.contextPath(
+            ArchiveEvidenceMapRowIds.untagged,
+          ),
         ),
         isTrue,
       );
@@ -258,7 +274,9 @@ void main() {
         workspaceLayout: ArchiveWorkspaceLayoutEngine.build(
           entries: const [],
           archiveHome: ArchiveHomeSummaryEngine.build(entries: const []),
-          attentionFilters: EvidenceAttentionFiltersEngine.build(entries: const []),
+          attentionFilters: EvidenceAttentionFiltersEngine.build(
+            entries: const [],
+          ),
           actionPlan: ArchiveHealthActionPlanEngine.build(entries: const []),
           archiveHealth: ArchiveHealthScoreEngine.build(entries: const []),
           contextInsights: ContextInsightsEngine.build(entries: const []),
@@ -272,7 +290,9 @@ void main() {
       final oneLayout = ArchiveWorkspaceLayoutEngine.build(
         entries: oneEntries,
         archiveHome: ArchiveHomeSummaryEngine.build(entries: oneEntries),
-        attentionFilters: EvidenceAttentionFiltersEngine.build(entries: oneEntries),
+        attentionFilters: EvidenceAttentionFiltersEngine.build(
+          entries: oneEntries,
+        ),
         actionPlan: ArchiveHealthActionPlanEngine.build(entries: oneEntries),
         archiveHealth: ArchiveHealthScoreEngine.build(entries: oneEntries),
         contextInsights: ContextInsightsEngine.build(entries: oneEntries),
@@ -289,7 +309,9 @@ void main() {
       final two = ArchiveWorkspaceLayoutEngine.build(
         entries: _entries(2),
         archiveHome: ArchiveHomeSummaryEngine.build(entries: _entries(2)),
-        attentionFilters: EvidenceAttentionFiltersEngine.build(entries: _entries(2)),
+        attentionFilters: EvidenceAttentionFiltersEngine.build(
+          entries: _entries(2),
+        ),
         actionPlan: ArchiveHealthActionPlanEngine.build(entries: _entries(2)),
         archiveHealth: ArchiveHealthScoreEngine.build(entries: _entries(2)),
         contextInsights: ContextInsightsEngine.build(entries: _entries(2)),
@@ -300,7 +322,9 @@ void main() {
       final three = ArchiveWorkspaceLayoutEngine.build(
         entries: _entries(3),
         archiveHome: ArchiveHomeSummaryEngine.build(entries: _entries(3)),
-        attentionFilters: EvidenceAttentionFiltersEngine.build(entries: _entries(3)),
+        attentionFilters: EvidenceAttentionFiltersEngine.build(
+          entries: _entries(3),
+        ),
         actionPlan: ArchiveHealthActionPlanEngine.build(entries: _entries(3)),
         archiveHealth: ArchiveHealthScoreEngine.build(entries: _entries(3)),
         contextInsights: ContextInsightsEngine.build(entries: _entries(3)),
@@ -312,7 +336,9 @@ void main() {
       final five = ArchiveWorkspaceLayoutEngine.build(
         entries: _entries(5),
         archiveHome: ArchiveHomeSummaryEngine.build(entries: _entries(5)),
-        attentionFilters: EvidenceAttentionFiltersEngine.build(entries: _entries(5)),
+        attentionFilters: EvidenceAttentionFiltersEngine.build(
+          entries: _entries(5),
+        ),
         actionPlan: ArchiveHealthActionPlanEngine.build(entries: _entries(5)),
         archiveHealth: ArchiveHealthScoreEngine.build(entries: _entries(5)),
         contextInsights: ContextInsightsEngine.build(entries: _entries(5)),

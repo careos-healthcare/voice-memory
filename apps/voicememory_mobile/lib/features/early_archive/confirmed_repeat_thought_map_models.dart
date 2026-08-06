@@ -1,12 +1,7 @@
 import 'confirmed_repeat_thought_map_copy.dart';
 
 /// Which loop section the Thought Map is mapping.
-enum ThoughtMapSectionId {
-  trigger,
-  thought,
-  action,
-  result,
-}
+enum ThoughtMapSectionId { trigger, thought, action, result }
 
 /// One section of the loop map — grounded value or an honest record prompt.
 class ThoughtMapSection {
@@ -29,15 +24,15 @@ class ThoughtMapSection {
   String get displayText => isKnown ? value!.trim() : unknownPrompt;
 
   String get guidedRecordPrompt => switch (id) {
-        ThoughtMapSectionId.trigger =>
-          ConfirmedRepeatThoughtMapCopy.triggerGuidedPrompt,
-        ThoughtMapSectionId.thought =>
-          ConfirmedRepeatThoughtMapCopy.thoughtGuidedPrompt,
-        ThoughtMapSectionId.action =>
-          ConfirmedRepeatThoughtMapCopy.actionGuidedPrompt,
-        ThoughtMapSectionId.result =>
-          ConfirmedRepeatThoughtMapCopy.resultGuidedPrompt,
-      };
+    ThoughtMapSectionId.trigger =>
+      ConfirmedRepeatThoughtMapCopy.triggerGuidedPrompt,
+    ThoughtMapSectionId.thought =>
+      ConfirmedRepeatThoughtMapCopy.thoughtGuidedPrompt,
+    ThoughtMapSectionId.action =>
+      ConfirmedRepeatThoughtMapCopy.actionGuidedPrompt,
+    ThoughtMapSectionId.result =>
+      ConfirmedRepeatThoughtMapCopy.resultGuidedPrompt,
+  };
 }
 
 /// Built Thought Map for a confirmed repeat — never invents loop content.

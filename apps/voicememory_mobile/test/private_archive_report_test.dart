@@ -22,69 +22,65 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 5,
-      createdAt: DateTime(2026, 6, 14),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 5,
+  createdAt: DateTime(2026, 6, 14),
+);
 
 void _expectNoAdviceLanguage(String copy) {
-  final lower = copy
-      .replaceAll(PrivateReportCopy.footer, '')
-      .toLowerCase();
+  final lower = copy.replaceAll(PrivateReportCopy.footer, '').toLowerCase();
   expect(lower, isNot(contains('you should')));
   expect(lower, isNot(contains('try this')));
   expect(lower, isNot(contains('recommendations')));
@@ -125,16 +121,13 @@ void main() {
         entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      expect(
-        report.sections.map((section) => section.heading).toList(),
-        [
-          PrivateArchiveReportCopy.whatRepeatedHeading,
-          PrivateArchiveReportCopy.whatChangedHeading,
-          PrivateArchiveReportCopy.whatHelpedHeading,
-          PrivateArchiveReportCopy.evidenceHeading,
-          PrivateArchiveReportCopy.whatToWatchNextHeading,
-        ],
-      );
+      expect(report.sections.map((section) => section.heading).toList(), [
+        PrivateArchiveReportCopy.whatRepeatedHeading,
+        PrivateArchiveReportCopy.whatChangedHeading,
+        PrivateArchiveReportCopy.whatHelpedHeading,
+        PrivateArchiveReportCopy.evidenceHeading,
+        PrivateArchiveReportCopy.whatToWatchNextHeading,
+      ]);
     });
 
     test('repeated phrase is grounded and max 6 words', () {
@@ -181,10 +174,7 @@ void main() {
       )!;
       final changed = report.sections[1];
       expect(changed.hasEvidence, isTrue);
-      expect(
-        changed.lines.first,
-        WhatChangedV2Copy.payoffSofter,
-      );
+      expect(changed.lines.first, WhatChangedV2Copy.payoffSofter);
     });
 
     test('helped section uses helped tracking marker', () async {
@@ -198,7 +188,10 @@ void main() {
       final report = PrivateArchiveReportEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
@@ -278,8 +271,14 @@ void main() {
       expect(preview, contains(PrivateArchiveReportCopy.previewTitle));
       expect(preview, contains(PrivateArchiveReportCopy.previewBody));
       expect(preview, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatChangedHeading)));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatToWatchNextHeading)));
+      expect(
+        preview,
+        isNot(contains(PrivateArchiveReportCopy.whatChangedHeading)),
+      );
+      expect(
+        preview,
+        isNot(contains(PrivateArchiveReportCopy.whatToWatchNextHeading)),
+      );
 
       final full = report.plainText(isPro: true);
       expect(full, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
@@ -301,10 +300,7 @@ void main() {
         PrivateArchiveReportCopy.previewBody.toLowerCase(),
         contains('your first repeat'),
       );
-      expect(
-        PrivateArchiveReportCopy.intro,
-        PrivateReportCopy.subtitle,
-      );
+      expect(PrivateArchiveReportCopy.intro, PrivateReportCopy.subtitle);
     });
 
     test('private report is evidence summary not coaching report', () {
@@ -343,14 +339,8 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(PrivateArchiveReportCopy.copyReportCta),
-        findsOneWidget,
-      );
-      expect(
-        find.text(PrivateArchiveReportCopy.viewReportCta),
-        findsOneWidget,
-      );
+      expect(find.text(PrivateArchiveReportCopy.copyReportCta), findsOneWidget);
+      expect(find.text(PrivateArchiveReportCopy.viewReportCta), findsOneWidget);
     });
 
     testWidgets('export scope lists included and not included sections', (
@@ -421,11 +411,16 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const Key('private_archive_report_copy_cta')),
       );
-      await tester.tap(find.byKey(const Key('private_archive_report_copy_cta')));
+      await tester.tap(
+        find.byKey(const Key('private_archive_report_copy_cta')),
+      );
       await tester.pump();
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
-      expect(copiedText, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
+      expect(
+        copiedText,
+        contains(PrivateArchiveReportCopy.whatRepeatedHeading),
+      );
       expect(copiedText, contains(PrivateReportCopy.footer));
       expect(copiedText.toLowerCase(), isNot(contains('.m4a')));
     });
@@ -461,7 +456,9 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const Key('private_archive_report_copy_cta')),
       );
-      await tester.tap(find.byKey(const Key('private_archive_report_copy_cta')));
+      await tester.tap(
+        find.byKey(const Key('private_archive_report_copy_cta')),
+      );
       await tester.pump();
 
       expect(copiedText, contains(PrivateArchiveReportCopy.whatChangedHeading));
@@ -469,7 +466,10 @@ void main() {
         copiedText,
         contains(PrivateArchiveReportCopy.whatToWatchNextHeading),
       );
-      expect(copiedText, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
+      expect(
+        copiedText,
+        isNot(contains(PrivateArchiveReportCopy.previewTitle)),
+      );
     });
 
     testWidgets('free preview shows See Pro without full report sections', (
@@ -495,10 +495,7 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(PrivateArchiveReportCopy.previewTitle),
-        findsOneWidget,
-      );
+      expect(find.text(PrivateArchiveReportCopy.previewTitle), findsOneWidget);
       expect(find.text(PrivateArchiveReportCopy.previewProCta), findsOneWidget);
       expect(
         find.text(PrivateArchiveReportCopy.whatToWatchNextHeading),
@@ -544,8 +541,9 @@ void main() {
 
     test('free confirmed repeat proof remains available without Pro', () {
       expect(
-        EarlyFirstSignalEngine.build(entries: _threeRelatedRepeatEntries())
-            ?.showsConfirmedRepeat,
+        EarlyFirstSignalEngine.build(
+          entries: _threeRelatedRepeatEntries(),
+        )?.showsConfirmedRepeat,
         isTrue,
       );
     });

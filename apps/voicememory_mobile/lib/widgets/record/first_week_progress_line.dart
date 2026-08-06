@@ -20,11 +20,11 @@ class FirstWeekProgressLine extends StatelessWidget {
   final String surface;
 
   String get _stateKey => switch (progress.state) {
-        FirstWeekProgressState.day1 => 'day_1',
-        FirstWeekProgressState.day2 => 'day_2',
-        FirstWeekProgressState.firstProof => 'first_proof',
-        FirstWeekProgressState.day3to7 => 'day_${progress.weekDay}',
-      };
+    FirstWeekProgressState.day1 => 'day_1',
+    FirstWeekProgressState.day2 => 'day_2',
+    FirstWeekProgressState.firstProof => 'first_proof',
+    FirstWeekProgressState.day3to7 => 'day_${progress.weekDay}',
+  };
 
   @override
   Widget build(BuildContext context) {

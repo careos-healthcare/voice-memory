@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/revenue_lift_experiment_v2/revenue_l
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_copy.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_engine.dart';
 import 'package:voicememory_mobile/features/revenue_readiness/revenue_readiness_dashboard_v2_model.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/revenue_readiness_dashboard_v2_card.dart';
@@ -18,26 +18,22 @@ const _privateTranscript =
 
 RevenueReadinessDashboardV2Dashboard _dashboardFrom(
   RevenueReadinessDashboardV2Input input,
-) =>
-    RevenueReadinessDashboardV2Engine.buildFromInput(input);
+) => RevenueReadinessDashboardV2Engine.buildFromInput(input);
 
 RevenueReadinessDashboardV2Section _section(
   RevenueReadinessDashboardV2Dashboard dashboard,
   RevenueReadinessDashboardV2SectionId id,
-) =>
-    dashboard.sections.firstWhere((section) => section.id == id);
+) => dashboard.sections.firstWhere((section) => section.id == id);
 
 RevenueReadinessDashboardV2MetricRow _metric(
   RevenueReadinessDashboardV2Dashboard dashboard,
   RevenueReadinessDashboardV2MetricId id,
-) =>
-    dashboard.allRows.firstWhere((row) => row.id == id);
+) => dashboard.allRows.firstWhere((row) => row.id == id);
 
 bool _hasDiagnosis(
   RevenueReadinessDashboardV2Dashboard dashboard,
   RevenueReadinessDashboardV2DiagnosisId id,
-) =>
-    dashboard.diagnoses.any((diagnosis) => diagnosis.id == id);
+) => dashboard.diagnoses.any((diagnosis) => diagnosis.id == id);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -49,9 +45,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: RevenueReadinessDashboardV2Card(
-            dashboardOverride: dashboard,
-          ),
+          child: RevenueReadinessDashboardV2Card(dashboardOverride: dashboard),
         ),
       ),
     ),
@@ -72,53 +66,62 @@ void main() {
     });
 
     test('renders all funnel sections', () {
-      final dashboard = _dashboardFrom(const RevenueReadinessDashboardV2Input());
-      expect(
-        dashboard.sections.map((section) => section.title),
-        [
-          RevenueReadinessDashboardV2Copy.sectionCapture,
-          RevenueReadinessDashboardV2Copy.sectionProof,
-          RevenueReadinessDashboardV2Copy.sectionReturn,
-          RevenueReadinessDashboardV2Copy.sectionRevenue,
-        ],
+      final dashboard = _dashboardFrom(
+        const RevenueReadinessDashboardV2Input(),
       );
+      expect(dashboard.sections.map((section) => section.title), [
+        RevenueReadinessDashboardV2Copy.sectionCapture,
+        RevenueReadinessDashboardV2Copy.sectionProof,
+        RevenueReadinessDashboardV2Copy.sectionReturn,
+        RevenueReadinessDashboardV2Copy.sectionRevenue,
+      ]);
       expect(
-        _section(dashboard, RevenueReadinessDashboardV2SectionId.capture)
-            .rows
-            .length,
+        _section(
+          dashboard,
+          RevenueReadinessDashboardV2SectionId.capture,
+        ).rows.length,
         3,
       );
       expect(
-        _section(dashboard, RevenueReadinessDashboardV2SectionId.proof)
-            .rows
-            .length,
+        _section(
+          dashboard,
+          RevenueReadinessDashboardV2SectionId.proof,
+        ).rows.length,
         6,
       );
       expect(
-        _section(dashboard, RevenueReadinessDashboardV2SectionId.returnFunnel)
-            .rows
-            .length,
+        _section(
+          dashboard,
+          RevenueReadinessDashboardV2SectionId.returnFunnel,
+        ).rows.length,
         3,
       );
       expect(
-        _section(dashboard, RevenueReadinessDashboardV2SectionId.revenue)
-            .rows
-            .length,
+        _section(
+          dashboard,
+          RevenueReadinessDashboardV2SectionId.revenue,
+        ).rows.length,
         8,
       );
     });
 
     test('handles no data', () {
-      final dashboard = _dashboardFrom(const RevenueReadinessDashboardV2Input());
+      final dashboard = _dashboardFrom(
+        const RevenueReadinessDashboardV2Input(),
+      );
       expect(dashboard.hasDiagnoses, isFalse);
       expect(
-        _metric(dashboard, RevenueReadinessDashboardV2MetricId.firstSave)
-            .valueLabel,
+        _metric(
+          dashboard,
+          RevenueReadinessDashboardV2MetricId.firstSave,
+        ).valueLabel,
         RevenueReadinessDashboardV2Copy.notEnoughData,
       );
       expect(
-        _metric(dashboard, RevenueReadinessDashboardV2MetricId.useful)
-            .valueLabel,
+        _metric(
+          dashboard,
+          RevenueReadinessDashboardV2MetricId.useful,
+        ).valueLabel,
         RevenueReadinessDashboardV2Copy.notEnoughData,
       );
     });
@@ -141,7 +144,8 @@ void main() {
         dashboard.diagnoses
             .singleWhere(
               (item) =>
-                  item.id == RevenueReadinessDashboardV2DiagnosisId.lowFirstSave,
+                  item.id ==
+                  RevenueReadinessDashboardV2DiagnosisId.lowFirstSave,
             )
             .nextActionLabel,
         RevenueReadinessDashboardV2Copy.actionFixFirstCapture,
@@ -247,7 +251,8 @@ void main() {
         dashboard.diagnoses
             .singleWhere(
               (item) =>
-                  item.id == RevenueReadinessDashboardV2DiagnosisId.lowPaywallSeen,
+                  item.id ==
+                  RevenueReadinessDashboardV2DiagnosisId.lowPaywallSeen,
             )
             .nextActionLabel,
         RevenueReadinessDashboardV2Copy.actionFixProBridgeHidden,
@@ -298,7 +303,8 @@ void main() {
             .singleWhere(
               (item) =>
                   item.id ==
-                  RevenueReadinessDashboardV2DiagnosisId.purchaseCompletionIssue,
+                  RevenueReadinessDashboardV2DiagnosisId
+                      .purchaseCompletionIssue,
             )
             .nextActionLabel,
         RevenueReadinessDashboardV2Copy.actionFixBillingConfidence,
@@ -323,7 +329,8 @@ void main() {
         dashboard.diagnoses
             .singleWhere(
               (item) =>
-                  item.id == RevenueReadinessDashboardV2DiagnosisId.restoreFailure,
+                  item.id ==
+                  RevenueReadinessDashboardV2DiagnosisId.restoreFailure,
             )
             .nextActionLabel,
         RevenueReadinessDashboardV2Copy.actionFixRestoreFlow,
@@ -338,10 +345,15 @@ void main() {
         ),
       );
       final blob = dashboard.allDisplayedText
-          .where((line) => line != RevenueReadinessDashboardV2Copy.localCountsNote)
+          .where(
+            (line) => line != RevenueReadinessDashboardV2Copy.localCountsNote,
+          )
           .join(' ')
           .toLowerCase();
-      expect(blob.split('\n').where((line) => line.contains(' said ')), isEmpty);
+      expect(
+        blob.split('\n').where((line) => line.contains(' said ')),
+        isEmpty,
+      );
       expect(blob, isNot(contains(_privateTranscript)));
       expect(blob, isNot(contains('entry_id')));
       expect(blob, isNot(contains('entry id')));

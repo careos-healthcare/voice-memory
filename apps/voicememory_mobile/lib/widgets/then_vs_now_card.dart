@@ -119,13 +119,14 @@ class ThenVsNowCard extends StatelessWidget {
             children: [
               FilledButton(
                 key: const Key('then_vs_now_card_primary_button'),
-                onPressed: onPrimaryAction ??
-                    () => context.push(result.primaryRoute),
+                onPressed:
+                    onPrimaryAction ?? () => context.push(result.primaryRoute),
                 child: Text(result.primaryCtaLabel),
               ),
               OutlinedButton(
                 key: const Key('then_vs_now_card_secondary_button'),
-                onPressed: onSecondaryAction ??
+                onPressed:
+                    onSecondaryAction ??
                     () => context.push(result.secondaryRoute),
                 child: Text(result.secondaryCtaLabel),
               ),

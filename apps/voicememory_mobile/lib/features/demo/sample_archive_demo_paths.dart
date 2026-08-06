@@ -83,10 +83,7 @@ abstract final class SampleArchiveDemoPaths {
 
   static Future<void> copyDemoSummary(BuildContext context) async {
     final pack = DemoSharePackEngine.build();
-    await ArchiveShareActions.copyShareText(
-      context,
-      text: pack.plainText,
-    );
+    await ArchiveShareActions.copyShareText(context, text: pack.plainText);
   }
 
   static void backToArchive(BuildContext context) {

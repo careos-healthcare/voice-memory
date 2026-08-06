@@ -22,11 +22,7 @@ const _placeholder =
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -45,22 +41,18 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 CurrentRelevanceState _stateForEntries(List<JournalEntry> entries) {
   final built = CurrentRelevanceEngine.build(
@@ -98,10 +90,7 @@ void main() {
   group('CurrentRelevanceCopy', () {
     test('defines question, options, responses, and differentiation line', () {
       expect(CurrentRelevanceCopy.title, 'Does this still affect today?');
-      expect(
-        CurrentRelevanceCopy.body,
-        contains('appeared before'),
-      );
+      expect(CurrentRelevanceCopy.body, contains('appeared before'));
       expect(
         CurrentRelevanceCopy.differentiationLine,
         contains('ChatGPT can respond to one conversation'),
@@ -190,10 +179,7 @@ void main() {
     test('hidden during first proof payoff', () {
       final entries = _threeRelatedEntries();
       final state = _stateForEntries(entries);
-      expect(
-        FirstProofPayoffEngine.build(entries: entries),
-        isNotNull,
-      );
+      expect(FirstProofPayoffEngine.build(entries: entries), isNotNull);
       expect(
         CurrentRelevanceEngine.shouldShow(
           state: state,
@@ -254,10 +240,7 @@ void main() {
         isFalse,
       );
       expect(
-        CurrentRelevanceEngine.isQuestionActive(
-          state: state,
-          visible: true,
-        ),
+        CurrentRelevanceEngine.isQuestionActive(state: state, visible: true),
         isTrue,
       );
     });
@@ -271,10 +254,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: CurrentRelevanceCard.test(
-              state: state,
-              source: 'test',
-            ),
+            body: CurrentRelevanceCard.test(state: state, source: 'test'),
           ),
         ),
       );
@@ -383,7 +363,9 @@ void main() {
         CurrentRelevanceAnswer.yes,
       );
       expect(
-        analyticsEvents.any((event) => event.event == 'current_relevance_answered'),
+        analyticsEvents.any(
+          (event) => event.event == 'current_relevance_answered',
+        ),
         isTrue,
       );
     });
@@ -408,7 +390,10 @@ void main() {
 
       expect(analyticsEvents, hasLength(2));
       for (final record in analyticsEvents) {
-        expect(record.event, anyOf('current_relevance_seen', 'current_relevance_answered'));
+        expect(
+          record.event,
+          anyOf('current_relevance_seen', 'current_relevance_answered'),
+        );
         expect(record.props.keys, contains('source'));
         expect(record.props.keys, contains('entry_count'));
         expect(record.props.keys, contains('has_confirmed_repeat'));
@@ -424,21 +409,29 @@ void main() {
   });
 
   group('Current relevance placement', () {
-    test('patterns screen renders relevance card before post-proof Pro bridge', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
-      final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
-      final proBridgeIndex = source.indexOf(
-        "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
-      );
-      expect(relevanceIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(relevanceIndex));
-    });
+    test(
+      'patterns screen renders relevance card before post-proof Pro bridge',
+      () {
+        final source = File(
+          'lib/screens/archive_belief_screen.dart',
+        ).readAsStringSync();
+        final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
+        final proBridgeIndex = source.indexOf(
+          "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
+        );
+        expect(relevanceIndex, greaterThan(0));
+        expect(proBridgeIndex, greaterThan(relevanceIndex));
+      },
+    );
 
     test('record screen renders relevance card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final relevanceIndex = source.indexOf('showCurrentRelevanceOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final relevanceIndex = source.indexOf(
+        'showCurrentRelevanceOnRecordReady',
+      );
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(relevanceIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(relevanceIndex));
     });

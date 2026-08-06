@@ -34,12 +34,11 @@ class BillingService {
   PremiumEntitlements _merge(
     PremiumEntitlements? server,
     PremiumEntitlements store,
-  ) =>
-      mergeEntitlements(
-        server: server,
-        store: store,
-        revenueCatConfigured: _revenueCat.isConfigured,
-      );
+  ) => mergeEntitlements(
+    server: server,
+    store: store,
+    revenueCatConfigured: _revenueCat.isConfigured,
+  );
 
   /// When RevenueCat is configured and reports free, stale cached Pro must not win.
   static PremiumEntitlements mergeEntitlements({

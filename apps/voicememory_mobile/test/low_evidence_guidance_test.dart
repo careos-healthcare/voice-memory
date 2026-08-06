@@ -30,7 +30,8 @@ JournalEntry _entry({
   return JournalEntry(
     id: id,
     createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-    transcript: transcript ??
+    transcript:
+        transcript ??
         'A long enough transcript to count as a saved reflection for tests.',
     durationSeconds: 30,
     reflection: const Reflection(
@@ -92,14 +93,8 @@ void main() {
 
   group('LowEvidenceEngine', () {
     test('zero entries returns null', () {
-      expect(
-        LowEvidenceEngine.buildForRecordReady(entries: const []),
-        isNull,
-      );
-      expect(
-        LowEvidenceEngine.buildForPatternsTab(entries: const []),
-        isNull,
-      );
+      expect(LowEvidenceEngine.buildForRecordReady(entries: const []), isNull);
+      expect(LowEvidenceEngine.buildForPatternsTab(entries: const []), isNull);
     });
 
     test('one real entry shows archive started copy', () {
@@ -203,10 +198,7 @@ void main() {
       );
 
       expect(FirstProofMomentEngine.build(entries: entries), isNotNull);
-      expect(
-        LowEvidenceEngine.buildForRecordReady(entries: entries),
-        isNull,
-      );
+      expect(LowEvidenceEngine.buildForRecordReady(entries: entries), isNull);
     });
 
     test('copy does not expose internal quality labels', () {
@@ -244,9 +236,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LowEvidenceGuidanceCard(guidance: guidance),
-          ),
+          home: Scaffold(body: LowEvidenceGuidanceCard(guidance: guidance)),
         ),
       );
 
@@ -292,9 +282,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: PatternsEvidenceQualityFallbackView(
-              lowEvidence: guidance,
-            ),
+            body: PatternsEvidenceQualityFallbackView(lowEvidence: guidance),
           ),
         ),
       );
@@ -315,10 +303,7 @@ void main() {
     testWidgets('one entry ready shows archive started card and mic CTA', (
       tester,
     ) async {
-      await _pumpRecordReady(
-        tester,
-        entries: [_entry(id: 'a')],
-      );
+      await _pumpRecordReady(tester, entries: [_entry(id: 'a')]);
 
       expect(
         find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),

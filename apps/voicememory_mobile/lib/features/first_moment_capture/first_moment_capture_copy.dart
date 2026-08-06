@@ -46,18 +46,18 @@ abstract final class FirstMomentCaptureCopy {
       };
 
   static List<String> allVisibleStrings() => [
-        coreStart,
-        coreAnythingCounts,
-        coreArchiveSense,
-        title,
-        body,
-        reassurance,
-        privacyLine,
-        primaryCta,
-        secondaryCta,
-        keptPuttingOffExample,
-        feltHeavierExample,
-        somethingHelpedExample,
-        dontWantToForgetExample,
-      ];
+    coreStart,
+    coreAnythingCounts,
+    coreArchiveSense,
+    title,
+    body,
+    reassurance,
+    privacyLine,
+    primaryCta,
+    secondaryCta,
+    keptPuttingOffExample,
+    feltHeavierExample,
+    somethingHelpedExample,
+    dontWantToForgetExample,
+  ];
 }

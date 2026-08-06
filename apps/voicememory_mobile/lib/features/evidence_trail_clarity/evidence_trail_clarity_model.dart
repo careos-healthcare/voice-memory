@@ -1,18 +1,14 @@
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 
-enum EvidenceTrailClarityFeedbackOption {
-  yes,
-  notYet,
-  needMoreProof,
-}
+enum EvidenceTrailClarityFeedbackOption { yes, notYet, needMoreProof }
 
 extension EvidenceTrailClarityFeedbackOptionAnalytics
     on EvidenceTrailClarityFeedbackOption {
   String get analyticsValue => switch (this) {
-        EvidenceTrailClarityFeedbackOption.yes => 'yes',
-        EvidenceTrailClarityFeedbackOption.notYet => 'not_yet',
-        EvidenceTrailClarityFeedbackOption.needMoreProof => 'need_more_proof',
-      };
+    EvidenceTrailClarityFeedbackOption.yes => 'yes',
+    EvidenceTrailClarityFeedbackOption.notYet => 'not_yet',
+    EvidenceTrailClarityFeedbackOption.needMoreProof => 'need_more_proof',
+  };
 }
 
 class EvidenceTrailClarityTimelineRow {

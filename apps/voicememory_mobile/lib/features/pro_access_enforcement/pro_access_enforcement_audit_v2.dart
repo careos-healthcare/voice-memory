@@ -64,19 +64,22 @@ abstract final class ProAccessEnforcementAuditV2 {
   ) {
     final revenueCatConfigured =
         signals.revenueCatConfigured && !signals.revenueCatApiKeyMissing;
-    final staleCachedProRisk = signals.cachedProOnDisk &&
+    final staleCachedProRisk =
+        signals.cachedProOnDisk &&
         revenueCatConfigured &&
         !signals.proEntitlementActive;
 
     return ProAccessEnforcementAuditInput(
       revenueCatConfigured: revenueCatConfigured,
-      proEntitlementReadable: revenueCatConfigured &&
+      proEntitlementReadable:
+          revenueCatConfigured &&
           signals.proStateReadable &&
           signals.productsLoaded,
       restorePurchasesReachable: signals.restorePurchasesReachable,
       restoreNoCrashVerified: signals.restoreNoCrashVerified,
       localCachePreventsStalePro: !staleCachedProRisk,
-      entitlementPersistsAfterRestart: signals.entitlementPersistsAfterRestart ||
+      entitlementPersistsAfterRestart:
+          signals.entitlementPersistsAfterRestart ||
           (signals.cachedProOnDisk && signals.proEntitlementActive),
       revenueCatLinkedToAccount: signals.revenueCatLinkedToAccount,
       serverSideEntitlementCheckPresent: signals.backendConfigured,
@@ -98,24 +101,22 @@ abstract final class ProAccessEnforcementAuditV2 {
     bool appLockEnabled = false,
     bool privacyLockIndependentOfPro = true,
     bool deviceSharingPrevented = false,
-  }) =>
-      ProAccessEnforcementLocalSignals(
-        revenueCatConfigured: diagnostics.revenueCatConfigured,
-        revenueCatApiKeyMissing: diagnostics.apiKeyMissing,
-        productsLoaded:
-            diagnostics.offeringsLoaded && diagnostics.packageCount > 0,
-        proStateReadable: proStateReadable || diagnostics.revenueCatConfigured,
-        proEntitlementActive: proEntitlementActive,
-        cachedProOnDisk: cachedProOnDisk,
-        restorePurchasesReachable: restorePurchasesReachable,
-        restoreNoCrashVerified: restoreNoCrashVerified,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        revenueCatLinkedToAccount: revenueCatLinkedToAccount,
-        backendConfigured: backendConfigured,
-        appLockEnabled: appLockEnabled,
-        privacyLockIndependentOfPro: privacyLockIndependentOfPro,
-        deviceSharingPrevented: deviceSharingPrevented,
-      );
+  }) => ProAccessEnforcementLocalSignals(
+    revenueCatConfigured: diagnostics.revenueCatConfigured,
+    revenueCatApiKeyMissing: diagnostics.apiKeyMissing,
+    productsLoaded: diagnostics.offeringsLoaded && diagnostics.packageCount > 0,
+    proStateReadable: proStateReadable || diagnostics.revenueCatConfigured,
+    proEntitlementActive: proEntitlementActive,
+    cachedProOnDisk: cachedProOnDisk,
+    restorePurchasesReachable: restorePurchasesReachable,
+    restoreNoCrashVerified: restoreNoCrashVerified,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    revenueCatLinkedToAccount: revenueCatLinkedToAccount,
+    backendConfigured: backendConfigured,
+    appLockEnabled: appLockEnabled,
+    privacyLockIndependentOfPro: privacyLockIndependentOfPro,
+    deviceSharingPrevented: deviceSharingPrevented,
+  );
 
   static String decisionLabelFor(ProAccessEnforcementAuditDecision decision) =>
       switch (decision) {

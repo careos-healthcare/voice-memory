@@ -14,14 +14,14 @@ abstract final class FirstProofActionLoopCopy {
   static const removeFromPatternCta = 'Remove from this pattern';
 
   static List<String> allVisibleStrings() => [
-        yesTitle,
-        sortOfTitle,
-        noTitle,
-        watchThisNextCta,
-        viewPatternDetailsCta,
-        renamePatternCta,
-        keepRecordingCta,
-        correctTranscriptCta,
-        removeFromPatternCta,
-      ];
+    yesTitle,
+    sortOfTitle,
+    noTitle,
+    watchThisNextCta,
+    viewPatternDetailsCta,
+    renamePatternCta,
+    keepRecordingCta,
+    correctTranscriptCta,
+    removeFromPatternCta,
+  ];
 }

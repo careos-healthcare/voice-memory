@@ -25,19 +25,17 @@ class LiveAudioSessionFailure implements Exception {
 /// Orchestrates mint → proxy connect → setupComplete → PCM streaming lifecycle.
 class LiveAudioSessionCoordinator {
   LiveAudioSessionCoordinator({
-    required LiveAudioSessionApiClient sessionApi,
-    required CaptureAttestService attest,
+    required this._sessionApi,
+    required this._attest,
     LiveAudioWebSocketClient? webSocketClient,
     LivePcm16CaptureSource? captureSource,
     ApiUsageGuard? usageGuard,
-    String usageScopeKey = liveAudioUsageScopePrefix,
-  })  : _sessionApi = sessionApi,
-        _attest = attest,
-        _webSocketClient = webSocketClient ?? LiveAudioWebSocketClient(),
-        _captureSource = captureSource ??
-            RecordLivePcm16CaptureSource(configureIosAudioSession: false),
-        _usageGuard = usageGuard ?? ApiUsageGuard.shared,
-        _usageScopeKey = usageScopeKey;
+    this._usageScopeKey = liveAudioUsageScopePrefix,
+  }) : _webSocketClient = webSocketClient ?? LiveAudioWebSocketClient(),
+       _captureSource =
+           captureSource ??
+           RecordLivePcm16CaptureSource(configureIosAudioSession: false),
+       _usageGuard = usageGuard ?? ApiUsageGuard.shared;
 
   final LiveAudioSessionApiClient _sessionApi;
   final CaptureAttestService _attest;
@@ -150,7 +148,10 @@ class LiveAudioSessionCoordinator {
       Error.throwWithStackTrace(
         error is LiveAudioSessionFailure
             ? error
-            : LiveAudioSessionFailure('Live audio connect failed.', cause: error),
+            : LiveAudioSessionFailure(
+                'Live audio connect failed.',
+                cause: error,
+              ),
         stackTrace,
       );
     }
@@ -158,7 +159,9 @@ class LiveAudioSessionCoordinator {
 
   Future<void> startMicrophoneCapture() async {
     if (!canStreamAudio) {
-      throw StateError('Live audio session is not ready for microphone capture');
+      throw StateError(
+        'Live audio session is not ready for microphone capture',
+      );
     }
     if (_isCapturingMicrophone) return;
 
@@ -260,7 +263,8 @@ class LiveAudioSessionCoordinator {
     if (!canStreamAudio || _state == LiveSessionState.reconnecting) {
       return;
     }
-    if (_state != LiveSessionState.ready && _state != LiveSessionState.streaming) {
+    if (_state != LiveSessionState.ready &&
+        _state != LiveSessionState.streaming) {
       throw StateError('Live audio session is not ready for streaming');
     }
     if (_state == LiveSessionState.ready) {

@@ -23,28 +23,26 @@ CommercialProofExecutorInput _input({
   bool paidIntentBetaComplete = true,
   bool secretsRotationComplete = true,
   bool secretsRotationRepoSafe = true,
-}) =>
-    CommercialProofExecutorInput(
-      productPromiseClear: productPromiseClear,
-      firstJourneyStable: firstJourneyStable,
-      firstProofUseful: firstProofUseful,
-      proPromiseClear: proPromiseClear,
-      revenueCatProductsLoad: revenueCatProductsLoad,
-      paywallPriceVisible: paywallPriceVisible,
-      sandboxPurchaseWorks: sandboxPurchaseWorks,
-      restoreWorks: restoreWorks,
-      entitlementPersists: entitlementPersists,
-      testFlightUploaded: testFlightUploaded,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      secretsRotationComplete: secretsRotationComplete,
-      secretsRotationRepoSafe: secretsRotationRepoSafe,
-    );
+}) => CommercialProofExecutorInput(
+  productPromiseClear: productPromiseClear,
+  firstJourneyStable: firstJourneyStable,
+  firstProofUseful: firstProofUseful,
+  proPromiseClear: proPromiseClear,
+  revenueCatProductsLoad: revenueCatProductsLoad,
+  paywallPriceVisible: paywallPriceVisible,
+  sandboxPurchaseWorks: sandboxPurchaseWorks,
+  restoreWorks: restoreWorks,
+  entitlementPersists: entitlementPersists,
+  testFlightUploaded: testFlightUploaded,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  secretsRotationComplete: secretsRotationComplete,
+  secretsRotationRepoSafe: secretsRotationRepoSafe,
+);
 
 CommercialProofExecutorCheck _check(
   CommercialProofExecutorResult result,
   CommercialProofExecutorCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('CommercialProofExecutor.build', () {
@@ -99,9 +97,7 @@ void main() {
     });
 
     test('restore fails -> restoreBlocked', () {
-      final result = CommercialProofExecutor.build(
-        _input(restoreWorks: false),
-      );
+      final result = CommercialProofExecutor.build(_input(restoreWorks: false));
       expect(result.status, CommercialProofExecutorStatus.restoreBlocked);
     });
 
@@ -145,10 +141,7 @@ void main() {
 
     test('secrets repo unsafe blocks internal TestFlight too', () {
       final result = CommercialProofExecutor.build(
-        _input(
-          secretsRotationComplete: false,
-          secretsRotationRepoSafe: false,
-        ),
+        _input(secretsRotationComplete: false, secretsRotationRepoSafe: false),
       );
       expect(
         result.status,
@@ -206,19 +199,19 @@ void main() {
 
       final executorResult =
           CommercialProofExecutor.fromCommercialReadinessGateInput(
-        CommercialReadinessGateInput(
-          productPromiseClear: true,
-          firstJourneyStable: true,
-          firstProofUsefulEnough: true,
-          proPromiseClear: true,
-          revenueCatProductLoads: true,
-          paywallPriceVisible: true,
-          sandboxPurchaseWorks: true,
-          restoreWorks: true,
-          entitlementPersists: true,
-          testFlightBuildUploaded: false,
-        ),
-      );
+            CommercialReadinessGateInput(
+              productPromiseClear: true,
+              firstJourneyStable: true,
+              firstProofUsefulEnough: true,
+              proPromiseClear: true,
+              revenueCatProductLoads: true,
+              paywallPriceVisible: true,
+              sandboxPurchaseWorks: true,
+              restoreWorks: true,
+              entitlementPersists: true,
+              testFlightBuildUploaded: false,
+            ),
+          );
       expect(
         executorResult.status,
         CommercialProofExecutorStatus.testFlightBlocked,
@@ -249,13 +242,16 @@ void main() {
       expect(doc, contains('no pricing changes'));
     });
 
-    test('guardrail requires real purchase restore entitlement beta evidence', () {
-      final lower = CommercialProofExecutorCopy.guardrail.toLowerCase();
-      expect(lower, contains('purchase'));
-      expect(lower, contains('restore'));
-      expect(lower, contains('entitlement'));
-      expect(lower, contains('beta evidence'));
-    });
+    test(
+      'guardrail requires real purchase restore entitlement beta evidence',
+      () {
+        final lower = CommercialProofExecutorCopy.guardrail.toLowerCase();
+        expect(lower, contains('purchase'));
+        expect(lower, contains('restore'));
+        expect(lower, contains('entitlement'));
+        expect(lower, contains('beta evidence'));
+      },
+    );
 
     test('all visible strings pass proof surface advice guard', () {
       for (final copy in CommercialProofExecutorCopy.allVisibleStrings()) {

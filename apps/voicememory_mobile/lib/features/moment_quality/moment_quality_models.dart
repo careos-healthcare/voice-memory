@@ -1,9 +1,5 @@
 /// Local quality band for moment draft/saved text — not a score.
-enum MomentQualityLevel {
-  veryShort,
-  someDetail,
-  strongDetail,
-}
+enum MomentQualityLevel { veryShort, someDetail, strongDetail }
 
 /// Deterministic coach output from [MomentQualityEngine].
 class MomentQualityResult {

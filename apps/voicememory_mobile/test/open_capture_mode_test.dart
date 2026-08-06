@@ -15,10 +15,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/widgets/record/open_capture_prompt_chips.dart';
 
-JournalEntry _entry({
-  required String id,
-  required String transcript,
-}) =>
+JournalEntry _entry({required String id, required String transcript}) =>
     JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 12),
@@ -228,8 +225,7 @@ void main() {
               ),
               GoRoute(
                 path: '/away',
-                builder: (context, state) =>
-                    const Scaffold(body: Text('Away')),
+                builder: (context, state) => const Scaffold(body: Text('Away')),
               ),
             ],
           ),
@@ -321,11 +317,10 @@ void main() {
       expect(analyticsEvents, hasLength(2));
       expect(analyticsEvents[0].event, OpenCaptureAnalytics.seenEvent);
       expect(analyticsEvents[1].event, OpenCaptureAnalytics.chipTappedEvent);
-      expect(analyticsEvents[1].props.keys, containsAll([
-        'source',
-        'entry_count',
-        'chip_type',
-      ]));
+      expect(
+        analyticsEvents[1].props.keys,
+        containsAll(['source', 'entry_count', 'chip_type']),
+      );
       expect(analyticsEvents[1].props['chip_type'], 'win');
       for (final record in analyticsEvents) {
         for (final value in record.props.values) {
@@ -346,19 +341,21 @@ void main() {
   });
 
   group('Open capture placement', () {
-    test('chips sit under RecordCaptureModesCard on record screen when not simplified', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final modesIndex = source.indexOf('RecordCaptureModesCard(');
-      final chipsIndex = source.indexOf(
-        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
-      );
-      expect(modesIndex, greaterThan(0));
-      expect(chipsIndex, greaterThan(modesIndex));
-      expect(
-        source,
-        contains('!firstUseSimplifiedRecord'),
-      );
-    });
+    test(
+      'chips sit under RecordCaptureModesCard on record screen when not simplified',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        final modesIndex = source.indexOf('RecordCaptureModesCard(');
+        final chipsIndex = source.indexOf(
+          'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+        );
+        expect(modesIndex, greaterThan(0));
+        expect(chipsIndex, greaterThan(modesIndex));
+        expect(source, contains('!firstUseSimplifiedRecord'));
+      },
+    );
 
     test('chip tap sets selected prompt line only', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();

@@ -1,5 +1,3 @@
-import 'comparison_engine_prompt.dart';
-
 /// Exact confidence labels for comparison output.
 enum ComparisonConfidenceLabel {
   earlySignal('Early signal'),

@@ -85,8 +85,9 @@ void main() {
         ),
         GoRoute(
           path: '/belief-detail',
-          builder: (context, state) =>
-              BeliefDetailScreen(belief: state.extra! as ArchiveBeliefCardModel),
+          builder: (context, state) => BeliefDetailScreen(
+            belief: state.extra! as ArchiveBeliefCardModel,
+          ),
         ),
       ],
     );

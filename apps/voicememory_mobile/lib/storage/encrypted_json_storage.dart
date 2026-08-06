@@ -9,7 +9,7 @@ class EncryptedJsonStorage {
   final AesGcm _algorithm = AesGcm.with256bits();
 
   EncryptedJsonStorage({required List<int> masterKeyBytes})
-      : _secretKey = SecretKey(masterKeyBytes);
+    : _secretKey = SecretKey(masterKeyBytes);
 
   /// Ciphers raw JSON string maps into a securely sealed transit payload.
   Future<String> encryptData(Map<String, dynamic> rawJson) async {
@@ -38,11 +38,7 @@ class EncryptedJsonStorage {
       final nonce = base64.decode(payload['nonce'] as String);
       final macBytes = base64.decode(payload['mac'] as String);
 
-      final secretBox = SecretBox(
-        cipherText,
-        nonce: nonce,
-        mac: Mac(macBytes),
-      );
+      final secretBox = SecretBox(cipherText, nonce: nonce, mac: Mac(macBytes));
 
       final clearTextBytes = await _algorithm.decrypt(
         secretBox,

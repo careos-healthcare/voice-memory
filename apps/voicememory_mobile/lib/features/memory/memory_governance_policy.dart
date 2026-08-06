@@ -681,11 +681,13 @@ abstract class MemoryGovernancePolicy {
     return decision;
   }
 
-  @visibleForTesting
-  static void resetForTest() {
-    CurrentIntentSignal.resetSessionForTest();
-    EntryAboutnessSession.resetSessionForTest();
-    MemorySurfacingSession.resetSessionForTest();
-    TopicShiftGuard.resetForTest();
+  static void resetPersistedState() {
+    CurrentIntentSignal.resetSessionState();
+    EntryAboutnessSession.resetSessionState();
+    MemorySurfacingSession.resetSessionState();
+    TopicShiftGuard.resetPersistedState();
   }
+
+  @visibleForTesting
+  static void resetForTest() => resetPersistedState();
 }

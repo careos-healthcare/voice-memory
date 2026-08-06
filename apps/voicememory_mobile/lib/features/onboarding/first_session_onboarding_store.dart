@@ -30,12 +30,7 @@ class FirstSessionOnboardingStore {
     required int entryCount,
     required bool isReady,
     required bool isPostSave,
-  }) =>
-      loaded &&
-      isReady &&
-      !isPostSave &&
-      entryCount == 0 &&
-      !_dismissed;
+  }) => loaded && isReady && !isPostSave && entryCount == 0 && !_dismissed;
 
   Future<bool> _readDismissed() async {
     final raw = await _prefs.readMap(prefsKey);
@@ -61,7 +56,9 @@ class FirstSessionOnboardingStore {
     _loaded = true;
     if (AppServices.isInitialized) {
       try {
-        await AppServices.instance.prefs.writeMap(prefsKey, {'dismissed': false});
+        await AppServices.instance.prefs.writeMap(prefsKey, {
+          'dismissed': false,
+        });
       } catch (_) {}
     }
   }

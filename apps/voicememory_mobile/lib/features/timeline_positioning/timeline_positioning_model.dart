@@ -1,5 +1,3 @@
-import 'timeline_positioning_copy.dart';
-
 /// Resolved timeline positioning card — copy and safe metadata only.
 class TimelinePositioningResult {
   const TimelinePositioningResult({

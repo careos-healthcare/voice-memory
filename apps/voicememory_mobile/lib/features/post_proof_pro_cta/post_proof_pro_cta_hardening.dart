@@ -84,19 +84,19 @@ abstract final class PostProofProCtaHardening {
 
   static PostProofProCtaHardeningReport report(
     PostProofProCtaHardeningResult result,
-  ) =>
-      PostProofProCtaHardeningReport(
-        headline: PostProofProCtaCopy.headline,
-        body: PostProofProCtaCopy.body,
-        positioning: PostProofProCtaCopy.positioning,
-        orderLine: PostProofProCtaCopy.orderLine,
-        guardrail: PostProofProCtaCopy.guardrail,
-        result: result,
-      );
+  ) => PostProofProCtaHardeningReport(
+    headline: PostProofProCtaCopy.headline,
+    body: PostProofProCtaCopy.body,
+    positioning: PostProofProCtaCopy.positioning,
+    orderLine: PostProofProCtaCopy.orderLine,
+    guardrail: PostProofProCtaCopy.guardrail,
+    result: result,
+  );
 
   static bool shouldShowProCta(PostProofProCtaHardeningInput input) {
     if (input.userExplicitlyOpenedPro ?? false) return true;
-    final hasProofValue = (input.firstUsefulProofSeen ?? false) ||
+    final hasProofValue =
+        (input.firstUsefulProofSeen ?? false) ||
         (input.proofAcceptedOrCorrected ?? false) ||
         (input.clearLongerTrailMoment ?? false);
     return hasProofValue;
@@ -111,24 +111,25 @@ abstract final class PostProofProCtaHardening {
     bool? pricingChangeRequested,
     bool? revenueCatChangeRequested,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      PostProofProCtaHardeningInput(
-        firstUsefulProofSeen: firstUsefulProofSeen ??
-            _signalPassed(
-              paidIntentBeta,
-              PaidIntentBetaProofSignalId.firstUsefulProofSeen,
-            ),
-        proofAcceptedOrCorrected: proofAcceptedOrCorrected ??
-            _signalPassed(
-              paidIntentBeta,
-              PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
-            ),
-        clearLongerTrailMoment: clearLongerTrailMoment,
-        userExplicitlyOpenedPro: userExplicitlyOpenedPro,
-        proCtaRequested: proCtaRequested,
-        pricingChangeRequested: pricingChangeRequested,
-        revenueCatChangeRequested: revenueCatChangeRequested,
-      );
+  }) => PostProofProCtaHardeningInput(
+    firstUsefulProofSeen:
+        firstUsefulProofSeen ??
+        _signalPassed(
+          paidIntentBeta,
+          PaidIntentBetaProofSignalId.firstUsefulProofSeen,
+        ),
+    proofAcceptedOrCorrected:
+        proofAcceptedOrCorrected ??
+        _signalPassed(
+          paidIntentBeta,
+          PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
+        ),
+    clearLongerTrailMoment: clearLongerTrailMoment,
+    userExplicitlyOpenedPro: userExplicitlyOpenedPro,
+    proCtaRequested: proCtaRequested,
+    pricingChangeRequested: pricingChangeRequested,
+    revenueCatChangeRequested: revenueCatChangeRequested,
+  );
 
   static PostProofProCtaHardeningInput fromRepoSignals({
     required String postProofProCtaDocSource,
@@ -140,20 +141,20 @@ abstract final class PostProofProCtaHardening {
     bool? proCtaRequested,
     bool? pricingChangeRequested,
     bool? revenueCatChangeRequested,
-  }) =>
-      PostProofProCtaHardeningInput(
-        firstUsefulProofSeen: firstUsefulProofSeen,
-        proofAcceptedOrCorrected: proofAcceptedOrCorrected,
-        clearLongerTrailMoment: clearLongerTrailMoment,
-        userExplicitlyOpenedPro: userExplicitlyOpenedPro,
-        proCtaRequested: proCtaRequested,
-        pricingChangeRequested: pricingChangeRequested,
-        revenueCatChangeRequested: revenueCatChangeRequested,
-        docListsRules: detectDocListsRules(postProofProCtaDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(hardeningCopySource),
-        canonicalCopyPresentInCopy:
-            detectCanonicalCopyPresentInCopy(hardeningCopySource),
-      );
+  }) => PostProofProCtaHardeningInput(
+    firstUsefulProofSeen: firstUsefulProofSeen,
+    proofAcceptedOrCorrected: proofAcceptedOrCorrected,
+    clearLongerTrailMoment: clearLongerTrailMoment,
+    userExplicitlyOpenedPro: userExplicitlyOpenedPro,
+    proCtaRequested: proCtaRequested,
+    pricingChangeRequested: pricingChangeRequested,
+    revenueCatChangeRequested: revenueCatChangeRequested,
+    docListsRules: detectDocListsRules(postProofProCtaDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(hardeningCopySource),
+    canonicalCopyPresentInCopy: detectCanonicalCopyPresentInCopy(
+      hardeningCopySource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -228,49 +229,58 @@ abstract final class PostProofProCtaHardening {
     ].join(' ');
     final guardrailLower = PostProofProCtaCopy.guardrail.toLowerCase();
     final proCtaRequested = input.proCtaRequested ?? false;
-    final hasProofValue = (input.firstUsefulProofSeen ?? false) ||
+    final hasProofValue =
+        (input.firstUsefulProofSeen ?? false) ||
         (input.proofAcceptedOrCorrected ?? false) ||
         (input.clearLongerTrailMoment ?? false);
     final explicitOpen = input.userExplicitlyOpenedPro ?? false;
     return [
       _rule(
         id: PostProofProCtaRuleId.hideBeforeFirstUsefulProofUnlessExplicitOpen,
-        passes: guardrailLower.contains('hide before first useful proof') &&
+        passes:
+            guardrailLower.contains('hide before first useful proof') &&
             (!proCtaRequested || explicitOpen || hasProofValue),
       ),
       _rule(
         id: PostProofProCtaRuleId.showAfterProofValueMoment,
-        passes: guardrailLower.contains('clear longer-trail moment') &&
+        passes:
+            guardrailLower.contains('clear longer-trail moment') &&
             (!proCtaRequested || shouldShowProCta(input)),
       ),
       _rule(
         id: PostProofProCtaRuleId.canonicalCtaAndBody,
-        passes: copyBundle.contains(PostProofProCtaCopy.canonicalCta) &&
+        passes:
+            copyBundle.contains(PostProofProCtaCopy.canonicalCta) &&
             copyBundle.contains(PostProofProCtaCopy.canonicalBody),
       ),
       _rule(
         id: PostProofProCtaRuleId.noMoreAiLanguage,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('never say more ai'),
       ),
       _rule(
         id: PostProofProCtaRuleId.noDashboardLanguage,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('life-dashboard framing'),
       ),
       _rule(
         id: PostProofProCtaRuleId.noStorageLanguage,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('storage framing'),
       ),
       _rule(
         id: PostProofProCtaRuleId.noUrgencyScarcityLanguage,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('urgency/scarcity'),
       ),
       _rule(
         id: PostProofProCtaRuleId.noPricingOrRevenueCatChanges,
-        passes: guardrailLower.contains('do not change pricing or revenuecat') &&
+        passes:
+            guardrailLower.contains('do not change pricing or revenuecat') &&
             (!(input.pricingChangeRequested ?? false) &&
                 !(input.revenueCatChangeRequested ?? false)),
       ),
@@ -326,17 +336,16 @@ abstract final class PostProofProCtaHardening {
   static PostProofProCtaRule _rule({
     required PostProofProCtaRuleId id,
     required bool passes,
-  }) =>
-      PostProofProCtaRule(
-        id: id,
-        label: PostProofProCtaCopy.ruleLabelFor(id),
-        status: passes
-            ? PostProofProCtaRuleStatus.pass
-            : PostProofProCtaRuleStatus.fail,
-        detailLabel: passes
-            ? PostProofProCtaCopy.detailPass
-            : PostProofProCtaCopy.detailFail,
-      );
+  }) => PostProofProCtaRule(
+    id: id,
+    label: PostProofProCtaCopy.ruleLabelFor(id),
+    status: passes
+        ? PostProofProCtaRuleStatus.pass
+        : PostProofProCtaRuleStatus.fail,
+    detailLabel: passes
+        ? PostProofProCtaCopy.detailPass
+        : PostProofProCtaCopy.detailFail,
+  );
 }
 
 class PostProofProCtaHardeningInput {

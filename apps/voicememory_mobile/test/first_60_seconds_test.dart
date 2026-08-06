@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.d
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/journal_screen.dart';
+import 'package:archiveme_research/screens/journal_screen.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -105,10 +105,7 @@ void main() {
   group('Copy guardrails', () {
     test('intro copy is exact', () {
       expect(First60Copy.introTitle, 'When it repeats, save it');
-      expect(
-        First60Copy.introBody,
-        LandingAppContinuityCopy.heroBody,
-      );
+      expect(First60Copy.introBody, LandingAppContinuityCopy.heroBody);
       expect(First60Copy.introCta, 'Record one moment');
       expect(
         First60Copy.introReassurance,
@@ -148,7 +145,10 @@ void main() {
     });
 
     test('Pro bridge copy is exact', () {
-      expect(First60Copy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(
+        First60Copy.proTitle,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(
         First60Copy.proBody,
         'Unlock deeper history, saved evidence, and what keeps returning '
@@ -636,17 +636,24 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('zero entries shows simplified promise card instead of intro card', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
-      expect(find.byKey(const Key('timeline_positioning_card')), findsNothing);
-      expect(find.byKey(const Key('first_60_intro_card')), findsNothing);
-      expect(find.text('What is on your mind?'), findsNothing);
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'zero entries shows simplified promise card instead of intro card',
+      (tester) async {
+        await pumpRecordScreen(tester);
+        expect(
+          find.byKey(const Key('record_first_run_screen_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('timeline_positioning_card')),
+          findsNothing,
+        );
+        expect(find.byKey(const Key('first_60_intro_card')), findsNothing);
+        expect(find.text('What is on your mind?'), findsNothing);
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('intro hides once a recording is saved', (tester) async {
       await tester.runAsync(() async {
@@ -677,10 +684,15 @@ void main() {
       'advanced memory controls are not forced into the first 60 seconds',
       (tester) async {
         await pumpRecordScreen(tester);
-        final promiseCard = find.byKey(const Key('record_first_run_screen_card'));
+        final promiseCard = find.byKey(
+          const Key('record_first_run_screen_card'),
+        );
         expect(promiseCard, findsOneWidget);
         expect(
-          find.descendant(of: promiseCard, matching: find.textContaining('Memory')),
+          find.descendant(
+            of: promiseCard,
+            matching: find.textContaining('Memory'),
+          ),
           findsNothing,
         );
         expect(
@@ -731,10 +743,7 @@ void main() {
       });
       await pumpJournal(tester);
 
-      expect(
-        find.byKey(const Key('first_archive_value_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('first_archive_value_card')), findsOneWidget);
       expect(find.text(RecordReturnProCopy.archiveTitle), findsOneWidget);
       expect(find.text(RecordReturnProCopy.archiveBody), findsOneWidget);
       // Search 2.0 and Pins exist on this branch, so both actions render.
@@ -764,10 +773,7 @@ void main() {
         );
       });
       await pumpJournal(tester);
-      expect(
-        find.byKey(const Key('first_archive_value_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('first_archive_value_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -807,10 +813,7 @@ void main() {
       expect(pinned.isPinned, isTrue);
       // An already-pinned entry gets no pin action on a fresh view.
       await pumpJournal(tester);
-      expect(
-        find.byKey(const Key('first_archive_value_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('first_archive_value_card')), findsOneWidget);
       expect(find.byKey(const Key('first_archive_pin_cta')), findsNothing);
       expect(tester.takeException(), isNull);
     });

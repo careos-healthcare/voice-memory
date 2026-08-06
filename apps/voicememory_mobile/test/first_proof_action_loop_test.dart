@@ -28,43 +28,42 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -95,7 +94,10 @@ void main() {
       expect(content, isNotNull);
       expect(content!.title, FirstProofActionLoopCopy.yesTitle);
       expect(content.actions, contains(FirstProofActionType.watchThisNext));
-      expect(content.actions, contains(FirstProofActionType.viewPatternDetails));
+      expect(
+        content.actions,
+        contains(FirstProofActionType.viewPatternDetails),
+      );
     });
 
     test('Sort of answer shows rename pattern and keep recording', () {
@@ -127,10 +129,7 @@ void main() {
       expect(content, isNotNull);
       expect(content!.title, FirstProofActionLoopCopy.noTitle);
       expect(content.actions, contains(FirstProofActionType.correctTranscript));
-      expect(
-        content.actions,
-        contains(FirstProofActionType.removeFromPattern),
-      );
+      expect(content.actions, contains(FirstProofActionType.removeFromPattern));
       expect(content.actions, contains(FirstProofActionType.keepRecording));
     });
   });
@@ -194,9 +193,21 @@ void main() {
         _entry(id: 'q3', transcript: 'Nothing much today.'),
       ];
       final pending = [
-        _entry(id: 'v1', transcript: _placeholder, localAudioPath: '/tmp/v1.m4a'),
-        _entry(id: 'v2', transcript: _placeholder, localAudioPath: '/tmp/v2.m4a'),
-        _entry(id: 'v3', transcript: _placeholder, localAudioPath: '/tmp/v3.m4a'),
+        _entry(
+          id: 'v1',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v1.m4a',
+        ),
+        _entry(
+          id: 'v2',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v2.m4a',
+        ),
+        _entry(
+          id: 'v3',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v3.m4a',
+        ),
       ];
 
       for (final entries in [generic, quiet, pending]) {
@@ -243,7 +254,10 @@ void main() {
       );
 
       expect(find.text(FirstProofActionLoopCopy.yesTitle), findsOneWidget);
-      expect(find.text(FirstProofActionLoopCopy.watchThisNextCta), findsOneWidget);
+      expect(
+        find.text(FirstProofActionLoopCopy.watchThisNextCta),
+        findsOneWidget,
+      );
       expect(
         find.text(FirstProofActionLoopCopy.viewPatternDetailsCta),
         findsOneWidget,
@@ -291,8 +305,14 @@ void main() {
       );
 
       expect(find.text(FirstProofActionLoopCopy.sortOfTitle), findsOneWidget);
-      expect(find.text(FirstProofActionLoopCopy.renamePatternCta), findsOneWidget);
-      expect(find.text(FirstProofActionLoopCopy.keepRecordingCta), findsOneWidget);
+      expect(
+        find.text(FirstProofActionLoopCopy.renamePatternCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(FirstProofActionLoopCopy.keepRecordingCta),
+        findsOneWidget,
+      );
 
       await tester.tap(
         find.byKey(const Key('first_proof_action_loop_rename_pattern')),
@@ -307,60 +327,64 @@ void main() {
       expect(keptRecording, isTrue);
     });
 
-    testWidgets('No answer shows correct transcript remove and keep recording', (
-      tester,
-    ) async {
-      final entries = _threeRelatedEntries();
-      final payoff = FirstProofPayoffEngine.build(entries: entries)!;
-      final content = FirstProofActionLoopEngine.build(
-        answer: FirstProofTruthAnswer.no,
-        entries: entries,
-        payoff: payoff,
-      )!;
+    testWidgets(
+      'No answer shows correct transcript remove and keep recording',
+      (tester) async {
+        final entries = _threeRelatedEntries();
+        final payoff = FirstProofPayoffEngine.build(entries: entries)!;
+        final content = FirstProofActionLoopEngine.build(
+          answer: FirstProofTruthAnswer.no,
+          entries: entries,
+          payoff: payoff,
+        )!;
 
-      var corrected = false;
-      var removed = false;
-      var keptRecording = false;
+        var corrected = false;
+        var removed = false;
+        var keptRecording = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: FirstProofActionLoopCard(
-              content: content,
-              entryCount: 3,
-              onWatchThisNext: () {},
-              onCorrectTranscript: () => corrected = true,
-              onRemoveFromPattern: () => removed = true,
-              onKeepRecording: () => keptRecording = true,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: FirstProofActionLoopCard(
+                content: content,
+                entryCount: 3,
+                onWatchThisNext: () {},
+                onCorrectTranscript: () => corrected = true,
+                onRemoveFromPattern: () => removed = true,
+                onKeepRecording: () => keptRecording = true,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(find.text(FirstProofActionLoopCopy.noTitle), findsOneWidget);
-      expect(
-        find.text(FirstProofActionLoopCopy.correctTranscriptCta),
-        findsOneWidget,
-      );
-      expect(
-        find.text(FirstProofActionLoopCopy.removeFromPatternCta),
-        findsOneWidget,
-      );
-      expect(find.text(FirstProofActionLoopCopy.keepRecordingCta), findsOneWidget);
+        expect(find.text(FirstProofActionLoopCopy.noTitle), findsOneWidget);
+        expect(
+          find.text(FirstProofActionLoopCopy.correctTranscriptCta),
+          findsOneWidget,
+        );
+        expect(
+          find.text(FirstProofActionLoopCopy.removeFromPatternCta),
+          findsOneWidget,
+        );
+        expect(
+          find.text(FirstProofActionLoopCopy.keepRecordingCta),
+          findsOneWidget,
+        );
 
-      await tester.tap(
-        find.byKey(const Key('first_proof_action_loop_correct_transcript')),
-      );
-      await tester.pump();
-      expect(corrected, isTrue);
-      expect(removed, isFalse);
+        await tester.tap(
+          find.byKey(const Key('first_proof_action_loop_correct_transcript')),
+        );
+        await tester.pump();
+        expect(corrected, isTrue);
+        expect(removed, isFalse);
 
-      await tester.tap(
-        find.byKey(const Key('first_proof_action_loop_remove_from_pattern')),
-      );
-      await tester.pump();
-      expect(removed, isTrue);
-    });
+        await tester.tap(
+          find.byKey(const Key('first_proof_action_loop_remove_from_pattern')),
+        );
+        await tester.pump();
+        expect(removed, isTrue);
+      },
+    );
   });
 
   group('FirstProofActionLoopAnalytics', () {
@@ -432,7 +456,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

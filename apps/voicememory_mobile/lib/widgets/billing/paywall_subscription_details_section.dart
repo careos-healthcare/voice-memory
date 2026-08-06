@@ -34,9 +34,9 @@ class PaywallSubscriptionDetailsSection extends StatelessWidget {
         yearlyPrice ?? ArchiveLoopPaywallCopy.subscriptionPriceUnavailable;
     final priceLines = <String>[
       '${ArchiveLoopPaywallCopy.subscriptionMonthlyTitle}: '
-      '$monthlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionMonthlyDuration}',
+          '$monthlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionMonthlyDuration}',
       '${ArchiveLoopPaywallCopy.subscriptionYearlyTitle}: '
-      '$yearlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionYearlyDuration}',
+          '$yearlyPriceText · ${ArchiveLoopPaywallCopy.subscriptionYearlyDuration}',
     ];
     if (!plansAvailable) {
       priceLines.add(ArchiveLoopPaywallCopy.subscriptionPlansUnavailable);
@@ -96,7 +96,8 @@ class PaywallSubscriptionDetailsSection extends StatelessWidget {
               ),
               TextButton(
                 key: const Key('paywall_privacy_policy_link'),
-                onPressed: () => openUrl(ArchiveLoopPaywallCopy.privacyPolicyUrl),
+                onPressed: () =>
+                    openUrl(ArchiveLoopPaywallCopy.privacyPolicyUrl),
                 child: const Text(ArchiveLoopPaywallCopy.privacyPolicyLabel),
               ),
             ],

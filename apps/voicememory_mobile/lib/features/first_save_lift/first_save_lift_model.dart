@@ -1,10 +1,7 @@
 import 'first_save_lift_copy.dart';
 
 class FirstSaveLiftExample {
-  const FirstSaveLiftExample({
-    required this.id,
-    required this.text,
-  });
+  const FirstSaveLiftExample({required this.id, required this.text});
 
   final FirstSaveLiftExampleId id;
   final String text;

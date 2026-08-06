@@ -29,19 +29,19 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 List<JournalEntry> get _confirmedThreeEntries => [
-      _entry(
-        '1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 void main() {
   group('ArchiveCurrentBeliefEngine', () {
@@ -129,11 +129,10 @@ void main() {
           viewingConfirmedRepeatOrTimeline: true,
           hasConfirmedRepeatFoundation:
               EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-            _confirmedThreeEntries,
-          ),
+                _confirmedThreeEntries,
+              ),
           hasCurrentBeliefSurface:
-              surface?.isPrimaryAfterFirstProof == true &&
-                  surface!.shouldShow,
+              surface?.isPrimaryAfterFirstProof == true && surface!.shouldShow,
         ),
         isTrue,
       );
@@ -158,26 +157,26 @@ void main() {
 
   group('Patterns post-proof stack order', () {
     test('primary surfaces follow deterministic order constants', () {
-      expect(
-        PatternsPostProofStackOrder.primarySurfacesAfterFirstProof,
-        [
-          PatternsPostProofStackOrder.archiveCurrentBelief,
-          PatternsPostProofStackOrder.whatChangedSinceLastTime,
-          PatternsPostProofStackOrder.earlyEvidenceTimeline,
-        ],
-      );
+      expect(PatternsPostProofStackOrder.primarySurfacesAfterFirstProof, [
+        PatternsPostProofStackOrder.archiveCurrentBelief,
+        PatternsPostProofStackOrder.whatChangedSinceLastTime,
+        PatternsPostProofStackOrder.earlyEvidenceTimeline,
+      ]);
     });
 
     test('ArchiveCurrentBelief leads WhatChanged and timeline on Patterns', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       const stackAnchor =
           'if (showArchiveCurrentBelief &&\n                    archiveBeliefSurfaceCandidate.shouldShow)';
       final stackStart = source.indexOf(stackAnchor);
       expect(stackStart, greaterThan(0));
       final stack = source.substring(stackStart);
       final belief = stack.indexOf('ArchiveBeliefSurfaceCard');
-      final whatChanged = stack.indexOf('_buildWhatChangedSinceLastTimeWidgets');
+      final whatChanged = stack.indexOf(
+        '_buildWhatChangedSinceLastTimeWidgets',
+      );
       final timeline = stack.indexOf('EarlyEvidenceTimelineCard');
       final privateReport = stack.indexOf('PrivateArchiveReportCard');
       final proBridge = stack.indexOf('ArchiveIntelligenceProBridgeCard');

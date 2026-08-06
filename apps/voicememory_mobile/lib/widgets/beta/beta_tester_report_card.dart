@@ -9,15 +9,9 @@ import '../../theme/voicememory_cards.dart';
 
 /// Beta-first report card — local UI only, no export or subscription CTA.
 class BetaTesterReportCard extends StatefulWidget {
-  const BetaTesterReportCard({
-    super.key,
-    required this.result,
-  });
+  const BetaTesterReportCard({super.key, required this.result});
 
-  const BetaTesterReportCard.test({
-    super.key,
-    required this.result,
-  });
+  const BetaTesterReportCard.test({super.key, required this.result});
 
   final BetaTesterReportResult result;
 
@@ -38,20 +32,20 @@ class _BetaTesterReportCardState extends State<BetaTesterReportCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final headingStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final headingStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('beta_tester_report_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

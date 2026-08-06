@@ -74,7 +74,9 @@ abstract final class ProofEmotionalClarityEngine {
       subheadline: variant == ProofEmotionalClarityVariant.strongRepeat
           ? ProofEmotionalClarityCopyFix.subheadline
           : null,
-      evidenceLine: ProofEmotionalClarityCopyFix.evidenceLineForCount(entryCount),
+      evidenceLine: ProofEmotionalClarityCopyFix.evidenceLineForCount(
+        entryCount,
+      ),
       whatCameBackBody: whatCameBack,
       whatChangedBody: whatChanged,
       whyItMightMatterBody: whyMatters,
@@ -97,7 +99,8 @@ abstract final class ProofEmotionalClarityEngine {
 
     return switch (option) {
       WhatChangedV2Option.softer => ProofEmotionalClarityCopyFix.softenedPayoff,
-      WhatChangedV2Option.stronger => ProofEmotionalClarityCopyFix.repeatedPayoff,
+      WhatChangedV2Option.stronger =>
+        ProofEmotionalClarityCopyFix.repeatedPayoff,
       WhatChangedV2Option.same => ProofEmotionalClarityCopyFix.repeatedPayoff,
       WhatChangedV2Option.differentResponse =>
         ProofEmotionalClarityCopyFix.changedPayoff,
@@ -108,11 +111,10 @@ abstract final class ProofEmotionalClarityEngine {
 
   static bool _allowsStrongEmotionalCopy(
     ProofConfidenceCalibrationResult calibration,
-  ) =>
-      ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
-        calibration: calibration,
-        hasSafeAnchor: calibration.hasSafeAnchor,
-      );
+  ) => ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
+    calibration: calibration,
+    hasSafeAnchor: calibration.hasSafeAnchor,
+  );
 
   static ProofEmotionalClarityVariant _resolveVariant({
     required EvidenceWeightingResult? weighting,

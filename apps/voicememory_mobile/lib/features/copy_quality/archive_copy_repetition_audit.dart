@@ -131,13 +131,12 @@ abstract class ArchiveCopyRepetitionAudit {
     }
     for (final phrase in genericPhrases) {
       fixes.add(switch (phrase) {
-        'record another moment' =>
-          'Try "Record the next time this shows up."',
+        'record another moment' => 'Try "Record the next time this shows up."',
         'your map is getting sharper' || 'your map gets sharper' =>
           'Try "ArchiveMe has one more piece of evidence."',
-        'this may be about' => 'Try "Your words point to…" or "The strongest clue is…"',
-        'what changed' =>
-          'Try "What changed since your earlier recording."',
+        'this may be about' =>
+          'Try "Your words point to…" or "The strongest clue is…"',
+        'what changed' => 'Try "What changed since your earlier recording."',
         _ => 'Replace generic phrase "$phrase" with evidence-based wording.',
       });
     }

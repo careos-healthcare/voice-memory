@@ -50,12 +50,16 @@ class LocalCuriosityHookRepository implements CuriosityHookRepository {
     if (raw == null || raw.isEmpty) return const [];
     final hooksRaw = raw['hooks'];
     if (hooksRaw is! List) return const [];
-    final hooks = hooksRaw
-        .whereType<Map>()
-        .map((entry) => CuriosityHook.fromJson(Map<String, dynamic>.from(entry)))
-        .whereType<CuriosityHook>()
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final hooks =
+        hooksRaw
+            .whereType<Map>()
+            .map(
+              (entry) =>
+                  CuriosityHook.fromJson(Map<String, dynamic>.from(entry)),
+            )
+            .whereType<CuriosityHook>()
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     _cached = hooks;
     _loaded = true;
     return hooks;

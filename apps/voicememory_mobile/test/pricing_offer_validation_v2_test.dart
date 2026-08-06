@@ -28,24 +28,21 @@ PricingOfferValidationSummary _summary({
   int needStrongerProofCount = 1,
   int needRankingCount = 1,
   int ctaTapCount = 2,
-}) =>
-    PricingOfferValidationSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      understoodLongerTrailCount: understoodLongerTrailCount,
-      understoodNotMoreAiCount: understoodNotMoreAiCount,
-      payYesCount: payYesCount,
-      payMaybeCount: payMaybeCount,
-      payNoCount: payNoCount,
-      priceTooHighCount: priceTooHighCount,
-      needStrongerProofCount: needStrongerProofCount,
-      needRankingCount: needRankingCount,
-      ctaTapCount: ctaTapCount,
-    );
+}) => PricingOfferValidationSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  understoodLongerTrailCount: understoodLongerTrailCount,
+  understoodNotMoreAiCount: understoodNotMoreAiCount,
+  payYesCount: payYesCount,
+  payMaybeCount: payMaybeCount,
+  payNoCount: payNoCount,
+  priceTooHighCount: priceTooHighCount,
+  needStrongerProofCount: needStrongerProofCount,
+  needRankingCount: needRankingCount,
+  ctaTapCount: ctaTapCount,
+);
 
-PricingOfferValidationSummary _corePassingSummary({
-  int totalTesters = 30,
-}) =>
+PricingOfferValidationSummary _corePassingSummary({int totalTesters = 30}) =>
     _summary(
       totalTesters: totalTesters,
       usefulProofCount: totalTesters == 20 ? 5 : 7,
@@ -53,24 +50,23 @@ PricingOfferValidationSummary _corePassingSummary({
       understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
     );
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('PricingOfferValidationV2 thresholds', () {
@@ -184,22 +180,19 @@ void main() {
       },
     );
 
-    test(
-      'ranking requested but pay yes/maybe passes returns holdRanking',
-      () {
-        expect(
-          PricingOfferValidationV2.resolve(
-            _corePassingSummary().copyWith(
-              payYesCount: 2,
-              payMaybeCount: 1,
-              needRankingCount: 7,
-              needStrongerProofCount: 1,
-            ),
+    test('ranking requested but pay yes/maybe passes returns holdRanking', () {
+      expect(
+        PricingOfferValidationV2.resolve(
+          _corePassingSummary().copyWith(
+            payYesCount: 2,
+            payMaybeCount: 1,
+            needRankingCount: 7,
+            needStrongerProofCount: 1,
           ),
-          PricingOfferValidationDecision.holdRanking,
-        );
-      },
-    );
+        ),
+        PricingOfferValidationDecision.holdRanking,
+      );
+    });
 
     test(
       'ranking requested and pay weak only after proof/Pro pass returns investigateRankingOnlyIfPaymentBlocked',
@@ -213,8 +206,7 @@ void main() {
               needStrongerProofCount: 1,
             ),
           ),
-          PricingOfferValidationDecision
-              .investigateRankingOnlyIfPaymentBlocked,
+          PricingOfferValidationDecision.investigateRankingOnlyIfPaymentBlocked,
         );
       },
     );
@@ -306,25 +298,28 @@ void main() {
       },
     );
 
-    test('copy does not claim advice ranking therapy diagnosis or coaching', () {
-      for (final text in [
-        PricingOfferValidationV2Copy.title,
-        PricingOfferValidationV2Copy.body,
-        PricingOfferValidationV2Copy.valueLine,
-        PricingOfferValidationV2Copy.priceQuestion,
-        PricingOfferValidationV2Copy.reasonQuestion,
-        PricingOfferValidationV2Copy.cta,
-        PricingOfferValidationV2Copy.secondary,
-      ]) {
-        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
-        final lower = text.toLowerCase();
-        expect(lower.contains('ranking'), isFalse, reason: text);
-        expect(lower.contains('advice'), isFalse, reason: text);
-        expect(lower.contains('therapy'), isFalse, reason: text);
-        expect(lower.contains('diagnosis'), isFalse, reason: text);
-        expect(lower.contains('coaching'), isFalse, reason: text);
-      }
-    });
+    test(
+      'copy does not claim advice ranking therapy diagnosis or coaching',
+      () {
+        for (final text in [
+          PricingOfferValidationV2Copy.title,
+          PricingOfferValidationV2Copy.body,
+          PricingOfferValidationV2Copy.valueLine,
+          PricingOfferValidationV2Copy.priceQuestion,
+          PricingOfferValidationV2Copy.reasonQuestion,
+          PricingOfferValidationV2Copy.cta,
+          PricingOfferValidationV2Copy.secondary,
+        ]) {
+          expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+          final lower = text.toLowerCase();
+          expect(lower.contains('ranking'), isFalse, reason: text);
+          expect(lower.contains('advice'), isFalse, reason: text);
+          expect(lower.contains('therapy'), isFalse, reason: text);
+          expect(lower.contains('diagnosis'), isFalse, reason: text);
+          expect(lower.contains('coaching'), isFalse, reason: text);
+        }
+      },
+    );
   });
 
   group('Protected areas', () {
@@ -380,39 +375,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -429,21 +427,20 @@ extension on PricingOfferValidationSummary {
     int? needStrongerProofCount,
     int? needRankingCount,
     int? ctaTapCount,
-  }) =>
-      PricingOfferValidationSummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        usefulProofCount: usefulProofCount ?? this.usefulProofCount,
-        understoodLongerTrailCount:
-            understoodLongerTrailCount ?? this.understoodLongerTrailCount,
-        understoodNotMoreAiCount:
-            understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
-        payYesCount: payYesCount ?? this.payYesCount,
-        payMaybeCount: payMaybeCount ?? this.payMaybeCount,
-        payNoCount: payNoCount ?? this.payNoCount,
-        priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
-        needStrongerProofCount:
-            needStrongerProofCount ?? this.needStrongerProofCount,
-        needRankingCount: needRankingCount ?? this.needRankingCount,
-        ctaTapCount: ctaTapCount ?? this.ctaTapCount,
-      );
+  }) => PricingOfferValidationSummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    usefulProofCount: usefulProofCount ?? this.usefulProofCount,
+    understoodLongerTrailCount:
+        understoodLongerTrailCount ?? this.understoodLongerTrailCount,
+    understoodNotMoreAiCount:
+        understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
+    payYesCount: payYesCount ?? this.payYesCount,
+    payMaybeCount: payMaybeCount ?? this.payMaybeCount,
+    payNoCount: payNoCount ?? this.payNoCount,
+    priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
+    needStrongerProofCount:
+        needStrongerProofCount ?? this.needStrongerProofCount,
+    needRankingCount: needRankingCount ?? this.needRankingCount,
+    ctaTapCount: ctaTapCount ?? this.ctaTapCount,
+  );
 }

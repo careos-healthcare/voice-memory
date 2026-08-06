@@ -185,38 +185,36 @@ abstract final class PaymentBlockerDecisionMatrix {
   static PaymentBlockerReport report(
     PaymentBlockerSummary summary,
     PaymentBlockerDecision decision,
-  ) =>
-      PaymentBlockerReport(
-        decision: decision,
-        label: labelFor(decision),
-        guardrail: PaymentBlockerDecisionCopy.guardrail,
-      );
+  ) => PaymentBlockerReport(
+    decision: decision,
+    label: labelFor(decision),
+    guardrail: PaymentBlockerDecisionCopy.guardrail,
+  );
 
   static String labelFor(PaymentBlockerDecision decision) => switch (decision) {
-        PaymentBlockerDecision.insufficientData =>
-          PaymentBlockerDecisionCopy.insufficientDataLabel,
-        PaymentBlockerDecision.repairProofFirst =>
-          PaymentBlockerDecisionCopy.repairProofFirstLabel,
-        PaymentBlockerDecision.repairProUnderstanding =>
-          PaymentBlockerDecisionCopy.repairProUnderstandingLabel,
-        PaymentBlockerDecision.validateLongerTrailValue =>
-          PaymentBlockerDecisionCopy.validateLongerTrailValue,
-        PaymentBlockerDecision.sharpenProofValueProposition =>
-          PaymentBlockerDecisionCopy.sharpenProofValueProposition,
-        PaymentBlockerDecision.investigatePrioritisationConceptOnly =>
-          PaymentBlockerDecisionCopy.investigatePrioritisationConceptOnly,
-        PaymentBlockerDecision.validatePriceCopy =>
-          PaymentBlockerDecisionCopy.validatePriceCopyLabel,
-        PaymentBlockerDecision.productionCandidate =>
-          PaymentBlockerDecisionCopy.productionCandidateLabel,
-      };
+    PaymentBlockerDecision.insufficientData =>
+      PaymentBlockerDecisionCopy.insufficientDataLabel,
+    PaymentBlockerDecision.repairProofFirst =>
+      PaymentBlockerDecisionCopy.repairProofFirstLabel,
+    PaymentBlockerDecision.repairProUnderstanding =>
+      PaymentBlockerDecisionCopy.repairProUnderstandingLabel,
+    PaymentBlockerDecision.validateLongerTrailValue =>
+      PaymentBlockerDecisionCopy.validateLongerTrailValue,
+    PaymentBlockerDecision.sharpenProofValueProposition =>
+      PaymentBlockerDecisionCopy.sharpenProofValueProposition,
+    PaymentBlockerDecision.investigatePrioritisationConceptOnly =>
+      PaymentBlockerDecisionCopy.investigatePrioritisationConceptOnly,
+    PaymentBlockerDecision.validatePriceCopy =>
+      PaymentBlockerDecisionCopy.validatePriceCopyLabel,
+    PaymentBlockerDecision.productionCandidate =>
+      PaymentBlockerDecisionCopy.productionCandidateLabel,
+  };
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum PaymentBlockerDecision {

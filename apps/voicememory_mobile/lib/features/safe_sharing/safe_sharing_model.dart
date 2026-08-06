@@ -34,15 +34,15 @@ class SafeSharingFoundation {
   final String foundationBody;
 
   List<String> get allVisibleStrings => [
-        shareOnlyWhatYouChoose,
-        privateReportExplainPattern,
-        noDiagnosisDisclaimer,
-        userControlIncluded,
-        futureSharingPrinciple,
-        futureFeatureLabel,
-        foundationHeadline,
-        foundationBody,
-      ];
+    shareOnlyWhatYouChoose,
+    privateReportExplainPattern,
+    noDiagnosisDisclaimer,
+    userControlIncluded,
+    futureSharingPrinciple,
+    futureFeatureLabel,
+    foundationHeadline,
+    foundationBody,
+  ];
 
   static SafeSharingFoundation build() {
     final visible = SafeSharingCopy.allVisibleStrings();

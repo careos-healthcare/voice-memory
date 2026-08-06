@@ -16,49 +16,48 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _privateNote = 'This is not about work - it is more about family.';
 
@@ -98,60 +97,92 @@ void main() {
       expect(prompt.body, VisibleArchiveProofCopy.nextMomentFourBody);
     });
 
-    test('correction note on belief target shows retest prompt at 4+ entries', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
-        _privateNote,
-      );
+    test(
+      'correction note on belief target shows retest prompt at 4+ entries',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.beliefUpdate,
+          ),
+          _privateNote,
+        );
 
-      final prompt = NextMomentPromptEngine.build(entries: _entries(4))!;
-      expect(prompt.title, VisibleArchiveProofCopy.correctionNextFourTitle);
-      expect(prompt.body, VisibleArchiveProofCopy.correctionNextFourBody);
-      expect(prompt.secondaryCta, 'View evidence');
-      expect(prompt.secondaryAction, NextMomentPromptAction.viewEvidence);
-      expect(prompt.body.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
-      _expectNoBannedCopy([prompt.title, prompt.body]);
-    });
+        final prompt = NextMomentPromptEngine.build(entries: _entries(4))!;
+        expect(prompt.title, VisibleArchiveProofCopy.correctionNextFourTitle);
+        expect(prompt.body, VisibleArchiveProofCopy.correctionNextFourBody);
+        expect(prompt.secondaryCta, 'View evidence');
+        expect(prompt.secondaryAction, NextMomentPromptAction.viewEvidence);
+        expect(
+          prompt.body.toLowerCase(),
+          isNot(contains(_privateNote.toLowerCase())),
+        );
+        _expectNoBannedCopy([prompt.title, prompt.body]);
+      },
+    );
 
-    test('correction note on weekly review target shows review prompt at 5+', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.weeklyReview),
-        _privateNote,
-      );
+    test(
+      'correction note on weekly review target shows review prompt at 5+',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.weeklyReview,
+          ),
+          _privateNote,
+        );
 
-      final prompt = NextMomentPromptEngine.build(entries: _entries(5))!;
-      expect(prompt.title, VisibleArchiveProofCopy.correctionNextFiveReviewTitle);
-      expect(prompt.body, VisibleArchiveProofCopy.correctionNextFiveReviewBody);
-      expect(prompt.secondaryCta, 'View review');
-      expect(prompt.secondaryAction, NextMomentPromptAction.viewReview);
-      expect(prompt.body.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
-    });
+        final prompt = NextMomentPromptEngine.build(entries: _entries(5))!;
+        expect(
+          prompt.title,
+          VisibleArchiveProofCopy.correctionNextFiveReviewTitle,
+        );
+        expect(
+          prompt.body,
+          VisibleArchiveProofCopy.correctionNextFiveReviewBody,
+        );
+        expect(prompt.secondaryCta, 'View review');
+        expect(prompt.secondaryAction, NextMomentPromptAction.viewReview);
+        expect(
+          prompt.body.toLowerCase(),
+          isNot(contains(_privateNote.toLowerCase())),
+        );
+      },
+    );
 
-    test('correction note on archive home at 3 entries uses generic prompt with thin evidence',
-        () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.archiveHomeId(ArchiveHomeStage.three),
-        _privateNote,
-      );
+    test(
+      'correction note on archive home at 3 entries uses generic prompt with thin evidence',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.archiveHomeId(ArchiveHomeStage.three),
+          _privateNote,
+        );
 
-      final prompt = NextMomentPromptEngine.build(entries: _entries(3))!;
-      expect(prompt.title, VisibleArchiveProofCopy.correctionNextGenericTitle);
-      expect(prompt.body, contains('not quite right'));
-      expect(prompt.body, contains('missed'));
-      expect(prompt.secondaryCta, isNull);
-    });
+        final prompt = NextMomentPromptEngine.build(entries: _entries(3))!;
+        expect(
+          prompt.title,
+          VisibleArchiveProofCopy.correctionNextGenericTitle,
+        );
+        expect(prompt.body, contains('not quite right'));
+        expect(prompt.body, contains('missed'));
+        expect(prompt.secondaryCta, isNull);
+      },
+    );
 
-    test('correction note is not treated as fact or certainty in prompt copy', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
-        _privateNote,
-      );
-      final prompt = NextMomentPromptEngine.build(entries: _entries(4))!;
-      expect(prompt.body.toLowerCase(), contains('your note says'));
-      expect(prompt.body.toLowerCase(), isNot(contains('this is true')));
-      expect(prompt.body.toLowerCase(), isNot(contains('you always')));
-      expect(prompt.title.toLowerCase(), isNot(contains('confirmed')));
-    });
+    test(
+      'correction note is not treated as fact or certainty in prompt copy',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.beliefUpdate,
+          ),
+          _privateNote,
+        );
+        final prompt = NextMomentPromptEngine.build(entries: _entries(4))!;
+        expect(prompt.body.toLowerCase(), contains('your note says'));
+        expect(prompt.body.toLowerCase(), isNot(contains('this is true')));
+        expect(prompt.body.toLowerCase(), isNot(contains('you always')));
+        expect(prompt.title.toLowerCase(), isNot(contains('confirmed')));
+      },
+    );
 
     test('empty or whitespace correction note is ignored', () {
       ArchiveInsightFeedbackStore.saveCorrectionNote(
@@ -190,19 +221,28 @@ void main() {
       expect(prompt.title, VisibleArchiveProofCopy.nextMomentTwoTitle);
     });
 
-    test('activeContext prefers weekly review over belief when both have notes', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
-        'Belief note',
-      );
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.weeklyReview),
-        _privateNote,
-      );
+    test(
+      'activeContext prefers weekly review over belief when both have notes',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.beliefUpdate,
+          ),
+          'Belief note',
+        );
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.weeklyReview,
+          ),
+          _privateNote,
+        );
 
-      final context = CorrectionInformedNextPrompt.activeContext(eligibleCount: 5);
-      expect(context?.target, CorrectionInformedPromptTarget.weeklyReview);
-    });
+        final context = CorrectionInformedNextPrompt.activeContext(
+          eligibleCount: 5,
+        );
+        expect(context?.target, CorrectionInformedPromptTarget.weeklyReview);
+      },
+    );
   });
 
   group('Archive Home next action integration', () {
@@ -217,29 +257,44 @@ void main() {
       );
 
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
-      expect(summary.nextActionLine, VisibleArchiveProofCopy.correctionNextFourTitle);
+      expect(
+        summary.nextActionLine,
+        VisibleArchiveProofCopy.correctionNextFourTitle,
+      );
     });
   });
 
   group('Correction note privacy in prompts', () {
-    test('shareable archive proof does not include correction note or prompt note text',
-        () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote(
-        ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.weeklyReview),
-        _privateNote,
-      );
-      final prompt = NextMomentPromptEngine.build(entries: _entries(5))!;
-      final proof = const ShareableArchiveProofEngine().buildFromJournal(
-        entries: _entries(5),
-      );
-      final shareText = proof.lines.join('\n');
-      expect(shareText.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
-      expect(shareText.toLowerCase(), isNot(contains(prompt.title.toLowerCase())));
-    });
+    test(
+      'shareable archive proof does not include correction note or prompt note text',
+      () {
+        ArchiveInsightFeedbackStore.saveCorrectionNote(
+          ArchiveInsightFeedbackStore.targetId(
+            ArchiveInsightTarget.weeklyReview,
+          ),
+          _privateNote,
+        );
+        final prompt = NextMomentPromptEngine.build(entries: _entries(5))!;
+        final proof = const ShareableArchiveProofEngine().buildFromJournal(
+          entries: _entries(5),
+        );
+        final shareText = proof.lines.join('\n');
+        expect(
+          shareText.toLowerCase(),
+          isNot(contains(_privateNote.toLowerCase())),
+        );
+        expect(
+          shareText.toLowerCase(),
+          isNot(contains(prompt.title.toLowerCase())),
+        );
+      },
+    );
   });
 
   group('NextMomentPromptCard correction routes', () {
-    testWidgets('View evidence and View review callbacks still work', (tester) async {
+    testWidgets('View evidence and View review callbacks still work', (
+      tester,
+    ) async {
       ArchiveInsightFeedbackStore.saveCorrectionNote(
         ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate),
         _privateNote,
@@ -266,7 +321,9 @@ void main() {
       await tester.pump();
       expect(primaryTapped, isTrue);
 
-      await tester.tap(find.byKey(const Key('next_moment_prompt_secondary_cta')));
+      await tester.tap(
+        find.byKey(const Key('next_moment_prompt_secondary_cta')),
+      );
       await tester.pump();
       expect(secondaryTapped, isTrue);
     });

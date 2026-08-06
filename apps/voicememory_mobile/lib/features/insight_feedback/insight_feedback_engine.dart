@@ -10,8 +10,8 @@ class InsightFeedbackEngine {
     final records = insightId == null
         ? InsightFeedbackStore.cached
         : InsightFeedbackStore.cached
-            .where((record) => record.insightId == insightId)
-            .toList();
+              .where((record) => record.insightId == insightId)
+              .toList();
 
     if (records.isEmpty) return InsightFeedbackSummary.empty;
 
@@ -25,7 +25,9 @@ class InsightFeedbackEngine {
         .where((record) => record.choice == InsightFeedbackChoice.tooEarly)
         .length;
     final saveAsWatchThemeCount = records
-        .where((record) => record.choice == InsightFeedbackChoice.saveAsWatchTheme)
+        .where(
+          (record) => record.choice == InsightFeedbackChoice.saveAsWatchTheme,
+        )
         .length;
 
     return InsightFeedbackSummary(
@@ -44,8 +46,7 @@ class InsightFeedbackEngine {
 
   bool hasAnyFeedback() => InsightFeedbackStore.cached.isNotEmpty;
 
-  String betaOutcomesLabel() =>
-      hasAnyFeedback()
-          ? InsightFeedbackCopy.betaOutcomesSome
-          : InsightFeedbackCopy.betaOutcomesNone;
+  String betaOutcomesLabel() => hasAnyFeedback()
+      ? InsightFeedbackCopy.betaOutcomesSome
+      : InsightFeedbackCopy.betaOutcomesNone;
 }

@@ -72,161 +72,194 @@ void main() {
       expect(result.guidanceSlot, SurfacePriorityCardKey.lowFrictionReturn);
     });
 
-    test('gives three moment completion highest guidance priority for zero entry', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 0,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: true,
-          firstMomentCapture: true,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
+    test(
+      'gives three moment completion highest guidance priority for zero entry',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 0,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: true,
+            firstMomentCapture: true,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
 
-      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.firstMomentCapture,
-        candidate: true,
-      ), isFalse);
-    });
+        expect(
+          result.guidanceSlot,
+          SurfacePriorityCardKey.threeMomentCompletion,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.firstMomentCapture,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('gives first moment capture highest guidance priority when three moment inactive', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 0,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: false,
-          firstMomentCapture: true,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
+    test(
+      'gives first moment capture highest guidance priority when three moment inactive',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 0,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: false,
+            firstMomentCapture: true,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
 
-      expect(result.guidanceSlot, SurfacePriorityCardKey.firstMomentCapture);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.lowFrictionReturn,
-        candidate: true,
-      ), isFalse);
-    });
+        expect(result.guidanceSlot, SurfacePriorityCardKey.firstMomentCapture);
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.lowFrictionReturn,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('gives three moment completion highest guidance priority for one entry', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 1,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: true,
-          firstMomentCapture: false,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
+    test(
+      'gives three moment completion highest guidance priority for one entry',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 1,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: true,
+            firstMomentCapture: false,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
 
-      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.secondMomentReturn,
-        candidate: true,
-      ), isFalse);
-    });
+        expect(
+          result.guidanceSlot,
+          SurfacePriorityCardKey.threeMomentCompletion,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.secondMomentReturn,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('gives second moment return highest guidance priority when three moment inactive', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 1,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: false,
-          firstMomentCapture: false,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
+    test(
+      'gives second moment return highest guidance priority when three moment inactive',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 1,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: false,
+            firstMomentCapture: false,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
 
-      expect(result.guidanceSlot, SurfacePriorityCardKey.secondMomentReturn);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.lowFrictionReturn,
-        candidate: true,
-      ), isFalse);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.whatToNoticeNext,
-        candidate: true,
-      ), isFalse);
-    });
+        expect(result.guidanceSlot, SurfacePriorityCardKey.secondMomentReturn);
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.lowFrictionReturn,
+            candidate: true,
+          ),
+          isFalse,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.whatToNoticeNext,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('never shows more than 1 proof card', () {
       final result = SurfacePriorityEngine.auditRecordReady(
@@ -276,17 +309,17 @@ void main() {
     });
 
     test('keeps capture controls primary', () {
-      expect(
-        SurfacePriorityCopy.coreRule,
-        contains('capture-first'),
-      );
+      expect(SurfacePriorityCopy.coreRule, contains('capture-first'));
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       expect(source, contains('_buildCaptureEntryActions'));
-      expect(source.indexOf('_buildCaptureEntryActions'), lessThan(
-        source.indexOf(
-          'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+      expect(
+        source.indexOf('_buildCaptureEntryActions'),
+        lessThan(
+          source.indexOf(
+            'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+          ),
         ),
-      ));
+      );
     });
 
     test('prefers TimelineProofMoment over ArchiveTimelineSpine', () {
@@ -319,18 +352,27 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.timelineProofMoment,
-        candidate: true,
-      ), isTrue);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.archiveTimelineSpine,
-        candidate: true,
-      ), isFalse);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.betaTesterReport,
-        candidate: true,
-      ), isTrue);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.timelineProofMoment,
+          candidate: true,
+        ),
+        isTrue,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.archiveTimelineSpine,
+          candidate: true,
+        ),
+        isFalse,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.betaTesterReport,
+          candidate: true,
+        ),
+        isTrue,
+      );
     });
 
     test('suppresses older education stack when timeline spine visible', () {
@@ -364,14 +406,20 @@ void main() {
       );
 
       expect(result.proofSlot, SurfacePriorityCardKey.archiveTimelineSpine);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.evidenceWeighting,
-        candidate: true,
-      ), isFalse);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.timelinePositioning,
-        candidate: true,
-      ), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.evidenceWeighting,
+          candidate: true,
+        ),
+        isFalse,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.timelinePositioning,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
 
     test('never shows report with multiple proof cards', () {
@@ -404,10 +452,13 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.betaTesterReport,
-        candidate: true,
-      ), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.betaTesterReport,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 
@@ -434,13 +485,17 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.lowFrictionReturn,
-        candidate: true,
-      ), isFalse);
-      expect(result.hiddenReasons, contains(
-        SurfacePriorityCopy.hiddenReasonPostSaveGuidance,
-      ));
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.lowFrictionReturn,
+          candidate: true,
+        ),
+        isFalse,
+      );
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonPostSaveGuidance),
+      );
     });
 
     test('FirstProofPayoff wins', () {
@@ -465,14 +520,17 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.firstProofPayoff,
-        candidate: true,
-      ), isTrue);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.returnPayoff,
-        candidate: true,
-      ), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.firstProofPayoff,
+          candidate: true,
+        ),
+        isTrue,
+      );
+      expect(
+        result.isVisible(SurfacePriorityCardKey.returnPayoff, candidate: true),
+        isFalse,
+      );
     });
 
     test('WhatChanged wins', () {
@@ -497,14 +555,17 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.whatChanged,
-        candidate: true,
-      ), isTrue);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.firstProofPayoff,
-        candidate: true,
-      ), isFalse);
+      expect(
+        result.isVisible(SurfacePriorityCardKey.whatChanged, candidate: true),
+        isTrue,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.firstProofPayoff,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 
@@ -574,10 +635,13 @@ void main() {
         ),
       );
 
-      expect(result.isVisible(
-        SurfacePriorityCardKey.betaTesterReport,
-        candidate: true,
-      ), isTrue);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.betaTesterReport,
+          candidate: true,
+        ),
+        isTrue,
+      );
       final reportIndex = result.visibleCardKeys.indexOf(
         SurfacePriorityCardKey.betaTesterReport,
       );
@@ -659,58 +723,64 @@ void main() {
           )
           .length;
       expect(detailVisible, lessThanOrEqualTo(1));
-      expect(result.visibleCardKeys, contains(
-        SurfacePriorityCardKey.correctionMemory,
-      ));
+      expect(
+        result.visibleCardKeys,
+        contains(SurfacePriorityCardKey.correctionMemory),
+      );
     });
 
-    test('proof quality response wins correction slot over not relevant recovery',
-        () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: true,
-          proofQualityResponse: true,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
+    test(
+      'proof quality response wins correction slot over not relevant recovery',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: true,
+            proofQualityResponse: true,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
 
-      expect(result.correctionSlot, SurfacePriorityCardKey.proofQualityResponse);
-      expect(
-        result.isVisible(
+        expect(
+          result.correctionSlot,
           SurfacePriorityCardKey.proofQualityResponse,
-          candidate: true,
-        ),
-        isTrue,
-      );
-      expect(
-        result.isVisible(
-          SurfacePriorityCardKey.notRelevantRecovery,
-          candidate: true,
-        ),
-        isFalse,
-      );
-    });
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.proofQualityResponse,
+            candidate: true,
+          ),
+          isTrue,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.notRelevantRecovery,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('SurfacePriorityEngine paywall', () {
@@ -724,17 +794,25 @@ void main() {
         ),
       );
 
-      expect(SurfacePriorityCopy.paidReason,
-          'Pro keeps the longer proof trail over time.');
+      expect(
+        SurfacePriorityCopy.paidReason,
+        'Pro keeps the longer proof trail over time.',
+      );
       expect(result.visibleCardCount, 1);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.paywallPrimaryReason,
-        candidate: true,
-      ), isTrue);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.paywallSecondaryReason,
-        candidate: true,
-      ), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.paywallPrimaryReason,
+          candidate: true,
+        ),
+        isTrue,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.paywallSecondaryReason,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 
@@ -774,15 +852,18 @@ void main() {
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == SurfacePriorityAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'surface',
-        'entry_count',
-        'visible_card_count',
-        'suppressed_card_count',
-        'proof_card_key',
-        'guidance_card_key',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll([
+          'source',
+          'surface',
+          'entry_count',
+          'visible_card_count',
+          'suppressed_card_count',
+          'proof_card_key',
+          'guidance_card_key',
+        ]),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('body')));
     });
@@ -816,8 +897,9 @@ void main() {
     });
 
     test('patterns screen references SurfacePriorityEngine', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('SurfacePriorityEngine.auditPatterns'));
       expect(source, contains('showPatternsProEvidenceValueCard'));
     });

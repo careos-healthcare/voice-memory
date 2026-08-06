@@ -18,33 +18,32 @@ JournalEntry _voiceEntry({
   String id = 'v1',
   String transcript = '',
   String? localAudioPath = '/tmp/audio.m4a',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _usableVoiceEntry({String id = 'v1'}) => _voiceEntry(
-      id: id,
-      transcript: 'I said yes when I had no capacity left today.',
-    );
+  id: id,
+  transcript: 'I said yes when I had no capacity left today.',
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => _voiceEntry(
-      id: id,
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-    );
+  id: id,
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+);
 
 bool firstSavePayoffEligible({
   required int entryCount,
@@ -77,32 +76,48 @@ void main() {
 
     test('low-quality voice save does not qualify for first-save payoff', () {
       final degraded = _degradedVoiceEntry();
-      expect(firstSavePayoffEligible(entryCount: 1, savedEntry: degraded), isFalse);
+      expect(
+        firstSavePayoffEligible(entryCount: 1, savedEntry: degraded),
+        isFalse,
+      );
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(degraded), isTrue);
     });
 
     test('good transcript still qualifies for first-save payoff', () {
       final usable = _usableVoiceEntry();
-      expect(firstSavePayoffEligible(entryCount: 1, savedEntry: usable), isTrue);
-    });
-
-    test('typed recovery clears degraded state and enables first-save payoff', () async {
-      final degraded = _degradedVoiceEntry();
-      await AppServices.instance.journalStore.save(degraded);
-
-      final result = await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: 'I said yes when I had no capacity left.',
-      );
-
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
-      expect(VoiceCaptureQuality.displayTextLength(result.entry), greaterThan(0));
       expect(
-        firstSavePayoffEligible(entryCount: 1, savedEntry: result.entry),
+        firstSavePayoffEligible(entryCount: 1, savedEntry: usable),
         isTrue,
       );
-      expect(archiveEvidenceReflectionCount([result.entry]), 1);
     });
+
+    test(
+      'typed recovery clears degraded state and enables first-save payoff',
+      () async {
+        final degraded = _degradedVoiceEntry();
+        await AppServices.instance.journalStore.save(degraded);
+
+        final result = await AppServices.instance.pipeline
+            .attachTypedTextToVoiceEntry(
+              entry: degraded,
+              transcript: 'I said yes when I had no capacity left.',
+            );
+
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isFalse,
+        );
+        expect(
+          VoiceCaptureQuality.displayTextLength(result.entry),
+          greaterThan(0),
+        );
+        expect(
+          firstSavePayoffEligible(entryCount: 1, savedEntry: result.entry),
+          isTrue,
+        );
+        expect(archiveEvidenceReflectionCount([result.entry]), 1);
+      },
+    );
 
     test('degraded post-save policy keeps typed recovery and record again', () {
       final policy = RecordCtaPolicy.resolve(
@@ -130,7 +145,10 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.postSaveSuccess);
-      expect(policy.primaryLabel, isNot(PendingTranscriptRecoveryCopy.primaryAction));
+      expect(
+        policy.primaryLabel,
+        isNot(PendingTranscriptRecoveryCopy.primaryAction),
+      );
     });
 
     test('recovery copy matches pending transcript spec', () {

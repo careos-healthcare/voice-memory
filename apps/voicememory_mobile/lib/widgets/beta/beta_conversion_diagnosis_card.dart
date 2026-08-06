@@ -25,7 +25,8 @@ class BetaConversionDiagnosisCard extends StatefulWidget {
       _BetaConversionDiagnosisCardState();
 }
 
-class _BetaConversionDiagnosisCardState extends State<BetaConversionDiagnosisCard> {
+class _BetaConversionDiagnosisCardState
+    extends State<BetaConversionDiagnosisCard> {
   BetaConversionDiagnosisResult? _result;
 
   @override
@@ -75,9 +76,9 @@ class _BetaConversionDiagnosisCardState extends State<BetaConversionDiagnosisCar
           Text(
             result.title,
             key: const Key('beta_conversion_diagnosis_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -103,9 +104,9 @@ class _BetaConversionDiagnosisCardState extends State<BetaConversionDiagnosisCar
           else ...[
             Text(
               BetaConversionDiagnosisCopy.diagnosisTitle,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             for (final diagnosis in result.diagnoses) ...[
@@ -149,7 +150,9 @@ class _DiagnosisTile extends StatelessWidget {
         children: [
           Text(
             diagnosis.message,
-            key: Key('beta_conversion_diagnosis_message_${diagnosis.metricId.name}'),
+            key: Key(
+              'beta_conversion_diagnosis_message_${diagnosis.metricId.name}',
+            ),
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -160,19 +163,25 @@ class _DiagnosisTile extends StatelessWidget {
           Text(
             '${BetaConversionDiagnosisCopy.metricPrefix}: '
             '${diagnosis.metricLabel} · ${diagnosis.currentValueLabel}',
-            key: Key('beta_conversion_diagnosis_metric_${diagnosis.metricId.name}'),
+            key: Key(
+              'beta_conversion_diagnosis_metric_${diagnosis.metricId.name}',
+            ),
             style: const TextStyle(fontSize: 12, height: 1.35),
           ),
           Text(
             '${BetaConversionDiagnosisCopy.targetPrefix}: '
             '${diagnosis.targetValueLabel}',
-            key: Key('beta_conversion_diagnosis_target_${diagnosis.metricId.name}'),
+            key: Key(
+              'beta_conversion_diagnosis_target_${diagnosis.metricId.name}',
+            ),
             style: const TextStyle(fontSize: 12, height: 1.35),
           ),
           Text(
             '${BetaConversionDiagnosisCopy.fixPrefix}: '
             '${diagnosis.recommendedFixLabel}',
-            key: Key('beta_conversion_diagnosis_fix_${diagnosis.metricId.name}'),
+            key: Key(
+              'beta_conversion_diagnosis_fix_${diagnosis.metricId.name}',
+            ),
             style: const TextStyle(
               fontSize: 12,
               height: 1.35,

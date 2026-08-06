@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 
 class _SpyCuriosityDataExporter extends CuriosityDataExporter {
   _SpyCuriosityDataExporter({required super.journalService})
-      : super(reactionRepository: InMemoryCuriosityReactionRepository());
+    : super(reactionRepository: InMemoryCuriosityReactionRepository());
 
   int markdownCalls = 0;
   DateTime? lastMarkdownStart;
@@ -62,7 +62,9 @@ void main() {
   });
 
   group('WeeklyProductivityReportScreen', () {
-    testWidgets('renders warm empty state when there are no check-ins', (tester) async {
+    testWidgets('renders warm empty state when there are no check-ins', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -78,14 +80,35 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_productivity_report_empty')), findsOneWidget);
-      expect(find.byKey(const Key('weekly_productivity_report_empty_title')), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.emptyTitle), findsOneWidget);
-      expect(find.byKey(const Key('weekly_productivity_report_empty_body')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_empty')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_empty_title')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.emptyTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_empty_body')),
+        findsOneWidget,
+      );
       expect(find.text(WeeklyProductivityReportCopy.emptyBody), findsOneWidget);
-      expect(find.byKey(const Key('weekly_productivity_report_loaded')), findsNothing);
-      expect(find.byKey(const Key('weekly_productivity_report_hero')), findsNothing);
-      expect(find.byKey(const Key('weekly_productivity_report_export_section')), findsNothing);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_loaded')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_hero')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_export_section')),
+        findsNothing,
+      );
     });
 
     testWidgets('renders populated weekly report layout', (tester) async {
@@ -108,26 +131,44 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_productivity_report_loaded')), findsOneWidget);
-      expect(find.byKey(const Key('weekly_productivity_report_hero')), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.heroSubtitle(6)), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_loaded')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_hero')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.heroSubtitle(6)),
+        findsOneWidget,
+      );
 
-      expect(find.byKey(const Key('weekly_productivity_report_breakdown')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_breakdown')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(
-          Key('weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.progressed.name}'),
+          Key(
+            'weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.progressed.name}',
+          ),
         ),
         findsOneWidget,
       );
       expect(
         find.byKey(
-          Key('weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.stuck.name}'),
+          Key(
+            'weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.stuck.name}',
+          ),
         ),
         findsOneWidget,
       );
       expect(
         find.byKey(
-          Key('weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.pivot.name}'),
+          Key(
+            'weekly_productivity_report_reaction_${YesterdaysSnapshotReaction.pivot.name}',
+          ),
         ),
         findsOneWidget,
       );
@@ -135,23 +176,48 @@ void main() {
       expect(find.text('33%'), findsOneWidget);
       expect(find.text('17%'), findsOneWidget);
 
-      expect(find.byKey(const Key('weekly_productivity_report_momentum')), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.momentumTitle), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_momentum')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.momentumTitle),
+        findsOneWidget,
+      );
       expect(find.text('finished the draft'), findsOneWidget);
       expect(find.text('shipped the fix'), findsOneWidget);
 
-      expect(find.byKey(const Key('weekly_productivity_report_obstacles')), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.obstaclesTitle), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_obstacles')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.obstaclesTitle),
+        findsOneWidget,
+      );
       expect(find.text('said yes again'), findsOneWidget);
 
-      expect(find.byKey(const Key('weekly_productivity_report_empty')), findsNothing);
-      expect(find.byKey(const Key('weekly_productivity_report_export_section')), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.exportMarkdownLabel), findsOneWidget);
-      expect(find.text(WeeklyProductivityReportCopy.exportJsonLabel), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_productivity_report_empty')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('weekly_productivity_report_export_section')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.exportMarkdownLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WeeklyProductivityReportCopy.exportJsonLabel),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('renders clinical trajectory trend when history points exist',
-        (tester) async {
+    testWidgets('renders clinical trajectory trend when history points exist', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -184,13 +250,18 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Clinical Telemetry & Down-Regulation'), findsOneWidget);
-      expect(find.byKey(const Key('clinical_telemetry_rolling_health_score')), findsOneWidget);
+      expect(
+        find.byKey(const Key('clinical_telemetry_rolling_health_score')),
+        findsOneWidget,
+      );
       expect(find.text('Rolling Stability Index'), findsOneWidget);
       expect(find.text('40 / 100'), findsOneWidget);
       expect(find.text('Needs attention'), findsOneWidget);
     });
 
-    testWidgets('markdown export button calls exporter and shows toast', (tester) async {
+    testWidgets('markdown export button calls exporter and shows toast', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(800, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -236,7 +307,10 @@ void main() {
       expect(exporter.lastMarkdownEnd, isNotNull);
       expect(copiedMarkdown, contains('ArchiveMe — Curiosity Loop Export'));
       expect(copiedMarkdown, contains('said yes again'));
-      expect(find.text(WeeklyProductivityReportCopy.markdownCopiedToast), findsOneWidget);
+      expect(
+        find.text(WeeklyProductivityReportCopy.markdownCopiedToast),
+        findsOneWidget,
+      );
     });
   });
 }

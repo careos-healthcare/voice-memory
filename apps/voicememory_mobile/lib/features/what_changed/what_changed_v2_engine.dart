@@ -37,8 +37,9 @@ abstract final class WhatChangedV2Engine {
     if (!_allowsPrompt(entries)) return null;
 
     final latestEntryId = RepeatReturnCheckStore.latestSavedEntryId(entries);
-    if (WhatChangedV2Store.cached
-        .any((record) => record.entryId == latestEntryId)) {
+    if (WhatChangedV2Store.cached.any(
+      (record) => record.entryId == latestEntryId,
+    )) {
       return null;
     }
 
@@ -182,9 +183,7 @@ abstract final class WhatChangedV2Engine {
     if (ArchiveEvidenceQualityGate.usableCount(entries) == 0) return false;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
     if (!evidence.isStrong) return false;
 

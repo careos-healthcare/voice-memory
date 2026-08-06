@@ -41,21 +41,20 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: 'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityBoundaryResponseInput _eligibleInput({
   CapacityBoundaryResponseSelection? selection,
@@ -64,21 +63,20 @@ CapacityBoundaryResponseInput _eligibleInput({
   bool pendingCostCheckin = false,
   bool beforeYesPauseOnHome = false,
   bool weeklyReviewOnHome = false,
-}) =>
-    CapacityBoundaryResponseInput(
-      sampleMode: false,
-      realSavedMomentCount: 3,
-      capacityWedgeActive: true,
-      capacityMomentCount: 3,
-      capacityEvidenceCount: 3,
-      outcomeOrCostRecordCount: 2,
-      pendingPullReasonOnHome: pendingPullReason,
-      pendingDecisionOutcome: pendingDecisionOutcome,
-      pendingCostCheckin: pendingCostCheckin,
-      beforeYesPauseOnHome: beforeYesPauseOnHome,
-      weeklyReviewOnHome: weeklyReviewOnHome,
-      selection: selection,
-    );
+}) => CapacityBoundaryResponseInput(
+  sampleMode: false,
+  realSavedMomentCount: 3,
+  capacityWedgeActive: true,
+  capacityMomentCount: 3,
+  capacityEvidenceCount: 3,
+  outcomeOrCostRecordCount: 2,
+  pendingPullReasonOnHome: pendingPullReason,
+  pendingDecisionOutcome: pendingDecisionOutcome,
+  pendingCostCheckin: pendingCostCheckin,
+  beforeYesPauseOnHome: beforeYesPauseOnHome,
+  weeklyReviewOnHome: weeklyReviewOnHome,
+  selection: selection,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -208,66 +206,71 @@ void main() {
       ]);
     });
 
-    test('archive home suppresses when pending pull reason/outcome/cost/weekly review', () {
-      expect(
-        CapacityBoundaryResponseEngine.showOnArchiveHome(
-          hasFeature: true,
-          sampleMode: false,
-          pendingPullReason: true,
-          pendingDecisionOutcome: false,
-          pendingCostCheckin: false,
-          beforeYesPauseOnHome: false,
-          weeklyReviewOnHome: false,
-        ),
-        isFalse,
-      );
-      expect(
-        CapacityBoundaryResponseEngine.showOnArchiveHome(
-          hasFeature: true,
-          sampleMode: false,
-          pendingPullReason: false,
-          pendingDecisionOutcome: true,
-          pendingCostCheckin: false,
-          beforeYesPauseOnHome: false,
-          weeklyReviewOnHome: false,
-        ),
-        isFalse,
-      );
-      expect(
-        CapacityBoundaryResponseEngine.showOnArchiveHome(
-          hasFeature: true,
-          sampleMode: false,
-          pendingPullReason: false,
-          pendingDecisionOutcome: false,
-          pendingCostCheckin: true,
-          beforeYesPauseOnHome: false,
-          weeklyReviewOnHome: false,
-        ),
-        isFalse,
-      );
-      expect(
-        CapacityBoundaryResponseEngine.showOnArchiveHome(
-          hasFeature: true,
-          sampleMode: false,
-          pendingPullReason: false,
-          pendingDecisionOutcome: false,
-          pendingCostCheckin: false,
-          beforeYesPauseOnHome: false,
-          weeklyReviewOnHome: true,
-        ),
-        isFalse,
-      );
-      expect(
-        engine.build(
-          _eligibleInput(
+    test(
+      'archive home suppresses when pending pull reason/outcome/cost/weekly review',
+      () {
+        expect(
+          CapacityBoundaryResponseEngine.showOnArchiveHome(
+            hasFeature: true,
+            sampleMode: false,
+            pendingPullReason: true,
             pendingDecisionOutcome: false,
             pendingCostCheckin: false,
+            beforeYesPauseOnHome: false,
             weeklyReviewOnHome: false,
           ),
-        ).showOnArchiveHome,
-        isTrue,
-      );
-    });
+          isFalse,
+        );
+        expect(
+          CapacityBoundaryResponseEngine.showOnArchiveHome(
+            hasFeature: true,
+            sampleMode: false,
+            pendingPullReason: false,
+            pendingDecisionOutcome: true,
+            pendingCostCheckin: false,
+            beforeYesPauseOnHome: false,
+            weeklyReviewOnHome: false,
+          ),
+          isFalse,
+        );
+        expect(
+          CapacityBoundaryResponseEngine.showOnArchiveHome(
+            hasFeature: true,
+            sampleMode: false,
+            pendingPullReason: false,
+            pendingDecisionOutcome: false,
+            pendingCostCheckin: true,
+            beforeYesPauseOnHome: false,
+            weeklyReviewOnHome: false,
+          ),
+          isFalse,
+        );
+        expect(
+          CapacityBoundaryResponseEngine.showOnArchiveHome(
+            hasFeature: true,
+            sampleMode: false,
+            pendingPullReason: false,
+            pendingDecisionOutcome: false,
+            pendingCostCheckin: false,
+            beforeYesPauseOnHome: false,
+            weeklyReviewOnHome: true,
+          ),
+          isFalse,
+        );
+        expect(
+          engine
+              .build(
+                _eligibleInput(
+                  pendingDecisionOutcome: false,
+                  pendingCostCheckin: false,
+                  weeklyReviewOnHome: false,
+                ),
+              )
+              .showOnArchiveHome,
+          isTrue,
+        );
+      },
+    );
 
     test('copy passes language guard', () {
       _expectNoBannedCopy(CapacityBoundaryResponseCopy.allVisibleStrings());
@@ -303,8 +306,9 @@ void main() {
         final text = CapacityBoundaryResponseCopy.textForId(id);
         expect(text, isNotNull);
         expect(
-          CapacityBoundaryResponseCopy.templates
-              .map((template) => template.text),
+          CapacityBoundaryResponseCopy.templates.map(
+            (template) => template.text,
+          ),
           contains(text),
         );
       }
@@ -322,9 +326,15 @@ void main() {
           ),
         ),
       );
-      expect(find.byKey(const Key('capacity_boundary_response_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('capacity_boundary_response_card')),
+        findsOneWidget,
+      );
       expect(find.text(CapacityBoundaryResponseCopy.title), findsOneWidget);
-      expect(find.text(CapacityBoundaryResponseCopy.chooseResponseCta), findsOneWidget);
+      expect(
+        find.text(CapacityBoundaryResponseCopy.chooseResponseCta),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hidden in sample mode', (tester) async {
@@ -352,8 +362,9 @@ void main() {
       await _resetStore('picker');
     });
 
-    testWidgets('copy action does not include private transcript text',
-        (tester) async {
+    testWidgets('copy action does not include private transcript text', (
+      tester,
+    ) async {
       final calls = <MethodCall>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -377,17 +388,13 @@ void main() {
       );
 
       final result = engine.build(
-        _eligibleInput(
-          selection: CapacityBoundaryResponseStore.cached,
-        ),
+        _eligibleInput(selection: CapacityBoundaryResponseStore.cached),
       );
 
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: CapacityBoundaryResponsePicker(result: result),
-          ),
+          home: Scaffold(body: CapacityBoundaryResponsePicker(result: result)),
         ),
       );
       await tester.pump();

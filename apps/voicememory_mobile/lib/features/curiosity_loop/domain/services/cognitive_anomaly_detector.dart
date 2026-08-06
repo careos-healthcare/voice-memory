@@ -20,7 +20,8 @@ class CognitiveAnomalyDetector {
     required CognitiveBiomarkers baseline,
   }) {
     final driftVariance = current.cohesionDrift - baseline.cohesionDrift;
-    final lexicalVariance = baseline.lexicalDiversity - current.lexicalDiversity;
+    final lexicalVariance =
+        baseline.lexicalDiversity - current.lexicalDiversity;
 
     return driftVariance >= driftVarianceThreshold ||
         lexicalVariance >= lexicalVarianceThreshold;

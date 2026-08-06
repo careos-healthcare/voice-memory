@@ -38,37 +38,39 @@ void main() {
       ApiUsageGuard.resetForTest();
     });
 
-    test('connect mints session, waits for setupComplete, then streams PCM',
-        () async {
-      final sinkController = StreamController<dynamic>();
-      final webSocketClient = LiveAudioWebSocketClient(
-        connectionFactory: (_, {headers}) =>
-            _FakeSocketConnection(sinkController),
-      );
+    test(
+      'connect mints session, waits for setupComplete, then streams PCM',
+      () async {
+        final sinkController = StreamController<dynamic>();
+        final webSocketClient = LiveAudioWebSocketClient(
+          connectionFactory: (_, {headers}) =>
+              _FakeSocketConnection(sinkController),
+        );
 
-      final coordinator = LiveAudioSessionCoordinator(
-        sessionApi: sessionApi,
-        attest: attest,
-        webSocketClient: webSocketClient,
-        captureSource: _FakeCaptureForCoordinator(),
-        usageGuard: usageGuard,
-      );
+        final coordinator = LiveAudioSessionCoordinator(
+          sessionApi: sessionApi,
+          attest: attest,
+          webSocketClient: webSocketClient,
+          captureSource: _FakeCaptureForCoordinator(),
+          usageGuard: usageGuard,
+        );
 
-      final connectFuture = coordinator.connect();
-      await Future<void>.delayed(Duration.zero);
-      sinkController.add(jsonEncode({'setupComplete': {}}));
-      await connectFuture;
+        final connectFuture = coordinator.connect();
+        await Future<void>.delayed(Duration.zero);
+        sinkController.add(jsonEncode({'setupComplete': {}}));
+        await connectFuture;
 
-      expect(coordinator.state, LiveSessionState.ready);
-      expect(sessionApi.mintCalls, 1);
+        expect(coordinator.state, LiveSessionState.ready);
+        expect(sessionApi.mintCalls, 1);
 
-      coordinator.streamPcm16kChunk(const [5, 6, 7]);
-      expect(coordinator.state, LiveSessionState.streaming);
+        coordinator.streamPcm16kChunk(const [5, 6, 7]);
+        expect(coordinator.state, LiveSessionState.streaming);
 
-      await coordinator.disconnect();
-      await coordinator.dispose();
-      await sinkController.close();
-    });
+        await coordinator.disconnect();
+        await coordinator.dispose();
+        await sinkController.close();
+      },
+    );
 
     test('reconnectSession re-mints and resumes microphone capture', () async {
       StreamController<dynamic>? activeSink;
@@ -93,8 +95,9 @@ void main() {
       await connectFuture;
       await coordinator.startMicrophoneCapture();
 
-      final reconnectFuture =
-          coordinator.reconnectSession(reason: 'socket_closed');
+      final reconnectFuture = coordinator.reconnectSession(
+        reason: 'socket_closed',
+      );
       await Future<void>.delayed(Duration.zero);
       activeSink!.add(jsonEncode({'setupComplete': {}}));
       await reconnectFuture;
@@ -196,8 +199,7 @@ class _FakeApiClientWithAttest extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }
 
 class _FakeCaptureForCoordinator implements LivePcm16CaptureSource {

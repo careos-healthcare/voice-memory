@@ -10,7 +10,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
-import 'package:voicememory_mobile/screens/onboarding_intent_screen.dart';
+import 'package:archiveme_research/screens/onboarding_intent_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/first_insight_sharpness_row.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_clearer_moment_banner.dart';
@@ -102,10 +102,7 @@ void main() {
         AudienceWedge.proveEnough.firstPrompt.toLowerCase(),
         contains('pressure to do more'),
       );
-      expect(
-        AudienceWedge.notSureYet.firstPrompt,
-        contains('repeating'),
-      );
+      expect(AudienceWedge.notSureYet.firstPrompt, contains('repeating'));
     });
 
     test('legacy intent maps to wedge', () async {
@@ -159,10 +156,7 @@ void main() {
       );
       final title = result.reads.first.title.toLowerCase();
       expect(title, isNot(contains('saying yes before')));
-      expect(
-        title,
-        anyOf(contains('prove'), contains('ignoring rest')),
-      );
+      expect(title, anyOf(contains('prove'), contains('ignoring rest')));
     });
   });
 
@@ -333,17 +327,8 @@ void main() {
   });
 
   test('paywall copy aligned to continuity concept', () {
-    expect(
-      ConsumerUiCopy.paywallHeadline,
-      contains('longer proof trail'),
-    );
-    expect(
-      ConsumerUiCopy.paywallBullets.first,
-      contains('Longer proof trail'),
-    );
-    expect(
-      ConsumerUiCopy.paywallDifferentiation,
-      contains('not more chat'),
-    );
+    expect(ConsumerUiCopy.paywallHeadline, contains('longer proof trail'));
+    expect(ConsumerUiCopy.paywallBullets.first, contains('Longer proof trail'));
+    expect(ConsumerUiCopy.paywallDifferentiation, contains('not more chat'));
   });
 }

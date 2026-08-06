@@ -39,8 +39,7 @@ abstract final class ProMemoryBoundaryEngine {
   static bool includeWeeklyReviewSection({
     required int sectionIndex,
     required bool isPro,
-  }) =>
-      isPro || sectionIndex < freeWeeklyReviewPreviewSectionCount;
+  }) => isPro || sectionIndex < freeWeeklyReviewPreviewSectionCount;
 
   static bool hasGatedWeeklyReviewSections({
     required WeeklyArchiveReviewResult review,
@@ -64,8 +63,7 @@ abstract final class ProMemoryBoundaryEngine {
   static bool hasGatedOlderMoments({
     required int totalMomentCount,
     required bool isPro,
-  }) =>
-      !isPro && totalMomentCount > freePatternDetailMomentLimit;
+  }) => !isPro && totalMomentCount > freePatternDetailMomentLimit;
 
   static int gatedOlderMomentCount({
     required int totalMomentCount,
@@ -79,12 +77,11 @@ abstract final class ProMemoryBoundaryEngine {
     required int sectionIndex,
     required bool isPro,
     int previewSectionCount = 1,
-  }) =>
-      PrivateArchiveReportGates.includeSectionInPreview(
-        sectionIndex: sectionIndex,
-        isPro: isPro,
-        previewSectionCount: previewSectionCount,
-      );
+  }) => PrivateArchiveReportGates.includeSectionInPreview(
+    sectionIndex: sectionIndex,
+    isPro: isPro,
+    previewSectionCount: previewSectionCount,
+  );
 
   /// Uses cached entitlement when offline; never hard-blocks core free loop.
   static Future<bool> resolveIsPro({
@@ -112,30 +109,28 @@ abstract final class ProMemoryBoundaryEngine {
     bool hasPatternChanged = false,
     bool hasPrivateArchiveReportPreview = false,
     bool hasReturnCheckAnswered = false,
-  }) =>
-      PaywallTimingGates.showFullArchiveHistoryProBoundary(
-        entryCount: entryCount,
-        resolved: resolved,
-        isPro: isPro,
-        isPostSave: isPostSave,
-        hasConfirmedRepeat: hasConfirmedRepeat,
-        hasArchiveSummary: hasArchiveSummary,
-        hasWeeklyArchiveReview: hasWeeklyArchiveReview,
-        hasPatternChanged: hasPatternChanged,
-        hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
-        hasReturnCheckAnswered: hasReturnCheckAnswered,
-      );
+  }) => PaywallTimingGates.showFullArchiveHistoryProBoundary(
+    entryCount: entryCount,
+    resolved: resolved,
+    isPro: isPro,
+    isPostSave: isPostSave,
+    hasConfirmedRepeat: hasConfirmedRepeat,
+    hasArchiveSummary: hasArchiveSummary,
+    hasWeeklyArchiveReview: hasWeeklyArchiveReview,
+    hasPatternChanged: hasPatternChanged,
+    hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
+    hasReturnCheckAnswered: hasReturnCheckAnswered,
+  );
 
   static ProPackagingDisplay buildPaywallPackaging({
     required bool offeringsAvailable,
     required bool showPlanPrices,
     String? purchaseCta,
-  }) =>
-      ProPackagingEngine.build(
-        offeringsAvailable: offeringsAvailable,
-        showPlanPrices: showPlanPrices,
-        purchaseCta: purchaseCta,
-      );
+  }) => ProPackagingEngine.build(
+    offeringsAvailable: offeringsAvailable,
+    showPlanPrices: showPlanPrices,
+    purchaseCta: purchaseCta,
+  );
 
   static String offeringsUnavailableFallback() =>
       ProPackagingCopy.offeringsUnavailableBody;

@@ -77,31 +77,31 @@ abstract final class ReleaseBlockerPriority {
     );
   }
 
-  static ReleaseBlockerPriorityReport report(ReleaseBlockerPriorityResult result) =>
-      ReleaseBlockerPriorityReport(
-        headline: ReleaseBlockerPriorityCopy.headline,
-        body: ReleaseBlockerPriorityCopy.body,
-        priorityLine: ReleaseBlockerPriorityCopy.priorityLine,
-        securityLine: ReleaseBlockerPriorityCopy.securityLine,
-        crashLine: ReleaseBlockerPriorityCopy.crashLine,
-        storeReadinessLine: ReleaseBlockerPriorityCopy.storeReadinessLine,
-        purchaseLine: ReleaseBlockerPriorityCopy.purchaseLine,
-        restoreLine: ReleaseBlockerPriorityCopy.restoreLine,
-        entitlementLine: ReleaseBlockerPriorityCopy.entitlementLine,
-        firstJourneyLine: ReleaseBlockerPriorityCopy.firstJourneyLine,
-        proofTrustLine: ReleaseBlockerPriorityCopy.proofTrustLine,
-        paidIntentLine: ReleaseBlockerPriorityCopy.paidIntentLine,
-        readyLine: ReleaseBlockerPriorityCopy.readyLine,
-        freezeLine: ReleaseBlockerPriorityCopy.freezeLine,
-        guardrail: ReleaseBlockerPriorityCopy.guardrail,
-        result: result,
-      );
+  static ReleaseBlockerPriorityReport report(
+    ReleaseBlockerPriorityResult result,
+  ) => ReleaseBlockerPriorityReport(
+    headline: ReleaseBlockerPriorityCopy.headline,
+    body: ReleaseBlockerPriorityCopy.body,
+    priorityLine: ReleaseBlockerPriorityCopy.priorityLine,
+    securityLine: ReleaseBlockerPriorityCopy.securityLine,
+    crashLine: ReleaseBlockerPriorityCopy.crashLine,
+    storeReadinessLine: ReleaseBlockerPriorityCopy.storeReadinessLine,
+    purchaseLine: ReleaseBlockerPriorityCopy.purchaseLine,
+    restoreLine: ReleaseBlockerPriorityCopy.restoreLine,
+    entitlementLine: ReleaseBlockerPriorityCopy.entitlementLine,
+    firstJourneyLine: ReleaseBlockerPriorityCopy.firstJourneyLine,
+    proofTrustLine: ReleaseBlockerPriorityCopy.proofTrustLine,
+    paidIntentLine: ReleaseBlockerPriorityCopy.paidIntentLine,
+    readyLine: ReleaseBlockerPriorityCopy.readyLine,
+    freezeLine: ReleaseBlockerPriorityCopy.freezeLine,
+    guardrail: ReleaseBlockerPriorityCopy.guardrail,
+    result: result,
+  );
 
   static ReleaseBlockerPriorityResult _result({
     required ReleaseBlockerPriorityDecision decision,
     required String message,
-  }) =>
-      ReleaseBlockerPriorityResult(decision: decision, message: message);
+  }) => ReleaseBlockerPriorityResult(decision: decision, message: message);
 }
 
 enum ReleaseBlockerPriorityDecision {

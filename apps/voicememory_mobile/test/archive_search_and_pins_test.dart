@@ -17,8 +17,8 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
-import 'package:voicememory_mobile/screens/journal_screen.dart';
-import 'package:voicememory_mobile/screens/pinned_evidence_screen.dart';
+import 'package:archiveme_research/screens/journal_screen.dart';
+import 'package:archiveme_research/screens/pinned_evidence_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -406,7 +406,8 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       late Directory dir;
-      final journalPath = '${Directory.systemTemp.createTempSync('vm_search_screen_').path}/entries.json';
+      final journalPath =
+          '${Directory.systemTemp.createTempSync('vm_search_screen_').path}/entries.json';
       dir = File(journalPath).parent;
       final prefsPath = '${dir.path}/prefs.json';
       for (final path in [

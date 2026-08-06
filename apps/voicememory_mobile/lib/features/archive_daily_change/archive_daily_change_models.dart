@@ -33,10 +33,7 @@ enum ArchiveDailyChangeResponseType {
 
 /// Local last-seen state — timestamps only.
 class ArchiveDailyChangeState {
-  const ArchiveDailyChangeState({
-    this.lastSeenAt,
-    this.dismissedAt,
-  });
+  const ArchiveDailyChangeState({this.lastSeenAt, this.dismissedAt});
 
   final DateTime? lastSeenAt;
   final DateTime? dismissedAt;
@@ -44,11 +41,10 @@ class ArchiveDailyChangeState {
   static const empty = ArchiveDailyChangeState();
 
   Map<String, dynamic> toJson() => {
-        if (lastSeenAt != null)
-          'lastSeenAt': lastSeenAt!.toUtc().toIso8601String(),
-        if (dismissedAt != null)
-          'dismissedAt': dismissedAt!.toUtc().toIso8601String(),
-      };
+    if (lastSeenAt != null) 'lastSeenAt': lastSeenAt!.toUtc().toIso8601String(),
+    if (dismissedAt != null)
+      'dismissedAt': dismissedAt!.toUtc().toIso8601String(),
+  };
 
   static ArchiveDailyChangeState fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -56,8 +52,9 @@ class ArchiveDailyChangeState {
     final dismissedRaw = json['dismissedAt'];
     return ArchiveDailyChangeState(
       lastSeenAt: lastSeenRaw is String ? DateTime.tryParse(lastSeenRaw) : null,
-      dismissedAt:
-          dismissedRaw is String ? DateTime.tryParse(dismissedRaw) : null,
+      dismissedAt: dismissedRaw is String
+          ? DateTime.tryParse(dismissedRaw)
+          : null,
     );
   }
 
@@ -65,12 +62,10 @@ class ArchiveDailyChangeState {
     DateTime? lastSeenAt,
     DateTime? dismissedAt,
     bool clearDismissedAt = false,
-  }) =>
-      ArchiveDailyChangeState(
-        lastSeenAt: lastSeenAt ?? this.lastSeenAt,
-        dismissedAt:
-            clearDismissedAt ? null : (dismissedAt ?? this.dismissedAt),
-      );
+  }) => ArchiveDailyChangeState(
+    lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+    dismissedAt: clearDismissedAt ? null : (dismissedAt ?? this.dismissedAt),
+  );
 }
 
 /// Engine inputs — counts, ids, and timestamps only.

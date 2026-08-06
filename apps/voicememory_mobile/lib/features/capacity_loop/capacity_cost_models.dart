@@ -9,21 +9,11 @@ abstract final class CapacityCostTypeIds {
   static const resentment = 'resentment';
   static const none = 'none';
 
-  static const all = [
-    time,
-    energy,
-    attention,
-    workSpillover,
-    resentment,
-    none,
-  ];
+  static const all = [time, energy, attention, workSpillover, resentment, none];
 }
 
 /// Local check-in status — metadata only.
-enum CapacityCostRecordStatus {
-  answered,
-  skipped,
-}
+enum CapacityCostRecordStatus { answered, skipped }
 
 /// One local later-cost check-in linked to a saved moment.
 class CapacityCostRecord {
@@ -47,12 +37,12 @@ class CapacityCostRecord {
       !costTypeIds.every((id) => id == CapacityCostTypeIds.none);
 
   Map<String, dynamic> toJson() => {
-        'sourceEntryId': sourceEntryId,
-        'costTypeIds': costTypeIds,
-        'status': status.name,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'sourceEntryId': sourceEntryId,
+    'costTypeIds': costTypeIds,
+    'status': status.name,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   static CapacityCostRecord? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

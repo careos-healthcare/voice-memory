@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/widgets/beta/beta_feedback_capture_card.dart'
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/beta_feedback_capture/unused.json'));
+    : super(file: File('test/tmp/beta_feedback_capture/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -30,7 +30,8 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 BetaFeedbackCaptureContext _context({
-  BetaFeedbackCaptureSurface surface = BetaFeedbackCaptureSurface.recordPostSave,
+  BetaFeedbackCaptureSurface surface =
+      BetaFeedbackCaptureSurface.recordPostSave,
   String source = 'test',
   int entryCount = 1,
   bool betaMissionEnabled = true,
@@ -51,30 +52,29 @@ BetaFeedbackCaptureContext _context({
   bool coreCaptureCtaVisible = false,
   bool paywallNoCtaRequested = false,
   bool paywallPurchaseAttempted = false,
-}) =>
-    BetaFeedbackCaptureContext(
-      surface: surface,
-      source: source,
-      entryCount: entryCount,
-      betaMissionEnabled: betaMissionEnabled,
-      isReady: isReady,
-      isRecording: isRecording,
-      isPostSave: isPostSave,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      hasUsefulProof: hasUsefulProof,
-      hasPaywallSeen: hasPaywallSeen,
-      hasPurchaseCtaTapped: hasPurchaseCtaTapped,
-      isPro: isPro,
-      timelineProofVisible: timelineProofVisible,
-      proPreviewVisible: proPreviewVisible,
-      existingProofFeedbackVisible: existingProofFeedbackVisible,
-      coreCaptureCtaVisible: coreCaptureCtaVisible,
-      paywallNoCtaRequested: paywallNoCtaRequested,
-      paywallPurchaseAttempted: paywallPurchaseAttempted,
-    );
+}) => BetaFeedbackCaptureContext(
+  surface: surface,
+  source: source,
+  entryCount: entryCount,
+  betaMissionEnabled: betaMissionEnabled,
+  isReady: isReady,
+  isRecording: isRecording,
+  isPostSave: isPostSave,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  hasUsefulProof: hasUsefulProof,
+  hasPaywallSeen: hasPaywallSeen,
+  hasPurchaseCtaTapped: hasPurchaseCtaTapped,
+  isPro: isPro,
+  timelineProofVisible: timelineProofVisible,
+  proPreviewVisible: proPreviewVisible,
+  existingProofFeedbackVisible: existingProofFeedbackVisible,
+  coreCaptureCtaVisible: coreCaptureCtaVisible,
+  paywallNoCtaRequested: paywallNoCtaRequested,
+  paywallPurchaseAttempted: paywallPurchaseAttempted,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -84,10 +84,7 @@ Future<void> _pumpCard(
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
-        body: BetaFeedbackCaptureCard.test(
-          result: result,
-          store: store,
-        ),
+        body: BetaFeedbackCaptureCard.test(result: result, store: store),
       ),
     ),
   );
@@ -130,9 +127,12 @@ void main() {
       );
       expect(result.shouldShow, isTrue);
       expect(result.moment, BetaFeedbackCaptureMoment.afterFirstSave);
-      expect(result.title, BetaFeedbackCaptureCopy.titleFor(
-        BetaFeedbackCaptureMoment.afterFirstSave,
-      ));
+      expect(
+        result.title,
+        BetaFeedbackCaptureCopy.titleFor(
+          BetaFeedbackCaptureMoment.afterFirstSave,
+        ),
+      );
     });
 
     test('after third save shows expectation question', () {
@@ -181,18 +181,24 @@ void main() {
       expect(result.moment, BetaFeedbackCaptureMoment.afterPaywallSeenNoCta);
     });
 
-    test('after paywall CTA without purchase shows purchase blocker question', () {
-      final result = BetaFeedbackCaptureEngine.build(
-        context: _context(
-          surface: BetaFeedbackCaptureSurface.paywall,
-          isPostSave: false,
-          paywallPurchaseAttempted: true,
-          hasPurchaseCtaTapped: true,
-        ),
-      );
-      expect(result.shouldShow, isTrue);
-      expect(result.moment, BetaFeedbackCaptureMoment.afterPaywallCtaNoPurchase);
-    });
+    test(
+      'after paywall CTA without purchase shows purchase blocker question',
+      () {
+        final result = BetaFeedbackCaptureEngine.build(
+          context: _context(
+            surface: BetaFeedbackCaptureSurface.paywall,
+            isPostSave: false,
+            paywallPurchaseAttempted: true,
+            hasPurchaseCtaTapped: true,
+          ),
+        );
+        expect(result.shouldShow, isTrue);
+        expect(
+          result.moment,
+          BetaFeedbackCaptureMoment.afterPaywallCtaNoPurchase,
+        );
+      },
+    );
 
     test('one card per surface resolves highest priority moment', () {
       final result = BetaFeedbackCaptureEngine.build(
@@ -208,10 +214,7 @@ void main() {
 
     test('respects surface priority via core capture CTA guard', () {
       final result = BetaFeedbackCaptureEngine.build(
-        context: _context(
-          entryCount: 1,
-          coreCaptureCtaVisible: true,
-        ),
+        context: _context(entryCount: 1, coreCaptureCtaVisible: true),
       );
       expect(result.shouldShow, isFalse);
     });
@@ -225,20 +228,14 @@ void main() {
 
     test('hidden during degraded transcript', () {
       final result = BetaFeedbackCaptureEngine.build(
-        context: _context(
-          entryCount: 1,
-          isDegradedTranscriptState: true,
-        ),
+        context: _context(entryCount: 1, isDegradedTranscriptState: true),
       );
       expect(result.shouldShow, isFalse);
     });
 
     test('hidden during WhatChanged', () {
       final result = BetaFeedbackCaptureEngine.build(
-        context: _context(
-          entryCount: 1,
-          whatChangedQuestionActive: true,
-        ),
+        context: _context(entryCount: 1, whatChangedQuestionActive: true),
       );
       expect(result.shouldShow, isFalse);
     });
@@ -263,7 +260,10 @@ void main() {
     expect(find.byKey(const Key('beta_feedback_capture_card')), findsOneWidget);
     await tester.tap(find.byKey(const Key('beta_feedback_capture_dismiss')));
     await tester.pump();
-    expect(find.byKey(const Key('beta_feedback_capture_card_hidden')), findsOneWidget);
+    expect(
+      find.byKey(const Key('beta_feedback_capture_card_hidden')),
+      findsOneWidget,
+    );
     expect(
       BetaFeedbackCaptureStore.isDismissedToday(
         BetaFeedbackCaptureMoment.afterFirstSave,

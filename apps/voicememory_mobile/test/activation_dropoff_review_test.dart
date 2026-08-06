@@ -21,20 +21,19 @@ ActivationDropoffCounters _filled({
   int returnCheckAnswered = 0,
   int proBoundarySeen = 0,
   int proTapped = 0,
-}) =>
-    ActivationDropoffCounters(
-      appOpened: appOpened,
-      firstUsePromptSeen: firstUsePromptSeen,
-      firstMomentSaved: firstMomentSaved,
-      returnedAfterFirstMoment: returnedAfterFirstMoment,
-      secondMomentSaved: secondMomentSaved,
-      firstProofReached: firstProofReached,
-      returnedAfterFirstProof: returnedAfterFirstProof,
-      fourthMomentSaved: fourthMomentSaved,
-      returnCheckAnswered: returnCheckAnswered,
-      proBoundarySeen: proBoundarySeen,
-      proTapped: proTapped,
-    );
+}) => ActivationDropoffCounters(
+  appOpened: appOpened,
+  firstUsePromptSeen: firstUsePromptSeen,
+  firstMomentSaved: firstMomentSaved,
+  returnedAfterFirstMoment: returnedAfterFirstMoment,
+  secondMomentSaved: secondMomentSaved,
+  firstProofReached: firstProofReached,
+  returnedAfterFirstProof: returnedAfterFirstProof,
+  fourthMomentSaved: fourthMomentSaved,
+  returnCheckAnswered: returnCheckAnswered,
+  proBoundarySeen: proBoundarySeen,
+  proTapped: proTapped,
+);
 
 void main() {
   group('ActivationDropoffReviewEngine', () {
@@ -64,9 +63,11 @@ void main() {
         ActivationDropoffReviewCopy.bottleneckSecondMomentSaved,
       );
       expect(
-        review.rows.firstWhere(
-          (row) => row.id == ActivationDropoffRowId.firstMomentSaved,
-        ).status,
+        review.rows
+            .firstWhere(
+              (row) => row.id == ActivationDropoffRowId.firstMomentSaved,
+            )
+            .status,
         ActivationDropoffRowStatus.reached,
       );
     });
@@ -97,21 +98,24 @@ void main() {
       );
     });
 
-    test('return check answered resolves correct bottleneck when prior steps done', () {
-      final review = ActivationDropoffReviewEngine.build(
-        counters: _filled(
-          firstMomentSaved: 1,
-          secondMomentSaved: 1,
-          firstProofReached: 1,
-          returnedAfterFirstProof: 1,
-        ),
-      );
+    test(
+      'return check answered resolves correct bottleneck when prior steps done',
+      () {
+        final review = ActivationDropoffReviewEngine.build(
+          counters: _filled(
+            firstMomentSaved: 1,
+            secondMomentSaved: 1,
+            firstProofReached: 1,
+            returnedAfterFirstProof: 1,
+          ),
+        );
 
-      expect(
-        review.bottleneckSummary,
-        ActivationDropoffReviewCopy.bottleneckReturnCheckAnswered,
-      );
-    });
+        expect(
+          review.bottleneckSummary,
+          ActivationDropoffReviewCopy.bottleneckReturnCheckAnswered,
+        );
+      },
+    );
 
     test('Pro tapped resolves no critical bottleneck', () {
       final review = ActivationDropoffReviewEngine.build(
@@ -141,16 +145,19 @@ void main() {
       expect(review.bottleneckSummary, isNotEmpty);
     });
 
-    test('maps beta counts including confirmed repeat fallback for first proof', () {
-      final counters = ActivationDropoffReviewEngine.fromBetaCounts(
-        const BetaActivationLoopCounts(
-          thirdMomentSaved: 0,
-          confirmedRepeatSeen: 2,
-        ),
-      );
+    test(
+      'maps beta counts including confirmed repeat fallback for first proof',
+      () {
+        final counters = ActivationDropoffReviewEngine.fromBetaCounts(
+          const BetaActivationLoopCounts(
+            thirdMomentSaved: 0,
+            confirmedRepeatSeen: 2,
+          ),
+        );
 
-      expect(counters.firstProofReached, 2);
-    });
+        expect(counters.firstProofReached, 2);
+      },
+    );
   });
 
   group('ActivationDropoffReviewCard', () {
@@ -171,14 +178,18 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ActivationDropoffReviewCard(review: review),
-          ),
+          home: Scaffold(body: ActivationDropoffReviewCard(review: review)),
         ),
       );
 
-      expect(find.byKey(const Key('activation_dropoff_review_hidden')), findsOneWidget);
-      expect(find.byKey(const Key('activation_dropoff_review_card')), findsNothing);
+      expect(
+        find.byKey(const Key('activation_dropoff_review_hidden')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('activation_dropoff_review_card')),
+        findsNothing,
+      );
     });
 
     testWidgets('shows card when developer settings unlocked', (tester) async {
@@ -190,15 +201,19 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ActivationDropoffReviewCard(review: review),
-          ),
+          home: Scaffold(body: ActivationDropoffReviewCard(review: review)),
         ),
       );
 
-      expect(find.byKey(const Key('activation_dropoff_review_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('activation_dropoff_review_card')),
+        findsOneWidget,
+      );
       expect(find.text(ActivationDropoffReviewCopy.title), findsOneWidget);
-      expect(find.text(ActivationDropoffReviewCopy.bottleneckLabel), findsOneWidget);
+      expect(
+        find.text(ActivationDropoffReviewCopy.bottleneckLabel),
+        findsOneWidget,
+      );
     });
   });
 
@@ -234,7 +249,9 @@ void main() {
 
   group('Production UI isolation', () {
     test('settings screen does not import activation dropoff review card', () {
-      final source = File('lib/screens/settings_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/settings_screen.dart',
+      ).readAsStringSync();
       expect(source.contains('activation_dropoff_review'), isFalse);
       expect(source.contains('ActivationDropoffReviewCard'), isFalse);
     });

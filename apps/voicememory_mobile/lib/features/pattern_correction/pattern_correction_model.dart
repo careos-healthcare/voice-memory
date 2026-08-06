@@ -49,18 +49,18 @@ class PatternCorrectionContext {
   final VoidCallback? onKeepRecording;
 
   bool allows(PatternCorrectionAction action) => switch (action) {
-        PatternCorrectionAction.renamePattern =>
-          canRenamePattern && (patternLabel?.trim().isNotEmpty ?? false),
-        PatternCorrectionAction.removeFromPattern =>
-          canRemoveFromPattern &&
-              (patternKey?.isNotEmpty ?? false) &&
-              (latestEntryId?.isNotEmpty ?? false),
-        PatternCorrectionAction.correctTranscript =>
-          canCorrectTranscript && (latestEntryId?.isNotEmpty ?? false),
-        PatternCorrectionAction.deleteMoment =>
-          canDeleteMoment && (latestEntryId?.isNotEmpty ?? false),
-        PatternCorrectionAction.privacyCentre => true,
-        PatternCorrectionAction.betaFeedback => true,
-        PatternCorrectionAction.keepRecording => onKeepRecording != null,
-      };
+    PatternCorrectionAction.renamePattern =>
+      canRenamePattern && (patternLabel?.trim().isNotEmpty ?? false),
+    PatternCorrectionAction.removeFromPattern =>
+      canRemoveFromPattern &&
+          (patternKey?.isNotEmpty ?? false) &&
+          (latestEntryId?.isNotEmpty ?? false),
+    PatternCorrectionAction.correctTranscript =>
+      canCorrectTranscript && (latestEntryId?.isNotEmpty ?? false),
+    PatternCorrectionAction.deleteMoment =>
+      canDeleteMoment && (latestEntryId?.isNotEmpty ?? false),
+    PatternCorrectionAction.privacyCentre => true,
+    PatternCorrectionAction.betaFeedback => true,
+    PatternCorrectionAction.keepRecording => onKeepRecording != null,
+  };
 }

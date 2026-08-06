@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_compression/archive_compression_model.dart';
-import 'package:voicememory_mobile/screens/archive_compression_screen.dart';
+import 'package:archiveme_research/screens/archive_compression_screen.dart';
 
 ArchiveMomentGroup _group({String id = 'g1'}) => ArchiveMomentGroup(
   id: id,

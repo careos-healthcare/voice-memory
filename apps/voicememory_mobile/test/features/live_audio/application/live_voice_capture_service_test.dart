@@ -50,7 +50,9 @@ void main() {
     late List<List<int>> pcmSent;
 
     setUp(() {
-      ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 5));
+      ApiUsageGuard.resetForTest(
+        replacement: ApiUsageGuard(maxAttemptsPerScope: 5),
+      );
       pcmSent = <List<int>>[];
       journalFile = File(
         '${Directory.systemTemp.path}/live_voice_bridge_${DateTime.now().microsecondsSinceEpoch}.json',
@@ -99,17 +101,20 @@ void main() {
       await startFuture;
     }
 
-    test('cycles gracefully through pipeline initialization to active state', () async {
-      expect(captureService.captureState, LiveVoiceCaptureState.idle);
-      expect(captureService.isPipelineActive, isFalse);
+    test(
+      'cycles gracefully through pipeline initialization to active state',
+      () async {
+        expect(captureService.captureState, LiveVoiceCaptureState.idle);
+        expect(captureService.isPipelineActive, isFalse);
 
-      await startConnected(hardwareSampleRate: 48000);
+        await startConnected(hardwareSampleRate: 48000);
 
-      expect(captureService.captureState, LiveVoiceCaptureState.active);
-      expect(captureService.isRecording, isTrue);
-      expect(captureService.isPipelineActive, isTrue);
-      expect(captureService.hardwareSampleRate, 48000);
-    });
+        expect(captureService.captureState, LiveVoiceCaptureState.active);
+        expect(captureService.isRecording, isTrue);
+        expect(captureService.isPipelineActive, isTrue);
+        expect(captureService.hardwareSampleRate, 48000);
+      },
+    );
 
     test('ignores raw hardware chunks while paused by audio focus', () async {
       await startConnected(hardwareSampleRate: 48000);
@@ -127,108 +132,128 @@ void main() {
       expect(captureService.isPipelineActive, isTrue);
     });
 
-    test('safely routes raw hardware chunks through isolate processing', () async {
-      await startConnected(hardwareSampleRate: 16000, enableIsolatePipeline: true);
-      expect(captureService.isRecording, isTrue);
-      expect(captureService.isPipelineActive, isTrue);
+    test(
+      'safely routes raw hardware chunks through isolate processing',
+      () async {
+        await startConnected(
+          hardwareSampleRate: 16000,
+          enableIsolatePipeline: true,
+        );
+        expect(captureService.isRecording, isTrue);
+        expect(captureService.isPipelineActive, isTrue);
 
-      final rawHardwareBlock = Int16List.fromList(List<int>.generate(320, (_) => 5));
-
-      expect(
-        () => captureService.handleRawHardwareChunk(rawHardwareBlock),
-        returnsNormally,
-      );
-
-      await pumpEventQueue(times: 5);
-
-      expect(pcmSent, hasLength(1));
-      expect(pcmSent.first, hasLength(640));
-    });
-
-    test('handles high-throughput raw buffers without main-thread faults', () async {
-      await startConnected(hardwareSampleRate: 48000);
-
-      final stressBlock = Int16List.fromList(
-        List<int>.generate(320 * 4, (i) => i & 0x7fff),
-      );
-
-      for (var i = 0; i < 50; i++) {
-        captureService.handleRawHardwareChunk(stressBlock);
-      }
-
-      await Future<void>.delayed(const Duration(milliseconds: 150));
-
-      expect(captureService.isRecording, isTrue);
-      expect(captureService.isPipelineActive, isTrue);
-      expect(captureService.captureState, LiveVoiceCaptureState.active);
-      expect(pcmSent, isNotEmpty);
-      expect(pcmSent.every((chunk) => chunk.length == 640), isTrue);
-    });
-
-    test('executes clean pipeline teardown on explicit session termination', () async {
-      await startConnected(hardwareSampleRate: 48000);
-      expect(captureService.captureState, LiveVoiceCaptureState.active);
-      expect(captureService.isPipelineActive, isTrue);
-
-      await captureService.terminateActiveSession();
-
-      expect(captureService.captureState, LiveVoiceCaptureState.idle);
-      expect(captureService.isActive, isFalse);
-      expect(captureService.isPipelineActive, isFalse);
-      expect(journalPipeline.saveCalls, 0);
-    });
-
-    test('networkTimeout vaults processed PCM instead of streaming to websocket', () async {
-      final vaultDirectory =
-          await Directory.systemTemp.createTemp('capture_vault_');
-      final vault = LocalAudioVault(
-        keyStore: InMemoryPrivateDataEncryptionKeyStore(),
-        resolveCacheDirectory: () async => vaultDirectory,
-      );
-
-      final bridgeService = _buildBridgeCaptureService(
-        sessionApi: sessionApi,
-        sinkController: sinkController,
-        journalPipeline: journalPipeline,
-        pcmSent: pcmSent,
-        offlineAudioVault: vault,
-      );
-
-      try {
-        final startFuture = bridgeService.start(hardwareSampleRate: 48000);
-        await Future<void>.delayed(Duration.zero);
-        sinkController.add(jsonEncode({'setupComplete': {}}));
-        await startFuture;
-
-        final sentBeforeFault = pcmSent.length;
-
-        await bridgeService.handleSessionFailure(
-          LiveVoiceErrorState.networkTimeout,
-          reason: 'unrecoverable_timeout',
+        final rawHardwareBlock = Int16List.fromList(
+          List<int>.generate(320, (_) => 5),
         );
 
-        expect(bridgeService.isOfflineVaultActive, isTrue);
-        expect(bridgeService.hasError, isTrue);
-        expect(bridgeService.captureState, LiveVoiceCaptureState.active);
-        expect(bridgeService.isPausedByAudioFocus, isFalse);
-
-        bridgeService.handleRawHardwareChunk(
-          Int16List.fromList(List<int>.generate(1920, (i) => (i % 1000) - 500)),
+        expect(
+          () => captureService.handleRawHardwareChunk(rawHardwareBlock),
+          returnsNormally,
         );
-        await pumpEventQueue(times: 10);
 
-        expect(pcmSent.length, sentBeforeFault);
-        expect(bridgeService.vaultedFrameCount, greaterThan(0));
-        expect(bridgeService.offlineVaultFile, isNotNull);
+        await pumpEventQueue(times: 5);
 
-        await bridgeService.terminateActiveSession();
-        await bridgeService.dispose();
-      } finally {
-        if (vaultDirectory.existsSync()) {
-          await vaultDirectory.delete(recursive: true);
+        expect(pcmSent, hasLength(1));
+        expect(pcmSent.first, hasLength(640));
+      },
+    );
+
+    test(
+      'handles high-throughput raw buffers without main-thread faults',
+      () async {
+        await startConnected(hardwareSampleRate: 48000);
+
+        final stressBlock = Int16List.fromList(
+          List<int>.generate(320 * 4, (i) => i & 0x7fff),
+        );
+
+        for (var i = 0; i < 50; i++) {
+          captureService.handleRawHardwareChunk(stressBlock);
         }
-      }
-    });
+
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+
+        expect(captureService.isRecording, isTrue);
+        expect(captureService.isPipelineActive, isTrue);
+        expect(captureService.captureState, LiveVoiceCaptureState.active);
+        expect(pcmSent, isNotEmpty);
+        expect(pcmSent.every((chunk) => chunk.length == 640), isTrue);
+      },
+    );
+
+    test(
+      'executes clean pipeline teardown on explicit session termination',
+      () async {
+        await startConnected(hardwareSampleRate: 48000);
+        expect(captureService.captureState, LiveVoiceCaptureState.active);
+        expect(captureService.isPipelineActive, isTrue);
+
+        await captureService.terminateActiveSession();
+
+        expect(captureService.captureState, LiveVoiceCaptureState.idle);
+        expect(captureService.isActive, isFalse);
+        expect(captureService.isPipelineActive, isFalse);
+        expect(journalPipeline.saveCalls, 0);
+      },
+    );
+
+    test(
+      'networkTimeout vaults processed PCM instead of streaming to websocket',
+      () async {
+        final vaultDirectory = await Directory.systemTemp.createTemp(
+          'capture_vault_',
+        );
+        final vault = LocalAudioVault(
+          keyStore: InMemoryPrivateDataEncryptionKeyStore(),
+          resolveCacheDirectory: () async => vaultDirectory,
+        );
+
+        final bridgeService = _buildBridgeCaptureService(
+          sessionApi: sessionApi,
+          sinkController: sinkController,
+          journalPipeline: journalPipeline,
+          pcmSent: pcmSent,
+          offlineAudioVault: vault,
+        );
+
+        try {
+          final startFuture = bridgeService.start(hardwareSampleRate: 48000);
+          await Future<void>.delayed(Duration.zero);
+          sinkController.add(jsonEncode({'setupComplete': {}}));
+          await startFuture;
+
+          final sentBeforeFault = pcmSent.length;
+
+          await bridgeService.handleSessionFailure(
+            LiveVoiceErrorState.networkTimeout,
+            reason: 'unrecoverable_timeout',
+          );
+
+          expect(bridgeService.isOfflineVaultActive, isTrue);
+          expect(bridgeService.hasError, isTrue);
+          expect(bridgeService.captureState, LiveVoiceCaptureState.active);
+          expect(bridgeService.isPausedByAudioFocus, isFalse);
+
+          bridgeService.handleRawHardwareChunk(
+            Int16List.fromList(
+              List<int>.generate(1920, (i) => (i % 1000) - 500),
+            ),
+          );
+          await pumpEventQueue(times: 10);
+
+          expect(pcmSent.length, sentBeforeFault);
+          expect(bridgeService.vaultedFrameCount, greaterThan(0));
+          expect(bridgeService.offlineVaultFile, isNotNull);
+
+          await bridgeService.terminateActiveSession();
+          await bridgeService.dispose();
+        } finally {
+          if (vaultDirectory.existsSync()) {
+            await vaultDirectory.delete(recursive: true);
+          }
+        }
+      },
+    );
   });
 
   group('LiveVoiceCaptureService', () {
@@ -240,9 +265,12 @@ void main() {
     late Directory vaultDirectory;
 
     setUp(() async {
-      ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 5));
-      vaultDirectory =
-          await Directory.systemTemp.createTemp('live_voice_vault_');
+      ApiUsageGuard.resetForTest(
+        replacement: ApiUsageGuard(maxAttemptsPerScope: 5),
+      );
+      vaultDirectory = await Directory.systemTemp.createTemp(
+        'live_voice_vault_',
+      );
       journalFile = File(
         '${Directory.systemTemp.path}/live_voice_test_${DateTime.now().microsecondsSinceEpoch}.json',
       );
@@ -354,50 +382,59 @@ void main() {
       await sub.cancel();
     });
 
-    test('retrySessionRecovery clears error when proxy session is still streamable', () async {
-      await startConnected();
-      await service.handleSessionFailure(
-        LiveVoiceErrorState.networkTimeout,
-        reason: 'socket_closed',
-      );
-      expect(service.hasError, isTrue);
-      expect(service.isOfflineVaultActive, isTrue);
-      expect(service.isPausedByAudioFocus, isFalse);
+    test(
+      'retrySessionRecovery clears error when proxy session is still streamable',
+      () async {
+        await startConnected();
+        await service.handleSessionFailure(
+          LiveVoiceErrorState.networkTimeout,
+          reason: 'socket_closed',
+        );
+        expect(service.hasError, isTrue);
+        expect(service.isOfflineVaultActive, isTrue);
+        expect(service.isPausedByAudioFocus, isFalse);
 
-      await service.retrySessionRecovery();
+        await service.retrySessionRecovery();
 
-      expect(service.hasError, isFalse);
-      expect(service.isOfflineVaultActive, isFalse);
-      expect(service.isActive, isTrue);
-      expect(service.controller.isCapturingMicrophone, isTrue);
-    });
+        expect(service.hasError, isFalse);
+        expect(service.isOfflineVaultActive, isFalse);
+        expect(service.isActive, isTrue);
+        expect(service.controller.isCapturingMicrophone, isTrue);
+      },
+    );
 
-    test('pauseLiveCapture and resumeLiveCapture keep session active', () async {
-      final capture = service.controller;
-      await startConnected();
-      expect(service.isActive, isTrue);
+    test(
+      'pauseLiveCapture and resumeLiveCapture keep session active',
+      () async {
+        final capture = service.controller;
+        await startConnected();
+        expect(service.isActive, isTrue);
 
-      await service.pauseLiveCapture();
-      expect(service.isPausedByAudioFocus, isTrue);
-      expect(service.isActive, isTrue);
-      expect(capture.isCapturingMicrophone, isFalse);
-      expect(capture.isPausedByAudioFocus, isTrue);
+        await service.pauseLiveCapture();
+        expect(service.isPausedByAudioFocus, isTrue);
+        expect(service.isActive, isTrue);
+        expect(capture.isCapturingMicrophone, isFalse);
+        expect(capture.isPausedByAudioFocus, isTrue);
 
-      await service.resumeLiveCapture();
-      expect(service.isPausedByAudioFocus, isFalse);
-      expect(service.isActive, isTrue);
-      expect(capture.isCapturingMicrophone, isTrue);
-    });
+        await service.resumeLiveCapture();
+        expect(service.isPausedByAudioFocus, isFalse);
+        expect(service.isActive, isTrue);
+        expect(capture.isCapturingMicrophone, isTrue);
+      },
+    );
 
-    test('resumeLiveCaptureIfActive skips when session is not streamable', () async {
-      await startConnected();
-      await service.pauseLiveCapture();
-      await service.controller.disconnect();
+    test(
+      'resumeLiveCaptureIfActive skips when session is not streamable',
+      () async {
+        await startConnected();
+        await service.pauseLiveCapture();
+        await service.controller.disconnect();
 
-      await service.resumeLiveCaptureIfActive();
-      expect(service.isPausedByAudioFocus, isTrue);
-      expect(service.isActive, isTrue);
-    });
+        await service.resumeLiveCaptureIfActive();
+        expect(service.isPausedByAudioFocus, isTrue);
+        expect(service.isActive, isTrue);
+      },
+    );
 
     test('terminateActiveSession cancels without saving', () async {
       await startConnected();
@@ -407,54 +444,60 @@ void main() {
       expect(pipeline.saveCalls, 0);
     });
 
-    test('routes microphone capture through isolate pipeline when enabled', () async {
-      final capture = _FakeCapture();
-      final pcmSent = <List<int>>[];
-      service = _buildBridgeCaptureService(
-        sessionApi: sessionApi,
-        sinkController: sinkController,
-        journalPipeline: pipeline,
-        pcmSent: pcmSent,
-        captureSource: capture,
-      );
+    test(
+      'routes microphone capture through isolate pipeline when enabled',
+      () async {
+        final capture = _FakeCapture();
+        final pcmSent = <List<int>>[];
+        service = _buildBridgeCaptureService(
+          sessionApi: sessionApi,
+          sinkController: sinkController,
+          journalPipeline: pipeline,
+          pcmSent: pcmSent,
+          captureSource: capture,
+        );
 
-      final startFuture = service.start(enableIsolatePipeline: true);
-      await Future<void>.delayed(Duration.zero);
-      sinkController.add(jsonEncode({'setupComplete': {}}));
-      await startFuture;
+        final startFuture = service.start(enableIsolatePipeline: true);
+        await Future<void>.delayed(Duration.zero);
+        sinkController.add(jsonEncode({'setupComplete': {}}));
+        await startFuture;
 
-      expect(service.isPipelineActive, isTrue);
-      expect(service.captureState, LiveVoiceCaptureState.active);
+        expect(service.isPipelineActive, isTrue);
+        expect(service.captureState, LiveVoiceCaptureState.active);
 
-      capture.emitChunk(List<int>.generate(640, (i) => i % 256));
-      await pumpEventQueue(times: 5);
+        capture.emitChunk(List<int>.generate(640, (i) => i % 256));
+        await pumpEventQueue(times: 5);
 
-      expect(pcmSent, isNotEmpty);
-      expect(pcmSent.first, hasLength(640));
-    });
+        expect(pcmSent, isNotEmpty);
+        expect(pcmSent.first, hasLength(640));
+      },
+    );
 
-    test('handleRawHardwareChunk bypasses capture when pipeline is active', () async {
-      final pcmSent = <List<int>>[];
-      service = _buildBridgeCaptureService(
-        sessionApi: sessionApi,
-        sinkController: sinkController,
-        journalPipeline: pipeline,
-        pcmSent: pcmSent,
-      );
+    test(
+      'handleRawHardwareChunk bypasses capture when pipeline is active',
+      () async {
+        final pcmSent = <List<int>>[];
+        service = _buildBridgeCaptureService(
+          sessionApi: sessionApi,
+          sinkController: sinkController,
+          journalPipeline: pipeline,
+          pcmSent: pcmSent,
+        );
 
-      final startFuture = service.start(hardwareSampleRate: 48000);
-      await Future<void>.delayed(Duration.zero);
-      sinkController.add(jsonEncode({'setupComplete': {}}));
-      await startFuture;
+        final startFuture = service.start(hardwareSampleRate: 48000);
+        await Future<void>.delayed(Duration.zero);
+        sinkController.add(jsonEncode({'setupComplete': {}}));
+        await startFuture;
 
-      service.handleRawHardwareChunk(
-        Int16List.fromList(List<int>.generate(1920, (i) => (i % 1000) - 500)),
-      );
-      await pumpEventQueue(times: 5);
+        service.handleRawHardwareChunk(
+          Int16List.fromList(List<int>.generate(1920, (i) => (i % 1000) - 500)),
+        );
+        await pumpEventQueue(times: 5);
 
-      expect(pcmSent, hasLength(2));
-      expect(pcmSent.every((chunk) => chunk.length == 640), isTrue);
-    });
+        expect(pcmSent, hasLength(2));
+        expect(pcmSent.every((chunk) => chunk.length == 640), isTrue);
+      },
+    );
   });
 }
 
@@ -593,9 +636,9 @@ class _InstrumentedWebSocketClient extends LiveAudioWebSocketClient {
     required StreamController<dynamic> socketEvents,
     this.onPcmSent,
   }) : super(
-          connectionFactory: (_, {headers}) =>
-              _FakeSocketConnection(socketEvents),
-        );
+         connectionFactory: (_, {headers}) =>
+             _FakeSocketConnection(socketEvents),
+       );
 
   final void Function(List<int> chunk)? onPcmSent;
 
@@ -643,6 +686,5 @@ class _FakeApiClientWithAttest extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

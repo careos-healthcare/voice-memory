@@ -5,34 +5,35 @@ abstract final class ProofRepairPlaybooksCopy {
   ProofRepairPlaybooksCopy._();
 
   static String titleFor(ProofRepairPlaybook playbook) => switch (playbook) {
-        ProofRepairPlaybook.repairProofAgain => repairProofAgainTitle,
-        ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainTitle,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailTitle,
-        ProofRepairPlaybook.waitForMoreData => waitForMoreDataTitle,
-        ProofRepairPlaybook.productionReadiness => productionReadinessTitle,
-      };
+    ProofRepairPlaybook.repairProofAgain => repairProofAgainTitle,
+    ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainTitle,
+    ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailTitle,
+    ProofRepairPlaybook.waitForMoreData => waitForMoreDataTitle,
+    ProofRepairPlaybook.productionReadiness => productionReadinessTitle,
+  };
 
   static String problemFor(ProofRepairPlaybook playbook) => switch (playbook) {
-        ProofRepairPlaybook.repairProofAgain => repairProofAgainProblem,
-        ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainProblem,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailProblem,
-        ProofRepairPlaybook.waitForMoreData => waitForMoreDataProblem,
-        ProofRepairPlaybook.productionReadiness => productionReadinessProblem,
-      };
+    ProofRepairPlaybook.repairProofAgain => repairProofAgainProblem,
+    ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainProblem,
+    ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailProblem,
+    ProofRepairPlaybook.waitForMoreData => waitForMoreDataProblem,
+    ProofRepairPlaybook.productionReadiness => productionReadinessProblem,
+  };
 
   static String actionFor(ProofRepairPlaybook playbook) => switch (playbook) {
-        ProofRepairPlaybook.repairProofAgain => repairProofAgainAction,
-        ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainAction,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailAction,
-        ProofRepairPlaybook.waitForMoreData => waitForMoreDataAction,
-        ProofRepairPlaybook.productionReadiness => productionReadinessAction,
-      };
+    ProofRepairPlaybook.repairProofAgain => repairProofAgainAction,
+    ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainAction,
+    ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailAction,
+    ProofRepairPlaybook.waitForMoreData => waitForMoreDataAction,
+    ProofRepairPlaybook.productionReadiness => productionReadinessAction,
+  };
 
   static List<String> allowedChangesFor(ProofRepairPlaybook playbook) =>
       switch (playbook) {
         ProofRepairPlaybook.repairProofAgain => repairProofAgainAllowed,
         ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainAllowed,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailAllowed,
+        ProofRepairPlaybook.returnToEvidenceTrail =>
+          returnToEvidenceTrailAllowed,
         ProofRepairPlaybook.waitForMoreData => waitForMoreDataAllowed,
         ProofRepairPlaybook.productionReadiness => productionReadinessAllowed,
       };
@@ -41,19 +42,22 @@ abstract final class ProofRepairPlaybooksCopy {
       switch (playbook) {
         ProofRepairPlaybook.repairProofAgain => repairProofAgainBlocked,
         ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainBlocked,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailBlocked,
+        ProofRepairPlaybook.returnToEvidenceTrail =>
+          returnToEvidenceTrailBlocked,
         ProofRepairPlaybook.waitForMoreData => waitForMoreDataBlocked,
         ProofRepairPlaybook.productionReadiness => productionReadinessBlocked,
       };
 
-  static String successMetricFor(ProofRepairPlaybook playbook) =>
-      switch (playbook) {
-        ProofRepairPlaybook.repairProofAgain => repairProofAgainSuccessMetric,
-        ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainSuccessMetric,
-        ProofRepairPlaybook.returnToEvidenceTrail => returnToEvidenceTrailSuccessMetric,
-        ProofRepairPlaybook.waitForMoreData => waitForMoreDataSuccessMetric,
-        ProofRepairPlaybook.productionReadiness => productionReadinessSuccessMetric,
-      };
+  static String successMetricFor(
+    ProofRepairPlaybook playbook,
+  ) => switch (playbook) {
+    ProofRepairPlaybook.repairProofAgain => repairProofAgainSuccessMetric,
+    ProofRepairPlaybook.tightenAnchorsAgain => tightenAnchorsAgainSuccessMetric,
+    ProofRepairPlaybook.returnToEvidenceTrail =>
+      returnToEvidenceTrailSuccessMetric,
+    ProofRepairPlaybook.waitForMoreData => waitForMoreDataSuccessMetric,
+    ProofRepairPlaybook.productionReadiness => productionReadinessSuccessMetric,
+  };
 
   static const repairProofAgainTitle = 'Repair proof again';
   static const repairProofAgainProblem =

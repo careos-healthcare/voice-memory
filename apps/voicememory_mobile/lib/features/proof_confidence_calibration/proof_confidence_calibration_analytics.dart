@@ -11,11 +11,9 @@ abstract final class ProofConfidenceCalibrationAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void calibrated({
-    required ProofConfidenceCalibrationResult result,
-  }) {
+  static void calibrated({required ProofConfidenceCalibrationResult result}) {
     if (!result.shouldCalibrate) return;
 
     final props = <String, Object>{

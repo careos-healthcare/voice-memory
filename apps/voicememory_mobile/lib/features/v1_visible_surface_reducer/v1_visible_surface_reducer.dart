@@ -41,15 +41,14 @@ abstract final class V1VisibleSurfaceReducer {
 
   static V1VisibleSurfaceReducerReport report(
     V1VisibleSurfaceReducerResult result,
-  ) =>
-      V1VisibleSurfaceReducerReport(
-        headline: V1VisibleSurfaceReducerCopy.headline,
-        body: V1VisibleSurfaceReducerCopy.body,
-        coreLine: V1VisibleSurfaceReducerCopy.coreLine,
-        hiddenLine: V1VisibleSurfaceReducerCopy.hiddenLine,
-        guardrail: V1VisibleSurfaceReducerCopy.guardrail,
-        result: result,
-      );
+  ) => V1VisibleSurfaceReducerReport(
+    headline: V1VisibleSurfaceReducerCopy.headline,
+    body: V1VisibleSurfaceReducerCopy.body,
+    coreLine: V1VisibleSurfaceReducerCopy.coreLine,
+    hiddenLine: V1VisibleSurfaceReducerCopy.hiddenLine,
+    guardrail: V1VisibleSurfaceReducerCopy.guardrail,
+    result: result,
+  );
 
   static V1SurfaceDecision baseDecisionFor(V1Surface surface) =>
       switch (surface) {
@@ -59,14 +58,12 @@ abstract final class V1VisibleSurfaceReducer {
         V1Surface.postSaveReinforcement ||
         V1Surface.restorePurchases ||
         V1Surface.privacySupport ||
-        V1Surface.archiveHome =>
-          V1SurfaceDecision.showCore,
+        V1Surface.archiveHome => V1SurfaceDecision.showCore,
         V1Surface.firstProof ||
         V1Surface.whyProofAppeared ||
         V1Surface.confirmCorrect ||
         V1Surface.whatChanged ||
-        V1Surface.proLongerTrail =>
-          V1SurfaceDecision.allowAfterProof,
+        V1Surface.proLongerTrail => V1SurfaceDecision.allowAfterProof,
         V1Surface.shareProof => V1SurfaceDecision.allowOnlyWhenUserAsked,
         V1Surface.developerDiagnostics => V1SurfaceDecision.developerOnly,
         V1Surface.archiveHealth ||
@@ -79,12 +76,14 @@ abstract final class V1VisibleSurfaceReducer {
         V1Surface.contextExpansion ||
         V1Surface.dashboard ||
         V1Surface.search ||
-        V1Surface.monthlyReview =>
-          V1SurfaceDecision.hideForV1,
+        V1Surface.monthlyReview => V1SurfaceDecision.hideForV1,
       };
 
-  static bool detectProofThresholdStillThree(String archiveEvidenceGateSource) =>
-      archiveEvidenceGateSource.contains('static const minProofEntryCount = 3;');
+  static bool detectProofThresholdStillThree(
+    String archiveEvidenceGateSource,
+  ) => archiveEvidenceGateSource.contains(
+    'static const minProofEntryCount = 3;',
+  );
 
   static bool detectRecordLayoutUnchanged(String recordScreenSource) =>
       recordScreenSource.contains('RecordScreen') &&
@@ -99,32 +98,34 @@ abstract final class V1VisibleSurfaceReducer {
     bool proofValueSeen = false,
     bool userExplicitlyAsked = false,
     bool developerMode = false,
-  }) =>
-      V1VisibleSurfaceReducerInput(
-        postSaveImmediate: postSaveImmediate,
-        firstProofSafe: firstProofSafe &&
-            detectProofThresholdStillThree(archiveEvidenceGateSource),
-        afterFirstProof: afterFirstProof,
-        confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
-        proofValueSeen: proofValueSeen,
-        userExplicitlyAsked: userExplicitlyAsked,
-        developerMode: developerMode,
-        proofThresholdStillThree: detectProofThresholdStillThree(
-          archiveEvidenceGateSource,
-        ),
-      );
+  }) => V1VisibleSurfaceReducerInput(
+    postSaveImmediate: postSaveImmediate,
+    firstProofSafe:
+        firstProofSafe &&
+        detectProofThresholdStillThree(archiveEvidenceGateSource),
+    afterFirstProof: afterFirstProof,
+    confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
+    proofValueSeen: proofValueSeen,
+    userExplicitlyAsked: userExplicitlyAsked,
+    developerMode: developerMode,
+    proofThresholdStillThree: detectProofThresholdStillThree(
+      archiveEvidenceGateSource,
+    ),
+  );
 
   static V1VisibleSurfaceReducerResult build(
     V1VisibleSurfaceReducerInput input,
   ) {
     final surfaces = {
-      for (final surface in V1Surface.values)
-        surface: resolve(surface, input),
+      for (final surface in V1Surface.values) surface: resolve(surface, input),
     };
     return V1VisibleSurfaceReducerResult(
       surfaces: surfaces,
       visibleCoreCount: surfaces.values
-          .where((item) => item.visible && item.decision == V1SurfaceDecision.showCore)
+          .where(
+            (item) =>
+                item.visible && item.decision == V1SurfaceDecision.showCore,
+          )
           .length,
       hiddenCount: surfaces.values
           .where((item) => item.decision == V1SurfaceDecision.hideForV1)
@@ -140,7 +141,11 @@ abstract final class V1VisibleSurfaceReducer {
     V1VisibleSurfaceReducerInput input,
   ) {
     final decision = baseDecisionFor(surface);
-    final visible = _isVisible(surface: surface, decision: decision, input: input);
+    final visible = _isVisible(
+      surface: surface,
+      decision: decision,
+      input: input,
+    );
     return V1VisibleSurfaceReducerSurfaceResult(
       surface: surface,
       label: V1VisibleSurfaceReducerCopy.labelFor(surface),
@@ -159,36 +164,32 @@ abstract final class V1VisibleSurfaceReducer {
     required V1Surface surface,
     required V1SurfaceDecision decision,
     required V1VisibleSurfaceReducerInput input,
-  }) =>
-      switch (decision) {
-        V1SurfaceDecision.showCore => switch (surface) {
-            V1Surface.postSaveReinforcement => input.postSaveImmediate,
-            _ => true,
-          },
-        V1SurfaceDecision.allowAfterProof => _proofGatedVisible(
-            surface: surface,
-            input: input,
-          ),
-        V1SurfaceDecision.allowOnlyWhenUserAsked =>
-          input.userExplicitlyAsked,
-        V1SurfaceDecision.hideForV1 => false,
-        V1SurfaceDecision.developerOnly => input.developerMode,
-        V1SurfaceDecision.releaseBlockerOnly => false,
-      };
+  }) => switch (decision) {
+    V1SurfaceDecision.showCore => switch (surface) {
+      V1Surface.postSaveReinforcement => input.postSaveImmediate,
+      _ => true,
+    },
+    V1SurfaceDecision.allowAfterProof => _proofGatedVisible(
+      surface: surface,
+      input: input,
+    ),
+    V1SurfaceDecision.allowOnlyWhenUserAsked => input.userExplicitlyAsked,
+    V1SurfaceDecision.hideForV1 => false,
+    V1SurfaceDecision.developerOnly => input.developerMode,
+    V1SurfaceDecision.releaseBlockerOnly => false,
+  };
 
   static bool _proofGatedVisible({
     required V1Surface surface,
     required V1VisibleSurfaceReducerInput input,
-  }) =>
-      switch (surface) {
-        V1Surface.firstProof => input.firstProofGuardSafe,
-        V1Surface.whyProofAppeared || V1Surface.confirmCorrect =>
-          input.afterFirstProof,
-        V1Surface.whatChanged => input.confirmedRepeatOrEligibleMoment,
-        V1Surface.proLongerTrail =>
-          input.afterFirstProof || input.proofValueSeen,
-        _ => false,
-      };
+  }) => switch (surface) {
+    V1Surface.firstProof => input.firstProofGuardSafe,
+    V1Surface.whyProofAppeared ||
+    V1Surface.confirmCorrect => input.afterFirstProof,
+    V1Surface.whatChanged => input.confirmedRepeatOrEligibleMoment,
+    V1Surface.proLongerTrail => input.afterFirstProof || input.proofValueSeen,
+    _ => false,
+  };
 
   static String _detailFor({
     required V1Surface surface,
@@ -198,15 +199,15 @@ abstract final class V1VisibleSurfaceReducer {
   }) {
     if (!visible) {
       return switch (decision) {
-        V1SurfaceDecision.hideForV1 =>
-          V1VisibleSurfaceReducerCopy.detailHidden,
+        V1SurfaceDecision.hideForV1 => V1VisibleSurfaceReducerCopy.detailHidden,
         V1SurfaceDecision.allowAfterProof =>
           V1VisibleSurfaceReducerCopy.detailGated,
         V1SurfaceDecision.allowOnlyWhenUserAsked =>
           V1VisibleSurfaceReducerCopy.detailUserAsked,
         V1SurfaceDecision.developerOnly =>
           V1VisibleSurfaceReducerCopy.detailDeveloper,
-        V1SurfaceDecision.showCore when surface == V1Surface.postSaveReinforcement =>
+        V1SurfaceDecision.showCore
+            when surface == V1Surface.postSaveReinforcement =>
           V1VisibleSurfaceReducerCopy.detailPostSave,
         _ => V1VisibleSurfaceReducerCopy.detailHidden,
       };

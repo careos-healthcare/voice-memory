@@ -87,9 +87,8 @@ class InMemoryPrivateDataEncryptionKeyStore
   List<int>? _keyBytes;
 
   @override
-  Future<List<int>?> readKeyBytes() async => _keyBytes == null
-      ? null
-      : List<int>.from(_keyBytes!);
+  Future<List<int>?> readKeyBytes() async =>
+      _keyBytes == null ? null : List<int>.from(_keyBytes!);
 
   @override
   Future<void> writeKeyBytes(List<int> keyBytes) async {

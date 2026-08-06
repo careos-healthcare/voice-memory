@@ -46,7 +46,8 @@ abstract final class BetaInviteLoopEngine {
     bool whatChangedQuestionActive = false,
     bool patternReviewInboxHasActiveItems = false,
   }) {
-    final hasFirstProof = FirstProofPayoffEngine.build(entries: entries) != null ||
+    final hasFirstProof =
+        FirstProofPayoffEngine.build(entries: entries) != null ||
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
     final trigger = _resolveTrigger(
       entries: entries,
@@ -59,7 +60,8 @@ abstract final class BetaInviteLoopEngine {
       surface: surface,
       source: source,
       entryCount: entryCount,
-      betaMissionEnabled: betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
+      betaMissionEnabled:
+          betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
       dismissed: dismissed || BetaInviteLoopDismissStore.isDismissed(),
       hasFirstProof: hasFirstProof,
       trigger: trigger,
@@ -71,9 +73,7 @@ abstract final class BetaInviteLoopEngine {
     );
   }
 
-  static BetaInviteLoopResult build({
-    required BetaInviteLoopContext context,
-  }) {
+  static BetaInviteLoopResult build({required BetaInviteLoopContext context}) {
     final shouldShow = shouldShowCard(context);
     return BetaInviteLoopResult(
       shouldShow: shouldShow,

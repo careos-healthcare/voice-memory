@@ -122,13 +122,15 @@ abstract class MemorySurfacingSession {
     lastSaveWasDoNotSurface = false;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     selected = MemorySurfacingMode.normal;
     lastSaveWasSensitive = false;
     lastSaveWasDoNotSurface = false;
     pickerSeenThisSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 }
 
 abstract class MemorySurfacingCopy {

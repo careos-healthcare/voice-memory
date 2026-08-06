@@ -26,19 +26,19 @@ class ArchiveClarityProgressCard extends StatefulWidget {
     this.engine = const ArchiveClarityEngine(),
     this.sampleMode = false,
     this.weeklyReviewAvailable = false,
-    ArchiveClarityResult? initialResult,
-  }) : _initialResult = initialResult;
+    this._initialResult,
+  });
 
   const ArchiveClarityProgressCard.test({
     super.key,
     required this.entries,
-    required ArchiveClarityResult initialResult,
+    required ArchiveClarityResult this._initialResult,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const ArchiveClarityEngine(),
     this.sampleMode = false,
     this.weeklyReviewAvailable = false,
-  }) : _initialResult = initialResult;
+  });
 
   final List<JournalEntry> entries;
   final VoidCallback? onPrimaryAction;
@@ -53,7 +53,8 @@ class ArchiveClarityProgressCard extends StatefulWidget {
       _ArchiveClarityProgressCardState();
 }
 
-class _ArchiveClarityProgressCardState extends State<ArchiveClarityProgressCard> {
+class _ArchiveClarityProgressCardState
+    extends State<ArchiveClarityProgressCard> {
   ArchiveClarityResult? _result;
   bool _loading = true;
 
@@ -87,14 +88,17 @@ class _ArchiveClarityProgressCardState extends State<ArchiveClarityProgressCard>
     }
 
     final watchlist =
-        widget.watchlistStore ?? ArchiveWatchlistStore(AppServices.instance.prefs);
+        widget.watchlistStore ??
+        ArchiveWatchlistStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
     final watchItems = await watchlist.loadItems();
-    final realEntriesList =
-        SampleArchiveMode.excludeSampleEntries(widget.entries);
+    final realEntriesList = SampleArchiveMode.excludeSampleEntries(
+      widget.entries,
+    );
     final realEntries = realEntriesList.length;
-    final usable =
-        ArchiveEvidenceGuard.eligibleReflectionCount(realEntriesList);
+    final usable = ArchiveEvidenceGuard.eligibleReflectionCount(
+      realEntriesList,
+    );
     if (!mounted) return;
     setState(() {
       _result = widget.engine.build(
@@ -170,7 +174,8 @@ class _ArchiveClarityProgressCardState extends State<ArchiveClarityProgressCard>
             children: [
               FilledButton(
                 key: const Key('archive_clarity_progress_primary_button'),
-                onPressed: widget.onPrimaryAction ??
+                onPressed:
+                    widget.onPrimaryAction ??
                     () => context.push(result.primaryRoute),
                 child: Text(result.primaryCtaLabel),
               ),

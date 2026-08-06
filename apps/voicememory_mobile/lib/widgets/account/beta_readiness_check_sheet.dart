@@ -61,10 +61,9 @@ class BetaReadinessCheckSheet extends StatelessWidget {
             Text(
               report.intro,
               key: const Key('beta_readiness_check_intro'),
-              style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                color: AppColors.textSecondary,
-                height: 1.45,
-              ),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+              ).copyWith(color: AppColors.textSecondary, height: 1.45),
             ),
             const SizedBox(height: AppSpacing.lg),
             for (final section in report.sections) ...[
@@ -85,10 +84,9 @@ class BetaReadinessCheckSheet extends StatelessWidget {
                   key: Key(
                     'beta_readiness_warning_${report.warnings.indexOf(warning)}',
                   ),
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.45,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary, height: 1.45),
                 ),
               ),
           ],
@@ -115,8 +113,7 @@ class _SectionBlock extends StatelessWidget {
           style: ArchiveMobileTypography.cardLabel(context),
         ),
         const SizedBox(height: AppSpacing.xs),
-        for (final item in section.items)
-          _ItemRow(item: item),
+        for (final item in section.items) _ItemRow(item: item),
       ],
     );
   }
@@ -138,20 +135,18 @@ class _ItemRow extends StatelessWidget {
             child: Text(
               item.label,
               key: Key('beta_readiness_item_label_${item.id.name}'),
-              style: ArchiveMobileTypography.listTitle(context).copyWith(
-                fontSize: 14,
-                height: 1.35,
-              ),
+              style: ArchiveMobileTypography.listTitle(
+                context,
+              ).copyWith(fontSize: 14, height: 1.35),
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
             item.status.label,
             key: Key('beta_readiness_item_status_${item.id.name}'),
-            style: ArchiveMobileTypography.listTitle(context).copyWith(
-              fontSize: 13,
-              color: _statusColor(item.status),
-            ),
+            style: ArchiveMobileTypography.listTitle(
+              context,
+            ).copyWith(fontSize: 13, color: _statusColor(item.status)),
           ),
         ],
       ),
@@ -159,8 +154,8 @@ class _ItemRow extends StatelessWidget {
   }
 
   Color _statusColor(BetaReadinessItemStatus status) => switch (status) {
-        BetaReadinessItemStatus.pass => AppColors.success,
-        BetaReadinessItemStatus.needsManualCheck => AppColors.textSecondary,
-        BetaReadinessItemStatus.notAvailable => AppColors.error,
-      };
+    BetaReadinessItemStatus.pass => AppColors.success,
+    BetaReadinessItemStatus.needsManualCheck => AppColors.textSecondary,
+    BetaReadinessItemStatus.notAvailable => AppColors.error,
+  };
 }

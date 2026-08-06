@@ -128,7 +128,8 @@ abstract final class NoDashboardPositioningGuard {
       const NoDashboardPositioningGuardSnapshot(
         headline: NoDashboardPositioningGuardCopy.headline,
         body: NoDashboardPositioningGuardCopy.body,
-        preferredLanguageLine: NoDashboardPositioningGuardCopy.preferredLanguageLine,
+        preferredLanguageLine:
+            NoDashboardPositioningGuardCopy.preferredLanguageLine,
         avoidLanguageLine: NoDashboardPositioningGuardCopy.avoidLanguageLine,
         blockLine: NoDashboardPositioningGuardCopy.blockLine,
         warnLine: NoDashboardPositioningGuardCopy.warnLine,
@@ -180,11 +181,7 @@ abstract final class NoDashboardPositioningGuard {
   }
 }
 
-enum NoDashboardPositioningGuardAction {
-  allowed,
-  block,
-  warn,
-}
+enum NoDashboardPositioningGuardAction { allowed, block, warn }
 
 enum NoDashboardPositioningGuardReason {
   allowedProofTrailLanguage,

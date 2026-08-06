@@ -48,24 +48,23 @@ ProofFloorRescueInput _input({
   int usefulFeedbackCount = 0,
   BetaProofFeedbackType? latestFeedbackType,
   bool feedbackAnsweredToday = false,
-}) =>
-    ProofFloorRescueInput(
-      entryCount: entryCount,
-      source: 'test',
-      isPro: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      hasLowMatchQuality: hasLowMatchQuality,
-      usefulFeedbackCount: usefulFeedbackCount,
-      latestFeedbackType: latestFeedbackType,
-      feedbackAnsweredToday: feedbackAnsweredToday,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-    );
+}) => ProofFloorRescueInput(
+  entryCount: entryCount,
+  source: 'test',
+  isPro: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  hasLowMatchQuality: hasLowMatchQuality,
+  usefulFeedbackCount: usefulFeedbackCount,
+  latestFeedbackType: latestFeedbackType,
+  feedbackAnsweredToday: feedbackAnsweredToday,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+);
 
 SurfacePriorityCandidates _recordReadyCandidates({
   bool proofFloorRescue = false,
@@ -73,37 +72,36 @@ SurfacePriorityCandidates _recordReadyCandidates({
   bool proVisibilityLift = false,
   bool proPreview = false,
   bool proBridgeVisibility = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      proofFloorRescue: proofFloorRescue,
-      threeMomentCompletion: false,
-      firstMomentCapture: false,
-      secondMomentReturn: false,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      timelineProofMoment: true,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proUnderstandingLift: proUnderstandingLift,
-      proVisibilityLift: proVisibilityLift,
-      proPreview: proPreview,
-      proBridgeVisibility: proBridgeVisibility,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  proofFloorRescue: proofFloorRescue,
+  threeMomentCompletion: false,
+  firstMomentCapture: false,
+  secondMomentReturn: false,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  timelineProofMoment: true,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proUnderstandingLift: proUnderstandingLift,
+  proVisibilityLift: proVisibilityLift,
+  proPreview: proPreview,
+  proBridgeVisibility: proBridgeVisibility,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 void main() {
   setUp(() async {
@@ -115,13 +113,19 @@ void main() {
 
   group('ProofFloorRescueCopy', () {
     test('uses exact rescue copy', () {
-      expect(ProofFloorRescueCopy.waitTitle,
-          'ArchiveMe is still watching this');
-      expect(ProofFloorRescueCopy.feedbackTitle,
-          'Was this proof actually useful?');
+      expect(
+        ProofFloorRescueCopy.waitTitle,
+        'ArchiveMe is still watching this',
+      );
+      expect(
+        ProofFloorRescueCopy.feedbackTitle,
+        'Was this proof actually useful?',
+      );
       expect(ProofFloorRescueCopy.sharpenTitle, 'Make the next proof sharper');
-      expect(ProofFloorRescueCopy.suppressTitle,
-          'ArchiveMe will back off this thread');
+      expect(
+        ProofFloorRescueCopy.suppressTitle,
+        'ArchiveMe will back off this thread',
+      );
       expect(ProofFloorRescueCopy.dashboardFocusTitle, 'Protect proof floor');
     });
 
@@ -244,27 +248,30 @@ void main() {
       );
     });
 
-    test('surface priority blocks pro cards when proof floor rescue active', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'test',
-        candidates: _recordReadyCandidates(
-          proofFloorRescue: true,
-          proUnderstandingLift: true,
-          proVisibilityLift: true,
-          proPreview: true,
-          proBridgeVisibility: true,
-        ),
-      );
-      expect(result.proSlot, isNull);
-      expect(
-        result.isVisible(
-          SurfacePriorityCardKey.proUnderstandingLift,
-          candidate: true,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'surface priority blocks pro cards when proof floor rescue active',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'test',
+          candidates: _recordReadyCandidates(
+            proofFloorRescue: true,
+            proUnderstandingLift: true,
+            proVisibilityLift: true,
+            proPreview: true,
+            proBridgeVisibility: true,
+          ),
+        );
+        expect(result.proSlot, isNull);
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.proUnderstandingLift,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('strong useful proof still allows Pro path', () {
       final input = _input(
@@ -369,20 +376,14 @@ void main() {
   group('Dashboard repair focus', () {
     test('prioritizes protect_proof_floor when usefulProofCount < 2', () {
       final focus = ProofFloorRescueEngine.resolveRepairFocus(
-        const RevenueReadinessDashboardV2Input(
-          testerCount: 10,
-          usefulCount: 1,
-        ),
+        const RevenueReadinessDashboardV2Input(testerCount: 10, usefulCount: 1),
       );
       expect(focus?.focus, ProofFloorRescueRepairFocusId.protectProofFloor);
       expect(focus?.title, ProofFloorRescueCopy.dashboardFocusTitle);
       expect(focus?.body, ProofFloorRescueCopy.dashboardFocusBody);
 
       final dashboard = RevenueReadinessDashboardV2Engine.buildFromInput(
-        const RevenueReadinessDashboardV2Input(
-          testerCount: 10,
-          usefulCount: 1,
-        ),
+        const RevenueReadinessDashboardV2Input(testerCount: 10, usefulCount: 1),
       );
       expect(
         dashboard.proofFloorRescueFocus?.focus,
@@ -396,9 +397,7 @@ void main() {
       final result = ProofFloorRescueEngine.build(input: _input());
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ProofFloorRescueCard.test(result: result),
-          ),
+          home: Scaffold(body: ProofFloorRescueCard.test(result: result)),
         ),
       );
       expect(find.text(ProofFloorRescueCopy.waitTitle), findsOneWidget);
@@ -419,9 +418,7 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ProofFloorRescueCard.test(result: result),
-          ),
+          home: Scaffold(body: ProofFloorRescueCard.test(result: result)),
         ),
       );
       expect(find.text(ProofFloorRescueCopy.feedbackTitle), findsOneWidget);
@@ -439,15 +436,17 @@ void main() {
     });
 
     test('archive belief screen integrates proof floor rescue', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('ProofFloorRescueCard'));
       expect(source, contains('blocksProByProofFloorOnPatterns'));
     });
 
     test('testing screen shows preview/status', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('_ProofFloorRescueTestingPanel'));
       expect(source, contains('proof_floor_rescue_state_status'));
       expect(source, contains('proof_floor_rescue_pro_block_status'));
@@ -455,9 +454,9 @@ void main() {
     });
 
     test('no fake evidence in rescue module', () {
-      final engine =
-          File('lib/features/proof_floor_rescue/proof_floor_rescue_engine.dart')
-              .readAsStringSync();
+      final engine = File(
+        'lib/features/proof_floor_rescue/proof_floor_rescue_engine.dart',
+      ).readAsStringSync();
       expect(engine.contains('seed'), isFalse);
       expect(engine.contains('fake'), isFalse);
     });

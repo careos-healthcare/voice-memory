@@ -3,7 +3,13 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../../models/journal_entry.dart';
 import 'evidence_first_pattern_copy.dart';
 
-enum PatternHumanCopyKind { fallback, evidenceFirst, highConfidencePressure, genericThread, pressureLoop }
+enum PatternHumanCopyKind {
+  fallback,
+  evidenceFirst,
+  highConfidencePressure,
+  genericThread,
+  pressureLoop,
+}
 
 /// Calm, grounded user-facing copy for Patterns surfaces.
 abstract class PatternHumanCopy {
@@ -135,7 +141,8 @@ class PatternHumanCopyInput {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final latest = eligible.isNotEmpty ? eligible.last : null;
     final transcript = latest?.transcript.trim() ?? '';
-    final analysisData = analysis ?? const ArchiveEvidenceHeuristics().analyze(entries);
+    final analysisData =
+        analysis ?? const ArchiveEvidenceHeuristics().analyze(entries);
     final score = PatternHumanCopyResolver.computeConfidence(
       evidenceCount: eligible.length,
       possibleRepeat: analysisData.possibleRepeat,
@@ -266,13 +273,15 @@ abstract class PatternHumanCopyResolver {
 
   static PatternHumanCopyBundle resolve(PatternHumanCopyInput input) {
     final evidenceInput = EvidenceFirstPatternCopyInput.fromHumanInput(input);
-    final confidence = input.confidenceScore ?? computeConfidence(
-      evidenceCount: input.evidenceCount,
-      possibleRepeat: input.possibleRepeat,
-      confidenceBand: input.confidenceBand,
-      pressurePhrases: input.pressurePhrases,
-      transcripts: input.allTranscriptText,
-    );
+    final confidence =
+        input.confidenceScore ??
+        computeConfidence(
+          evidenceCount: input.evidenceCount,
+          possibleRepeat: input.possibleRepeat,
+          confidenceBand: input.confidenceBand,
+          pressurePhrases: input.pressurePhrases,
+          transcripts: input.allTranscriptText,
+        );
     final evidenceInputWithConfidence = EvidenceFirstPatternCopyInput(
       transcripts: evidenceInput.transcripts,
       evidenceCount: evidenceInput.evidenceCount,

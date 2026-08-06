@@ -37,23 +37,23 @@ abstract final class CoreMetricsMinimumSetCopy {
       'change emission, or add product surfaces.';
 
   static String labelFor(CoreMetricsMinimumMetricId id) => switch (id) {
-        CoreMetricsMinimumMetricId.appOpened => metricAppOpened,
-        CoreMetricsMinimumMetricId.firstSave => metricFirstSave,
-        CoreMetricsMinimumMetricId.secondSave => metricSecondSave,
-        CoreMetricsMinimumMetricId.firstUsefulProofSeen =>
-          metricFirstUsefulProofSeen,
-        CoreMetricsMinimumMetricId.proofAccepted => metricProofAccepted,
-        CoreMetricsMinimumMetricId.proofCorrected => metricProofCorrected,
-        CoreMetricsMinimumMetricId.proPromiseSeen => metricProPromiseSeen,
-        CoreMetricsMinimumMetricId.proTapped => metricProTapped,
-        CoreMetricsMinimumMetricId.purchaseStarted => metricPurchaseStarted,
-        CoreMetricsMinimumMetricId.purchaseCompleted => metricPurchaseCompleted,
-        CoreMetricsMinimumMetricId.restoreTapped => metricRestoreTapped,
-        CoreMetricsMinimumMetricId.restoreSucceeded => metricRestoreSucceeded,
-        CoreMetricsMinimumMetricId.entitlementActive => metricEntitlementActive,
-        CoreMetricsMinimumMetricId.crashOrBlockerReported =>
-          metricCrashOrBlockerReported,
-      };
+    CoreMetricsMinimumMetricId.appOpened => metricAppOpened,
+    CoreMetricsMinimumMetricId.firstSave => metricFirstSave,
+    CoreMetricsMinimumMetricId.secondSave => metricSecondSave,
+    CoreMetricsMinimumMetricId.firstUsefulProofSeen =>
+      metricFirstUsefulProofSeen,
+    CoreMetricsMinimumMetricId.proofAccepted => metricProofAccepted,
+    CoreMetricsMinimumMetricId.proofCorrected => metricProofCorrected,
+    CoreMetricsMinimumMetricId.proPromiseSeen => metricProPromiseSeen,
+    CoreMetricsMinimumMetricId.proTapped => metricProTapped,
+    CoreMetricsMinimumMetricId.purchaseStarted => metricPurchaseStarted,
+    CoreMetricsMinimumMetricId.purchaseCompleted => metricPurchaseCompleted,
+    CoreMetricsMinimumMetricId.restoreTapped => metricRestoreTapped,
+    CoreMetricsMinimumMetricId.restoreSucceeded => metricRestoreSucceeded,
+    CoreMetricsMinimumMetricId.entitlementActive => metricEntitlementActive,
+    CoreMetricsMinimumMetricId.crashOrBlockerReported =>
+      metricCrashOrBlockerReported,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

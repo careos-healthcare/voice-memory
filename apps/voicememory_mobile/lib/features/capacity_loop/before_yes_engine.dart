@@ -23,16 +23,16 @@ class BeforeYesPauseResult {
   });
 
   const BeforeYesPauseResult.hidden()
-      : showOnRecord = false,
-        showOnArchiveHome = false,
-        showOnCapacityLoop = false,
-        title = BeforeYesCopy.title,
-        body = BeforeYesCopy.body,
-        pauseCtaLabel = BeforeYesCopy.pauseCta,
-        alreadyYesCtaLabel = BeforeYesCopy.alreadyYesCta,
-        recordPrompt = BeforeYesCopy.recordPrompt,
-        loopSectionTitle = BeforeYesCopy.loopSectionTitle,
-        loopSectionBody = BeforeYesCopy.loopSectionBody;
+    : showOnRecord = false,
+      showOnArchiveHome = false,
+      showOnCapacityLoop = false,
+      title = BeforeYesCopy.title,
+      body = BeforeYesCopy.body,
+      pauseCtaLabel = BeforeYesCopy.pauseCta,
+      alreadyYesCtaLabel = BeforeYesCopy.alreadyYesCta,
+      recordPrompt = BeforeYesCopy.recordPrompt,
+      loopSectionTitle = BeforeYesCopy.loopSectionTitle,
+      loopSectionBody = BeforeYesCopy.loopSectionBody;
 
   final bool showOnRecord;
   final bool showOnArchiveHome;
@@ -70,9 +70,7 @@ class BeforeYesPauseInput {
 
 /// Builds before-you-say-yes visibility — capacity wedge only.
 class BeforeYesPauseEngine {
-  const BeforeYesPauseEngine({
-    this.loopEngine = const CapacityLoopEngine(),
-  });
+  const BeforeYesPauseEngine({this.loopEngine = const CapacityLoopEngine()});
 
   final CapacityLoopEngine loopEngine;
 
@@ -87,11 +85,11 @@ class BeforeYesPauseEngine {
       showOnRecord: true,
       showOnArchiveHome:
           hasLoopOrCostEvidence &&
-              !input.costLaterCheckinVisible &&
-              CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
-                capacityWedgeActive: input.capacityWedgeActive,
-                capacityMomentCount: input.capacityMomentCount,
-              ),
+          !input.costLaterCheckinVisible &&
+          CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+            capacityWedgeActive: input.capacityWedgeActive,
+            capacityMomentCount: input.capacityMomentCount,
+          ),
       showOnCapacityLoop: hasLoopOrCostEvidence,
       title: BeforeYesCopy.title,
       body: BeforeYesCopy.body,

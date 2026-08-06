@@ -39,7 +39,8 @@ abstract final class ShareCardBuilder {
       return null;
     }
 
-    final resolvedDetail = detail ??
+    final resolvedDetail =
+        detail ??
         PatternDetailEngine.build(
           entries: entries,
           confirmedRepeat: confirmedRepeat,
@@ -97,7 +98,7 @@ abstract final class ShareCardBuilder {
   }
 
   static String? sanitizeDisplayLabel(String raw) {
-    final trimmed = PatternNameStore.normalizeCustomName(raw);
+    final trimmed = PatternNameStore.sanitizeCustomName(raw);
     if (trimmed == null || trimmed.isEmpty) return null;
     if (_containsContactInfo(trimmed)) return null;
     return trimmed;

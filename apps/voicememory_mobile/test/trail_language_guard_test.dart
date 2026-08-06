@@ -24,10 +24,7 @@ void main() {
       const copy = 'ArchiveMe keeps your proof trail over time.';
       final result = TrailLanguageGuard.isAllowedCopy(copy);
       expect(result.isAllowed, isTrue);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.allowedProofTrailLanguage,
-      );
+      expect(result.reason, TrailLanguageGuardReason.allowedProofTrailLanguage);
       expect(TrailLanguageGuard.containsPreferredTrailLanguage(copy), isTrue);
     });
 
@@ -97,10 +94,7 @@ void main() {
         'Maintain your mind map every week.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedMindMapMaintenance,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedMindMapMaintenance);
     });
 
     test('keep your mind map active blocked', () {
@@ -108,10 +102,7 @@ void main() {
         'Keep your mind map active with daily updates.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedMindMapMaintenance,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedMindMapMaintenance);
     });
 
     test('update your map daily blocked', () {
@@ -119,10 +110,7 @@ void main() {
         'Update your map daily to stay organized.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedMindMapMaintenance,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedMindMapMaintenance);
     });
 
     test('daily tracker blocked', () {
@@ -157,10 +145,7 @@ void main() {
         'ArchiveMe is a storage app for everything you think.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedStoragePositioning,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedStoragePositioning);
     });
 
     test('second brain positioning blocked', () {
@@ -168,10 +153,7 @@ void main() {
         'Build your second brain inside ArchiveMe.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedStoragePositioning,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedStoragePositioning);
     });
 
     test('ranked patterns blocked', () {
@@ -179,10 +161,7 @@ void main() {
         'See your ranked patterns at a glance.',
       );
       expect(result.isAllowed, isFalse);
-      expect(
-        result.reason,
-        TrailLanguageGuardReason.blockedRankingPositioning,
-      );
+      expect(result.reason, TrailLanguageGuardReason.blockedRankingPositioning);
     });
 
     test('therapy language blocked', () {
@@ -212,10 +191,7 @@ void main() {
 
   group('TrailLanguageGuardCopy', () {
     test('headline says ArchiveMe builds a trail', () {
-      expect(
-        TrailLanguageGuardCopy.headline,
-        'ArchiveMe builds a trail',
-      );
+      expect(TrailLanguageGuardCopy.headline, 'ArchiveMe builds a trail');
     });
 
     test('body says user does not maintain a mind map', () {
@@ -226,10 +202,7 @@ void main() {
     });
 
     test('body says save small real moments', () {
-      expect(
-        TrailLanguageGuardCopy.body,
-        contains('save small real moments'),
-      );
+      expect(TrailLanguageGuardCopy.body, contains('save small real moments'));
     });
 
     test('body says ArchiveMe builds proof trail over time', () {
@@ -239,24 +212,28 @@ void main() {
       );
     });
 
-    test('preferredLanguageLine includes trail/proof trail/evidence trail/saved moments',
-        () {
-      final line = TrailLanguageGuardCopy.preferredLanguageLine.toLowerCase();
-      expect(line, contains('trail'));
-      expect(line, contains('proof trail'));
-      expect(line, contains('evidence trail'));
-      expect(line, contains('saved moments'));
-    });
+    test(
+      'preferredLanguageLine includes trail/proof trail/evidence trail/saved moments',
+      () {
+        final line = TrailLanguageGuardCopy.preferredLanguageLine.toLowerCase();
+        expect(line, contains('trail'));
+        expect(line, contains('proof trail'));
+        expect(line, contains('evidence trail'));
+        expect(line, contains('saved moments'));
+      },
+    );
 
-    test('avoidLanguageLine blocks mind-map maintenance/dashboard/daily/streak/storage',
-        () {
-      final line = TrailLanguageGuardCopy.avoidLanguageLine.toLowerCase();
-      expect(line, contains('mind-map maintenance'));
-      expect(line, contains('dashboard to maintain'));
-      expect(line, contains('daily tracking'));
-      expect(line, contains('streaks'));
-      expect(line, contains('storage language'));
-    });
+    test(
+      'avoidLanguageLine blocks mind-map maintenance/dashboard/daily/streak/storage',
+      () {
+        final line = TrailLanguageGuardCopy.avoidLanguageLine.toLowerCase();
+        expect(line, contains('mind-map maintenance'));
+        expect(line, contains('dashboard to maintain'));
+        expect(line, contains('daily tracking'));
+        expect(line, contains('streaks'));
+        expect(line, contains('storage language'));
+      },
+    );
 
     test('whyTrailLine says save repeat now and see later', () {
       expect(
@@ -463,39 +440,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -514,7 +494,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

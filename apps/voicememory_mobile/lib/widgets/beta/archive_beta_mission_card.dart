@@ -26,8 +26,8 @@ class ArchiveBetaMissionCard extends StatefulWidget {
     this.onDismissed,
     this.store,
     bool dismissed = false,
-  })  : skipPrefsLoad = true,
-        initialDismissed = dismissed;
+  }) : skipPrefsLoad = true,
+       initialDismissed = dismissed;
 
   final bool showStartCta;
   final VoidCallback? onStart;
@@ -72,7 +72,9 @@ class _ArchiveBetaMissionCardState extends State<ArchiveBetaMissionCard> {
   @override
   Widget build(BuildContext context) {
     if (_dismissed) {
-      return const SizedBox.shrink(key: Key('archive_beta_mission_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('archive_beta_mission_card_hidden'),
+      );
     }
 
     final bodyStyle = ArchiveMobileTypography.listSubtitle(context);

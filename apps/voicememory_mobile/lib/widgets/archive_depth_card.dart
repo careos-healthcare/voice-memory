@@ -10,10 +10,7 @@ import '../theme/voicememory_cards.dart';
 
 /// Compact archive depth readout for Archive Home / Patterns.
 class ArchiveDepthCard extends StatelessWidget {
-  const ArchiveDepthCard({
-    super.key,
-    required this.result,
-  });
+  const ArchiveDepthCard({super.key, required this.result});
 
   final ArchiveDepthResult result;
 
@@ -87,10 +84,7 @@ class ArchiveDepthCard extends StatelessWidget {
 
 /// One-line archive depth hint on Record after 2+ entries.
 class ArchiveDepthCompactHint extends StatelessWidget {
-  const ArchiveDepthCompactHint({
-    super.key,
-    required this.result,
-  });
+  const ArchiveDepthCompactHint({super.key, required this.result});
 
   final ArchiveDepthResult result;
 

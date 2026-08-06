@@ -35,7 +35,8 @@ class ReturnAfterProofLiftV2Card extends StatefulWidget {
       _ReturnAfterProofLiftV2CardState();
 }
 
-class _ReturnAfterProofLiftV2CardState extends State<ReturnAfterProofLiftV2Card> {
+class _ReturnAfterProofLiftV2CardState
+    extends State<ReturnAfterProofLiftV2Card> {
   var _trackedSeen = false;
   var _dismissedToday = false;
   var _watchExpanded = false;
@@ -80,10 +81,9 @@ class _ReturnAfterProofLiftV2CardState extends State<ReturnAfterProofLiftV2Card>
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('return_after_proof_lift_v2_card'),

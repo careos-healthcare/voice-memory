@@ -45,20 +45,20 @@ class _ArchiveTimelineSpineCardState extends State<ArchiveTimelineSpineCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final rowLabelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final rowLabelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('archive_timeline_spine_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -134,9 +134,9 @@ class _ArchiveTimelineSpineCardState extends State<ArchiveTimelineSpineCard> {
           Text(
             widget.result.differentiationLine,
             key: const Key('archive_timeline_spine_differentiation'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

@@ -48,11 +48,7 @@ abstract final class PricingOfferValidationV2Copy {
     'you need to',
   ];
 
-  static const priceOptions = [
-    priceYes,
-    priceMaybe,
-    priceNo,
-  ];
+  static const priceOptions = [priceYes, priceMaybe, priceNo];
 
   static const reasonOptions = [
     reasonSeeingReturn,

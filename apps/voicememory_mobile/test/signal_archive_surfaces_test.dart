@@ -9,8 +9,8 @@ import 'package:voicememory_mobile/features/signal_archive/signal_archive_snapsh
 import 'package:voicememory_mobile/features/signal_archive/signal_corrections_engine.dart';
 import 'package:voicememory_mobile/features/signal_archive/signal_evidence_engine.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/signal_detail_screen.dart';
-import 'package:voicememory_mobile/screens/signal_evidence_screen.dart';
+import 'package:archiveme_research/screens/signal_detail_screen.dart';
+import 'package:archiveme_research/screens/signal_evidence_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/signal/archive_home_dashboard.dart';
 import 'package:voicememory_mobile/widgets/signal/archive_watching_card.dart';

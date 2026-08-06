@@ -12,8 +12,7 @@ const _userTranscript =
 RevenueReadinessRow _row(
   RevenueReadinessDashboard dashboard,
   RevenueReadinessRowId id,
-) =>
-    dashboard.rows.firstWhere((row) => row.id == id);
+) => dashboard.rows.firstWhere((row) => row.id == id);
 
 void main() {
   setUp(() {
@@ -66,10 +65,7 @@ void main() {
     });
 
     test('shows paywall reached when paywall_seen exists', () {
-      RevenueFunnelAnalytics.paywallSeen(
-        source: 'general_pro',
-        isPro: false,
-      );
+      RevenueFunnelAnalytics.paywallSeen(source: 'general_pro', isPro: false);
       final dashboard = RevenueReadinessEngine.build();
       expect(
         _row(dashboard, RevenueReadinessRowId.paywallReached).status,

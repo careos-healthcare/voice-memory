@@ -28,24 +28,23 @@ BetaRepairLabVisibilityInput _input({
   BetaProofFeedbackType? feedbackType = BetaProofFeedbackType.useful,
   bool isNegativeFeedback = false,
   bool isPro = false,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: entryCount,
-      source: 'test',
-      isPro: isPro,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: isNegativeFeedback,
-      betaMissionEnabled: betaMissionEnabled,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: entryCount,
+  source: 'test',
+  isPro: isPro,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback: isNegativeFeedback,
+  betaMissionEnabled: betaMissionEnabled,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -56,10 +55,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: EvidenceTrailClarityCard.test(
-            result: result,
-            onSeePro: () {},
-          ),
+          child: EvidenceTrailClarityCard.test(result: result, onSeePro: () {}),
         ),
       ),
     ),
@@ -208,8 +204,7 @@ void main() {
       BetaRepairLabStore.repairModeOverrideForTest =
           'evidenceTrailTimelineClarity';
       expect(
-        EvidenceTrailClarityEngine
-            .blocksOtherProCardsWhenEvidenceTrailClarityActive(
+        EvidenceTrailClarityEngine.blocksOtherProCardsWhenEvidenceTrailClarityActive(
           betaMissionEnabled: true,
           showEvidenceTrailClarity: true,
         ),
@@ -259,10 +254,7 @@ void main() {
   group('Integration wiring', () {
     test('CTA opens existing PaywallSource.valueMoment', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      expect(
-        source,
-        contains('record_beta_repair_lab_evidence_trail_clarity'),
-      );
+      expect(source, contains('record_beta_repair_lab_evidence_trail_clarity'));
       expect(source, contains('PaywallSource.valueMoment'));
     });
 
@@ -282,8 +274,9 @@ void main() {
   });
 
   group('EvidenceTrailClarityCard', () {
-    testWidgets('card copy contains timeline rows and Pro support line',
-        (tester) async {
+    testWidgets('card copy contains timeline rows and Pro support line', (
+      tester,
+    ) async {
       BetaRepairLabStore.repairModeOverrideForTest =
           'evidenceTrailTimelineClarity';
       final result = EvidenceTrailClarityEngine.build(
@@ -292,7 +285,10 @@ void main() {
       );
       await _pumpCard(tester, result: result);
 
-      expect(find.byKey(const Key('evidence_trail_clarity_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('evidence_trail_clarity_card')),
+        findsOneWidget,
+      );
       expect(find.text('Now'), findsOneWidget);
       expect(find.text('Next returns'), findsOneWidget);
       expect(find.text('Change'), findsOneWidget);

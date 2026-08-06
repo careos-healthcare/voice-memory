@@ -40,7 +40,8 @@ abstract final class SecondMomentReturnEngine {
       notTodayAction: SecondMomentReturnCopy.notTodayAction,
       afterNoticedSomething: SecondMomentReturnCopy.afterNoticedSomething,
       afterNotToday: SecondMomentReturnCopy.afterNotToday,
-      returnReasonLine: RevenueLiftExperimentV2Engine.showReturnReasonLine(
+      returnReasonLine:
+          RevenueLiftExperimentV2Engine.showReturnReasonLine(
             entryCount: entryCount,
           )
           ? RevenueLiftExperimentV2Copy.returnReasonLine
@@ -66,7 +67,9 @@ abstract final class SecondMomentReturnEngine {
   }) {
     if (dismissedForToday) return false;
     if (entryCount == 1) return true;
-    if (entryCount == 2 && !hasConfirmedRepeat && !secondDayReturnCueCompleted) {
+    if (entryCount == 2 &&
+        !hasConfirmedRepeat &&
+        !secondDayReturnCueCompleted) {
       return true;
     }
     return false;

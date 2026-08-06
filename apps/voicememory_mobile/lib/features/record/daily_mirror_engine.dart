@@ -16,8 +16,10 @@ class DailyMirrorEngine {
   const DailyMirrorEngine({
     EarlyBehaviorLoopEngine? behaviorLoopEngine,
     EarlySpecificInsightEngine? phraseInsightEngine,
-  })  : _behaviorLoopEngine = behaviorLoopEngine ?? const EarlyBehaviorLoopEngine(),
-        _phraseInsightEngine = phraseInsightEngine ?? const EarlySpecificInsightEngine();
+  }) : _behaviorLoopEngine =
+           behaviorLoopEngine ?? const EarlyBehaviorLoopEngine(),
+       _phraseInsightEngine =
+           phraseInsightEngine ?? const EarlySpecificInsightEngine();
 
   final EarlyBehaviorLoopEngine _behaviorLoopEngine;
   final EarlySpecificInsightEngine _phraseInsightEngine;
@@ -244,12 +246,14 @@ class DailyMirrorEngine {
     if (overlapping.isEmpty) return null;
 
     final overlapSeed = overlapping.firstWhere(
-      (term) => latestText.contains(term) || _termOverlapsLatest(term, latestText),
+      (term) =>
+          latestText.contains(term) || _termOverlapsLatest(term, latestText),
       orElse: () => overlapping.first,
     );
     final olderPhrase = _shortPhraseFromEntry(olderHalf.last, overlapSeed);
     final latestPhrase = _shortPhraseFromEntry(latest, overlapSeed);
-    final caughtEarly = latestText.contains('paused') ||
+    final caughtEarly =
+        latestText.contains('paused') ||
         latestText.contains('caught') ||
         latestText.contains('before');
 
@@ -289,18 +293,13 @@ class DailyMirrorEngine {
 
   String _entryText(JournalEntry entry) {
     final parts = <String>[
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.concreteObservation,
-          )
-          case final observation?)
-        observation,
-      if (ConsumerCopyGuard.userFacingObservation(
-            entry.reflection.exactLanguagePattern,
-          )
-          case final pattern?)
-        pattern,
-      if (_cleanTranscript(entry.transcript) case final transcript?)
-        transcript,
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.concreteObservation,
+      ),
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.exactLanguagePattern,
+      ),
+      ?_cleanTranscript(entry.transcript),
     ];
     return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
@@ -314,7 +313,10 @@ class DailyMirrorEngine {
 
   List<String> _termsFromEvidenceLine(String line) {
     final matches = RegExp(r"'([^']+)'").allMatches(line);
-    return matches.map((m) => m.group(1)!.trim()).where((t) => t.isNotEmpty).toList();
+    return matches
+        .map((m) => m.group(1)!.trim())
+        .where((t) => t.isNotEmpty)
+        .toList();
   }
 
   String? _formatYourWordsLine(List<String> terms) {

@@ -32,7 +32,6 @@ class RevenueCatService implements StoreBillingPort {
   Stream<PremiumEntitlements> get entitlementStream =>
       _entitlementController.stream;
 
-  @override
   PremiumEntitlements get latestEntitlements => _latest;
 
   @override
@@ -248,7 +247,8 @@ class RevenueCatService implements StoreBillingPort {
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
           offerings: null,
-          error: 'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
+          error:
+              'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
       } catch (e) {

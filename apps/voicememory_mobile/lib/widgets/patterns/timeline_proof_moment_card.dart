@@ -26,7 +26,8 @@ class TimelineProofMomentCard extends StatefulWidget {
   final String source;
 
   @override
-  State<TimelineProofMomentCard> createState() => _TimelineProofMomentCardState();
+  State<TimelineProofMomentCard> createState() =>
+      _TimelineProofMomentCardState();
 }
 
 class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
@@ -46,15 +47,15 @@ class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final rowStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
+    final detail = ProofDetailRepairEngine.buildFromTimelineMoment(
+      widget.result,
     );
-    final rowStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
-    final detail = ProofDetailRepairEngine.buildFromTimelineMoment(widget.result);
 
     return Container(
       key: const Key('timeline_proof_moment_card'),
@@ -62,7 +63,9 @@ class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
       padding: EdgeInsets.all(
         widget.result.compact ? AppSpacing.sm : AppSpacing.md,
       ),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -136,9 +139,9 @@ class _TimelineProofMomentCardState extends State<TimelineProofMomentCard> {
             Text(
               widget.result.differentiationLine,
               key: const Key('timeline_proof_moment_differentiation'),
-              style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.xs),
           ],

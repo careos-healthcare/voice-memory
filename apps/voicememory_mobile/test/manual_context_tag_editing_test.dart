@@ -21,45 +21,43 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -87,7 +85,6 @@ void _expectNoBannedCopy(Iterable<String> visible) {
     }
   }
 }
-
 
 void main() {
   group('JournalStore manual context tag editing', () {
@@ -306,10 +303,16 @@ void main() {
         transcript:
             'I felt pressure at work before saying yes again even when I was tired.',
       );
-      final tagged = CaptureContextTags.applyTag(entry, CaptureContextTagIds.work);
+      final tagged = CaptureContextTags.applyTag(
+        entry,
+        CaptureContextTagIds.work,
+      );
       expect(tagged.captureContextTag, CaptureContextTagIds.work);
 
-      final changed = CaptureContextTags.updateTag(tagged, CaptureContextTagIds.home);
+      final changed = CaptureContextTags.updateTag(
+        tagged,
+        CaptureContextTagIds.home,
+      );
       expect(changed.captureContextTag, CaptureContextTagIds.home);
 
       final cleared = CaptureContextTags.clearTag(changed);
@@ -341,7 +344,9 @@ void main() {
         tagId: CaptureContextTagIds.work,
       );
 
-      const cancelled = EditContextTagResult(action: EditContextTagAction.cancel);
+      const cancelled = EditContextTagResult(
+        action: EditContextTagAction.cancel,
+      );
       expect(cancelled.action, EditContextTagAction.cancel);
 
       final loaded = await store.getById('e1');
@@ -350,13 +355,13 @@ void main() {
   });
 
   group('EditContextTagSheet UI', () {
-    testWidgets('save button stays disabled until a tag is selected', (tester) async {
+    testWidgets('save button stays disabled until a tag is selected', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: EditContextTagSheet(initialTagId: null),
-          ),
+          home: Scaffold(body: EditContextTagSheet(initialTagId: null)),
         ),
       );
       await tester.pump();
@@ -393,9 +398,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: EditContextTagSheet(initialTagId: null),
-          ),
+          home: Scaffold(body: EditContextTagSheet(initialTagId: null)),
         ),
       );
       await tester.pump();

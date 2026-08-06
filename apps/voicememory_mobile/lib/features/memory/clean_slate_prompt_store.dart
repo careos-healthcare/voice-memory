@@ -140,12 +140,14 @@ abstract class CleanSlatePromptStore {
     );
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     _sessionStartedAt = null;
     _userChoice = null;
     _dismissedForSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 
   @visibleForTesting
   static void seedSessionStartForTest(DateTime startedAt) {

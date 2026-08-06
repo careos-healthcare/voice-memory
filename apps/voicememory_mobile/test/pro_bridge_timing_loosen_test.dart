@@ -25,11 +25,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -86,32 +82,30 @@ ProBridgeVisibilityInput _input({
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
   bool isZeroEntryState = false,
-}) =>
-    ProBridgeVisibilityInput(
-      surface: ProBridgeVisibilitySurface.recordReady,
-      source: 'test',
-      entryCount: entryCount,
-      isPro: false,
-      postProofProBridgeEnabled: true,
-      hasFirstProof: hasFirstProof,
-      isZeroEntryState: isZeroEntryState,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
-      hasBetaProofLiftVisible: hasBetaProofLiftVisible,
-      hasReturnAfterProofStrengthenedVisible:
-          hasReturnAfterProofStrengthenedVisible,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
-      hasSolidStrongPatternWithSafeAnchors:
-          hasSolidStrongPatternWithSafeAnchors,
-      feedbackState: feedbackState,
-      isRecording: isRecording,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-    );
+}) => ProBridgeVisibilityInput(
+  surface: ProBridgeVisibilitySurface.recordReady,
+  source: 'test',
+  entryCount: entryCount,
+  isPro: false,
+  postProofProBridgeEnabled: true,
+  hasFirstProof: hasFirstProof,
+  isZeroEntryState: isZeroEntryState,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
+  hasBetaProofLiftVisible: hasBetaProofLiftVisible,
+  hasReturnAfterProofStrengthenedVisible:
+      hasReturnAfterProofStrengthenedVisible,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
+  hasSolidStrongPatternWithSafeAnchors: hasSolidStrongPatternWithSafeAnchors,
+  feedbackState: feedbackState,
+  isRecording: isRecording,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+);
 
 void main() {
   setUp(() async {
@@ -123,7 +117,11 @@ void main() {
     test('still hidden before proof', () {
       expect(
         ProBridgeVisibilityEngine.shouldShow(
-          input: _input(hasFirstProof: false, entryCount: 0, isZeroEntryState: true),
+          input: _input(
+            hasFirstProof: false,
+            entryCount: 0,
+            isZeroEntryState: true,
+          ),
         ),
         isFalse,
       );
@@ -177,7 +175,10 @@ void main() {
         ),
       );
       expect(result.allowed, isTrue);
-      expect(result.trigger, ProMomentTimingTrigger.betaProofLiftUnderValidProof);
+      expect(
+        result.trigger,
+        ProMomentTimingTrigger.betaProofLiftUnderValidProof,
+      );
     });
 
     test('visible after ReturnAfterProofStrengthening target', () {
@@ -187,7 +188,10 @@ void main() {
         ),
       );
       expect(result.allowed, isTrue);
-      expect(result.trigger, ProMomentTimingTrigger.returnAfterProofStrengthened);
+      expect(
+        result.trigger,
+        ProMomentTimingTrigger.returnAfterProofStrengthened,
+      );
     });
 
     test('visible after fresh return correction', () {
@@ -269,7 +273,7 @@ void main() {
                     override['whatChangedQuestionActive'] as bool? ?? false,
                 patternReviewInboxHasActiveItems:
                     override['patternReviewInboxHasActiveItems'] as bool? ??
-                        false,
+                    false,
               ),
             ),
           ).allowed,
@@ -339,7 +343,8 @@ void main() {
         source: 'record_ready',
         surface: 'record_ready',
         entryCount: 3,
-        triggerReason: ProMomentTimingTrigger.usefulProofConfidence.analyticsValue,
+        triggerReason:
+            ProMomentTimingTrigger.usefulProofConfidence.analyticsValue,
         confidenceLevel: ProofConfidenceLevel.useful.analyticsValue,
         hasSafeAnchor: true,
       );
@@ -398,16 +403,13 @@ void main() {
 
     test('copy uses loosened timeline language', () {
       expect(ProBridgeVisibilityCopy.title, 'Keep the longer trail');
-      expect(
-        ProBridgeVisibilityCopy.body,
-        contains('first useful proof'),
-      );
+      expect(ProBridgeVisibilityCopy.body, contains('first useful proof'));
     });
 
     test('timing engine does not reference billing product IDs', () {
-      final source =
-          File('lib/features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart')
-              .readAsStringSync();
+      final source = File(
+        'lib/features/pro_bridge_visibility/pro_bridge_timing_loosen_engine.dart',
+      ).readAsStringSync();
       expect(source, isNot(contains('proEntitlementId')));
       expect(source, isNot(contains('archive_loop_pro_monthly')));
     });

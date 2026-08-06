@@ -109,8 +109,7 @@ abstract final class ProSinglePromise {
   static ProSinglePromiseResult _result(
     ProSinglePromiseDecision decision,
     String message,
-  ) =>
-      ProSinglePromiseResult(decision: decision, message: message);
+  ) => ProSinglePromiseResult(decision: decision, message: message);
 }
 
 abstract final class ProSinglePromiseGuardrail {
@@ -174,10 +173,7 @@ class ProSinglePromiseInput {
 }
 
 class ProSinglePromiseResult {
-  const ProSinglePromiseResult({
-    required this.decision,
-    required this.message,
-  });
+  const ProSinglePromiseResult({required this.decision, required this.message});
 
   final ProSinglePromiseDecision decision;
   final String message;

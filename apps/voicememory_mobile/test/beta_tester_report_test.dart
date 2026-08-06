@@ -17,11 +17,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -40,22 +36,18 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: _now.subtract(const Duration(days: 2)),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: _now,
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: _now.subtract(const Duration(days: 2))),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: _now,
+  ),
+];
 
 BetaTesterReportResult _buildReport(List<JournalEntry> entries) =>
     BetaTesterReportEngine.build(
@@ -292,14 +284,20 @@ void main() {
     testWidgets('renders all five section headers', (tester) async {
       await pumpCard(tester);
       for (final section in BetaTesterReportCopy.sectionOrder) {
-        expect(find.text(BetaTesterReportCopy.headingFor(section)), findsOneWidget);
+        expect(
+          find.text(BetaTesterReportCopy.headingFor(section)),
+          findsOneWidget,
+        );
       }
     });
 
     testWidgets('renders fallback lines', (tester) async {
       await pumpCard(tester);
       for (final section in BetaTesterReportCopy.sectionOrder) {
-        expect(find.text(BetaTesterReportCopy.bodyFor(section)), findsOneWidget);
+        expect(
+          find.text(BetaTesterReportCopy.bodyFor(section)),
+          findsOneWidget,
+        );
       }
     });
 
@@ -316,15 +314,18 @@ void main() {
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == BetaTesterReportAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_correction',
-        'has_fading_signal',
-        'has_softening_signal',
-        'section_count',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_correction',
+          'has_fading_signal',
+          'has_softening_signal',
+          'section_count',
+        ]),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('body')));
       expect(seen.props.keys, isNot(contains('entry_id')));
@@ -364,8 +365,9 @@ void main() {
 
   group('Beta tester report placement', () {
     test('appears on Patterns below ArchiveTimelineSpineCard', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');
       final reportIndex = source.indexOf('if (showBetaTesterReportOnPatterns)');
       expect(spineIndex, greaterThan(0));

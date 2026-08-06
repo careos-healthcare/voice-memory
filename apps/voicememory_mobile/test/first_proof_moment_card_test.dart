@@ -15,52 +15,53 @@ import 'package:voicememory_mobile/widgets/record/first_proof_moment_card.dart';
 
 FirstProofMoment _sampleMoment({
   List<String> evidencePhrases = const ['said yes'],
-}) =>
-    FirstProofMoment(
-      primaryLabel: FirstProofMomentCopy.primaryLabel,
-      title: FirstProofMomentCopy.title,
-      body: FirstProofMomentCopy.bodyStrong,
-      evidenceLabel: FirstProofMomentCopy.evidenceLabel,
-      evidencePhrases: evidencePhrases,
-      whyLine: FirstProofMomentCopy.whyLine,
-      nextLine: FirstProofMomentCopy.nextLine,
-      hasStrongEvidence: true,
-      usesPhraseBody: true,
-    );
+}) => FirstProofMoment(
+  primaryLabel: FirstProofMomentCopy.primaryLabel,
+  title: FirstProofMomentCopy.title,
+  body: FirstProofMomentCopy.bodyStrong,
+  evidenceLabel: FirstProofMomentCopy.evidenceLabel,
+  evidencePhrases: evidencePhrases,
+  whyLine: FirstProofMomentCopy.whyLine,
+  nextLine: FirstProofMomentCopy.nextLine,
+  hasStrongEvidence: true,
+  usesPhraseBody: true,
+);
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: 'pattern',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: 'signal',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: 'pattern',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: 'signal',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 void main() {
   group('FirstProofMomentCard evidence affordance', () {
-    testWidgets('evidence label does not use link-blue styling', (tester) async {
+    testWidgets('evidence label does not use link-blue styling', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -168,7 +169,9 @@ void main() {
 
   group('FirstProofMomentCard proof flow', () {
     test('first proof still appears after three related entries', () {
-      final moment = FirstProofMomentEngine.build(entries: _threeRelatedEntries());
+      final moment = FirstProofMomentEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(moment, isNotNull);
       expect(moment!.title, FirstProofMomentCopy.title);
       expect(moment.evidencePhrases, isNotEmpty);

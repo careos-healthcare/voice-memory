@@ -37,7 +37,9 @@ class _ExportScreenState extends State<ExportScreen> {
       await Share.shareXFiles([
         XFile(file.path),
       ], subject: 'ArchiveMe journal export');
-      setState(() => _message = 'Export ready (${payload.entries.length} entries).');
+      setState(
+        () => _message = 'Export ready (${payload.entries.length} entries).',
+      );
     } catch (e) {
       setState(
         () => _message = userFacingErrorMessage(

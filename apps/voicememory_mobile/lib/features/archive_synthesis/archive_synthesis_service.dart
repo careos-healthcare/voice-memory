@@ -15,12 +15,10 @@ import 'archive_synthesis_trigger.dart';
 /// GPT-5 synthesis V2 — parallel layer; does not modify archive engines.
 class ArchiveSynthesisService {
   ArchiveSynthesisService({
-    required ArchiveSynthesisStore store,
-    required ApiClient api,
-    required DeviceIdStore deviceIds,
-  }) : _store = store,
-       _api = api,
-       _deviceIds = deviceIds;
+    required this._store,
+    required this._api,
+    required this._deviceIds,
+  });
 
   final ArchiveSynthesisStore _store;
   final ApiClient _api;

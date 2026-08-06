@@ -132,41 +132,62 @@ void main() {
   });
 
   group('voice transcription pipeline', () {
-    test('recording saved with transcript when transcription succeeds', () async {
-      await _initPipeline(_TranscriptionPipelineFakeApi());
-      final audio = await _usableAudioFile();
+    test(
+      'recording saved with transcript when transcription succeeds',
+      () async {
+        await _initPipeline(_TranscriptionPipelineFakeApi());
+        final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      );
+        final result = await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        );
 
-      expect(result.syncSucceeded, isTrue);
-      expect(result.entry.transcript, _spokenTranscript);
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isFalse);
-      expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
-    });
+        expect(result.syncSucceeded, isTrue);
+        expect(result.entry.transcript, _spokenTranscript);
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isFalse,
+        );
+        expect(
+          VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+          isFalse,
+        );
+        expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
+      },
+    );
 
-    test('recording saved with manual fallback when transcription fails', () async {
-      await _initPipeline(
-        _TranscriptionPipelineFakeApi(
-          transcribeError: ApiException('Service unavailable', statusCode: 503),
-        ),
-      );
-      final audio = await _usableAudioFile();
+    test(
+      'recording saved with manual fallback when transcription fails',
+      () async {
+        await _initPipeline(
+          _TranscriptionPipelineFakeApi(
+            transcribeError: ApiException(
+              'Service unavailable',
+              statusCode: 503,
+            ),
+          ),
+        );
+        final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      );
+        final result = await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        );
 
-      expect(result.syncSucceeded, isFalse);
-      expect(result.entry.localAudioPath, audio.path);
-      expect(File(result.entry.localAudioPath!).existsSync(), isTrue);
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isTrue);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isTrue);
-    });
+        expect(result.syncSucceeded, isFalse);
+        expect(result.entry.localAudioPath, audio.path);
+        expect(File(result.entry.localAudioPath!).existsSync(), isTrue);
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isTrue,
+        );
+        expect(
+          VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+          isTrue,
+        );
+      },
+    );
 
     test('manual transcript save persists and clears degraded state', () async {
       await _initPipeline(_TranscriptionPipelineFakeApi());
@@ -174,15 +195,18 @@ void main() {
       final degraded = _degradedVoiceEntry(audioPath: audio.path);
       await AppServices.instance.journalStore.save(degraded);
 
-      final result =
-          await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
+      final result = await AppServices.instance.pipeline
+          .attachTypedTextToVoiceEntry(
             entry: degraded,
             transcript: 'I said yes when I had no capacity left.',
           );
 
       expect(result.attachedTypedTextToVoiceEntry, isTrue);
       expect(result.entry.localAudioPath, audio.path);
-      expect(result.entry.transcript, 'I said yes when I had no capacity left.');
+      expect(
+        result.entry.transcript,
+        'I said yes when I had no capacity left.',
+      );
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
       expect(
         resolveEntryDisplayText(result.entry).text,
@@ -212,75 +236,99 @@ void main() {
       expect(audio.readAsBytesSync(), originalBytes);
     });
 
-    test('transcription success with analysis failure saves transcript and success state', () async {
-      await _initPipeline(
-        _TranscriptionPipelineFakeApi(
-          analyzeError: ApiException(
-            'Voice processing is temporarily unavailable.',
-            statusCode: 503,
-            code: 'ANALYZE_UNAVAILABLE',
+    test(
+      'transcription success with analysis failure saves transcript and success state',
+      () async {
+        await _initPipeline(
+          _TranscriptionPipelineFakeApi(
+            analyzeError: ApiException(
+              'Voice processing is temporarily unavailable.',
+              statusCode: 503,
+              code: 'ANALYZE_UNAVAILABLE',
+            ),
           ),
-        ),
-      );
-      final audio = await _usableAudioFile();
+        );
+        final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      );
+        final result = await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        );
 
-      expect(result.syncSucceeded, isFalse);
-      expect(result.analysisSucceeded, isFalse);
-      expect(result.entry.transcript, _spokenTranscript);
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isFalse);
-      expect(VoiceCapturePostSave.showViewPatternsPrimary(result.entry), isTrue);
-      expect(result.syncNote, VoiceCaptureCopy.analysisUnavailableNote);
-      expect(
-        VoiceCaptureQuality.displayTextSource(result.entry),
-        EntryDisplayTextSource.transcript,
-      );
-    });
+        expect(result.syncSucceeded, isFalse);
+        expect(result.analysisSucceeded, isFalse);
+        expect(result.entry.transcript, _spokenTranscript);
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isFalse,
+        );
+        expect(
+          VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+          isFalse,
+        );
+        expect(
+          VoiceCapturePostSave.showViewPatternsPrimary(result.entry),
+          isTrue,
+        );
+        expect(result.syncNote, VoiceCaptureCopy.analysisUnavailableNote);
+        expect(
+          VoiceCaptureQuality.displayTextSource(result.entry),
+          EntryDisplayTextSource.transcript,
+        );
+      },
+    );
 
-    test('analysis failure does not use transcription failed logging path', () async {
-      await _initPipeline(
-        _TranscriptionPipelineFakeApi(
-          analyzeError: ApiException(
-            'Voice processing is temporarily unavailable.',
-            statusCode: 503,
-            code: 'ANALYZE_UNAVAILABLE',
+    test(
+      'analysis failure does not use transcription failed logging path',
+      () async {
+        await _initPipeline(
+          _TranscriptionPipelineFakeApi(
+            analyzeError: ApiException(
+              'Voice processing is temporarily unavailable.',
+              statusCode: 503,
+              code: 'ANALYZE_UNAVAILABLE',
+            ),
           ),
-        ),
-      );
-      final audio = await _usableAudioFile();
+        );
+        final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      );
+        final result = await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        );
 
-      expect(result.entry.transcript, _spokenTranscript);
-      expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
-    });
+        expect(result.entry.transcript, _spokenTranscript);
+        expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
+      },
+    );
 
-    test('low-quality transcript preserves audio and routes to typed fallback', () async {
-      await _initPipeline(_TranscriptionPipelineFakeApi(transcript: '...'));
-      final audio = await _usableAudioFile();
+    test(
+      'low-quality transcript preserves audio and routes to typed fallback',
+      () async {
+        await _initPipeline(_TranscriptionPipelineFakeApi(transcript: '...'));
+        final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      );
+        final result = await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        );
 
-      expect(result.syncSucceeded, isFalse);
-      expect(result.lowQualityTranscript, isTrue);
-      expect(result.entry.localAudioPath, audio.path);
-      expect(File(result.entry.localAudioPath!).existsSync(), isTrue);
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isTrue);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isTrue);
-      expect(result.syncNote, VoiceCaptureCopy.lowQualityTranscriptIssue);
-      expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isFalse);
-    });
+        expect(result.syncSucceeded, isFalse);
+        expect(result.lowQualityTranscript, isTrue);
+        expect(result.entry.localAudioPath, audio.path);
+        expect(File(result.entry.localAudioPath!).existsSync(), isTrue);
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isTrue,
+        );
+        expect(
+          VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+          isTrue,
+        );
+        expect(result.syncNote, VoiceCaptureCopy.lowQualityTranscriptIssue);
+        expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isFalse);
+      },
+    );
 
     test('valid short sentence transcript is accepted', () async {
       const spoken = 'I felt pressure today';
@@ -296,7 +344,10 @@ void main() {
       expect(result.lowQualityTranscript, isFalse);
       expect(result.entry.transcript, spoken);
       expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isFalse);
+      expect(
+        VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+        isFalse,
+      );
     });
 
     test('api guard skip keeps audio and degraded fallback state', () async {
@@ -323,7 +374,10 @@ void main() {
       expect(blocked.syncSucceeded, isFalse);
       expect(blocked.entry.localAudioPath, audio.path);
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(blocked.entry), isTrue);
-      expect(VoiceCapturePostSave.showTypedFallbackPrimary(blocked.entry), isTrue);
+      expect(
+        VoiceCapturePostSave.showTypedFallbackPrimary(blocked.entry),
+        isTrue,
+      );
     });
   });
 }

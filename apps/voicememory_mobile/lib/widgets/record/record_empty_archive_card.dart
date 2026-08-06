@@ -17,7 +17,9 @@ class RecordEmptyArchiveCard extends StatelessWidget {
       key: const Key('record_empty_archive_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -37,10 +39,9 @@ class RecordEmptyArchiveCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             RecordScreenFramingCopy.emptyArchiveFootnote,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: VoiceMemoryColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: VoiceMemoryColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -60,7 +61,9 @@ class RecordArchiveStartedCard extends StatelessWidget {
       key: const Key('record_archive_started_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -108,7 +111,9 @@ class RecordArchiveWeakCompareCard extends StatelessWidget {
       key: const Key('record_archive_weak_compare_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,10 +133,9 @@ class RecordArchiveWeakCompareCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             RecordScreenFramingCopy.weakCompareFootnote,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: VoiceMemoryColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: VoiceMemoryColors.textSecondary, fontSize: 12),
           ),
           const SizedBox(height: AppSpacing.md),
           SizedBox(

@@ -14,67 +14,65 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _blankEntry({String id = 'b1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: 'too short',
-      durationSeconds: 5,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: 'too short',
+  durationSeconds: 5,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _distinctEntries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
-const _privateNote =
-    'This is not about work - it is more about family.';
+const _privateNote = 'This is not about work - it is more about family.';
 
 const _bannedWords = [
   'diagnosis',
@@ -252,12 +250,18 @@ void main() {
     });
 
     test('correction notes do not appear in share-safe proof', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote('beliefUpdate', _privateNote);
+      ArchiveInsightFeedbackStore.saveCorrectionNote(
+        'beliefUpdate',
+        _privateNote,
+      );
       final proof = const ShareableArchiveProofEngine().buildFromJournal(
         entries: _distinctEntries(5),
       );
       final shareText = proof.lines.join('\n');
-      expect(shareText.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
+      expect(
+        shareText.toLowerCase(),
+        isNot(contains(_privateNote.toLowerCase())),
+      );
       expect(shareText.toLowerCase(), isNot(contains('your note:')));
     });
 
@@ -288,7 +292,9 @@ void main() {
     });
 
     testWidgets('visible score renders sections', (tester) async {
-      final score = ArchiveHealthScoreEngine.build(entries: _distinctEntries(3));
+      final score = ArchiveHealthScoreEngine.build(
+        entries: _distinctEntries(3),
+      );
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -299,10 +305,19 @@ void main() {
 
       expect(find.byKey(const Key('archive_health_card')), findsOneWidget);
       expect(find.text('Archive health'), findsOneWidget);
-      expect(find.byKey(const Key('archive_health_usable_count')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_health_usable_count')),
+        findsOneWidget,
+      );
       expect(find.text('3'), findsOneWidget);
-      expect(find.byKey(const Key('archive_health_quality_line')), findsOneWidget);
-      expect(find.byKey(const Key('archive_health_add_next_line')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_health_quality_line')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_health_add_next_line')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(
         tester.widgetList<Text>(find.byType(Text)).map((w) => w.data ?? ''),
       );

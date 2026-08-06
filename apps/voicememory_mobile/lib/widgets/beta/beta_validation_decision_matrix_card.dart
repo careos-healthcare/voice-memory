@@ -46,7 +46,8 @@ class _BetaValidationDecisionMatrixCardState
     final input = await RevenueReadinessDashboardV2Engine.loadInput();
     if (!mounted) return;
     setState(
-      () => _result = BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
+      () =>
+          _result = BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
     );
   }
 
@@ -81,16 +82,16 @@ class _BetaValidationDecisionMatrixCardState
           Text(
             BetaValidationDecisionMatrixCopy.cardTitle,
             key: const Key('beta_validation_decision_matrix_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
             BetaValidationDecisionMatrixCopy.cohortTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -101,9 +102,9 @@ class _BetaValidationDecisionMatrixCardState
           const SizedBox(height: 10),
           Text(
             BetaValidationDecisionMatrixCopy.metricsTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           for (final line in result.metricLines)
@@ -117,17 +118,17 @@ class _BetaValidationDecisionMatrixCardState
           const SizedBox(height: 12),
           Text(
             BetaValidationDecisionMatrixCopy.outcomeTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
             result.title,
             key: const Key('beta_validation_decision_matrix_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -142,9 +143,9 @@ class _BetaValidationDecisionMatrixCardState
           const SizedBox(height: 10),
           Text(
             BetaValidationDecisionMatrixCopy.reasonTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -156,9 +157,9 @@ class _BetaValidationDecisionMatrixCardState
           Text(
             BetaValidationDecisionMatrixCopy.onlyFixThisOneNext,
             key: const Key('beta_validation_decision_matrix_only_fix'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           if (BetaFixPlaybookEngine.hasPlaybook(result.outcome)) ...[
             const SizedBox(height: 6),

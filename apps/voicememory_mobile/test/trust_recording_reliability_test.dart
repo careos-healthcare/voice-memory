@@ -124,8 +124,14 @@ void main() {
         MicrophonePermissionCopy.deniedBody,
         contains('use text if available'),
       );
-      expect(MicrophonePermissionCopy.deniedBody.toLowerCase(), isNot(contains('ai listens')));
-      expect(MicrophonePermissionCopy.deniedBody.toLowerCase(), isNot(contains('therapy')));
+      expect(
+        MicrophonePermissionCopy.deniedBody.toLowerCase(),
+        isNot(contains('ai listens')),
+      );
+      expect(
+        MicrophonePermissionCopy.deniedBody.toLowerCase(),
+        isNot(contains('therapy')),
+      );
     });
 
     testWidgets('blocked panel shows denied guidance', (tester) async {
@@ -170,8 +176,14 @@ void main() {
     test('save failure does not claim saved', () {
       expect(VoiceCaptureCopy.saveFailed, CaptureRecoveryCopy.saveFailed);
       expect(VoiceCaptureCopy.saveFailed, contains('not saved'));
-      expect(VoiceCaptureCopy.saveFailed.toLowerCase(), isNot(contains('saved privately')));
-      expect(VoiceCaptureCopy.saveFailed.toLowerCase(), isNot(contains('moment saved')));
+      expect(
+        VoiceCaptureCopy.saveFailed.toLowerCase(),
+        isNot(contains('saved privately')),
+      );
+      expect(
+        VoiceCaptureCopy.saveFailed.toLowerCase(),
+        isNot(contains('moment saved')),
+      );
     });
 
     test('transcript unavailable confirms save without dumping text', () {
@@ -187,7 +199,10 @@ void main() {
         VoiceCaptureCopy.transcriptUnavailable,
         contains('transcript may need another try'),
       );
-      expect(VoiceCaptureCopy.transcriptUnavailable, isNot(contains('transcript:')));
+      expect(
+        VoiceCaptureCopy.transcriptUnavailable,
+        isNot(contains('transcript:')),
+      );
     });
 
     test('local text save failure throws not saved copy', () async {
@@ -229,12 +244,12 @@ void main() {
       );
     });
 
-    testWidgets('returned-after-delay strip renders welcome back', (tester) async {
+    testWidgets('returned-after-delay strip renders welcome back', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: CaptureRecoveryHintStrip.returnedAfterDelay(),
-          ),
+          home: Scaffold(body: CaptureRecoveryHintStrip.returnedAfterDelay()),
         ),
       );
 
@@ -242,8 +257,14 @@ void main() {
         find.byKey(const Key('capture_recovery_returned_after_delay')),
         findsOneWidget,
       );
-      expect(find.text(CaptureRecoveryCopy.returnedAfterDelayTitle), findsOneWidget);
-      expect(find.text(CaptureRecoveryCopy.returnedAfterDelayBody), findsOneWidget);
+      expect(
+        find.text(CaptureRecoveryCopy.returnedAfterDelayTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(CaptureRecoveryCopy.returnedAfterDelayBody),
+        findsOneWidget,
+      );
     });
 
     test('return gate opens after several days away', () {
@@ -292,16 +313,23 @@ void main() {
   group('Privacy and support trust copy', () {
     testWidgets('About trust section is visible', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: PrivacyTrustSection()),
-        ),
+        const MaterialApp(home: Scaffold(body: PrivacyTrustSection())),
       );
 
       expect(find.text(TrustReliabilityCopy.sectionTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.archivePrivateTitle), findsOneWidget);
+      expect(
+        find.text(TrustReliabilityCopy.archivePrivateTitle),
+        findsOneWidget,
+      );
       expect(find.text(TrustReliabilityCopy.resetArchiveTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.copyPrivateReportsTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.supportAvailableTitle), findsOneWidget);
+      expect(
+        find.text(TrustReliabilityCopy.copyPrivateReportsTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(TrustReliabilityCopy.supportAvailableTitle),
+        findsOneWidget,
+      );
     });
 
     test('support URL is configured', () {
@@ -350,7 +378,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PrivacyDataControlsCopy.cancel), findsOneWidget);
-      expect(find.text(PrivacyDataControlsCopy.clearArchiveConfirm), findsOneWidget);
+      expect(
+        find.text(PrivacyDataControlsCopy.clearArchiveConfirm),
+        findsOneWidget,
+      );
       expect(
         PrivacyDataControlsCopy.clearLocalArchiveConfirmBody,
         contains('cannot be undone'),
@@ -360,10 +391,7 @@ void main() {
 
   group('Export and report copy', () {
     test('private report copy does not imply audio sharing', () {
-      expect(
-        PrivateArchiveReportCopy.copyReportCta,
-        'Copy report',
-      );
+      expect(PrivateArchiveReportCopy.copyReportCta, 'Copy report');
       expect(
         PrivateArchiveReportCopy.intro,
         contains('private summary from your saved moments'),

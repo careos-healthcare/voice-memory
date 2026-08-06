@@ -439,7 +439,7 @@ abstract class FirstPatternQualityMessySamples {
     expectedCategory: 'vague',
     acceptableTitles: [
       ...FirstPatternQualityTitles.fallbackTitles,
-      if (acceptableExtra != null) ...acceptableExtra,
+      ...?acceptableExtra,
     ],
     unacceptableTitles: [
       FirstPatternQualityTitles.responsibility,

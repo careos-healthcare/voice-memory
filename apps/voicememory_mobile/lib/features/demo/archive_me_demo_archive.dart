@@ -47,21 +47,9 @@ abstract final class ArchiveMeDemoArchive {
     }
 
     return [
-      entry(
-        suffix: 'first',
-        daysAgo: 6,
-        transcript: firstMomentBody,
-      ),
-      entry(
-        suffix: 'repeat',
-        daysAgo: 3,
-        transcript: repeatedMomentBody,
-      ),
-      entry(
-        suffix: 'confirmed',
-        daysAgo: 0,
-        transcript: confirmedRepeatBody,
-      ),
+      entry(suffix: 'first', daysAgo: 6, transcript: firstMomentBody),
+      entry(suffix: 'repeat', daysAgo: 3, transcript: repeatedMomentBody),
+      entry(suffix: 'confirmed', daysAgo: 0, transcript: confirmedRepeatBody),
     ];
   }
 
@@ -77,15 +65,12 @@ abstract final class ArchiveMeDemoArchive {
       null;
 
   static bool get hasBeliefProof =>
-      const ArchiveBeliefSurfaceSource()
-          .resolve(journalEntries())
-          .shouldShow;
+      const ArchiveBeliefSurfaceSource().resolve(journalEntries()).shouldShow;
 
-  static bool get hasBeliefHeadline =>
-      const ArchiveBeliefSurfaceSource()
-          .resolve(journalEntries())
-          .headline
-          .contains('believes');
+  static bool get hasBeliefHeadline => const ArchiveBeliefSurfaceSource()
+      .resolve(journalEntries())
+      .headline
+      .contains('believes');
 
   static bool get enginesReady =>
       hasConfirmedRepeat && hasEvidenceTimeline && hasBeliefProof;

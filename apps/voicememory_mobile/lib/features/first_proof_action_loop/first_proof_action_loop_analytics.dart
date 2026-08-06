@@ -12,16 +12,16 @@ abstract final class FirstProofActionLoopAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static String actionKey(FirstProofActionType action) => switch (action) {
-        FirstProofActionType.watchThisNext => 'watch_this_next',
-        FirstProofActionType.viewPatternDetails => 'view_pattern_details',
-        FirstProofActionType.renamePattern => 'rename_pattern',
-        FirstProofActionType.keepRecording => 'keep_recording',
-        FirstProofActionType.correctTranscript => 'correct_transcript',
-        FirstProofActionType.removeFromPattern => 'remove_from_pattern',
-      };
+    FirstProofActionType.watchThisNext => 'watch_this_next',
+    FirstProofActionType.viewPatternDetails => 'view_pattern_details',
+    FirstProofActionType.renamePattern => 'rename_pattern',
+    FirstProofActionType.keepRecording => 'keep_recording',
+    FirstProofActionType.correctTranscript => 'correct_transcript',
+    FirstProofActionType.removeFromPattern => 'remove_from_pattern',
+  };
 
   static void selected({
     required String source,

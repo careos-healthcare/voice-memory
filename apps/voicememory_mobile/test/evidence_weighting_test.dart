@@ -18,11 +18,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -62,27 +58,27 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
+  _entry(
+    '4',
+    'Same capacity pressure came back but it felt easier to stop this time.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+];
 
 EvidenceWeightingResult _resultFor(
   List<JournalEntry> entries, {
@@ -261,10 +257,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EvidenceWeightingCard.test(
-              result: result,
-              source: 'test',
-            ),
+            body: EvidenceWeightingCard.test(result: result, source: 'test'),
           ),
         ),
       );
@@ -303,7 +296,10 @@ void main() {
       await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelFading), findsOneWidget);
-      expect(find.text(EvidenceWeightingCopy.explanationFading), findsOneWidget);
+      expect(
+        find.text(EvidenceWeightingCopy.explanationFading),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders Softened state when softening signal exists', (
@@ -318,20 +314,21 @@ void main() {
       );
     });
 
-    testWidgets('renders Needs fresh proof for older repeat without recent save', (
-      tester,
-    ) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+    testWidgets(
+      'renders Needs fresh proof for older repeat without recent save',
+      (tester) async {
+        await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
-      expect(
-        find.text(EvidenceWeightingCopy.labelNeedsFreshProof),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EvidenceWeightingCopy.explanationNeedsFreshProof),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.text(EvidenceWeightingCopy.labelNeedsFreshProof),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EvidenceWeightingCopy.explanationNeedsFreshProof),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('differentiation line appears', (tester) async {
       await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
@@ -381,8 +378,9 @@ void main() {
 
   group('Evidence weighting placement', () {
     test('patterns screen renders card before post-proof Pro bridge', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final cardIndex = source.indexOf('EvidenceWeightingCard(');
       final proBridgeIndex = source.indexOf(
         "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
@@ -394,14 +392,17 @@ void main() {
     test('record screen renders card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('showEvidenceWeightingOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(cardIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(cardIndex));
     });
 
     test('patterns card sits after current relevance card', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
       final weightingIndex = source.indexOf('EvidenceWeightingCard(');
       expect(relevanceIndex, greaterThan(0));

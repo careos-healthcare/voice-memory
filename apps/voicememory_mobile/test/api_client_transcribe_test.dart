@@ -14,47 +14,54 @@ void main() {
     await AppConfig.initApiResolution();
   });
 
-  test('postTranscribe rejects HTML responses with clear fallback reason', () async {
-    final client = ApiClient(
-      httpClient: MockClient((request) async {
-        expect(request.url.toString(), 'https://voice-memory-iota.vercel.app/api/transcribe');
-        expect(request.method, 'POST');
-        expect(request.headers['x-vm-capture-token'], 'capture-token');
-        expect(request.headers['accept'], 'application/json');
-        return http.Response(
-          '<!DOCTYPE html><html><body>404</body></html>',
-          404,
-          headers: {'content-type': 'text/html;charset=utf-8'},
-        );
-      }),
-      baseUrl: 'https://voice-memory-iota.vercel.app',
-    );
+  test(
+    'postTranscribe rejects HTML responses with clear fallback reason',
+    () async {
+      final client = ApiClient(
+        httpClient: MockClient((request) async {
+          expect(
+            request.url.toString(),
+            'https://voice-memory-iota.vercel.app/api/transcribe',
+          );
+          expect(request.method, 'POST');
+          expect(request.headers['x-vm-capture-token'], 'capture-token');
+          expect(request.headers['accept'], 'application/json');
+          return http.Response(
+            '<!DOCTYPE html><html><body>404</body></html>',
+            404,
+            headers: {'content-type': 'text/html;charset=utf-8'},
+          );
+        }),
+        baseUrl: 'https://voice-memory-iota.vercel.app',
+      );
 
-    final dir = Directory.systemTemp.createTempSync('vm_transcribe_html_');
-    final audio = File('${dir.path}/voice.m4a')..writeAsBytesSync(const [1, 2, 3, 4]);
+      final dir = Directory.systemTemp.createTempSync('vm_transcribe_html_');
+      final audio = File('${dir.path}/voice.m4a')
+        ..writeAsBytesSync(const [1, 2, 3, 4]);
 
-    await expectLater(
-      client.postTranscribe(
-        audioFile: audio,
-        durationSeconds: 12,
-        captureToken: 'capture-token',
-      ),
-      throwsA(
-        isA<FormatException>().having(
-          (e) => e.message,
-          'message',
-          ApiResponseSafety.htmlResponseMessage,
+      await expectLater(
+        client.postTranscribe(
+          audioFile: audio,
+          durationSeconds: 12,
+          captureToken: 'capture-token',
         ),
-      ),
-    );
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            ApiResponseSafety.htmlResponseMessage,
+          ),
+        ),
+      );
 
-    expect(
-      TranscriptionService.failureReason(
-        FormatException(ApiResponseSafety.htmlResponseMessage),
-      ),
-      'wrong_api_host:html_response',
-    );
-  });
+      expect(
+        TranscriptionService.failureReason(
+          FormatException(ApiResponseSafety.htmlResponseMessage),
+        ),
+        'wrong_api_host:html_response',
+      );
+    },
+  );
 
   test('postTranscribe parses JSON transcript on success', () async {
     final client = ApiClient(
@@ -69,7 +76,8 @@ void main() {
     );
 
     final dir = Directory.systemTemp.createTempSync('vm_transcribe_ok_');
-    final audio = File('${dir.path}/voice.m4a')..writeAsBytesSync(const [1, 2, 3, 4]);
+    final audio = File('${dir.path}/voice.m4a')
+      ..writeAsBytesSync(const [1, 2, 3, 4]);
 
     final transcript = await client.postTranscribe(
       audioFile: audio,

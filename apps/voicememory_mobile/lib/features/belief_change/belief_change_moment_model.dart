@@ -8,19 +8,16 @@ enum BeliefChangeType {
   unknown;
 
   String get analyticsValue => switch (this) {
-        BeliefChangeType.softened => 'softened',
-        BeliefChangeType.differentResponse => 'different_response',
-        BeliefChangeType.helpfulAction => 'helpful_action',
-        BeliefChangeType.lowerUrgency => 'lower_urgency',
-        BeliefChangeType.unknown => 'unknown',
-      };
+    BeliefChangeType.softened => 'softened',
+    BeliefChangeType.differentResponse => 'different_response',
+    BeliefChangeType.helpfulAction => 'helpful_action',
+    BeliefChangeType.lowerUrgency => 'lower_urgency',
+    BeliefChangeType.unknown => 'unknown',
+  };
 }
 
 class BeliefChangeEvidenceSnippet {
-  const BeliefChangeEvidenceSnippet({
-    required this.label,
-    required this.quote,
-  });
+  const BeliefChangeEvidenceSnippet({required this.label, required this.quote});
 
   final String label;
   final String quote;

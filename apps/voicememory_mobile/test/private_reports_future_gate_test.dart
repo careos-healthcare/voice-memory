@@ -13,17 +13,15 @@ const _docsPath = 'docs/PRIVATE_REPORTS_FUTURE.md';
 PrivateReportsFutureGateInput _input({
   bool? firstProofSeen,
   bool? longerProofTrailConverts,
-}) =>
-    PrivateReportsFutureGateInput(
-      firstProofSeen: firstProofSeen,
-      longerProofTrailConverts: longerProofTrailConverts,
-    );
+}) => PrivateReportsFutureGateInput(
+  firstProofSeen: firstProofSeen,
+  longerProofTrailConverts: longerProofTrailConverts,
+);
 
 PrivateReportsFutureRule _rule(
   PrivateReportsFutureGateResult result,
   PrivateReportsFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('PrivateReportsFutureGate.build', () {
@@ -90,7 +88,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = PrivateReportsFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, PrivateReportsFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          PrivateReportsFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -181,10 +183,7 @@ void main() {
     });
 
     test('detectDocListsRules matches docs', () {
-      expect(
-        PrivateReportsFutureGate.detectDocListsRules(docsSource),
-        isTrue,
-      );
+      expect(PrivateReportsFutureGate.detectDocListsRules(docsSource), isTrue);
     });
 
     test('detectGuardrailPresentInCopy matches gate copy', () {

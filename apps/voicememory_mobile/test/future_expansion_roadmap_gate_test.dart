@@ -24,30 +24,27 @@ FutureExpansionRoadmapGateInput _input({
   bool? firstProofSuccessRateAcceptable = true,
   bool? noReleaseBlockers = true,
   bool? noSecretsProductionBlockerForProductionLaunch = true,
-}) =>
-    FutureExpansionRoadmapGateInput(
-      testFlightUploaded: testFlightUploaded,
-      purchaseWorks: purchaseWorks,
-      restoreWorks: restoreWorks,
-      entitlementPersists: entitlementPersists,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      firstProofSuccessRateAcceptable: firstProofSuccessRateAcceptable,
-      noReleaseBlockers: noReleaseBlockers,
-      noSecretsProductionBlockerForProductionLaunch:
-          noSecretsProductionBlockerForProductionLaunch,
-    );
+}) => FutureExpansionRoadmapGateInput(
+  testFlightUploaded: testFlightUploaded,
+  purchaseWorks: purchaseWorks,
+  restoreWorks: restoreWorks,
+  entitlementPersists: entitlementPersists,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  firstProofSuccessRateAcceptable: firstProofSuccessRateAcceptable,
+  noReleaseBlockers: noReleaseBlockers,
+  noSecretsProductionBlockerForProductionLaunch:
+      noSecretsProductionBlockerForProductionLaunch,
+);
 
 FutureExpansionPrereq _prereq(
   FutureExpansionRoadmapGateResult result,
   FutureExpansionPrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 FutureExpansionIdea _idea(
   FutureExpansionRoadmapGateResult result,
   FutureExpansionIdeaId id,
-) =>
-    result.ideas.firstWhere((idea) => idea.id == id);
+) => result.ideas.firstWhere((idea) => idea.id == id);
 
 void main() {
   group('FutureExpansionRoadmapGate.build', () {
@@ -68,7 +65,10 @@ void main() {
 
     test('all prerequisites pass -> postV1PlanningAllowed', () {
       final result = FutureExpansionRoadmapGate.build(_input());
-      expect(result.decision, FutureExpansionGateDecision.postV1PlanningAllowed);
+      expect(
+        result.decision,
+        FutureExpansionGateDecision.postV1PlanningAllowed,
+      );
       expect(result.releaseProofComplete, isTrue);
       expect(result.blockedIdeaCount, 0);
       expect(result.readyIdeaCount, greaterThan(0));
@@ -132,21 +132,27 @@ void main() {
       );
     });
 
-    test('premium tiers stay documented even when paid-intent beta complete', () {
-      final result = FutureExpansionRoadmapGate.build(_input());
-      expect(
-        _idea(result, FutureExpansionIdeaId.premiumLongerTrailTiers).status,
-        FutureExpansionIdeaStatus.documentedNotSurfaced,
-      );
-    });
+    test(
+      'premium tiers stay documented even when paid-intent beta complete',
+      () {
+        final result = FutureExpansionRoadmapGate.build(_input());
+        expect(
+          _idea(result, FutureExpansionIdeaId.premiumLongerTrailTiers).status,
+          FutureExpansionIdeaStatus.documentedNotSurfaced,
+        );
+      },
+    );
 
-    test('loop packs ready for post-V1 planning when release proof complete', () {
-      final result = FutureExpansionRoadmapGate.build(_input());
-      expect(
-        _idea(result, FutureExpansionIdeaId.loopPacks).status,
-        FutureExpansionIdeaStatus.readyForPostV1Planning,
-      );
-    });
+    test(
+      'loop packs ready for post-V1 planning when release proof complete',
+      () {
+        final result = FutureExpansionRoadmapGate.build(_input());
+        expect(
+          _idea(result, FutureExpansionIdeaId.loopPacks).status,
+          FutureExpansionIdeaStatus.readyForPostV1Planning,
+        );
+      },
+    );
 
     test('report exposes canonical copy', () {
       final report = FutureExpansionRoadmapGate.report(
@@ -154,7 +160,10 @@ void main() {
       );
       expect(report.headline, FutureExpansionRoadmapCopy.headline);
       expect(report.guardrail, FutureExpansionRoadmapCopy.guardrail);
-      expect(report.prereqOrderLine, FutureExpansionRoadmapCopy.prereqOrderLine);
+      expect(
+        report.prereqOrderLine,
+        FutureExpansionRoadmapCopy.prereqOrderLine,
+      );
     });
   });
 
@@ -203,7 +212,10 @@ void main() {
         ),
       );
       final result = FutureExpansionRoadmapGate.build(input);
-      expect(result.decision, FutureExpansionGateDecision.postV1PlanningAllowed);
+      expect(
+        result.decision,
+        FutureExpansionGateDecision.postV1PlanningAllowed,
+      );
       expect(
         _prereq(result, FutureExpansionPrereqId.testFlightUploaded).status,
         FutureExpansionPrereqStatus.pass,
@@ -277,16 +289,19 @@ void main() {
       );
     });
 
-    test('fromRepoSignals defaults pending prerequisites -> expansionFrozen', () {
-      final result = FutureExpansionRoadmapGate.build(
-        FutureExpansionRoadmapGate.fromRepoSignals(
-          futureExpansionRoadmapDocSource: docsSource,
-          gateCopySource: gateCopySource,
-        ),
-      );
-      expect(result.decision, FutureExpansionGateDecision.expansionFrozen);
-      expect(result.releaseProofComplete, isFalse);
-    });
+    test(
+      'fromRepoSignals defaults pending prerequisites -> expansionFrozen',
+      () {
+        final result = FutureExpansionRoadmapGate.build(
+          FutureExpansionRoadmapGate.fromRepoSignals(
+            futureExpansionRoadmapDocSource: docsSource,
+            gateCopySource: gateCopySource,
+          ),
+        );
+        expect(result.decision, FutureExpansionGateDecision.expansionFrozen);
+        expect(result.releaseProofComplete, isFalse);
+      },
+    );
   });
 
   group('protected regression', () {
@@ -300,7 +315,10 @@ void main() {
     test('guardrail forbids V1 surfacing and pricing experiments', () {
       final guardrail = FutureExpansionRoadmapCopy.guardrail.toLowerCase();
       expect(guardrail, contains('no new live ui'));
-      expect(guardrail, contains('no pricing experiments before paid-intent beta'));
+      expect(
+        guardrail,
+        contains('no pricing experiments before paid-intent beta'),
+      );
       expect(guardrail, contains('not surfaced in v1'));
     });
 

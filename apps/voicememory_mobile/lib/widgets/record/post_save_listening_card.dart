@@ -33,19 +33,17 @@ class PostSaveListeningCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               PostSaveRecordedSummaryCopy.listeningBody,
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textPrimary,
-                height: 1.45,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textPrimary, height: 1.45),
             ),
             if (stageLabel != null && stageLabel!.trim().isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
                 stageLabel!,
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ],

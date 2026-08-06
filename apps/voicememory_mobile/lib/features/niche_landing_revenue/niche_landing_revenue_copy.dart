@@ -37,59 +37,62 @@ abstract final class NicheLandingRevenueCopy {
   static const detailPass = 'Pass';
   static const detailFail = 'Fail';
 
-  static const detailLandingPlanFrozen = 'Landing plan frozen until guardrails pass';
+  static const detailLandingPlanFrozen =
+      'Landing plan frozen until guardrails pass';
   static const detailLandingPlanDocumented =
       'Landing plan documented for marketing/web acquisition';
 
   static String labelFor(NicheLandingPageId id) => switch (id) {
-        NicheLandingPageId.sayingYesNoCapacity => 'Saying yes/no capacity',
-        NicheLandingPageId.proveEnough => 'Prove enough',
-        NicheLandingPageId.relationshipReplay => 'Relationship replay',
-        NicheLandingPageId.repeatingHabit => 'Repeating habit',
-        NicheLandingPageId.workPressure => 'Work pressure',
-        NicheLandingPageId.overcommitment => 'Overcommitment',
-      };
+    NicheLandingPageId.sayingYesNoCapacity => 'Saying yes/no capacity',
+    NicheLandingPageId.proveEnough => 'Prove enough',
+    NicheLandingPageId.relationshipReplay => 'Relationship replay',
+    NicheLandingPageId.repeatingHabit => 'Repeating habit',
+    NicheLandingPageId.workPressure => 'Work pressure',
+    NicheLandingPageId.overcommitment => 'Overcommitment',
+  };
 
   static String hookFor(NicheLandingPageId id) => switch (id) {
-        NicheLandingPageId.sayingYesNoCapacity =>
-          'When yes/no capacity keeps replaying, save one repeat and compare it later.',
-        NicheLandingPageId.proveEnough =>
-          'When you keep trying to prove you did enough, save one repeat and compare it later.',
-        NicheLandingPageId.relationshipReplay =>
-          'When relationship replay loops return, save one repeat and compare it later.',
-        NicheLandingPageId.repeatingHabit =>
-          'When the same habit keeps returning, save one repeat and compare it later.',
-        NicheLandingPageId.workPressure =>
-          'When work pressure patterns repeat, save one repeat and compare it later.',
-        NicheLandingPageId.overcommitment =>
-          'When overcommitment cycles replay, save one repeat and compare it later.',
-      };
+    NicheLandingPageId.sayingYesNoCapacity =>
+      'When yes/no capacity keeps replaying, save one repeat and compare it later.',
+    NicheLandingPageId.proveEnough =>
+      'When you keep trying to prove you did enough, save one repeat and compare it later.',
+    NicheLandingPageId.relationshipReplay =>
+      'When relationship replay loops return, save one repeat and compare it later.',
+    NicheLandingPageId.repeatingHabit =>
+      'When the same habit keeps returning, save one repeat and compare it later.',
+    NicheLandingPageId.workPressure =>
+      'When work pressure patterns repeat, save one repeat and compare it later.',
+    NicheLandingPageId.overcommitment =>
+      'When overcommitment cycles replay, save one repeat and compare it later.',
+  };
 
   static String ruleLabelFor(NicheLandingRevenueRuleId id) => switch (id) {
-        NicheLandingRevenueRuleId.marketingWebNotAppV1Surface =>
-          'Marketing/web, not app V1 feature surface',
-        NicheLandingRevenueRuleId.noMedicalTherapyClaims =>
-          'No medical or wellness-treatment claims',
-        NicheLandingRevenueRuleId.corePromiseOnEveryLandingPage =>
-          'Core promise on every landing page',
-        NicheLandingRevenueRuleId.paidPromiseDocumented =>
-          'Paid promise documented',
-      };
+    NicheLandingRevenueRuleId.marketingWebNotAppV1Surface =>
+      'Marketing/web, not app V1 feature surface',
+    NicheLandingRevenueRuleId.noMedicalTherapyClaims =>
+      'No medical or wellness-treatment claims',
+    NicheLandingRevenueRuleId.corePromiseOnEveryLandingPage =>
+      'Core promise on every landing page',
+    NicheLandingRevenueRuleId.paidPromiseDocumented =>
+      'Paid promise documented',
+  };
 
   static String messageFor(NicheLandingRevenuePlanDecision decision) =>
       switch (decision) {
-        NicheLandingRevenuePlanDecision.landingPlanFrozen => landingPlanFrozenLine,
+        NicheLandingRevenuePlanDecision.landingPlanFrozen =>
+          landingPlanFrozenLine,
         NicheLandingRevenuePlanDecision.landingPlanDocumented =>
           landingPlanDocumentedLine,
       };
 
-  static String recommendationFor(NicheLandingRevenuePlanDecision decision) =>
-      switch (decision) {
-        NicheLandingRevenuePlanDecision.landingPlanFrozen =>
-          'Keep niche landing pages in marketing/web docs until core and paid promises align.',
-        NicheLandingRevenuePlanDecision.landingPlanDocumented =>
-          'Publish acquisition pages on marketing/web only. Keep app V1 surfaces unchanged.',
-      };
+  static String recommendationFor(
+    NicheLandingRevenuePlanDecision decision,
+  ) => switch (decision) {
+    NicheLandingRevenuePlanDecision.landingPlanFrozen =>
+      'Keep niche landing pages in marketing/web docs until core and paid promises align.',
+    NicheLandingRevenuePlanDecision.landingPlanDocumented =>
+      'Publish acquisition pages on marketing/web only. Keep app V1 surfaces unchanged.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -136,10 +139,7 @@ enum NicheLandingRevenueRuleId {
   paidPromiseDocumented,
 }
 
-enum NicheLandingRevenueRuleStatus {
-  pass,
-  fail,
-}
+enum NicheLandingRevenueRuleStatus { pass, fail }
 
 enum NicheLandingRevenuePlanDecision {
   landingPlanFrozen,

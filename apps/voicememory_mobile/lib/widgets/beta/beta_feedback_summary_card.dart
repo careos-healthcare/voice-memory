@@ -22,22 +22,23 @@ class BetaFeedbackSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = summary ?? BetaFeedbackIntelligenceEngine.buildSummary(
-      entries: entries,
-    );
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 15,
-    );
+    final data =
+        summary ??
+        BetaFeedbackIntelligenceEngine.buildSummary(entries: entries);
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 15);
 
     return Container(
       key: const Key('beta_feedback_summary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7F8FA)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7F8FA),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,11 +147,7 @@ class _SummaryRow extends StatelessWidget {
               style: labelStyle,
             ),
           ),
-          Text(
-            value,
-            key: Key('${keyName}_value'),
-            style: valueStyle,
-          ),
+          Text(value, key: Key('${keyName}_value'), style: valueStyle),
         ],
       ),
     );

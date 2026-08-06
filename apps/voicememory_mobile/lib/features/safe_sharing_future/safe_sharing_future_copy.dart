@@ -41,39 +41,41 @@ abstract final class SafeSharingFutureCopy {
       'Future growth sharing documented only';
 
   static String prereqLabelFor(SafeSharingFuturePrereqId id) => switch (id) {
-        SafeSharingFuturePrereqId.firstUsefulProofSeen => 'First useful proof seen',
-        SafeSharingFuturePrereqId.paidIntentBetaComplete =>
-          'Paid-intent beta complete',
-      };
+    SafeSharingFuturePrereqId.firstUsefulProofSeen => 'First useful proof seen',
+    SafeSharingFuturePrereqId.paidIntentBetaComplete =>
+      'Paid-intent beta complete',
+  };
 
   static String ruleLabelFor(SafeSharingFutureRuleId id) => switch (id) {
-        SafeSharingFutureRuleId.noRawPrivateTextByDefault =>
-          'No raw private text by default',
-        SafeSharingFutureRuleId.explicitUserShareOrExport =>
-          'Explicit user share or export',
-        SafeSharingFutureRuleId.shareProductInsightNotArchive =>
-          'Share product insight, not archive content',
-        SafeSharingFutureRuleId.noSharingInFirstFiveMinutes =>
-          'No sharing in first five minutes',
-        SafeSharingFutureRuleId.noSharingBeforeFirstUsefulProof =>
-          'No sharing before first useful proof',
-        SafeSharingFutureRuleId.noLiveV1SharingExpansion =>
-          'No live V1 sharing expansion',
-      };
+    SafeSharingFutureRuleId.noRawPrivateTextByDefault =>
+      'No raw private text by default',
+    SafeSharingFutureRuleId.explicitUserShareOrExport =>
+      'Explicit user share or export',
+    SafeSharingFutureRuleId.shareProductInsightNotArchive =>
+      'Share product insight, not archive content',
+    SafeSharingFutureRuleId.noSharingInFirstFiveMinutes =>
+      'No sharing in first five minutes',
+    SafeSharingFutureRuleId.noSharingBeforeFirstUsefulProof =>
+      'No sharing before first useful proof',
+    SafeSharingFutureRuleId.noLiveV1SharingExpansion =>
+      'No live V1 sharing expansion',
+  };
 
-  static String messageFor(SafeSharingFutureGateDecision decision) => switch (decision) {
+  static String messageFor(SafeSharingFutureGateDecision decision) =>
+      switch (decision) {
         SafeSharingFutureGateDecision.sharingFrozen => sharingFrozenLine,
         SafeSharingFutureGateDecision.futureGrowthSharingDocumented =>
           futureGrowthSharingDocumentedLine,
       };
 
-  static String recommendationFor(SafeSharingFutureGateDecision decision) =>
-      switch (decision) {
-        SafeSharingFutureGateDecision.sharingFrozen =>
-          'Do not expand sharing until first useful proof and beta proof complete. Keep sharing explicit and product-only.',
-        SafeSharingFutureGateDecision.futureGrowthSharingDocumented =>
-          'Document growth sharing as future-only. Never share raw private text by default and never before proof.',
-      };
+  static String recommendationFor(
+    SafeSharingFutureGateDecision decision,
+  ) => switch (decision) {
+    SafeSharingFutureGateDecision.sharingFrozen =>
+      'Do not expand sharing until first useful proof and beta proof complete. Keep sharing explicit and product-only.',
+    SafeSharingFutureGateDecision.futureGrowthSharingDocumented =>
+      'Document growth sharing as future-only. Never share raw private text by default and never before proof.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -102,16 +104,9 @@ abstract final class SafeSharingFutureCopy {
   }
 }
 
-enum SafeSharingFuturePrereqId {
-  firstUsefulProofSeen,
-  paidIntentBetaComplete,
-}
+enum SafeSharingFuturePrereqId { firstUsefulProofSeen, paidIntentBetaComplete }
 
-enum SafeSharingFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum SafeSharingFuturePrereqStatus { pass, pending, fail }
 
 enum SafeSharingFutureRuleId {
   noRawPrivateTextByDefault,
@@ -122,10 +117,7 @@ enum SafeSharingFutureRuleId {
   noLiveV1SharingExpansion,
 }
 
-enum SafeSharingFutureRuleStatus {
-  pass,
-  fail,
-}
+enum SafeSharingFutureRuleStatus { pass, fail }
 
 enum SafeSharingFutureGateDecision {
   sharingFrozen,

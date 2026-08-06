@@ -40,14 +40,12 @@ class _PurchaseConfidenceCardState extends State<PurchaseConfidenceCard> {
   @override
   Widget build(BuildContext context) {
     _trackSeenOnce();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final footerStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final footerStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('purchase_confidence_card'),
@@ -111,10 +109,9 @@ class PurchaseConfidenceCompactLine extends StatelessWidget {
     return Text(
       PurchaseConfidenceCopy.compactTrustLine,
       key: const Key('purchase_confidence_compact_trust'),
-      style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-        color: AppColors.textSecondary,
-        height: 1.4,
-      ),
+      style: ArchiveMobileTypography.responsiveHelper(
+        context,
+      ).copyWith(color: AppColors.textSecondary, height: 1.4),
     );
   }
 }

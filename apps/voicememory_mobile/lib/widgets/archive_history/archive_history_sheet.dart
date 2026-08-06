@@ -9,7 +9,6 @@ import '../../features/archive_history/archive_history_engine.dart';
 import '../../features/archive_history/archive_history_filter.dart';
 import '../../features/archive_history/archive_history_item.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
-import '../../features/transcript_correction/transcript_correction_gate.dart';
 import '../../features/trust/pending_transcript_recovery_copy.dart';
 import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
@@ -39,10 +38,8 @@ class ArchiveHistorySheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (sheetContext) => ArchiveHistorySheet(
-        content: content,
-        entryCount: entryCount,
-      ),
+      builder: (sheetContext) =>
+          ArchiveHistorySheet(content: content, entryCount: entryCount),
     );
   }
 
@@ -55,7 +52,8 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
   late ArchiveHistoryContent _content = widget.content;
   late int _entryCount = widget.entryCount;
 
-  List<ArchiveHistoryItem> get _filteredItems => ArchiveHistoryFilterEngine.apply(
+  List<ArchiveHistoryItem> get _filteredItems =>
+      ArchiveHistoryFilterEngine.apply(
         items: _content.items,
         filter: _activeFilter,
       );
@@ -97,11 +95,9 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
               Text(
                 ArchiveHistoryCopy.sheetSubtitle,
                 key: const Key('archive_history_sheet_subtitle'),
-                style:
-                    ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary, height: 1.4),
               ),
               if (!_content.isEmpty) ...[
                 const SizedBox(height: AppSpacing.md),
@@ -123,8 +119,9 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                 Text(
                   ArchiveHistoryCopy.emptyBody,
                   key: const Key('archive_history_empty_body'),
-                  style: ArchiveMobileTypography.explanationBody(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ] else if (filteredItems.isEmpty) ...[
                 Text(
@@ -136,8 +133,9 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                 Text(
                   ArchiveHistoryCopy.filteredEmptyBody,
                   key: const Key('archive_history_filtered_empty_body'),
-                  style: ArchiveMobileTypography.explanationBody(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ] else ...[
                 for (final item in filteredItems) ...[
@@ -209,27 +207,27 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
   int get entryCount => widget.entryCount;
 
   String get _statusKey => switch (item.status) {
-        ArchiveHistoryStatus.usedAsEvidence => 'used_as_evidence',
-        ArchiveHistoryStatus.savedOnly => 'saved_only',
-        ArchiveHistoryStatus.transcriptPending => 'transcript_pending',
-        ArchiveHistoryStatus.needsYourWords => 'needs_your_words',
-        ArchiveHistoryStatus.ignoredForPatterns => 'ignored_for_patterns',
-        ArchiveHistoryStatus.excludedFromPattern => 'excluded_from_pattern',
-      };
+    ArchiveHistoryStatus.usedAsEvidence => 'used_as_evidence',
+    ArchiveHistoryStatus.savedOnly => 'saved_only',
+    ArchiveHistoryStatus.transcriptPending => 'transcript_pending',
+    ArchiveHistoryStatus.needsYourWords => 'needs_your_words',
+    ArchiveHistoryStatus.ignoredForPatterns => 'ignored_for_patterns',
+    ArchiveHistoryStatus.excludedFromPattern => 'excluded_from_pattern',
+  };
 
   String get _chipLabel => switch (item.status) {
-        ArchiveHistoryStatus.usedAsEvidence =>
-          ArchiveHistoryCopy.chipUsedAsEvidence,
-        ArchiveHistoryStatus.savedOnly => ArchiveHistoryCopy.chipSavedOnly,
-        ArchiveHistoryStatus.transcriptPending =>
-          ArchiveHistoryCopy.chipTranscriptPending,
-        ArchiveHistoryStatus.needsYourWords =>
-          ArchiveHistoryCopy.chipNeedsYourWords,
-        ArchiveHistoryStatus.ignoredForPatterns =>
-          ArchiveHistoryCopy.chipIgnoredForPatterns,
-        ArchiveHistoryStatus.excludedFromPattern =>
-          ArchiveHistoryCopy.chipExcludedFromPattern,
-      };
+    ArchiveHistoryStatus.usedAsEvidence =>
+      ArchiveHistoryCopy.chipUsedAsEvidence,
+    ArchiveHistoryStatus.savedOnly => ArchiveHistoryCopy.chipSavedOnly,
+    ArchiveHistoryStatus.transcriptPending =>
+      ArchiveHistoryCopy.chipTranscriptPending,
+    ArchiveHistoryStatus.needsYourWords =>
+      ArchiveHistoryCopy.chipNeedsYourWords,
+    ArchiveHistoryStatus.ignoredForPatterns =>
+      ArchiveHistoryCopy.chipIgnoredForPatterns,
+    ArchiveHistoryStatus.excludedFromPattern =>
+      ArchiveHistoryCopy.chipExcludedFromPattern,
+  };
 
   Future<void> _openRecovery(BuildContext context) async {
     final entry = await AppServices.instance.journalStore.getById(item.entryId);
@@ -242,9 +240,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
     );
     if (result == null || !context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(PendingTranscriptRecoveryCopy.savedSuccess),
-      ),
+      const SnackBar(content: Text(PendingTranscriptRecoveryCopy.savedSuccess)),
     );
   }
 
@@ -259,9 +255,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
     );
     if (updated == null || !context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(TranscriptCorrectionCopy.savedSuccess),
-      ),
+      const SnackBar(content: Text(TranscriptCorrectionCopy.savedSuccess)),
     );
     await widget.onMomentDeleted();
   }
@@ -290,15 +284,12 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
               child: Text(
                 item.dateTimeLabel,
                 key: Key('archive_history_date_${item.entryId}'),
-                style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                  color: AppColors.textPrimary,
-                ),
+                style: ArchiveMobileTypography.cardLabel(
+                  context,
+                ).copyWith(color: AppColors.textPrimary),
               ),
             ),
-            _StatusChip(
-              label: _chipLabel,
-              statusKey: _statusKey,
-            ),
+            _StatusChip(label: _chipLabel, statusKey: _statusKey),
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -307,19 +298,18 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
           key: Key('archive_history_preview_${item.entryId}'),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: ArchiveMobileTypography.explanationBody(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.explanationBody(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         if (item.evidenceNote != null) ...[
           const SizedBox(height: AppSpacing.xs),
           Text(
             item.evidenceNote!,
             key: Key('archive_history_note_${item.entryId}'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
           ),
         ],
         if (item.helpedNote != null) ...[
@@ -327,10 +317,9 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
           Text(
             item.helpedNote!,
             key: Key('archive_history_helped_${item.entryId}'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
           ),
         ],
         if (item.showAddWordsCta) ...[
@@ -378,10 +367,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({
-    required this.label,
-    required this.statusKey,
-  });
+  const _StatusChip({required this.label, required this.statusKey});
 
   final String label;
   final String statusKey;

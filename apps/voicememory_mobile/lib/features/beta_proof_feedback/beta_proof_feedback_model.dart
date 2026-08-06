@@ -7,34 +7,27 @@ enum BetaProofFeedbackSurface {
   privateArchiveReportPreview,
 }
 
-enum BetaProofFeedbackType {
-  useful,
-  tooVague,
-  alreadyKnew,
-  notRelevant,
-}
+enum BetaProofFeedbackType { useful, tooVague, alreadyKnew, notRelevant }
 
 extension BetaProofFeedbackSurfaceStorage on BetaProofFeedbackSurface {
   String get storageValue => switch (this) {
-        BetaProofFeedbackSurface.timelineProofMoment =>
-          'timeline_proof_moment',
-        BetaProofFeedbackSurface.archiveTimelineSpine =>
-          'archive_timeline_spine',
-        BetaProofFeedbackSurface.firstProofPayoff => 'first_proof_payoff',
-        BetaProofFeedbackSurface.privateArchiveReportPreview =>
-          'private_archive_report_preview',
-      };
+    BetaProofFeedbackSurface.timelineProofMoment => 'timeline_proof_moment',
+    BetaProofFeedbackSurface.archiveTimelineSpine => 'archive_timeline_spine',
+    BetaProofFeedbackSurface.firstProofPayoff => 'first_proof_payoff',
+    BetaProofFeedbackSurface.privateArchiveReportPreview =>
+      'private_archive_report_preview',
+  };
 
   String get analyticsValue => storageValue;
 }
 
 extension BetaProofFeedbackTypeStorage on BetaProofFeedbackType {
   String get storageValue => switch (this) {
-        BetaProofFeedbackType.useful => 'useful',
-        BetaProofFeedbackType.tooVague => 'too_vague',
-        BetaProofFeedbackType.alreadyKnew => 'already_knew',
-        BetaProofFeedbackType.notRelevant => 'not_relevant',
-      };
+    BetaProofFeedbackType.useful => 'useful',
+    BetaProofFeedbackType.tooVague => 'too_vague',
+    BetaProofFeedbackType.alreadyKnew => 'already_knew',
+    BetaProofFeedbackType.notRelevant => 'not_relevant',
+  };
 
   String get analyticsValue => storageValue;
 
@@ -62,13 +55,12 @@ class BetaProofFeedbackRecord {
   bool get answered => feedbackType != null;
 
   Map<String, dynamic> toJson() => {
-        if (feedbackType != null) 'feedbackType': feedbackType!.storageValue,
-        if (dateKey != null) 'dateKey': dateKey,
-        if (surface != null) 'surface': surface!.storageValue,
-        if (entryCount != null) 'entryCount': entryCount,
-        if (answeredAt != null)
-          'answeredAt': answeredAt!.toUtc().toIso8601String(),
-      };
+    if (feedbackType != null) 'feedbackType': feedbackType!.storageValue,
+    if (dateKey != null) 'dateKey': dateKey,
+    if (surface != null) 'surface': surface!.storageValue,
+    if (entryCount != null) 'entryCount': entryCount,
+    if (answeredAt != null) 'answeredAt': answeredAt!.toUtc().toIso8601String(),
+  };
 
   factory BetaProofFeedbackRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -76,8 +68,7 @@ class BetaProofFeedbackRecord {
       feedbackType: _typeFromRaw(json['feedbackType'] as String?),
       dateKey: json['dateKey'] is String ? json['dateKey'] as String : null,
       surface: _surfaceFromRaw(json['surface'] as String?),
-      entryCount:
-          json['entryCount'] is int ? json['entryCount'] as int : null,
+      entryCount: json['entryCount'] is int ? json['entryCount'] as int : null,
       answeredAt: _timestampFromRaw(json['answeredAt'] as String?),
     );
   }

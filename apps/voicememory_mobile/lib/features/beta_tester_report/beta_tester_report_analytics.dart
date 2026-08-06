@@ -11,11 +11,9 @@ abstract final class BetaTesterReportAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required BetaTesterReportResult result,
-  }) {
+  static void seen({required BetaTesterReportResult result}) {
     final props = <String, Object>{
       'source': result.source,
       'entry_count': result.entryCount,

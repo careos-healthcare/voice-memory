@@ -60,9 +60,8 @@ abstract final class RevenueLiftExperimentV2Engine {
 
   static RevenueLiftExperimentV2LiftFocus _focus(
     RevenueLiftExperimentV2Focus focus,
-  ) =>
-      RevenueLiftExperimentV2LiftFocus(
-        focus: focus,
-        label: RevenueLiftExperimentV2Copy.liftFocusLabelFor(focus),
-      );
+  ) => RevenueLiftExperimentV2LiftFocus(
+    focus: focus,
+    label: RevenueLiftExperimentV2Copy.liftFocusLabelFor(focus),
+  );
 }

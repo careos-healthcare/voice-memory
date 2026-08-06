@@ -203,9 +203,7 @@ abstract final class ArchiveRepeatPhraseSanitizer {
           (blob.contains('pressure') || blob.contains('deadline')));
 
   static bool _hasAgreeingPressure(String blob) =>
-      blob.contains('agree') ||
-      blob.contains('agreed') ||
-      blob.contains('yes');
+      blob.contains('agree') || blob.contains('agreed') || blob.contains('yes');
 
   static String _humanizePhrase(String phrase) {
     final cleaned = sanitize(phrase);

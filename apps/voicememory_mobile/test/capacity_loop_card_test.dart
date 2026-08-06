@@ -40,32 +40,32 @@ JournalEntry _capacityEntry(
   String id, {
   String? transcript,
   List<String> themes = const ['work'],
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again even when I was tired today and said yes.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: themes,
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again even when I was tired today and said yes.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: themes,
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _realCapacityEntries(int count) => List.generate(
-      count,
-      (i) => _capacityEntry(
-        'real_$i',
-        transcript:
-            'I said yes again under pressure even though I had no capacity left today number $i.',
-      ),
-    );
+  count,
+  (i) => _capacityEntry(
+    'real_$i',
+    transcript:
+        'I said yes again under pressure even though I had no capacity left today number $i.',
+  ),
+);
 
 CapacityLoopInput _input({
   int realSavedMomentCount = 0,
@@ -75,16 +75,15 @@ CapacityLoopInput _input({
   bool sampleMode = false,
   String? topRecurringTheme,
   int costSignalCount = 0,
-}) =>
-    CapacityLoopInput(
-      realSavedMomentCount: realSavedMomentCount,
-      capacityEvidenceCount: capacityEvidenceCount,
-      capacityLoopActive: capacityLoopActive,
-      capacityCohortActive: capacityCohortActive,
-      sampleMode: sampleMode,
-      topRecurringTheme: topRecurringTheme,
-      costSignalCount: costSignalCount,
-    );
+}) => CapacityLoopInput(
+  realSavedMomentCount: realSavedMomentCount,
+  capacityEvidenceCount: capacityEvidenceCount,
+  capacityLoopActive: capacityLoopActive,
+  capacityCohortActive: capacityCohortActive,
+  sampleMode: sampleMode,
+  topRecurringTheme: topRecurringTheme,
+  costSignalCount: costSignalCount,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -102,27 +101,27 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 CapacityLoopResult _fullResult({int count = 3}) => CapacityLoopResult(
-      hasCard: true,
-      isEmpty: false,
-      showOnArchiveHome: true,
-      title: CapacityLoopCopy.title,
-      subtitle: CapacityLoopCopy.subtitle,
-      evidenceCountLabel: CapacityLoopCopy.evidenceCountLabel(count),
-      whatRepeated: CapacityLoopCopy.whatRepeatedStrong,
-      costLater: CapacityLoopCopy.costLaterWithCount(2),
-      watchNext: CapacityLoopCopy.watchNext,
-      primaryCtaLabel: CapacityLoopCopy.saveYesMomentCta,
-      secondaryCtaLabel: CapacityLoopCopy.reviewLoopCta,
-      primaryRoute: CapacityLoopCopy.recordRoute,
-      secondaryRoute: CapacityLoopCopy.route,
-      shareCopy: CapacityLoopCopy.shareCopy,
-      triggerLabel: CapacityLoopCopy.loopDiagramTrigger,
-      saidYesLabel: CapacityLoopCopy.loopDiagramSaidYes,
-      costLaterLabel: CapacityLoopCopy.loopDiagramCostLater,
-      repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
-      watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
-      costEvidenceLabel: '',
-    );
+  hasCard: true,
+  isEmpty: false,
+  showOnArchiveHome: true,
+  title: CapacityLoopCopy.title,
+  subtitle: CapacityLoopCopy.subtitle,
+  evidenceCountLabel: CapacityLoopCopy.evidenceCountLabel(count),
+  whatRepeated: CapacityLoopCopy.whatRepeatedStrong,
+  costLater: CapacityLoopCopy.costLaterWithCount(2),
+  watchNext: CapacityLoopCopy.watchNext,
+  primaryCtaLabel: CapacityLoopCopy.saveYesMomentCta,
+  secondaryCtaLabel: CapacityLoopCopy.reviewLoopCta,
+  primaryRoute: CapacityLoopCopy.recordRoute,
+  secondaryRoute: CapacityLoopCopy.route,
+  shareCopy: CapacityLoopCopy.shareCopy,
+  triggerLabel: CapacityLoopCopy.loopDiagramTrigger,
+  saidYesLabel: CapacityLoopCopy.loopDiagramSaidYes,
+  costLaterLabel: CapacityLoopCopy.loopDiagramCostLater,
+  repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
+  watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
+  costEvidenceLabel: '',
+);
 
 void main() {
   const engine = CapacityLoopEngine();
@@ -188,12 +187,15 @@ void main() {
           costSignalCount: 2,
         ),
       );
-      expect(result.whatRepeated.toLowerCase(), anyOf(
-        contains('may'),
-        contains('starting to show'),
-        contains('forming'),
-        contains('saved moments where'),
-      ));
+      expect(
+        result.whatRepeated.toLowerCase(),
+        anyOf(
+          contains('may'),
+          contains('starting to show'),
+          contains('forming'),
+          contains('saved moments where'),
+        ),
+      );
     });
 
     test('includes Built from 3 saved moments when applicable', () {
@@ -307,7 +309,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('capacity_loop_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('capacity_loop_card_hidden')),
+        findsOneWidget,
+      );
       expect(find.text('Your yes loop'), findsNothing);
     });
 
@@ -422,7 +427,10 @@ void main() {
 
     test('share copy is fixed safe text only', () {
       expect(CapacityLoopCopy.shareCopy, contains('No private entries shared'));
-      expect(CapacityLoopCopy.shareCopy.toLowerCase(), isNot(contains('transcript')));
+      expect(
+        CapacityLoopCopy.shareCopy.toLowerCase(),
+        isNot(contains('transcript')),
+      );
     });
   });
 }

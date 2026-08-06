@@ -95,10 +95,9 @@ class _CurrentRelevanceCardState extends State<CurrentRelevanceCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final answered = _answeredAnswer;
 
     if (answered != null) {
@@ -106,7 +105,9 @@ class _CurrentRelevanceCardState extends State<CurrentRelevanceCard> {
         key: const Key('current_relevance_response_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -119,9 +120,9 @@ class _CurrentRelevanceCardState extends State<CurrentRelevanceCard> {
             Text(
               CurrentRelevanceCopy.differentiationLine,
               key: const Key('current_relevance_differentiation_line'),
-              style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -132,7 +133,9 @@ class _CurrentRelevanceCardState extends State<CurrentRelevanceCard> {
       key: const Key('current_relevance_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7FAF6)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7FAF6),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

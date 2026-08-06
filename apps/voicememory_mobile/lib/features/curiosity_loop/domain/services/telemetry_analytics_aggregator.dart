@@ -8,7 +8,9 @@ class TelemetryAnalyticsAggregator {
   const TelemetryAnalyticsAggregator();
 
   /// Computes historical data arrays down into distinct 7-day down-regulation metrics.
-  List<WeeklyTelemetrySummary> calculateWeeklyTrends(List<TelemetryDataPoint> history) {
+  List<WeeklyTelemetrySummary> calculateWeeklyTrends(
+    List<TelemetryDataPoint> history,
+  ) {
     if (history.isEmpty) return [];
 
     // Sort chronologically
@@ -41,20 +43,29 @@ class TelemetryAnalyticsAggregator {
           ? 0.0
           : (successfulRegulations / groundedPoints.length) * 100.0;
 
-      final totalLexical = points.fold<double>(0.0, (sum, p) => sum + p.lexicalDelta);
-      final totalDrift = points.fold<double>(0.0, (sum, p) => sum + p.driftDelta);
+      final totalLexical = points.fold<double>(
+        0.0,
+        (sum, p) => sum + p.lexicalDelta,
+      );
+      final totalDrift = points.fold<double>(
+        0.0,
+        (sum, p) => sum + p.driftDelta,
+      );
 
-      summaries.add(WeeklyTelemetrySummary(
-        weekStartDate: weekStart,
-        totalObservations: points.length,
-        groundedInterventionsCount: groundedPoints.length,
-        downRegulationSuccessRate: successRate,
-        averageLexicalDelta: totalLexical / points.length,
-        averageDriftDelta: totalDrift / points.length,
-      ));
+      summaries.add(
+        WeeklyTelemetrySummary(
+          weekStartDate: weekStart,
+          totalObservations: points.length,
+          groundedInterventionsCount: groundedPoints.length,
+          downRegulationSuccessRate: successRate,
+          averageLexicalDelta: totalLexical / points.length,
+          averageDriftDelta: totalDrift / points.length,
+        ),
+      );
     });
 
-    return summaries..sort((a, b) => b.weekStartDate.compareTo(a.weekStartDate));
+    return summaries
+      ..sort((a, b) => b.weekStartDate.compareTo(a.weekStartDate));
   }
 
   DateTime _startOfWeek(DateTime date) {

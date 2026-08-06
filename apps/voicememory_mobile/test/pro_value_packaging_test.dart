@@ -5,7 +5,7 @@ import 'package:voicememory_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_engine.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_models.dart';
-import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
+import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 
 const _bannedWords = [
@@ -33,16 +33,15 @@ const _forbiddenPurchaseCtas = [
   'Limited time',
 ];
 
-ProValueInput _defaultInput({bool purchasesAvailable = false}) =>
-    ProValueInput(
-      savedEntryCount: 5,
-      depthLevel: ArchiveDepthLevel.weeklyReviewReady,
-      watchlistCount: 2,
-      weeklyReviewAvailable: true,
-      evidenceMapContextCount: 3,
-      beliefHistoryAvailable: true,
-      purchasesAvailable: purchasesAvailable,
-    );
+ProValueInput _defaultInput({bool purchasesAvailable = false}) => ProValueInput(
+  savedEntryCount: 5,
+  depthLevel: ArchiveDepthLevel.weeklyReviewReady,
+  watchlistCount: 2,
+  weeklyReviewAvailable: true,
+  evidenceMapContextCount: 3,
+  beliefHistoryAvailable: true,
+  purchasesAvailable: purchasesAvailable,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -62,14 +61,13 @@ void main() {
     test('headline is deeper long-term evidence history', () {
       final plan = const ProValueEngine().build(_defaultInput());
       expect(plan.headline, ProValueCopy.headline);
-      expect(
-        plan.headline,
-        'You saw the first useful repeat.',
-      );
+      expect(plan.headline, 'You saw the first useful repeat.');
     });
 
     test('value bullets cover long-term Pro surfaces', () {
-      final bullets = const ProValueEngine().build(_defaultInput()).valueBullets;
+      final bullets = const ProValueEngine()
+          .build(_defaultInput())
+          .valueBullets;
       expect(bullets, ProValueCopy.valueBullets);
       expect(bullets, contains('Longer evidence history'));
       expect(bullets, contains('Weekly archive reviews'));
@@ -109,10 +107,7 @@ void main() {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(
-        ProValueCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
-      );
+      expect(ProValueCopy.allVisibleCopy(), anyElement(contains('ArchiveMe')));
     });
   });
 
@@ -120,7 +115,10 @@ void main() {
     test('preview copy matches ProValueCopy headline and bullets', () {
       expect(ProValuePreviewCopy.headline, ProValueCopy.headline);
       expect(ProValuePreviewCopy.proForBullets, ProValueCopy.valueBullets);
-      expect(ProValuePreviewCopy.freeNowTitle, ProValueCopy.freeNowSectionTitle);
+      expect(
+        ProValuePreviewCopy.freeNowTitle,
+        ProValueCopy.freeNowSectionTitle,
+      );
     });
   });
 
@@ -134,7 +132,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('pro_value_preview_headline')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pro_value_preview_headline')),
+        findsOneWidget,
+      );
       expect(find.text(ProValueCopy.headline), findsOneWidget);
       expect(find.text(ProValueCopy.subheadline), findsOneWidget);
       expect(find.text(ProValueCopy.freeNowSectionTitle), findsOneWidget);
@@ -145,7 +146,9 @@ void main() {
       expect(find.text(ProValueCopy.secondaryCtaLabel), findsOneWidget);
     });
 
-    testWidgets('honestly says purchases are not available yet', (tester) async {
+    testWidgets('honestly says purchases are not available yet', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),

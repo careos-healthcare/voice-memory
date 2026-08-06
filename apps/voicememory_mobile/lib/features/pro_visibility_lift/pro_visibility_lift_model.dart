@@ -21,20 +21,19 @@ class ProVisibilityLiftResult {
     required String source,
     required ProVisibilityLiftSurface surface,
     required int entryCount,
-  }) =>
-      ProVisibilityLiftResult(
-        shouldShow: false,
-        title: '',
-        body: '',
-        primaryCta: '',
-        secondaryCta: '',
-        source: source,
-        surface: surface,
-        entryCount: entryCount,
-        confidenceLevel: ProofConfidenceLevel.watchOnly,
-        feedbackState: ProofQualityFeedbackState.none,
-        hasPaywallSeen: false,
-      );
+  }) => ProVisibilityLiftResult(
+    shouldShow: false,
+    title: '',
+    body: '',
+    primaryCta: '',
+    secondaryCta: '',
+    source: source,
+    surface: surface,
+    entryCount: entryCount,
+    confidenceLevel: ProofConfidenceLevel.watchOnly,
+    feedbackState: ProofQualityFeedbackState.none,
+    hasPaywallSeen: false,
+  );
 
   final bool shouldShow;
   final String title;

@@ -10,7 +10,8 @@ abstract final class BetaDecisionCopy {
       'Build only the highest-priority failing branch.';
 
   static const holdDoNotExpand = 'Do not build expansion yet.';
-  static const nextFixRecordOnboarding = 'Next build: fix Record/onboarding copy.';
+  static const nextFixRecordOnboarding =
+      'Next build: fix Record/onboarding copy.';
   static const nextFixCaptureFriction = 'Next build: reduce capture friction.';
   static const nextAddReturnReason = 'Next build: add return reason.';
   static const nextImproveProofClarity =
@@ -32,31 +33,32 @@ abstract final class BetaDecisionCopy {
   static const outcomeSaveCta = 'Save tester outcome';
   static const outcomeClearCta = 'Clear all logged outcomes';
   static const outcomeLoggedCount = 'Logged outcomes';
-  static const outcomeNoSignalsSelected = 'Select at least one signal before saving.';
+  static const outcomeNoSignalsSelected =
+      'Select at least one signal before saving.';
 
   static String signalLabel(BetaDecisionSignal signal) => switch (signal) {
-        BetaDecisionSignal.understoodPromise => 'Understood promise',
-        BetaDecisionSignal.misunderstoodAsGenericJournal =>
-          'Sounded like a daily notes app',
-        BetaDecisionSignal.misunderstoodAsChatbot =>
-          'Sounded like a chat assistant',
-        BetaDecisionSignal.misunderstoodAsTherapy =>
-          'Sounded like clinical support',
-        BetaDecisionSignal.tappedRecord => 'Tapped Record/Type',
-        BetaDecisionSignal.savedFirstMoment => 'Saved first moment',
-        BetaDecisionSignal.returnedDay2 => 'Returned day 2',
-        BetaDecisionSignal.reachedThreeMoments => 'Reached 3 moments',
-        BetaDecisionSignal.sawFirstProof => 'Saw first proof/thread',
-        BetaDecisionSignal.proofFeltMeaningful => 'Proof felt meaningful',
-        BetaDecisionSignal.willingToPayForLongerTrail =>
-          'Would pay for longer trail',
-        BetaDecisionSignal.askedForHistory => 'Asked for history',
-        BetaDecisionSignal.askedForExport => 'Asked for export',
-        BetaDecisionSignal.askedForReport => 'Asked for monthly report',
-        BetaDecisionSignal.askedForReminder => 'Asked for reminder',
-        BetaDecisionSignal.hesitatedAtCapture => 'Hesitated at capture',
-        BetaDecisionSignal.confusedWhatToWrite => 'Confused what to write',
-      };
+    BetaDecisionSignal.understoodPromise => 'Understood promise',
+    BetaDecisionSignal.misunderstoodAsGenericJournal =>
+      'Sounded like a daily notes app',
+    BetaDecisionSignal.misunderstoodAsChatbot =>
+      'Sounded like a chat assistant',
+    BetaDecisionSignal.misunderstoodAsTherapy =>
+      'Sounded like clinical support',
+    BetaDecisionSignal.tappedRecord => 'Tapped Record/Type',
+    BetaDecisionSignal.savedFirstMoment => 'Saved first moment',
+    BetaDecisionSignal.returnedDay2 => 'Returned day 2',
+    BetaDecisionSignal.reachedThreeMoments => 'Reached 3 moments',
+    BetaDecisionSignal.sawFirstProof => 'Saw first proof/thread',
+    BetaDecisionSignal.proofFeltMeaningful => 'Proof felt meaningful',
+    BetaDecisionSignal.willingToPayForLongerTrail =>
+      'Would pay for longer trail',
+    BetaDecisionSignal.askedForHistory => 'Asked for history',
+    BetaDecisionSignal.askedForExport => 'Asked for export',
+    BetaDecisionSignal.askedForReport => 'Asked for monthly report',
+    BetaDecisionSignal.askedForReminder => 'Asked for reminder',
+    BetaDecisionSignal.hesitatedAtCapture => 'Hesitated at capture',
+    BetaDecisionSignal.confusedWhatToWrite => 'Confused what to write',
+  };
 
   static const signalGroups = <String, List<BetaDecisionSignal>>{
     'Understanding': [
@@ -80,9 +82,7 @@ abstract final class BetaDecisionCopy {
       BetaDecisionSignal.sawFirstProof,
       BetaDecisionSignal.proofFeltMeaningful,
     ],
-    'Monetization': [
-      BetaDecisionSignal.willingToPayForLongerTrail,
-    ],
+    'Monetization': [BetaDecisionSignal.willingToPayForLongerTrail],
     'Utility asks': [
       BetaDecisionSignal.askedForHistory,
       BetaDecisionSignal.askedForExport,
@@ -90,21 +90,21 @@ abstract final class BetaDecisionCopy {
     ],
   };
 
-  static String recommendationFor(BetaNextBuildRecommendation recommendation) =>
-      switch (recommendation) {
-        BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
-          nextFixRecordOnboarding,
-        BetaNextBuildRecommendation.fixCaptureFriction => nextFixCaptureFriction,
-        BetaNextBuildRecommendation.addReturnReason => nextAddReturnReason,
-        BetaNextBuildRecommendation.improveProofEmotionalClarity =>
-          nextImproveProofClarity,
-        BetaNextBuildRecommendation.sharpenProPackaging =>
-          nextSharpenProPackaging,
-        BetaNextBuildRecommendation.expandProUtility => nextExpandProUtility,
-        BetaNextBuildRecommendation.holdDoNotExpand => holdDoNotExpand,
-        BetaNextBuildRecommendation.insufficientData => insufficientDataBody,
-        BetaNextBuildRecommendation.noFailingBranch => noFailingBranchBody,
-      };
+  static String recommendationFor(
+    BetaNextBuildRecommendation recommendation,
+  ) => switch (recommendation) {
+    BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
+      nextFixRecordOnboarding,
+    BetaNextBuildRecommendation.fixCaptureFriction => nextFixCaptureFriction,
+    BetaNextBuildRecommendation.addReturnReason => nextAddReturnReason,
+    BetaNextBuildRecommendation.improveProofEmotionalClarity =>
+      nextImproveProofClarity,
+    BetaNextBuildRecommendation.sharpenProPackaging => nextSharpenProPackaging,
+    BetaNextBuildRecommendation.expandProUtility => nextExpandProUtility,
+    BetaNextBuildRecommendation.holdDoNotExpand => holdDoNotExpand,
+    BetaNextBuildRecommendation.insufficientData => insufficientDataBody,
+    BetaNextBuildRecommendation.noFailingBranch => noFailingBranchBody,
+  };
 
   static const decisionTreeBranches = <String>[
     'A. Misunderstanding → fix Record/onboarding copy only',

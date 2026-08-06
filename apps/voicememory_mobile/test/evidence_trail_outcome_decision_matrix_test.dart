@@ -14,73 +14,53 @@ EvidenceTrailOutcomeSummary _summary({
   int paywallCtaTapCount = 2,
   int wouldPayYesMaybeCount = 4,
   int evidenceTrailClearCount = 5,
-}) =>
-    EvidenceTrailOutcomeSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      sawProCount: sawProCount,
-      understandsProCount: understandsProCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-      evidenceTrailClearCount: evidenceTrailClearCount,
-    );
+}) => EvidenceTrailOutcomeSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  sawProCount: sawProCount,
+  understandsProCount: understandsProCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+  evidenceTrailClearCount: evidenceTrailClearCount,
+);
 
 EvidenceTrailOutcomeSummary _productionPassingSummary({
   int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      usefulProofCount: totalTesters == 20 ? 5 : 7,
-      tooVagueOrNotRelevantCount: totalTesters == 20 ? 4 : 6,
-      sawProCount: totalTesters == 20 ? 3 : 4,
-      understandsProCount: totalTesters == 20 ? 3 : 4,
-      paywallCtaTapCount: 1,
-      wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
-      evidenceTrailClearCount: totalTesters == 20 ? 3 : 4,
-    );
+}) => _summary(
+  totalTesters: totalTesters,
+  usefulProofCount: totalTesters == 20 ? 5 : 7,
+  tooVagueOrNotRelevantCount: totalTesters == 20 ? 4 : 6,
+  sawProCount: totalTesters == 20 ? 3 : 4,
+  understandsProCount: totalTesters == 20 ? 3 : 4,
+  paywallCtaTapCount: 1,
+  wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
+  evidenceTrailClearCount: totalTesters == 20 ? 3 : 4,
+);
 
 void main() {
   group('EvidenceTrailOutcomeDecisionMatrix thresholds', () {
     test('30 tester exact targets', () {
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.usefulProofTargetFor(30),
-        7,
-      );
+      expect(EvidenceTrailOutcomeDecisionMatrix.usefulProofTargetFor(30), 7);
       expect(
         EvidenceTrailOutcomeDecisionMatrix.evidenceTrailClearTargetFor(30),
         4,
       );
       expect(EvidenceTrailOutcomeDecisionMatrix.sawProTargetFor(30), 4);
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.understandsProTargetFor(30),
-        4,
-      );
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.paywallCtaTapTargetFor(30),
-        1,
-      );
+      expect(EvidenceTrailOutcomeDecisionMatrix.understandsProTargetFor(30), 4);
+      expect(EvidenceTrailOutcomeDecisionMatrix.paywallCtaTapTargetFor(30), 1);
       expect(EvidenceTrailOutcomeDecisionMatrix.wouldPayTargetFor(30), 3);
     });
 
     test('20 tester scaled targets', () {
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.usefulProofTargetFor(20),
-        5,
-      );
+      expect(EvidenceTrailOutcomeDecisionMatrix.usefulProofTargetFor(20), 5);
       expect(
         EvidenceTrailOutcomeDecisionMatrix.evidenceTrailClearTargetFor(20),
         3,
       );
       expect(EvidenceTrailOutcomeDecisionMatrix.sawProTargetFor(20), 3);
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.understandsProTargetFor(20),
-        3,
-      );
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.paywallCtaTapTargetFor(20),
-        1,
-      );
+      expect(EvidenceTrailOutcomeDecisionMatrix.understandsProTargetFor(20), 3);
+      expect(EvidenceTrailOutcomeDecisionMatrix.paywallCtaTapTargetFor(20), 1);
       expect(EvidenceTrailOutcomeDecisionMatrix.wouldPayTargetFor(20), 2);
     });
   });
@@ -88,9 +68,7 @@ void main() {
   group('EvidenceTrailOutcomeDecisionMatrix.resolve', () {
     test('under 20 testers returns insufficientData', () {
       expect(
-        EvidenceTrailOutcomeDecisionMatrix.resolve(
-          _summary(totalTesters: 19),
-        ),
+        EvidenceTrailOutcomeDecisionMatrix.resolve(_summary(totalTesters: 19)),
         EvidenceTrailOutcomeDecision.insufficientData,
       );
     });
@@ -113,15 +91,17 @@ void main() {
       );
     });
 
-    test('evidence trail clear under target returns improveTimelineExplanation',
-        () {
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.resolve(
-          _summary(evidenceTrailClearCount: 3),
-        ),
-        EvidenceTrailOutcomeDecision.improveTimelineExplanation,
-      );
-    });
+    test(
+      'evidence trail clear under target returns improveTimelineExplanation',
+      () {
+        expect(
+          EvidenceTrailOutcomeDecisionMatrix.resolve(
+            _summary(evidenceTrailClearCount: 3),
+          ),
+          EvidenceTrailOutcomeDecision.improveTimelineExplanation,
+        );
+      },
+    );
 
     test('sawPro under target returns proTooHidden', () {
       expect(
@@ -133,21 +113,22 @@ void main() {
     });
 
     test(
-        'evidence trail clear passes but wouldPay weak returns pricingValidation',
-        () {
-      expect(
-        EvidenceTrailOutcomeDecisionMatrix.resolve(
-          _summary(
-            sawProCount: 5,
-            understandsProCount: 5,
-            paywallCtaTapCount: 2,
-            wouldPayYesMaybeCount: 2,
-            evidenceTrailClearCount: 5,
+      'evidence trail clear passes but wouldPay weak returns pricingValidation',
+      () {
+        expect(
+          EvidenceTrailOutcomeDecisionMatrix.resolve(
+            _summary(
+              sawProCount: 5,
+              understandsProCount: 5,
+              paywallCtaTapCount: 2,
+              wouldPayYesMaybeCount: 2,
+              evidenceTrailClearCount: 5,
+            ),
           ),
-        ),
-        EvidenceTrailOutcomeDecision.pricingValidation,
-      );
-    });
+          EvidenceTrailOutcomeDecision.pricingValidation,
+        );
+      },
+    );
 
     test('all targets pass returns productionCandidate', () {
       expect(
@@ -165,10 +146,7 @@ void main() {
     test('proof problems beat Pro problems', () {
       expect(
         EvidenceTrailOutcomeDecisionMatrix.resolve(
-          _summary(
-            usefulProofCount: 6,
-            sawProCount: 1,
-          ),
+          _summary(usefulProofCount: 6, sawProCount: 1),
         ),
         EvidenceTrailOutcomeDecision.protectProof,
       );

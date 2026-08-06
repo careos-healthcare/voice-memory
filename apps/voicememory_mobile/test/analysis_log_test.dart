@@ -15,10 +15,7 @@ void main() {
   });
 
   test('AnalysisLog.success accepts observation length', () {
-    expect(
-      () => AnalysisLog.success(observationLength: 18),
-      returnsNormally,
-    );
+    expect(() => AnalysisLog.success(observationLength: 18), returnsNormally);
   });
 
   test('ApiException preserves analyze failure code', () {

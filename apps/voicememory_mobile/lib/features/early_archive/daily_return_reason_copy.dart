@@ -36,7 +36,6 @@ abstract final class DailyReturnReasonCopy {
 
   static const recordCta = 'Record this';
 
-  static const missingChangeGuided =
-      'What happened when this came up again?';
+  static const missingChangeGuided = 'What happened when this came up again?';
   static const missingPositiveGuided = 'What helped in this moment?';
 }

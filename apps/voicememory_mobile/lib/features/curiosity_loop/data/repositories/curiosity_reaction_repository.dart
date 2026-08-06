@@ -25,8 +25,7 @@ class LocalCuriosityReactionRepository implements CuriosityReactionRepository {
   static List<CuriosityReactionRecord> _cached = const [];
   static bool _loaded = false;
 
-  static List<CuriosityReactionRecord> get cached =>
-      List.unmodifiable(_cached);
+  static List<CuriosityReactionRecord> get cached => List.unmodifiable(_cached);
 
   static LocalCuriosityReactionRepository instance() =>
       LocalCuriosityReactionRepository(AppServices.instance.prefs);
@@ -45,16 +44,17 @@ class LocalCuriosityReactionRepository implements CuriosityReactionRepository {
     if (raw == null || raw.isEmpty) return const [];
     final recordsRaw = raw['reactions'];
     if (recordsRaw is! List) return const [];
-    final records = recordsRaw
-        .whereType<Map>()
-        .map(
-          (entry) => CuriosityReactionRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
-        )
-        .whereType<CuriosityReactionRecord>()
-        .toList()
-      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    final records =
+        recordsRaw
+            .whereType<Map>()
+            .map(
+              (entry) => CuriosityReactionRecord.fromJson(
+                Map<String, dynamic>.from(entry),
+              ),
+            )
+            .whereType<CuriosityReactionRecord>()
+            .toList()
+          ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
     _cached = records;
     _loaded = true;
     return records;
@@ -124,9 +124,10 @@ bool _isTimestampAfter(DateTime value, DateTime boundary) {
 
 /// In-memory reaction store for lightweight unit tests.
 @visibleForTesting
-class InMemoryCuriosityReactionRepository implements CuriosityReactionRepository {
+class InMemoryCuriosityReactionRepository
+    implements CuriosityReactionRepository {
   InMemoryCuriosityReactionRepository([List<CuriosityReactionRecord>? seed])
-      : _records = [...?seed];
+    : _records = [...?seed];
 
   final List<CuriosityReactionRecord> _records;
 

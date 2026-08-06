@@ -13,7 +13,7 @@ abstract final class FirstRunPositioningAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required FirstRunPositioningResult result}) {
     final props = <String, Object>{

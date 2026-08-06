@@ -35,35 +35,35 @@ abstract final class PatternLifecycleCopy {
       'This has not shown up recently. That may matter too.';
 
   static String labelFor(PatternLifecycleState state) => switch (state) {
-        PatternLifecycleState.forming => formingLabel,
-        PatternLifecycleState.repeated => repeatedLabel,
-        PatternLifecycleState.watching => watchingLabel,
-        PatternLifecycleState.changing => changingLabel,
-        PatternLifecycleState.softening => softeningLabel,
-        PatternLifecycleState.quiet => quietLabel,
-      };
+    PatternLifecycleState.forming => formingLabel,
+    PatternLifecycleState.repeated => repeatedLabel,
+    PatternLifecycleState.watching => watchingLabel,
+    PatternLifecycleState.changing => changingLabel,
+    PatternLifecycleState.softening => softeningLabel,
+    PatternLifecycleState.quiet => quietLabel,
+  };
 
   static String bodyFor(PatternLifecycleState state) => switch (state) {
-        PatternLifecycleState.forming => formingBody,
-        PatternLifecycleState.repeated => repeatedBody,
-        PatternLifecycleState.watching => watchingBody,
-        PatternLifecycleState.changing => changingBody,
-        PatternLifecycleState.softening => softeningBody,
-        PatternLifecycleState.quiet => quietBody,
-      };
+    PatternLifecycleState.forming => formingBody,
+    PatternLifecycleState.repeated => repeatedBody,
+    PatternLifecycleState.watching => watchingBody,
+    PatternLifecycleState.changing => changingBody,
+    PatternLifecycleState.softening => softeningBody,
+    PatternLifecycleState.quiet => quietBody,
+  };
 
   static List<String> allVisibleStrings() => [
-        formingLabel,
-        formingBody,
-        repeatedLabel,
-        repeatedBody,
-        watchingLabel,
-        watchingBody,
-        changingLabel,
-        changingBody,
-        softeningLabel,
-        softeningBody,
-        quietLabel,
-        quietBody,
-      ];
+    formingLabel,
+    formingBody,
+    repeatedLabel,
+    repeatedBody,
+    watchingLabel,
+    watchingBody,
+    changingLabel,
+    changingBody,
+    softeningLabel,
+    softeningBody,
+    quietLabel,
+    quietBody,
+  ];
 }

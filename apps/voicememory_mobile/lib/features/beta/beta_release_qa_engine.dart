@@ -67,7 +67,9 @@ abstract final class BetaReleaseQaEngine {
       id: BetaReleaseQaRowId.betaMissionFlag,
       label: BetaReleaseQaCopy.rowBetaMissionFlag,
       status: enabled ? BetaReleaseQaStatus.ready : BetaReleaseQaStatus.missing,
-      detail: enabled ? BetaReleaseQaCopy.detailEnabled : BetaReleaseQaCopy.detailOff,
+      detail: enabled
+          ? BetaReleaseQaCopy.detailEnabled
+          : BetaReleaseQaCopy.detailOff,
     );
   }
 
@@ -75,14 +77,16 @@ abstract final class BetaReleaseQaEngine {
     final present = apiBaseUrlPresentOverride ?? _apiBaseUrlPresent();
     final status = present
         ? (kReleaseMode && AppConfig.looksLikeLocalhost
-            ? BetaReleaseQaStatus.checkManually
-            : BetaReleaseQaStatus.ready)
+              ? BetaReleaseQaStatus.checkManually
+              : BetaReleaseQaStatus.ready)
         : BetaReleaseQaStatus.missing;
     return BetaReleaseQaRow(
       id: BetaReleaseQaRowId.apiBaseUrlPresent,
       label: BetaReleaseQaCopy.rowApiBaseUrlPresent,
       status: status,
-      detail: present ? BetaReleaseQaCopy.detailSet : BetaReleaseQaCopy.detailMissing,
+      detail: present
+          ? BetaReleaseQaCopy.detailSet
+          : BetaReleaseQaCopy.detailMissing,
     );
   }
 
@@ -94,20 +98,24 @@ abstract final class BetaReleaseQaEngine {
       status: present
           ? BetaReleaseQaStatus.ready
           : (kReleaseMode
-              ? BetaReleaseQaStatus.checkManually
-              : BetaReleaseQaStatus.missing),
-      detail: present ? BetaReleaseQaCopy.detailSet : BetaReleaseQaCopy.detailMissing,
+                ? BetaReleaseQaStatus.checkManually
+                : BetaReleaseQaStatus.missing),
+      detail: present
+          ? BetaReleaseQaCopy.detailSet
+          : BetaReleaseQaCopy.detailMissing,
     );
   }
 
   static BetaReleaseQaRow _firstUsePromptRow() {
-    final available = RecordFirstUsePromptCopy.title.isNotEmpty &&
+    final available =
+        RecordFirstUsePromptCopy.title.isNotEmpty &&
         RecordFirstUsePromptCopy.body.isNotEmpty;
     return BetaReleaseQaRow(
       id: BetaReleaseQaRowId.firstUsePromptAvailable,
       label: BetaReleaseQaCopy.rowFirstUsePromptAvailable,
-      status:
-          available ? BetaReleaseQaStatus.ready : BetaReleaseQaStatus.missing,
+      status: available
+          ? BetaReleaseQaStatus.ready
+          : BetaReleaseQaStatus.missing,
     );
   }
 
@@ -117,43 +125,46 @@ abstract final class BetaReleaseQaEngine {
     return BetaReleaseQaRow(
       id: BetaReleaseQaRowId.testerMissionAvailable,
       label: BetaReleaseQaCopy.rowTesterMissionAvailable,
-      status:
-          available ? BetaReleaseQaStatus.ready : BetaReleaseQaStatus.missing,
+      status: available
+          ? BetaReleaseQaStatus.ready
+          : BetaReleaseQaStatus.missing,
     );
   }
 
   static BetaReleaseQaRow _firstProofPathRow() => const BetaReleaseQaRow(
-        id: BetaReleaseQaRowId.firstProofPathAvailable,
-        label: BetaReleaseQaCopy.rowFirstProofPathAvailable,
-        status: BetaReleaseQaStatus.ready,
-      );
+    id: BetaReleaseQaRowId.firstProofPathAvailable,
+    label: BetaReleaseQaCopy.rowFirstProofPathAvailable,
+    status: BetaReleaseQaStatus.ready,
+  );
 
   static BetaReleaseQaRow _returnCheckPathRow() => const BetaReleaseQaRow(
-        id: BetaReleaseQaRowId.returnCheckPathAvailable,
-        label: BetaReleaseQaCopy.rowReturnCheckPathAvailable,
-        status: BetaReleaseQaStatus.ready,
-      );
+    id: BetaReleaseQaRowId.returnCheckPathAvailable,
+    label: BetaReleaseQaCopy.rowReturnCheckPathAvailable,
+    status: BetaReleaseQaStatus.ready,
+  );
 
   static BetaReleaseQaRow _evidenceTimelineRow() => const BetaReleaseQaRow(
-        id: BetaReleaseQaRowId.evidenceTimelineAvailable,
-        label: BetaReleaseQaCopy.rowEvidenceTimelineAvailable,
-        status: BetaReleaseQaStatus.ready,
-      );
+    id: BetaReleaseQaRowId.evidenceTimelineAvailable,
+    label: BetaReleaseQaCopy.rowEvidenceTimelineAvailable,
+    status: BetaReleaseQaStatus.ready,
+  );
 
   static BetaReleaseQaRow _privateReportPreviewRow() => const BetaReleaseQaRow(
-        id: BetaReleaseQaRowId.privateReportPreviewAvailable,
-        label: BetaReleaseQaCopy.rowPrivateReportPreviewAvailable,
-        status: BetaReleaseQaStatus.ready,
-      );
+    id: BetaReleaseQaRowId.privateReportPreviewAvailable,
+    label: BetaReleaseQaCopy.rowPrivateReportPreviewAvailable,
+    status: BetaReleaseQaStatus.ready,
+  );
 
   static BetaReleaseQaRow _proBridgeRouteRow() {
-    final available = proBridgeRouteAvailableOverride ??
+    final available =
+        proBridgeRouteAvailableOverride ??
         BetaReleaseQaCopy.proBridgeRoute.isNotEmpty;
     return BetaReleaseQaRow(
       id: BetaReleaseQaRowId.proBridgeRouteAvailable,
       label: BetaReleaseQaCopy.rowProBridgeRouteAvailable,
-      status:
-          available ? BetaReleaseQaStatus.ready : BetaReleaseQaStatus.missing,
+      status: available
+          ? BetaReleaseQaStatus.ready
+          : BetaReleaseQaStatus.missing,
     );
   }
 
@@ -163,8 +174,8 @@ abstract final class BetaReleaseQaEngine {
     );
     final status = review.rows.isNotEmpty
         ? (ArchiveBetaDebugGate.showLoopDebugControls
-            ? BetaReleaseQaStatus.ready
-            : BetaReleaseQaStatus.checkManually)
+              ? BetaReleaseQaStatus.ready
+              : BetaReleaseQaStatus.checkManually)
         : BetaReleaseQaStatus.missing;
     return BetaReleaseQaRow(
       id: BetaReleaseQaRowId.activationDropoffReviewAvailable,

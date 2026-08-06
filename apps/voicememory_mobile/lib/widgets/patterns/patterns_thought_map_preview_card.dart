@@ -95,7 +95,7 @@ class _PatternsThoughtMapPreviewCardState
   }
 
   void _saveRename() {
-    final normalized = ArchiveBeliefCorrectionStore.normalizeRenamedTitle(
+    final normalized = ArchiveBeliefCorrectionStore.sanitizeRenamedTitle(
       _renameController.text,
     );
     if (normalized == null) return;

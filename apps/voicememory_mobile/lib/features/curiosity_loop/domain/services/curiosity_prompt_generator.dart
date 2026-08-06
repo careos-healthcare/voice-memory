@@ -97,10 +97,7 @@ class DefaultCuriosityPromptGenerator implements CuriosityPromptGenerator {
     };
   }
 
-  String _topicLabel({
-    required CuriosityHook hook,
-    JournalEntry? sourceEntry,
-  }) {
+  String _topicLabel({required CuriosityHook hook, JournalEntry? sourceEntry}) {
     final anchor = hook.primaryAnchor.trim();
     if (anchor.isNotEmpty) return anchor;
 

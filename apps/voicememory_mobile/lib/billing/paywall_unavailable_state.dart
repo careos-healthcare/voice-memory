@@ -9,8 +9,7 @@ abstract final class PaywallUnavailableState {
   static bool purchasesUnavailable({
     required bool billingReady,
     required bool hasPackages,
-  }) =>
-      !billingReady || !hasPackages;
+  }) => !billingReady || !hasPackages;
 
   static String primaryDismissLabel({required bool hideBenefits}) =>
       hideBenefits ? continueWithoutProLabel : doneLabel;

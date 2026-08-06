@@ -3,14 +3,11 @@ import '../archive_timeline_spine/archive_timeline_spine_engine.dart';
 import '../archive_timeline_spine/archive_timeline_spine_model.dart';
 import '../correction_memory/correction_memory_engine.dart';
 import '../evidence_anchors/evidence_anchor_model.dart';
-import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../evidence_anchors/evidence_anchor_copy.dart';
 import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
-import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
-import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
@@ -79,11 +76,13 @@ abstract final class TimelineProofMomentEngine {
       if (spine.hasConfirmedRepeat)
         TimelineProofMomentRow(
           label: TimelineProofMomentCopy.returnedRow,
-          detail: anchorByType[EvidenceAnchorType.repeat]?.safeSummary ??
+          detail:
+              anchorByType[EvidenceAnchorType.repeat]?.safeSummary ??
               (spine.evidenceAnchors.isNotEmpty
                   ? spine.evidenceAnchors.first
                   : null),
-          anchorType: anchorByType[EvidenceAnchorType.repeat]?.type ??
+          anchorType:
+              anchorByType[EvidenceAnchorType.repeat]?.type ??
               EvidenceAnchorType.repeat,
         ),
       if (spine.hasCorrection && correction != null)
@@ -94,7 +93,8 @@ abstract final class TimelineProofMomentEngine {
               returnedAfterFaded: correction.returnedAfterFaded,
             ),
           ),
-          detail: anchorByType[EvidenceAnchorType.corrected]?.safeSummary ??
+          detail:
+              anchorByType[EvidenceAnchorType.corrected]?.safeSummary ??
               anchorByType[EvidenceAnchorType.freshReturn]?.safeSummary,
           anchorType: correction.returnedAfterFaded
               ? EvidenceAnchorType.freshReturn
@@ -102,9 +102,11 @@ abstract final class TimelineProofMomentEngine {
         ),
       TimelineProofMomentRow(
         label: TimelineProofMomentCopy.currentWeightRow,
-        detail: anchorByType[EvidenceAnchorType.current]?.safeSummary ??
+        detail:
+            anchorByType[EvidenceAnchorType.current]?.safeSummary ??
             anchorByType[EvidenceAnchorType.fading]?.safeSummary,
-        anchorType: anchorByType[EvidenceAnchorType.current]?.type ??
+        anchorType:
+            anchorByType[EvidenceAnchorType.current]?.type ??
             anchorByType[EvidenceAnchorType.fading]?.type,
       ),
     ];
@@ -115,10 +117,9 @@ abstract final class TimelineProofMomentEngine {
       beliefSurfaceVisible: spine.hasConfirmedRepeat || spine.hasCorrection,
       now: now,
     );
-    final calibrationFeedback =
-        BetaProofFeedbackStore.recordFor(
-          BetaProofFeedbackSurface.timelineProofMoment,
-        ).feedbackType;
+    final calibrationFeedback = BetaProofFeedbackStore.recordFor(
+      BetaProofFeedbackSurface.timelineProofMoment,
+    ).feedbackType;
     final proofConfidenceCalibration = ProofConfidenceCalibrationEngine.build(
       entries: entries,
       beliefSurfaceVisible: spine.hasConfirmedRepeat || spine.hasCorrection,
@@ -136,10 +137,11 @@ abstract final class TimelineProofMomentEngine {
       level: proofConfidenceCalibration.level,
     );
 
-    final shouldShow = ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
-      calibration: proofConfidenceCalibration,
-      hasSafeAnchor: anchorExtraction.hasSafeAnchor,
-    );
+    final shouldShow =
+        ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
+          calibration: proofConfidenceCalibration,
+          hasSafeAnchor: anchorExtraction.hasSafeAnchor,
+        );
 
     return TimelineProofMomentResult(
       shouldShow: shouldShow,
@@ -149,12 +151,14 @@ abstract final class TimelineProofMomentEngine {
       hasCorrection: spine.hasCorrection,
       currentWeight: spine.currentWeight,
       rowCount: rows.length,
-      title: sharpenedPayoff?.title ??
+      title:
+          sharpenedPayoff?.title ??
           _titleFor(proofConfidenceCalibration, compact: compact),
       body: sharpenedPayoff?.body ?? proofConfidenceCalibration.displayCopy,
       rows: rows,
-      currentWeightLine:
-          TimelineProofMomentCopy.currentWeightLineFor(spine.currentWeight),
+      currentWeightLine: TimelineProofMomentCopy.currentWeightLineFor(
+        spine.currentWeight,
+      ),
       footer: TimelineProofMomentCopy.footer,
       differentiationLine: TimelineProofMomentCopy.differentiationLine,
       proLine: TimelineProofMomentCopy.proLine,
@@ -175,8 +179,7 @@ abstract final class TimelineProofMomentEngine {
     return switch (calibration.level) {
       ProofConfidenceLevel.strong ||
       ProofConfidenceLevel.useful ||
-      ProofConfidenceLevel.freshReturn =>
-        TimelineProofMomentCopy.title,
+      ProofConfidenceLevel.freshReturn => TimelineProofMomentCopy.title,
       _ => TimelineProofMomentCopy.compactTitle,
     };
   }
@@ -260,9 +263,8 @@ abstract final class TimelineProofMomentEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ArchiveTimelineSpineEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ArchiveTimelineSpineEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

@@ -18,7 +18,7 @@ import 'package:voicememory_mobile/widgets/pro/pro_visibility_lift_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/pro_visibility_lift/unused.json'));
+    : super(file: File('test/tmp/pro_visibility_lift/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -31,24 +31,23 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-ProVisibilityLiftResult _allowedResult() =>
-    ProVisibilityLiftEngine.build(
-      surface: ProVisibilityLiftSurface.recordReady,
-      source: 'test',
-      entryCount: 4,
-      isPro: false,
-      hasUsefulProof: true,
-      confidenceLevel: ProofConfidenceLevel.useful,
-      feedbackState: ProofQualityFeedbackState.useful,
-      hasPaywallSeen: false,
-      hasFreshReturnAfterCorrection: false,
-      hasChangeAnchor: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      isPostSaveDegradedState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-    );
+ProVisibilityLiftResult _allowedResult() => ProVisibilityLiftEngine.build(
+  surface: ProVisibilityLiftSurface.recordReady,
+  source: 'test',
+  entryCount: 4,
+  isPro: false,
+  hasUsefulProof: true,
+  confidenceLevel: ProofConfidenceLevel.useful,
+  feedbackState: ProofQualityFeedbackState.useful,
+  hasPaywallSeen: false,
+  hasFreshReturnAfterCorrection: false,
+  hasChangeAnchor: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  isPostSaveDegradedState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+);
 
 void main() {
   setUp(() async {
@@ -155,7 +154,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('pro_visibility_lift_primary_cta')));
+      await tester.tap(
+        find.byKey(const Key('pro_visibility_lift_primary_cta')),
+      );
       await tester.pump();
       expect(tapped, isTrue);
     });
@@ -236,8 +237,9 @@ void main() {
     });
 
     test('patterns screen integrates pro visibility lift card', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('ProVisibilityLiftCard'));
       expect(source, contains('patterns_pro_visibility_lift'));
     });

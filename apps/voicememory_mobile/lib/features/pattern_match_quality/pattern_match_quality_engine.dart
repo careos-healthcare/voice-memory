@@ -50,9 +50,7 @@ abstract final class PatternMatchQualityEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final hasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
-    if (!hasConfirmedRepeat &&
-        !beliefSurfaceVisible &&
-        entries.length < 3) {
+    if (!hasConfirmedRepeat && !beliefSurfaceVisible && entries.length < 3) {
       return PatternMatchQualityResult.hidden(
         source: source,
         entryCount: entries.length,
@@ -60,14 +58,13 @@ abstract final class PatternMatchQualityEngine {
     }
 
     final weighting = evidenceWeighting;
-    final correctionSnapshot = correction ??
+    final correctionSnapshot =
+        correction ??
         (entries.length >= 3
-            ? CorrectionMemoryEngine.snapshotFor(
-                entries: entries,
-                now: clock,
-              )
+            ? CorrectionMemoryEngine.snapshotFor(entries: entries, now: clock)
             : null);
-    final anchorExtraction = evidenceWeighting == null &&
+    final anchorExtraction =
+        evidenceWeighting == null &&
             entries.length >= 3 &&
             _passesEvidenceQuality(entries)
         ? EvidenceAnchorEngine.build(
@@ -115,7 +112,8 @@ abstract final class PatternMatchQualityEngine {
       hasSafeAnchorInline: hasSafeAnchorInline,
     );
     final confidenceBand = _resolveBand(score);
-    final shouldShowAsProof = hasSafeAnchorInline &&
+    final shouldShowAsProof =
+        hasSafeAnchorInline &&
         !_onlyNonSpecificAnchors(anchorExtraction) &&
         (confidenceBand == PatternMatchConfidenceBand.solid ||
             confidenceBand == PatternMatchConfidenceBand.strong);
@@ -210,10 +208,10 @@ abstract final class PatternMatchQualityEngine {
     }
 
     if (_hasAvoidancePattern(
-          eligible: eligible,
-          beliefEvidencePhrases: beliefEvidencePhrases,
-          anchorExtraction: anchorExtraction,
-        )) {
+      eligible: eligible,
+      beliefEvidencePhrases: beliefEvidencePhrases,
+      anchorExtraction: anchorExtraction,
+    )) {
       add(PatternMatchDimension.sameAvoidancePattern);
     }
 
@@ -308,8 +306,10 @@ abstract final class PatternMatchQualityEngine {
         anchorExtraction?.hasChangeAnchor == true) {
       score += 8;
     }
-    if (anchorExtraction?.hasSafeAnchor == true) score += 6;
-    else if (hasSafeAnchorInline) score += 6;
+    if (anchorExtraction?.hasSafeAnchor == true) {
+      score += 6;
+    } else if (hasSafeAnchorInline)
+      score += 6;
     score -= weakReasons.length * 12;
     if (score < 0) return 0;
     if (score > 100) return 100;
@@ -360,8 +360,9 @@ abstract final class PatternMatchQualityEngine {
       if (phrase.toLowerCase().contains('avoided')) return true;
     }
     if (eligible.length < 3) return false;
-    final evidence =
-        ConfirmedRepeatEvidencePhraseEngine.extract(eligible.sublist(0, 3));
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(
+      eligible.sublist(0, 3),
+    );
     return evidence.phrases.any(
       (phrase) => phrase.toLowerCase().contains('avoided'),
     );
@@ -378,8 +379,9 @@ abstract final class PatternMatchQualityEngine {
     if (eligible.length < 3) {
       return beliefEvidencePhrases.every(_isGenericPhrase);
     }
-    final evidence =
-        ConfirmedRepeatEvidencePhraseEngine.extract(eligible.sublist(0, 3));
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(
+      eligible.sublist(0, 3),
+    );
     if (evidence.isStrong) return false;
     if (evidence.phrases.isEmpty) {
       return beliefEvidencePhrases.isEmpty ||
@@ -454,12 +456,14 @@ abstract final class PatternMatchQualityEngine {
     }
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 3) return false;
-    final evidence =
-        ConfirmedRepeatEvidencePhraseEngine.extract(eligible.sublist(0, 3));
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(
+      eligible.sublist(0, 3),
+    );
     if (!evidence.isStrong) return false;
     if (AnchorSpecificityGuard.behaviorSpecificPhraseFromEntries(
-      eligible.sublist(0, 3),
-    ) != null) {
+          eligible.sublist(0, 3),
+        ) !=
+        null) {
       return true;
     }
     return ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(

@@ -35,7 +35,9 @@ class PostSaveReturnHandoffCard extends StatelessWidget {
       key: Key('post_save_return_handoff_card_${handoff.stage.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -48,18 +50,17 @@ class PostSaveReturnHandoffCard extends StatelessWidget {
           Text(
             handoff.body,
             key: const Key('post_save_return_handoff_body'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             handoff.footer,
             key: const Key('post_save_return_handoff_footer'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
           ),
           if (BetaImprovementPackEngine.returnThreeDayPlan(
                 entryCount: entryCount,
@@ -72,10 +73,9 @@ class PostSaveReturnHandoffCard extends StatelessWidget {
               Text(
                 line,
                 key: Key('post_save_return_plan_${line.hashCode}'),
-                style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 13,
-                ),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                ).copyWith(color: AppColors.textSecondary, fontSize: 13),
               ),
           ],
         ],

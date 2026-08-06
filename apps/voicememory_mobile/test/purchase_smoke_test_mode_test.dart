@@ -6,7 +6,7 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/purchase_smoke_test/purchase_smoke_test_copy.dart';
 import 'package:voicememory_mobile/features/purchase_smoke_test/purchase_smoke_test_engine.dart';
 import 'package:voicememory_mobile/features/purchase_smoke_test/purchase_smoke_test_model.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/purchase_smoke_test_card.dart';
@@ -17,8 +17,7 @@ PurchaseSmokeTestSnapshot _snapshotFrom(PurchaseSmokeTestInput input) =>
 PurchaseSmokeTestCheck _check(
   PurchaseSmokeTestSnapshot snapshot,
   PurchaseSmokeTestCheckId id,
-) =>
-    snapshot.checks.firstWhere((check) => check.id == id);
+) => snapshot.checks.firstWhere((check) => check.id == id);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -114,26 +113,29 @@ void main() {
       );
     });
 
-    test('missing monthly package shows warning or blocked on purchase CTA', () {
-      final snapshot = _snapshotFrom(
-        const PurchaseSmokeTestInput(
-          billingConfigured: true,
-          revenueCatInitialized: true,
-          offeringsLoaded: true,
-          currentOfferingExists: true,
-          hasMonthlyPackage: false,
-        ),
-      );
+    test(
+      'missing monthly package shows warning or blocked on purchase CTA',
+      () {
+        final snapshot = _snapshotFrom(
+          const PurchaseSmokeTestInput(
+            billingConfigured: true,
+            revenueCatInitialized: true,
+            offeringsLoaded: true,
+            currentOfferingExists: true,
+            hasMonthlyPackage: false,
+          ),
+        );
 
-      expect(
-        _check(snapshot, PurchaseSmokeTestCheckId.monthlyPackageFound).status,
-        PurchaseSmokeTestStatus.blocked,
-      );
-      expect(
-        _check(snapshot, PurchaseSmokeTestCheckId.purchaseCtaVisible).status,
-        PurchaseSmokeTestStatus.warning,
-      );
-    });
+        expect(
+          _check(snapshot, PurchaseSmokeTestCheckId.monthlyPackageFound).status,
+          PurchaseSmokeTestStatus.blocked,
+        );
+        expect(
+          _check(snapshot, PurchaseSmokeTestCheckId.purchaseCtaVisible).status,
+          PurchaseSmokeTestStatus.warning,
+        );
+      },
+    );
 
     test('restore visible check exists', () {
       final snapshot = _snapshotFrom(
@@ -143,8 +145,10 @@ void main() {
         ),
       );
 
-      final restoreCheck =
-          _check(snapshot, PurchaseSmokeTestCheckId.restoreVisible);
+      final restoreCheck = _check(
+        snapshot,
+        PurchaseSmokeTestCheckId.restoreVisible,
+      );
       expect(restoreCheck.label, PurchaseSmokeTestCopy.checkRestoreVisible);
       expect(restoreCheck.status, PurchaseSmokeTestStatus.ready);
     });
@@ -178,10 +182,16 @@ void main() {
       );
 
       expect(
-        _check(snapshot, PurchaseSmokeTestCheckId.proUnlockReadable).detailLabel,
+        _check(
+          snapshot,
+          PurchaseSmokeTestCheckId.proUnlockReadable,
+        ).detailLabel,
         PurchaseSmokeTestCopy.entitlementFree,
       );
-      expect(snapshot.allDisplayedText.join(' '), isNot(contains('Purchase complete')));
+      expect(
+        snapshot.allDisplayedText.join(' '),
+        isNot(contains('Purchase complete')),
+      );
     });
 
     test('entitlement IDs unchanged', () {
@@ -199,15 +209,12 @@ void main() {
 
       final event = analyticsEvents.single;
       expect(event.event, PurchaseSmokeTestAnalytics.openedEvent);
-      expect(
-        event.props.keys.toSet(),
-        {
-          'source',
-          'billing_configured',
-          'offerings_loaded',
-          'entitlement_known',
-        },
-      );
+      expect(event.props.keys.toSet(), {
+        'source',
+        'billing_configured',
+        'offerings_loaded',
+        'entitlement_known',
+      });
       expect(event.props['source'], 'test');
     });
   });
@@ -236,13 +243,16 @@ void main() {
         120,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.byKey(const Key('purchase_smoke_test_open_paywall')));
+      await tester.tap(
+        find.byKey(const Key('purchase_smoke_test_open_paywall')),
+      );
       await tester.pump();
 
       expect(opened, isTrue);
       expect(
         analyticsEvents.any(
-          (event) => event.event == PurchaseSmokeTestAnalytics.paywallOpenedEvent,
+          (event) =>
+              event.event == PurchaseSmokeTestAnalytics.paywallOpenedEvent,
         ),
         isTrue,
       );
@@ -259,7 +269,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('purchase_smoke_test_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('purchase_smoke_test_hidden')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('purchase_smoke_test_card')), findsNothing);
     });
   });

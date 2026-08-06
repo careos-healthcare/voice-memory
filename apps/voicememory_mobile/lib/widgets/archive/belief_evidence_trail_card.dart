@@ -24,18 +24,15 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     if (!trail.hasEnoughEvidence) {
       return Container(
@@ -51,7 +48,8 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
             Text(trail.title, style: titleStyle),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              trail.insufficientBody ?? BeliefEvidenceTrailCopy.insufficientBody,
+              trail.insufficientBody ??
+                  BeliefEvidenceTrailCopy.insufficientBody,
               key: const Key('belief_evidence_trail_insufficient_body'),
               style: bodyStyle,
             ),
@@ -77,131 +75,131 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
               );
 
         return Container(
-      key: const Key('belief_evidence_trail_card'),
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.backgroundSecondary,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (trail.notConclusionLine case final notConclusion?) ...[
-            Text(
-              notConclusion,
-              key: const Key('belief_evidence_trail_not_conclusion'),
-              style: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-          ],
-          if (trail.sourceLine case final source?) ...[
-            Text(
-              source,
-              key: const Key('belief_evidence_trail_source_line'),
-              style: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-          if (trail.stageLabel case final stage?) ...[
-            Text(
-              stage,
-              key: const Key('belief_evidence_trail_stage_label'),
-              style: labelStyle,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-          Text(
-            BeliefEvidenceTrailCopy.currentBeliefLabel,
-            key: const Key('belief_evidence_trail_belief_label'),
-            style: labelStyle,
+          key: const Key('belief_evidence_trail_card'),
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: VoiceMemoryCards.standard(
+            background: AppColors.backgroundSecondary,
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            trail.currentBelief ?? '',
-            key: const Key('belief_evidence_trail_current_belief'),
-            style: bodyStyle,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            BeliefEvidenceTrailCopy.whatChangedLabel,
-            key: const Key('belief_evidence_trail_change_label'),
-            style: labelStyle,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            adaptedChangeLine ?? '',
-            key: const Key('belief_evidence_trail_change_line'),
-            style: bodyStyle,
-          ),
-          if (trail.evidenceRows.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              BeliefEvidenceTrailCopy.evidenceLabel,
-              key: const Key('belief_evidence_trail_evidence_label'),
-              style: labelStyle,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            for (var i = 0; i < trail.evidenceRows.length; i++) ...[
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (trail.notConclusionLine case final notConclusion?) ...[
+                Text(
+                  notConclusion,
+                  key: const Key('belief_evidence_trail_not_conclusion'),
+                  style: bodyStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+              ],
+              if (trail.sourceLine case final source?) ...[
+                Text(
+                  source,
+                  key: const Key('belief_evidence_trail_source_line'),
+                  style: bodyStyle,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
+              if (trail.stageLabel case final stage?) ...[
+                Text(
+                  stage,
+                  key: const Key('belief_evidence_trail_stage_label'),
+                  style: labelStyle,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
               Text(
-                trail.evidenceRows[i],
-                key: Key('belief_evidence_trail_evidence_$i'),
+                BeliefEvidenceTrailCopy.currentBeliefLabel,
+                key: const Key('belief_evidence_trail_belief_label'),
+                style: labelStyle,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                trail.currentBelief ?? '',
+                key: const Key('belief_evidence_trail_current_belief'),
                 style: bodyStyle,
               ),
-              if (i < trail.evidenceRows.length - 1)
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                BeliefEvidenceTrailCopy.whatChangedLabel,
+                key: const Key('belief_evidence_trail_change_label'),
+                style: labelStyle,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                adaptedChangeLine ?? '',
+                key: const Key('belief_evidence_trail_change_line'),
+                style: bodyStyle,
+              ),
+              if (trail.evidenceRows.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  BeliefEvidenceTrailCopy.evidenceLabel,
+                  key: const Key('belief_evidence_trail_evidence_label'),
+                  style: labelStyle,
+                ),
                 const SizedBox(height: AppSpacing.xs),
+                for (var i = 0; i < trail.evidenceRows.length; i++) ...[
+                  Text(
+                    trail.evidenceRows[i],
+                    key: Key('belief_evidence_trail_evidence_$i'),
+                    style: bodyStyle,
+                  ),
+                  if (i < trail.evidenceRows.length - 1)
+                    const SizedBox(height: AppSpacing.xs),
+                ],
+              ],
+              if (trail.uncertaintyLine case final uncertainty?) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  BeliefEvidenceTrailCopy.stillUncertainLabel,
+                  key: const Key('belief_evidence_trail_uncertain_label'),
+                  style: labelStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  uncertainty,
+                  key: const Key('belief_evidence_trail_uncertainty_line'),
+                  style: bodyStyle,
+                ),
+              ],
+              if (trail.nextActionLine case final nextAction?) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  BeliefEvidenceTrailCopy.addNextLabel,
+                  key: const Key('belief_evidence_trail_add_next_label'),
+                  style: labelStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  nextAction,
+                  key: const Key('belief_evidence_trail_next_action'),
+                  style: bodyStyle,
+                ),
+              ],
+              if (trail.footnoteLine case final footnote?) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  footnote,
+                  key: const Key('belief_evidence_trail_footnote'),
+                  style: footnoteStyle,
+                ),
+              ],
+              if (onAddAnother != null && trail.primaryCta != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                FilledButton(
+                  key: const Key('belief_evidence_trail_add_cta'),
+                  onPressed: onAddAnother,
+                  child: Text(trail.primaryCta!),
+                ),
+              ],
+              if (trail.historyTimeline case final history?) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _BeliefHistorySection(timeline: history),
+              ],
             ],
-          ],
-          if (trail.uncertaintyLine case final uncertainty?) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              BeliefEvidenceTrailCopy.stillUncertainLabel,
-              key: const Key('belief_evidence_trail_uncertain_label'),
-              style: labelStyle,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              uncertainty,
-              key: const Key('belief_evidence_trail_uncertainty_line'),
-              style: bodyStyle,
-            ),
-          ],
-          if (trail.nextActionLine case final nextAction?) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              BeliefEvidenceTrailCopy.addNextLabel,
-              key: const Key('belief_evidence_trail_add_next_label'),
-              style: labelStyle,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              nextAction,
-              key: const Key('belief_evidence_trail_next_action'),
-              style: bodyStyle,
-            ),
-          ],
-          if (trail.footnoteLine case final footnote?) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              footnote,
-              key: const Key('belief_evidence_trail_footnote'),
-              style: footnoteStyle,
-            ),
-          ],
-          if (onAddAnother != null && trail.primaryCta != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(
-              key: const Key('belief_evidence_trail_add_cta'),
-              onPressed: onAddAnother,
-              child: Text(trail.primaryCta!),
-            ),
-          ],
-          if (trail.historyTimeline case final history?) ...[
-            const SizedBox(height: AppSpacing.lg),
-            _BeliefHistorySection(timeline: history),
-          ],
-        ],
-      ),
-    );
+          ),
+        );
       },
     );
   }
@@ -214,14 +212,12 @@ class _BeliefHistorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -250,10 +246,7 @@ class _BeliefHistorySection extends StatelessWidget {
           style: bodyStyle,
         ),
         const SizedBox(height: AppSpacing.sm),
-        Text(
-          BeliefHistoryTimelineCopy.currentBeliefLabel,
-          style: labelStyle,
-        ),
+        Text(BeliefHistoryTimelineCopy.currentBeliefLabel, style: labelStyle),
         const SizedBox(height: AppSpacing.xs),
         Text(
           timeline.currentBelief,

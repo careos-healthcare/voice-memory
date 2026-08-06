@@ -11,24 +11,23 @@ abstract final class FirstSessionLiftEngine {
   static FirstSessionLiftResult build({
     required int entryCount,
     required String source,
-  }) =>
-      FirstSessionLiftResult(
-        shouldShow: entryCount == 0,
-        title: FirstSessionLiftCopy.title,
-        body: FirstSessionLiftCopy.body,
-        primaryCta: FirstSessionLiftCopy.primaryCta,
-        secondaryCta: FirstSessionLiftCopy.secondaryCta,
-        microcopy: FirstSessionLiftCopy.microcopy,
-        chips: [
-          for (final id in FirstSessionLiftCopy.exampleOrder)
-            FirstSessionLiftChip(
-              id: id,
-              text: FirstSessionLiftCopy.exampleTextFor(id),
-            ),
-        ],
-        entryCount: entryCount,
-        source: source,
-      );
+  }) => FirstSessionLiftResult(
+    shouldShow: entryCount == 0,
+    title: FirstSessionLiftCopy.title,
+    body: FirstSessionLiftCopy.body,
+    primaryCta: FirstSessionLiftCopy.primaryCta,
+    secondaryCta: FirstSessionLiftCopy.secondaryCta,
+    microcopy: FirstSessionLiftCopy.microcopy,
+    chips: [
+      for (final id in FirstSessionLiftCopy.exampleOrder)
+        FirstSessionLiftChip(
+          id: id,
+          text: FirstSessionLiftCopy.exampleTextFor(id),
+        ),
+    ],
+    entryCount: entryCount,
+    source: source,
+  );
 
   static bool shouldShow({
     required FirstSessionLiftResult? result,

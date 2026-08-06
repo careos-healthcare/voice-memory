@@ -12,22 +12,17 @@ const _docsPath = 'docs/LOOP_PACKS_FUTURE.md';
 LoopPacksFutureGateInput _input({
   bool? testFlightUploaded = true,
   bool? paidIntentBetaComplete = true,
-}) =>
-    LoopPacksFutureGateInput(
-      testFlightUploaded: testFlightUploaded,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-    );
+}) => LoopPacksFutureGateInput(
+  testFlightUploaded: testFlightUploaded,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+);
 
 LoopPackFuturePrereq _prereq(
   LoopPacksFutureGateResult result,
   LoopPackFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
-LoopPackFuture _pack(
-  LoopPacksFutureGateResult result,
-  LoopPackFutureId id,
-) =>
+LoopPackFuture _pack(LoopPacksFutureGateResult result, LoopPackFutureId id) =>
     result.packs.firstWhere((pack) => pack.id == id);
 
 void main() {
@@ -94,8 +89,10 @@ void main() {
         'proveEnough',
       );
       expect(
-        _pack(result, LoopPackFutureId.feelingBehindWhenStopping)
-            .audienceWedgeId,
+        _pack(
+          result,
+          LoopPackFutureId.feelingBehindWhenStopping,
+        ).audienceWedgeId,
         'feelingBehindWhenStop',
       );
     });
@@ -209,12 +206,20 @@ void main() {
     test('pack positioning avoids therapy and diagnosis language', () {
       const forbidden = ['therapy', 'diagnosis', 'diagnose', 'disorder'];
       for (final id in LoopPackFutureId.values) {
-        final positioning = LoopPacksFutureCopy.positioningFor(id).toLowerCase();
+        final positioning = LoopPacksFutureCopy.positioningFor(
+          id,
+        ).toLowerCase();
         for (final word in forbidden) {
-          expect(positioning.contains(word), isFalse, reason: '$id: $positioning');
+          expect(
+            positioning.contains(word),
+            isFalse,
+            reason: '$id: $positioning',
+          );
         }
         expect(
-          ProofSurfaceAdviceGuard.passes(LoopPacksFutureCopy.positioningFor(id)),
+          ProofSurfaceAdviceGuard.passes(
+            LoopPacksFutureCopy.positioningFor(id),
+          ),
           isTrue,
           reason: LoopPacksFutureCopy.positioningFor(id),
         );
@@ -247,10 +252,7 @@ void main() {
       final guardSource = File(
         'lib/features/archive_proof/proof_surface_advice_guard.dart',
       ).readAsStringSync();
-      expect(
-        guardSource,
-        contains('LoopPacksFutureCopy.allVisibleStrings()'),
-      );
+      expect(guardSource, contains('LoopPacksFutureCopy.allVisibleStrings()'));
     });
   });
 }

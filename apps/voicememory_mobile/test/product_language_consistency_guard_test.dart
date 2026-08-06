@@ -17,17 +17,21 @@ import 'package:voicememory_mobile/features/surface_priority/surface_priority_mo
 void main() {
   group('ProductLanguageConsistencyGuard.evaluate', () {
     test('proof trail language preferred', () {
-      const copy = 'Save one repeat. One sentence is enough. ArchiveMe compares later.';
+      const copy =
+          'Save one repeat. One sentence is enough. ArchiveMe compares later.';
       final result = ProductLanguageConsistencyGuard.evaluate(copy);
       expect(result.action, ProductLanguageConsistencyAction.preferredAligned);
       expect(
-        ProductLanguageConsistencyGuard.containsPreferredProofTrailLanguage(copy),
+        ProductLanguageConsistencyGuard.containsPreferredProofTrailLanguage(
+          copy,
+        ),
         isTrue,
       );
     });
 
     test('longer proof trail language preferred', () {
-      const copy = 'Pro keeps the longer proof trail as repeats return, change, or fade.';
+      const copy =
+          'Pro keeps the longer proof trail as repeats return, change, or fade.';
       final result = ProductLanguageConsistencyGuard.evaluate(copy);
       expect(result.action, ProductLanguageConsistencyAction.preferredAligned);
     });
@@ -37,7 +41,10 @@ void main() {
         'Pro keeps the full timeline as it grows.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
-      expect(result.reason, ProductLanguageConsistencyReason.blockedFullTimeline);
+      expect(
+        result.reason,
+        ProductLanguageConsistencyReason.blockedFullTimeline,
+      );
     });
 
     test('longer story blocked', () {
@@ -45,7 +52,10 @@ void main() {
         'ArchiveMe tells your longer story over time.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
-      expect(result.reason, ProductLanguageConsistencyReason.blockedLongerStory);
+      expect(
+        result.reason,
+        ProductLanguageConsistencyReason.blockedLongerStory,
+      );
     });
 
     test('dashboard positioning blocked', () {
@@ -61,7 +71,10 @@ void main() {
         'Build your second brain inside ArchiveMe.',
       );
       expect(result.action, ProductLanguageConsistencyAction.highRiskBlocked);
-      expect(result.reason, ProductLanguageConsistencyReason.blockedSecondBrain);
+      expect(
+        result.reason,
+        ProductLanguageConsistencyReason.blockedSecondBrain,
+      );
     });
 
     test('storage promise blocked', () {
@@ -77,17 +90,17 @@ void main() {
         'Unlock the full pattern timeline with Pro.',
       );
       expect(result.action, ProductLanguageConsistencyAction.riskyLanguageWarn);
-      expect(result.reason, ProductLanguageConsistencyReason.warnedFullTimeline);
+      expect(
+        result.reason,
+        ProductLanguageConsistencyReason.warnedFullTimeline,
+      );
     });
 
     test('monthly private report warns', () {
       final result = ProductLanguageConsistencyGuard.evaluate(
         'Pro includes a monthly private report.',
       );
-      expect(
-        result.action,
-        ProductLanguageConsistencyAction.riskyLanguageWarn,
-      );
+      expect(result.action, ProductLanguageConsistencyAction.riskyLanguageWarn);
       expect(
         result.reason,
         ProductLanguageConsistencyReason.warnedReportPrimaryValue,
@@ -113,7 +126,8 @@ void main() {
   group('High-risk surface scans', () {
     test('first journey copy passes guard', () {
       final offenders = <String>[];
-      for (final text in ProductLanguageConsistencyGuard.firstJourneyCopyBlocks()) {
+      for (final text
+          in ProductLanguageConsistencyGuard.firstJourneyCopyBlocks()) {
         if (!ProductLanguageConsistencyGuard.passesFirstJourney(text)) {
           offenders.add(text);
         }
@@ -123,7 +137,8 @@ void main() {
 
     test('pro promise copy passes guard', () {
       final offenders = <String>[];
-      for (final text in ProductLanguageConsistencyGuard.proPromiseCopyBlocks()) {
+      for (final text
+          in ProductLanguageConsistencyGuard.proPromiseCopyBlocks()) {
         if (!ProductLanguageConsistencyGuard.passesProPromise(text)) {
           offenders.add(text);
         }
@@ -144,8 +159,8 @@ void main() {
 
   group('ProductLanguageConsistencyGuardCopy', () {
     test('preferredLanguageLine includes proof trail phrases', () {
-      final line =
-          ProductLanguageConsistencyGuardCopy.preferredLanguageLine.toLowerCase();
+      final line = ProductLanguageConsistencyGuardCopy.preferredLanguageLine
+          .toLowerCase();
       expect(line, contains('repeat'));
       expect(line, contains('proof trail'));
       expect(line, contains('longer proof trail'));
@@ -154,8 +169,8 @@ void main() {
     });
 
     test('riskyLanguageLine lists dashboard story storage language', () {
-      final line =
-          ProductLanguageConsistencyGuardCopy.riskyLanguageLine.toLowerCase();
+      final line = ProductLanguageConsistencyGuardCopy.riskyLanguageLine
+          .toLowerCase();
       expect(line, contains('full timeline'));
       expect(line, contains('longer story'));
       expect(line, contains('dashboard'));
@@ -195,21 +210,30 @@ void main() {
       }
     });
 
-    test('proof_surface_advice_guard registers product language consistency copy', () {
-      final source =
-          File('lib/features/archive_proof/proof_surface_advice_guard.dart')
-              .readAsStringSync();
-      expect(source, contains('product_language_consistency_guard_copy.dart'));
-      expect(
-        source,
-        contains('ProductLanguageConsistencyGuardCopy.allVisibleStrings()'),
-      );
-    });
+    test(
+      'proof_surface_advice_guard registers product language consistency copy',
+      () {
+        final source = File(
+          'lib/features/archive_proof/proof_surface_advice_guard.dart',
+        ).readAsStringSync();
+        expect(
+          source,
+          contains('product_language_consistency_guard_copy.dart'),
+        );
+        expect(
+          source,
+          contains('ProductLanguageConsistencyGuardCopy.allVisibleStrings()'),
+        );
+      },
+    );
 
-    test('validate_core.sh includes product language consistency guard bundle', () {
-      final source = File('tool/validate_core.sh').readAsStringSync();
-      expect(source, contains('run_product_language_consistency_guard.sh'));
-    });
+    test(
+      'validate_core.sh includes product language consistency guard bundle',
+      () {
+        final source = File('tool/validate_core.sh').readAsStringSync();
+        expect(source, contains('run_product_language_consistency_guard.sh'));
+      },
+    );
 
     test('action items secondary gate regressions unchanged', () {
       expect(
@@ -253,38 +277,41 @@ void main() {
       expect(ProofSelectionPrinciple.allowsRankingUi(), isFalse);
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

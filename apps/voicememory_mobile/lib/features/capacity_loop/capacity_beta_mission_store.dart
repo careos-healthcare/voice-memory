@@ -41,10 +41,7 @@ class CapacityBetaMissionStore {
     if (_cached.completedAt != null) return;
     final now = DateTime.now().toUtc();
     await _persist(
-      _cached.copyWith(
-        startedAt: _cached.startedAt ?? now,
-        completedAt: now,
-      ),
+      _cached.copyWith(startedAt: _cached.startedAt ?? now, completedAt: now),
     );
   }
 

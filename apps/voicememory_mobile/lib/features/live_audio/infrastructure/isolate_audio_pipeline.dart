@@ -20,8 +20,7 @@ class PipelineConfig {
   final int frameDurationMs;
   final int maxRingBufferSize;
 
-  int get targetSamplesPerFrame =>
-      (targetSampleRate * frameDurationMs) ~/ 1000;
+  int get targetSamplesPerFrame => (targetSampleRate * frameDurationMs) ~/ 1000;
 }
 
 /// Commands sent from the main thread to the background isolate.
@@ -69,9 +68,7 @@ class AudioPipelineProcessor {
     var droppedOldestFrame = false;
 
     while (_sampleAccumulator.length >= sizeTarget) {
-      frames.add(
-        Int16List.fromList(_sampleAccumulator.sublist(0, sizeTarget)),
-      );
+      frames.add(Int16List.fromList(_sampleAccumulator.sublist(0, sizeTarget)));
       _sampleAccumulator = _sampleAccumulator.sublist(sizeTarget);
 
       if (frames.length > config.maxRingBufferSize) {
@@ -104,9 +101,8 @@ Int16List resampleLinearInt16(Int16List input, int fromRate, int toRate) {
     final fraction = srcIndex - index;
 
     if (index + 1 < input.length) {
-      output[i] =
-          ((1 - fraction) * input[index] + fraction * input[index + 1])
-              .round();
+      output[i] = ((1 - fraction) * input[index] + fraction * input[index + 1])
+          .round();
     } else {
       output[i] = input[index];
     }
@@ -115,17 +111,16 @@ Int16List resampleLinearInt16(Int16List input, int fromRate, int toRate) {
   return output;
 }
 
-typedef IsolateSpawnFn = Future<Isolate?> Function(
-  void Function(SendPort) entryPoint,
-  SendPort message,
-);
+typedef IsolateSpawnFn =
+    Future<Isolate?> Function(
+      void Function(SendPort) entryPoint,
+      SendPort message,
+    );
 
 /// Off-main-thread resampling and fixed-duration PCM framing for live capture.
 class IsolateAudioPipeline {
-  IsolateAudioPipeline(
-    this.config, {
-    IsolateSpawnFn? spawnIsolate,
-  }) : _spawnIsolate = spawnIsolate ?? _defaultSpawnIsolate;
+  IsolateAudioPipeline(this.config, {IsolateSpawnFn? spawnIsolate})
+    : _spawnIsolate = spawnIsolate ?? _defaultSpawnIsolate;
 
   final PipelineConfig config;
   final IsolateSpawnFn _spawnIsolate;
@@ -168,10 +163,7 @@ class IsolateAudioPipeline {
     if (message is SendPort) {
       _toIsolatePort = message;
       _toIsolatePort!.send(
-        IsolatePipelineMessage(
-          command: PipelineCommand.init,
-          config: config,
-        ),
+        IsolatePipelineMessage(command: PipelineCommand.init, config: config),
       );
       final readyCompleter = _readyCompleter;
       if (readyCompleter != null && !readyCompleter.isCompleted) {

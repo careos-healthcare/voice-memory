@@ -19,10 +19,8 @@ export '../models/curiosity_hook_presentation.dart';
 /// UI hook state consumed by [CuriosityHookCard].
 typedef CuriosityHook = CuriosityHookPresentation;
 
-typedef CuriosityHookSubmit = FutureOr<void> Function(
-  String responseText, {
-  required bool wasGrounded,
-});
+typedef CuriosityHookSubmit =
+    FutureOr<void> Function(String responseText, {required bool wasGrounded});
 
 @Deprecated('Use CuriosityHookSubmit')
 typedef CuriosityHookResponseSubmitted = CuriosityHookSubmit;
@@ -48,12 +46,12 @@ class CuriosityHookCard extends StatefulWidget {
     this.onResponseSubmitted,
     this.groundingPacingDuration = const Duration(seconds: 4),
   }) : presentation = _hookFromDomain(
-          hook,
-          sourceEntry: sourceEntry,
-          currentMetrics: currentMetrics,
-          baselineMetrics: baselineMetrics,
-          anomalyDetector: anomalyDetector,
-        );
+         hook,
+         sourceEntry: sourceEntry,
+         currentMetrics: currentMetrics,
+         baselineMetrics: baselineMetrics,
+         anomalyDetector: anomalyDetector,
+       );
 
   final CuriosityHookPresentation presentation;
   final CuriosityHookSubmit? onSubmit;
@@ -71,8 +69,7 @@ class CuriosityHookCard extends StatefulWidget {
     CognitiveBiomarkers? baselineMetrics,
     CognitiveAnomalyDetector? anomalyDetector,
   }) {
-    final resolvedCurrentMetrics =
-        currentMetrics ?? sourceEntry?.biomarkers;
+    final resolvedCurrentMetrics = currentMetrics ?? sourceEntry?.biomarkers;
 
     return CuriosityHookPresentation.fromDomain(
       hook,
@@ -123,8 +120,9 @@ class _CuriosityHookCardState extends State<CuriosityHookCard> {
     final theme = Theme.of(context);
     final isOverloaded = widget.presentation.isLowCognitiveLoad;
 
-    final dynamicCardPadding =
-        isOverloaded ? const EdgeInsets.all(28.0) : const EdgeInsets.all(16.0);
+    final dynamicCardPadding = isOverloaded
+        ? const EdgeInsets.all(28.0)
+        : const EdgeInsets.all(16.0);
     final requiresPacingGate = isOverloaded && !_hasCompletedGrounding;
 
     return AnimatedContainer(
@@ -188,8 +186,9 @@ class _CuriosityHookCardState extends State<CuriosityHookCard> {
                               ? 'Write down simple words. No pressure.'
                               : 'Capture your conceptual flow details here...',
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(isOverloaded ? 16 : 8),
+                            borderRadius: BorderRadius.circular(
+                              isOverloaded ? 16 : 8,
+                            ),
                           ),
                         ),
                       ),
@@ -295,11 +294,14 @@ class _ConnectedCuriosityHookCardScope extends StatefulWidget {
 
 class _ConnectedCuriosityHookCardScopeState
     extends State<_ConnectedCuriosityHookCardScope> {
-  late Future<({
-    JournalEntry? sourceEntry,
-    CognitiveBiomarkers? currentMetrics,
-    CognitiveBaselineSnapshot? baselineSnapshot,
-  })> _contextFuture;
+  late Future<
+    ({
+      JournalEntry? sourceEntry,
+      CognitiveBiomarkers? currentMetrics,
+      CognitiveBaselineSnapshot? baselineSnapshot,
+    })
+  >
+  _contextFuture;
 
   @override
   void initState() {
@@ -326,16 +328,19 @@ class _ConnectedCuriosityHookCardScopeState
     return widget.hook.entryId;
   }
 
-  Future<({
-    JournalEntry? sourceEntry,
-    CognitiveBiomarkers? currentMetrics,
-    CognitiveBaselineSnapshot? baselineSnapshot,
-  })> _loadPresentationContext() async {
+  Future<
+    ({
+      JournalEntry? sourceEntry,
+      CognitiveBiomarkers? currentMetrics,
+      CognitiveBaselineSnapshot? baselineSnapshot,
+    })
+  >
+  _loadPresentationContext() async {
     final baselineSnapshot = widget.baselineStore != null
         ? await widget.baselineStore!.loadSnapshot()
         : AppServices.isInitialized
-            ? await AppServices.instance.getBaselineStore().loadSnapshot()
-            : null;
+        ? await AppServices.instance.getBaselineStore().loadSnapshot()
+        : null;
 
     JournalEntry? sourceEntry = widget.sourceEntry;
     final targetEntryId = _resolvedSourceEntryId();
@@ -343,11 +348,14 @@ class _ConnectedCuriosityHookCardScopeState
       if (widget.journalService != null) {
         sourceEntry = await widget.journalService!.getEntry(targetEntryId);
       } else if (AppServices.isInitialized) {
-        sourceEntry = await AppServices.instance.journal.getEntry(targetEntryId);
+        sourceEntry = await AppServices.instance.journal.getEntry(
+          targetEntryId,
+        );
       }
     }
 
-    final currentMetrics = sourceEntry?.biomarkers ??
+    final currentMetrics =
+        sourceEntry?.biomarkers ??
         (AppServices.isInitialized
             ? await AppServices.instance.getCurrentMetrics(widget.hook)
             : null);
@@ -379,11 +387,12 @@ class _ConnectedCuriosityHookCardScopeState
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<
-        ({
-          JournalEntry? sourceEntry,
-          CognitiveBiomarkers? currentMetrics,
-          CognitiveBaselineSnapshot? baselineSnapshot,
-        })>(
+      ({
+        JournalEntry? sourceEntry,
+        CognitiveBiomarkers? currentMetrics,
+        CognitiveBaselineSnapshot? baselineSnapshot,
+      })
+    >(
       future: _contextFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -402,7 +411,8 @@ class _ConnectedCuriosityHookCardScopeState
         return CuriosityHookCard(
           presentation: presentation,
           groundingPacingDuration: widget.groundingPacingDuration,
-          onSubmit: widget.onSubmit ??
+          onSubmit:
+              widget.onSubmit ??
               (_, {required wasGrounded}) =>
                   _commitTrajectoryRecord(wasGrounded: wasGrounded),
         );

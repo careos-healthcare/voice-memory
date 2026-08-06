@@ -42,8 +42,9 @@ class _BetaFixPlaybookCardState extends State<BetaFixPlaybookCard> {
   Future<void> _loadResult() async {
     final input = await RevenueReadinessDashboardV2Engine.loadInput();
     if (!mounted) return;
-    final validation =
-        BetaValidationDecisionMatrixEngine.fromRevenueInput(input);
+    final validation = BetaValidationDecisionMatrixEngine.fromRevenueInput(
+      input,
+    );
     setState(
       () => _result = BetaFixPlaybookEngine.fromValidationResult(validation),
     );
@@ -81,24 +82,24 @@ class _BetaFixPlaybookCardState extends State<BetaFixPlaybookCard> {
           Text(
             BetaFixPlaybookCopy.cardTitle,
             key: const Key('beta_fix_playbook_card_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
             result.title,
             key: const Key('beta_fix_playbook_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 10),
           Text(
             BetaFixPlaybookCopy.diagnosisTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -109,9 +110,9 @@ class _BetaFixPlaybookCardState extends State<BetaFixPlaybookCard> {
           const SizedBox(height: 10),
           Text(
             BetaFixPlaybookCopy.fixPlanTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           for (final step in result.fixPlan)
@@ -119,16 +120,18 @@ class _BetaFixPlaybookCardState extends State<BetaFixPlaybookCard> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
                 '• $step',
-                key: Key('beta_fix_playbook_fix_${result.fixPlan.indexOf(step)}'),
+                key: Key(
+                  'beta_fix_playbook_fix_${result.fixPlan.indexOf(step)}',
+                ),
                 style: const TextStyle(fontSize: 12, height: 1.35),
               ),
             ),
           const SizedBox(height: 8),
           Text(
             BetaFixPlaybookCopy.doNotDoTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           for (final step in result.doNotDo)
@@ -136,7 +139,9 @@ class _BetaFixPlaybookCardState extends State<BetaFixPlaybookCard> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
                 '• $step',
-                key: Key('beta_fix_playbook_dont_${result.doNotDo.indexOf(step)}'),
+                key: Key(
+                  'beta_fix_playbook_dont_${result.doNotDo.indexOf(step)}',
+                ),
                 style: const TextStyle(fontSize: 12, height: 1.35),
               ),
             ),

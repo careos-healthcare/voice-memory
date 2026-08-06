@@ -217,10 +217,11 @@ class ArchiveEvidenceIndex {
 
   Set<String> _terms(String transcript) {
     final counts = <String, int>{};
-    for (final word in transcript
-        .toLowerCase()
-        .replaceAll(RegExp(r"[^\p{L}\p{N}\s']", unicode: true), ' ')
-        .split(RegExp(r'\s+'))) {
+    for (final word
+        in transcript
+            .toLowerCase()
+            .replaceAll(RegExp(r"[^\p{L}\p{N}\s']", unicode: true), ' ')
+            .split(RegExp(r'\s+'))) {
       if (word.length < 3 || _stopWords.contains(word)) continue;
       counts[_stem(word)] = (counts[_stem(word)] ?? 0) + 1;
     }
@@ -401,7 +402,9 @@ class FramingOccurrences {
   }
 
   bool get isEmpty =>
-      _supporting.isEmpty && _counterexamples.isEmpty && _contradictions.isEmpty;
+      _supporting.isEmpty &&
+      _counterexamples.isEmpty &&
+      _contradictions.isEmpty;
 
   Iterable<String> get supportingEntryIds => _supporting.keys;
 

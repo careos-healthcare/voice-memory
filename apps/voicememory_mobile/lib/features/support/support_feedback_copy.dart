@@ -60,6 +60,7 @@ $sectionTestingTitle
 • $sectionTestingBulletTwo
 
 Support: $supportUrl
-'''.trim();
+'''
+        .trim();
   }
 }

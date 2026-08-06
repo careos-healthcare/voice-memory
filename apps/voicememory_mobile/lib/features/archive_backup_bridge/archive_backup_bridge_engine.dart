@@ -57,17 +57,18 @@ abstract final class ArchiveBackupBridgeEngine {
     bool? hasSeenProof,
   }) {
     final resolvedHasSeenProof =
-        hasSeenProof ?? ProEvidenceValueEngine.firstProofPayoffSeenForEntries(
-          entries,
-        );
+        hasSeenProof ??
+        ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries);
     return ArchiveBackupBridgeContext(
       surface: surface,
       entryCount: entryCount,
       isPro: isPro,
       dismissed: dismissed,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
-      hasReportPreview: hasReportPreview ??
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
+      hasReportPreview:
+          hasReportPreview ??
           ArchiveBackupBridgeEngine.hasReportPreview(
             entries: entries,
             returnChecks: returnChecks,
@@ -82,9 +83,9 @@ abstract final class ArchiveBackupBridgeEngine {
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems:
           ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      ),
+            entries: entries,
+            returnChecks: returnChecks,
+          ),
     );
   }
 
@@ -95,8 +96,7 @@ abstract final class ArchiveBackupBridgeEngine {
     return true;
   }
 
-  static bool showProCta(ArchiveBackupBridgeContext context) =>
-      !context.isPro;
+  static bool showProCta(ArchiveBackupBridgeContext context) => !context.isPro;
 
   static bool _isBlocked(ArchiveBackupBridgeContext context) {
     if (context.dismissed) return true;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../features/memory/next_entry_fresh_mode.dart';
 import '../../features/memory/memory_control_model.dart';
-import '../../theme/app_spacing.dart';
 
 /// One-shot fresh mode toggle for the record screen entry options.
 class FreshNextEntryCard extends StatefulWidget {

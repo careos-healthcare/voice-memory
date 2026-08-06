@@ -105,10 +105,8 @@ class _PendingTranscriptRecoverySheetState
         throw CapturePipelineFailure(PendingTranscriptRecoveryCopy.saveFailed);
       }
 
-      final result = await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: existing,
-        transcript: text,
-      );
+      final result = await AppServices.instance.pipeline
+          .attachTypedTextToVoiceEntry(entry: existing, transcript: text);
 
       PendingTranscriptRecoveryAnalytics.saved(
         source: widget.source,
@@ -170,9 +168,9 @@ class _PendingTranscriptRecoverySheetState
               Text(
                 PendingTranscriptRecoveryCopy.inputHelper,
                 key: const Key('pending_transcript_recovery_input_helper'),
-                style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
               TextField(
@@ -182,9 +180,7 @@ class _PendingTranscriptRecoverySheetState
                 maxLines: 4,
                 minLines: 3,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
                 onChanged: (_) => setState(() {}),
               ),
               if (_error != null) ...[
@@ -192,9 +188,9 @@ class _PendingTranscriptRecoverySheetState
                 Text(
                   _error!,
                   key: const Key('pending_transcript_recovery_error'),
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
               const SizedBox(height: AppSpacing.md),

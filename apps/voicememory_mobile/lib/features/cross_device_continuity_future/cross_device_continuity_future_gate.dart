@@ -61,7 +61,9 @@ abstract final class CrossDeviceContinuityFutureGate {
     return CrossDeviceContinuityFutureGateResult(
       decision: decision,
       message: CrossDeviceContinuityFutureCopy.messageFor(decision),
-      recommendation: CrossDeviceContinuityFutureCopy.recommendationFor(decision),
+      recommendation: CrossDeviceContinuityFutureCopy.recommendationFor(
+        decision,
+      ),
       positioning: CrossDeviceContinuityFutureCopy.positioning,
       rules: rules,
       ruleOrder: canonicalRuleOrder,
@@ -69,8 +71,8 @@ abstract final class CrossDeviceContinuityFutureGate {
       prereqs: prereqs,
       prereqOrder: canonicalPrereqOrder,
       technicalProofComplete: technicalProofComplete,
-      v1SurfacingBlocked: decision ==
-          CrossDeviceContinuityFutureGateDecision.continuityFrozen,
+      v1SurfacingBlocked:
+          decision == CrossDeviceContinuityFutureGateDecision.continuityFrozen,
       cloudPromiseBlocked: true,
       accessEverywherePromiseBlocked: true,
       neverLoseArchivePromiseBlocked: true,
@@ -92,16 +94,15 @@ abstract final class CrossDeviceContinuityFutureGate {
 
   static CrossDeviceContinuityFutureGateReport report(
     CrossDeviceContinuityFutureGateResult result,
-  ) =>
-      CrossDeviceContinuityFutureGateReport(
-        headline: CrossDeviceContinuityFutureCopy.headline,
-        body: CrossDeviceContinuityFutureCopy.body,
-        positioning: CrossDeviceContinuityFutureCopy.positioning,
-        orderLine: CrossDeviceContinuityFutureCopy.orderLine,
-        prereqOrderLine: CrossDeviceContinuityFutureCopy.prereqOrderLine,
-        guardrail: CrossDeviceContinuityFutureCopy.guardrail,
-        result: result,
-      );
+  ) => CrossDeviceContinuityFutureGateReport(
+    headline: CrossDeviceContinuityFutureCopy.headline,
+    body: CrossDeviceContinuityFutureCopy.body,
+    positioning: CrossDeviceContinuityFutureCopy.positioning,
+    orderLine: CrossDeviceContinuityFutureCopy.orderLine,
+    prereqOrderLine: CrossDeviceContinuityFutureCopy.prereqOrderLine,
+    guardrail: CrossDeviceContinuityFutureCopy.guardrail,
+    result: result,
+  );
 
   static CrossDeviceContinuityFutureGateInput composeInput({
     bool? accountIdentityProof,
@@ -111,16 +112,15 @@ abstract final class CrossDeviceContinuityFutureGate {
     bool? migrationProof,
     bool? v1ContinuitySurfacingRequested,
     SingleLaunchChecklistInput? launchChecklist,
-  }) =>
-      CrossDeviceContinuityFutureGateInput(
-        accountIdentityProof: accountIdentityProof ??
-            launchChecklist?.productionApiWorks,
-        restoreProof: restoreProof ?? launchChecklist?.restoreWorks,
-        backupProof: backupProof,
-        privacyProof: privacyProof ?? launchChecklist?.supportPrivacyTermsWork,
-        migrationProof: migrationProof,
-        v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
-      );
+  }) => CrossDeviceContinuityFutureGateInput(
+    accountIdentityProof:
+        accountIdentityProof ?? launchChecklist?.productionApiWorks,
+    restoreProof: restoreProof ?? launchChecklist?.restoreWorks,
+    backupProof: backupProof,
+    privacyProof: privacyProof ?? launchChecklist?.supportPrivacyTermsWork,
+    migrationProof: migrationProof,
+    v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
+  );
 
   static CrossDeviceContinuityFutureGateInput fromRepoSignals({
     required String crossDeviceContinuityFutureDocSource,
@@ -132,20 +132,19 @@ abstract final class CrossDeviceContinuityFutureGate {
     bool? privacyProof,
     bool? migrationProof,
     bool? v1ContinuitySurfacingRequested,
-  }) =>
-      CrossDeviceContinuityFutureGateInput(
-        accountIdentityProof: accountIdentityProof,
-        restoreProof: restoreProof,
-        backupProof: backupProof,
-        privacyProof: privacyProof,
-        migrationProof: migrationProof,
-        v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
-        docListsRules: detectDocListsRules(crossDeviceContinuityFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        syncExpectationSafetyAligned: detectSyncExpectationSafetyAligned(
-          syncExpectationSafetyGuardSource,
-        ),
-      );
+  }) => CrossDeviceContinuityFutureGateInput(
+    accountIdentityProof: accountIdentityProof,
+    restoreProof: restoreProof,
+    backupProof: backupProof,
+    privacyProof: privacyProof,
+    migrationProof: migrationProof,
+    v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
+    docListsRules: detectDocListsRules(crossDeviceContinuityFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    syncExpectationSafetyAligned: detectSyncExpectationSafetyAligned(
+      syncExpectationSafetyGuardSource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -191,7 +190,8 @@ abstract final class CrossDeviceContinuityFutureGate {
       CrossDeviceContinuityFutureCopy.guardrail,
       CrossDeviceContinuityFutureCopy.body,
     ].join(' ');
-    final guardrailLower = CrossDeviceContinuityFutureCopy.guardrail.toLowerCase();
+    final guardrailLower = CrossDeviceContinuityFutureCopy.guardrail
+        .toLowerCase();
     final technicalProofComplete = canonicalPrereqOrder.every((id) {
       final value = _prereqValueFor(input, id);
       return value == true;
@@ -199,28 +199,33 @@ abstract final class CrossDeviceContinuityFutureGate {
     return [
       _rule(
         id: CrossDeviceContinuityFutureRuleId.futureOnly,
-        passes: guardrailLower.contains('future only') &&
+        passes:
+            guardrailLower.contains('future only') &&
             (!(input.v1ContinuitySurfacingRequested ?? false) ||
                 technicalProofComplete),
       ),
       _rule(
         id: CrossDeviceContinuityFutureRuleId.noCloudBackupPromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no cloud backup promise'),
       ),
       _rule(
         id: CrossDeviceContinuityFutureRuleId.noAccessEverywherePromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no access everywhere promise'),
       ),
       _rule(
         id: CrossDeviceContinuityFutureRuleId.noNeverLoseArchivePromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no never lose your archive promise'),
       ),
       _rule(
         id: CrossDeviceContinuityFutureRuleId.technicalProofBeforeLaunch,
-        passes: guardrailLower.contains('migration proof') &&
+        passes:
+            guardrailLower.contains('migration proof') &&
             technicalProofComplete,
       ),
     ];
@@ -228,29 +233,21 @@ abstract final class CrossDeviceContinuityFutureGate {
 
   static List<CrossDeviceContinuityFuturePrereq> _buildPrereqs(
     CrossDeviceContinuityFutureGateInput input,
-  ) =>
-      canonicalPrereqOrder
-          .map(
-            (id) => _prereq(
-              id: id,
-              value: _prereqValueFor(input, id),
-            ),
-          )
-          .toList();
+  ) => canonicalPrereqOrder
+      .map((id) => _prereq(id: id, value: _prereqValueFor(input, id)))
+      .toList();
 
   static bool? _prereqValueFor(
     CrossDeviceContinuityFutureGateInput input,
     CrossDeviceContinuityFuturePrereqId id,
-  ) =>
-      switch (id) {
-        CrossDeviceContinuityFuturePrereqId.accountIdentityProof =>
-          input.accountIdentityProof,
-        CrossDeviceContinuityFuturePrereqId.restoreProof => input.restoreProof,
-        CrossDeviceContinuityFuturePrereqId.backupProof => input.backupProof,
-        CrossDeviceContinuityFuturePrereqId.privacyProof => input.privacyProof,
-        CrossDeviceContinuityFuturePrereqId.migrationProof =>
-          input.migrationProof,
-      };
+  ) => switch (id) {
+    CrossDeviceContinuityFuturePrereqId.accountIdentityProof =>
+      input.accountIdentityProof,
+    CrossDeviceContinuityFuturePrereqId.restoreProof => input.restoreProof,
+    CrossDeviceContinuityFuturePrereqId.backupProof => input.backupProof,
+    CrossDeviceContinuityFuturePrereqId.privacyProof => input.privacyProof,
+    CrossDeviceContinuityFuturePrereqId.migrationProof => input.migrationProof,
+  };
 
   static bool _violatesCloudBackupPromise(String copy) =>
       cloudBackupViolationMarkers.any(copy.toLowerCase().contains);
@@ -325,17 +322,16 @@ abstract final class CrossDeviceContinuityFutureGate {
   static CrossDeviceContinuityFutureRule _rule({
     required CrossDeviceContinuityFutureRuleId id,
     required bool passes,
-  }) =>
-      CrossDeviceContinuityFutureRule(
-        id: id,
-        label: CrossDeviceContinuityFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? CrossDeviceContinuityFutureRuleStatus.pass
-            : CrossDeviceContinuityFutureRuleStatus.fail,
-        detailLabel: passes
-            ? CrossDeviceContinuityFutureCopy.detailPass
-            : CrossDeviceContinuityFutureCopy.detailFail,
-      );
+  }) => CrossDeviceContinuityFutureRule(
+    id: id,
+    label: CrossDeviceContinuityFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? CrossDeviceContinuityFutureRuleStatus.pass
+        : CrossDeviceContinuityFutureRuleStatus.fail,
+    detailLabel: passes
+        ? CrossDeviceContinuityFutureCopy.detailPass
+        : CrossDeviceContinuityFutureCopy.detailFail,
+  );
 }
 
 class CrossDeviceContinuityFutureGateInput {

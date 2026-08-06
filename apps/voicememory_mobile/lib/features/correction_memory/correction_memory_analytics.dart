@@ -12,7 +12,7 @@ abstract final class CorrectionMemoryAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void saved({
     required String source,

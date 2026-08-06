@@ -17,13 +17,12 @@ abstract final class ProofClarityImportanceDiagnosticCopy {
   static ProofClarityImportanceReport report(
     ProofClarityImportanceSummary summary,
     ProofClarityImportanceDecision decision,
-  ) =>
-      ProofClarityImportanceReport(
-        title: titleFor(decision),
-        body: bodyFor(decision),
-        nextAction: nextActionFor(decision),
-        guardrail: guardrail,
-      );
+  ) => ProofClarityImportanceReport(
+    title: titleFor(decision),
+    body: bodyFor(decision),
+    nextAction: nextActionFor(decision),
+    guardrail: guardrail,
+  );
 
   static String titleFor(ProofClarityImportanceDecision decision) =>
       switch (decision) {
@@ -43,39 +42,39 @@ abstract final class ProofClarityImportanceDiagnosticCopy {
       switch (decision) {
         ProofClarityImportanceDecision.insufficientData =>
           'Build 69 does not yet have enough testers to tell whether users '
-          'want clearer proof explanation or ranking across ideas.',
+              'want clearer proof explanation or ranking across ideas.',
         ProofClarityImportanceDecision.repairProofExplanation =>
           'Too many testers still find proof vague or cannot judge the '
-          'explanation clearly enough.',
+              'explanation clearly enough.',
         ProofClarityImportanceDecision.bothProblemsRepairExplanationFirst =>
           'Testers report vague proof and want ranking, but explanation must '
-          'be clearer before any importance ranking work.',
+              'be clearer before any importance ranking work.',
         ProofClarityImportanceDecision.investigateRankingImportance =>
           'Explanation is clear enough, but testers still want ranking or '
-          'importance across multiple ideas. Diagnose only — do not build '
-          'ranked lists yet.',
+              'importance across multiple ideas. Diagnose only — do not build '
+              'ranked lists yet.',
         ProofClarityImportanceDecision.proofExplanationStable =>
           'Useful proof, low vague/not relevant, clear explanation, and low '
-          'ranking demand are all holding.',
+              'ranking demand are all holding.',
       };
 
   static String nextActionFor(ProofClarityImportanceDecision decision) =>
       switch (decision) {
         ProofClarityImportanceDecision.insufficientData =>
           'Keep testing Build 69 until at least 20 testers complete proof '
-          'detail and facilitator questions.',
+              'detail and facilitator questions.',
         ProofClarityImportanceDecision.repairProofExplanation =>
           'Repair proof explanation copy only. Do not tighten anchors or add '
-          'more proof.',
+              'more proof.',
         ProofClarityImportanceDecision.bothProblemsRepairExplanationFirst =>
           'Repair proof explanation before investigating ranking or '
-          'importance features.',
+              'importance features.',
         ProofClarityImportanceDecision.investigateRankingImportance =>
           'Run follow-up interviews on ranking demand. Do not build ranked '
-          'lists or change anchors yet.',
+              'lists or change anchors yet.',
         ProofClarityImportanceDecision.proofExplanationStable =>
           'Return to evidence-trail clarity and value signals. Do not add '
-          'ranking yet.',
+              'ranking yet.',
       };
 
   static Iterable<String> allVisibleStrings() sync* {

@@ -16,10 +16,7 @@ import '../widgets/consumer/consumer_screen_back_header.dart';
 
 /// Private drilldown for one evidence map context row.
 class ArchiveEvidenceContextScreen extends StatefulWidget {
-  const ArchiveEvidenceContextScreen({
-    super.key,
-    required this.contextTagId,
-  });
+  const ArchiveEvidenceContextScreen({super.key, required this.contextTagId});
 
   final String contextTagId;
 
@@ -31,7 +28,8 @@ class ArchiveEvidenceContextScreen extends StatefulWidget {
 class _ArchiveEvidenceContextScreenState
     extends State<ArchiveEvidenceContextScreen> {
   ArchiveEvidenceContextDrilldown? _drilldown;
-  EvidenceAttentionFilters _attentionFilters = EvidenceAttentionFilters.hidden();
+  EvidenceAttentionFilters _attentionFilters =
+      EvidenceAttentionFilters.hidden();
   bool _loading = true;
 
   @override
@@ -105,7 +103,9 @@ class _ArchiveEvidenceContextScreenState
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         drilldown.subtitle,
-                        key: const Key('archive_evidence_context_screen_subtitle'),
+                        key: const Key(
+                          'archive_evidence_context_screen_subtitle',
+                        ),
                         style: VoiceMemoryTypography.bodyStyle(),
                       ),
                       const SizedBox(height: AppSpacing.lg),

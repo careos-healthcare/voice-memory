@@ -21,11 +21,11 @@ class ReturnTomorrowCueCard extends StatelessWidget {
   final String surface;
 
   String get _stateKey => switch (cue.state) {
-        ReturnTomorrowCueState.afterFirstMoment => 'after_first_moment',
-        ReturnTomorrowCueState.afterSecondRelated => 'after_second_related',
-        ReturnTomorrowCueState.afterFirstProof => 'after_first_proof',
-        ReturnTomorrowCueState.nextDayReturn => 'next_day_return',
-      };
+    ReturnTomorrowCueState.afterFirstMoment => 'after_first_moment',
+    ReturnTomorrowCueState.afterSecondRelated => 'after_second_related',
+    ReturnTomorrowCueState.afterFirstProof => 'after_first_proof',
+    ReturnTomorrowCueState.nextDayReturn => 'next_day_return',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +56,9 @@ class ReturnTomorrowCueCard extends StatelessWidget {
           Text(
             cue.body,
             key: Key('return_tomorrow_cue_body_$_stateKey'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

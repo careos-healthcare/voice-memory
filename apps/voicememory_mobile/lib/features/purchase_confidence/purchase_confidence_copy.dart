@@ -25,9 +25,9 @@ abstract final class PurchaseConfidenceCopy {
   static const compactTrustLine = coreMessage;
 
   static List<String> allCardStrings() => [
-        cardTitle,
-        body,
-        ...trustBullets,
-        footer,
-      ];
+    cardTitle,
+    body,
+    ...trustBullets,
+    footer,
+  ];
 }

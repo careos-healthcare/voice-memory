@@ -79,7 +79,10 @@ abstract final class FirstWeekProgressEngine {
   }) {
     if (!FirstWeekProgressGates.archiveAllowsProgress(entries)) return null;
 
-    final weekDay = FirstWeekProgressGates.weekDayNumber(entries: entries, now: now);
+    final weekDay = FirstWeekProgressGates.weekDayNumber(
+      entries: entries,
+      now: now,
+    );
     if (weekDay == null) return null;
 
     return _buildForWeekDay(
@@ -98,7 +101,10 @@ abstract final class FirstWeekProgressEngine {
   }) {
     if (!FirstWeekProgressGates.archiveAllowsProgress(entries)) return null;
 
-    final weekDay = FirstWeekProgressGates.weekDayNumber(entries: entries, now: now);
+    final weekDay = FirstWeekProgressGates.weekDayNumber(
+      entries: entries,
+      now: now,
+    );
     if (weekDay == null) return null;
 
     return _buildForWeekDay(
@@ -118,7 +124,8 @@ abstract final class FirstWeekProgressEngine {
     DateTime? now,
   }) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final hasFirstProof = firstProofUnlocked ||
+    final hasFirstProof =
+        firstProofUnlocked ||
         (eligible.length >= 3 &&
             FirstProofMomentEngine.build(entries: entries) != null);
 

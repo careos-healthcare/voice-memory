@@ -28,10 +28,10 @@ class DailyMirrorRecordCard extends StatelessWidget {
     return switch (mirror.stage) {
       DailyMirrorStage.emptyArchive => _EmptyArchiveCard(),
       DailyMirrorStage.heardFirstMoment => _HeardFirstMomentCard(
-          mirror: mirror,
-          onPrimaryCta: onPrimaryCta,
-          showRecordCta: showRecordCta,
-        ),
+        mirror: mirror,
+        onPrimaryCta: onPrimaryCta,
+        showRecordCta: showRecordCta,
+      ),
       DailyMirrorStage.possibleLoop => _PossibleLoopCard(mirror: mirror),
       DailyMirrorStage.whatChanged => _WhatChangedCard(mirror: mirror),
     };
@@ -45,7 +45,9 @@ class _EmptyArchiveCard extends StatelessWidget {
       key: const Key('record_empty_archive_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -65,10 +67,9 @@ class _EmptyArchiveCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             RecordScreenFramingCopy.emptyArchiveFootnote,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: VoiceMemoryColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: VoiceMemoryColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -100,7 +101,9 @@ class _HeardFirstMomentCard extends StatelessWidget {
         key: const Key('record_archive_weak_compare_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFFFFBF5),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -120,10 +123,9 @@ class _HeardFirstMomentCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               DailyMirrorCopy.weakStartedFootnote,
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: VoiceMemoryColors.textSecondary,
-                fontSize: 12,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: VoiceMemoryColors.textSecondary, fontSize: 12),
             ),
             if (showRecordCta) ...[
               const SizedBox(height: AppSpacing.md),
@@ -149,7 +151,9 @@ class _HeardFirstMomentCard extends StatelessWidget {
       key: const Key('record_archive_started_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -202,7 +206,9 @@ class _PossibleLoopCard extends StatelessWidget {
         key: const Key('early_specific_insight_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFFFFBF5),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -253,7 +259,9 @@ class _PossibleLoopCard extends StatelessWidget {
       key: const Key('early_behavior_loop_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,7 +330,9 @@ class _WhatChangedCard extends StatelessWidget {
       key: const Key('daily_mirror_what_changed_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

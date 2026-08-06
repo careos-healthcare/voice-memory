@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 abstract class ArchiveActivationScriptedE2EGate {
   ArchiveActivationScriptedE2EGate._();
 
-  static const debugConfirmFirstNodeKey = 'archive_loop_debug_confirm_first_node';
+  static const debugConfirmFirstNodeKey =
+      'archive_loop_debug_confirm_first_node';
 
   @visibleForTesting
   static bool? enabledOverride;

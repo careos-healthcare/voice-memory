@@ -15,7 +15,8 @@ abstract final class SecretsRotationLaunchGateCopy {
       'secret logs, Vercel production env, launch block enforced.';
 
   static const checkStripeSecretKeyRotated = 'Stripe secret key rotated';
-  static const checkStripeWebhookSecretRotated = 'Stripe webhook secret rotated';
+  static const checkStripeWebhookSecretRotated =
+      'Stripe webhook secret rotated';
   static const checkProductionEnvUpdated = 'Production env updated';
   static const checkOldWebhookDisabled = 'Old webhook disabled';
   static const checkRevenueCatApiKeySeparatedFromDocsLogs =
@@ -50,25 +51,25 @@ abstract final class SecretsRotationLaunchGateCopy {
       'secrets, do not commit secret values, and do not change product features.';
 
   static String labelFor(SecretsRotationLaunchGateCheckId id) => switch (id) {
-        SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated =>
-          checkStripeSecretKeyRotated,
-        SecretsRotationLaunchGateCheckId.stripeWebhookSecretRotated =>
-          checkStripeWebhookSecretRotated,
-        SecretsRotationLaunchGateCheckId.productionEnvUpdated =>
-          checkProductionEnvUpdated,
-        SecretsRotationLaunchGateCheckId.oldWebhookDisabled =>
-          checkOldWebhookDisabled,
-        SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs =>
-          checkRevenueCatApiKeySeparatedFromDocsLogs,
-        SecretsRotationLaunchGateCheckId.noSecretValuesCommitted =>
-          checkNoSecretValuesCommitted,
-        SecretsRotationLaunchGateCheckId.noSecretValuesPrintedInLogs =>
-          checkNoSecretValuesPrintedInLogs,
-        SecretsRotationLaunchGateCheckId.vercelEnvProductionVerified =>
-          checkVercelEnvProductionVerified,
-        SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed =>
-          checkLaunchBlockedUntilRotationConfirmed,
-      };
+    SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated =>
+      checkStripeSecretKeyRotated,
+    SecretsRotationLaunchGateCheckId.stripeWebhookSecretRotated =>
+      checkStripeWebhookSecretRotated,
+    SecretsRotationLaunchGateCheckId.productionEnvUpdated =>
+      checkProductionEnvUpdated,
+    SecretsRotationLaunchGateCheckId.oldWebhookDisabled =>
+      checkOldWebhookDisabled,
+    SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs =>
+      checkRevenueCatApiKeySeparatedFromDocsLogs,
+    SecretsRotationLaunchGateCheckId.noSecretValuesCommitted =>
+      checkNoSecretValuesCommitted,
+    SecretsRotationLaunchGateCheckId.noSecretValuesPrintedInLogs =>
+      checkNoSecretValuesPrintedInLogs,
+    SecretsRotationLaunchGateCheckId.vercelEnvProductionVerified =>
+      checkVercelEnvProductionVerified,
+    SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed =>
+      checkLaunchBlockedUntilRotationConfirmed,
+  };
 
   static String messageFor(SecretsRotationLaunchGateStatus status) =>
       switch (status) {
@@ -80,17 +81,18 @@ abstract final class SecretsRotationLaunchGateCopy {
           readyForProductionSubmissionLine,
       };
 
-  static String recommendationFor(SecretsRotationLaunchGateStatus status) =>
-      switch (status) {
-        SecretsRotationLaunchGateStatus.safeForInternalTestFlight =>
-          'Rotate Stripe secrets, update production env, disable old webhooks, '
+  static String recommendationFor(
+    SecretsRotationLaunchGateStatus status,
+  ) => switch (status) {
+    SecretsRotationLaunchGateStatus.safeForInternalTestFlight =>
+      'Rotate Stripe secrets, update production env, disable old webhooks, '
           'and verify Vercel before submission.',
-        SecretsRotationLaunchGateStatus.blockedForProductionSubmission =>
-          'Remove committed secrets, stop secret logging, and complete rotation '
+    SecretsRotationLaunchGateStatus.blockedForProductionSubmission =>
+      'Remove committed secrets, stop secret logging, and complete rotation '
           'before any production launch.',
-        SecretsRotationLaunchGateStatus.readyForProductionSubmission =>
-          'Secrets rotation gate passes. Proceed to production submission.',
-      };
+    SecretsRotationLaunchGateStatus.readyForProductionSubmission =>
+      'Secrets rotation gate passes. Proceed to production submission.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -132,12 +134,7 @@ enum SecretsRotationLaunchGateCheckId {
   launchBlockedUntilRotationConfirmed,
 }
 
-enum SecretsRotationLaunchGateCheckStatus {
-  pass,
-  fail,
-  pending,
-  blocked,
-}
+enum SecretsRotationLaunchGateCheckStatus { pass, fail, pending, blocked }
 
 enum SecretsRotationLaunchGateStatus {
   safeForInternalTestFlight,

@@ -31,20 +31,19 @@ FeatureNoiseReductionInput _input({
   bool isPostSave = false,
   bool userAskedForSurface = false,
   bool storeReadinessMode = false,
-}) =>
-    FeatureNoiseReductionInput(
-      surfaceType: surfaceType,
-      eligibleEntryCount: eligibleEntryCount,
-      hasFirstUsefulProof: hasFirstUsefulProof,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      hasLongerTrail: hasLongerTrail,
-      hasUserCorrection: hasUserCorrection,
-      isFirstSession: isFirstSession,
-      isRecordScreen: isRecordScreen,
-      isPostSave: isPostSave,
-      userAskedForSurface: userAskedForSurface,
-      storeReadinessMode: storeReadinessMode,
-    );
+}) => FeatureNoiseReductionInput(
+  surfaceType: surfaceType,
+  eligibleEntryCount: eligibleEntryCount,
+  hasFirstUsefulProof: hasFirstUsefulProof,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  hasLongerTrail: hasLongerTrail,
+  hasUserCorrection: hasUserCorrection,
+  isFirstSession: isFirstSession,
+  isRecordScreen: isRecordScreen,
+  isPostSave: isPostSave,
+  userAskedForSurface: userAskedForSurface,
+  storeReadinessMode: storeReadinessMode,
+);
 
 void main() {
   group('FeatureNoiseReduction.build', () {
@@ -207,7 +206,10 @@ void main() {
         ),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, FeatureNoiseReductionReason.hideContextUntilEvidence);
+      expect(
+        result.reason,
+        FeatureNoiseReductionReason.hideContextUntilEvidence,
+      );
     });
 
     test('context detail hidden before first proof', () {
@@ -218,7 +220,10 @@ void main() {
         ),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, FeatureNoiseReductionReason.hideContextUntilEvidence);
+      expect(
+        result.reason,
+        FeatureNoiseReductionReason.hideContextUntilEvidence,
+      );
     });
 
     test('archive health hidden before 5 eligible entries', () {
@@ -285,7 +290,10 @@ void main() {
         ),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, FeatureNoiseReductionReason.hideReportsUntilEvidence);
+      expect(
+        result.reason,
+        FeatureNoiseReductionReason.hideReportsUntilEvidence,
+      );
     });
 
     test('monthly report hidden before longer trail', () {
@@ -296,7 +304,10 @@ void main() {
         ),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, FeatureNoiseReductionReason.hideReportsUntilEvidence);
+      expect(
+        result.reason,
+        FeatureNoiseReductionReason.hideReportsUntilEvidence,
+      );
     });
 
     test('private report hidden before longer trail', () {
@@ -307,7 +318,10 @@ void main() {
         ),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, FeatureNoiseReductionReason.hideReportsUntilEvidence);
+      expect(
+        result.reason,
+        FeatureNoiseReductionReason.hideReportsUntilEvidence,
+      );
     });
 
     test('archive review hidden before 5 entries', () {
@@ -361,36 +375,42 @@ void main() {
       );
     });
 
-    test('body includes save a repeat / first proof / correct / longer trail',
-        () {
-      final body = FeatureNoiseReductionCopy.body.toLowerCase();
-      expect(body, contains('save a repeat'));
-      expect(body, contains('first proof'));
-      expect(body, contains('correct'));
-      expect(body, contains('longer trail'));
-    });
+    test(
+      'body includes save a repeat / first proof / correct / longer trail',
+      () {
+        final body = FeatureNoiseReductionCopy.body.toLowerCase();
+        expect(body, contains('save a repeat'));
+        expect(body, contains('first proof'));
+        expect(body, contains('correct'));
+        expect(body, contains('longer trail'));
+      },
+    );
 
-    test('coreJourneyLine lists record/first proof/why/confirm/correct/longer trail/Pro',
-        () {
-      final line = FeatureNoiseReductionCopy.coreJourneyLine.toLowerCase();
-      expect(line, contains('record'));
-      expect(line, contains('first proof'));
-      expect(line, contains('why it appeared'));
-      expect(line, contains('confirm or correct'));
-      expect(line, contains('longer trail'));
-      expect(line, contains('pro'));
-    });
+    test(
+      'coreJourneyLine lists record/first proof/why/confirm/correct/longer trail/Pro',
+      () {
+        final line = FeatureNoiseReductionCopy.coreJourneyLine.toLowerCase();
+        expect(line, contains('record'));
+        expect(line, contains('first proof'));
+        expect(line, contains('why it appeared'));
+        expect(line, contains('confirm or correct'));
+        expect(line, contains('longer trail'));
+        expect(line, contains('pro'));
+      },
+    );
 
-    test('hideEarlyLine includes reports/action items/archive health/context detail/quick actions/review surfaces',
-        () {
-      final line = FeatureNoiseReductionCopy.hideEarlyLine.toLowerCase();
-      expect(line, contains('reports'));
-      expect(line, contains('action items'));
-      expect(line, contains('archive health'));
-      expect(line, contains('context detail'));
-      expect(line, contains('quick actions'));
-      expect(line, contains('review surfaces'));
-    });
+    test(
+      'hideEarlyLine includes reports/action items/archive health/context detail/quick actions/review surfaces',
+      () {
+        final line = FeatureNoiseReductionCopy.hideEarlyLine.toLowerCase();
+        expect(line, contains('reports'));
+        expect(line, contains('action items'));
+        expect(line, contains('archive health'));
+        expect(line, contains('context detail'));
+        expect(line, contains('quick actions'));
+        expect(line, contains('review surfaces'));
+      },
+    );
 
     test('notDeletedLine says hidden does not mean removed', () {
       expect(
@@ -413,13 +433,15 @@ void main() {
       );
     });
 
-    test('guardrail says secondary surfaces must not compete with first proof journey',
-        () {
-      expect(
-        FeatureNoiseReductionCopy.guardrail,
-        contains('secondary surfaces compete with the first proof journey'),
-      );
-    });
+    test(
+      'guardrail says secondary surfaces must not compete with first proof journey',
+      () {
+        expect(
+          FeatureNoiseReductionCopy.guardrail,
+          contains('secondary surfaces compete with the first proof journey'),
+        );
+      },
+    );
 
     test('copy does not say better than ChatGPT', () {
       for (final text in FeatureNoiseReductionCopy.allVisibleStrings()) {
@@ -603,43 +625,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

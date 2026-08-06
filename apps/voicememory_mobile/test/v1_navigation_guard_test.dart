@@ -34,6 +34,7 @@ void main() {
         '/pricing',
         '/restore-purchases',
         '/delete-account',
+        '/export',
         '/privacy',
         '/privacy-trust-centre',
         '/terms',
@@ -97,6 +98,8 @@ void main() {
           '/weekly-report',
           '/archive-analyst',
           '/archive-evidence-trail',
+          '/beta-feedback',
+          '/testing-archiveme',
         ]) {
           expect(V1NavigationGuard.isAllowed(path), isFalse, reason: path);
         }

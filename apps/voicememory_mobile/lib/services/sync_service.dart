@@ -41,8 +41,8 @@ class SyncService {
     this._api,
     this._journal,
     this._prefs, {
-    JournalOwnershipGuard ownershipGuard = const JournalOwnershipGuard(),
-  }) : _ownershipGuard = ownershipGuard;
+    this._ownershipGuard = const JournalOwnershipGuard(),
+  });
 
   final ApiClient _api;
   final JournalStore _journal;

@@ -209,5 +209,4 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
   });
-
 }

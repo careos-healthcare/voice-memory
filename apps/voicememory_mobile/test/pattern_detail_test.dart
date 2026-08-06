@@ -35,70 +35,69 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String observation = 'Work pressure showed up in this moment.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeSaidYesEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourSaidYesEntries() => [
-      ..._threeSaidYesEntries(),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeSaidYesEntries(),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 PatternDetailResult _detailFor(List<JournalEntry> entries) {
   final signal = EarlyFirstSignalEngine.build(entries: entries);
@@ -163,7 +162,10 @@ void main() {
     test('returns null before confirmed repeat foundation', () {
       final entries = [
         _voiceEntry(id: 'a', transcript: 'A quiet lunch with a friend today.'),
-        _voiceEntry(id: 'b', transcript: 'Another unrelated note about errands.'),
+        _voiceEntry(
+          id: 'b',
+          transcript: 'Another unrelated note about errands.',
+        ),
       ];
       expect(
         PatternDetailEngine.canShow(
@@ -219,7 +221,10 @@ void main() {
       ];
       final detail = _detailFor(entries);
       for (final moment in detail.savedMoments) {
-        expect(moment.previewText.toLowerCase(), isNot(contains('checking mic')));
+        expect(
+          moment.previewText.toLowerCase(),
+          isNot(contains('checking mic')),
+        );
         expect(
           moment.previewText,
           isNot(contains(CaptureSaveMessages.recordingSavedLocally)),
@@ -280,10 +285,7 @@ void main() {
       final entries = _threeSaidYesEntries();
       final detail = _detailFor(entries);
       expect(detail.whatChangedSupported, isFalse);
-      expect(
-        detail.whatChangedBody,
-        PatternDetailCopy.notEnoughChangeEvidence,
-      );
+      expect(detail.whatChangedBody, PatternDetailCopy.notEnoughChangeEvidence);
     });
 
     test('fallback copy when not enough helped evidence', () {
@@ -304,9 +306,15 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('pattern_detail_sheet_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_detail_sheet_title')),
+        findsOneWidget,
+      );
       expect(find.text(PatternDetailCopy.sheetTitle), findsOneWidget);
-      expect(find.text(PatternDetailCopy.whyThisMattersHeading), findsOneWidget);
+      expect(
+        find.text(PatternDetailCopy.whyThisMattersHeading),
+        findsOneWidget,
+      );
       expect(find.text(PatternDetailCopy.whyThisMattersBody), findsOneWidget);
       expect(find.text(PatternDetailCopy.evidenceIntro), findsOneWidget);
       expect(find.text(PatternDetailCopy.whatChangedHeading), findsOneWidget);
@@ -322,17 +330,15 @@ void main() {
       expect(find.textContaining('score'), findsNothing);
 
       if (detail.hasSavedMoments) {
-        expect(
-          find.text(ArchiveHistoryCopy.chipUsedAsEvidence),
-          findsWidgets,
-        );
+        expect(find.text(ArchiveHistoryCopy.chipUsedAsEvidence), findsWidgets);
       }
     });
   });
 
   group('ArchiveBeliefSurfaceCard detail action', () {
-    testWidgets('shows View pattern details for grounded primary surface',
-        (tester) async {
+    testWidgets('shows View pattern details for grounded primary surface', (
+      tester,
+    ) async {
       final surface = ArchiveCurrentBeliefEngine.build(
         entries: _threeSaidYesEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -357,7 +363,10 @@ void main() {
         find.byKey(const Key('archive_belief_surface_view_pattern_details')),
         findsOneWidget,
       );
-      expect(find.text(PatternDetailCopy.viewPatternDetailsCta), findsOneWidget);
+      expect(
+        find.text(PatternDetailCopy.viewPatternDetailsCta),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hides detail action for preview surface', (tester) async {
@@ -392,8 +401,9 @@ void main() {
       );
     });
 
-    testWidgets('hides detail action when callback not provided',
-        (tester) async {
+    testWidgets('hides detail action when callback not provided', (
+      tester,
+    ) async {
       final surface = ArchiveCurrentBeliefEngine.build(
         entries: _threeSaidYesEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -422,7 +432,9 @@ void main() {
 
   group('integration untouched', () {
     test('first proof flow still works', () {
-      final signal = EarlyFirstSignalEngine.build(entries: _threeSaidYesEntries());
+      final signal = EarlyFirstSignalEngine.build(
+        entries: _threeSaidYesEntries(),
+      );
       expect(signal?.showsConfirmedRepeat, isTrue);
     });
 
@@ -440,8 +452,9 @@ void main() {
     });
 
     test('patterns screen wires detail action for grounded patterns', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('PatternDetailEngine.canShow'));
       expect(source, contains('_openPatternDetail'));
       expect(source, contains('onViewPatternDetails'));

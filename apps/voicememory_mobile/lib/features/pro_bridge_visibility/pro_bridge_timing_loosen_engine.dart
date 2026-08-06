@@ -69,69 +69,67 @@ abstract final class ProBridgeTimingLoosenEngine {
 
   static ProBridgeTimingLoosenInput fromVisibilityInput(
     ProBridgeVisibilityInput input,
-  ) =>
-      ProBridgeTimingLoosenInput(
-        surface: input.surface,
-        source: input.source,
-        entryCount: input.entryCount,
-        isRecording: input.isRecording,
-        isZeroEntryState: input.isZeroEntryState,
-        isFirstRecordingState: input.isFirstRecordingState,
-        isPostSaveDegradedState: input.isPostSaveDegradedState,
-        isDegradedTranscriptState: input.isDegradedTranscriptState,
-        hasFirstProof: input.hasFirstProof,
-        hasTimelineProofVisible: input.hasTimelineProofVisible,
-        hasFirstProofPayoffVisible: input.hasFirstProofPayoffVisible,
-        hasBetaTesterReportVisible: input.hasBetaTesterReportVisible,
-        hasMonthlyPrivateReportPreviewVisible:
-            input.hasMonthlyPrivateReportPreviewVisible,
-        hasCorrectionMemoryVisible: input.hasCorrectionMemoryVisible,
-        hasBetaProofLiftVisible: input.hasBetaProofLiftVisible,
-        hasReturnAfterProofStrengthenedVisible:
-            input.hasReturnAfterProofStrengthenedVisible,
-        feedbackState: input.feedbackState,
-        whatChangedQuestionActive: input.whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: input.patternReviewInboxHasActiveItems,
-        proSlotAvailable: input.proSlotAvailable,
-        confidenceLevel: input.confidenceLevel,
-        hasSafeAnchor: input.hasSafeAnchor,
-        hasFreshReturnAfterCorrection: input.hasFreshReturnAfterCorrection,
-        hasSolidStrongPatternWithSafeAnchors:
-            input.hasSolidStrongPatternWithSafeAnchors,
-      );
+  ) => ProBridgeTimingLoosenInput(
+    surface: input.surface,
+    source: input.source,
+    entryCount: input.entryCount,
+    isRecording: input.isRecording,
+    isZeroEntryState: input.isZeroEntryState,
+    isFirstRecordingState: input.isFirstRecordingState,
+    isPostSaveDegradedState: input.isPostSaveDegradedState,
+    isDegradedTranscriptState: input.isDegradedTranscriptState,
+    hasFirstProof: input.hasFirstProof,
+    hasTimelineProofVisible: input.hasTimelineProofVisible,
+    hasFirstProofPayoffVisible: input.hasFirstProofPayoffVisible,
+    hasBetaTesterReportVisible: input.hasBetaTesterReportVisible,
+    hasMonthlyPrivateReportPreviewVisible:
+        input.hasMonthlyPrivateReportPreviewVisible,
+    hasCorrectionMemoryVisible: input.hasCorrectionMemoryVisible,
+    hasBetaProofLiftVisible: input.hasBetaProofLiftVisible,
+    hasReturnAfterProofStrengthenedVisible:
+        input.hasReturnAfterProofStrengthenedVisible,
+    feedbackState: input.feedbackState,
+    whatChangedQuestionActive: input.whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: input.patternReviewInboxHasActiveItems,
+    proSlotAvailable: input.proSlotAvailable,
+    confidenceLevel: input.confidenceLevel,
+    hasSafeAnchor: input.hasSafeAnchor,
+    hasFreshReturnAfterCorrection: input.hasFreshReturnAfterCorrection,
+    hasSolidStrongPatternWithSafeAnchors:
+        input.hasSolidStrongPatternWithSafeAnchors,
+  );
 
   static ProBridgeTimingLoosenInput fromTimingContext(
     ProMomentTimingContext context,
-  ) =>
-      ProBridgeTimingLoosenInput(
-        surface: _surfaceFromTiming(context.surface),
-        source: context.source,
-        entryCount: context.entryCount,
-        isRecording: context.isRecording,
-        isZeroEntryState: context.isZeroEntryState,
-        isFirstRecordingState: context.isFirstRecordingState,
-        isPostSaveDegradedState: context.isPostSaveDegradedState,
-        isDegradedTranscriptState: context.isDegradedTranscriptState,
-        hasFirstProof: context.hasFirstProof,
-        hasTimelineProofVisible: context.hasTimelineProofVisible,
-        hasFirstProofPayoffVisible: context.hasFirstProofPayoffVisible,
-        hasBetaTesterReportVisible: context.hasBetaTesterReportVisible,
-        hasMonthlyPrivateReportPreviewVisible:
-            context.hasMonthlyPrivateReportPreviewVisible,
-        hasCorrectionMemoryVisible: context.hasCorrectionMemoryVisible,
-        hasBetaProofLiftVisible: context.hasBetaProofLiftVisible,
-        hasReturnAfterProofStrengthenedVisible:
-            context.hasReturnAfterProofStrengthenedVisible,
-        feedbackState: context.feedbackState,
-        whatChangedQuestionActive: context.whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: context.patternReviewInboxHasActiveItems,
-        proSlotAvailable: context.proSlotAvailable,
-        confidenceLevel: context.confidenceLevel,
-        hasSafeAnchor: context.hasSafeAnchor,
-        hasFreshReturnAfterCorrection: context.hasFreshReturnAfterCorrection,
-        hasSolidStrongPatternWithSafeAnchors:
-            context.hasSolidStrongPatternWithSafeAnchors,
-      );
+  ) => ProBridgeTimingLoosenInput(
+    surface: _surfaceFromTiming(context.surface),
+    source: context.source,
+    entryCount: context.entryCount,
+    isRecording: context.isRecording,
+    isZeroEntryState: context.isZeroEntryState,
+    isFirstRecordingState: context.isFirstRecordingState,
+    isPostSaveDegradedState: context.isPostSaveDegradedState,
+    isDegradedTranscriptState: context.isDegradedTranscriptState,
+    hasFirstProof: context.hasFirstProof,
+    hasTimelineProofVisible: context.hasTimelineProofVisible,
+    hasFirstProofPayoffVisible: context.hasFirstProofPayoffVisible,
+    hasBetaTesterReportVisible: context.hasBetaTesterReportVisible,
+    hasMonthlyPrivateReportPreviewVisible:
+        context.hasMonthlyPrivateReportPreviewVisible,
+    hasCorrectionMemoryVisible: context.hasCorrectionMemoryVisible,
+    hasBetaProofLiftVisible: context.hasBetaProofLiftVisible,
+    hasReturnAfterProofStrengthenedVisible:
+        context.hasReturnAfterProofStrengthenedVisible,
+    feedbackState: context.feedbackState,
+    whatChangedQuestionActive: context.whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: context.patternReviewInboxHasActiveItems,
+    proSlotAvailable: context.proSlotAvailable,
+    confidenceLevel: context.confidenceLevel,
+    hasSafeAnchor: context.hasSafeAnchor,
+    hasFreshReturnAfterCorrection: context.hasFreshReturnAfterCorrection,
+    hasSolidStrongPatternWithSafeAnchors:
+        context.hasSolidStrongPatternWithSafeAnchors,
+  );
 
   static ProBridgeTimingLoosenSignals resolveSignals({
     required List<JournalEntry> entries,
@@ -184,7 +182,8 @@ abstract final class ProBridgeTimingLoosenEngine {
       confidenceLevel: calibration.level,
       hasSafeAnchor: hasSafeAnchor,
       hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
-      hasSolidStrongPatternWithSafeAnchors: hasSolidStrongPatternWithSafeAnchors,
+      hasSolidStrongPatternWithSafeAnchors:
+          hasSolidStrongPatternWithSafeAnchors,
     );
   }
 
@@ -224,7 +223,7 @@ abstract final class ProBridgeTimingLoosenEngine {
           hasBetaProofLiftVisible ?? base.hasBetaProofLiftVisible,
       hasReturnAfterProofStrengthenedVisible:
           hasReturnAfterProofStrengthenedVisible ??
-              base.hasReturnAfterProofStrengthenedVisible,
+          base.hasReturnAfterProofStrengthenedVisible,
       feedbackState: base.feedbackState,
       whatChangedQuestionActive: base.whatChangedQuestionActive,
       patternReviewInboxHasActiveItems: base.patternReviewInboxHasActiveItems,
@@ -242,8 +241,7 @@ abstract final class ProBridgeTimingLoosenEngine {
 
   static ProMomentTimingTrigger? resolveTriggerForContext(
     ProMomentTimingContext context,
-  ) =>
-      _resolveAllowedTrigger(fromTimingContext(context));
+  ) => _resolveAllowedTrigger(fromTimingContext(context));
 
   static ProBridgeTimingLoosenBlockedReason? _resolveBlockedReason(
     ProBridgeTimingLoosenInput input,
@@ -335,16 +333,15 @@ abstract final class ProBridgeTimingLoosenEngine {
 
   static ProBridgeVisibilitySurface _surfaceFromTiming(
     ProMomentTimingSurface surface,
-  ) =>
-      switch (surface) {
-        ProMomentTimingSurface.recordReady =>
-          ProBridgeVisibilitySurface.recordReady,
-        ProMomentTimingSurface.recordPostSave =>
-          ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
-        ProMomentTimingSurface.archivePatterns =>
-          ProBridgeVisibilitySurface.archivePatterns,
-        ProMomentTimingSurface.paywall => ProBridgeVisibilitySurface.recordReady,
-      };
+  ) => switch (surface) {
+    ProMomentTimingSurface.recordReady =>
+      ProBridgeVisibilitySurface.recordReady,
+    ProMomentTimingSurface.recordPostSave =>
+      ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
+    ProMomentTimingSurface.archivePatterns =>
+      ProBridgeVisibilitySurface.archivePatterns,
+    ProMomentTimingSurface.paywall => ProBridgeVisibilitySurface.recordReady,
+  };
 }
 
 class ProBridgeTimingLoosenSignals {
@@ -431,20 +428,21 @@ enum ProBridgeTimingLoosenBlockedReason {
 extension ProBridgeTimingLoosenBlockedReasonAnalytics
     on ProBridgeTimingLoosenBlockedReason {
   String get analyticsValue => switch (this) {
-        ProBridgeTimingLoosenBlockedReason.beforeFirstSave => 'before_first_save',
-        ProBridgeTimingLoosenBlockedReason.beforeFirstProof => 'before_first_proof',
-        ProBridgeTimingLoosenBlockedReason.recording => 'recording',
-        ProBridgeTimingLoosenBlockedReason.postSaveDegraded => 'post_save_degraded',
-        ProBridgeTimingLoosenBlockedReason.feedbackTooVague => 'feedback_too_vague',
-        ProBridgeTimingLoosenBlockedReason.feedbackNotRelevant =>
-          'feedback_not_relevant',
-        ProBridgeTimingLoosenBlockedReason.whatChangedActive => 'what_changed_active',
-        ProBridgeTimingLoosenBlockedReason.patternReviewInboxActive =>
-          'pattern_review_inbox_active',
-        ProBridgeTimingLoosenBlockedReason.proSlotAlreadyUsed =>
-          'pro_slot_already_used',
-        ProBridgeTimingLoosenBlockedReason.noAllowedMoment => 'no_allowed_moment',
-      };
+    ProBridgeTimingLoosenBlockedReason.beforeFirstSave => 'before_first_save',
+    ProBridgeTimingLoosenBlockedReason.beforeFirstProof => 'before_first_proof',
+    ProBridgeTimingLoosenBlockedReason.recording => 'recording',
+    ProBridgeTimingLoosenBlockedReason.postSaveDegraded => 'post_save_degraded',
+    ProBridgeTimingLoosenBlockedReason.feedbackTooVague => 'feedback_too_vague',
+    ProBridgeTimingLoosenBlockedReason.feedbackNotRelevant =>
+      'feedback_not_relevant',
+    ProBridgeTimingLoosenBlockedReason.whatChangedActive =>
+      'what_changed_active',
+    ProBridgeTimingLoosenBlockedReason.patternReviewInboxActive =>
+      'pattern_review_inbox_active',
+    ProBridgeTimingLoosenBlockedReason.proSlotAlreadyUsed =>
+      'pro_slot_already_used',
+    ProBridgeTimingLoosenBlockedReason.noAllowedMoment => 'no_allowed_moment',
+  };
 }
 
 class ProBridgeTimingLoosenResult {
@@ -460,25 +458,23 @@ class ProBridgeTimingLoosenResult {
     required ProMomentTimingTrigger trigger,
     ProofConfidenceLevel? confidenceLevel,
     bool hasSafeAnchor = false,
-  }) =>
-      ProBridgeTimingLoosenResult(
-        allowed: true,
-        trigger: trigger,
-        confidenceLevel: confidenceLevel,
-        hasSafeAnchor: hasSafeAnchor,
-      );
+  }) => ProBridgeTimingLoosenResult(
+    allowed: true,
+    trigger: trigger,
+    confidenceLevel: confidenceLevel,
+    hasSafeAnchor: hasSafeAnchor,
+  );
 
   factory ProBridgeTimingLoosenResult.blocked({
     required ProBridgeTimingLoosenBlockedReason blockedReason,
     ProofConfidenceLevel? confidenceLevel,
     bool hasSafeAnchor = false,
-  }) =>
-      ProBridgeTimingLoosenResult(
-        allowed: false,
-        blockedReason: blockedReason,
-        confidenceLevel: confidenceLevel,
-        hasSafeAnchor: hasSafeAnchor,
-      );
+  }) => ProBridgeTimingLoosenResult(
+    allowed: false,
+    blockedReason: blockedReason,
+    confidenceLevel: confidenceLevel,
+    hasSafeAnchor: hasSafeAnchor,
+  );
 
   final bool allowed;
   final ProMomentTimingTrigger? trigger;

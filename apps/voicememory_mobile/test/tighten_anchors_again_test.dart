@@ -29,7 +29,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/tighten_anchors_again/unused.json'));
+    : super(file: File('test/tmp/tighten_anchors_again/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -52,23 +52,22 @@ JournalEntry _entry(
   DateTime? createdAt,
   String mood = 'thoughtful',
   String concreteObservation = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: mood,
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: concreteObservation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: mood,
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: concreteObservation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _specificRepeatEntries({DateTime? anchor}) {
   final base = anchor ?? _now;
@@ -142,25 +141,25 @@ List<JournalEntry> _genericEmotionalEntries() {
 BetaRepairLabVisibilityInput _repairInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   BetaProofFeedbackType? feedbackType,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 void main() {
   late _MemoryPrefs prefs;
@@ -201,7 +200,9 @@ void main() {
         isFalse,
       );
       expect(
-        AnchorSpecificityGuard.isProofLevelEligible('saved privately on device'),
+        AnchorSpecificityGuard.isProofLevelEligible(
+          'saved privately on device',
+        ),
         isFalse,
       );
       expect(
@@ -290,10 +291,7 @@ void main() {
       expect(calibration.hasSafeAnchor, isTrue);
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
       final timeline = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
@@ -383,9 +381,7 @@ void main() {
     test('evidence trail pricing modes cannot override rejected anchor', () {
       expect(
         EvidenceTrailClarityEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-          ),
+          input: _repairInput(confidenceLevel: ProofConfidenceLevel.watchOnly),
           hasSafeAnchor: false,
         ),
         isFalse,

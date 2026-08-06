@@ -9,8 +9,7 @@ abstract final class ChangeTrailClarityCopy {
       'shows whether it comes back, changes shape, gets softer, gets stronger, '
       'fades, or gets corrected.';
 
-  static const returnsLine =
-      'Returns: the same repeat appears again.';
+  static const returnsLine = 'Returns: the same repeat appears again.';
 
   static const changesLine =
       'Changes: the repeat shows up in a slightly different way.';
@@ -21,8 +20,7 @@ abstract final class ChangeTrailClarityCopy {
   static const strengthensLine =
       'Strengthens: the repeat appears more clearly or more often.';
 
-  static const fadesLine =
-      'Fades: the repeat stops showing up as much.';
+  static const fadesLine = 'Fades: the repeat stops showing up as much.';
 
   static const correctedLine =
       'Corrected: you marked the proof as too vague or not relevant, so ArchiveMe '

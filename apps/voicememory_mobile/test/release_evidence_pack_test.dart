@@ -30,43 +30,42 @@ ReleaseEvidencePackInput _input({
   bool screenshots = true,
   bool testFlightUploaded = true,
   bool secretsRotated = true,
-}) =>
-    ReleaseEvidencePackInput(
-      cleanGitStatus: cleanGitStatus,
-      versionBuildCaptured: versionBuildCaptured,
-      physicalIphoneSmokeTest: physicalIphoneSmokeTest,
-      physicalIpadSmokeTest: physicalIpadSmokeTest,
-      productionApiSmokeTest: productionApiSmokeTest,
-      voiceSavePath: voiceSavePath,
-      typedSavePath: typedSavePath,
-      firstProofPath: firstProofPath,
-      proPaywallRoute: proPaywallRoute,
-      revenueCatProductLoad: revenueCatProductLoad,
-      sandboxPurchase: sandboxPurchase,
-      restorePurchases: restorePurchases,
-      entitlementPersistence: entitlementPersistence,
-      supportUrl: supportUrl,
-      privacyUrl: privacyUrl,
-      termsUrl: termsUrl,
-      screenshots: screenshots,
-      testFlightUploaded: testFlightUploaded,
-      secretsRotated: secretsRotated,
-    );
+}) => ReleaseEvidencePackInput(
+  cleanGitStatus: cleanGitStatus,
+  versionBuildCaptured: versionBuildCaptured,
+  physicalIphoneSmokeTest: physicalIphoneSmokeTest,
+  physicalIpadSmokeTest: physicalIpadSmokeTest,
+  productionApiSmokeTest: productionApiSmokeTest,
+  voiceSavePath: voiceSavePath,
+  typedSavePath: typedSavePath,
+  firstProofPath: firstProofPath,
+  proPaywallRoute: proPaywallRoute,
+  revenueCatProductLoad: revenueCatProductLoad,
+  sandboxPurchase: sandboxPurchase,
+  restorePurchases: restorePurchases,
+  entitlementPersistence: entitlementPersistence,
+  supportUrl: supportUrl,
+  privacyUrl: privacyUrl,
+  termsUrl: termsUrl,
+  screenshots: screenshots,
+  testFlightUploaded: testFlightUploaded,
+  secretsRotated: secretsRotated,
+);
 
 void main() {
   group('ReleaseEvidencePack.resolve', () {
-    test('all evidence present with secrets rotated returns readyForSubmission',
-        () {
-      final result = ReleaseEvidencePack.resolve(_input());
-      expect(result.status, ReleaseEvidencePackStatus.readyForSubmission);
-      expect(result.missingItems, isEmpty);
-      expect(result.message, ReleaseEvidencePackCopy.submissionLine);
-    });
+    test(
+      'all evidence present with secrets rotated returns readyForSubmission',
+      () {
+        final result = ReleaseEvidencePack.resolve(_input());
+        expect(result.status, ReleaseEvidencePackStatus.readyForSubmission);
+        expect(result.missingItems, isEmpty);
+        expect(result.message, ReleaseEvidencePackCopy.submissionLine);
+      },
+    );
 
     test('all evidence present without secrets returns readyForTestFlight', () {
-      final result = ReleaseEvidencePack.resolve(
-        _input(secretsRotated: false),
-      );
+      final result = ReleaseEvidencePack.resolve(_input(secretsRotated: false));
       expect(result.status, ReleaseEvidencePackStatus.readyForTestFlight);
       expect(result.missingItems, isEmpty);
       expect(result.message, ReleaseEvidencePackCopy.testFlightLine);
@@ -85,7 +84,11 @@ void main() {
       for (final item in ReleaseEvidencePack.requiredEvidenceItems) {
         final input = _withMissing(item);
         final result = ReleaseEvidencePack.resolve(input);
-        expect(result.status, ReleaseEvidencePackStatus.notReady, reason: item.name);
+        expect(
+          result.status,
+          ReleaseEvidencePackStatus.notReady,
+          reason: item.name,
+        );
         expect(result.missingItems, contains(item), reason: item.name);
       }
     });
@@ -127,12 +130,19 @@ void main() {
         ReleaseEvidencePackCopy.body.toLowerCase(),
         contains('not product work'),
       );
-      expect(ReleaseEvidencePackCopy.guardrail.toLowerCase(), contains('proof only'));
+      expect(
+        ReleaseEvidencePackCopy.guardrail.toLowerCase(),
+        contains('proof only'),
+      );
     });
 
     test('labels cover all required evidence items', () {
       for (final item in ReleaseEvidencePack.requiredEvidenceItems) {
-        expect(ReleaseEvidencePack.labelFor(item), isNotEmpty, reason: item.name);
+        expect(
+          ReleaseEvidencePack.labelFor(item),
+          isNotEmpty,
+          reason: item.name,
+        );
       }
     });
 

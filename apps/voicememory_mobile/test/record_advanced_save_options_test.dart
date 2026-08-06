@@ -102,7 +102,10 @@ void main() {
     ) async {
       await pumpRecordScreen(tester, entries: 1);
 
-      expect(find.text(EntryMemoryModeCopy.advancedSaveOptionsTitle), findsOneWidget);
+      expect(
+        find.text(EntryMemoryModeCopy.advancedSaveOptionsTitle),
+        findsOneWidget,
+      );
       expect(
         find.text(EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper),
         findsOneWidget,
@@ -120,7 +123,10 @@ void main() {
       await expandAdvancedSaveOptions(tester);
 
       expect(find.text(EntryMemoryModeCopy.useLabel), findsOneWidget);
-      expect(find.text(EntryThreadScopeCopy.existingThreadLabel), findsOneWidget);
+      expect(
+        find.text(EntryThreadScopeCopy.existingThreadLabel),
+        findsOneWidget,
+      );
       expect(find.text(ArchivePacksCopy.saveToPack), findsOneWidget);
     });
 
@@ -139,33 +145,42 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(EntryMemoryModeCopy.advancedSaveOptionsTitle), findsOneWidget);
+      expect(
+        find.text(EntryMemoryModeCopy.advancedSaveOptionsTitle),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('entry_memory_scope_picker')), findsNothing);
 
       await expandAdvancedSaveOptions(tester);
 
-      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_memory_scope_picker')),
+        findsOneWidget,
+      );
     });
 
-    test('default save metadata stays on archive context with no thread or pack', () async {
-      expect(
-        EntryMemoryModeSession.selectedMode,
-        EntryMemoryMode.useArchiveContext,
-      );
-      expect(
-        EntryThreadScopeSession.selectedScope,
-        EntryThreadScope.noThread,
-      );
+    test(
+      'default save metadata stays on archive context with no thread or pack',
+      () async {
+        expect(
+          EntryMemoryModeSession.selectedMode,
+          EntryMemoryMode.useArchiveContext,
+        );
+        expect(
+          EntryThreadScopeSession.selectedScope,
+          EntryThreadScope.noThread,
+        );
 
-      final saved = await EntrySaveCoordinator.applyNewEntryOptions(
-        _entry(id: 'default_save'),
-        entryCount: 1,
-      );
+        final saved = await EntrySaveCoordinator.applyNewEntryOptions(
+          _entry(id: 'default_save'),
+          entryCount: 1,
+        );
 
-      expect(saved.treatAsNew, isFalse);
-      expect(saved.keepSeparate, isFalse);
-      expect(saved.archiveThreadId, isNull);
-      expect(saved.archivePackId, isNull);
-    });
+        expect(saved.treatAsNew, isFalse);
+        expect(saved.keepSeparate, isFalse);
+        expect(saved.archiveThreadId, isNull);
+        expect(saved.archivePackId, isNull);
+      },
+    );
   });
 }

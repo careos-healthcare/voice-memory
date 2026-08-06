@@ -44,31 +44,28 @@ JournalEntry _entry(
   String id, {
   String? transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _entry(
-        'e$i',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _entry('e$i', createdAt: DateTime(2026, 6, 9 + i, 12)),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -96,10 +93,10 @@ bool _milestoneComplete({
             !e.transcript.startsWith('[draft]'),
       )
       .length;
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
-  final weekly =
-      WeeklyArchiveReviewEngine.build(entries: entries);
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
+  final weekly = WeeklyArchiveReviewEngine.build(entries: entries);
   return ArchiveMilestonesEngine.isComplete(
     id: id,
     savedCount: saved,
@@ -296,7 +293,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('archive_milestones_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_milestones_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Pro preview routes at ten entries', (tester) async {
@@ -306,9 +306,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, _) => ArchiveMilestonesCard.test(
-              entries: _entries(10),
-            ),
+            builder: (_, _) =>
+                ArchiveMilestonesCard.test(entries: _entries(10)),
           ),
           GoRoute(
             path: '/pro-preview',
@@ -318,21 +317,25 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_milestones_pro_line')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('archive_milestones_pro_preview_button')));
+      expect(
+        find.byKey(const Key('archive_milestones_pro_line')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const Key('archive_milestones_pro_preview_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.text('pro-preview'), findsOneWidget);
     });
 
-    testWidgets('does not include Buy now or Subscribe now text', (tester) async {
+    testWidgets('does not include Buy now or Subscribe now text', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -349,9 +352,9 @@ void main() {
 
   group('Archive milestones privacy boundaries', () {
     test('does not write to JournalStore', () {
-      final engineSrc =
-          File('lib/features/archive_milestones/archive_milestones_engine.dart')
-              .readAsStringSync();
+      final engineSrc = File(
+        'lib/features/archive_milestones/archive_milestones_engine.dart',
+      ).readAsStringSync();
       expect(engineSrc, isNot(contains('JournalStore')));
     });
 
@@ -371,8 +374,9 @@ void main() {
     });
 
     test('archive belief screen wires milestones card', () {
-      final src =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('ArchiveMilestonesCard'));
       expect(src, contains('ArchiveMilestonesGates.showOnArchive'));
     });

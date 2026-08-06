@@ -247,7 +247,10 @@ void main() {
       expect(find.text('Restore purchases'), findsOneWidget);
       expect(find.byKey(const Key('security_export')), findsOneWidget);
       expect(find.byKey(const Key('security_wipe_local')), findsOneWidget);
-      expect(find.byKey(const Key('security_hide_app_switcher')), findsOneWidget);
+      expect(
+        find.byKey(const Key('security_hide_app_switcher')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('security_delete')), findsOneWidget);
     });
   });

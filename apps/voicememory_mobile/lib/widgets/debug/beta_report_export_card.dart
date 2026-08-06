@@ -26,24 +26,20 @@ class BetaReportExportCard extends StatelessWidget {
   final Future<void> Function(String text)? copyText;
 
   Future<void> _copyReport(BuildContext context) async {
-    final copy = copyText ??
-        (text) => Clipboard.setData(ClipboardData(text: text));
+    final copy =
+        copyText ?? (text) => Clipboard.setData(ClipboardData(text: text));
     await copy(report.formattedText);
     onCopied?.call();
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(BetaReportExportCopy.copiedConfirmation),
-      ),
+      const SnackBar(content: Text(BetaReportExportCopy.copiedConfirmation)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('beta_report_export_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('beta_report_export_hidden'));
     }
 
     return Align(

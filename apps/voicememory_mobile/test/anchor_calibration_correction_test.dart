@@ -30,8 +30,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/anchor_calibration/unused.json'));
+  _MemoryPrefs() : super(file: File('test/tmp/anchor_calibration/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -48,11 +47,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -96,19 +91,18 @@ EvidenceAnchor _anchor(
   String id = 'a1',
   String summary = 'Said yes when capacity was already full.',
   bool isSafeForDisplay = true,
-}) =>
-    EvidenceAnchor(
-      id: id,
-      type: type,
-      label: type.label,
-      safeSummary: summary,
-      strength: 0.8,
-      recencyWeight: 0.9,
-      sourceCount: 2,
-      isUserCorrected: false,
-      isFreshReturn: type == EvidenceAnchorType.freshReturn,
-      isSafeForDisplay: isSafeForDisplay,
-    );
+}) => EvidenceAnchor(
+  id: id,
+  type: type,
+  label: type.label,
+  safeSummary: summary,
+  strength: 0.8,
+  recencyWeight: 0.9,
+  sourceCount: 2,
+  isUserCorrected: false,
+  isFreshReturn: type == EvidenceAnchorType.freshReturn,
+  isSafeForDisplay: isSafeForDisplay,
+);
 
 EvidenceAnchorExtractionResult _extraction(List<EvidenceAnchor> anchors) =>
     EvidenceAnchorExtractionResult(
@@ -185,11 +179,17 @@ void main() {
     test('helped ranks above repeat', () {
       expect(
         AnchorCalibrationEngine.typeRank(EvidenceAnchorType.helped),
-        greaterThan(AnchorCalibrationEngine.typeRank(EvidenceAnchorType.repeat)),
+        greaterThan(
+          AnchorCalibrationEngine.typeRank(EvidenceAnchorType.repeat),
+        ),
       );
       final ranked = AnchorCalibrationEngine.rankAnchors([
         _anchor(EvidenceAnchorType.repeat, id: 'repeat'),
-        _anchor(EvidenceAnchorType.helped, id: 'helped', summary: 'Helped: paused before saying yes.'),
+        _anchor(
+          EvidenceAnchorType.helped,
+          id: 'helped',
+          summary: 'Helped: paused before saying yes.',
+        ),
       ]);
       expect(ranked.first.type, EvidenceAnchorType.helped);
     });
@@ -253,16 +253,11 @@ void main() {
         entries: _threeRelatedEntries(),
         beliefSurfaceVisible: true,
         source: 'test',
-        anchorExtraction: _extraction([
-          _anchor(EvidenceAnchorType.repeat),
-        ]),
+        anchorExtraction: _extraction([_anchor(EvidenceAnchorType.repeat)]),
         calibrationFeedback: BetaProofFeedbackType.alreadyKnew,
         now: _now,
       );
-      expect(
-        calibration.primaryCopy,
-        AnchorCalibrationCopy.changeTrackingBody,
-      );
+      expect(calibration.primaryCopy, AnchorCalibrationCopy.changeTrackingBody);
       expect(calibration.level, isNot(ProofConfidenceLevel.strong));
     });
 
@@ -294,9 +289,7 @@ void main() {
         entries: _threeRelatedEntries(),
         beliefSurfaceVisible: true,
         source: 'test',
-        anchorExtraction: _extraction([
-          _anchor(EvidenceAnchorType.repeat),
-        ]),
+        anchorExtraction: _extraction([_anchor(EvidenceAnchorType.repeat)]),
         calibrationFeedback: BetaProofFeedbackType.notRelevant,
         now: _now,
       );
@@ -360,7 +353,9 @@ void main() {
 
     test('no medical claims', () {
       expect(
-        ProofSurfaceAdviceGuard.passes(AnchorCalibrationCopy.changeTrackingBody),
+        ProofSurfaceAdviceGuard.passes(
+          AnchorCalibrationCopy.changeTrackingBody,
+        ),
         isTrue,
       );
       expect(
@@ -380,7 +375,10 @@ void main() {
         source: 'test',
         trackAnalytics: true,
       );
-      expect(analyticsEvents.single.event, AnchorCalibrationAnalytics.appliedEvent);
+      expect(
+        analyticsEvents.single.event,
+        AnchorCalibrationAnalytics.appliedEvent,
+      );
       expect(
         analyticsEvents.single.props.keys,
         containsAll([

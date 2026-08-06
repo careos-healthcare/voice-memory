@@ -4,7 +4,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_personal_evidence_summary_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_personal_evidence_summary_model.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_personal_evidence_summary_card.dart';
 
 PressureCheckInRecord _record({

@@ -35,20 +35,19 @@ class ProofSpecificityResult {
   factory ProofSpecificityResult.hidden({
     required String source,
     int entryCount = 0,
-  }) =>
-      ProofSpecificityResult(
-        shouldShow: false,
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: false,
-        hasBeliefSurface: false,
-        evidenceAnchorCount: 0,
-        title: ProofSpecificityCopy.title,
-        body: ProofSpecificityCopy.body,
-        evidenceAnchors: const [],
-        usesFallbackEvidenceLine: true,
-        boundaryLine: ProofSpecificityCopy.boundaryLine,
-        correctionLine: ProofSpecificityCopy.correctionLine,
-        differentiationLine: ProofSpecificityCopy.differentiationLine,
-      );
+  }) => ProofSpecificityResult(
+    shouldShow: false,
+    entryCount: entryCount,
+    source: source,
+    hasConfirmedRepeat: false,
+    hasBeliefSurface: false,
+    evidenceAnchorCount: 0,
+    title: ProofSpecificityCopy.title,
+    body: ProofSpecificityCopy.body,
+    evidenceAnchors: const [],
+    usesFallbackEvidenceLine: true,
+    boundaryLine: ProofSpecificityCopy.boundaryLine,
+    correctionLine: ProofSpecificityCopy.correctionLine,
+    differentiationLine: ProofSpecificityCopy.differentiationLine,
+  );
 }

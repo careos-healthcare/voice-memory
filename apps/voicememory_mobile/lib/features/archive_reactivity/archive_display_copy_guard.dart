@@ -7,15 +7,15 @@ import 'archive_copy_normalizer.dart';
 abstract class ArchiveDisplayCopyGuard {
   ArchiveDisplayCopyGuard._();
 
-  static const malformedLogTokens = ArchiveCopyNormalizer.residualMalformedTokens;
+  static const malformedLogTokens =
+      ArchiveCopyNormalizer.residualMalformedTokens;
 
   static String normalize(String text) => ArchiveCopyNormalizer.normalize(text);
 
   static PatternDisplayCopyCheckResult checkForDisplayLog({
     required PatternDisplayField field,
     required String text,
-  }) =>
-      ArchiveCopyGrammarGate.checkForDisplayLog(field: field, text: text);
+  }) => ArchiveCopyGrammarGate.checkForDisplayLog(field: field, text: text);
 
   static String validateAndNormalize({
     required String field,
@@ -40,14 +40,12 @@ abstract class ArchiveDisplayCopyGuard {
   static bool passesGrammarGate({
     required PatternDisplayField field,
     required String text,
-  }) =>
-      ArchiveCopyGrammarGate.passes(field: field, text: text);
+  }) => ArchiveCopyGrammarGate.passes(field: field, text: text);
 
   static String grammarDisplayOrFallback({
     required PatternDisplayField field,
     required String text,
-  }) =>
-      ArchiveCopyGrammarGate.displayOrFallback(field: field, text: text);
+  }) => ArchiveCopyGrammarGate.displayOrFallback(field: field, text: text);
 
   static bool passesCombinedGate({
     required String field,
@@ -55,14 +53,13 @@ abstract class ArchiveDisplayCopyGuard {
     bool allowShortLabel = false,
     bool requireSpecificity = true,
     bool allowGenericFallback = false,
-  }) =>
-      validateAndNormalize(
-        field: field,
-        text: text,
-        allowShortLabel: allowShortLabel,
-        requireSpecificity: requireSpecificity,
-        allowGenericFallback: allowGenericFallback,
-      ).isNotEmpty;
+  }) => validateAndNormalize(
+    field: field,
+    text: text,
+    allowShortLabel: allowShortLabel,
+    requireSpecificity: requireSpecificity,
+    allowGenericFallback: allowGenericFallback,
+  ).isNotEmpty;
 
   static ArchiveCopyMinimumResult inspect({
     required String field,
@@ -70,12 +67,11 @@ abstract class ArchiveDisplayCopyGuard {
     bool allowShortLabel = false,
     bool requireSpecificity = true,
     bool allowGenericFallback = false,
-  }) =>
-      ArchiveCopyMinimumBar.validate(
-        field: field,
-        text: text,
-        allowShortLabel: allowShortLabel,
-        requireSpecificity: requireSpecificity,
-        allowGenericFallback: allowGenericFallback,
-      );
+  }) => ArchiveCopyMinimumBar.validate(
+    field: field,
+    text: text,
+    allowShortLabel: allowShortLabel,
+    requireSpecificity: requireSpecificity,
+    allowGenericFallback: allowGenericFallback,
+  );
 }

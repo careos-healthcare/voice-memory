@@ -10,7 +10,7 @@ abstract final class PaywallValueSharpeningAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -22,7 +22,7 @@ abstract final class PaywallValueSharpeningAnalytics {
       'source': source,
       'surface': surface,
       'proof_connected': proofConnected ? 1 : 0,
-      if (entryCount != null) 'entry_count': entryCount,
+      'entry_count': ?entryCount,
     };
 
     captureForTest?.call(seenEvent, properties);

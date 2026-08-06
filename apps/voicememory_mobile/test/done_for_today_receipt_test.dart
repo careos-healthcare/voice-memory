@@ -120,22 +120,25 @@ void main() {
       expect(receipt.sourceTerms, isEmpty);
     });
 
-    test('single entry with thread metadata stays neutral — no repeat claim', () {
-      final receipt = engine.build(
-        saved: true,
-        entryCount: 1,
-        records: _workThread3(),
-        now: _base,
-      );
-      expect(
-        receipt.archiveLine,
-        VisibleArchiveProofCopy.oneEntryAddedTodayLine,
-      );
-      expect(
-        receipt.tomorrowLine,
-        VisibleArchiveProofCopy.oneEntryTomorrowLine,
-      );
-    });
+    test(
+      'single entry with thread metadata stays neutral — no repeat claim',
+      () {
+        final receipt = engine.build(
+          saved: true,
+          entryCount: 1,
+          records: _workThread3(),
+          now: _base,
+        );
+        expect(
+          receipt.archiveLine,
+          VisibleArchiveProofCopy.oneEntryAddedTodayLine,
+        );
+        expect(
+          receipt.tomorrowLine,
+          VisibleArchiveProofCopy.oneEntryTomorrowLine,
+        );
+      },
+    );
 
     test('includes "Done for today", enough-for-today, and the rest line', () {
       for (final receipt in [
@@ -265,13 +268,12 @@ void main() {
     DoneForTodayReceipt buildFor(
       List<PressureCheckInRecord> records, {
       int? entryCount,
-    }) =>
-        engine.build(
-          saved: true,
-          entryCount: entryCount ?? records.length.clamp(2, 99),
-          records: records,
-          now: _base,
-        );
+    }) => engine.build(
+      saved: true,
+      entryCount: entryCount ?? records.length.clamp(2, 99),
+      records: records,
+      now: _base,
+    );
 
     test('returned thread gets the thread-specific cue', () {
       final receipt = buildFor(_workThread3());
@@ -327,10 +329,7 @@ void main() {
 
     test('one-entry cue uses future check framing only', () {
       final receipt = engine.build(saved: true, entryCount: 1, now: _base);
-      expect(
-        receipt.tomorrowCueLine,
-        DoneForTodayReceipt.genericTomorrowCue,
-      );
+      expect(receipt.tomorrowCueLine, DoneForTodayReceipt.genericTomorrowCue);
     });
 
     test('cue is one sentence in every variant', () {

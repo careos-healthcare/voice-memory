@@ -28,20 +28,20 @@ abstract final class StoreReadinessSingleSource {
       auditStatus: audit.resolveStatus(),
       productionStatus: input.productionChecklist?.resolveStatus(),
       testFlightReady: _testFlightReady(steps),
-      submissionReady: decision == StoreReadinessSingleSourceDecision.submissionReady,
+      submissionReady:
+          decision == StoreReadinessSingleSourceDecision.submissionReady,
     );
   }
 
   static StoreReadinessSingleSourceReport report(
     StoreReadinessSingleSourceResult result,
-  ) =>
-      StoreReadinessSingleSourceReport(
-        headline: StoreReadinessSingleSourceCopy.headline,
-        body: StoreReadinessSingleSourceCopy.body,
-        orderLine: StoreReadinessSingleSourceCopy.orderLine,
-        guardrail: StoreReadinessSingleSourceCopy.guardrail,
-        result: result,
-      );
+  ) => StoreReadinessSingleSourceReport(
+    headline: StoreReadinessSingleSourceCopy.headline,
+    body: StoreReadinessSingleSourceCopy.body,
+    orderLine: StoreReadinessSingleSourceCopy.orderLine,
+    guardrail: StoreReadinessSingleSourceCopy.guardrail,
+    result: result,
+  );
 
   static StoreReadinessSingleSourceInput fromProofInput(
     StoreReadinessProofInput proofInput, {
@@ -50,31 +50,30 @@ abstract final class StoreReadinessSingleSource {
     bool entitlementPersistsAfterRestart = false,
     bool paidIntentBetaReady = false,
     ProductionCandidateChecklist? productionChecklist,
-  }) =>
-      StoreReadinessSingleSourceInput(
-        signingConfigured: signingConfigured,
-        appStoreMetadataReady: proofInput.appStoreMetadataReady,
-        supportUrlSet: proofInput.supportUrlSet,
-        privacyUrlSet: proofInput.privacyUrlSet,
-        termsUrlSet: termsUrlSet,
-        screenshotsReady: proofInput.screenshotsReady,
-        revenueCatApiKeyProvided: proofInput.revenueCatApiKeyProvided,
-        revenueCatConfigured: proofInput.revenueCatConfigured,
-        productsLoaded: proofInput.productsLoaded,
-        proEntitlementConfigured: proofInput.proEntitlementConfigured,
-        purchaseFlowReachable: proofInput.purchaseFlowReachable,
-        restorePurchasesReachable: proofInput.restorePurchasesReachable,
-        restoreNoCrashVerified: proofInput.restoreNoCrashVerified,
-        purchasesUnavailableFallbackVerified:
-            proofInput.purchasesUnavailableFallbackVerified,
-        proStateCanBeRead: proofInput.proStateCanBeRead,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        physicalDeviceSmokePassed: proofInput.physicalDeviceSmokePassed,
-        testFlightUploadReady: proofInput.testFlightUploadReady,
-        paidIntentBetaReady: paidIntentBetaReady,
-        secretsRotated: proofInput.secretsRotated,
-        productionChecklist: productionChecklist,
-      );
+  }) => StoreReadinessSingleSourceInput(
+    signingConfigured: signingConfigured,
+    appStoreMetadataReady: proofInput.appStoreMetadataReady,
+    supportUrlSet: proofInput.supportUrlSet,
+    privacyUrlSet: proofInput.privacyUrlSet,
+    termsUrlSet: termsUrlSet,
+    screenshotsReady: proofInput.screenshotsReady,
+    revenueCatApiKeyProvided: proofInput.revenueCatApiKeyProvided,
+    revenueCatConfigured: proofInput.revenueCatConfigured,
+    productsLoaded: proofInput.productsLoaded,
+    proEntitlementConfigured: proofInput.proEntitlementConfigured,
+    purchaseFlowReachable: proofInput.purchaseFlowReachable,
+    restorePurchasesReachable: proofInput.restorePurchasesReachable,
+    restoreNoCrashVerified: proofInput.restoreNoCrashVerified,
+    purchasesUnavailableFallbackVerified:
+        proofInput.purchasesUnavailableFallbackVerified,
+    proStateCanBeRead: proofInput.proStateCanBeRead,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    physicalDeviceSmokePassed: proofInput.physicalDeviceSmokePassed,
+    testFlightUploadReady: proofInput.testFlightUploadReady,
+    paidIntentBetaReady: paidIntentBetaReady,
+    secretsRotated: proofInput.secretsRotated,
+    productionChecklist: productionChecklist,
+  );
 
   static StoreReadinessSingleSourceInput fromProductionCandidateChecklist(
     ProductionCandidateChecklist checklist, {
@@ -91,27 +90,26 @@ abstract final class StoreReadinessSingleSource {
     bool proStateCanBeRead = true,
     bool entitlementPersistsAfterRestart = false,
     bool paidIntentBetaReady = false,
-  }) =>
-      fromProofInput(
-        StoreReadinessProof.fromProductionCandidateChecklist(
-          checklist,
-          revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-          revenueCatConfigured: revenueCatConfigured,
-          productsLoaded: productsLoaded,
-          proEntitlementConfigured: proEntitlementConfigured,
-          purchaseFlowReachable: purchaseFlowReachable,
-          restorePurchasesReachable: restorePurchasesReachable,
-          restoreNoCrashVerified: restoreNoCrashVerified,
-          purchasesUnavailableFallbackVerified:
-              purchasesUnavailableFallbackVerified,
-          proStateCanBeRead: proStateCanBeRead,
-        ),
-        signingConfigured: signingConfigured,
-        termsUrlSet: termsUrlSet,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        paidIntentBetaReady: paidIntentBetaReady,
-        productionChecklist: checklist,
-      );
+  }) => fromProofInput(
+    StoreReadinessProof.fromProductionCandidateChecklist(
+      checklist,
+      revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+      revenueCatConfigured: revenueCatConfigured,
+      productsLoaded: productsLoaded,
+      proEntitlementConfigured: proEntitlementConfigured,
+      purchaseFlowReachable: purchaseFlowReachable,
+      restorePurchasesReachable: restorePurchasesReachable,
+      restoreNoCrashVerified: restoreNoCrashVerified,
+      purchasesUnavailableFallbackVerified:
+          purchasesUnavailableFallbackVerified,
+      proStateCanBeRead: proStateCanBeRead,
+    ),
+    signingConfigured: signingConfigured,
+    termsUrlSet: termsUrlSet,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    paidIntentBetaReady: paidIntentBetaReady,
+    productionChecklist: checklist,
+  );
 
   static StoreReadinessSingleSourceInput fromStoreReadinessAudit(
     StoreReadinessAudit audit, {
@@ -129,50 +127,48 @@ abstract final class StoreReadinessSingleSource {
     bool entitlementPersistsAfterRestart = false,
     bool paidIntentBetaReady = false,
     ProductionCandidateChecklist? productionChecklist,
-  }) =>
-      fromProofInput(
-        StoreReadinessProof.fromStoreReadinessAudit(
-          audit,
-          revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-          revenueCatConfigured: revenueCatConfigured,
-          productsLoaded: productsLoaded,
-          proEntitlementConfigured: proEntitlementConfigured,
-          purchaseFlowReachable: purchaseFlowReachable,
-          restorePurchasesReachable: restorePurchasesReachable,
-          restoreNoCrashVerified: restoreNoCrashVerified,
-          purchasesUnavailableFallbackVerified:
-              purchasesUnavailableFallbackVerified,
-          proStateCanBeRead: proStateCanBeRead,
-        ),
-        signingConfigured: signingConfigured,
-        termsUrlSet: termsUrlSet,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        paidIntentBetaReady: paidIntentBetaReady,
-        productionChecklist: productionChecklist,
-      );
+  }) => fromProofInput(
+    StoreReadinessProof.fromStoreReadinessAudit(
+      audit,
+      revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+      revenueCatConfigured: revenueCatConfigured,
+      productsLoaded: productsLoaded,
+      proEntitlementConfigured: proEntitlementConfigured,
+      purchaseFlowReachable: purchaseFlowReachable,
+      restorePurchasesReachable: restorePurchasesReachable,
+      restoreNoCrashVerified: restoreNoCrashVerified,
+      purchasesUnavailableFallbackVerified:
+          purchasesUnavailableFallbackVerified,
+      proStateCanBeRead: proStateCanBeRead,
+    ),
+    signingConfigured: signingConfigured,
+    termsUrlSet: termsUrlSet,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    paidIntentBetaReady: paidIntentBetaReady,
+    productionChecklist: productionChecklist,
+  );
 
   static StoreReadinessProofInput toProofInput(
     StoreReadinessSingleSourceInput input,
-  ) =>
-      StoreReadinessProofInput(
-        revenueCatApiKeyProvided: input.revenueCatApiKeyProvided,
-        revenueCatConfigured: input.revenueCatConfigured,
-        productsLoaded: input.productsLoaded,
-        proEntitlementConfigured: input.proEntitlementConfigured,
-        purchaseFlowReachable: input.purchaseFlowReachable,
-        restorePurchasesReachable: input.restorePurchasesReachable,
-        restoreNoCrashVerified: input.restoreNoCrashVerified,
-        purchasesUnavailableFallbackVerified:
-            input.purchasesUnavailableFallbackVerified,
-        proStateCanBeRead: input.proStateCanBeRead,
-        supportUrlSet: input.supportUrlSet,
-        privacyUrlSet: input.privacyUrlSet,
-        appStoreMetadataReady: input.appStoreMetadataReady,
-        screenshotsReady: input.screenshotsReady,
-        physicalDeviceSmokePassed: input.physicalDeviceSmokePassed,
-        testFlightUploadReady: input.testFlightUploadReady,
-        secretsRotated: input.secretsRotated,
-      );
+  ) => StoreReadinessProofInput(
+    revenueCatApiKeyProvided: input.revenueCatApiKeyProvided,
+    revenueCatConfigured: input.revenueCatConfigured,
+    productsLoaded: input.productsLoaded,
+    proEntitlementConfigured: input.proEntitlementConfigured,
+    purchaseFlowReachable: input.purchaseFlowReachable,
+    restorePurchasesReachable: input.restorePurchasesReachable,
+    restoreNoCrashVerified: input.restoreNoCrashVerified,
+    purchasesUnavailableFallbackVerified:
+        input.purchasesUnavailableFallbackVerified,
+    proStateCanBeRead: input.proStateCanBeRead,
+    supportUrlSet: input.supportUrlSet,
+    privacyUrlSet: input.privacyUrlSet,
+    appStoreMetadataReady: input.appStoreMetadataReady,
+    screenshotsReady: input.screenshotsReady,
+    physicalDeviceSmokePassed: input.physicalDeviceSmokePassed,
+    testFlightUploadReady: input.testFlightUploadReady,
+    secretsRotated: input.secretsRotated,
+  );
 
   static StoreReadinessAudit toAudit(StoreReadinessSingleSourceInput input) =>
       StoreReadinessAudit(
@@ -204,20 +200,24 @@ abstract final class StoreReadinessSingleSource {
 
     final signingOk = input.signingConfigured;
     final metadataOk = signingOk && input.appStoreMetadataReady;
-    final supportOk = metadataOk &&
+    final supportOk =
+        metadataOk &&
         input.supportUrlSet &&
         input.privacyUrlSet &&
         input.termsUrlSet;
     final screenshotsOk = supportOk && input.screenshotsReady;
-    final revenueCatOk = screenshotsOk &&
+    final revenueCatOk =
+        screenshotsOk &&
         input.revenueCatApiKeyProvided &&
         input.revenueCatConfigured &&
         input.productsLoaded;
     final purchaseOk = revenueCatOk && input.purchaseFlowReachable;
-    final restoreOk = purchaseOk &&
+    final restoreOk =
+        purchaseOk &&
         input.restorePurchasesReachable &&
         input.restoreNoCrashVerified;
-    final entitlementOk = restoreOk &&
+    final entitlementOk =
+        restoreOk &&
         input.proEntitlementConfigured &&
         input.proStateCanBeRead &&
         input.entitlementPersistsAfterRestart;
@@ -234,12 +234,15 @@ abstract final class StoreReadinessSingleSource {
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.metadata,
-        status: statusFor(prerequisite: signingOk, value: input.appStoreMetadataReady),
+        status: statusFor(
+          prerequisite: signingOk,
+          value: input.appStoreMetadataReady,
+        ),
         detailLabel: !signingOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.appStoreMetadataReady
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.supportPrivacyTerms,
@@ -250,36 +253,38 @@ abstract final class StoreReadinessSingleSource {
         ),
         detailLabel: !metadataOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
-            : input.supportUrlSet &&
-                    input.privacyUrlSet &&
-                    input.termsUrlSet
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            : input.supportUrlSet && input.privacyUrlSet && input.termsUrlSet
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.screenshots,
-        status: statusFor(prerequisite: supportOk, value: input.screenshotsReady),
+        status: statusFor(
+          prerequisite: supportOk,
+          value: input.screenshotsReady,
+        ),
         detailLabel: !supportOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.screenshotsReady
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.revenueCatProducts,
         status: statusFor(
           prerequisite: screenshotsOk,
-          value: input.revenueCatApiKeyProvided &&
+          value:
+              input.revenueCatApiKeyProvided &&
               input.revenueCatConfigured &&
               input.productsLoaded,
         ),
         detailLabel: !screenshotsOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.revenueCatApiKeyProvided &&
-                    input.revenueCatConfigured &&
-                    input.productsLoaded
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+                  input.revenueCatConfigured &&
+                  input.productsLoaded
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.purchasePath,
@@ -290,8 +295,8 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !revenueCatOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.purchaseFlowReachable
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.restorePath,
@@ -303,24 +308,25 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !purchaseOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.restorePurchasesReachable && input.restoreNoCrashVerified
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.entitlementPersistence,
         status: statusFor(
           prerequisite: restoreOk,
-          value: input.proEntitlementConfigured &&
+          value:
+              input.proEntitlementConfigured &&
               input.proStateCanBeRead &&
               input.entitlementPersistsAfterRestart,
         ),
         detailLabel: !restoreOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.proEntitlementConfigured &&
-                    input.proStateCanBeRead &&
-                    input.entitlementPersistsAfterRestart
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+                  input.proStateCanBeRead &&
+                  input.entitlementPersistsAfterRestart
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.physicalDeviceSmoke,
@@ -331,8 +337,8 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !entitlementOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.physicalDeviceSmokePassed
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.testFlightUpload,
@@ -343,8 +349,8 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !smokeOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.testFlightUploadReady
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.paidIntentBeta,
@@ -355,8 +361,8 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !testFlightOk
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.paidIntentBetaReady
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailPending,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailPending,
       ),
       _step(
         id: StoreReadinessSingleSourceStepId.secretsRotation,
@@ -367,8 +373,8 @@ abstract final class StoreReadinessSingleSource {
         detailLabel: !(testFlightOk && input.paidIntentBetaReady)
             ? StoreReadinessSingleSourceCopy.detailBlocked
             : input.secretsRotated
-                ? StoreReadinessSingleSourceCopy.detailPass
-                : StoreReadinessSingleSourceCopy.detailFail,
+            ? StoreReadinessSingleSourceCopy.detailPass
+            : StoreReadinessSingleSourceCopy.detailFail,
       ),
     ];
   }
@@ -377,13 +383,12 @@ abstract final class StoreReadinessSingleSource {
     required StoreReadinessSingleSourceStepId id,
     required StoreReadinessSingleSourceStepStatus status,
     required String detailLabel,
-  }) =>
-      StoreReadinessSingleSourceStep(
-        id: id,
-        label: StoreReadinessSingleSourceCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => StoreReadinessSingleSourceStep(
+    id: id,
+    label: StoreReadinessSingleSourceCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 
   static StoreReadinessSingleSourceDecision _resolveDecision(
     List<StoreReadinessSingleSourceStep> steps,
@@ -413,7 +418,9 @@ abstract final class StoreReadinessSingleSource {
   }
 
   static bool _testFlightReady(List<StoreReadinessSingleSourceStep> steps) =>
-      steps.take(testFlightStepCount).every(
+      steps
+          .take(testFlightStepCount)
+          .every(
             (step) => step.status == StoreReadinessSingleSourceStepStatus.pass,
           );
 
@@ -442,12 +449,7 @@ abstract final class StoreReadinessSingleSource {
       };
 }
 
-enum StoreReadinessSingleSourceStepStatus {
-  pass,
-  fail,
-  pending,
-  blocked,
-}
+enum StoreReadinessSingleSourceStepStatus { pass, fail, pending, blocked }
 
 enum StoreReadinessSingleSourceDecision {
   notReady,

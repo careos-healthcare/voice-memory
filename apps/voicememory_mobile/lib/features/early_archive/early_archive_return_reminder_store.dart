@@ -48,10 +48,13 @@ class EarlyArchiveReturnReminderStore {
     await _prefs.writeMap(_reminderSetKey, {'set': true});
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest(MobilePrefsStore prefs) async {
-    EarlyArchiveReturnReminderSession.resetForTest();
+  static Future<void> resetPersistedState(MobilePrefsStore prefs) async {
+    EarlyArchiveReturnReminderSession.resetSessionState();
     await prefs.writeMap(_dismissedAtKey, {});
     await prefs.writeMap(_reminderSetKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest(MobilePrefsStore prefs) =>
+      resetPersistedState(prefs);
 }

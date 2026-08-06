@@ -32,40 +32,42 @@ abstract final class ReleaseFragilityCopy {
   static const detailReleaseBlocked = 'Release blocked';
 
   static String labelFor(ReleaseFragilityRiskId id) => switch (id) {
-        ReleaseFragilityRiskId.signing => 'Signing',
-        ReleaseFragilityRiskId.bundleId => 'Bundle id',
-        ReleaseFragilityRiskId.displayName => 'Display name',
-        ReleaseFragilityRiskId.iosDeploymentTarget => 'iOS deployment target',
-        ReleaseFragilityRiskId.revenueCatKey => 'RevenueCat key',
-        ReleaseFragilityRiskId.appStoreProducts => 'App Store products',
-        ReleaseFragilityRiskId.entitlementId => 'Entitlement id',
-        ReleaseFragilityRiskId.restorePath => 'Restore path',
-        ReleaseFragilityRiskId.supportUrl => 'Support URL',
-        ReleaseFragilityRiskId.privacyUrl => 'Privacy URL',
-        ReleaseFragilityRiskId.termsUrl => 'Terms URL',
-        ReleaseFragilityRiskId.widgetExtension => 'Widget extension',
-        ReleaseFragilityRiskId.productionApi => 'Production API',
-        ReleaseFragilityRiskId.secrets => 'Secrets',
-        ReleaseFragilityRiskId.screenshots => 'Screenshots',
-        ReleaseFragilityRiskId.testFlightUpload => 'TestFlight upload',
-        ReleaseFragilityRiskId.staleProductCopy => 'Stale product copy',
-      };
+    ReleaseFragilityRiskId.signing => 'Signing',
+    ReleaseFragilityRiskId.bundleId => 'Bundle id',
+    ReleaseFragilityRiskId.displayName => 'Display name',
+    ReleaseFragilityRiskId.iosDeploymentTarget => 'iOS deployment target',
+    ReleaseFragilityRiskId.revenueCatKey => 'RevenueCat key',
+    ReleaseFragilityRiskId.appStoreProducts => 'App Store products',
+    ReleaseFragilityRiskId.entitlementId => 'Entitlement id',
+    ReleaseFragilityRiskId.restorePath => 'Restore path',
+    ReleaseFragilityRiskId.supportUrl => 'Support URL',
+    ReleaseFragilityRiskId.privacyUrl => 'Privacy URL',
+    ReleaseFragilityRiskId.termsUrl => 'Terms URL',
+    ReleaseFragilityRiskId.widgetExtension => 'Widget extension',
+    ReleaseFragilityRiskId.productionApi => 'Production API',
+    ReleaseFragilityRiskId.secrets => 'Secrets',
+    ReleaseFragilityRiskId.screenshots => 'Screenshots',
+    ReleaseFragilityRiskId.testFlightUpload => 'TestFlight upload',
+    ReleaseFragilityRiskId.staleProductCopy => 'Stale product copy',
+  };
 
-  static String messageFor(ReleaseFragilityDecision decision) => switch (decision) {
+  static String messageFor(ReleaseFragilityDecision decision) =>
+      switch (decision) {
         ReleaseFragilityDecision.lowRisk => lowRiskLine,
         ReleaseFragilityDecision.manualCheckNeeded => manualCheckNeededLine,
         ReleaseFragilityDecision.releaseBlocked => releaseBlockedLine,
       };
 
-  static String recommendationFor(ReleaseFragilityDecision decision) =>
-      switch (decision) {
-        ReleaseFragilityDecision.lowRisk =>
-          'Continue release prep. Keep manual evidence updated as checks complete.',
-        ReleaseFragilityDecision.manualCheckNeeded =>
-          'Complete pending manual release evidence before App Store submission.',
-        ReleaseFragilityDecision.releaseBlocked =>
-          'Fix the earliest blocked operational risk before TestFlight or submission.',
-      };
+  static String recommendationFor(
+    ReleaseFragilityDecision decision,
+  ) => switch (decision) {
+    ReleaseFragilityDecision.lowRisk =>
+      'Continue release prep. Keep manual evidence updated as checks complete.',
+    ReleaseFragilityDecision.manualCheckNeeded =>
+      'Complete pending manual release evidence before App Store submission.',
+    ReleaseFragilityDecision.releaseBlocked =>
+      'Fix the earliest blocked operational risk before TestFlight or submission.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -108,14 +110,6 @@ enum ReleaseFragilityRiskId {
   staleProductCopy,
 }
 
-enum ReleaseFragilityRiskLevel {
-  lowRisk,
-  manualCheckNeeded,
-  releaseBlocked,
-}
+enum ReleaseFragilityRiskLevel { lowRisk, manualCheckNeeded, releaseBlocked }
 
-enum ReleaseFragilityDecision {
-  lowRisk,
-  manualCheckNeeded,
-  releaseBlocked,
-}
+enum ReleaseFragilityDecision { lowRisk, manualCheckNeeded, releaseBlocked }

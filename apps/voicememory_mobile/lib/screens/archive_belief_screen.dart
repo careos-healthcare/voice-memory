@@ -77,6 +77,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final theme = Theme.of(context);
     final entries = _entries;
     return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(title: const Text('Archive')),
       body: SafeArea(
         child: RefreshIndicator(

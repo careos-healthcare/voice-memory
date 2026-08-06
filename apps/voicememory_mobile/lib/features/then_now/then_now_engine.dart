@@ -82,26 +82,26 @@ class ThenNowEngine {
   }
 
   static ThenNowResult _screenshotPreview() => ThenNowResult(
-        hasCard: false,
-        headline: ThenNowCopy.screenshotHeadline,
-        thenLabel: ThenNowCopy.thenLabel,
-        thenSummary: ThenNowCopy.screenshotThenSummary,
-        nowLabel: ThenNowCopy.nowLabel,
-        nowSummary: ThenNowCopy.screenshotNowSummary,
-        evidenceCountLabel: ThenNowCopy.evidenceCountLabel(
-          earlierCount: 1,
-          newerCount: 1,
-          total: 2,
-        ),
-        helperText: ThenNowCopy.helperText,
-        cautionLabel: ThenNowCopy.cautionLabel,
-        primaryCtaLabel: ThenNowCopy.reviewChangeCta,
-        primaryRoute: ThenNowCopy.route,
-        secondaryCtaLabel: ThenNowCopy.saveAnotherMomentCta,
-        secondaryRoute: ThenNowCopy.recordRoute,
-        reasonId: ThenNowReasonId.themeComparison,
-        showOnArchiveHome: false,
-      );
+    hasCard: false,
+    headline: ThenNowCopy.screenshotHeadline,
+    thenLabel: ThenNowCopy.thenLabel,
+    thenSummary: ThenNowCopy.screenshotThenSummary,
+    nowLabel: ThenNowCopy.nowLabel,
+    nowSummary: ThenNowCopy.screenshotNowSummary,
+    evidenceCountLabel: ThenNowCopy.evidenceCountLabel(
+      earlierCount: 1,
+      newerCount: 1,
+      total: 2,
+    ),
+    helperText: ThenNowCopy.helperText,
+    cautionLabel: ThenNowCopy.cautionLabel,
+    primaryCtaLabel: ThenNowCopy.reviewChangeCta,
+    primaryRoute: ThenNowCopy.route,
+    secondaryCtaLabel: ThenNowCopy.saveAnotherMomentCta,
+    secondaryRoute: ThenNowCopy.recordRoute,
+    reasonId: ThenNowReasonId.themeComparison,
+    showOnArchiveHome: false,
+  );
 
   static ThenNowResult _earlyPreview(ThenNowInput input) {
     return ThenNowResult(
@@ -137,13 +137,13 @@ class ThenNowEngine {
     final thenSummary = thenCount > nowCount
         ? ThenNowCopy.thenMoreOften
         : nowCount > thenCount
-            ? ThenNowCopy.thenLessOften
-            : ThenNowCopy.thenAppeared;
+        ? ThenNowCopy.thenLessOften
+        : ThenNowCopy.thenAppeared;
     final nowSummary = thenCount > nowCount
         ? ThenNowCopy.nowShifting
         : nowCount > thenCount
-            ? ThenNowCopy.nowAppearingMore
-            : ThenNowCopy.nowStillAppears;
+        ? ThenNowCopy.nowAppearingMore
+        : ThenNowCopy.nowStillAppears;
 
     return ThenNowResult(
       hasCard: true,
@@ -153,11 +153,7 @@ class ThenNowEngine {
       nowLabel: ThenNowCopy.nowLabel,
       nowSummary: nowSummary,
       evidenceCountLabel:
-          '${ThenNowCopy.themeEvidenceLabel(theme)} · ${ThenNowCopy.evidenceCountLabel(
-        earlierCount: input.earlierMomentCount,
-        newerCount: input.newerMomentCount,
-        total: input.realSavedMomentCount,
-      )}',
+          '${ThenNowCopy.themeEvidenceLabel(theme)} · ${ThenNowCopy.evidenceCountLabel(earlierCount: input.earlierMomentCount, newerCount: input.newerMomentCount, total: input.realSavedMomentCount)}',
       helperText: ThenNowCopy.helperText,
       cautionLabel: ThenNowCopy.cautionLabel,
       primaryCtaLabel: ThenNowCopy.reviewChangeCta,
@@ -199,7 +195,7 @@ class ThenNowEngine {
   static Map<String, int> _themeCountsFor(List<JournalEntry> entries) {
     final counts = <String, int>{};
     for (final entry in entries) {
-      final themes = entry.reflection?.recurringThemes ?? const [];
+      final themes = entry.reflection.recurringThemes;
       for (final raw in themes) {
         final theme = raw.trim().toLowerCase();
         if (theme.isEmpty) continue;

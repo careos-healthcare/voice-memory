@@ -10,15 +10,9 @@ import '../../theme/voicememory_cards.dart';
 
 /// Explains why ArchiveMe noticed a repeat — safe labels only, no Pro CTA.
 class ProofSpecificityCard extends StatefulWidget {
-  const ProofSpecificityCard({
-    super.key,
-    required this.result,
-  });
+  const ProofSpecificityCard({super.key, required this.result});
 
-  const ProofSpecificityCard.test({
-    super.key,
-    required this.result,
-  });
+  const ProofSpecificityCard.test({super.key, required this.result});
 
   final ProofSpecificityResult result;
 
@@ -42,16 +36,17 @@ class _ProofSpecificityCardState extends State<ProofSpecificityCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('proof_specificity_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -108,9 +103,9 @@ class _ProofSpecificityCardState extends State<ProofSpecificityCard> {
           Text(
             widget.result.differentiationLine,
             key: const Key('proof_specificity_differentiation_line'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

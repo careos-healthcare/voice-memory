@@ -10,8 +10,7 @@ abstract final class ProPromiseCopyAuditCopy {
 
   static const preferredFreeLine = 'Free shows the first useful proof.';
 
-  static const preferredProLine =
-      'Pro keeps the longer proof trail over time.';
+  static const preferredProLine = 'Pro keeps the longer proof trail over time.';
 
   static const preferredContinuityLine =
       'Track what returns, changes, fades, or gets corrected.';

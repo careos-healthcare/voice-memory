@@ -1,4 +1,6 @@
 /// Copy for the post-save return handoff after entry 1 or 2.
+library;
+
 import '../trust/capture_recovery_copy.dart';
 
 abstract final class PostSaveReturnHandoffCopy {
@@ -16,12 +18,12 @@ abstract final class PostSaveReturnHandoffCopy {
   static const afterSecondSaveRelatedBodyFallback =
       'One more related moment unlocks first proof.';
 
-  static const afterSecondSaveRelatedFooter =
-      '2 of 3 · Ten seconds is enough.';
+  static const afterSecondSaveRelatedFooter = '2 of 3 · Ten seconds is enough.';
 
   static const afterSecondSaveUnrelatedTitle = 'Keep recording real moments';
 
-  static const afterSecondSaveUnrelatedBody = CaptureRecoveryCopy.noClearMatchYet;
+  static const afterSecondSaveUnrelatedBody =
+      CaptureRecoveryCopy.noClearMatchYet;
 
   static const afterSecondSaveUnrelatedFooter = 'No need to force a pattern.';
 

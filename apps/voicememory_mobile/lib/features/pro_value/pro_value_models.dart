@@ -23,10 +23,7 @@ class ProValueInput {
 
 /// Navigation target for Pro value CTAs.
 class ProValueCTA {
-  const ProValueCTA({
-    required this.label,
-    required this.route,
-  });
+  const ProValueCTA({required this.label, required this.route});
 
   final String label;
   final String route;

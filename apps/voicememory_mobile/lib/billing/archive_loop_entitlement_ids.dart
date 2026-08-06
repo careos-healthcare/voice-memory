@@ -9,10 +9,7 @@ abstract class ArchiveLoopEntitlementIds {
   static const revenueCatLegacyPro = 'pro';
 
   /// Entitlement ids checked when mapping RevenueCat customer info to Pro access.
-  static const revenueCatEntitlementIds = [
-    archiveLoopPro,
-    revenueCatLegacyPro,
-  ];
+  static const revenueCatEntitlementIds = [archiveLoopPro, revenueCatLegacyPro];
 
   /// Preferred id for purchase/restore success logs.
   static const logEntitlementId = archiveLoopPro;

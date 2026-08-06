@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import 'pro_archive_continuity_card.dart';
 
 /// Backward-compatible alias — prefer [ProArchiveContinuityCard].

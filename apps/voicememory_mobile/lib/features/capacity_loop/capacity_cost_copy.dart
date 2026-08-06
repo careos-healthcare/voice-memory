@@ -5,8 +5,7 @@ abstract final class CapacityCostCopy {
   CapacityCostCopy._();
 
   static const cardTitle = 'Did that yes cost you later?';
-  static const cardBody =
-      'Did this cost you time, energy, or attention later?';
+  static const cardBody = 'Did this cost you time, energy, or attention later?';
   static const cardHelper =
       'This helps your archive understand the pattern. No private details are shared.';
   static const answerCheckinCta = 'Answer check-in';
@@ -23,14 +22,14 @@ abstract final class CapacityCostCopy {
   static const costTypeNone = 'None / not really';
 
   static String labelForCostType(String id) => switch (id) {
-        CapacityCostTypeIds.time => costTypeTime,
-        CapacityCostTypeIds.energy => costTypeEnergy,
-        CapacityCostTypeIds.attention => costTypeAttention,
-        CapacityCostTypeIds.workSpillover => costTypeWorkSpillover,
-        CapacityCostTypeIds.resentment => costTypeResentment,
-        CapacityCostTypeIds.none => costTypeNone,
-        _ => id,
-      };
+    CapacityCostTypeIds.time => costTypeTime,
+    CapacityCostTypeIds.energy => costTypeEnergy,
+    CapacityCostTypeIds.attention => costTypeAttention,
+    CapacityCostTypeIds.workSpillover => costTypeWorkSpillover,
+    CapacityCostTypeIds.resentment => costTypeResentment,
+    CapacityCostTypeIds.none => costTypeNone,
+    _ => id,
+  };
 
   static String laterCostRecordedCount(int count) =>
       'Later cost recorded on $count moment${count == 1 ? '' : 's'}.';
@@ -44,20 +43,20 @@ abstract final class CapacityCostCopy {
   static const shareSafeNote = 'No private details are shared.';
 
   static List<String> allVisibleStrings() => [
-        cardTitle,
-        cardBody,
-        cardHelper,
-        answerCheckinCta,
-        skipCta,
-        saveCheckinCta,
-        earlyStateBody,
-        costTypeTime,
-        costTypeEnergy,
-        costTypeAttention,
-        costTypeWorkSpillover,
-        costTypeResentment,
-        costTypeNone,
-        strengthenLoopPrompt,
-        shareSafeNote,
-      ];
+    cardTitle,
+    cardBody,
+    cardHelper,
+    answerCheckinCta,
+    skipCta,
+    saveCheckinCta,
+    earlyStateBody,
+    costTypeTime,
+    costTypeEnergy,
+    costTypeAttention,
+    costTypeWorkSpillover,
+    costTypeResentment,
+    costTypeNone,
+    strengthenLoopPrompt,
+    shareSafeNote,
+  ];
 }

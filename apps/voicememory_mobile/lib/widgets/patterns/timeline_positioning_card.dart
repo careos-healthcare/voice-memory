@@ -29,7 +29,8 @@ class TimelinePositioningCard extends StatefulWidget {
   final bool compact;
 
   @override
-  State<TimelinePositioningCard> createState() => _TimelinePositioningCardState();
+  State<TimelinePositioningCard> createState() =>
+      _TimelinePositioningCardState();
 }
 
 class _TimelinePositioningCardState extends State<TimelinePositioningCard> {
@@ -48,17 +49,18 @@ class _TimelinePositioningCardState extends State<TimelinePositioningCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final bulletStyle = bodyStyle.copyWith(color: AppColors.textPrimary);
 
     return Container(
       key: const Key('timeline_positioning_card'),
       width: double.infinity,
       padding: EdgeInsets.all(widget.compact ? AppSpacing.sm : AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -82,9 +84,9 @@ class _TimelinePositioningCardState extends State<TimelinePositioningCard> {
           Text(
             widget.result.differentiationLine,
             key: const Key('timeline_positioning_differentiation_line'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(

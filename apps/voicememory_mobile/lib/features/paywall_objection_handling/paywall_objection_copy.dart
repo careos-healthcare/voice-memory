@@ -46,38 +46,35 @@ abstract final class PaywallObjectionCopy {
   ];
 
   static List<PaywallObjectionRow> allRows() => const [
-        PaywallObjectionRow(
-          id: PaywallObjectionId.notJournaling,
-          question: notJournalingQuestion,
-          answer: notJournalingAnswer,
-        ),
-        PaywallObjectionRow(
-          id: PaywallObjectionId.notAiChat,
-          question: notAiChatQuestion,
-          answer: notAiChatAnswer,
-        ),
-        PaywallObjectionRow(
-          id: PaywallObjectionId.whatProKeeps,
-          question: whatProKeepsQuestion,
-          answer: whatProKeepsAnswer,
-        ),
-        PaywallObjectionRow(
-          id: PaywallObjectionId.stayInControl,
-          question: stayInControlQuestion,
-          answer: stayInControlAnswer,
-        ),
-        PaywallObjectionRow(
-          id: PaywallObjectionId.restorePurchases,
-          question: restorePurchasesQuestion,
-          answer: restorePurchasesAnswer,
-        ),
-      ];
+    PaywallObjectionRow(
+      id: PaywallObjectionId.notJournaling,
+      question: notJournalingQuestion,
+      answer: notJournalingAnswer,
+    ),
+    PaywallObjectionRow(
+      id: PaywallObjectionId.notAiChat,
+      question: notAiChatQuestion,
+      answer: notAiChatAnswer,
+    ),
+    PaywallObjectionRow(
+      id: PaywallObjectionId.whatProKeeps,
+      question: whatProKeepsQuestion,
+      answer: whatProKeepsAnswer,
+    ),
+    PaywallObjectionRow(
+      id: PaywallObjectionId.stayInControl,
+      question: stayInControlQuestion,
+      answer: stayInControlAnswer,
+    ),
+    PaywallObjectionRow(
+      id: PaywallObjectionId.restorePurchases,
+      question: restorePurchasesQuestion,
+      answer: restorePurchasesAnswer,
+    ),
+  ];
 
   static List<String> allDisplayedStrings() => [
-        sectionTitle,
-        for (final row in allRows()) ...[
-          row.question,
-          row.answer,
-        ],
-      ];
+    sectionTitle,
+    for (final row in allRows()) ...[row.question, row.answer],
+  ];
 }

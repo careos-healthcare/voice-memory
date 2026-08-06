@@ -36,6 +36,5 @@ abstract final class EarlyEvidenceTimelineDemo {
   static bool canShowCta({
     required int entryCount,
     required bool hasRealTimeline,
-  }) =>
-      !hasRealTimeline && (entryCount == 0 || entryCount == 1);
+  }) => !hasRealTimeline && (entryCount == 0 || entryCount == 1);
 }

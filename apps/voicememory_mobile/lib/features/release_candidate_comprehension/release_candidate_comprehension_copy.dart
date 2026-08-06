@@ -32,8 +32,7 @@ abstract final class ReleaseCandidateComprehensionCopy {
   static const changeProofLine =
       'The trail shows whether the repeat returns, changes, fades, or gets corrected.';
 
-  static const paymentQuestion =
-      'Would you pay to keep that trail over time?';
+  static const paymentQuestion = 'Would you pay to keep that trail over time?';
 
   static const guardrail =
       'Do not ship release-candidate messaging unless users understand ArchiveMe is '

@@ -50,37 +50,35 @@ abstract final class SecondMomentReturnCopy {
     SecondMomentReturnPromptType.didSomethingFeelHeavier,
   ];
 
-  static String promptTextFor(SecondMomentReturnPromptType type) =>
-      switch (type) {
-        SecondMomentReturnPromptType.didThisComeBack =>
-          didThisComeBackPrompt,
-        SecondMomentReturnPromptType.didItFeelDifferent =>
-          didItFeelDifferentPrompt,
-        SecondMomentReturnPromptType.didAnythingHelp => didAnythingHelpPrompt,
-        SecondMomentReturnPromptType.didYouAvoidItAgain =>
-          didYouAvoidItAgainPrompt,
-        SecondMomentReturnPromptType.didSomethingFeelHeavier =>
-          didSomethingFeelHeavierPrompt,
-      };
+  static String promptTextFor(
+    SecondMomentReturnPromptType type,
+  ) => switch (type) {
+    SecondMomentReturnPromptType.didThisComeBack => didThisComeBackPrompt,
+    SecondMomentReturnPromptType.didItFeelDifferent => didItFeelDifferentPrompt,
+    SecondMomentReturnPromptType.didAnythingHelp => didAnythingHelpPrompt,
+    SecondMomentReturnPromptType.didYouAvoidItAgain => didYouAvoidItAgainPrompt,
+    SecondMomentReturnPromptType.didSomethingFeelHeavier =>
+      didSomethingFeelHeavierPrompt,
+  };
 
   static List<String> allVisibleStrings() => [
-        coreReturnReason,
-        title,
-        bodyStart,
-        bodyCompare,
-        bodyThird,
-        body,
-        noticeLine,
-        noPressureLine,
-        noticedSomethingAction,
-        showWhatToNoticeAction,
-        notTodayAction,
-        afterNoticedSomething,
-        afterNotToday,
-        didThisComeBackPrompt,
-        didItFeelDifferentPrompt,
-        didAnythingHelpPrompt,
-        didYouAvoidItAgainPrompt,
-        didSomethingFeelHeavierPrompt,
-      ];
+    coreReturnReason,
+    title,
+    bodyStart,
+    bodyCompare,
+    bodyThird,
+    body,
+    noticeLine,
+    noPressureLine,
+    noticedSomethingAction,
+    showWhatToNoticeAction,
+    notTodayAction,
+    afterNoticedSomething,
+    afterNotToday,
+    didThisComeBackPrompt,
+    didItFeelDifferentPrompt,
+    didAnythingHelpPrompt,
+    didYouAvoidItAgainPrompt,
+    didSomethingFeelHeavierPrompt,
+  ];
 }

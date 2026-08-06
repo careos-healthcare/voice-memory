@@ -396,15 +396,19 @@ void main() {
       expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
-    testWidgets('early-thread card suppressed on capture-first record at 2 entries', (
-      tester,
-    ) async {
-      await tester.runAsync(() => seedEntries(2));
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'early-thread card suppressed on capture-first record at 2 entries',
+      (tester) async {
+        await tester.runAsync(() => seedEntries(2));
+        await pumpRecordScreen(tester);
+        expect(
+          find.byKey(const Key('day_seven_continuity_card')),
+          findsNothing,
+        );
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('review-ready card suppressed on capture-first record', (
       tester,

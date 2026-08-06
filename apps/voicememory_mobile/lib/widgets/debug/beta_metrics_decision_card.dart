@@ -7,19 +7,14 @@ import '../../theme/app_theme.dart';
 
 /// Internal beta metrics decision — developer diagnostics only.
 class BetaMetricsDecisionCard extends StatelessWidget {
-  const BetaMetricsDecisionCard({
-    super.key,
-    required this.report,
-  });
+  const BetaMetricsDecisionCard({super.key, required this.report});
 
   final BetaMetricsDecisionReport report;
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('beta_metrics_decision_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('beta_metrics_decision_hidden'));
     }
 
     return Container(
@@ -36,9 +31,9 @@ class BetaMetricsDecisionCard extends StatelessWidget {
           Text(
             report.title,
             key: const Key('beta_metrics_decision_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -46,7 +41,8 @@ class BetaMetricsDecisionCard extends StatelessWidget {
             key: const Key('beta_metrics_decision_summary'),
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: report.primaryBottleneck ==
+              color:
+                  report.primaryBottleneck ==
                       BetaMetricsDecisionBottleneck.healthy
                   ? AppColors.textPrimary
                   : AppColors.warning,
@@ -64,14 +60,16 @@ class BetaMetricsDecisionCard extends StatelessWidget {
             Text(
               report.coreValueFeedbackLabel!,
               key: const Key('beta_metrics_decision_core_value_feedback_label'),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             Text(
               report.coreValueFeedbackAnswer!,
-              key: const Key('beta_metrics_decision_core_value_feedback_answer'),
+              key: const Key(
+                'beta_metrics_decision_core_value_feedback_answer',
+              ),
               style: const TextStyle(
                 color: AppTheme.muted,
                 fontSize: 13,

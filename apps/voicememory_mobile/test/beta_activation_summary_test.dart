@@ -14,7 +14,7 @@ import 'package:voicememory_mobile/features/early_archive/early_archive_proof_an
 import 'package:voicememory_mobile/features/first25/first25_user_metrics.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_analytics.dart';
 import 'package:voicememory_mobile/features/transcript_correction/transcript_correction_analytics.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
@@ -83,9 +83,7 @@ void main() {
       expect(
         BetaActivationSummaryEngine.resolveStatus(
           loop: const BetaActivationLoopCounts(secondMomentSaved: 1),
-          extension: const BetaActivationSummaryExtension(
-            firstProofReached: 1,
-          ),
+          extension: const BetaActivationSummaryExtension(firstProofReached: 1),
         ),
         BetaActivationStatus.firstProofReached,
       );
@@ -167,13 +165,8 @@ void main() {
 
     test('buildCopyText is metadata only', () {
       final summary = BetaActivationSummaryEngine.build(
-        loop: const BetaActivationLoopCounts(
-          appOpened: 2,
-          firstMomentSaved: 1,
-        ),
-        extension: const BetaActivationSummaryExtension(
-          firstProofReached: 1,
-        ),
+        loop: const BetaActivationLoopCounts(appOpened: 2, firstMomentSaved: 1),
+        extension: const BetaActivationSummaryExtension(firstProofReached: 1),
       );
 
       final copy = BetaActivationSummaryEngine.buildCopyText(summary);
@@ -182,8 +175,14 @@ void main() {
       expect(copy, contains('Activation status'));
       expect(copy, contains('First proof reached'));
       expect(copy, contains('App opens: 2'));
-      expect(copy.toLowerCase(), isNot(contains(_sampleTranscript.toLowerCase())));
-      expect(copy.toLowerCase(), isNot(contains(_samplePatternName.toLowerCase())));
+      expect(
+        copy.toLowerCase(),
+        isNot(contains(_sampleTranscript.toLowerCase())),
+      );
+      expect(
+        copy.toLowerCase(),
+        isNot(contains(_samplePatternName.toLowerCase())),
+      );
       expect(copy.toLowerCase(), isNot(contains('transcript:')));
       expect(copy.toLowerCase(), isNot(contains('feedback note')));
       expect(copy.toLowerCase(), isNot(contains('pattern name')));
@@ -208,7 +207,10 @@ void main() {
         answer: 'same',
         hasGroundedPhrase: true,
       );
-      ActivationFunnelAnalytics.track('beta_feedback_opened', source: 'account');
+      ActivationFunnelAnalytics.track(
+        'beta_feedback_opened',
+        source: 'account',
+      );
       ActivationFunnelAnalytics.track(
         'beta_feedback_submitted',
         source: 'account',
@@ -255,12 +257,15 @@ void main() {
 
   group('Testing ArchiveMe scope', () {
     test('beta progress summary lives in Testing ArchiveMe screen only', () {
-      final testingSource =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
-      final accountSource =
-          File('lib/screens/account_screen.dart').readAsStringSync();
-      final settingsSource =
-          File('lib/screens/settings_screen.dart').readAsStringSync();
+      final testingSource = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
+      final accountSource = File(
+        'lib/screens/account_screen.dart',
+      ).readAsStringSync();
+      final settingsSource = File(
+        'lib/screens/settings_screen.dart',
+      ).readAsStringSync();
 
       expect(
         testingSource.contains('testing_archiveme_beta_progress_summary'),
@@ -269,7 +274,10 @@ void main() {
       expect(testingSource.contains('BetaActivationSummarySheet'), isTrue);
       expect(accountSource.contains('BetaActivationSummarySheet'), isFalse);
       expect(settingsSource.contains('BetaActivationSummarySheet'), isFalse);
-      expect(settingsSource.contains('ArchiveBetaMissionGate.isEnabled'), isTrue);
+      expect(
+        settingsSource.contains('ArchiveBetaMissionGate.isEnabled'),
+        isTrue,
+      );
     });
 
     testWidgets('Testing ArchiveMe shows beta progress summary when enabled', (
@@ -277,7 +285,9 @@ void main() {
     ) async {
       ArchiveBetaMissionGate.enabledOverride = true;
 
-      await tester.pumpWidget(const MaterialApp(home: TestingArchiveMeScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: TestingArchiveMeScreen()),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -293,7 +303,9 @@ void main() {
     ) async {
       ArchiveBetaMissionGate.enabledOverride = false;
 
-      await tester.pumpWidget(const MaterialApp(home: TestingArchiveMeScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: TestingArchiveMeScreen()),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -318,15 +330,14 @@ void main() {
     });
 
     test('feature files do not touch billing or signing surfaces', () {
-      final featureDir = Directory(
-        'lib/features/beta_activation',
+      final featureDir = Directory('lib/features/beta_activation');
+      final widgetFile = File(
+        'lib/widgets/account/beta_activation_summary_sheet.dart',
       );
-      final widgetFile = File('lib/widgets/account/beta_activation_summary_sheet.dart');
       final sources = [
-        ...featureDir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.dart')),
+        ...featureDir.listSync().whereType<File>().where(
+          (f) => f.path.endsWith('.dart'),
+        ),
         widgetFile,
       ];
 

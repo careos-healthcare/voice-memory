@@ -28,39 +28,34 @@ RevenueCatLiveProofInput _input({
   bool? restoreAfterReinstallSucceeds = true,
   bool? calmFallbackOnFailure = true,
   bool? noCrash = true,
-}) =>
-    RevenueCatLiveProofInput(
-      iosApiKeyPresent: iosApiKeyPresent,
-      offeringLoads: offeringLoads,
-      productIdentifierMatches: productIdentifierMatches,
-      priceVisible: priceVisible,
-      paywallRouteOpens: paywallRouteOpens,
-      purchaseButtonEnabled: purchaseButtonEnabled,
-      storeKitSheetAppears: storeKitSheetAppears,
-      sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
-      entitlementActiveAfterPurchase: entitlementActiveAfterPurchase,
-      proGateUnlocks: proGateUnlocks,
-      appRestartKeepsEntitlement: appRestartKeepsEntitlement,
-      restorePurchasesSucceeds: restorePurchasesSucceeds,
-      restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
-      calmFallbackOnFailure: calmFallbackOnFailure,
-      noCrash: noCrash,
-    );
+}) => RevenueCatLiveProofInput(
+  iosApiKeyPresent: iosApiKeyPresent,
+  offeringLoads: offeringLoads,
+  productIdentifierMatches: productIdentifierMatches,
+  priceVisible: priceVisible,
+  paywallRouteOpens: paywallRouteOpens,
+  purchaseButtonEnabled: purchaseButtonEnabled,
+  storeKitSheetAppears: storeKitSheetAppears,
+  sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+  entitlementActiveAfterPurchase: entitlementActiveAfterPurchase,
+  proGateUnlocks: proGateUnlocks,
+  appRestartKeepsEntitlement: appRestartKeepsEntitlement,
+  restorePurchasesSucceeds: restorePurchasesSucceeds,
+  restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
+  calmFallbackOnFailure: calmFallbackOnFailure,
+  noCrash: noCrash,
+);
 
 RevenueCatLiveProofCheck _check(
   RevenueCatLiveProofResult result,
   RevenueCatLiveProofCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('RevenueCatLiveProofRunner.build', () {
     test('runner has fifteen canonical checklist items', () {
       expect(RevenueCatLiveProofRunner.checkCount, 15);
-      expect(
-        RevenueCatLiveProofCopy.canonicalChecklistOrder,
-        hasLength(15),
-      );
+      expect(RevenueCatLiveProofCopy.canonicalChecklistOrder, hasLength(15));
       final result = RevenueCatLiveProofRunner.build(_input());
       expect(result.checks, hasLength(15));
     });
@@ -91,8 +86,10 @@ void main() {
         RevenueCatLiveProofStatus.pending,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.restorePurchasesSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.restorePurchasesSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.blocked,
       );
     });
@@ -111,8 +108,10 @@ void main() {
         RevenueCatLiveProofCheckId.restorePurchasesSucceeds,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.restoreAfterReinstallSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.restoreAfterReinstallSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.blocked,
       );
     });
@@ -131,8 +130,10 @@ void main() {
         RevenueCatLiveProofCheckId.appRestartKeepsEntitlement,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.restorePurchasesSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.restorePurchasesSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.blocked,
       );
     });
@@ -167,13 +168,12 @@ void main() {
       );
 
       expect(result.decision, RevenueCatLiveProofDecision.blocked);
+      expect(result.earliestBlocker, RevenueCatLiveProofCheckId.offeringLoads);
       expect(
-        result.earliestBlocker,
-        RevenueCatLiveProofCheckId.offeringLoads,
-      );
-      expect(
-        _check(result, RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.blocked,
       );
     });
@@ -192,8 +192,10 @@ void main() {
         RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.entitlementActiveAfterPurchase)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.entitlementActiveAfterPurchase,
+        ).status,
         RevenueCatLiveProofStatus.blocked,
       );
     });
@@ -220,8 +222,10 @@ void main() {
         RevenueCatLiveProofStatus.pass,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.productIdentifierMatches)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.productIdentifierMatches,
+        ).status,
         RevenueCatLiveProofStatus.pass,
       );
     });
@@ -258,13 +262,17 @@ void main() {
 
       expect(result.decision, RevenueCatLiveProofDecision.proved);
       expect(
-        _check(result, RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.pass,
       );
       expect(
-        _check(result, RevenueCatLiveProofCheckId.restorePurchasesSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatLiveProofCheckId.restorePurchasesSucceeds,
+        ).status,
         RevenueCatLiveProofStatus.pass,
       );
     });
@@ -321,13 +329,11 @@ void main() {
         ProValueCopy.purchaseUnavailableNote,
         'Purchases are not available yet. The free archive flow remains usable.',
       );
-      expect(
-        ProValueCopy.headline,
-        'You saw the first useful repeat.',
-      );
+      expect(ProValueCopy.headline, 'You saw the first useful repeat.');
 
-      final proValueSource =
-          File('lib/features/pro_value/pro_value_copy.dart').readAsStringSync();
+      final proValueSource = File(
+        'lib/features/pro_value/pro_value_copy.dart',
+      ).readAsStringSync();
       expect(
         RevenueCatLiveProofRunner.detectCalmFallbackCopy(proValueSource),
         isTrue,
@@ -345,9 +351,9 @@ void main() {
         );
       }
       expect(
-        File('lib/features/revenuecat_live_proof/revenuecat_live_proof_runner.dart')
-            .readAsStringSync()
-            .contains('archive_loop_pro_monthly'),
+        File(
+          'lib/features/revenuecat_live_proof/revenuecat_live_proof_runner.dart',
+        ).readAsStringSync().contains('archive_loop_pro_monthly'),
         isTrue,
       );
     });

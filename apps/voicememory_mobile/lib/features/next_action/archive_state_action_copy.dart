@@ -22,15 +22,15 @@ abstract final class ArchiveStateActionCopy {
   }
 
   static List<String> get allActionLabels => [
-        noEntries,
-        oneEntry,
-        twoUnrelated,
-        twoRelated,
-        firstProof,
-        returnCheckUnanswered,
-        returnCheckAnswered,
-        patternChanged,
-        helpfulActionAppeared,
-        privateReportForming,
-      ];
+    noEntries,
+    oneEntry,
+    twoUnrelated,
+    twoRelated,
+    firstProof,
+    returnCheckUnanswered,
+    returnCheckAnswered,
+    patternChanged,
+    helpfulActionAppeared,
+    privateReportForming,
+  ];
 }

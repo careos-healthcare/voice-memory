@@ -48,7 +48,9 @@ abstract final class ReleaseEvidencePack {
     );
   }
 
-  static List<ReleaseEvidenceItem> missingItems(ReleaseEvidencePackInput input) {
+  static List<ReleaseEvidenceItem> missingItems(
+    ReleaseEvidencePackInput input,
+  ) {
     final missing = <ReleaseEvidenceItem>[];
     for (final item in requiredEvidenceItems) {
       if (!_present(input, item)) {
@@ -70,67 +72,67 @@ abstract final class ReleaseEvidencePack {
       );
 
   static String labelFor(ReleaseEvidenceItem item) => switch (item) {
-        ReleaseEvidenceItem.cleanGitStatus =>
-          ReleaseEvidencePackCopy.cleanGitStatusLabel,
-        ReleaseEvidenceItem.versionBuildCaptured =>
-          ReleaseEvidencePackCopy.versionBuildCapturedLabel,
-        ReleaseEvidenceItem.physicalIphoneSmokeTest =>
-          ReleaseEvidencePackCopy.physicalIphoneSmokeTestLabel,
-        ReleaseEvidenceItem.physicalIpadSmokeTest =>
-          ReleaseEvidencePackCopy.physicalIpadSmokeTestLabel,
-        ReleaseEvidenceItem.productionApiSmokeTest =>
-          ReleaseEvidencePackCopy.productionApiSmokeTestLabel,
-        ReleaseEvidenceItem.voiceSavePath =>
-          ReleaseEvidencePackCopy.voiceSavePathLabel,
-        ReleaseEvidenceItem.typedSavePath =>
-          ReleaseEvidencePackCopy.typedSavePathLabel,
-        ReleaseEvidenceItem.firstProofPath =>
-          ReleaseEvidencePackCopy.firstProofPathLabel,
-        ReleaseEvidenceItem.proPaywallRoute =>
-          ReleaseEvidencePackCopy.proPaywallRouteLabel,
-        ReleaseEvidenceItem.revenueCatProductLoad =>
-          ReleaseEvidencePackCopy.revenueCatProductLoadLabel,
-        ReleaseEvidenceItem.sandboxPurchase =>
-          ReleaseEvidencePackCopy.sandboxPurchaseLabel,
-        ReleaseEvidenceItem.restorePurchases =>
-          ReleaseEvidencePackCopy.restorePurchasesLabel,
-        ReleaseEvidenceItem.entitlementPersistence =>
-          ReleaseEvidencePackCopy.entitlementPersistenceLabel,
-        ReleaseEvidenceItem.supportUrl => ReleaseEvidencePackCopy.supportUrlLabel,
-        ReleaseEvidenceItem.privacyUrl => ReleaseEvidencePackCopy.privacyUrlLabel,
-        ReleaseEvidenceItem.termsUrl => ReleaseEvidencePackCopy.termsUrlLabel,
-        ReleaseEvidenceItem.screenshots => ReleaseEvidencePackCopy.screenshotsLabel,
-        ReleaseEvidenceItem.testFlightUploaded =>
-          ReleaseEvidencePackCopy.testFlightUploadedLabel,
-        ReleaseEvidenceItem.secretsRotated =>
-          ReleaseEvidencePackCopy.secretsRotatedLabel,
-      };
+    ReleaseEvidenceItem.cleanGitStatus =>
+      ReleaseEvidencePackCopy.cleanGitStatusLabel,
+    ReleaseEvidenceItem.versionBuildCaptured =>
+      ReleaseEvidencePackCopy.versionBuildCapturedLabel,
+    ReleaseEvidenceItem.physicalIphoneSmokeTest =>
+      ReleaseEvidencePackCopy.physicalIphoneSmokeTestLabel,
+    ReleaseEvidenceItem.physicalIpadSmokeTest =>
+      ReleaseEvidencePackCopy.physicalIpadSmokeTestLabel,
+    ReleaseEvidenceItem.productionApiSmokeTest =>
+      ReleaseEvidencePackCopy.productionApiSmokeTestLabel,
+    ReleaseEvidenceItem.voiceSavePath =>
+      ReleaseEvidencePackCopy.voiceSavePathLabel,
+    ReleaseEvidenceItem.typedSavePath =>
+      ReleaseEvidencePackCopy.typedSavePathLabel,
+    ReleaseEvidenceItem.firstProofPath =>
+      ReleaseEvidencePackCopy.firstProofPathLabel,
+    ReleaseEvidenceItem.proPaywallRoute =>
+      ReleaseEvidencePackCopy.proPaywallRouteLabel,
+    ReleaseEvidenceItem.revenueCatProductLoad =>
+      ReleaseEvidencePackCopy.revenueCatProductLoadLabel,
+    ReleaseEvidenceItem.sandboxPurchase =>
+      ReleaseEvidencePackCopy.sandboxPurchaseLabel,
+    ReleaseEvidenceItem.restorePurchases =>
+      ReleaseEvidencePackCopy.restorePurchasesLabel,
+    ReleaseEvidenceItem.entitlementPersistence =>
+      ReleaseEvidencePackCopy.entitlementPersistenceLabel,
+    ReleaseEvidenceItem.supportUrl => ReleaseEvidencePackCopy.supportUrlLabel,
+    ReleaseEvidenceItem.privacyUrl => ReleaseEvidencePackCopy.privacyUrlLabel,
+    ReleaseEvidenceItem.termsUrl => ReleaseEvidencePackCopy.termsUrlLabel,
+    ReleaseEvidenceItem.screenshots => ReleaseEvidencePackCopy.screenshotsLabel,
+    ReleaseEvidenceItem.testFlightUploaded =>
+      ReleaseEvidencePackCopy.testFlightUploadedLabel,
+    ReleaseEvidenceItem.secretsRotated =>
+      ReleaseEvidencePackCopy.secretsRotatedLabel,
+  };
 
-  static bool _present(ReleaseEvidencePackInput input, ReleaseEvidenceItem item) =>
-      switch (item) {
-        ReleaseEvidenceItem.cleanGitStatus => input.cleanGitStatus,
-        ReleaseEvidenceItem.versionBuildCaptured => input.versionBuildCaptured,
-        ReleaseEvidenceItem.physicalIphoneSmokeTest =>
-          input.physicalIphoneSmokeTest,
-        ReleaseEvidenceItem.physicalIpadSmokeTest => input.physicalIpadSmokeTest,
-        ReleaseEvidenceItem.productionApiSmokeTest =>
-          input.productionApiSmokeTest,
-        ReleaseEvidenceItem.voiceSavePath => input.voiceSavePath,
-        ReleaseEvidenceItem.typedSavePath => input.typedSavePath,
-        ReleaseEvidenceItem.firstProofPath => input.firstProofPath,
-        ReleaseEvidenceItem.proPaywallRoute => input.proPaywallRoute,
-        ReleaseEvidenceItem.revenueCatProductLoad => input.revenueCatProductLoad,
-        ReleaseEvidenceItem.sandboxPurchase => input.sandboxPurchase,
-        ReleaseEvidenceItem.restorePurchases => input.restorePurchases,
-        ReleaseEvidenceItem.entitlementPersistence =>
-          input.entitlementPersistence,
-        ReleaseEvidenceItem.supportUrl => input.supportUrl,
-        ReleaseEvidenceItem.privacyUrl => input.privacyUrl,
-        ReleaseEvidenceItem.termsUrl => input.termsUrl,
-        ReleaseEvidenceItem.screenshots => input.screenshots,
-        ReleaseEvidenceItem.testFlightUploaded => input.testFlightUploaded,
-        ReleaseEvidenceItem.secretsRotated => input.secretsRotated,
-      };
+  static bool _present(
+    ReleaseEvidencePackInput input,
+    ReleaseEvidenceItem item,
+  ) => switch (item) {
+    ReleaseEvidenceItem.cleanGitStatus => input.cleanGitStatus,
+    ReleaseEvidenceItem.versionBuildCaptured => input.versionBuildCaptured,
+    ReleaseEvidenceItem.physicalIphoneSmokeTest =>
+      input.physicalIphoneSmokeTest,
+    ReleaseEvidenceItem.physicalIpadSmokeTest => input.physicalIpadSmokeTest,
+    ReleaseEvidenceItem.productionApiSmokeTest => input.productionApiSmokeTest,
+    ReleaseEvidenceItem.voiceSavePath => input.voiceSavePath,
+    ReleaseEvidenceItem.typedSavePath => input.typedSavePath,
+    ReleaseEvidenceItem.firstProofPath => input.firstProofPath,
+    ReleaseEvidenceItem.proPaywallRoute => input.proPaywallRoute,
+    ReleaseEvidenceItem.revenueCatProductLoad => input.revenueCatProductLoad,
+    ReleaseEvidenceItem.sandboxPurchase => input.sandboxPurchase,
+    ReleaseEvidenceItem.restorePurchases => input.restorePurchases,
+    ReleaseEvidenceItem.entitlementPersistence => input.entitlementPersistence,
+    ReleaseEvidenceItem.supportUrl => input.supportUrl,
+    ReleaseEvidenceItem.privacyUrl => input.privacyUrl,
+    ReleaseEvidenceItem.termsUrl => input.termsUrl,
+    ReleaseEvidenceItem.screenshots => input.screenshots,
+    ReleaseEvidenceItem.testFlightUploaded => input.testFlightUploaded,
+    ReleaseEvidenceItem.secretsRotated => input.secretsRotated,
+  };
 }
 
 enum ReleaseEvidenceItem {

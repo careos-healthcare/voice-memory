@@ -15,45 +15,43 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -196,10 +194,7 @@ void main() {
           ),
         ],
       );
-      expect(
-        map.rows.last.rowId,
-        ArchiveEvidenceMapRowIds.untagged,
-      );
+      expect(map.rows.last.rowId, ArchiveEvidenceMapRowIds.untagged);
       expect(map.rows.last.label, 'Untagged');
       expect(map.rows.last.count, 2);
       expect(
@@ -384,17 +379,24 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: SingleChildScrollView(
-            child: ArchiveEvidenceMapCard(map: map),
-          ),
+          home: SingleChildScrollView(child: ArchiveEvidenceMapCard(map: map)),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_evidence_map_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_evidence_map_card')),
+        findsOneWidget,
+      );
       expect(find.text('Evidence map'), findsOneWidget);
-      expect(find.byKey(const Key('archive_evidence_map_row_work')), findsOneWidget);
-      expect(find.byKey(const Key('archive_evidence_map_row_untagged')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_evidence_map_row_work')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_evidence_map_row_untagged')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Work: 2 moments'), findsOneWidget);
       expect(find.textContaining('Untagged: 1 moment'), findsOneWidget);
     });
@@ -436,7 +438,9 @@ void main() {
         find.byKey(const Key('archive_evidence_map_row_tap_work')),
         findsOneWidget,
       );
-      await tester.tap(find.byKey(const Key('archive_evidence_map_row_tap_work')));
+      await tester.tap(
+        find.byKey(const Key('archive_evidence_map_row_tap_work')),
+      );
       await tester.pump();
       expect(tappedId, CaptureContextTagIds.work);
     });

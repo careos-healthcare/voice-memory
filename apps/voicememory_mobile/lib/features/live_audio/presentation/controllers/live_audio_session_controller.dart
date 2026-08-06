@@ -11,8 +11,9 @@ import '../../domain/services/live_pcm16_capture_source.dart';
 /// Thin UI-facing adapter over [LiveAudioSessionCoordinator].
 class LiveAudioSessionController extends ChangeNotifier {
   LiveAudioSessionController(this._coordinator) {
-    _serverEventsSubscription =
-        _coordinator.serverEvents.listen(_handleServerEvent);
+    _serverEventsSubscription = _coordinator.serverEvents.listen(
+      _handleServerEvent,
+    );
   }
 
   final LiveAudioSessionCoordinator _coordinator;

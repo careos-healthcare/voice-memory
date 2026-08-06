@@ -21,15 +21,16 @@ abstract final class CommercialReadinessGate {
       recommendation: CommercialReadinessGateCopy.recommendationFor(status),
       checks: checks,
       earliestBlocker: _earliestBlockerForStatus(status, checks),
-      commerciallyReady: status == CommercialReadinessGateStatus.commerciallyReady,
-      productReadyOnly: status == CommercialReadinessGateStatus.productReadyOnly,
+      commerciallyReady:
+          status == CommercialReadinessGateStatus.commerciallyReady,
+      productReadyOnly:
+          status == CommercialReadinessGateStatus.productReadyOnly,
     );
   }
 
   static CommercialReadinessGateResult buildFromSources(
     CommercialReadinessGateSources sources,
-  ) =>
-      build(composeInput(sources));
+  ) => build(composeInput(sources));
 
   static CommercialReadinessGateInput composeInput(
     CommercialReadinessGateSources sources,
@@ -44,7 +45,8 @@ abstract final class CommercialReadinessGate {
             firstJourneyStable: sources.firstJourneyStable,
             firstProofUsefulEnough: sources.firstProofUsefulEnough,
             proPromiseClear: sources.proPromiseClear,
-            paywallPriceVisible: sources.sandbox?.productTitlePriceVisible ?? false,
+            paywallPriceVisible:
+                sources.sandbox?.productTitlePriceVisible ?? false,
             sandboxPurchaseWorks:
                 sources.sandbox?.sandboxPurchaseSucceeds == true,
           )
@@ -85,54 +87,58 @@ abstract final class CommercialReadinessGate {
 
   static bool secretsRotationDoneFromLaunchGate(
     SecretsRotationLaunchGateResult result,
-  ) =>
-      result.productionSubmissionReady;
+  ) => result.productionSubmissionReady;
 
   static CommercialReadinessGateInput mergeSecretsRotationLaunchGate(
     CommercialReadinessGateInput base,
     SecretsRotationLaunchGateInput secrets,
-  ) =>
-      CommercialReadinessGateInput(
-        productPromiseClear: base.productPromiseClear,
-        firstJourneyStable: base.firstJourneyStable,
-        firstProofUsefulEnough: base.firstProofUsefulEnough,
-        proPromiseClear: base.proPromiseClear,
-        revenueCatProductLoads: base.revenueCatProductLoads,
-        paywallPriceVisible: base.paywallPriceVisible,
-        sandboxPurchaseWorks: base.sandboxPurchaseWorks,
-        restoreWorks: base.restoreWorks,
-        entitlementPersists: base.entitlementPersists,
-        testFlightBuildUploaded: base.testFlightBuildUploaded,
-        paidIntentBetaComplete: base.paidIntentBetaComplete,
-        secretsRotationDone: secretsRotationDoneFromLaunchGate(
-          SecretsRotationLaunchGate.build(secrets),
-        ),
-      );
+  ) => CommercialReadinessGateInput(
+    productPromiseClear: base.productPromiseClear,
+    firstJourneyStable: base.firstJourneyStable,
+    firstProofUsefulEnough: base.firstProofUsefulEnough,
+    proPromiseClear: base.proPromiseClear,
+    revenueCatProductLoads: base.revenueCatProductLoads,
+    paywallPriceVisible: base.paywallPriceVisible,
+    sandboxPurchaseWorks: base.sandboxPurchaseWorks,
+    restoreWorks: base.restoreWorks,
+    entitlementPersists: base.entitlementPersists,
+    testFlightBuildUploaded: base.testFlightBuildUploaded,
+    paidIntentBetaComplete: base.paidIntentBetaComplete,
+    secretsRotationDone: secretsRotationDoneFromLaunchGate(
+      SecretsRotationLaunchGate.build(secrets),
+    ),
+  );
 
   static CommercialReadinessGateInput fromSecretsRotationLaunchGate(
     SecretsRotationLaunchGateInput secrets, {
     required CommercialReadinessGateInput base,
-  }) =>
-      mergeSecretsRotationLaunchGate(base, secrets);
+  }) => mergeSecretsRotationLaunchGate(base, secrets);
 
-  static CommercialReadinessGateReport report(CommercialReadinessGateResult result) =>
-      CommercialReadinessGateReport(
-        headline: CommercialReadinessGateCopy.headline,
-        body: CommercialReadinessGateCopy.body,
-        orderLine: CommercialReadinessGateCopy.orderLine,
-        guardrail: CommercialReadinessGateCopy.guardrail,
-        result: result,
-      );
+  static CommercialReadinessGateReport report(
+    CommercialReadinessGateResult result,
+  ) => CommercialReadinessGateReport(
+    headline: CommercialReadinessGateCopy.headline,
+    body: CommercialReadinessGateCopy.body,
+    orderLine: CommercialReadinessGateCopy.orderLine,
+    guardrail: CommercialReadinessGateCopy.guardrail,
+    result: result,
+  );
 
-  static bool detectProductPromiseCopyPresent(String proEvidenceValueCopySource) =>
+  static bool detectProductPromiseCopyPresent(
+    String proEvidenceValueCopySource,
+  ) =>
       proEvidenceValueCopySource.contains('productPromise') &&
       proEvidenceValueCopySource.contains('not a chat');
 
-  static bool detectFirstJourneyCopyPresent(String featureNoiseReductionCopySource) =>
-      featureNoiseReductionCopySource.contains('Keep the first journey clear');
+  static bool detectFirstJourneyCopyPresent(
+    String featureNoiseReductionCopySource,
+  ) => featureNoiseReductionCopySource.contains('Keep the first journey clear');
 
-  static bool detectFirstProofThresholdGuarded(String archiveEvidenceGateSource) =>
-      archiveEvidenceGateSource.contains('static const minProofEntryCount = 3;');
+  static bool detectFirstProofThresholdGuarded(
+    String archiveEvidenceGateSource,
+  ) => archiveEvidenceGateSource.contains(
+    'static const minProofEntryCount = 3;',
+  );
 
   static bool detectProPromiseCopyPresent(String proSinglePromiseCopySource) =>
       proSinglePromiseCopySource.contains('Keep the longer proof trail');
@@ -148,53 +154,53 @@ abstract final class CommercialReadinessGate {
     bool proPromiseClear = true,
     bool paywallPriceVisible = false,
     bool sandboxPurchaseWorks = false,
-  }) =>
-      CommercialReadinessGateInput(
-        productPromiseClear: productPromiseClear,
-        firstJourneyStable: firstJourneyStable,
-        firstProofUsefulEnough: firstProofUsefulEnough,
-        proPromiseClear: proPromiseClear,
-        revenueCatProductLoads: input.revenueCatApiKeyProvided &&
-            input.revenueCatConfigured &&
-            input.productsLoaded,
-        paywallPriceVisible: paywallPriceVisible,
-        sandboxPurchaseWorks: sandboxPurchaseWorks && input.purchaseFlowReachable,
-        restoreWorks: input.restorePurchasesReachable &&
-            input.restoreNoCrashVerified,
-        entitlementPersists: input.proEntitlementConfigured &&
-            input.proStateCanBeRead &&
-            input.entitlementPersistsAfterRestart,
-        testFlightBuildUploaded: input.testFlightUploadReady,
-        paidIntentBetaComplete: input.paidIntentBetaReady,
-        secretsRotationDone: input.secretsRotated,
-      );
+  }) => CommercialReadinessGateInput(
+    productPromiseClear: productPromiseClear,
+    firstJourneyStable: firstJourneyStable,
+    firstProofUsefulEnough: firstProofUsefulEnough,
+    proPromiseClear: proPromiseClear,
+    revenueCatProductLoads:
+        input.revenueCatApiKeyProvided &&
+        input.revenueCatConfigured &&
+        input.productsLoaded,
+    paywallPriceVisible: paywallPriceVisible,
+    sandboxPurchaseWorks: sandboxPurchaseWorks && input.purchaseFlowReachable,
+    restoreWorks:
+        input.restorePurchasesReachable && input.restoreNoCrashVerified,
+    entitlementPersists:
+        input.proEntitlementConfigured &&
+        input.proStateCanBeRead &&
+        input.entitlementPersistsAfterRestart,
+    testFlightBuildUploaded: input.testFlightUploadReady,
+    paidIntentBetaComplete: input.paidIntentBetaReady,
+    secretsRotationDone: input.secretsRotated,
+  );
 
   static CommercialReadinessGateInput fromRevenueCatSandboxProof(
     RevenueCatSandboxProofInput sandbox, {
     required CommercialReadinessGateInput base,
-  }) =>
-      CommercialReadinessGateInput(
-        productPromiseClear: base.productPromiseClear,
-        firstJourneyStable: base.firstJourneyStable,
-        firstProofUsefulEnough: base.firstProofUsefulEnough,
-        proPromiseClear: base.proPromiseClear,
-        revenueCatProductLoads:
-            sandbox.iosApiKeyPresent && sandbox.offeringLoads,
-        paywallPriceVisible: sandbox.productTitlePriceVisible,
-        sandboxPurchaseWorks: sandbox.sandboxPurchaseSucceeds == true,
-        restoreWorks: sandbox.restorePurchasesSucceeds == true,
-        entitlementPersists: sandbox.entitlementPersistsAfterRestart == true,
-        testFlightBuildUploaded: base.testFlightBuildUploaded,
-        paidIntentBetaComplete: base.paidIntentBetaComplete,
-        secretsRotationDone: base.secretsRotationDone,
-      );
+  }) => CommercialReadinessGateInput(
+    productPromiseClear: base.productPromiseClear,
+    firstJourneyStable: base.firstJourneyStable,
+    firstProofUsefulEnough: base.firstProofUsefulEnough,
+    proPromiseClear: base.proPromiseClear,
+    revenueCatProductLoads: sandbox.iosApiKeyPresent && sandbox.offeringLoads,
+    paywallPriceVisible: sandbox.productTitlePriceVisible,
+    sandboxPurchaseWorks: sandbox.sandboxPurchaseSucceeds == true,
+    restoreWorks: sandbox.restorePurchasesSucceeds == true,
+    entitlementPersists: sandbox.entitlementPersistsAfterRestart == true,
+    testFlightBuildUploaded: base.testFlightBuildUploaded,
+    paidIntentBetaComplete: base.paidIntentBetaComplete,
+    secretsRotationDone: base.secretsRotationDone,
+  );
 
   static CommercialReadinessGateInput _mergePaidIntent(
     CommercialReadinessGateInput input,
     PaidIntentBetaProofResult paidIntent, {
     required bool storePaidIntentReady,
   }) {
-    final betaComplete = storePaidIntentReady ||
+    final betaComplete =
+        storePaidIntentReady ||
         paidIntentBetaCompleteFromDecision(paidIntent.decision);
     final purchaseBlocked =
         paidIntent.decision == PaidIntentBetaProofDecision.purchaseBlocked;
@@ -205,10 +211,10 @@ abstract final class CommercialReadinessGate {
       firstProofUsefulEnough: input.firstProofUsefulEnough,
       proPromiseClear: input.proPromiseClear,
       revenueCatProductLoads: input.revenueCatProductLoads,
-      paywallPriceVisible:
-          purchaseBlocked ? false : input.paywallPriceVisible,
-      sandboxPurchaseWorks:
-          purchaseBlocked ? false : input.sandboxPurchaseWorks,
+      paywallPriceVisible: purchaseBlocked ? false : input.paywallPriceVisible,
+      sandboxPurchaseWorks: purchaseBlocked
+          ? false
+          : input.sandboxPurchaseWorks,
       restoreWorks: input.restoreWorks,
       entitlementPersists: input.entitlementPersists,
       testFlightBuildUploaded: input.testFlightBuildUploaded,
@@ -231,31 +237,32 @@ abstract final class CommercialReadinessGate {
     bool testFlightBuildUploaded = false,
     bool paidIntentBetaComplete = false,
     bool secretsRotationDone = false,
-  }) =>
-      CommercialReadinessGateInput(
-        productPromiseClear:
-            detectProductPromiseCopyPresent(proEvidenceValueCopySource),
-        firstJourneyStable:
-            detectFirstJourneyCopyPresent(featureNoiseReductionCopySource),
-        firstProofUsefulEnough:
-            detectFirstProofThresholdGuarded(archiveEvidenceGateSource),
-        proPromiseClear: detectProPromiseCopyPresent(proSinglePromiseCopySource),
-        revenueCatProductLoads: revenueCatProductLoads,
-        paywallPriceVisible:
-            paywallPriceVisible ||
-                detectPaywallPriceKeyPresent(paywallScreenSource),
-        sandboxPurchaseWorks: sandboxPurchaseWorks,
-        restoreWorks: restoreWorks,
-        entitlementPersists: entitlementPersists,
-        testFlightBuildUploaded: testFlightBuildUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        secretsRotationDone: secretsRotationDone,
-      );
+  }) => CommercialReadinessGateInput(
+    productPromiseClear: detectProductPromiseCopyPresent(
+      proEvidenceValueCopySource,
+    ),
+    firstJourneyStable: detectFirstJourneyCopyPresent(
+      featureNoiseReductionCopySource,
+    ),
+    firstProofUsefulEnough: detectFirstProofThresholdGuarded(
+      archiveEvidenceGateSource,
+    ),
+    proPromiseClear: detectProPromiseCopyPresent(proSinglePromiseCopySource),
+    revenueCatProductLoads: revenueCatProductLoads,
+    paywallPriceVisible:
+        paywallPriceVisible ||
+        detectPaywallPriceKeyPresent(paywallScreenSource),
+    sandboxPurchaseWorks: sandboxPurchaseWorks,
+    restoreWorks: restoreWorks,
+    entitlementPersists: entitlementPersists,
+    testFlightBuildUploaded: testFlightBuildUploaded,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    secretsRotationDone: secretsRotationDone,
+  );
 
   static bool paidIntentBetaCompleteFromDecision(
     PaidIntentBetaProofDecision decision,
-  ) =>
-      decision == PaidIntentBetaProofDecision.paidIntentPromising;
+  ) => decision == PaidIntentBetaProofDecision.paidIntentPromising;
 
   static List<CommercialReadinessGateCheck> _buildChecks(
     CommercialReadinessGateInput input,
@@ -270,16 +277,17 @@ abstract final class CommercialReadinessGate {
           : CommercialReadinessGateCheckStatus.fail;
     }
 
-    final productOk = input.productPromiseClear &&
+    final productOk =
+        input.productPromiseClear &&
         input.firstJourneyStable &&
         input.firstProofUsefulEnough &&
         input.proPromiseClear;
-    final storeOk = productOk &&
+    final storeOk =
+        productOk &&
         input.revenueCatProductLoads &&
         input.testFlightBuildUploaded;
-    final purchaseOk = storeOk &&
-        input.paywallPriceVisible &&
-        input.sandboxPurchaseWorks;
+    final purchaseOk =
+        storeOk && input.paywallPriceVisible && input.sandboxPurchaseWorks;
     final restoreOk = purchaseOk && input.restoreWorks;
     final entitlementOk = restoreOk && input.entitlementPersists;
     final betaOk = entitlementOk && input.paidIntentBetaComplete;
@@ -325,8 +333,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !productOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.revenueCatProductLoads
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.paywallPriceVisible,
@@ -337,8 +345,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !storeOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.paywallPriceVisible
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.sandboxPurchaseWorks,
@@ -349,8 +357,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !storeOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.sandboxPurchaseWorks
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.restoreWorks,
@@ -358,8 +366,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !purchaseOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.restoreWorks
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.entitlementPersists,
@@ -370,8 +378,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !restoreOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.entitlementPersists
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.testFlightBuildUploaded,
@@ -382,8 +390,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !productOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.testFlightBuildUploaded
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
       _check(
         id: CommercialReadinessGateCheckId.paidIntentBetaComplete,
@@ -394,8 +402,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !entitlementOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.paidIntentBetaComplete
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailPending,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailPending,
       ),
       _check(
         id: CommercialReadinessGateCheckId.secretsRotationDone,
@@ -406,8 +414,8 @@ abstract final class CommercialReadinessGate {
         detailLabel: !betaOk
             ? CommercialReadinessGateCopy.detailBlocked
             : input.secretsRotationDone
-                ? CommercialReadinessGateCopy.detailPass
-                : CommercialReadinessGateCopy.detailFail,
+            ? CommercialReadinessGateCopy.detailPass
+            : CommercialReadinessGateCopy.detailFail,
       ),
     ];
   }
@@ -502,13 +510,12 @@ abstract final class CommercialReadinessGate {
     required CommercialReadinessGateCheckId id,
     required CommercialReadinessGateCheckStatus status,
     required String detailLabel,
-  }) =>
-      CommercialReadinessGateCheck(
-        id: id,
-        label: CommercialReadinessGateCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => CommercialReadinessGateCheck(
+    id: id,
+    label: CommercialReadinessGateCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 }
 
 class CommercialReadinessGateInput {

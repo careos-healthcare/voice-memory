@@ -23,17 +23,16 @@ PositiveArchiveReinforcementInput _input({
   bool userCorrectedProofRecently = false,
   bool isWatchOnly = false,
   bool isPrivateRawText = false,
-}) =>
-    PositiveArchiveReinforcementInput(
-      savedMoment: savedMoment,
-      hasSafeRepeat: hasSafeRepeat,
-      hasEnoughArchiveSignal: hasEnoughArchiveSignal,
-      isFirstMoment: isFirstMoment,
-      isRelatedToPreviousRepeat: isRelatedToPreviousRepeat,
-      userCorrectedProofRecently: userCorrectedProofRecently,
-      isWatchOnly: isWatchOnly,
-      isPrivateRawText: isPrivateRawText,
-    );
+}) => PositiveArchiveReinforcementInput(
+  savedMoment: savedMoment,
+  hasSafeRepeat: hasSafeRepeat,
+  hasEnoughArchiveSignal: hasEnoughArchiveSignal,
+  isFirstMoment: isFirstMoment,
+  isRelatedToPreviousRepeat: isRelatedToPreviousRepeat,
+  userCorrectedProofRecently: userCorrectedProofRecently,
+  isWatchOnly: isWatchOnly,
+  isPrivateRawText: isPrivateRawText,
+);
 
 void main() {
   group('PositiveArchiveReinforcement.build', () {
@@ -71,7 +70,9 @@ void main() {
     });
 
     test('watchOnly hides reinforcement', () {
-      final result = PositiveArchiveReinforcement.build(_input(isWatchOnly: true));
+      final result = PositiveArchiveReinforcement.build(
+        _input(isWatchOnly: true),
+      );
       expect(result.shouldShow, isFalse);
       expect(result.reason, PositiveArchiveReinforcementReason.hiddenWatchOnly);
     });
@@ -81,7 +82,10 @@ void main() {
         _input(isFirstMoment: true),
       );
       expect(result.shouldShow, isTrue);
-      expect(result.reason, PositiveArchiveReinforcementReason.firstMomentSaved);
+      expect(
+        result.reason,
+        PositiveArchiveReinforcementReason.firstMomentSaved,
+      );
     });
 
     test('first moment message says one real moment is enough', () {
@@ -102,24 +106,29 @@ void main() {
       );
     });
 
-    test('related repeat message includes returning/changing/fading/corrected',
-        () {
-      final result = PositiveArchiveReinforcement.build(
-        _input(isRelatedToPreviousRepeat: true, hasSafeRepeat: true),
-      );
-      final message = result.message.toLowerCase();
-      expect(message, contains('returning'));
-      expect(message, contains('changing'));
-      expect(message, contains('fading'));
-      expect(message, contains('corrected'));
-    });
+    test(
+      'related repeat message includes returning/changing/fading/corrected',
+      () {
+        final result = PositiveArchiveReinforcement.build(
+          _input(isRelatedToPreviousRepeat: true, hasSafeRepeat: true),
+        );
+        final message = result.message.toLowerCase();
+        expect(message, contains('returning'));
+        expect(message, contains('changing'));
+        expect(message, contains('fading'));
+        expect(message, contains('corrected'));
+      },
+    );
 
     test('not enough proof shows notEnoughProofYet', () {
       final result = PositiveArchiveReinforcement.build(
         _input(hasEnoughArchiveSignal: false),
       );
       expect(result.shouldShow, isTrue);
-      expect(result.reason, PositiveArchiveReinforcementReason.notEnoughProofYet);
+      expect(
+        result.reason,
+        PositiveArchiveReinforcementReason.notEnoughProofYet,
+      );
     });
 
     test('not enough proof message says no need to force more', () {
@@ -132,7 +141,10 @@ void main() {
     test('default saved moment gives compare later message', () {
       final result = PositiveArchiveReinforcement.build(_input());
       expect(result.shouldShow, isTrue);
-      expect(result.reason, PositiveArchiveReinforcementReason.simpleMomentSaved);
+      expect(
+        result.reason,
+        PositiveArchiveReinforcementReason.simpleMomentSaved,
+      );
       expect(result.message, contains('compare later'));
     });
   });
@@ -153,10 +165,7 @@ void main() {
     });
 
     test('body says compare later', () {
-      expect(
-        PositiveArchiveReinforcementCopy.body,
-        contains('compare later'),
-      );
+      expect(PositiveArchiveReinforcementCopy.body, contains('compare later'));
     });
 
     test('noticedLine says noticed it and saved it', () {
@@ -208,29 +217,25 @@ void main() {
       },
     );
 
-    test('guardrail blocks streaks/daily pressure/advice/therapy/gamification',
-        () {
-      expect(
-        PositiveArchiveReinforcementCopy.guardrail,
-        contains('without creating streaks'),
-      );
-      expect(
-        PositiveArchiveReinforcementCopy.guardrail,
-        contains('daily pressure'),
-      );
-      expect(
-        PositiveArchiveReinforcementCopy.guardrail,
-        contains('advice'),
-      );
-      expect(
-        PositiveArchiveReinforcementCopy.guardrail,
-        contains('therapy'),
-      );
-      expect(
-        PositiveArchiveReinforcementCopy.guardrail,
-        contains('gamified habits'),
-      );
-    });
+    test(
+      'guardrail blocks streaks/daily pressure/advice/therapy/gamification',
+      () {
+        expect(
+          PositiveArchiveReinforcementCopy.guardrail,
+          contains('without creating streaks'),
+        );
+        expect(
+          PositiveArchiveReinforcementCopy.guardrail,
+          contains('daily pressure'),
+        );
+        expect(PositiveArchiveReinforcementCopy.guardrail, contains('advice'));
+        expect(PositiveArchiveReinforcementCopy.guardrail, contains('therapy'));
+        expect(
+          PositiveArchiveReinforcementCopy.guardrail,
+          contains('gamified habits'),
+        );
+      },
+    );
 
     test('copy does not position ArchiveMe as voice chat', () {
       for (final text in [
@@ -354,39 +359,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -405,7 +413,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

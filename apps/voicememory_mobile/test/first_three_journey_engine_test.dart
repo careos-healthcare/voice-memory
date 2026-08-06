@@ -36,10 +36,7 @@ List<JournalEntry> _repeatEntries() => [
     '2',
     'I took responsibility again before asking anyone for help today.',
   ),
-  _entry(
-    '3',
-    'I kept going again before checking whether I had room today.',
-  ),
+  _entry('3', 'I kept going again before checking whether I had room today.'),
 ];
 
 void main() {
@@ -75,7 +72,10 @@ void main() {
     expect(m.currentStep, FirstThreeJourneyStep.three);
     expect(m.title, FirstThreeSessionCopy.session2StartingToNoticeTitle);
     expect(m.title, contains('two moments to compare'));
-    expect(m.body, contains(FirstThreeSessionCopy.session2StartingToNoticeBody));
+    expect(
+      m.body,
+      contains(FirstThreeSessionCopy.session2StartingToNoticeBody),
+    );
     expect(m.progressLabel, FirstThreeSessionCopy.journeyStep2);
     expect(m.nextAction, FirstThreeSessionCopy.session2NextAction);
     expect(m.journeyStepIndex, 1);
@@ -103,10 +103,7 @@ void main() {
   });
 
   test('3 reflections with repeat match shows possible repeat title', () {
-    final m = engine.build(
-      reflectionCount: 3,
-      entries: _repeatEntries(),
-    );
+    final m = engine.build(reflectionCount: 3, entries: _repeatEntries());
     expect(m.title, FirstThreeSessionCopy.session2RepeatTitle);
     expect(m.completed, isTrue);
     expect(m.journeyStepIndex, 2);
@@ -118,12 +115,15 @@ void main() {
     expect(m.reflectionCount, 9);
   });
 
-  test('journey step index waits for three entries before watch-changes step', () {
-    expect(engine.journeyStepIndexForCount(0), 0);
-    expect(engine.journeyStepIndexForCount(1), 1);
-    expect(engine.journeyStepIndexForCount(2), 1);
-    expect(engine.journeyStepIndexForCount(3), 2);
-  });
+  test(
+    'journey step index waits for three entries before watch-changes step',
+    () {
+      expect(engine.journeyStepIndexForCount(0), 0);
+      expect(engine.journeyStepIndexForCount(1), 1);
+      expect(engine.journeyStepIndexForCount(2), 1);
+      expect(engine.journeyStepIndexForCount(3), 2);
+    },
+  );
 
   group('FirstThreeJourneyCard states', () {
     Finder cardTitle(String title) {
@@ -135,7 +135,10 @@ void main() {
       );
     }
 
-    Future<void> pumpCard(WidgetTester tester, FirstThreeJourneyModel model) async {
+    Future<void> pumpCard(
+      WidgetTester tester,
+      FirstThreeJourneyModel model,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -148,14 +151,26 @@ void main() {
     testWidgets('0 entries shows Start your archive', (tester) async {
       await pumpCard(tester, engine.build(reflectionCount: 0));
       expect(cardTitle(FirstThreeSessionCopy.session0Title), findsOneWidget);
-      expect(find.text(FirstThreeSessionCopy.session2RepeatTitle), findsNothing);
+      expect(
+        find.text(FirstThreeSessionCopy.session2RepeatTitle),
+        findsNothing,
+      );
     });
 
     testWidgets('1 entry shows one-moment copy', (tester) async {
       await pumpCard(tester, engine.build(reflectionCount: 1));
-      expect(cardTitle(FirstThreeSessionCopy.session1CardTitle), findsOneWidget);
-      expect(find.text(FirstThreeSessionCopy.session1NextAction), findsOneWidget);
-      expect(find.text(FirstThreeSessionCopy.session2RepeatTitle), findsNothing);
+      expect(
+        cardTitle(FirstThreeSessionCopy.session1CardTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(FirstThreeSessionCopy.session1NextAction),
+        findsOneWidget,
+      );
+      expect(
+        find.text(FirstThreeSessionCopy.session2RepeatTitle),
+        findsNothing,
+      );
     });
 
     testWidgets('2 entries shows starting to notice, not possible repeat', (
@@ -166,7 +181,10 @@ void main() {
         cardTitle(FirstThreeSessionCopy.session2StartingToNoticeTitle),
         findsOneWidget,
       );
-      expect(find.text(FirstThreeSessionCopy.session2RepeatTitle), findsNothing);
+      expect(
+        find.text(FirstThreeSessionCopy.session2RepeatTitle),
+        findsNothing,
+      );
       expect(
         find.byWidgetPredicate(
           (widget) =>
@@ -186,13 +204,22 @@ void main() {
           reflectionCount: 3,
           entries: [
             _entry('a', 'First ordinary moment with enough words saved today.'),
-            _entry('b', 'Second unrelated moment about cooking dinner tonight.'),
-            _entry('c', 'Third unrelated moment about walking outside quietly.'),
+            _entry(
+              'b',
+              'Second unrelated moment about cooking dinner tonight.',
+            ),
+            _entry(
+              'c',
+              'Third unrelated moment about walking outside quietly.',
+            ),
           ],
         ),
       );
       expect(cardTitle(FirstThreeSessionCopy.session3Title), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.secondSessionPossibleRepeatTitle), findsNothing);
+      expect(
+        find.text(ConsumerUiCopy.secondSessionPossibleRepeatTitle),
+        findsNothing,
+      );
     });
   });
 }

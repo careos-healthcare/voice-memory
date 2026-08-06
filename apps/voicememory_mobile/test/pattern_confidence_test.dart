@@ -27,37 +27,36 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _twoRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+];
 
 List<JournalEntry> _threeRelatedRepeatEntries({DateTime? anchor}) {
   final base = anchor ?? _now;
@@ -83,55 +82,54 @@ List<JournalEntry> _threeRelatedRepeatEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: _now.add(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: _now.add(const Duration(days: 1)),
+  ),
+];
 
 List<JournalEntry> _fourWithDifferentLatestPhrase() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I checked my calendar before answering when they asked me to take on more work.',
-        createdAt: _now.add(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I checked my calendar before answering when they asked me to take on more work.',
+    createdAt: _now.add(const Duration(days: 1)),
+  ),
+];
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 5, 1, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 5, 1, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13),
+);
 
 PatternConfidenceExplanationResult _explanationFor(
   List<JournalEntry> entries, {
@@ -153,21 +151,20 @@ PatternConfidenceExplanationResult _explanationFor(
 
 PatternConfidenceExplanationResult _manualExplanation(
   PatternConfidenceExplanationState state,
-) =>
-    PatternConfidenceExplanationResult(
-      shouldShow: true,
-      entryCount: 3,
-      source: 'test',
-      hasConfirmedRepeat: true,
-      hasBeliefSurface: true,
-      confidenceState: state,
-      title: PatternConfidenceCopy.explanationTitle,
-      intro: PatternConfidenceCopy.explanationIntro,
-      label: PatternConfidenceCopy.explanationLabelFor(state),
-      body: PatternConfidenceCopy.explanationBodyFor(state),
-      footer: PatternConfidenceCopy.explanationFooter,
-      differentiationLine: PatternConfidenceCopy.explanationDifferentiation,
-    );
+) => PatternConfidenceExplanationResult(
+  shouldShow: true,
+  entryCount: 3,
+  source: 'test',
+  hasConfirmedRepeat: true,
+  hasBeliefSurface: true,
+  confidenceState: state,
+  title: PatternConfidenceCopy.explanationTitle,
+  intro: PatternConfidenceCopy.explanationIntro,
+  label: PatternConfidenceCopy.explanationLabelFor(state),
+  body: PatternConfidenceCopy.explanationBodyFor(state),
+  footer: PatternConfidenceCopy.explanationFooter,
+  differentiationLine: PatternConfidenceCopy.explanationDifferentiation,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -270,13 +267,18 @@ void main() {
   group('PatternConfidenceEngine explanation states', () {
     test('early signal resolves from two related moments', () {
       final result = _explanationFor(_twoRelatedRepeatEntries());
-      expect(result.confidenceState, PatternConfidenceExplanationState.earlySignal);
+      expect(
+        result.confidenceState,
+        PatternConfidenceExplanationState.earlySignal,
+      );
       expect(result.label, PatternConfidenceCopy.explanationEarlySignalLabel);
       expect(result.body, PatternConfidenceCopy.explanationEarlySignalBody);
     });
 
     test('repeated resolves when repeat evidence spans saved moments', () {
-      final result = _manualExplanation(PatternConfidenceExplanationState.repeated);
+      final result = _manualExplanation(
+        PatternConfidenceExplanationState.repeated,
+      );
       expect(result.label, PatternConfidenceCopy.explanationRepeatedLabel);
       expect(result.body, PatternConfidenceCopy.explanationRepeatedBody);
     });
@@ -289,8 +291,9 @@ void main() {
     });
 
     test('fading resolves when repeat evidence is not recent', () {
-      final result =
-          _manualExplanation(PatternConfidenceExplanationState.fading);
+      final result = _manualExplanation(
+        PatternConfidenceExplanationState.fading,
+      );
       expect(result.confidenceState, PatternConfidenceExplanationState.fading);
       expect(result.label, PatternConfidenceCopy.explanationFadingLabel);
       expect(result.body, PatternConfidenceCopy.explanationFadingBody);
@@ -318,7 +321,10 @@ void main() {
       );
 
       final result = _explanationFor(entries);
-      expect(result.confidenceState, PatternConfidenceExplanationState.softened);
+      expect(
+        result.confidenceState,
+        PatternConfidenceExplanationState.softened,
+      );
       expect(result.label, PatternConfidenceCopy.explanationSoftenedLabel);
       expect(result.body, PatternConfidenceCopy.explanationSoftenedBody);
     });
@@ -449,7 +455,9 @@ void main() {
       expect(find.text(PatternConfidenceCopy.explanationTitle), findsOneWidget);
     });
 
-    testWidgets('renders "saved evidence, not a single answer"', (tester) async {
+    testWidgets('renders "saved evidence, not a single answer"', (
+      tester,
+    ) async {
       await _pumpCard(tester, _explanationFor(_threeRelatedRepeatEntries()));
 
       expect(
@@ -461,10 +469,7 @@ void main() {
     testWidgets('early signal says clue not conclusion', (tester) async {
       await _pumpCard(tester, _explanationFor(_twoRelatedRepeatEntries()));
 
-      expect(
-        find.textContaining('clue, not a conclusion'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('clue, not a conclusion'), findsOneWidget);
     });
 
     testWidgets('repeated says returned across saved moments', (tester) async {
@@ -512,16 +517,15 @@ void main() {
       expect(find.textContaining('returned differently'), findsOneWidget);
     });
 
-    testWidgets('needs fresh proof says needs newer saved moment', (tester) async {
+    testWidgets('needs fresh proof says needs newer saved moment', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         _manualExplanation(PatternConfidenceExplanationState.needsFreshProof),
       );
 
-      expect(
-        find.textContaining('needs a newer saved moment'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('needs a newer saved moment'), findsOneWidget);
     });
 
     testWidgets('no percentage confidence', (tester) async {
@@ -547,7 +551,9 @@ void main() {
       expect(find.byKey(const Key('pro_evidence_value_cta')), findsNothing);
     });
 
-    testWidgets('compact mode hides intro footer and differentiation', (tester) async {
+    testWidgets('compact mode hides intro footer and differentiation', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         _explanationFor(_threeRelatedRepeatEntries()),
@@ -568,13 +574,16 @@ void main() {
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, PatternConfidenceAnalytics.seenEvent);
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'confidence_state',
-        'has_confirmed_repeat',
-        'has_belief_surface',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'confidence_state',
+          'has_confirmed_repeat',
+          'has_belief_surface',
+        ]),
+      );
       for (final value in record.props.values) {
         final text = value.toString().toLowerCase();
         expect(text, isNot(contains('transcript')));
@@ -599,7 +608,9 @@ void main() {
     });
 
     test('no therapy or monetisation claims in explanation copy', () {
-      final blob = PatternConfidenceCopy.allExplanationStrings().join(' ').toLowerCase();
+      final blob = PatternConfidenceCopy.allExplanationStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));
@@ -610,8 +621,9 @@ void main() {
 
   group('Pattern confidence placement', () {
     test('patterns screen renders card after present day relevance', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final relevanceIndex = source.indexOf('PresentDayRelevanceCard(');
       final cardIndex = source.indexOf('PatternConfidenceCard(');
       final proBridgeIndex = source.indexOf(
@@ -624,17 +636,21 @@ void main() {
 
     test('record screen renders compact card after present day relevance', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final relevanceIndex =
-          source.indexOf('showPresentDayRelevanceOnRecordReady');
-      final cardIndex = source.indexOf('showPatternConfidenceExplanationOnRecordReady');
+      final relevanceIndex = source.indexOf(
+        'showPresentDayRelevanceOnRecordReady',
+      );
+      final cardIndex = source.indexOf(
+        'showPatternConfidenceExplanationOnRecordReady',
+      );
       expect(relevanceIndex, greaterThan(0));
       expect(cardIndex, greaterThan(relevanceIndex));
       expect(source.indexOf('compact: true,'), greaterThan(cardIndex));
     });
 
     test('weekly review renders compact card near weekly archive review', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final weeklyCardIndex = source.indexOf(
         'if (showPatternConfidenceExplanationNearWeeklyReview &&',
       );

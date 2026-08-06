@@ -27,57 +27,60 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   tearDown(ActivationFunnelAnalytics.resetForTest);
 
   group('FirstProofPayoffEngine', () {
     test('appears after third related usable entry', () {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(payoff, isNotNull);
       expect(payoff!.headline, FirstProofPayoffCopy.headline);
       expect(payoff.groundedPhrase.toLowerCase(), contains('said yes'));
     });
 
     test('shows 2–3 user-word snippets when safely available', () {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(payoff, isNotNull);
       expect(payoff!.variant, FirstProofPayoffVariant.strongWithSnippets);
       expect(payoff.snippets.length, greaterThanOrEqualTo(2));
@@ -92,23 +95,31 @@ void main() {
         ),
       );
       expect(payoff.showDifferentiation, isTrue);
-      expect(payoff.differentiationLine, ChatDifferentiationCopy.firstProofLine);
+      expect(
+        payoff.differentiationLine,
+        ChatDifferentiationCopy.firstProofLine,
+      );
       expect(payoff.timelineRows, hasLength(3));
       for (final snippet in payoff.snippets) {
         expect(snippet.quote, isNotEmpty);
       }
     });
 
-    test('assigns fallback variant when fewer than two snippets are extracted', () {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
-      expect(payoff, isNotNull);
-      expect(
-        payoff!.variant,
-        payoff.snippets.length >= 2
-            ? FirstProofPayoffVariant.strongWithSnippets
-            : FirstProofPayoffVariant.fallbackPhraseOnly,
-      );
-    });
+    test(
+      'assigns fallback variant when fewer than two snippets are extracted',
+      () {
+        final payoff = FirstProofPayoffEngine.build(
+          entries: _threeRelatedEntries(),
+        );
+        expect(payoff, isNotNull);
+        expect(
+          payoff!.variant,
+          payoff.snippets.length >= 2
+              ? FirstProofPayoffVariant.strongWithSnippets
+              : FirstProofPayoffVariant.fallbackPhraseOnly,
+        );
+      },
+    );
 
     test('does not show for generic test text', () {
       final entries = [
@@ -158,11 +169,14 @@ void main() {
       }
     });
 
-    test('visible strings pass advice guard except intentional negation line', () {
-      for (final line in FirstProofPayoffCopy.allVisibleStrings()) {
-        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
-      }
-    });
+    test(
+      'visible strings pass advice guard except intentional negation line',
+      () {
+        for (final line in FirstProofPayoffCopy.allVisibleStrings()) {
+          expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+        }
+      },
+    );
   });
 
   group('FirstProofPayoffGates', () {
@@ -188,8 +202,12 @@ void main() {
   });
 
   group('FirstProofPayoffCard', () {
-    testWidgets('leads with headline then user evidence snippets', (tester) async {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+    testWidgets('leads with headline then user evidence snippets', (
+      tester,
+    ) async {
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(payoff, isNotNull);
 
       await tester.pumpWidget(
@@ -211,10 +229,16 @@ void main() {
       );
       expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
       expect(find.text(ChatDifferentiationCopy.firstProofLine), findsOneWidget);
-      expect(find.text(ChatDifferentiationCopy.expandLinkLabel), findsOneWidget);
+      expect(
+        find.text(ChatDifferentiationCopy.expandLinkLabel),
+        findsOneWidget,
+      );
       expect(
         find.text(FirstProofPayoffCopy.truthLine).evaluate().isNotEmpty ||
-            find.text(ProofConfidenceCalibrationCopy.strong).evaluate().isNotEmpty,
+            find
+                .text(ProofConfidenceCalibrationCopy.strong)
+                .evaluate()
+                .isNotEmpty,
         isTrue,
       );
       expect(find.textContaining('said yes'), findsWidgets);
@@ -226,7 +250,9 @@ void main() {
     testWidgets('does not show large Watch this next CTA inside payoff card', (
       tester,
     ) async {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -241,13 +267,18 @@ void main() {
       );
 
       expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
-      expect(find.byKey(const Key('first_proof_payoff_watch_cta')), findsNothing);
+      expect(
+        find.byKey(const Key('first_proof_payoff_watch_cta')),
+        findsNothing,
+      );
     });
 
     testWidgets('Why this is different from chat opens explanation sheet', (
       tester,
     ) async {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(payoff!.showDifferentiation, isTrue);
 
       await tester.pumpWidget(
@@ -262,14 +293,22 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byKey(const Key('first_proof_payoff_chat_differentiation_link')));
+      await tester.tap(
+        find.byKey(const Key('first_proof_payoff_chat_differentiation_link')),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('chat_differentiation_sheet')), findsOneWidget);
+      expect(
+        find.byKey(const Key('chat_differentiation_sheet')),
+        findsOneWidget,
+      );
       expect(find.text(ChatDifferentiationCopy.sheetTitle), findsOneWidget);
       expect(find.text(ChatDifferentiationCopy.sheetBody), findsOneWidget);
       expect(find.text(ChatDifferentiationCopy.sheetCloseLine), findsOneWidget);
-      expect(find.text(ChatDifferentiationCopy.timelineFirstSavedLabel), findsOneWidget);
+      expect(
+        find.text(ChatDifferentiationCopy.timelineFirstSavedLabel),
+        findsOneWidget,
+      );
       final joined = [
         ChatDifferentiationCopy.sheetTitle,
         ChatDifferentiationCopy.sheetBody,
@@ -318,8 +357,12 @@ void main() {
       );
     });
 
-    testWidgets('View pattern details CTA fires when available', (tester) async {
-      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+    testWidgets('View pattern details CTA fires when available', (
+      tester,
+    ) async {
+      final payoff = FirstProofPayoffEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       var opened = false;
 
       await tester.binding.setSurfaceSize(const Size(800, 1200));
@@ -343,7 +386,9 @@ void main() {
       );
 
       if (payoff.canShowPatternDetail) {
-        final cta = find.byKey(const Key('first_proof_payoff_pattern_detail_cta'));
+        final cta = find.byKey(
+          const Key('first_proof_payoff_pattern_detail_cta'),
+        );
         await tester.ensureVisible(cta);
         await tester.tap(cta);
         await tester.pump();
@@ -413,15 +458,24 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });
 
     test('first proof remains on existing free engine path', () {
-      final confirmed = EarlyFirstSignalEngine.build(entries: _threeRelatedEntries());
+      final confirmed = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedEntries(),
+      );
       expect(confirmed?.showsConfirmedRepeat, isTrue);
-      expect(FirstProofPayoffEngine.build(entries: _threeRelatedEntries()), isNotNull);
+      expect(
+        FirstProofPayoffEngine.build(entries: _threeRelatedEntries()),
+        isNotNull,
+      );
     });
   });
 }

@@ -197,20 +197,18 @@ abstract final class LowEffortArchiveCapture {
   static LowEffortArchiveCaptureReport report(
     LowEffortArchiveCaptureSummary summary,
     LowEffortArchiveCaptureDecision decision,
-  ) =>
-      LowEffortArchiveCaptureReport(
-        headline: LowEffortArchiveCaptureCopy.headline,
-        body: LowEffortArchiveCaptureCopy.body,
-        decision: decision,
-        guardrail: LowEffortArchiveCaptureCopy.guardrail,
-      );
+  ) => LowEffortArchiveCaptureReport(
+    headline: LowEffortArchiveCaptureCopy.headline,
+    body: LowEffortArchiveCaptureCopy.body,
+    decision: decision,
+    guardrail: LowEffortArchiveCaptureCopy.guardrail,
+  );
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum LowEffortArchiveCaptureDecision {

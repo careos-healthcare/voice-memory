@@ -285,8 +285,9 @@ class TomorrowReturnLoopEngine {
     if (t.isEmpty) return '';
     if (t.contains('work')) return 'work pressure';
     if (t.contains('family')) return 'family pressure';
-    if (t.contains('rest') || t.contains('slow'))
+    if (t.contains('rest') || t.contains('slow')) {
       return 'guilt when you slow down';
+    }
     if (t.contains('respons')) return 'feeling responsible';
     if (t.length <= 28) return _titleCase(t);
     return _clip(_titleCase(t), 28);

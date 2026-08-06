@@ -17,7 +17,7 @@ abstract final class FirstSessionProofRepairAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void captureSeen({required FirstSessionCaptureRepairResult result}) {
     _emitCapture(captureSeenEvent, result: result);
@@ -92,7 +92,9 @@ abstract final class FirstSessionProofRepairAnalytics {
       props['action_type'] = actionType.analyticsValue;
     }
     if (chipId != null) {
-      props['chip_id'] = FirstSessionProofRepairCopy.captureChipAnalyticsId(chipId);
+      props['chip_id'] = FirstSessionProofRepairCopy.captureChipAnalyticsId(
+        chipId,
+      );
     }
     captureForTest?.call(event, props);
     ActivationFunnelAnalytics.track(
@@ -110,7 +112,10 @@ abstract final class FirstSessionProofRepairAnalytics {
     }
   }
 
-  static void _emitProof(String event, {required ProofQualityRepairResult result}) {
+  static void _emitProof(
+    String event, {
+    required ProofQualityRepairResult result,
+  }) {
     final props = <String, Object>{
       'source': result.source,
       'entry_count': result.entryCount,

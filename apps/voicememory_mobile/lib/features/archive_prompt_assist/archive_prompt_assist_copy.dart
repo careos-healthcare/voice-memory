@@ -12,7 +12,8 @@ abstract final class ArchivePromptAssistCopy {
 
   static const fallbackPrompt = 'What repeated today?';
 
-  static const oneSentenceReminder = 'Keep it small. One real sentence is enough.';
+  static const oneSentenceReminder =
+      'Keep it small. One real sentence is enough.';
 
   static const noChatModeLine =
       'This is not chat. It is a quick way to save proof when something returns.';

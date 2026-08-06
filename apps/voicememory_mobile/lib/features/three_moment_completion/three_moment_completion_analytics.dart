@@ -13,7 +13,7 @@ abstract final class ThreeMomentCompletionAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required ThreeMomentCompletionResult result}) {
     _emit(

@@ -32,8 +32,10 @@ abstract final class CrossDeviceContinuityFutureCopy {
   static const detailPending = 'Pending';
   static const detailFail = 'Fail';
 
-  static const detailBlockedBeforeTechnicalProof = 'Blocked before technical proof';
-  static const detailFutureContinuityDocumented = 'Future continuity documented only';
+  static const detailBlockedBeforeTechnicalProof =
+      'Blocked before technical proof';
+  static const detailFutureContinuityDocumented =
+      'Future continuity documented only';
 
   static String prereqLabelFor(CrossDeviceContinuityFuturePrereqId id) =>
       switch (id) {
@@ -45,7 +47,8 @@ abstract final class CrossDeviceContinuityFutureCopy {
         CrossDeviceContinuityFuturePrereqId.migrationProof => 'Migration proof',
       };
 
-  static String ruleLabelFor(CrossDeviceContinuityFutureRuleId id) => switch (id) {
+  static String ruleLabelFor(CrossDeviceContinuityFutureRuleId id) =>
+      switch (id) {
         CrossDeviceContinuityFutureRuleId.futureOnly => 'Future only',
         CrossDeviceContinuityFutureRuleId.noCloudBackupPromise =>
           'No cloud backup promise',
@@ -67,13 +70,12 @@ abstract final class CrossDeviceContinuityFutureCopy {
 
   static String recommendationFor(
     CrossDeviceContinuityFutureGateDecision decision,
-  ) =>
-      switch (decision) {
-        CrossDeviceContinuityFutureGateDecision.continuityFrozen =>
-          'Do not promise cloud backup, access everywhere, or never-lose-archive language until technical proof is complete.',
-        CrossDeviceContinuityFutureGateDecision.futureContinuityDocumented =>
-          'Document cross-device continuity as future expansion only. Keep local-archive honesty in V1 copy.',
-      };
+  ) => switch (decision) {
+    CrossDeviceContinuityFutureGateDecision.continuityFrozen =>
+      'Do not promise cloud backup, access everywhere, or never-lose-archive language until technical proof is complete.',
+    CrossDeviceContinuityFutureGateDecision.futureContinuityDocumented =>
+      'Document cross-device continuity as future expansion only. Keep local-archive honesty in V1 copy.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -110,11 +112,7 @@ enum CrossDeviceContinuityFuturePrereqId {
   migrationProof,
 }
 
-enum CrossDeviceContinuityFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum CrossDeviceContinuityFuturePrereqStatus { pass, pending, fail }
 
 enum CrossDeviceContinuityFutureRuleId {
   futureOnly,
@@ -124,10 +122,7 @@ enum CrossDeviceContinuityFutureRuleId {
   technicalProofBeforeLaunch,
 }
 
-enum CrossDeviceContinuityFutureRuleStatus {
-  pass,
-  fail,
-}
+enum CrossDeviceContinuityFutureRuleStatus { pass, fail }
 
 enum CrossDeviceContinuityFutureGateDecision {
   continuityFrozen,

@@ -111,12 +111,14 @@ abstract class EntryAboutnessSession {
     lastSaveWasNonPersonal = false;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     selected = EntryAboutness.aboutMe;
     lastSaveWasNonPersonal = false;
     pickerSeenThisSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 }
 
 abstract class EntryAboutnessCopy {

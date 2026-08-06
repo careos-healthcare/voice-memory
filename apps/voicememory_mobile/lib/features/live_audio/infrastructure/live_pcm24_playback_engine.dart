@@ -12,7 +12,7 @@ typedef LivePcmPlayerFactory = AudioPlayer Function();
 /// Plays Gemini Live output PCM and exposes chunks to downstream listeners.
 class LivePcm24PlaybackEngine {
   LivePcm24PlaybackEngine({LivePcmPlayerFactory? playerFactory})
-      : _playerFactory = playerFactory ?? AudioPlayer.new;
+    : _playerFactory = playerFactory ?? AudioPlayer.new;
 
   final LivePcmPlayerFactory _playerFactory;
   final _audioOutputController = StreamController<List<int>>.broadcast();
@@ -97,10 +97,7 @@ class LivePcm24PlaybackEngine {
           sampleRateHz: liveOutputSampleRateHz,
           numChannels: liveOutputNumChannels,
         );
-        await _player!.play(
-          BytesSource(wav),
-          mode: PlayerMode.lowLatency,
-        );
+        await _player!.play(BytesSource(wav), mode: PlayerMode.lowLatency);
         await _player!.onPlayerComplete.first;
         if (generation != _flushGeneration) break;
       }

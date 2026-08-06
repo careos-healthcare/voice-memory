@@ -8,7 +8,6 @@ import '../../features/signal_journey/signal_journey_engine.dart';
 import '../../features/signal_journey/signal_journey_model.dart';
 import '../../features/signal_journey/signal_journey_navigation.dart';
 import '../../product/consumer_ui_copy.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 

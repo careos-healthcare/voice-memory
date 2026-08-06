@@ -26,7 +26,9 @@ class CapacityBetaMissionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!result.hasMission) {
-      return const SizedBox.shrink(key: Key('capacity_beta_mission_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('capacity_beta_mission_card_hidden'),
+      );
     }
 
     return Container(
@@ -69,7 +71,8 @@ class CapacityBetaMissionCard extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               key: const Key('capacity_beta_mission_card_open'),
-              onPressed: onOpen ?? () => context.push(CapacityBetaMissionCopy.route),
+              onPressed:
+                  onOpen ?? () => context.push(CapacityBetaMissionCopy.route),
               child: Text(
                 compact
                     ? CapacityBetaMissionCopy.viewMissionCta

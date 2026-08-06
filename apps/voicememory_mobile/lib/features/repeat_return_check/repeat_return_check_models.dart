@@ -7,26 +7,26 @@ enum RepeatReturnCheckChoice {
   changed;
 
   String get analyticsReason => switch (this) {
-        RepeatReturnCheckChoice.stronger => 'stronger',
-        RepeatReturnCheckChoice.same => 'same',
-        RepeatReturnCheckChoice.softer => 'softer',
-        RepeatReturnCheckChoice.changed => 'changed',
-      };
+    RepeatReturnCheckChoice.stronger => 'stronger',
+    RepeatReturnCheckChoice.same => 'same',
+    RepeatReturnCheckChoice.softer => 'softer',
+    RepeatReturnCheckChoice.changed => 'changed',
+  };
 
   String get label => switch (this) {
-        RepeatReturnCheckChoice.stronger => RepeatReturnCheckCopy.stronger,
-        RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.same,
-        RepeatReturnCheckChoice.softer => RepeatReturnCheckCopy.softer,
-        RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.changed,
-      };
+    RepeatReturnCheckChoice.stronger => RepeatReturnCheckCopy.stronger,
+    RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.same,
+    RepeatReturnCheckChoice.softer => RepeatReturnCheckCopy.softer,
+    RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.changed,
+  };
 
   /// Ordinal for trend comparison — higher means the repeat felt more intense.
   int get intensity => switch (this) {
-        RepeatReturnCheckChoice.softer => 0,
-        RepeatReturnCheckChoice.same => 1,
-        RepeatReturnCheckChoice.stronger => 2,
-        RepeatReturnCheckChoice.changed => 1,
-      };
+    RepeatReturnCheckChoice.softer => 0,
+    RepeatReturnCheckChoice.same => 1,
+    RepeatReturnCheckChoice.stronger => 2,
+    RepeatReturnCheckChoice.changed => 1,
+  };
 
   /// Choices offered on the legacy repeat return check card.
   static const legacyOfferChoices = [
@@ -68,12 +68,12 @@ class RepeatReturnCheckRecord {
   }
 
   Map<String, dynamic> toJson() => {
-        'entryId': entryId,
-        if (choice != null) 'choice': choice!.name,
-        'dismissed': dismissed,
-        'entryCountAtCapture': entryCountAtCapture,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'entryId': entryId,
+    if (choice != null) 'choice': choice!.name,
+    'dismissed': dismissed,
+    'entryCountAtCapture': entryCountAtCapture,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory RepeatReturnCheckRecord.fromJson(Map<String, dynamic> json) {
     final choiceRaw = json['choice'] as String?;
@@ -87,7 +87,8 @@ class RepeatReturnCheckRecord {
             ),
       dismissed: json['dismissed'] == true,
       entryCountAtCapture: (json['entryCountAtCapture'] as num?)?.toInt() ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now().toUtc(),
     );
   }

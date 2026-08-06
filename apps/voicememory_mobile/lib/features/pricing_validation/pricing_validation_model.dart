@@ -5,13 +5,14 @@ enum PricingValidationPriceOption {
   wouldNotPayMonthly,
 }
 
-extension PricingValidationPriceOptionAnalytics on PricingValidationPriceOption {
+extension PricingValidationPriceOptionAnalytics
+    on PricingValidationPriceOption {
   String get analyticsValue => switch (this) {
-        PricingValidationPriceOption.price299 => '2.99',
-        PricingValidationPriceOption.price499 => '4.99',
-        PricingValidationPriceOption.price799 => '7.99',
-        PricingValidationPriceOption.wouldNotPayMonthly => 'would_not_pay_monthly',
-      };
+    PricingValidationPriceOption.price299 => '2.99',
+    PricingValidationPriceOption.price499 => '4.99',
+    PricingValidationPriceOption.price799 => '7.99',
+    PricingValidationPriceOption.wouldNotPayMonthly => 'would_not_pay_monthly',
+  };
 }
 
 enum PricingValidationReasonOption {
@@ -24,11 +25,11 @@ enum PricingValidationReasonOption {
 extension PricingValidationReasonOptionAnalytics
     on PricingValidationReasonOption {
   String get analyticsValue => switch (this) {
-        PricingValidationReasonOption.moreProofOverTime => 'more_proof_over_time',
-        PricingValidationReasonOption.betterCorrections => 'better_corrections',
-        PricingValidationReasonOption.clearerTimeline => 'clearer_timeline',
-        PricingValidationReasonOption.lowerPrice => 'lower_price',
-      };
+    PricingValidationReasonOption.moreProofOverTime => 'more_proof_over_time',
+    PricingValidationReasonOption.betterCorrections => 'better_corrections',
+    PricingValidationReasonOption.clearerTimeline => 'clearer_timeline',
+    PricingValidationReasonOption.lowerPrice => 'lower_price',
+  };
 }
 
 class PricingValidationResult {

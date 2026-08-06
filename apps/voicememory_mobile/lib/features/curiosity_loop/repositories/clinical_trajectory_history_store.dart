@@ -72,15 +72,15 @@ class StoredTrajectoryRecord {
   }
 
   Map<String, dynamic> toJson() => {
-        'date': date.toUtc().toIso8601String(),
-        'direction': directionValue,
-        'lexicalDelta': lexicalDelta,
-        'driftDelta': driftDelta,
-        'wasGrounded': wasGrounded,
-        if (entryId != null) 'entryId': entryId,
-        if (hookId != null) 'hookId': hookId,
-        if (volatilityDelta != null) 'volatilityDelta': volatilityDelta,
-      };
+    'date': date.toUtc().toIso8601String(),
+    'direction': directionValue,
+    'lexicalDelta': lexicalDelta,
+    'driftDelta': driftDelta,
+    'wasGrounded': wasGrounded,
+    if (entryId != null) 'entryId': entryId,
+    if (hookId != null) 'hookId': hookId,
+    if (volatilityDelta != null) 'volatilityDelta': volatilityDelta,
+  };
 
   factory StoredTrajectoryRecord.fromJsonMap(Map<String, dynamic> json) {
     final dateRaw = json['date'] ?? json['recordedAt'];
@@ -146,12 +146,12 @@ abstract interface class ClinicalTrajectoryHistoryStore {
   });
 }
 
-class LocalClinicalTrajectoryHistoryStore implements ClinicalTrajectoryHistoryStore {
+class LocalClinicalTrajectoryHistoryStore
+    implements ClinicalTrajectoryHistoryStore {
   LocalClinicalTrajectoryHistoryStore({
-    required MobilePrefsStore prefs,
-    required EncryptedJsonStorage cryptoStorage,
-  })  : _prefs = prefs,
-        _cryptoStorage = cryptoStorage;
+    required this._prefs,
+    required this._cryptoStorage,
+  });
 
   static const prefsKey = 'secure_clinical_trajectory_history_records';
   static const legacyPrefsKey = 'clinicalTrajectoryHistory_v1';
@@ -174,17 +174,16 @@ class LocalClinicalTrajectoryHistoryStore implements ClinicalTrajectoryHistorySt
     MobilePrefsStore prefs, {
     EncryptedJsonStorage? cryptoStorage,
     List<int>? masterKeyBytes,
-  }) =>
-      LocalClinicalTrajectoryHistoryStore(
-        prefs: prefs,
-        cryptoStorage: cryptoStorage ??
-            EncryptedJsonStorage(
-              masterKeyBytes: masterKeyBytes ??
-                  (throw ArgumentError(
-                    'Provide cryptoStorage or masterKeyBytes.',
-                  )),
-            ),
-      );
+  }) => LocalClinicalTrajectoryHistoryStore(
+    prefs: prefs,
+    cryptoStorage:
+        cryptoStorage ??
+        EncryptedJsonStorage(
+          masterKeyBytes:
+              masterKeyBytes ??
+              (throw ArgumentError('Provide cryptoStorage or masterKeyBytes.')),
+        ),
+  );
 
   @override
   Future<bool> appendRecord(StoredTrajectoryRecord record) async {
@@ -260,7 +259,9 @@ class LocalClinicalTrajectoryHistoryStore implements ClinicalTrajectoryHistorySt
     return const [];
   }
 
-  List<StoredTrajectoryRecord> _recordsFromPayload(Map<String, dynamic> payload) {
+  List<StoredTrajectoryRecord> _recordsFromPayload(
+    Map<String, dynamic> payload,
+  ) {
     final rawList = payload['records'];
     if (rawList is! List) {
       _cached = const [];
@@ -268,11 +269,12 @@ class LocalClinicalTrajectoryHistoryStore implements ClinicalTrajectoryHistorySt
     }
 
     try {
-      _cached = rawList
-          .map(StoredTrajectoryRecord.fromJson)
-          .whereType<StoredTrajectoryRecord>()
-          .toList()
-        ..sort((a, b) => a.date.compareTo(b.date));
+      _cached =
+          rawList
+              .map(StoredTrajectoryRecord.fromJson)
+              .whereType<StoredTrajectoryRecord>()
+              .toList()
+            ..sort((a, b) => a.date.compareTo(b.date));
       _cached = _prune(_cached, anchor: DateTime.now().toUtc());
       return _cached;
     } catch (e) {

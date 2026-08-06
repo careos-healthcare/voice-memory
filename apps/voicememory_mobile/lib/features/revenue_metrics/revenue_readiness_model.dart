@@ -59,13 +59,13 @@ class RevenueReadinessDashboard {
   final bool noPersonalContentCaptured;
 
   Iterable<String> get allDisplayedText => [
-        title,
-        subtitle,
-        ...rows.map((row) => row.label),
-        ...rows.map((row) => row.status.label),
-        ...surfaces.map((surface) => surface.label),
-        if (noPersonalContentCaptured) 'No content captured',
-      ];
+    title,
+    subtitle,
+    ...rows.map((row) => row.label),
+    ...rows.map((row) => row.status.label),
+    ...surfaces.map((surface) => surface.label),
+    if (noPersonalContentCaptured) 'No content captured',
+  ];
 }
 
 abstract final class RevenueReadinessCopy {

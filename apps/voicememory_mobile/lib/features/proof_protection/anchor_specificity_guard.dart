@@ -277,18 +277,18 @@ abstract final class AnchorSpecificityGuard {
     return isBehaviorSpecific(cleaned);
   }
 
-  static bool hasProofLevelSafeAnchor(EvidenceAnchorExtractionResult? extraction) {
+  static bool hasProofLevelSafeAnchor(
+    EvidenceAnchorExtractionResult? extraction,
+  ) {
     if (extraction == null || !extraction.shouldExtract) return false;
     return extraction.anchors.any((anchor) => anchor.isSafeForDisplay);
   }
 
-  static String? behaviorSpecificPhraseFromEntries(List<JournalEntry> entries) =>
-      findBehaviorSpecificPhraseInTexts(
-        entries
-            .map(_entryText)
-            .where((text) => text.trim().isNotEmpty)
-            .toList(),
-      );
+  static String? behaviorSpecificPhraseFromEntries(
+    List<JournalEntry> entries,
+  ) => findBehaviorSpecificPhraseInTexts(
+    entries.map(_entryText).where((text) => text.trim().isNotEmpty).toList(),
+  );
 
   static String? findBehaviorSpecificPhraseInTexts(List<String> texts) {
     if (texts.isEmpty) return null;
@@ -343,8 +343,9 @@ abstract final class AnchorSpecificityGuard {
     if (!hasRecognizableContext(lower)) return false;
     if (hasGenericDensityTooHigh(lower)) return false;
 
-    final contentWords =
-        _words(lower).where((word) => !_fillerWords.contains(word)).toList();
+    final contentWords = _words(
+      lower,
+    ).where((word) => !_fillerWords.contains(word)).toList();
     if (contentWords.isEmpty) return false;
 
     final onlyWeakContext = contentWords.every(
@@ -427,8 +428,9 @@ abstract final class AnchorSpecificityGuard {
     if (isBehaviorSpecific(lower)) return false;
 
     final words = _words(lower);
-    final contentWords =
-        words.where((word) => !_fillerWords.contains(word)).toList();
+    final contentWords = words
+        .where((word) => !_fillerWords.contains(word))
+        .toList();
     if (contentWords.isEmpty) return true;
 
     return contentWords.every(
@@ -445,7 +447,8 @@ abstract final class AnchorSpecificityGuard {
 
     final genericCount = words
         .where(
-          (word) => genericTerms.contains(word) || weakContextTerms.contains(word),
+          (word) =>
+              genericTerms.contains(word) || weakContextTerms.contains(word),
         )
         .length;
 

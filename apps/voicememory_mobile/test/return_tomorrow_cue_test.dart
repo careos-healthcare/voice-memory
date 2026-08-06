@@ -19,11 +19,7 @@ const _genericTest = 'This is a test to check function';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -40,10 +36,7 @@ JournalEntry _entry(
       syncStatus: SyncStatus.localOnly,
     );
 
-JournalEntry _voiceEntry({
-  required String id,
-  String transcript = '',
-}) =>
+JournalEntry _voiceEntry({required String id, String transcript = ''}) =>
     JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 10),
@@ -62,18 +55,18 @@ JournalEntry _voiceEntry({
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   group('ReturnTomorrowCueEngine post-save', () {
@@ -151,7 +144,9 @@ void main() {
       if (cue.watchingPhrase != null) {
         expect(
           cue.body,
-          ReturnTomorrowCueCopy.nextDayReturnBodyWithPhrase(cue.watchingPhrase!),
+          ReturnTomorrowCueCopy.nextDayReturnBodyWithPhrase(
+            cue.watchingPhrase!,
+          ),
         );
       } else {
         expect(cue.body, ReturnTomorrowCueCopy.nextDayReturnBody);
@@ -172,7 +167,11 @@ void main() {
     test('grounded phrase only appears when quality gate allows it', () {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final entries = [
-        _entry('1', _strongRepeat, createdAt: yesterday.subtract(const Duration(days: 1))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: yesterday.subtract(const Duration(days: 1)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -245,9 +244,7 @@ void main() {
     });
 
     test('pending transcript entries do not show cue', () {
-      final entries = [
-        _voiceEntry(id: 'p', transcript: ''),
-      ];
+      final entries = [_voiceEntry(id: 'p', transcript: '')];
       expect(
         ReturnTomorrowCueEngine.buildPostSave(
           entries: entries,
@@ -321,9 +318,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ReturnTomorrowCueCard(cue: cue, entryCount: 1),
-          ),
+          home: Scaffold(body: ReturnTomorrowCueCard(cue: cue, entryCount: 1)),
         ),
       );
       await tester.pump();

@@ -203,7 +203,8 @@ abstract final class BetaReadinessEngine {
         _item(
           id: BetaReadinessItemId.sendBetaFeedbackAvailable,
           label: BetaReadinessCopy.itemSendBetaFeedbackAvailable,
-          status: betaEnabled &&
+          status:
+              betaEnabled &&
                   BetaFeedbackCopy.sheetLinkLabel.isNotEmpty &&
                   BetaFeedbackCopy.sheetTitle.isNotEmpty
               ? BetaReadinessItemStatus.pass
@@ -212,7 +213,8 @@ abstract final class BetaReadinessEngine {
         _item(
           id: BetaReadinessItemId.betaProgressSummaryAvailable,
           label: BetaReadinessCopy.itemBetaProgressSummaryAvailable,
-          status: betaEnabled &&
+          status:
+              betaEnabled &&
                   BetaActivationSummaryCopy.openLink.isNotEmpty &&
                   BetaActivationSummaryCopy.sheetTitle.isNotEmpty
               ? BetaReadinessItemStatus.pass
@@ -221,8 +223,8 @@ abstract final class BetaReadinessEngine {
         _item(
           id: BetaReadinessItemId.copySummaryWorks,
           label: BetaReadinessCopy.itemCopySummaryWorks,
-          status: betaEnabled &&
-                  BetaActivationSummaryCopy.summaryCopied.isNotEmpty
+          status:
+              betaEnabled && BetaActivationSummaryCopy.summaryCopied.isNotEmpty
               ? BetaReadinessItemStatus.needsManualCheck
               : BetaReadinessItemStatus.notAvailable,
         ),
@@ -231,21 +233,20 @@ abstract final class BetaReadinessEngine {
   }
 
   static List<BetaReadinessWarning> _releaseWarnings() => const [
-        BetaReadinessWarning(text: BetaReadinessCopy.warningAppStoreProducts),
-        BetaReadinessWarning(
-          text: BetaReadinessCopy.warningLocalBackupPlainJson,
-        ),
-        BetaReadinessWarning(
-          text: BetaReadinessCopy.warningArchiveLocalUnlessExport,
-        ),
-      ];
+    BetaReadinessWarning(text: BetaReadinessCopy.warningAppStoreProducts),
+    BetaReadinessWarning(text: BetaReadinessCopy.warningLocalBackupPlainJson),
+    BetaReadinessWarning(
+      text: BetaReadinessCopy.warningArchiveLocalUnlessExport,
+    ),
+  ];
 
   static BetaReadinessItemStatus _firstUseOnboardingStatus() {
     final gate = RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
       loaded: true,
       entryCount: 0,
     );
-    final copyReady = RecordFirstUsePromptCopy.title.isNotEmpty &&
+    final copyReady =
+        RecordFirstUsePromptCopy.title.isNotEmpty &&
         RecordFirstUsePromptCopy.body.isNotEmpty &&
         RecordScreenFramingCopy.emptyArchiveTitle.isNotEmpty;
     if (gate && copyReady) {
@@ -275,10 +276,11 @@ abstract final class BetaReadinessEngine {
   }
 
   static BetaReadinessItemStatus _noDailyMapBeforeFirstSaveStatus() {
-    final mapGateAtZero = RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
-      loaded: true,
-      entryCount: 0,
-    );
+    final mapGateAtZero =
+        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+          loaded: true,
+          entryCount: 0,
+        );
     final policyAtZero = RecordHomeSurfacePolicy.resolve(
       isReady: true,
       loaded: true,
@@ -339,25 +341,24 @@ abstract final class BetaReadinessEngine {
   }
 
   static BetaReadinessItemStatus _whatChangedStatus() {
-    final gateAtFour = RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
-      loaded: true,
-      entryCount: 4,
-      isPostSave: false,
-    );
+    final gateAtFour =
+        RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
+          loaded: true,
+          entryCount: 4,
+          isPostSave: false,
+        );
     return WhatChangedV2Copy.question.isNotEmpty && gateAtFour
         ? BetaReadinessItemStatus.needsManualCheck
         : BetaReadinessItemStatus.notAvailable;
   }
 
-  static BetaReadinessItemStatus _copyAvailable(bool available) =>
-      available
-          ? BetaReadinessItemStatus.pass
-          : BetaReadinessItemStatus.notAvailable;
+  static BetaReadinessItemStatus _copyAvailable(bool available) => available
+      ? BetaReadinessItemStatus.pass
+      : BetaReadinessItemStatus.notAvailable;
 
   static BetaReadinessItem _item({
     required BetaReadinessItemId id,
     required String label,
     required BetaReadinessItemStatus status,
-  }) =>
-      BetaReadinessItem(id: id, label: label, status: status);
+  }) => BetaReadinessItem(id: id, label: label, status: status);
 }

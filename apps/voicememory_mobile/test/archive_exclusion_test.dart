@@ -25,43 +25,42 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -110,10 +109,7 @@ void main() {
       );
       expect(result.excluded, isTrue);
       expect(
-        ArchiveExclusionStore.isExcluded(
-          entryId: 'e3',
-          patternKey: patternKey,
-        ),
+        ArchiveExclusionStore.isExcluded(entryId: 'e3', patternKey: patternKey),
         isTrue,
       );
     });
@@ -134,7 +130,10 @@ void main() {
         entries: entries,
         viewingConfirmedRepeatOrTimeline: true,
       );
-      expect(detail?.savedMoments.any((m) => m.entryId == 'e3') ?? false, isFalse);
+      expect(
+        detail?.savedMoments.any((m) => m.entryId == 'e3') ?? false,
+        isFalse,
+      );
     });
 
     test('excluded moment does not count toward first proof', () async {
@@ -149,10 +148,7 @@ void main() {
         source: 'test',
       );
 
-      expect(
-        FirstProofPayoffEngine.build(entries: entries),
-        isNull,
-      );
+      expect(FirstProofPayoffEngine.build(entries: entries), isNull);
     });
 
     test('excluding can safely drop pattern below threshold', () async {
@@ -213,10 +209,7 @@ void main() {
       expect(await confirmFuture, isFalse);
 
       expect(
-        ArchiveExclusionStore.isExcluded(
-          entryId: 'e1',
-          patternKey: patternKey,
-        ),
+        ArchiveExclusionStore.isExcluded(entryId: 'e1', patternKey: patternKey),
         isFalse,
       );
     });
@@ -253,7 +246,10 @@ void main() {
         find.byKey(const Key('pattern_detail_exclude_from_pattern_0')),
         findsOneWidget,
       );
-      expect(find.text(ArchiveControlCopy.excludeFromPatternButton), findsWidgets);
+      expect(
+        find.text(ArchiveControlCopy.excludeFromPatternButton),
+        findsWidgets,
+      );
     });
   });
 
@@ -324,7 +320,10 @@ void main() {
       );
 
       final excludedEvents = captured
-          .where((e) => e.event == ArchiveControlAnalytics.patternEvidenceExcludedEvent)
+          .where(
+            (e) =>
+                e.event == ArchiveControlAnalytics.patternEvidenceExcludedEvent,
+          )
           .toList();
       expect(excludedEvents.length, 1);
       const allowedKeys = {'source', 'entry_count', 'has_confirmed_repeat'};
@@ -349,7 +348,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

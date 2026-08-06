@@ -75,13 +75,14 @@ abstract final class FirstProofPayoffEngine {
       hasStrongEvidence: hasStrongEvidence,
       emotionalClarity: null,
     );
-    final emotionalClarity = BetaImprovementPackEngine.proofEmotionalClarityDisplay(
-      entries: eligible,
-      calibration: calibration,
-      hasStrongEvidence: hasStrongEvidence,
-      groundedPhrase: primaryPhrase,
-      snippetQuotes: snippets.map((snippet) => snippet.quote).toList(),
-    );
+    final emotionalClarity =
+        BetaImprovementPackEngine.proofEmotionalClarityDisplay(
+          entries: eligible,
+          calibration: calibration,
+          hasStrongEvidence: hasStrongEvidence,
+          groundedPhrase: primaryPhrase,
+          snippetQuotes: snippets.map((snippet) => snippet.quote).toList(),
+        );
     final resolvedWhy = BetaImprovementPackEngine.firstProofWhyMattersLine(
       entryCount: eligible.length,
       hasStrongEvidence: hasStrongEvidence,
@@ -96,22 +97,21 @@ abstract final class FirstProofPayoffEngine {
         fallback: fallbackHeadline,
         emotionalClarity: emotionalClarity,
       ),
-      subhead: emotionalClarity?.subheadline ??
-          resolvedWhy ??
-          improvedWhy ??
-          '',
+      subhead:
+          emotionalClarity?.subheadline ?? resolvedWhy ?? improvedWhy ?? '',
       groundedPhrase: primaryPhrase,
       evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
       snippets: snippets,
       meaningLine: hasSnippets && !calibration.isWatchOnly
           ? FirstProofPayoffCopy.patternLine
           : '',
-      returnHook: resolvedWhy ??
+      returnHook:
+          resolvedWhy ??
           improvedWhy ??
           (hasSnippets
               ? (calibration.level == ProofConfidenceLevel.strong
-                  ? calibration.primaryCopy
-                  : FirstProofPayoffCopy.truthLine)
+                    ? calibration.primaryCopy
+                    : FirstProofPayoffCopy.truthLine)
               : calibration.primaryCopy),
       hasStrongEvidence: hasStrongEvidence,
       canShowPatternDetail: canShowPatternDetail,

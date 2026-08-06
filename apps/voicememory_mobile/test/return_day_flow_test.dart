@@ -43,11 +43,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -68,37 +64,36 @@ JournalEntry _voiceEntry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   tearDown(() async {
@@ -112,7 +107,11 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [
-        _entry('1', _strongRepeat, createdAt: yesterday.subtract(const Duration(days: 2))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: yesterday.subtract(const Duration(days: 2)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -166,7 +165,11 @@ void main() {
         ReturnDayFlowEngine.build(
           entries: [
             _entry('1', _strongRepeat, createdAt: yesterday),
-            _entry('2', 'Another moment saved earlier today.', createdAt: today),
+            _entry(
+              '2',
+              'Another moment saved earlier today.',
+              createdAt: today,
+            ),
           ],
           now: now,
         ),
@@ -189,7 +192,11 @@ void main() {
       expect(
         ReturnDayFlowEngine.build(
           entries: [
-            _voiceEntry(id: 'p', transcript: _placeholder, createdAt: yesterday),
+            _voiceEntry(
+              id: 'p',
+              transcript: _placeholder,
+              createdAt: yesterday,
+            ),
           ],
         ),
         isNull,
@@ -253,7 +260,10 @@ void main() {
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
       final flow = ReturnDayFlowEngine.build(entries: entries, now: now);
-      final returnCue = ReturnTomorrowCueEngine.buildReady(entries: entries, now: now);
+      final returnCue = ReturnTomorrowCueEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
 
       expect(flow, isNotNull);
       expect(returnCue, isNotNull);
@@ -264,7 +274,8 @@ void main() {
         flow: flow,
         dismissedToday: false,
       );
-      final showReturnTomorrow = ReturnTomorrowCueGates.shouldShowReady(
+      final showReturnTomorrow =
+          ReturnTomorrowCueGates.shouldShowReady(
             isReady: true,
             isRecording: false,
             isPostSave: false,
@@ -329,7 +340,9 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
     });
 
-    testWidgets('Not today shows acknowledgment and dismisses for today', (tester) async {
+    testWidgets('Not today shows acknowledgment and dismisses for today', (
+      tester,
+    ) async {
       const flow = ReturnDayFlow(
         title: ReturnDayFlowCopy.title,
         body: ReturnDayFlowCopy.defaultBody,
@@ -350,15 +363,22 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_watch_question_not_today')));
+      await tester.tap(
+        find.byKey(const Key('return_watch_question_not_today')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(ReturnDayFlowCopy.helperNotToday), findsOneWidget);
-      expect(find.byKey(const Key('return_watch_question_not_today')), findsNothing);
+      expect(
+        find.byKey(const Key('return_watch_question_not_today')),
+        findsNothing,
+      );
       expect(ReturnDayFlowStore.isDismissedToday, isTrue);
     });
 
-    testWidgets('Different routes to capture helper and callback', (tester) async {
+    testWidgets('Different routes to capture helper and callback', (
+      tester,
+    ) async {
       var different = false;
       final flow = ReturnDayFlow(
         title: ReturnDayFlowCopy.title,
@@ -380,7 +400,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_watch_question_different')));
+      await tester.tap(
+        find.byKey(const Key('return_watch_question_different')),
+      );
       await tester.pump();
 
       expect(different, isTrue);
@@ -409,8 +431,8 @@ void main() {
 
     testWidgets('analytics excludes phrase text', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      ComeBackTomorrowV2Analytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      ComeBackTomorrowV2Analytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
 
       final flow = ReturnDayFlow(
         title: ReturnDayFlowCopy.title,
@@ -430,7 +452,9 @@ void main() {
       await tester.pump();
 
       final seen = captured
-          .where((e) => e.event == ComeBackTomorrowV2Analytics.questionSeenEvent)
+          .where(
+            (e) => e.event == ComeBackTomorrowV2Analytics.questionSeenEvent,
+          )
           .toList();
       expect(seen, isNotEmpty);
       expect(seen.first.properties['days_since_set'], isA<int>());
@@ -446,7 +470,10 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
-      final progress = FirstWeekProgressEngine.buildReady(entries: entries, now: now);
+      final progress = FirstWeekProgressEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
       final flow = ReturnDayFlowEngine.build(entries: entries, now: now);
 
       expect(progress, isNotNull);

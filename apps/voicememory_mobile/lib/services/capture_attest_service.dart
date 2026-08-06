@@ -4,12 +4,10 @@ import '../storage/device_id.dart';
 
 class CaptureAttestService {
   CaptureAttestService({
-    required ApiClient api,
-    required DeviceIdStore deviceIds,
-    required CaptureTokenCache tokenCache,
-  }) : _api = api,
-       _deviceIds = deviceIds,
-       _tokenCache = tokenCache;
+    required this._api,
+    required this._deviceIds,
+    required this._tokenCache,
+  });
 
   final ApiClient _api;
   final DeviceIdStore _deviceIds;

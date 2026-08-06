@@ -1,10 +1,5 @@
 /// Post-save curiosity hook persisted for the voice return loop.
-enum CuriosityHookType {
-  anchorFollowUp,
-  blocker,
-  momentum,
-  returnWatch,
-}
+enum CuriosityHookType { anchorFollowUp, blocker, momentum, returnWatch }
 
 /// A single targeted curiosity prompt tied to one saved moment.
 class CuriosityHook {
@@ -55,17 +50,17 @@ class CuriosityHook {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'entryId': entryId,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'primaryAnchor': primaryAnchor,
-        'hookType': hookType.name,
-        'dynamicPrompt': dynamicPrompt,
-        if (sourceEntryId != null && sourceEntryId!.isNotEmpty)
-          'sourceEntryId': sourceEntryId,
-        if (isMemoryRecallCheck) 'isMemoryRecallCheck': true,
-        'isConsumed': isConsumed,
-      };
+    'id': id,
+    'entryId': entryId,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'primaryAnchor': primaryAnchor,
+    'hookType': hookType.name,
+    'dynamicPrompt': dynamicPrompt,
+    if (sourceEntryId != null && sourceEntryId!.isNotEmpty)
+      'sourceEntryId': sourceEntryId,
+    if (isMemoryRecallCheck) 'isMemoryRecallCheck': true,
+    'isConsumed': isConsumed,
+  };
 
   static CuriosityHook? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -131,14 +126,14 @@ class CuriosityHook {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        entryId,
-        createdAt,
-        primaryAnchor,
-        hookType,
-        dynamicPrompt,
-        sourceEntryId,
-        isMemoryRecallCheck,
-        isConsumed,
-      );
+    id,
+    entryId,
+    createdAt,
+    primaryAnchor,
+    hookType,
+    dynamicPrompt,
+    sourceEntryId,
+    isMemoryRecallCheck,
+    isConsumed,
+  );
 }

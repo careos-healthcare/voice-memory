@@ -390,7 +390,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Future<void> _resolveDelayedPaywallGate() async {
     if (widget.delayedPaywallProofGateOverride == null &&
         !ScreenshotMode.enabled &&
-        !DelayedPaywallProofStore.bypassGateForTest) {
+        !DelayedPaywallProofStore.isGateBypassedForTesting) {
       await DelayedPaywallProofStore.ensureLoaded();
     }
     if (!mounted) return;

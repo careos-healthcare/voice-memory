@@ -121,8 +121,12 @@ void main() {
   group('occurrences', () {
     test('counts distinct moments, not citations', () {
       final index = freshIndex();
-      index.upsertEntry(entry('a', 'phone at dinner', createdAt: DateTime(2026, 1, 1)));
-      index.upsertEntry(entry('b', 'phone at dinner', createdAt: DateTime(2026, 2, 1)));
+      index.upsertEntry(
+        entry('a', 'phone at dinner', createdAt: DateTime(2026, 1, 1)),
+      );
+      index.upsertEntry(
+        entry('b', 'phone at dinner', createdAt: DateTime(2026, 2, 1)),
+      );
 
       index.recordFraming(
         framing: 'framing_1',
@@ -139,8 +143,12 @@ void main() {
     test('a window counts only what is logged inside it', () {
       final index = freshIndex();
       final now = DateTime(2026, 3, 1);
-      index.upsertEntry(entry('recent', 'phone at dinner', createdAt: DateTime(2026, 2, 20)));
-      index.upsertEntry(entry('old', 'phone at dinner', createdAt: DateTime(2025, 6, 1)));
+      index.upsertEntry(
+        entry('recent', 'phone at dinner', createdAt: DateTime(2026, 2, 20)),
+      );
+      index.upsertEntry(
+        entry('old', 'phone at dinner', createdAt: DateTime(2025, 6, 1)),
+      );
       index.recordFraming(
         framing: 'framing_1',
         claimKind: 'repeated',
@@ -270,12 +278,13 @@ void main() {
         archiveScope: 'archive_a',
         ownerScope: 'owner_a',
       )..upsertEntry(entry('a', 'checking my phone during dinner'));
-      final second = ArchiveEvidenceIndex(
-        archiveScope: 'archive_b',
-        ownerScope: 'owner_a',
-      )..upsertEntry(
-        entry('a', 'checking my phone during dinner', archive: 'archive_b'),
-      );
+      final second =
+          ArchiveEvidenceIndex(
+            archiveScope: 'archive_b',
+            ownerScope: 'owner_a',
+          )..upsertEntry(
+            entry('a', 'checking my phone during dinner', archive: 'archive_b'),
+          );
 
       expect(
         first.sources.single.terms.intersection(second.sources.single.terms),

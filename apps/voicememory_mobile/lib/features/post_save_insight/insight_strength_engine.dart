@@ -1,4 +1,3 @@
-import '../first_session/first_session_pattern_category.dart';
 import '../first_session/first_session_pattern_model.dart';
 import 'insight_strength_model.dart';
 

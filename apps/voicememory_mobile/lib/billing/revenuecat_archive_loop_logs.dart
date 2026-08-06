@@ -5,10 +5,7 @@ import 'archive_loop_entitlement_ids.dart';
 abstract class ArchiveLoopRevenueCatLog {
   ArchiveLoopRevenueCatLog._();
 
-  static void configured({
-    required String platform,
-    required String source,
-  }) {
+  static void configured({required String platform, required String source}) {
     debugPrint(
       'ARCHIVEME_REVENUECAT_CONFIGURED platform=$platform source=$source',
     );
@@ -74,9 +71,7 @@ abstract class ArchiveLoopRevenueCatLog {
     required String source,
     required bool active,
   }) {
-    debugPrint(
-      'ARCHIVEME_ENTITLEMENT_REFRESHED source=$source active=$active',
-    );
+    debugPrint('ARCHIVEME_ENTITLEMENT_REFRESHED source=$source active=$active');
   }
 
   static void entitlementCacheUsed({required bool active}) {

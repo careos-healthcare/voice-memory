@@ -68,40 +68,39 @@ abstract final class ProAccessEnforcementAuditV3 {
 
   static ProAccessEnforcementStoreReadinessBridge fromLocalSignals(
     ProAccessEnforcementLocalSignals signals,
-  ) =>
-      fromStoreReadiness(
-        storeInputFromLocalSignals(signals),
-        revenueCatLinkedToAccount: signals.revenueCatLinkedToAccount,
-        backendConfigured: signals.backendConfigured,
-        privacyLockIndependentOfPro: signals.privacyLockIndependentOfPro,
-      );
+  ) => fromStoreReadiness(
+    storeInputFromLocalSignals(signals),
+    revenueCatLinkedToAccount: signals.revenueCatLinkedToAccount,
+    backendConfigured: signals.backendConfigured,
+    privacyLockIndependentOfPro: signals.privacyLockIndependentOfPro,
+  );
 
   static StoreReadinessSingleSourceInput storeInputFromLocalSignals(
     ProAccessEnforcementLocalSignals signals,
-  ) =>
-      StoreReadinessSingleSourceInput(
-        signingConfigured: true,
-        appStoreMetadataReady: true,
-        supportUrlSet: true,
-        privacyUrlSet: true,
-        termsUrlSet: true,
-        screenshotsReady: true,
-        revenueCatApiKeyProvided: !signals.revenueCatApiKeyMissing,
-        revenueCatConfigured: signals.revenueCatConfigured,
-        productsLoaded: signals.productsLoaded,
-        proEntitlementConfigured: signals.proStateReadable,
-        purchaseFlowReachable: signals.revenueCatConfigured,
-        restorePurchasesReachable: signals.restorePurchasesReachable,
-        restoreNoCrashVerified: signals.restoreNoCrashVerified,
-        purchasesUnavailableFallbackVerified: true,
-        proStateCanBeRead: signals.proStateReadable,
-        entitlementPersistsAfterRestart: signals.entitlementPersistsAfterRestart ||
-            (signals.cachedProOnDisk && signals.proEntitlementActive),
-        physicalDeviceSmokePassed: true,
-        testFlightUploadReady: true,
-        paidIntentBetaReady: true,
-        secretsRotated: true,
-      );
+  ) => StoreReadinessSingleSourceInput(
+    signingConfigured: true,
+    appStoreMetadataReady: true,
+    supportUrlSet: true,
+    privacyUrlSet: true,
+    termsUrlSet: true,
+    screenshotsReady: true,
+    revenueCatApiKeyProvided: !signals.revenueCatApiKeyMissing,
+    revenueCatConfigured: signals.revenueCatConfigured,
+    productsLoaded: signals.productsLoaded,
+    proEntitlementConfigured: signals.proStateReadable,
+    purchaseFlowReachable: signals.revenueCatConfigured,
+    restorePurchasesReachable: signals.restorePurchasesReachable,
+    restoreNoCrashVerified: signals.restoreNoCrashVerified,
+    purchasesUnavailableFallbackVerified: true,
+    proStateCanBeRead: signals.proStateReadable,
+    entitlementPersistsAfterRestart:
+        signals.entitlementPersistsAfterRestart ||
+        (signals.cachedProOnDisk && signals.proEntitlementActive),
+    physicalDeviceSmokePassed: true,
+    testFlightUploadReady: true,
+    paidIntentBetaReady: true,
+    secretsRotated: true,
+  );
 
   static bool ciEnforcementPasses({required bool bundleTestsGreen}) =>
       bundleTestsGreen;
@@ -127,7 +126,7 @@ abstract final class ProAccessEnforcementAuditV3 {
   static ProAccessEnforcementStoreReadinessTag _tagForStep({
     required StoreReadinessSingleSourceResult store,
     required Map<ProAccessEnforcementAuditItemId, ProAccessEnforcementAuditItem>
-        enforcementById,
+    enforcementById,
     required StoreReadinessSingleSourceStepId stepId,
   }) {
     final storeStep = store.steps.firstWhere((step) => step.id == stepId);
@@ -164,12 +163,13 @@ abstract final class ProAccessEnforcementAuditV3 {
     return true;
   }
 
-  static bool _billingStoreStepsAllPass(StoreReadinessSingleSourceResult store) =>
-      store.steps
-          .where((step) => billingStoreStepIds.contains(step.id))
-          .every(
-            (step) => step.status == StoreReadinessSingleSourceStepStatus.pass,
-          );
+  static bool _billingStoreStepsAllPass(
+    StoreReadinessSingleSourceResult store,
+  ) => store.steps
+      .where((step) => billingStoreStepIds.contains(step.id))
+      .every(
+        (step) => step.status == StoreReadinessSingleSourceStepStatus.pass,
+      );
 }
 
 class ProAccessEnforcementStoreReadinessTag {

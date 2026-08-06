@@ -18,55 +18,53 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctEntries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -103,7 +101,9 @@ void main() {
       );
       expect(copy.showLines, isFalse);
 
-      final summary = ArchiveHomeSummaryEngine.build(entries: _distinctEntries(3));
+      final summary = ArchiveHomeSummaryEngine.build(
+        entries: _distinctEntries(3),
+      );
       expect(summary.contextAwareSummaryLine, isNull);
       expect(summary.contextAwareDetailLine, isNull);
     });
@@ -333,34 +333,40 @@ void main() {
       expect(prompt.body, contains('different context'));
     });
 
-    test('archive health action plan adds context summary without duplicate detail', () {
-      final plan = ArchiveHealthActionPlanEngine.build(
-        entries: [
-          _voiceEntry(
-            id: 'e1',
-            transcript:
-                'I felt pressure at work before saying yes again even when I was tired moment one.',
-            captureContextTag: CaptureContextTagIds.work,
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript:
-                'Work kept pulling me back after I wanted to stop for the day moment two.',
-            createdAt: DateTime(2026, 6, 11),
-            captureContextTag: CaptureContextTagIds.work,
-          ),
-          _voiceEntry(
-            id: 'e3',
-            transcript:
-                'I noticed the same hurry showing up before I answered anyone moment three.',
-            createdAt: DateTime(2026, 6, 12),
-            captureContextTag: CaptureContextTagIds.work,
-          ),
-        ],
-      );
-      expect(plan.contextAwareSummaryLine, contains('mostly showing up at work'));
-      expect(plan.contextAwareDetailLine, isNull);
-    });
+    test(
+      'archive health action plan adds context summary without duplicate detail',
+      () {
+        final plan = ArchiveHealthActionPlanEngine.build(
+          entries: [
+            _voiceEntry(
+              id: 'e1',
+              transcript:
+                  'I felt pressure at work before saying yes again even when I was tired moment one.',
+              captureContextTag: CaptureContextTagIds.work,
+            ),
+            _voiceEntry(
+              id: 'e2',
+              transcript:
+                  'Work kept pulling me back after I wanted to stop for the day moment two.',
+              createdAt: DateTime(2026, 6, 11),
+              captureContextTag: CaptureContextTagIds.work,
+            ),
+            _voiceEntry(
+              id: 'e3',
+              transcript:
+                  'I noticed the same hurry showing up before I answered anyone moment three.',
+              createdAt: DateTime(2026, 6, 12),
+              captureContextTag: CaptureContextTagIds.work,
+            ),
+          ],
+        );
+        expect(
+          plan.contextAwareSummaryLine,
+          contains('mostly showing up at work'),
+        );
+        expect(plan.contextAwareDetailLine, isNull);
+      },
+    );
 
     test('belief history adds context-aware lines when tags exist', () {
       final timeline = BeliefHistoryTimelineEngine.build(

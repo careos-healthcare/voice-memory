@@ -22,7 +22,8 @@ class LiveVoiceStatusCard extends StatelessWidget {
     final statusLabel = LiveVoiceSessionPresentation.statusLabel(visualState);
     final helperText = LiveVoiceSessionPresentation.helperText(visualState);
     final timer = LiveVoiceSessionPresentation.formatTimer(seconds);
-    final showWaveform = visualState == LiveVoiceVisualState.listening ||
+    final showWaveform =
+        visualState == LiveVoiceVisualState.listening ||
         visualState == LiveVoiceVisualState.speaking ||
         visualState == LiveVoiceVisualState.connecting ||
         visualState == LiveVoiceVisualState.reconnecting;

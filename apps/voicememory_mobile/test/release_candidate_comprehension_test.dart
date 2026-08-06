@@ -31,56 +31,52 @@ ReleaseCandidateComprehensionSummary _summary({
   int wouldPayYesCount = 2,
   int wouldPayMaybeCount = 1,
   int wouldPayNoCount = 2,
-}) =>
-    ReleaseCandidateComprehensionSummary(
-      totalTesters: totalTesters,
-      understoodNotVoiceChatCount: understoodNotVoiceChatCount,
-      understoodFirstProofCount: understoodFirstProofCount,
-      understoodWhyAppearedCount: understoodWhyAppearedCount,
-      understoodConfirmCorrectCount: understoodConfirmCorrectCount,
-      understoodProKeepsTrailCount: understoodProKeepsTrailCount,
-      understoodReturnsChangesFadesCorrectionsCount:
-          understoodReturnsChangesFadesCorrectionsCount,
-      thoughtItWasVoiceChatCount: thoughtItWasVoiceChatCount,
-      thoughtItWasMoreAiCount: thoughtItWasMoreAiCount,
-      wouldPayYesCount: wouldPayYesCount,
-      wouldPayMaybeCount: wouldPayMaybeCount,
-      wouldPayNoCount: wouldPayNoCount,
-    );
+}) => ReleaseCandidateComprehensionSummary(
+  totalTesters: totalTesters,
+  understoodNotVoiceChatCount: understoodNotVoiceChatCount,
+  understoodFirstProofCount: understoodFirstProofCount,
+  understoodWhyAppearedCount: understoodWhyAppearedCount,
+  understoodConfirmCorrectCount: understoodConfirmCorrectCount,
+  understoodProKeepsTrailCount: understoodProKeepsTrailCount,
+  understoodReturnsChangesFadesCorrectionsCount:
+      understoodReturnsChangesFadesCorrectionsCount,
+  thoughtItWasVoiceChatCount: thoughtItWasVoiceChatCount,
+  thoughtItWasMoreAiCount: thoughtItWasMoreAiCount,
+  wouldPayYesCount: wouldPayYesCount,
+  wouldPayMaybeCount: wouldPayMaybeCount,
+  wouldPayNoCount: wouldPayNoCount,
+);
 
 ReleaseCandidateComprehensionSummary _fullComprehensionSummary({
   int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      understoodNotVoiceChatCount: totalTesters == 20 ? 5 : 7,
-      understoodFirstProofCount: totalTesters == 20 ? 5 : 7,
-      understoodWhyAppearedCount: totalTesters == 20 ? 5 : 7,
-      understoodConfirmCorrectCount: totalTesters == 20 ? 5 : 7,
-      understoodProKeepsTrailCount: totalTesters == 20 ? 4 : 6,
-      understoodReturnsChangesFadesCorrectionsCount:
-          totalTesters == 20 ? 4 : 6,
-      thoughtItWasVoiceChatCount: 0,
-    );
+}) => _summary(
+  totalTesters: totalTesters,
+  understoodNotVoiceChatCount: totalTesters == 20 ? 5 : 7,
+  understoodFirstProofCount: totalTesters == 20 ? 5 : 7,
+  understoodWhyAppearedCount: totalTesters == 20 ? 5 : 7,
+  understoodConfirmCorrectCount: totalTesters == 20 ? 5 : 7,
+  understoodProKeepsTrailCount: totalTesters == 20 ? 4 : 6,
+  understoodReturnsChangesFadesCorrectionsCount: totalTesters == 20 ? 4 : 6,
+  thoughtItWasVoiceChatCount: 0,
+);
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('ReleaseCandidateComprehension.resolve', () {
@@ -103,9 +99,7 @@ void main() {
     test('not-voice-chat understanding low returns repairPositioning', () {
       expect(
         ReleaseCandidateComprehension.resolve(
-          _fullComprehensionSummary().copyWith(
-            understoodNotVoiceChatCount: 4,
-          ),
+          _fullComprehensionSummary().copyWith(understoodNotVoiceChatCount: 4),
         ),
         ReleaseCandidateComprehensionDecision.repairPositioning,
       );
@@ -143,9 +137,7 @@ void main() {
     test('Pro keeps trail understanding low returns repairProTrail', () {
       expect(
         ReleaseCandidateComprehension.resolve(
-          _fullComprehensionSummary().copyWith(
-            understoodProKeepsTrailCount: 3,
-          ),
+          _fullComprehensionSummary().copyWith(understoodProKeepsTrailCount: 3),
         ),
         ReleaseCandidateComprehensionDecision.repairProTrail,
       );
@@ -165,30 +157,24 @@ void main() {
       },
     );
 
-    test(
-      'all comprehension passes but pay weak returns pricingValidation',
-      () {
-        expect(
-          ReleaseCandidateComprehension.resolve(
-            _fullComprehensionSummary().copyWith(
-              wouldPayYesCount: 0,
-              wouldPayMaybeCount: 1,
-            ),
+    test('all comprehension passes but pay weak returns pricingValidation', () {
+      expect(
+        ReleaseCandidateComprehension.resolve(
+          _fullComprehensionSummary().copyWith(
+            wouldPayYesCount: 0,
+            wouldPayMaybeCount: 1,
           ),
-          ReleaseCandidateComprehensionDecision.pricingValidation,
-        );
-      },
-    );
+        ),
+        ReleaseCandidateComprehensionDecision.pricingValidation,
+      );
+    });
 
-    test(
-      'all comprehension and pay pass returns releaseCandidate',
-      () {
-        expect(
-          ReleaseCandidateComprehension.resolve(_fullComprehensionSummary()),
-          ReleaseCandidateComprehensionDecision.releaseCandidate,
-        );
-      },
-    );
+    test('all comprehension and pay pass returns releaseCandidate', () {
+      expect(
+        ReleaseCandidateComprehension.resolve(_fullComprehensionSummary()),
+        ReleaseCandidateComprehensionDecision.releaseCandidate,
+      );
+    });
 
     test('conservative fallback returns repairPositioning', () {
       expect(
@@ -221,22 +207,16 @@ void main() {
         ReleaseCandidateComprehensionCopy.publicPromise,
         'When something repeats, save one real moment. ArchiveMe compares it later.',
       );
-      expect(
-        ReleaseCandidateComprehensionCopy.body,
-        contains('Not a diary'),
-      );
-      expect(
-        ReleaseCandidateComprehensionCopy.body,
-        contains('Not ChatGPT'),
-      );
-      expect(
-        ReleaseCandidateComprehensionCopy.body,
-        contains('Not homework'),
-      );
+      expect(ReleaseCandidateComprehensionCopy.body, contains('Not a diary'));
+      expect(ReleaseCandidateComprehensionCopy.body, contains('Not ChatGPT'));
+      expect(ReleaseCandidateComprehensionCopy.body, contains('Not homework'));
     });
 
     test('copy says one clear repeat', () {
-      expect(ReleaseCandidateComprehensionCopy.body, contains('one clear repeat'));
+      expect(
+        ReleaseCandidateComprehensionCopy.body,
+        contains('one clear repeat'),
+      );
     });
 
     test('copy says explains why it appeared', () {
@@ -320,7 +300,8 @@ void main() {
     });
 
     test('changeProofLine includes returns / changes / fades / corrected', () {
-      final line = ReleaseCandidateComprehensionCopy.changeProofLine.toLowerCase();
+      final line = ReleaseCandidateComprehensionCopy.changeProofLine
+          .toLowerCase();
       expect(line, contains('returns'));
       expect(line, contains('changes'));
       expect(line, contains('fades'));
@@ -337,21 +318,25 @@ void main() {
       },
     );
 
-    test('guardrail blocks release messaging unless users understand evidence trail',
-        () {
-      expect(
-        ReleaseCandidateComprehensionCopy.guardrail,
-        contains('Do not ship release-candidate messaging unless users understand'),
-      );
-      expect(
-        ReleaseCandidateComprehensionCopy.guardrail,
-        contains('evidence trail'),
-      );
-      expect(
-        ReleaseCandidateComprehensionCopy.guardrail,
-        contains('not voice chat'),
-      );
-    });
+    test(
+      'guardrail blocks release messaging unless users understand evidence trail',
+      () {
+        expect(
+          ReleaseCandidateComprehensionCopy.guardrail,
+          contains(
+            'Do not ship release-candidate messaging unless users understand',
+          ),
+        );
+        expect(
+          ReleaseCandidateComprehensionCopy.guardrail,
+          contains('evidence trail'),
+        );
+        expect(
+          ReleaseCandidateComprehensionCopy.guardrail,
+          contains('not voice chat'),
+        );
+      },
+    );
 
     test('copy does not say better than ChatGPT Voice', () {
       for (final text in [
@@ -577,39 +562,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -627,28 +615,27 @@ extension on ReleaseCandidateComprehensionSummary {
     int? wouldPayYesCount,
     int? wouldPayMaybeCount,
     int? wouldPayNoCount,
-  }) =>
-      ReleaseCandidateComprehensionSummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        understoodNotVoiceChatCount:
-            understoodNotVoiceChatCount ?? this.understoodNotVoiceChatCount,
-        understoodFirstProofCount:
-            understoodFirstProofCount ?? this.understoodFirstProofCount,
-        understoodWhyAppearedCount:
-            understoodWhyAppearedCount ?? this.understoodWhyAppearedCount,
-        understoodConfirmCorrectCount:
-            understoodConfirmCorrectCount ?? this.understoodConfirmCorrectCount,
-        understoodProKeepsTrailCount:
-            understoodProKeepsTrailCount ?? this.understoodProKeepsTrailCount,
-        understoodReturnsChangesFadesCorrectionsCount:
-            understoodReturnsChangesFadesCorrectionsCount ??
-            this.understoodReturnsChangesFadesCorrectionsCount,
-        thoughtItWasVoiceChatCount:
-            thoughtItWasVoiceChatCount ?? this.thoughtItWasVoiceChatCount,
-        thoughtItWasMoreAiCount:
-            thoughtItWasMoreAiCount ?? this.thoughtItWasMoreAiCount,
-        wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
-        wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
-        wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
-      );
+  }) => ReleaseCandidateComprehensionSummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    understoodNotVoiceChatCount:
+        understoodNotVoiceChatCount ?? this.understoodNotVoiceChatCount,
+    understoodFirstProofCount:
+        understoodFirstProofCount ?? this.understoodFirstProofCount,
+    understoodWhyAppearedCount:
+        understoodWhyAppearedCount ?? this.understoodWhyAppearedCount,
+    understoodConfirmCorrectCount:
+        understoodConfirmCorrectCount ?? this.understoodConfirmCorrectCount,
+    understoodProKeepsTrailCount:
+        understoodProKeepsTrailCount ?? this.understoodProKeepsTrailCount,
+    understoodReturnsChangesFadesCorrectionsCount:
+        understoodReturnsChangesFadesCorrectionsCount ??
+        this.understoodReturnsChangesFadesCorrectionsCount,
+    thoughtItWasVoiceChatCount:
+        thoughtItWasVoiceChatCount ?? this.thoughtItWasVoiceChatCount,
+    thoughtItWasMoreAiCount:
+        thoughtItWasMoreAiCount ?? this.thoughtItWasMoreAiCount,
+    wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
+    wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
+    wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
+  );
 }

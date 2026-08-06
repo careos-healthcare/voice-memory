@@ -5,17 +5,15 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
 class LiveVoiceConnectionPill extends StatelessWidget {
-  const LiveVoiceConnectionPill({
-    super.key,
-    required this.visualState,
-  });
+  const LiveVoiceConnectionPill({super.key, required this.visualState});
 
   final LiveVoiceVisualState visualState;
 
   @override
   Widget build(BuildContext context) {
     final label = LiveVoiceSessionPresentation.connectionPillLabel(visualState);
-    final isLive = visualState == LiveVoiceVisualState.listening ||
+    final isLive =
+        visualState == LiveVoiceVisualState.listening ||
         visualState == LiveVoiceVisualState.speaking;
     final color = switch (visualState) {
       LiveVoiceVisualState.error => AppColors.textSecondary,
@@ -42,18 +40,15 @@ class LiveVoiceConnectionPill extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: isLive ? AppColors.textPrimary : AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: isLive ? AppColors.textPrimary : AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

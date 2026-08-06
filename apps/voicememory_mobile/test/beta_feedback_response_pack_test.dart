@@ -52,27 +52,26 @@ BetaFeedbackResponseInput _input({
   bool dailyChangeAvailable = false,
   bool dailyChangeDismissed = false,
   bool quickCaptureFrictionStillWork = false,
-}) =>
-    BetaFeedbackResponseInput(
-      capacityWedgeActive: capacityWedgeActive,
-      capacityMomentCount: capacityMomentCount,
-      activationTarget: activationTarget,
-      fitIsPositive: fitIsPositive,
-      fitIsUnclear: fitIsUnclear,
-      fitNotAnswered: fitNotAnswered,
-      pullReasonRecordCount: pullReasonRecordCount,
-      outcomeRecordCount: outcomeRecordCount,
-      laterCostRecordCount: laterCostRecordCount,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      boundaryResponseSelected: boundaryResponseSelected,
-      boundaryResponseCopied: boundaryResponseCopied,
-      proInterestCaptured: proInterestCaptured,
-      paidIntentStrongWtp: paidIntentStrongWtp,
-      paidIntentSoftWtp: paidIntentSoftWtp,
-      dailyChangeAvailable: dailyChangeAvailable,
-      dailyChangeDismissed: dailyChangeDismissed,
-      quickCaptureFrictionStillWork: quickCaptureFrictionStillWork,
-    );
+}) => BetaFeedbackResponseInput(
+  capacityWedgeActive: capacityWedgeActive,
+  capacityMomentCount: capacityMomentCount,
+  activationTarget: activationTarget,
+  fitIsPositive: fitIsPositive,
+  fitIsUnclear: fitIsUnclear,
+  fitNotAnswered: fitNotAnswered,
+  pullReasonRecordCount: pullReasonRecordCount,
+  outcomeRecordCount: outcomeRecordCount,
+  laterCostRecordCount: laterCostRecordCount,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  boundaryResponseSelected: boundaryResponseSelected,
+  boundaryResponseCopied: boundaryResponseCopied,
+  proInterestCaptured: proInterestCaptured,
+  paidIntentStrongWtp: paidIntentStrongWtp,
+  paidIntentSoftWtp: paidIntentSoftWtp,
+  dailyChangeAvailable: dailyChangeAvailable,
+  dailyChangeDismissed: dailyChangeDismissed,
+  quickCaptureFrictionStillWork: quickCaptureFrictionStillWork,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -115,7 +114,10 @@ void main() {
         BetaFeedbackResponseCopy.suggestedFixClarifyPromise,
       );
       expect(result.recommendedResponseSummary, contains('onboarding copy'));
-      expect(result.recommendedResponseSummary, contains('Catch the yes before it costs you'));
+      expect(
+        result.recommendedResponseSummary,
+        contains('Catch the yes before it costs you'),
+      );
     });
 
     test('first moment blocked maps to record/start flow fix', () {
@@ -131,7 +133,10 @@ void main() {
     test('activation dropoff maps to 3-moment path fix', () {
       final one = engine.build(_input(capacityMomentCount: 1));
       expect(one.issueId, BetaFeedbackIssueIds.activationDropoff);
-      expect(one.recommendedResponseSummary, contains('N of 3 yes moments saved'));
+      expect(
+        one.recommendedResponseSummary,
+        contains('N of 3 yes moments saved'),
+      );
 
       final two = engine.build(_input(capacityMomentCount: 2));
       expect(two.issueId, BetaFeedbackIssueIds.activationDropoff);
@@ -155,7 +160,10 @@ void main() {
         result.suggestedNextFixLabel,
         BetaFeedbackResponseCopy.suggestedFixDailyChange,
       );
-      expect(result.recommendedResponseSummary, contains('Sharpen daily change'));
+      expect(
+        result.recommendedResponseSummary,
+        contains('Sharpen daily change'),
+      );
     });
 
     test('weak alternative maps to alternative rule improvement', () {
@@ -178,42 +186,51 @@ void main() {
       expect(result.recommendedResponseSummary, contains('alternative rules'));
     });
 
-    test('paid signal maps to RevenueCat readiness, not RevenueCat enabled', () {
-      final result = engine.build(
-        _input(
-          capacityMomentCount: 3,
-          fitIsPositive: true,
-          fitIsUnclear: false,
-          fitNotAnswered: false,
-          paidIntentStrongWtp: true,
-          dailyChangeAvailable: true,
-          weeklyReviewAvailable: true,
-          outcomeRecordCount: 1,
-        ),
-      );
-      expect(result.issueId, BetaFeedbackIssueIds.paidSignalReady);
-      expect(
-        result.suggestedNextFixLabel,
-        BetaFeedbackResponseCopy.suggestedFixPaidLaunch,
-      );
-      expect(result.recommendedResponseSummary, contains('RevenueCat'));
-      expect(result.recommendedResponseSummary, contains('Do not enable payments'));
-      expect(result.whatNotToChangeSummary, contains('Do not enable RevenueCat'));
-    });
+    test(
+      'paid signal maps to RevenueCat readiness, not RevenueCat enabled',
+      () {
+        final result = engine.build(
+          _input(
+            capacityMomentCount: 3,
+            fitIsPositive: true,
+            fitIsUnclear: false,
+            fitNotAnswered: false,
+            paidIntentStrongWtp: true,
+            dailyChangeAvailable: true,
+            weeklyReviewAvailable: true,
+            outcomeRecordCount: 1,
+          ),
+        );
+        expect(result.issueId, BetaFeedbackIssueIds.paidSignalReady);
+        expect(
+          result.suggestedNextFixLabel,
+          BetaFeedbackResponseCopy.suggestedFixPaidLaunch,
+        );
+        expect(result.recommendedResponseSummary, contains('RevenueCat'));
+        expect(
+          result.recommendedResponseSummary,
+          contains('Do not enable payments'),
+        );
+        expect(
+          result.whatNotToChangeSummary,
+          contains('Do not enable RevenueCat'),
+        );
+      },
+    );
 
     test('quick capture still work maps to reduce workload fix', () {
       final result = engine.build(
-        _input(
-          capacityMomentCount: 1,
-          quickCaptureFrictionStillWork: true,
-        ),
+        _input(capacityMomentCount: 1, quickCaptureFrictionStillWork: true),
       );
       expect(result.issueId, BetaFeedbackIssueIds.quickCaptureStillWork);
       expect(
         result.suggestedNextFixLabel,
         BetaFeedbackResponseCopy.suggestedFixReduceCaptureWorkload,
       );
-      expect(result.recommendedResponseSummary, contains('Reduce capture workload further'));
+      expect(
+        result.recommendedResponseSummary,
+        contains('Reduce capture workload further'),
+      );
     });
 
     test('returns hidden when wedge inactive', () {
@@ -280,10 +297,12 @@ void main() {
       }
     });
 
-    test('no mental health score / wellbeing score / clinical score / life score',
-        () {
-      _expectNoBannedCopy(BetaFeedbackResponseCopy.allVisibleStrings());
-    });
+    test(
+      'no mental health score / wellbeing score / clinical score / life score',
+      () {
+        _expectNoBannedCopy(BetaFeedbackResponseCopy.allVisibleStrings());
+      },
+    );
 
     test('no purchase CTAs or pro active claims in copy', () {
       for (final text in BetaFeedbackResponseCopy.allVisibleStrings()) {

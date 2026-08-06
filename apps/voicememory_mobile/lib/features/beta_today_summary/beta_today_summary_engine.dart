@@ -139,8 +139,9 @@ abstract final class BetaTodaySummaryEngine {
         EvidenceWeightState.needsFreshProof) {
       return true;
     }
-    return evidenceWeighting?.secondaryStates
-            .contains(EvidenceWeightState.needsFreshProof) ??
+    return evidenceWeighting?.secondaryStates.contains(
+          EvidenceWeightState.needsFreshProof,
+        ) ??
         false;
   }
 
@@ -158,8 +159,9 @@ abstract final class BetaTodaySummaryEngine {
     if (evidenceWeighting?.primaryState == EvidenceWeightState.fading) {
       return true;
     }
-    return evidenceWeighting?.secondaryStates
-            .contains(EvidenceWeightState.fading) ??
+    return evidenceWeighting?.secondaryStates.contains(
+          EvidenceWeightState.fading,
+        ) ??
         false;
   }
 
@@ -208,9 +210,8 @@ abstract final class BetaTodaySummaryEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      OpenCaptureEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => OpenCaptureEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

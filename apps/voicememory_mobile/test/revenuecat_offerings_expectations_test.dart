@@ -26,22 +26,25 @@ void main() {
     });
 
     test('paywall package selection uses PackageType monthly and annual', () {
-      final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final paywallSource = File(
+        'lib/screens/paywall_screen.dart',
+      ).readAsStringSync();
       expect(paywallSource, contains('PackageType.monthly'));
       expect(paywallSource, contains('PackageType.annual'));
       expect(paywallSource, contains('offerings?.current'));
       expect(paywallSource, isNot(contains('getOffering(')));
     });
 
-    test('availability gate checks current offering package count not store ids',
-        () {
-      final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(paywallSource, contains('availablePackages'));
-      expect(
-        paywallSource,
-        isNot(contains('storeProduct.identifier ==')),
-      );
-    });
+    test(
+      'availability gate checks current offering package count not store ids',
+      () {
+        final paywallSource = File(
+          'lib/screens/paywall_screen.dart',
+        ).readAsStringSync();
+        expect(paywallSource, contains('availablePackages'));
+        expect(paywallSource, isNot(contains('storeProduct.identifier ==')));
+      },
+    );
 
     test('archive paywall plans match by package type not identifier', () {
       final plansSource = File(
@@ -64,14 +67,24 @@ void main() {
     });
 
     test('paywall load always logs final purchase availability decision', () {
-      final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(paywallSource, contains('RevenueCatOfferingsDebugLog.paywallLoadStarted'));
+      final paywallSource = File(
+        'lib/screens/paywall_screen.dart',
+      ).readAsStringSync();
+      expect(
+        paywallSource,
+        contains('RevenueCatOfferingsDebugLog.paywallLoadStarted'),
+      );
       expect(paywallSource, contains('rc.fetchOfferings()'));
-      expect(paywallSource, contains('RevenueCatOfferingsDebugLog.paywallLoadResult'));
+      expect(
+        paywallSource,
+        contains('RevenueCatOfferingsDebugLog.paywallLoadResult'),
+      );
     });
 
     test('paywall restore path does not gate on package availability', () {
-      final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final paywallSource = File(
+        'lib/screens/paywall_screen.dart',
+      ).readAsStringSync();
       final restoreStart = paywallSource.indexOf('Future<void> _restore()');
       final restoreEnd = paywallSource.indexOf(
         'Future<void> _dismissWithCapture',

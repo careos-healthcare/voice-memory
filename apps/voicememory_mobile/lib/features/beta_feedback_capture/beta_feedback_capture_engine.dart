@@ -40,30 +40,29 @@ abstract final class BetaFeedbackCaptureEngine {
     bool coreCaptureCtaVisible = false,
     bool paywallNoCtaRequested = false,
     bool paywallPurchaseAttempted = false,
-  }) =>
-      BetaFeedbackCaptureContext(
-        surface: surface,
-        source: source,
-        entryCount: entryCount,
-        betaMissionEnabled: betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
-        isReady: isReady,
-        isRecording: isRecording,
-        isPostSave: isPostSave,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        hasUsefulProof: hasUsefulProof,
-        hasPaywallSeen: hasPaywallSeen,
-        hasPurchaseCtaTapped: hasPurchaseCtaTapped,
-        isPro: isPro,
-        timelineProofVisible: timelineProofVisible,
-        proPreviewVisible: proPreviewVisible,
-        existingProofFeedbackVisible: existingProofFeedbackVisible,
-        coreCaptureCtaVisible: coreCaptureCtaVisible,
-        paywallNoCtaRequested: paywallNoCtaRequested,
-        paywallPurchaseAttempted: paywallPurchaseAttempted,
-      );
+  }) => BetaFeedbackCaptureContext(
+    surface: surface,
+    source: source,
+    entryCount: entryCount,
+    betaMissionEnabled: betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
+    isReady: isReady,
+    isRecording: isRecording,
+    isPostSave: isPostSave,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    hasUsefulProof: hasUsefulProof,
+    hasPaywallSeen: hasPaywallSeen,
+    hasPurchaseCtaTapped: hasPurchaseCtaTapped,
+    isPro: isPro,
+    timelineProofVisible: timelineProofVisible,
+    proPreviewVisible: proPreviewVisible,
+    existingProofFeedbackVisible: existingProofFeedbackVisible,
+    coreCaptureCtaVisible: coreCaptureCtaVisible,
+    paywallNoCtaRequested: paywallNoCtaRequested,
+    paywallPurchaseAttempted: paywallPurchaseAttempted,
+  );
 
   static BetaFeedbackCaptureResult build({
     required BetaFeedbackCaptureContext context,
@@ -87,16 +86,17 @@ abstract final class BetaFeedbackCaptureEngine {
       moment: moment,
       title: BetaFeedbackCaptureCopy.titleFor(moment),
       options: BetaFeedbackCaptureCopy.optionsFor(moment),
-      followUpPlaceholder: BetaFeedbackCaptureCopy.followUpPlaceholderFor(moment),
+      followUpPlaceholder: BetaFeedbackCaptureCopy.followUpPlaceholderFor(
+        moment,
+      ),
       source: context.source,
       surface: context.surface,
       entryCount: context.entryCount,
       hasUsefulProof: context.hasUsefulProof,
       hasPaywallSeen: context.hasPaywallSeen,
       hasPurchaseCtaTapped: context.hasPurchaseCtaTapped,
-      unresolvedRevenueQuestion: BetaFeedbackCaptureCopy.unresolvedRevenueQuestion(
-        moment: moment,
-      ),
+      unresolvedRevenueQuestion:
+          BetaFeedbackCaptureCopy.unresolvedRevenueQuestion(moment: moment),
     );
   }
 
@@ -110,7 +110,9 @@ abstract final class BetaFeedbackCaptureEngine {
     for (final moment in momentPriority) {
       if (momentEligible(context: context, moment: moment) &&
           !BetaFeedbackCaptureStore.isResolvedToday(moment)) {
-        return BetaFeedbackCaptureCopy.unresolvedRevenueQuestion(moment: moment);
+        return BetaFeedbackCaptureCopy.unresolvedRevenueQuestion(
+          moment: moment,
+        );
       }
     }
     return BetaFeedbackCaptureCopy.unresolvedRevenueQuestion(moment: null);
@@ -218,17 +220,16 @@ abstract final class BetaFeedbackCaptureEngine {
     required bool isPostSaveDegraded,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      BetaProofFeedbackEngine.shouldShow(
-        surface: surface,
-        parentVisible: parentVisible,
-        entryCount: entryCount,
-        hasConfirmedRepeat: hasConfirmedRepeat,
-        isRecording: isRecording,
-        isPostSaveDegraded: isPostSaveDegraded,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => BetaProofFeedbackEngine.shouldShow(
+    surface: surface,
+    parentVisible: parentVisible,
+    entryCount: entryCount,
+    hasConfirmedRepeat: hasConfirmedRepeat,
+    isRecording: isRecording,
+    isPostSaveDegraded: isPostSaveDegraded,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 }
 
 extension BetaFeedbackCaptureResultCopy on BetaFeedbackCaptureResult {
@@ -245,21 +246,19 @@ extension BetaFeedbackCaptureResultCopy on BetaFeedbackCaptureResult {
     bool? hasPaywallSeen,
     bool? hasPurchaseCtaTapped,
     String? unresolvedRevenueQuestion,
-  }) =>
-      BetaFeedbackCaptureResult(
-        shouldShow: shouldShow ?? this.shouldShow,
-        moment: moment ?? this.moment,
-        title: title ?? this.title,
-        options: options ?? this.options,
-        followUpPlaceholder: followUpPlaceholder,
-        source: source ?? this.source,
-        surface: surface ?? this.surface,
-        entryCount: entryCount ?? this.entryCount,
-        hasUsefulProof: hasUsefulProof ?? this.hasUsefulProof,
-        hasPaywallSeen: hasPaywallSeen ?? this.hasPaywallSeen,
-        hasPurchaseCtaTapped:
-            hasPurchaseCtaTapped ?? this.hasPurchaseCtaTapped,
-        unresolvedRevenueQuestion:
-            unresolvedRevenueQuestion ?? this.unresolvedRevenueQuestion,
-      );
+  }) => BetaFeedbackCaptureResult(
+    shouldShow: shouldShow ?? this.shouldShow,
+    moment: moment ?? this.moment,
+    title: title ?? this.title,
+    options: options ?? this.options,
+    followUpPlaceholder: followUpPlaceholder,
+    source: source ?? this.source,
+    surface: surface ?? this.surface,
+    entryCount: entryCount ?? this.entryCount,
+    hasUsefulProof: hasUsefulProof ?? this.hasUsefulProof,
+    hasPaywallSeen: hasPaywallSeen ?? this.hasPaywallSeen,
+    hasPurchaseCtaTapped: hasPurchaseCtaTapped ?? this.hasPurchaseCtaTapped,
+    unresolvedRevenueQuestion:
+        unresolvedRevenueQuestion ?? this.unresolvedRevenueQuestion,
+  );
 }

@@ -1,4 +1,6 @@
 /// User-facing copy for voice capture quality and transcription fallback.
+library;
+
 import '../trust/capture_recovery_copy.dart';
 import '../archive_evidence/transcript_pending_copy.dart';
 

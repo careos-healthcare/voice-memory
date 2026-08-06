@@ -13,12 +13,11 @@ import 'live_audio_pipeline_log.dart';
 /// Microphone PCM capture via the `record` package — 16-bit LE mono @ 16 kHz.
 class RecordLivePcm16CaptureSource implements LivePcm16CaptureSource {
   RecordLivePcm16CaptureSource({
-    AudioRecorder? recorder,
+    this._recorder,
     MicrophonePermissionGateway? permissionGateway,
     this.configureIosAudioSession = true,
-  })  : _recorder = recorder,
-        _permissionGateway =
-            permissionGateway ?? PermissionHandlerMicrophoneGateway();
+  }) : _permissionGateway =
+           permissionGateway ?? PermissionHandlerMicrophoneGateway();
 
   final AudioRecorder? _recorder;
   final MicrophonePermissionGateway _permissionGateway;
@@ -29,15 +28,16 @@ class RecordLivePcm16CaptureSource implements LivePcm16CaptureSource {
   var _capturing = false;
 
   static RecordConfig get captureConfig => const RecordConfig(
-        encoder: AudioEncoder.pcm16bits,
-        sampleRate: liveInputSampleRateHz,
-        numChannels: liveInputNumChannels,
-      );
+    encoder: AudioEncoder.pcm16bits,
+    sampleRate: liveInputSampleRateHz,
+    numChannels: liveInputNumChannels,
+  );
 
   @override
   bool get isCapturing => _capturing;
 
-  AudioRecorder get _recorderInstance => _activeRecorder ??= _recorder ?? AudioRecorder();
+  AudioRecorder get _recorderInstance =>
+      _activeRecorder ??= _recorder ?? AudioRecorder();
 
   @override
   Future<void> start({required void Function(List<int> chunk) onChunk}) async {
@@ -112,6 +112,8 @@ class RecordLivePcm16CaptureSource implements LivePcm16CaptureSource {
       return;
     }
 
-    throw LivePcm16CaptureException('Microphone permission is required for live audio.');
+    throw LivePcm16CaptureException(
+      'Microphone permission is required for live audio.',
+    );
   }
 }

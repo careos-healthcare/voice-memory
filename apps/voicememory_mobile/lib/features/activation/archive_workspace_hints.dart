@@ -72,21 +72,23 @@ abstract final class ArchiveWorkspaceHintsEngine {
       needsAttentionHint: layout.showAttentionFilters
           ? _sectionHint(
               hintId: ArchiveWorkspaceHintIds.needsAttention,
-              body: VisibleArchiveProofCopy.archiveWorkspaceHintNeedsAttentionBody,
+              body: VisibleArchiveProofCopy
+                  .archiveWorkspaceHintNeedsAttentionBody,
             )
           : null,
       evidenceQualityHint:
           layout.evidenceQuality.show && layout.eligibleCount >= 3
-              ? _sectionHint(
-                  hintId: ArchiveWorkspaceHintIds.evidenceQuality,
-                  body: VisibleArchiveProofCopy
-                      .archiveWorkspaceHintEvidenceQualityBody,
-                )
-              : null,
+          ? _sectionHint(
+              hintId: ArchiveWorkspaceHintIds.evidenceQuality,
+              body: VisibleArchiveProofCopy
+                  .archiveWorkspaceHintEvidenceQualityBody,
+            )
+          : null,
       reviewHistoryHint: layout.reviewHistory.show && layout.eligibleCount >= 5
           ? _sectionHint(
               hintId: ArchiveWorkspaceHintIds.reviewHistory,
-              body: VisibleArchiveProofCopy.archiveWorkspaceHintReviewHistoryBody,
+              body:
+                  VisibleArchiveProofCopy.archiveWorkspaceHintReviewHistoryBody,
             )
           : null,
     );
@@ -108,10 +110,6 @@ abstract final class ArchiveWorkspaceHintsEngine {
     required String body,
   }) {
     if (ArchiveWorkspaceHintStore.isDismissed(hintId)) return null;
-    return ArchiveWorkspaceHint(
-      hintId: hintId,
-      body: body,
-      compact: true,
-    );
+    return ArchiveWorkspaceHint(hintId: hintId, body: body, compact: true);
   }
 }

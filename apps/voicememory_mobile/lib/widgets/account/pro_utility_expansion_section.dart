@@ -33,15 +33,12 @@ class ProUtilityExpansionSection extends StatelessWidget {
       hasMeaningfulProof: hasMeaningfulProof,
     );
     if (!model.shouldShowSection || rows.isEmpty) {
-      return const SizedBox.shrink(
-        key: Key('pro_utility_expansion_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('pro_utility_expansion_hidden'));
     }
 
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.35,
-    );
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.35);
     final rowTitleStyle = ArchiveMobileTypography.listTitle(context);
 
     return Container(
@@ -75,7 +72,8 @@ class ProUtilityExpansionSection extends StatelessWidget {
           ],
           SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
           for (var i = 0; i < rows.length; i++) ...[
-            if (i > 0) SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
+            if (i > 0)
+              SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
             _UtilityRow(
               row: rows[i],
               titleStyle: rowTitleStyle,

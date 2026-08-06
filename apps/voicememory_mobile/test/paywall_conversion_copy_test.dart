@@ -13,7 +13,7 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/widgets/billing/plan_selection_confidence_block.dart';
 
 PressureCheckInRecord _record({
@@ -61,7 +61,10 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
   await tester.pumpAndSettle();
   for (var i = 0; i < 40; i++) {
     await tester.pump(const Duration(milliseconds: 50));
-    if (find.byKey(const Key('paywall_unavailable_body')).evaluate().isNotEmpty) {
+    if (find
+        .byKey(const Key('paywall_unavailable_body'))
+        .evaluate()
+        .isNotEmpty) {
       break;
     }
   }
@@ -355,10 +358,7 @@ void main() {
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
       );
-      expect(
-        find.text(ConsumerUiCopy.paywallHeadline),
-        findsOneWidget,
-      );
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       // Unavailable fallback shows one headline line; subhead is omitted when it
       // matches the headline copy.
@@ -455,17 +455,21 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('generic unavailable paywall stays compact without confidence stack', (
-      tester,
-    ) async {
-      await _pumpPaywall(tester);
+    testWidgets(
+      'generic unavailable paywall stays compact without confidence stack',
+      (tester) async {
+        await _pumpPaywall(tester);
 
-      expect(find.text('Your saves stay free.'), findsNothing);
-      expect(find.text('Pro only adds continuity over time.'), findsNothing);
-      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.textContaining('VoiceMemory'), findsNothing);
-    });
+        expect(find.text('Your saves stay free.'), findsNothing);
+        expect(find.text('Pro only adds continuity over time.'), findsNothing);
+        expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+        expect(
+          find.byKey(const Key('paywall_unavailable_body')),
+          findsOneWidget,
+        );
+        expect(find.textContaining('VoiceMemory'), findsNothing);
+      },
+    );
   });
 
   group('Pro trial explainer', () {
@@ -546,7 +550,10 @@ void main() {
   group('Paywall above-fold clarity', () {
     test('clarity copy is exact — four lines plus free reassurance', () {
       expect(PaywallAboveFoldClarity.title, 'What Pro keeps');
-      expect(PaywallAboveFoldClarity.lines, PaywallAlignmentCopy.benefitBullets);
+      expect(
+        PaywallAboveFoldClarity.lines,
+        PaywallAlignmentCopy.benefitBullets,
+      );
       expect(
         PaywallAboveFoldClarity.freeReassuranceLine,
         'Free keeps today\u2019s save. Pro keeps the thread connected over '
@@ -554,16 +561,23 @@ void main() {
       );
     });
 
-    testWidgets('unavailable paywall does not show purchase-body clarity stack', (
-      tester,
-    ) async {
-      await _pumpPaywall(tester);
+    testWidgets(
+      'unavailable paywall does not show purchase-body clarity stack',
+      (tester) async {
+        await _pumpPaywall(tester);
 
-      expect(find.byKey(const Key('paywall_primary_value_block')), findsNothing);
-      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsNothing);
-      expect(find.text(PaywallConfidenceCopy.generic.first), findsNothing);
-      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-    });
+        expect(
+          find.byKey(const Key('paywall_primary_value_block')),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.paywallBackupLine), findsNothing);
+        expect(find.text(PaywallConfidenceCopy.generic.first), findsNothing);
+        expect(
+          find.byKey(const Key('paywall_unavailable_body')),
+          findsOneWidget,
+        );
+      },
+    );
 
     test(
       'source-specific purchase body keeps clarity before plan cards; packaging path stays compact',
@@ -571,12 +585,16 @@ void main() {
         final source = File(
           'lib/screens/paywall_screen.dart',
         ).readAsStringSync();
-        final paywallBody = source.substring(source.indexOf('Widget _paywallBody()'));
+        final paywallBody = source.substring(
+          source.indexOf('Widget _paywallBody()'),
+        );
         final packagingIdx = paywallBody.indexOf('if (showPackagingSection)');
-        final generalClarityIdx =
-            paywallBody.indexOf('_generalConversionClaritySection(');
-        final aboveFoldClarityIdx =
-            paywallBody.indexOf('_aboveFoldClaritySection()');
+        final generalClarityIdx = paywallBody.indexOf(
+          '_generalConversionClaritySection(',
+        );
+        final aboveFoldClarityIdx = paywallBody.indexOf(
+          '_aboveFoldClaritySection()',
+        );
         final clarityIdx = generalClarityIdx > -1
             ? generalClarityIdx
             : aboveFoldClarityIdx;
@@ -605,9 +623,7 @@ void main() {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,
-        contains(
-          'ActivationFunnelAnalytics.paywallAboveFoldClaritySeen',
-        ),
+        contains('ActivationFunnelAnalytics.paywallAboveFoldClaritySeen'),
       );
     });
 
@@ -915,51 +931,53 @@ void main() {
       expect(find.textContaining('free trial'), findsNothing);
     });
 
-    test('price confidence sits below the plan cards for source-specific purchase body', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(
-        RegExp(
-          r'if \(!showPackagingSection\) \.\.\.\[\s*'
-          r'// Plan-selection confidence: follows the selected plan, before '
-          r'the\s*// purchase CTA\.\s*'
-          r'const SizedBox\(height: 14\),\s*'
-          r'PlanSelectionConfidenceBlock\(\s*'
-          r'selectedPlanId: _planIdFor\(_selected\),\s*'
-          r'source: widget\.triggerArgs\?\.source\?\.id,\s*'
-          r'\),\s*'
-          r'// Price confidence directly below the plan cards\.\s*'
-          r'const SizedBox\(height: 10\),\s*'
-          r'_priceConfidenceLines\(\),\s*'
-          r'\],',
-        ).hasMatch(source),
-        isTrue,
-        reason:
-            'source-specific purchase body keeps plan and price confidence '
-            'below plan cards',
-      );
-      expect(
-        RegExp(
-          r'if \(!showPackagingSection\) \.\.\.\[\s*'
-          r'// Final price-confidence line directly before the purchase CTA\.\s*'
-          r'const SizedBox\(height: 10\),\s*'
-          r'_appStoreConfirmLine\(\),\s*'
-          r'\],\s*'
-          r'const SizedBox\(height: 16\),\s*'
-          r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),',
-        ).hasMatch(source),
-        isTrue,
-        reason:
-            'source-specific confidence stack stays above shared subscription '
-            'details before purchase',
-      );
-    });
+    test(
+      'price confidence sits below the plan cards for source-specific purchase body',
+      () {
+        final source = File(
+          'lib/screens/paywall_screen.dart',
+        ).readAsStringSync();
+        expect(
+          RegExp(
+            r'if \(!showPackagingSection\) \.\.\.\[\s*'
+            r'// Plan-selection confidence: follows the selected plan, before '
+            r'the\s*// purchase CTA\.\s*'
+            r'const SizedBox\(height: 14\),\s*'
+            r'PlanSelectionConfidenceBlock\(\s*'
+            r'selectedPlanId: _planIdFor\(_selected\),\s*'
+            r'source: widget\.triggerArgs\?\.source\?\.id,\s*'
+            r'\),\s*'
+            r'// Price confidence directly below the plan cards\.\s*'
+            r'const SizedBox\(height: 10\),\s*'
+            r'_priceConfidenceLines\(\),\s*'
+            r'\],',
+          ).hasMatch(source),
+          isTrue,
+          reason:
+              'source-specific purchase body keeps plan and price confidence '
+              'below plan cards',
+        );
+        expect(
+          RegExp(
+            r'if \(!showPackagingSection\) \.\.\.\[\s*'
+            r'// Final price-confidence line directly before the purchase CTA\.\s*'
+            r'const SizedBox\(height: 10\),\s*'
+            r'_appStoreConfirmLine\(\),\s*'
+            r'\],\s*'
+            r'const SizedBox\(height: 16\),\s*'
+            r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),',
+          ).hasMatch(source),
+          isTrue,
+          reason:
+              'source-specific confidence stack stays above shared subscription '
+              'details before purchase',
+        );
+      },
+    );
 
     test('price confidence logs price_confidence_seen in source', () {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(
-        source,
-        contains('ActivationFunnelAnalytics.priceConfidenceSeen'),
-      );
+      expect(source, contains('ActivationFunnelAnalytics.priceConfidenceSeen'));
     });
 
     test('no pressure, scarcity, lockout, or VoiceMemory language', () {
@@ -1019,31 +1037,36 @@ void main() {
       ]);
     });
 
-    test('reassurance sits above purchase CTA for source-specific purchase body', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(
-        RegExp(
-          r'if \(!showPackagingSection\) \.\.\.\[\s*'
-          r'const SizedBox\(height: 18\),\s*'
-          r'_confidenceSection\(\),\s*'
-          r'\],',
-        ).hasMatch(source),
-        isTrue,
-        reason:
-            'source-specific purchase body keeps reassurance above the CTA',
-      );
-      expect(
-        RegExp(
-          r'const SizedBox\(height: 16\),\s*'
-          r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),\s*'
-          r'const SizedBox\(height: 14\),\s*'
-          r'FilledButton\(',
-        ).hasMatch(source),
-        isTrue,
-        reason:
-            'subscription details and legal links render before the purchase CTA',
-      );
-    });
+    test(
+      'reassurance sits above purchase CTA for source-specific purchase body',
+      () {
+        final source = File(
+          'lib/screens/paywall_screen.dart',
+        ).readAsStringSync();
+        expect(
+          RegExp(
+            r'if \(!showPackagingSection\) \.\.\.\[\s*'
+            r'const SizedBox\(height: 18\),\s*'
+            r'_confidenceSection\(\),\s*'
+            r'\],',
+          ).hasMatch(source),
+          isTrue,
+          reason:
+              'source-specific purchase body keeps reassurance above the CTA',
+        );
+        expect(
+          RegExp(
+            r'const SizedBox\(height: 16\),\s*'
+            r'_subscriptionDetailsSection\(plansAvailable: _purchasePlansAvailable\),\s*'
+            r'const SizedBox\(height: 14\),\s*'
+            r'FilledButton\(',
+          ).hasMatch(source),
+          isTrue,
+          reason:
+              'subscription details and legal links render before the purchase CTA',
+        );
+      },
+    );
 
     test('reassurance logs purchase_reassurance_seen in source', () {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
@@ -1109,12 +1132,13 @@ void main() {
       expect(find.text('Keep the thread connected'), findsOneWidget);
     });
 
-    testWidgets('generic unavailable paywall stays compact', (
-      tester,
-    ) async {
+    testWidgets('generic unavailable paywall stays compact', (tester) async {
       await _pumpPaywall(tester);
 
-      expect(find.byKey(const Key('paywall_primary_value_block')), findsNothing);
+      expect(
+        find.byKey(const Key('paywall_primary_value_block')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('paywall_pro_thread_preview')), findsNothing);
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.text('Your saves stay free.'), findsNothing);
@@ -1236,21 +1260,22 @@ void main() {
       }
     });
 
-    testWidgets('long-term archive line stays on source-specific purchase body', (
-      tester,
-    ) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
-      );
-      expect(
-        find.text(
-          'This works best as a long-term archive, not a one-off feature.',
-        ),
-        findsNothing,
-      );
-      expect(find.text('Keep the thread connected'), findsOneWidget);
-    });
+    testWidgets(
+      'long-term archive line stays on source-specific purchase body',
+      (tester) async {
+        await _pumpPaywall(
+          tester,
+          args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
+        );
+        expect(
+          find.text(
+            'This works best as a long-term archive, not a one-off feature.',
+          ),
+          findsNothing,
+        );
+        expect(find.text('Keep the thread connected'), findsOneWidget);
+      },
+    );
 
     testWidgets('proof preview stays on source-specific purchase body', (
       tester,
@@ -1279,46 +1304,54 @@ void main() {
       expect(find.byKey(const Key('paywall_proof_preview')), findsNothing);
     });
 
-    testWidgets('suggestion reassurance stays on source-specific purchase body', (
-      tester,
-    ) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
-      );
-      expect(
-        find.text(
-          'Upgrade only if you want the archive to keep building over time.',
-        ),
-        findsNothing,
-      );
-      expect(find.text('Keep the thread connected'), findsOneWidget);
-    });
+    testWidgets(
+      'suggestion reassurance stays on source-specific purchase body',
+      (tester) async {
+        await _pumpPaywall(
+          tester,
+          args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
+        );
+        expect(
+          find.text(
+            'Upgrade only if you want the archive to keep building over time.',
+          ),
+          findsNothing,
+        );
+        expect(find.text('Keep the thread connected'), findsOneWidget);
+      },
+    );
 
-    testWidgets('framing and proof preview do not render on unavailable generic paywall', (
-      tester,
-    ) async {
-      await _pumpPaywall(tester);
+    testWidgets(
+      'framing and proof preview do not render on unavailable generic paywall',
+      (tester) async {
+        await _pumpPaywall(tester);
 
-      expect(find.text('Proof you can look for'), findsNothing);
-      expect(find.byKey(const Key('paywall_pro_thread_preview')), findsNothing);
-      expect(
-        find.text(
-          'This works best as a long-term archive, not a one-off feature.',
-        ),
-        findsNothing,
-      );
-      expect(
-        find.text(
-          'Upgrade only if you want the archive to keep building over time.',
-        ),
-        findsNothing,
-      );
-      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text('Your saves stay free.'), findsNothing);
-      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.textContaining('VoiceMemory'), findsNothing);
-    });
+        expect(find.text('Proof you can look for'), findsNothing);
+        expect(
+          find.byKey(const Key('paywall_pro_thread_preview')),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            'This works best as a long-term archive, not a one-off feature.',
+          ),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            'Upgrade only if you want the archive to keep building over time.',
+          ),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+        expect(find.text('Your saves stay free.'), findsNothing);
+        expect(
+          find.byKey(const Key('paywall_unavailable_body')),
+          findsOneWidget,
+        );
+        expect(find.textContaining('VoiceMemory'), findsNothing);
+      },
+    );
   });
 
   group('Locked CTAs route with the right paywall source', () {

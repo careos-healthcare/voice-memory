@@ -17,28 +17,28 @@ abstract final class WidgetReleaseRiskGate {
       recommendation: _recommendationFor(decision),
       checks: checks,
       earliestRisk: _earliestRisk(checks),
-      testFlightBlockedByWidget: decision ==
-          WidgetReleaseRiskGateDecision.widgetBlocksRelease,
+      testFlightBlockedByWidget:
+          decision == WidgetReleaseRiskGateDecision.widgetBlocksRelease,
       widgetShouldBeDisabled:
           decision == WidgetReleaseRiskGateDecision.widgetDisableForRelease ||
-              decision == WidgetReleaseRiskGateDecision.widgetBlocksRelease,
+          decision == WidgetReleaseRiskGateDecision.widgetBlocksRelease,
     );
   }
 
-  static WidgetReleaseRiskGateReport report(WidgetReleaseRiskGateResult result) =>
-      WidgetReleaseRiskGateReport(
-        headline: WidgetReleaseRiskGateCopy.headline,
-        body: WidgetReleaseRiskGateCopy.body,
-        orderLine: WidgetReleaseRiskGateCopy.orderLine,
-        guardrail: WidgetReleaseRiskGateCopy.guardrail,
-        result: result,
-      );
+  static WidgetReleaseRiskGateReport report(
+    WidgetReleaseRiskGateResult result,
+  ) => WidgetReleaseRiskGateReport(
+    headline: WidgetReleaseRiskGateCopy.headline,
+    body: WidgetReleaseRiskGateCopy.body,
+    orderLine: WidgetReleaseRiskGateCopy.orderLine,
+    guardrail: WidgetReleaseRiskGateCopy.guardrail,
+    result: result,
+  );
 
-  static bool detectExtensionTargetPresent(String pbxprojContents) =>
-      RegExp(
-        r'isa = PBXNativeTarget;[\s\S]*?name = TodayCheckWidget;',
-        multiLine: true,
-      ).hasMatch(pbxprojContents);
+  static bool detectExtensionTargetPresent(String pbxprojContents) => RegExp(
+    r'isa = PBXNativeTarget;[\s\S]*?name = TodayCheckWidget;',
+    multiLine: true,
+  ).hasMatch(pbxprojContents);
 
   static bool detectAppGroupConfigured({
     required String runnerEntitlements,
@@ -79,83 +79,79 @@ abstract final class WidgetReleaseRiskGate {
     bool signingPasses = true,
     bool noCrashOnLaunch = true,
     bool noStaleBrokenDefaultState = true,
-  }) =>
-      WidgetReleaseRiskGateInput(
-        extensionTargetPresent: detectExtensionTargetPresent(pbxprojContents),
-        appGroupConfigured: detectAppGroupConfigured(
-          runnerEntitlements: runnerEntitlements,
-          extensionEntitlements: extensionEntitlements,
-          objectiveWidgetStorageSwift: objectiveWidgetStorageSwift,
-          todayCheckWidgetSwift: todayCheckWidgetSwift,
-        ),
-        widgetOpensCorrectRoute: detectWidgetOpensCorrectRoute(widgetExporterDart),
-        noPrivateTranscriptShown: detectNoPrivateTranscriptPolicy(widgetPrepDoc),
-        testFlightInstallWorks: testFlightInstallWorks,
-        signingPasses: signingPasses,
-        noCrashOnLaunch: noCrashOnLaunch,
-        noStaleBrokenDefaultState: noStaleBrokenDefaultState,
-      );
+  }) => WidgetReleaseRiskGateInput(
+    extensionTargetPresent: detectExtensionTargetPresent(pbxprojContents),
+    appGroupConfigured: detectAppGroupConfigured(
+      runnerEntitlements: runnerEntitlements,
+      extensionEntitlements: extensionEntitlements,
+      objectiveWidgetStorageSwift: objectiveWidgetStorageSwift,
+      todayCheckWidgetSwift: todayCheckWidgetSwift,
+    ),
+    widgetOpensCorrectRoute: detectWidgetOpensCorrectRoute(widgetExporterDart),
+    noPrivateTranscriptShown: detectNoPrivateTranscriptPolicy(widgetPrepDoc),
+    testFlightInstallWorks: testFlightInstallWorks,
+    signingPasses: signingPasses,
+    noCrashOnLaunch: noCrashOnLaunch,
+    noStaleBrokenDefaultState: noStaleBrokenDefaultState,
+  );
 
   static List<WidgetReleaseRiskGateCheck> _buildChecks(
     WidgetReleaseRiskGateInput input,
-  ) =>
-      [
-        _check(
-          id: WidgetReleaseRiskGateCheckId.extensionTargetPresent,
-          pass: input.extensionTargetPresent,
-          failDetail: WidgetReleaseRiskGateCopy.detailDefer,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.appGroupConfigured,
-          pass: input.appGroupConfigured,
-          failDetail: WidgetReleaseRiskGateCopy.detailDefer,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute,
-          pass: input.widgetOpensCorrectRoute,
-          failDetail: WidgetReleaseRiskGateCopy.detailManual,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown,
-          pass: input.noPrivateTranscriptShown,
-          failDetail: WidgetReleaseRiskGateCopy.detailManual,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.testFlightInstallWorks,
-          pass: input.testFlightInstallWorks,
-          failDetail: WidgetReleaseRiskGateCopy.detailFail,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.signingPasses,
-          pass: input.signingPasses,
-          failDetail: WidgetReleaseRiskGateCopy.detailFail,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.noCrashOnLaunch,
-          pass: input.noCrashOnLaunch,
-          failDetail: WidgetReleaseRiskGateCopy.detailFail,
-        ),
-        _check(
-          id: WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState,
-          pass: input.noStaleBrokenDefaultState,
-          failDetail: WidgetReleaseRiskGateCopy.detailManual,
-        ),
-      ];
+  ) => [
+    _check(
+      id: WidgetReleaseRiskGateCheckId.extensionTargetPresent,
+      pass: input.extensionTargetPresent,
+      failDetail: WidgetReleaseRiskGateCopy.detailDefer,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.appGroupConfigured,
+      pass: input.appGroupConfigured,
+      failDetail: WidgetReleaseRiskGateCopy.detailDefer,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute,
+      pass: input.widgetOpensCorrectRoute,
+      failDetail: WidgetReleaseRiskGateCopy.detailManual,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown,
+      pass: input.noPrivateTranscriptShown,
+      failDetail: WidgetReleaseRiskGateCopy.detailManual,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.testFlightInstallWorks,
+      pass: input.testFlightInstallWorks,
+      failDetail: WidgetReleaseRiskGateCopy.detailFail,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.signingPasses,
+      pass: input.signingPasses,
+      failDetail: WidgetReleaseRiskGateCopy.detailFail,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.noCrashOnLaunch,
+      pass: input.noCrashOnLaunch,
+      failDetail: WidgetReleaseRiskGateCopy.detailFail,
+    ),
+    _check(
+      id: WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState,
+      pass: input.noStaleBrokenDefaultState,
+      failDetail: WidgetReleaseRiskGateCopy.detailManual,
+    ),
+  ];
 
   static WidgetReleaseRiskGateCheck _check({
     required WidgetReleaseRiskGateCheckId id,
     required bool pass,
     required String failDetail,
-  }) =>
-      WidgetReleaseRiskGateCheck(
-        id: id,
-        label: WidgetReleaseRiskGateCopy.labelFor(id),
-        status: pass
-            ? WidgetReleaseRiskGateCheckStatus.pass
-            : WidgetReleaseRiskGateCheckStatus.fail,
-        detailLabel:
-            pass ? WidgetReleaseRiskGateCopy.detailPass : failDetail,
-      );
+  }) => WidgetReleaseRiskGateCheck(
+    id: id,
+    label: WidgetReleaseRiskGateCopy.labelFor(id),
+    status: pass
+        ? WidgetReleaseRiskGateCheckStatus.pass
+        : WidgetReleaseRiskGateCheckStatus.fail,
+    detailLabel: pass ? WidgetReleaseRiskGateCopy.detailPass : failDetail,
+  );
 
   static WidgetReleaseRiskGateDecision _resolveDecision(
     WidgetReleaseRiskGateInput input,
@@ -203,22 +199,20 @@ abstract final class WidgetReleaseRiskGate {
           WidgetReleaseRiskGateCopy.widgetBlocksReleaseLine,
       };
 
-  static String _recommendationFor(WidgetReleaseRiskGateDecision decision) =>
-      switch (decision) {
-        WidgetReleaseRiskGateDecision.widgetSafe => 'Ship widget with TestFlight.',
-        WidgetReleaseRiskGateDecision.widgetNeedsManualXcodeCheck =>
-          'Run docs/TODAYS_CHECK_WIDGET_QA.md before enabling widget.',
-        WidgetReleaseRiskGateDecision.widgetDisableForRelease =>
-          'Defer widget extension; ship main app TestFlight without widget target.',
-        WidgetReleaseRiskGateDecision.widgetBlocksRelease =>
-          'Remove or disable TodayCheckWidget extension before archive upload.',
-      };
+  static String _recommendationFor(
+    WidgetReleaseRiskGateDecision decision,
+  ) => switch (decision) {
+    WidgetReleaseRiskGateDecision.widgetSafe => 'Ship widget with TestFlight.',
+    WidgetReleaseRiskGateDecision.widgetNeedsManualXcodeCheck =>
+      'Run docs/TODAYS_CHECK_WIDGET_QA.md before enabling widget.',
+    WidgetReleaseRiskGateDecision.widgetDisableForRelease =>
+      'Defer widget extension; ship main app TestFlight without widget target.',
+    WidgetReleaseRiskGateDecision.widgetBlocksRelease =>
+      'Remove or disable TodayCheckWidget extension before archive upload.',
+  };
 }
 
-enum WidgetReleaseRiskGateCheckStatus {
-  pass,
-  fail,
-}
+enum WidgetReleaseRiskGateCheckStatus { pass, fail }
 
 enum WidgetReleaseRiskGateDecision {
   widgetSafe,

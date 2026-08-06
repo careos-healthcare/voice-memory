@@ -5,7 +5,6 @@ import '../../design/archive_responsive_layout.dart';
 import '../../features/tomorrow_return/tomorrow_return_loop_models.dart';
 import '../../product/consumer_copy_guard.dart';
 import '../../product/consumer_ui_copy.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 

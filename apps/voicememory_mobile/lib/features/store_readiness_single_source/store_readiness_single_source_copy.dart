@@ -21,7 +21,8 @@ abstract final class StoreReadinessSingleSourceCopy {
   static const stepRevenueCatProducts = 'RevenueCat products verified';
   static const stepPurchasePath = 'Purchase path reachable';
   static const stepRestorePath = 'Restore path verified';
-  static const stepEntitlementPersistence = 'Entitlement persists after restart';
+  static const stepEntitlementPersistence =
+      'Entitlement persists after restart';
   static const stepPhysicalDeviceSmoke = 'Physical device smoke passed';
   static const stepTestFlightUpload = 'TestFlight upload ready';
   static const stepPaidIntentBeta = 'Paid intent beta ready';
@@ -54,24 +55,23 @@ abstract final class StoreReadinessSingleSourceCopy {
       'purchase, paywall, or RevenueCat behavior.';
 
   static String labelFor(StoreReadinessSingleSourceStepId id) => switch (id) {
-        StoreReadinessSingleSourceStepId.signing => stepSigning,
-        StoreReadinessSingleSourceStepId.metadata => stepMetadata,
-        StoreReadinessSingleSourceStepId.supportPrivacyTerms =>
-          stepSupportPrivacyTerms,
-        StoreReadinessSingleSourceStepId.screenshots => stepScreenshots,
-        StoreReadinessSingleSourceStepId.revenueCatProducts =>
-          stepRevenueCatProducts,
-        StoreReadinessSingleSourceStepId.purchasePath => stepPurchasePath,
-        StoreReadinessSingleSourceStepId.restorePath => stepRestorePath,
-        StoreReadinessSingleSourceStepId.entitlementPersistence =>
-          stepEntitlementPersistence,
-        StoreReadinessSingleSourceStepId.physicalDeviceSmoke =>
-          stepPhysicalDeviceSmoke,
-        StoreReadinessSingleSourceStepId.testFlightUpload =>
-          stepTestFlightUpload,
-        StoreReadinessSingleSourceStepId.paidIntentBeta => stepPaidIntentBeta,
-        StoreReadinessSingleSourceStepId.secretsRotation => stepSecretsRotation,
-      };
+    StoreReadinessSingleSourceStepId.signing => stepSigning,
+    StoreReadinessSingleSourceStepId.metadata => stepMetadata,
+    StoreReadinessSingleSourceStepId.supportPrivacyTerms =>
+      stepSupportPrivacyTerms,
+    StoreReadinessSingleSourceStepId.screenshots => stepScreenshots,
+    StoreReadinessSingleSourceStepId.revenueCatProducts =>
+      stepRevenueCatProducts,
+    StoreReadinessSingleSourceStepId.purchasePath => stepPurchasePath,
+    StoreReadinessSingleSourceStepId.restorePath => stepRestorePath,
+    StoreReadinessSingleSourceStepId.entitlementPersistence =>
+      stepEntitlementPersistence,
+    StoreReadinessSingleSourceStepId.physicalDeviceSmoke =>
+      stepPhysicalDeviceSmoke,
+    StoreReadinessSingleSourceStepId.testFlightUpload => stepTestFlightUpload,
+    StoreReadinessSingleSourceStepId.paidIntentBeta => stepPaidIntentBeta,
+    StoreReadinessSingleSourceStepId.secretsRotation => stepSecretsRotation,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

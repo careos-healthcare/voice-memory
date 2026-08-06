@@ -36,7 +36,9 @@ class AccountNamespace {
     if (trimmed.isEmpty) {
       throw ArgumentError.value(userId, 'userId', 'must not be empty');
     }
-    final digest = sha256.convert(utf8.encode('archiveme-account-ns-v1:$trimmed'));
+    final digest = sha256.convert(
+      utf8.encode('archiveme-account-ns-v1:$trimmed'),
+    );
     // 24 hex chars (96 bits) is short enough to be a friendly directory
     // name and long enough that collisions are not a practical concern.
     return AccountNamespace._(digest.toString().substring(0, 24));

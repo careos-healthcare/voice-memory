@@ -8,13 +8,13 @@ enum PatternLifecycleState {
   quiet;
 
   String get analyticsValue => switch (this) {
-        PatternLifecycleState.forming => 'forming',
-        PatternLifecycleState.repeated => 'repeated',
-        PatternLifecycleState.watching => 'watching',
-        PatternLifecycleState.changing => 'changing',
-        PatternLifecycleState.softening => 'softening',
-        PatternLifecycleState.quiet => 'quiet',
-      };
+    PatternLifecycleState.forming => 'forming',
+    PatternLifecycleState.repeated => 'repeated',
+    PatternLifecycleState.watching => 'watching',
+    PatternLifecycleState.changing => 'changing',
+    PatternLifecycleState.softening => 'softening',
+    PatternLifecycleState.quiet => 'quiet',
+  };
 }
 
 /// Grounded lifecycle label from existing evidence engines only.

@@ -62,90 +62,89 @@ abstract final class ArchiveThoughtMapEvidenceBuilder {
 
     final matched = switch (kind) {
       ArchiveThoughtMapNodeKind.trigger => window.where(
-          (e) => matches(
-            e,
-            (t) =>
-                _contextKeywords.values
-                    .expand((words) => words)
-                    .any(t.contains) ||
-                t.contains('capacity') ||
-                t.contains('yes') ||
-                t.contains('pressure'),
-          ),
+        (e) => matches(
+          e,
+          (t) =>
+              _contextKeywords.values
+                  .expand((words) => words)
+                  .any(t.contains) ||
+              t.contains('capacity') ||
+              t.contains('yes') ||
+              t.contains('pressure'),
         ),
+      ),
       ArchiveThoughtMapNodeKind.thought => window.where(
-          (e) => matches(
-            e,
-            (t) =>
-                analysis.repeatedPressurePhrases.any(
-                  (phrase) => t.contains(phrase.split(' ').last),
-                ) ||
-                t.contains('pressure') ||
-                t.contains('behind') ||
-                t.contains('enough') ||
-                t.contains('should') ||
-                t.contains('guilty'),
-          ),
+        (e) => matches(
+          e,
+          (t) =>
+              analysis.repeatedPressurePhrases.any(
+                (phrase) => t.contains(phrase.split(' ').last),
+              ) ||
+              t.contains('pressure') ||
+              t.contains('behind') ||
+              t.contains('enough') ||
+              t.contains('should') ||
+              t.contains('guilty'),
         ),
+      ),
       ArchiveThoughtMapNodeKind.behaviour => window.where(
-          (e) => matches(
-            e,
-            (t) =>
-                t.contains('said yes') ||
-                t.contains('agreed') ||
-                t.contains('capacity') ||
-                t.contains('yes again'),
-          ),
+        (e) => matches(
+          e,
+          (t) =>
+              t.contains('said yes') ||
+              t.contains('agreed') ||
+              t.contains('capacity') ||
+              t.contains('yes again'),
         ),
+      ),
       ArchiveThoughtMapNodeKind.relief => window.where(
-          (e) => matches(
-            e,
-            (t) =>
-                t.contains('noticed') ||
-                t.contains('earlier') ||
-                t.contains('realized') ||
-                t.contains('realised') ||
-                t.contains('sooner') ||
-                t.contains('softer'),
-          ),
+        (e) => matches(
+          e,
+          (t) =>
+              t.contains('noticed') ||
+              t.contains('earlier') ||
+              t.contains('realized') ||
+              t.contains('realised') ||
+              t.contains('sooner') ||
+              t.contains('softer'),
         ),
+      ),
       ArchiveThoughtMapNodeKind.cost => window.where(
-          (e) => matches(
-            e,
-            (t) =>
-                t.contains('tired') ||
-                t.contains('rest') ||
-                t.contains('exhausted') ||
-                t.contains('avoid') ||
-                t.contains('burnout'),
-          ),
+        (e) => matches(
+          e,
+          (t) =>
+              t.contains('tired') ||
+              t.contains('rest') ||
+              t.contains('exhausted') ||
+              t.contains('avoid') ||
+              t.contains('burnout'),
         ),
+      ),
       ArchiveThoughtMapNodeKind.alternative => window.where(
-          (e) => matches(
-            e,
-            (t) {
-              final testLine = thread.whatToTest.toLowerCase();
-              if (testLine.contains('capacity') &&
-                  (t.contains('capacity') || t.contains('yes'))) {
-                return true;
-              }
-              if (testLine.contains('agree') &&
-                  (t.contains('yes') || t.contains('agree'))) {
-                return true;
-              }
-              if (testLine.contains('different') || testLine.contains('notice')) {
-                return t.contains('different') || t.contains('notice');
-              }
-              return false;
-            },
-          ),
-        ),
+        (e) => matches(e, (t) {
+          final testLine = thread.whatToTest.toLowerCase();
+          if (testLine.contains('capacity') &&
+              (t.contains('capacity') || t.contains('yes'))) {
+            return true;
+          }
+          if (testLine.contains('agree') &&
+              (t.contains('yes') || t.contains('agree'))) {
+            return true;
+          }
+          if (testLine.contains('different') || testLine.contains('notice')) {
+            return t.contains('different') || t.contains('notice');
+          }
+          return false;
+        }),
+      ),
     };
 
     return matched.toList();
   }
 
-  static ArchiveThoughtMapEvidenceSnippet _snippetFromEntry(JournalEntry entry) {
+  static ArchiveThoughtMapEvidenceSnippet _snippetFromEntry(
+    JournalEntry entry,
+  ) {
     final trimmed = resolveEntryDisplayText(entry).text.trim();
     if (ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) {
       return ArchiveThoughtMapEvidenceSnippet(

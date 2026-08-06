@@ -12,31 +12,25 @@ enum ProofCautionGuardBlockedReason {
 extension ProofCautionGuardBlockedReasonAnalytics
     on ProofCautionGuardBlockedReason {
   String get analyticsValue => switch (this) {
-        ProofCautionGuardBlockedReason.userMarkedNotRelevant =>
-          'user_marked_not_relevant',
-        ProofCautionGuardBlockedReason.noSafeAnchor => 'no_safe_anchor',
-        ProofCautionGuardBlockedReason.genericWordingOnly =>
-          'generic_wording_only',
-        ProofCautionGuardBlockedReason.entriesUnrelated => 'entries_unrelated',
-        ProofCautionGuardBlockedReason.degradedTranscript =>
-          'degraded_transcript',
-        ProofCautionGuardBlockedReason.correctionBackground =>
-          'correction_background',
-      };
+    ProofCautionGuardBlockedReason.userMarkedNotRelevant =>
+      'user_marked_not_relevant',
+    ProofCautionGuardBlockedReason.noSafeAnchor => 'no_safe_anchor',
+    ProofCautionGuardBlockedReason.genericWordingOnly => 'generic_wording_only',
+    ProofCautionGuardBlockedReason.entriesUnrelated => 'entries_unrelated',
+    ProofCautionGuardBlockedReason.degradedTranscript => 'degraded_transcript',
+    ProofCautionGuardBlockedReason.correctionBackground =>
+      'correction_background',
+  };
 }
 
-enum ProofCautionGuardUpgradeReason {
-  watchOnlyRollback,
-  emergingRollback,
-}
+enum ProofCautionGuardUpgradeReason { watchOnlyRollback, emergingRollback }
 
 extension ProofCautionGuardUpgradeReasonAnalytics
     on ProofCautionGuardUpgradeReason {
   String get analyticsValue => switch (this) {
-        ProofCautionGuardUpgradeReason.watchOnlyRollback =>
-          'watch_only_rollback',
-        ProofCautionGuardUpgradeReason.emergingRollback => 'emerging_rollback',
-      };
+    ProofCautionGuardUpgradeReason.watchOnlyRollback => 'watch_only_rollback',
+    ProofCautionGuardUpgradeReason.emergingRollback => 'emerging_rollback',
+  };
 }
 
 class ProofCautionGuardResult {

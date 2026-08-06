@@ -31,46 +31,45 @@ abstract final class CapacityPullReasonCopy {
   static String weeklyMostCommonLine(String shortLabel) =>
       'This week, $shortLabel appeared most often.';
 
-  static const boundaryUrgentFitNote =
-      'This may fit when the pull is urgency.';
+  static const boundaryUrgentFitNote = 'This may fit when the pull is urgency.';
 
   static String labelForReason(String id) => switch (id) {
-        CapacityPullReasonIds.feltResponsible => reasonFeltResponsible,
-        CapacityPullReasonIds.soundedUrgent => reasonSoundedUrgent,
-        CapacityPullReasonIds.avoidDisappoint => reasonAvoidDisappoint,
-        CapacityPullReasonIds.squeezeItIn => reasonSqueezeItIn,
-        CapacityPullReasonIds.wantedOpportunity => reasonWantedOpportunity,
-        CapacityPullReasonIds.answeredTooQuickly => reasonAnsweredTooQuickly,
-        CapacityPullReasonIds.somethingElse => reasonSomethingElse,
-        _ => id,
-      };
+    CapacityPullReasonIds.feltResponsible => reasonFeltResponsible,
+    CapacityPullReasonIds.soundedUrgent => reasonSoundedUrgent,
+    CapacityPullReasonIds.avoidDisappoint => reasonAvoidDisappoint,
+    CapacityPullReasonIds.squeezeItIn => reasonSqueezeItIn,
+    CapacityPullReasonIds.wantedOpportunity => reasonWantedOpportunity,
+    CapacityPullReasonIds.answeredTooQuickly => reasonAnsweredTooQuickly,
+    CapacityPullReasonIds.somethingElse => reasonSomethingElse,
+    _ => id,
+  };
 
   static String shortLabelForReason(String id) => switch (id) {
-        CapacityPullReasonIds.feltResponsible => 'feeling responsible',
-        CapacityPullReasonIds.soundedUrgent => 'urgency',
-        CapacityPullReasonIds.avoidDisappoint => 'not wanting to disappoint',
-        CapacityPullReasonIds.squeezeItIn => 'thinking you could squeeze it in',
-        CapacityPullReasonIds.wantedOpportunity => 'wanting the opportunity',
-        CapacityPullReasonIds.answeredTooQuickly => 'answering too quickly',
-        CapacityPullReasonIds.somethingElse => 'mixed pulls',
-        _ => 'a repeated pull',
-      };
+    CapacityPullReasonIds.feltResponsible => 'feeling responsible',
+    CapacityPullReasonIds.soundedUrgent => 'urgency',
+    CapacityPullReasonIds.avoidDisappoint => 'not wanting to disappoint',
+    CapacityPullReasonIds.squeezeItIn => 'thinking you could squeeze it in',
+    CapacityPullReasonIds.wantedOpportunity => 'wanting the opportunity',
+    CapacityPullReasonIds.answeredTooQuickly => 'answering too quickly',
+    CapacityPullReasonIds.somethingElse => 'mixed pulls',
+    _ => 'a repeated pull',
+  };
 
   static List<String> allVisibleStrings() => [
-        cardTitle,
-        cardBody,
-        saveReasonCta,
-        skipCta,
-        reasonFeltResponsible,
-        reasonSoundedUrgent,
-        reasonAvoidDisappoint,
-        reasonSqueezeItIn,
-        reasonWantedOpportunity,
-        reasonAnsweredTooQuickly,
-        reasonSomethingElse,
-        loopStrengthenPrompt,
-        weeklySectionTitle,
-        weeklyFormingCopy,
-        boundaryUrgentFitNote,
-      ];
+    cardTitle,
+    cardBody,
+    saveReasonCta,
+    skipCta,
+    reasonFeltResponsible,
+    reasonSoundedUrgent,
+    reasonAvoidDisappoint,
+    reasonSqueezeItIn,
+    reasonWantedOpportunity,
+    reasonAnsweredTooQuickly,
+    reasonSomethingElse,
+    loopStrengthenPrompt,
+    weeklySectionTitle,
+    weeklyFormingCopy,
+    boundaryUrgentFitNote,
+  ];
 }

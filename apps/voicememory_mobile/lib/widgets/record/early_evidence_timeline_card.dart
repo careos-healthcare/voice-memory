@@ -45,7 +45,8 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _railColor = Color(0xFF6B8F71);
 
-  static String _chipLabel(EarlyEvidenceTimelineItemKind kind) => switch (kind) {
+  static String _chipLabel(EarlyEvidenceTimelineItemKind kind) =>
+      switch (kind) {
         EarlyEvidenceTimelineItemKind.repeatConfirmed => 'Repeat',
         EarlyEvidenceTimelineItemKind.triggerCaptured => 'Trigger',
         EarlyEvidenceTimelineItemKind.softerReturn => 'Change',
@@ -113,15 +114,16 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
               children: [
                 for (final phrase in visibleEvidencePhrases)
                   Chip(
-                    key: ValueKey('early_evidence_timeline_evidence_phrase_$phrase'),
+                    key: ValueKey(
+                      'early_evidence_timeline_evidence_phrase_$phrase',
+                    ),
                     label: Text(phrase),
                     backgroundColor: const Color(0xFFF4F7F4),
                     side: BorderSide.none,
                     visualDensity: VisualDensity.compact,
-                    labelStyle: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                      color: AppColors.textPrimary,
-                      height: 1.4,
-                    ),
+                    labelStyle: ArchiveMobileTypography.responsiveHelper(
+                      context,
+                    ).copyWith(color: AppColors.textPrimary, height: 1.4),
                   ),
               ],
             ),
@@ -149,8 +151,8 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
               ),
             EarlyArchiveInsightFeedbackRow(
               insightType: EarlyArchiveInsightType.timeline,
-              surface: surface!,
-              entryCount: count!,
+              surface: surface,
+              entryCount: count,
             ),
           ],
           if (onRecordWhatHelped != null &&
@@ -194,10 +196,9 @@ class _HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = compact
-        ? ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
-            fontSize: 17,
-            height: 1.25,
-          )
+        ? ArchiveMobileTypography.responsiveSectionTitle(
+            context,
+          ).copyWith(fontSize: 17, height: 1.25)
         : ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
             fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context)
                 ? 22
@@ -207,11 +208,14 @@ class _HeaderSection extends StatelessWidget {
             letterSpacing: -0.25,
             color: AppColors.textPrimary,
           );
-    final subtitleStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-      fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context) ? 17 : 16,
-    );
+    final subtitleStyle = ArchiveMobileTypography.explanationBody(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          height: 1.45,
+          fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context)
+              ? 17
+              : 16,
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -261,11 +265,14 @@ class _MilestoneChipTrail extends StatelessWidget {
             if (i > 0)
               Text(
                 '·',
-                key: Key('early_evidence_timeline_chip_sep_${items[i].kind.name}'),
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.textSecondary.withValues(alpha: 0.55),
-                  fontWeight: FontWeight.w600,
+                key: Key(
+                  'early_evidence_timeline_chip_sep_${items[i].kind.name}',
                 ),
+                style: ArchiveMobileTypography.responsiveHelper(context)
+                    .copyWith(
+                      color: AppColors.textSecondary.withValues(alpha: 0.55),
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             _MilestoneChip(
               label: EarlyEvidenceTimelineCard._chipLabel(items[i].kind),
@@ -279,10 +286,7 @@ class _MilestoneChipTrail extends StatelessWidget {
 }
 
 class _MilestoneChip extends StatelessWidget {
-  const _MilestoneChip({
-    required this.label,
-    required this.kind,
-  });
+  const _MilestoneChip({required this.label, required this.kind});
 
   final String label;
   final EarlyEvidenceTimelineItemKind kind;
@@ -331,23 +335,26 @@ class _EvidenceChain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemTitleStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-      fontSize: compact ? 14 : 15,
-      height: 1.3,
-    );
-    final itemBodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-      fontSize: compact ? 13 : 14,
-    );
-    final chipLabelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      fontWeight: FontWeight.w600,
-      color: AppColors.textSecondary.withValues(alpha: 0.85),
-      fontSize: 11,
-      letterSpacing: 0.15,
-    );
+    final itemTitleStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: compact ? 14 : 15,
+          height: 1.3,
+        );
+    final itemBodyStyle = ArchiveMobileTypography.explanationBody(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          height: 1.4,
+          fontSize: compact ? 13 : 14,
+        );
+    final chipLabelStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary.withValues(alpha: 0.85),
+          fontSize: 11,
+          letterSpacing: 0.15,
+        );
     final segmentHeight = compact ? 24.0 : 32.0;
     const railWidth = 2.0;
     const dotSize = 8.0;
@@ -411,7 +418,9 @@ class _EvidenceChain extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 2),
                             child: Text(
-                              EarlyEvidenceTimelineCard._chipLabel(items[i].kind),
+                              EarlyEvidenceTimelineCard._chipLabel(
+                                items[i].kind,
+                              ),
                               key: Key(
                                 'early_evidence_timeline_row_chip_${items[i].kind.name}',
                               ),

@@ -32,9 +32,15 @@ void main() {
   group('LiveAudioFocusGateway', () {
     test('liveVoiceAudioSessionConfiguration uses voice chat routing', () {
       const config = LiveAudioFocusGateway.liveVoiceAudioSessionConfiguration;
-      expect(config.avAudioSessionCategory, AVAudioSessionCategory.playAndRecord);
+      expect(
+        config.avAudioSessionCategory,
+        AVAudioSessionCategory.playAndRecord,
+      );
       expect(config.avAudioSessionMode, AVAudioSessionMode.voiceChat);
-      expect(config.androidAudioAttributes?.usage, AndroidAudioUsage.voiceCommunication);
+      expect(
+        config.androidAudioAttributes?.usage,
+        AndroidAudioUsage.voiceCommunication,
+      );
       expect(
         config.androidAudioFocusGainType,
         AndroidAudioFocusGainType.gainTransientExclusive,
@@ -96,81 +102,94 @@ void main() {
 
       expect(gateway.deferredFocusResume, isFalse);
       expect(service.isPausedByAudioFocus, isFalse);
-      expect(session.setActiveTrueCalls, greaterThan(callsBeforeDeferredResume));
+      expect(
+        session.setActiveTrueCalls,
+        greaterThan(callsBeforeDeferredResume),
+      );
 
       await gateway.dispose();
       await service.dispose();
       await sinkController.close();
     });
 
-    test('interruption end reactivates focus before resuming capture', () async {
-      final interruptions = StreamController<AudioInterruptionEvent>();
-      final built = _buildCaptureService();
-      final service = built.service;
-      final sinkController = built.sinkController;
-      final session = _FakeAudioSession();
-      final gateway = LiveAudioFocusGateway(
-        captureService: service,
-        resolveSession: () async => session,
-        interruptionEventsForTest: interruptions.stream,
-        initialAppLifecycle: AppLifecycleState.resumed,
-      );
+    test(
+      'interruption end reactivates focus before resuming capture',
+      () async {
+        final interruptions = StreamController<AudioInterruptionEvent>();
+        final built = _buildCaptureService();
+        final service = built.service;
+        final sinkController = built.sinkController;
+        final session = _FakeAudioSession();
+        final gateway = LiveAudioFocusGateway(
+          captureService: service,
+          resolveSession: () async => session,
+          interruptionEventsForTest: interruptions.stream,
+          initialAppLifecycle: AppLifecycleState.resumed,
+        );
 
-      await gateway.initializeAndRequestFocus();
-      await _startConnected(service, sinkController);
+        await gateway.initializeAndRequestFocus();
+        await _startConnected(service, sinkController);
 
-      interruptions.add(
-        AudioInterruptionEvent(true, AudioInterruptionType.pause),
-      );
-      await Future<void>.delayed(Duration.zero);
-      expect(service.isPausedByAudioFocus, isTrue);
-      final callsBeforeInterruptionEnd = session.setActiveTrueCalls;
+        interruptions.add(
+          AudioInterruptionEvent(true, AudioInterruptionType.pause),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(service.isPausedByAudioFocus, isTrue);
+        final callsBeforeInterruptionEnd = session.setActiveTrueCalls;
 
-      interruptions.add(
-        AudioInterruptionEvent(false, AudioInterruptionType.pause),
-      );
-      await Future<void>.delayed(Duration.zero);
+        interruptions.add(
+          AudioInterruptionEvent(false, AudioInterruptionType.pause),
+        );
+        await Future<void>.delayed(Duration.zero);
 
-      expect(session.setActiveTrueCalls, greaterThan(callsBeforeInterruptionEnd));
-      expect(service.isPausedByAudioFocus, isFalse);
+        expect(
+          session.setActiveTrueCalls,
+          greaterThan(callsBeforeInterruptionEnd),
+        );
+        expect(service.isPausedByAudioFocus, isFalse);
 
-      await gateway.dispose();
-      await service.dispose();
-      await interruptions.close();
-      await sinkController.close();
-    });
+        await gateway.dispose();
+        await service.dispose();
+        await interruptions.close();
+        await sinkController.close();
+      },
+    );
 
-    test('native lifecycle bridge is attached during focus initialization', () async {
-      final built = _buildCaptureService();
-      final service = built.service;
-      final sinkController = built.sinkController;
-      final session = _FakeAudioSession();
-      final bridge = NativeAudioLifecycleBridge(service);
-      final gateway = LiveAudioFocusGateway(
-        captureService: service,
-        resolveSession: () async => session,
-        interruptionEventsForTest: const Stream<AudioInterruptionEvent>.empty(),
-        nativeLifecycleBridge: bridge,
-        initialAppLifecycle: AppLifecycleState.resumed,
-      );
+    test(
+      'native lifecycle bridge is attached during focus initialization',
+      () async {
+        final built = _buildCaptureService();
+        final service = built.service;
+        final sinkController = built.sinkController;
+        final session = _FakeAudioSession();
+        final bridge = NativeAudioLifecycleBridge(service);
+        final gateway = LiveAudioFocusGateway(
+          captureService: service,
+          resolveSession: () async => session,
+          interruptionEventsForTest:
+              const Stream<AudioInterruptionEvent>.empty(),
+          nativeLifecycleBridge: bridge,
+          initialAppLifecycle: AppLifecycleState.resumed,
+        );
 
-      await gateway.initializeAndRequestFocus();
-      await _startConnected(service, sinkController);
+        await gateway.initializeAndRequestFocus();
+        await _startConnected(service, sinkController);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
-      expect(service.isPausedByAudioFocus, isTrue);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
+        expect(service.isPausedByAudioFocus, isTrue);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionEnded'),
-      );
-      expect(service.isPausedByAudioFocus, isFalse);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionEnded'),
+        );
+        expect(service.isPausedByAudioFocus, isFalse);
 
-      await gateway.dispose();
-      await service.dispose();
-      await sinkController.close();
-    });
+        await gateway.dispose();
+        await service.dispose();
+        await sinkController.close();
+      },
+    );
   });
 }
 
@@ -185,8 +204,10 @@ Future<void> _startConnected(
 }
 
 ({LiveVoiceCaptureService service, StreamController<dynamic> sinkController})
-    _buildCaptureService() {
-  ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+_buildCaptureService() {
+  ApiUsageGuard.resetForTest(
+    replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+  );
   final sinkController = StreamController<dynamic>();
   final journalFile = File(
     '${Directory.systemTemp.path}/live_focus_test_${DateTime.now().microsecondsSinceEpoch}.json',
@@ -308,15 +329,15 @@ class _SilentPlayback extends LivePcm24PlaybackEngine {
 
 class _NoopPipeline extends CapturePipelineService {
   _NoopPipeline({required File journalFile})
-      : super(
+    : super(
+        api: _FakeApi(),
+        attest: CaptureAttestService(
           api: _FakeApi(),
-          attest: CaptureAttestService(
-            api: _FakeApi(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache(),
-          ),
-          journalStore: JournalStore(file: journalFile),
-        );
+          deviceIds: _FakeDeviceIdStore(),
+          tokenCache: CaptureTokenCache(),
+        ),
+        journalStore: JournalStore(file: journalFile),
+      );
 }
 
 class _FakeApi extends ApiClient {
@@ -330,7 +351,5 @@ class _FakeApi extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }
-

@@ -49,15 +49,17 @@ class ReviewRitualEngine {
       summaryLabel: summaryLabel,
       helperText: helperText,
       privacyLine: ReviewRitualCopy.noRemindersLine,
-      cardHeadline:
-          hasRitual ? ReviewRitualCopy.cardHeadlineSet : ReviewRitualCopy.cardHeadlineUnset,
-      cardSummary:
-          hasRitual ? ReviewRitualCopy.cardSummarySet : ReviewRitualCopy.cardSummaryUnset,
+      cardHeadline: hasRitual
+          ? ReviewRitualCopy.cardHeadlineSet
+          : ReviewRitualCopy.cardHeadlineUnset,
+      cardSummary: hasRitual
+          ? ReviewRitualCopy.cardSummarySet
+          : ReviewRitualCopy.cardSummaryUnset,
       primaryCtaLabel: weeklyReviewReady
           ? ReviewRitualCopy.openWeeklyReviewCta
           : hasRitual
-              ? ReviewRitualCopy.openReviewRitualCta
-              : ReviewRitualCopy.chooseReviewTimeCta,
+          ? ReviewRitualCopy.openReviewRitualCta
+          : ReviewRitualCopy.chooseReviewTimeCta,
       primaryRoute: weeklyReviewReady
           ? WeeklyArchiveReviewNavigation.route
           : ReviewRitualCopy.route,

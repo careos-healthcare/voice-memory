@@ -42,38 +42,37 @@ StoreReadinessSingleSourceInput _input({
   bool paidIntentBetaReady = true,
   bool secretsRotated = true,
   ProductionCandidateChecklist? productionChecklist,
-}) =>
-    StoreReadinessSingleSourceInput(
-      signingConfigured: signingConfigured,
-      appStoreMetadataReady: appStoreMetadataReady,
-      supportUrlSet: supportUrlSet,
-      privacyUrlSet: privacyUrlSet,
-      termsUrlSet: termsUrlSet,
-      screenshotsReady: screenshotsReady,
-      revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-      revenueCatConfigured: revenueCatConfigured,
-      productsLoaded: productsLoaded,
-      proEntitlementConfigured: proEntitlementConfigured,
-      purchaseFlowReachable: purchaseFlowReachable,
-      restorePurchasesReachable: restorePurchasesReachable,
-      restoreNoCrashVerified: restoreNoCrashVerified,
-      purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
-      proStateCanBeRead: proStateCanBeRead,
-      entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-      physicalDeviceSmokePassed: physicalDeviceSmokePassed,
-      testFlightUploadReady: testFlightUploadReady,
-      paidIntentBetaReady: paidIntentBetaReady,
-      secretsRotated: secretsRotated,
-      productionChecklist: productionChecklist,
-    );
+}) => StoreReadinessSingleSourceInput(
+  signingConfigured: signingConfigured,
+  appStoreMetadataReady: appStoreMetadataReady,
+  supportUrlSet: supportUrlSet,
+  privacyUrlSet: privacyUrlSet,
+  termsUrlSet: termsUrlSet,
+  screenshotsReady: screenshotsReady,
+  revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+  revenueCatConfigured: revenueCatConfigured,
+  productsLoaded: productsLoaded,
+  proEntitlementConfigured: proEntitlementConfigured,
+  purchaseFlowReachable: purchaseFlowReachable,
+  restorePurchasesReachable: restorePurchasesReachable,
+  restoreNoCrashVerified: restoreNoCrashVerified,
+  purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
+  proStateCanBeRead: proStateCanBeRead,
+  entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+  physicalDeviceSmokePassed: physicalDeviceSmokePassed,
+  testFlightUploadReady: testFlightUploadReady,
+  paidIntentBetaReady: paidIntentBetaReady,
+  secretsRotated: secretsRotated,
+  productionChecklist: productionChecklist,
+);
 
 StoreReadinessSingleSourceStep _step(
   StoreReadinessSingleSourceResult result,
   StoreReadinessSingleSourceStepId id,
-) =>
-    result.steps.firstWhere((step) => step.id == id);
+) => result.steps.firstWhere((step) => step.id == id);
 
-ProductionCandidateChecklist _fullChecklist() => const ProductionCandidateChecklist(
+ProductionCandidateChecklist _fullChecklist() =>
+    const ProductionCandidateChecklist(
       betaResultsPassed: true,
       proofProtectionBaselineActive: true,
       usefulProofStable: true,
@@ -97,24 +96,24 @@ void main() {
   group('StoreReadinessSingleSource.build', () {
     test('canonical order has 12 steps', () {
       final result = StoreReadinessSingleSource.build(_input());
-      expect(result.steps.length, StoreReadinessSingleSource.canonicalStepCount);
       expect(
-        result.steps.map((step) => step.id).toList(),
-        [
-          StoreReadinessSingleSourceStepId.signing,
-          StoreReadinessSingleSourceStepId.metadata,
-          StoreReadinessSingleSourceStepId.supportPrivacyTerms,
-          StoreReadinessSingleSourceStepId.screenshots,
-          StoreReadinessSingleSourceStepId.revenueCatProducts,
-          StoreReadinessSingleSourceStepId.purchasePath,
-          StoreReadinessSingleSourceStepId.restorePath,
-          StoreReadinessSingleSourceStepId.entitlementPersistence,
-          StoreReadinessSingleSourceStepId.physicalDeviceSmoke,
-          StoreReadinessSingleSourceStepId.testFlightUpload,
-          StoreReadinessSingleSourceStepId.paidIntentBeta,
-          StoreReadinessSingleSourceStepId.secretsRotation,
-        ],
+        result.steps.length,
+        StoreReadinessSingleSource.canonicalStepCount,
       );
+      expect(result.steps.map((step) => step.id).toList(), [
+        StoreReadinessSingleSourceStepId.signing,
+        StoreReadinessSingleSourceStepId.metadata,
+        StoreReadinessSingleSourceStepId.supportPrivacyTerms,
+        StoreReadinessSingleSourceStepId.screenshots,
+        StoreReadinessSingleSourceStepId.revenueCatProducts,
+        StoreReadinessSingleSourceStepId.purchasePath,
+        StoreReadinessSingleSourceStepId.restorePath,
+        StoreReadinessSingleSourceStepId.entitlementPersistence,
+        StoreReadinessSingleSourceStepId.physicalDeviceSmoke,
+        StoreReadinessSingleSourceStepId.testFlightUpload,
+        StoreReadinessSingleSourceStepId.paidIntentBeta,
+        StoreReadinessSingleSourceStepId.secretsRotation,
+      ]);
     });
 
     test('signing missing -> notReady', () {
@@ -213,25 +212,40 @@ void main() {
       );
     });
 
-    test('TestFlight block clear but paid intent pending -> paidIntentPending', () {
-      final result = StoreReadinessSingleSource.build(
-        _input(paidIntentBetaReady: false),
-      );
-      expect(result.decision, StoreReadinessSingleSourceDecision.paidIntentPending);
-      expect(result.testFlightReady, isTrue);
-      expect(result.submissionReady, isFalse);
-      expect(result.earliestGap, StoreReadinessSingleSourceStepId.paidIntentBeta);
-      expect(
-        _step(result, StoreReadinessSingleSourceStepId.paidIntentBeta).detailLabel,
-        StoreReadinessSingleSourceCopy.detailPending,
-      );
-    });
+    test(
+      'TestFlight block clear but paid intent pending -> paidIntentPending',
+      () {
+        final result = StoreReadinessSingleSource.build(
+          _input(paidIntentBetaReady: false),
+        );
+        expect(
+          result.decision,
+          StoreReadinessSingleSourceDecision.paidIntentPending,
+        );
+        expect(result.testFlightReady, isTrue);
+        expect(result.submissionReady, isFalse);
+        expect(
+          result.earliestGap,
+          StoreReadinessSingleSourceStepId.paidIntentBeta,
+        );
+        expect(
+          _step(
+            result,
+            StoreReadinessSingleSourceStepId.paidIntentBeta,
+          ).detailLabel,
+          StoreReadinessSingleSourceCopy.detailPending,
+        );
+      },
+    );
 
     test('paid intent ready but secrets pending -> secretsPending', () {
       final result = StoreReadinessSingleSource.build(
         _input(secretsRotated: false),
       );
-      expect(result.decision, StoreReadinessSingleSourceDecision.secretsPending);
+      expect(
+        result.decision,
+        StoreReadinessSingleSourceDecision.secretsPending,
+      );
       expect(result.testFlightReady, isTrue);
       expect(result.submissionReady, isFalse);
       expect(
@@ -242,7 +256,10 @@ void main() {
 
     test('all canonical steps pass -> submissionReady', () {
       final result = StoreReadinessSingleSource.build(_input());
-      expect(result.decision, StoreReadinessSingleSourceDecision.submissionReady);
+      expect(
+        result.decision,
+        StoreReadinessSingleSourceDecision.submissionReady,
+      );
       expect(result.testFlightReady, isTrue);
       expect(result.submissionReady, isTrue);
       expect(result.earliestGap, isNull);
@@ -250,19 +267,21 @@ void main() {
   });
 
   group('StoreReadinessSingleSource bridges', () {
-    test('toProofInput delegates to StoreReadinessProof without duplicating logic',
-        () {
-      final input = _input(secretsRotated: false);
-      final proofInput = StoreReadinessSingleSource.toProofInput(input);
-      final proofResult = StoreReadinessProof.resolve(proofInput);
-      final result = StoreReadinessSingleSource.build(input);
+    test(
+      'toProofInput delegates to StoreReadinessProof without duplicating logic',
+      () {
+        final input = _input(secretsRotated: false);
+        final proofInput = StoreReadinessSingleSource.toProofInput(input);
+        final proofResult = StoreReadinessProof.resolve(proofInput);
+        final result = StoreReadinessSingleSource.build(input);
 
-      expect(result.proofResult.status, proofResult.status);
-      expect(
-        result.proofResult.status,
-        StoreReadinessProofStatus.readyForTestFlight,
-      );
-    });
+        expect(result.proofResult.status, proofResult.status);
+        expect(
+          result.proofResult.status,
+          StoreReadinessProofStatus.readyForTestFlight,
+        );
+      },
+    );
 
     test('fromProofInput round-trips proof fields', () {
       final proofInput = StoreReadinessProofInput(
@@ -291,7 +310,10 @@ void main() {
       );
       final roundTrip = StoreReadinessSingleSource.toProofInput(singleInput);
 
-      expect(roundTrip.revenueCatApiKeyProvided, proofInput.revenueCatApiKeyProvided);
+      expect(
+        roundTrip.revenueCatApiKeyProvided,
+        proofInput.revenueCatApiKeyProvided,
+      );
       expect(roundTrip.productsLoaded, proofInput.productsLoaded);
       expect(roundTrip.testFlightUploadReady, proofInput.testFlightUploadReady);
       expect(roundTrip.secretsRotated, proofInput.secretsRotated);
@@ -308,18 +330,27 @@ void main() {
       );
       final result = StoreReadinessSingleSource.build(input);
 
-      expect(result.productionStatus, ProductionCandidateStatus.readyForSubmission);
-      expect(result.decision, StoreReadinessSingleSourceDecision.submissionReady);
       expect(
-        StoreReadinessProof.fromProductionCandidateChecklist(checklist)
-            .appStoreMetadataReady,
+        result.productionStatus,
+        ProductionCandidateStatus.readyForSubmission,
+      );
+      expect(
+        result.decision,
+        StoreReadinessSingleSourceDecision.submissionReady,
+      );
+      expect(
+        StoreReadinessProof.fromProductionCandidateChecklist(
+          checklist,
+        ).appStoreMetadataReady,
         isTrue,
       );
     });
 
     test('fromStoreReadinessAudit bridges audit status', () {
       final checklist = _fullChecklist();
-      final audit = StoreReadinessAudit.fromProductionCandidateChecklist(checklist);
+      final audit = StoreReadinessAudit.fromProductionCandidateChecklist(
+        checklist,
+      );
       final input = StoreReadinessSingleSource.fromStoreReadinessAudit(
         audit,
         signingConfigured: true,
@@ -376,14 +407,8 @@ void main() {
         StoreReadinessSingleSourceCopy.guardrail,
         contains('Do not change'),
       );
-      expect(
-        StoreReadinessSingleSourceCopy.guardrail,
-        contains('purchase'),
-      );
-      expect(
-        StoreReadinessSingleSourceCopy.guardrail,
-        contains('RevenueCat'),
-      );
+      expect(StoreReadinessSingleSourceCopy.guardrail, contains('purchase'));
+      expect(StoreReadinessSingleSourceCopy.guardrail, contains('RevenueCat'));
     });
 
     test('copy avoids therapy diagnosis coaching and advice claims', () {
@@ -426,8 +451,9 @@ void main() {
         ProductionCandidateStatus.readyForSubmission,
       );
       expect(
-        StoreReadinessAudit.fromProductionCandidateChecklist(checklist)
-            .resolveStatus(),
+        StoreReadinessAudit.fromProductionCandidateChecklist(
+          checklist,
+        ).resolveStatus(),
         StoreReadinessStatus.readyForSubmission,
       );
     });
@@ -449,10 +475,13 @@ void main() {
       );
     });
 
-    test('revenuecat sandbox proof and release freeze regressions unchanged', () {
-      expect(RevenueCatSandboxProofCopy.headline, isNotEmpty);
-      expect(ReleaseCandidateFreezeCopy.headline, isNotEmpty);
-    });
+    test(
+      'revenuecat sandbox proof and release freeze regressions unchanged',
+      () {
+        expect(RevenueCatSandboxProofCopy.headline, isNotEmpty);
+        expect(ReleaseCandidateFreezeCopy.headline, isNotEmpty);
+      },
+    );
 
     test('proof selection principle still blocks ranking', () {
       expect(ProofSelectionPrinciple.allowsRankingUi(), isFalse);
@@ -462,38 +491,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

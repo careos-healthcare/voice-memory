@@ -5,6 +5,5 @@ abstract final class ArchiveCalendarGates {
   static bool showOnArchiveHome({
     required int realSavedMomentCount,
     required bool sampleMode,
-  }) =>
-      realSavedMomentCount >= 1 && !sampleMode;
+  }) => realSavedMomentCount >= 1 && !sampleMode;
 }

@@ -19,22 +19,21 @@ import '../services/curiosity_telemetry_tracker.dart';
 /// Post-save voice pipeline entry point for curiosity hooks.
 class CuriosityHookCoordinator {
   CuriosityHookCoordinator({
-    required CuriosityNotificationScheduler scheduler,
+    required this._scheduler,
     CuriosityHookRepository? repository,
     CuriosityHookJournalStore? journalStore,
     CuriosityPromptGenerator? promptGenerator,
     CuriosityAdaptiveTimingEngine? timingEngine,
     CuriosityTelemetryTracker? telemetry,
     CuriosityMemoryRecallHookEnricher? memoryRecallEnricher,
-  })  : _scheduler = scheduler,
-        _repository = repository ?? LocalCuriosityHookRepository.instance(),
-        _journalStore = journalStore ?? _defaultJournalStore(),
-        _promptGenerator =
-            promptGenerator ?? const DefaultCuriosityPromptGenerator(),
-        _timingEngine = timingEngine ?? const CuriosityAdaptiveTimingEngine(),
-        _telemetry = telemetry ?? const CuriosityTelemetryTracker(),
-        _memoryRecallEnricher =
-            memoryRecallEnricher ?? CuriosityMemoryRecallHookEnricher();
+  }) : _repository = repository ?? LocalCuriosityHookRepository.instance(),
+       _journalStore = journalStore ?? _defaultJournalStore(),
+       _promptGenerator =
+           promptGenerator ?? const DefaultCuriosityPromptGenerator(),
+       _timingEngine = timingEngine ?? const CuriosityAdaptiveTimingEngine(),
+       _telemetry = telemetry ?? const CuriosityTelemetryTracker(),
+       _memoryRecallEnricher =
+           memoryRecallEnricher ?? CuriosityMemoryRecallHookEnricher();
 
   static CuriosityHookCoordinator? _shared;
 

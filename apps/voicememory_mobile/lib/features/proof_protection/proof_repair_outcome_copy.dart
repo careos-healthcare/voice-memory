@@ -11,42 +11,41 @@ abstract final class ProofRepairOutcomeCopy {
   static ProofRepairOutcomeReport report(
     ProofRepairOutcomeSummary summary,
     ProofRepairOutcomeDecision decision,
-  ) =>
-      ProofRepairOutcomeReport(
-        title: titleFor(decision),
-        body: bodyFor(decision),
-        nextAction: nextActionFor(decision),
-        guardrail: guardrail,
-      );
+  ) => ProofRepairOutcomeReport(
+    title: titleFor(decision),
+    body: bodyFor(decision),
+    nextAction: nextActionFor(decision),
+    guardrail: guardrail,
+  );
 
-  static String titleFor(ProofRepairOutcomeDecision decision) =>
-      switch (decision) {
-        ProofRepairOutcomeDecision.insufficientData =>
-          'Not enough proof data yet',
-        ProofRepairOutcomeDecision.repairProofAgain =>
-          'Proof is still the blocker',
-        ProofRepairOutcomeDecision.tightenAnchorsAgain =>
-          'Proof is still too loose',
-        ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
-          'Proof is stable',
-        ProofRepairOutcomeDecision.productionCandidate =>
-          'Proof and value signals pass',
-      };
+  static String titleFor(
+    ProofRepairOutcomeDecision decision,
+  ) => switch (decision) {
+    ProofRepairOutcomeDecision.insufficientData => 'Not enough proof data yet',
+    ProofRepairOutcomeDecision.repairProofAgain => 'Proof is still the blocker',
+    ProofRepairOutcomeDecision.tightenAnchorsAgain =>
+      'Proof is still too loose',
+    ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
+      'Proof is stable',
+    ProofRepairOutcomeDecision.productionCandidate =>
+      'Proof and value signals pass',
+  };
 
-  static String bodyFor(ProofRepairOutcomeDecision decision) =>
-      switch (decision) {
-        ProofRepairOutcomeDecision.insufficientData =>
-          'Build 63 does not yet have enough testers to choose the next proof move.',
-        ProofRepairOutcomeDecision.repairProofAgain =>
-          'Useful proof is still below the Build 63 target.',
-        ProofRepairOutcomeDecision.tightenAnchorsAgain =>
-          'Too many testers still mark proof as too vague or not relevant.',
-        ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
-          'Proof quality is holding, but evidence-trail and value signals still need work.',
-        ProofRepairOutcomeDecision.productionCandidate =>
-          'Useful proof, anchor quality, evidence trail, Pro understanding, and '
+  static String bodyFor(
+    ProofRepairOutcomeDecision decision,
+  ) => switch (decision) {
+    ProofRepairOutcomeDecision.insufficientData =>
+      'Build 63 does not yet have enough testers to choose the next proof move.',
+    ProofRepairOutcomeDecision.repairProofAgain =>
+      'Useful proof is still below the Build 63 target.',
+    ProofRepairOutcomeDecision.tightenAnchorsAgain =>
+      'Too many testers still mark proof as too vague or not relevant.',
+    ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
+      'Proof quality is holding, but evidence-trail and value signals still need work.',
+    ProofRepairOutcomeDecision.productionCandidate =>
+      'Useful proof, anchor quality, evidence trail, Pro understanding, and '
           'would-pay intent are all holding.',
-      };
+  };
 
   static String nextActionFor(ProofRepairOutcomeDecision decision) =>
       switch (decision) {

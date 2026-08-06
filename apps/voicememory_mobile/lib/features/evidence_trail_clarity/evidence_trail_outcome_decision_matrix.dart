@@ -24,40 +24,35 @@ abstract final class EvidenceTrailOutcomeDecisionMatrix {
     );
   }
 
-  static int evidenceTrailClearTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: evidenceTrailClearNumerator,
-        denominator: scaleDenominator,
-      );
+  static int evidenceTrailClearTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: evidenceTrailClearNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int sawProTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: sawProNumerator,
-        denominator: scaleDenominator,
-      );
+  static int sawProTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: sawProNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int understandsProTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: understandsProNumerator,
-        denominator: scaleDenominator,
-      );
+  static int understandsProTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: understandsProNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int paywallCtaTapTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: paywallCtaTapNumerator,
-        denominator: scaleDenominator,
-      );
+  static int paywallCtaTapTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: paywallCtaTapNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int wouldPayTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: wouldPayNumerator,
-        denominator: scaleDenominator,
-      );
+  static int wouldPayTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: wouldPayNumerator,
+    denominator: scaleDenominator,
+  );
 
   static EvidenceTrailOutcomeDecision resolve(
     EvidenceTrailOutcomeSummary summary,
@@ -109,8 +104,7 @@ abstract final class EvidenceTrailOutcomeDecisionMatrix {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum EvidenceTrailOutcomeDecision {

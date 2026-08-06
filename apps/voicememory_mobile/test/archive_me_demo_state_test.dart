@@ -79,21 +79,26 @@ void main() {
   });
 
   group('JournalStore demo isolation', () {
-    test('loadAll returns demo entries without reading poisoned disk', () async {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
-      final dir = Directory.systemTemp.createTempSync('archive_me_demo');
-      addTearDown(() => dir.deleteSync(recursive: true));
-      final file = File('${dir.path}/journal.json')
-        ..writeAsStringSync('not valid json — would throw if parsed');
-      final store = JournalStore(file: file);
+    test(
+      'loadAll returns demo entries without reading poisoned disk',
+      () async {
+        ArchiveMeDemoState.debugForceEnabledForTest = true;
+        final dir = Directory.systemTemp.createTempSync('archive_me_demo');
+        addTearDown(() => dir.deleteSync(recursive: true));
+        final file = File('${dir.path}/journal.json')
+          ..writeAsStringSync('not valid json — would throw if parsed');
+        final store = JournalStore(file: file);
 
-      final loaded = await store.loadAll();
-      expect(loaded, hasLength(3));
-      expect(
-        loaded.every((e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix)),
-        isTrue,
-      );
-    });
+        final loaded = await store.loadAll();
+        expect(loaded, hasLength(3));
+        expect(
+          loaded.every(
+            (e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix),
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('save is a no-op while demo is active', () async {
       ArchiveMeDemoState.debugForceEnabledForTest = true;

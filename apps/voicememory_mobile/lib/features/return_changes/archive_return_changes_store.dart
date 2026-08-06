@@ -39,10 +39,8 @@ class ArchiveReturnChangesStore {
 }
 
 /// Resolves return changes from journal entries and prefs.
-Future<({
-  ArchiveReturnSnapshot current,
-  ArchiveReturnChangesResult? result,
-})> resolveArchiveReturnChanges({
+Future<({ArchiveReturnSnapshot current, ArchiveReturnChangesResult? result})>
+resolveArchiveReturnChanges({
   required List<JournalEntry> entries,
   required ArchiveReturnChangesStore store,
   ArchiveReturnChangesEngine engine = const ArchiveReturnChangesEngine(),

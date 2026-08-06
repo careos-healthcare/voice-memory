@@ -27,11 +27,7 @@ class OneSmallRecordingEngine {
     DateTime? now,
     int? entryCount,
   }) {
-    final plan = _planEngine.build(
-      records,
-      now: now,
-      entryCount: entryCount,
-    );
+    final plan = _planEngine.build(records, now: now, entryCount: entryCount);
     if (plan.hasPlan && plan.nextPrompt.trim().isNotEmpty) {
       return OneSmallRecording(
         hasRecording: true,

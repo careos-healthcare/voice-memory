@@ -13,7 +13,7 @@ abstract final class ProofCautionGuardAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void applied({
     required int entryCount,
@@ -61,8 +61,8 @@ abstract final class ProofCautionGuardAnalytics {
       'source': source,
       'original_level': originalLevel.analyticsValue,
       if (adjustedLevel != null) 'adjusted_level': adjustedLevel.analyticsValue,
-      if (reason != null) 'reason': reason,
-      if (blockedReason != null) 'blocked_reason': blockedReason,
+      'reason': ?reason,
+      'blocked_reason': ?blockedReason,
     };
 
     captureForTest?.call(event, properties);

@@ -18,16 +18,19 @@ abstract final class BeliefUpdatePayoffCopy {
   static const currentBeliefLabel =
       VisibleArchiveProofCopy.beliefUpdateCurrentBeliefLabel;
 
-  static const evidenceLabel = VisibleArchiveProofCopy.beliefUpdateEvidenceLabel;
+  static const evidenceLabel =
+      VisibleArchiveProofCopy.beliefUpdateEvidenceLabel;
 
   static const whatChangedLabel =
       VisibleArchiveProofCopy.beliefUpdateWhatChangedLabel;
 
   static const primaryCta = VisibleArchiveProofCopy.beliefUpdatePrimaryCta;
 
-  static const secondaryCta = VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta;
+  static const secondaryCta =
+      VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta;
 
-  static const analysisDeferredFootnote = VoiceCaptureCopy.analysisUnavailableNote;
+  static const analysisDeferredFootnote =
+      VoiceCaptureCopy.analysisUnavailableNote;
 }
 
 /// Cautious belief-update payoff when the archive reaches four or more usable moments.
@@ -113,8 +116,9 @@ abstract final class BeliefUpdatePayoffEngine {
       evidenceWeak: evidenceWeak,
       primaryCta: BeliefUpdatePayoffCopy.primaryCta,
       secondaryCta: BeliefUpdatePayoffCopy.secondaryCta,
-      footnoteLine:
-          analysisSucceeded ? null : BeliefUpdatePayoffCopy.analysisDeferredFootnote,
+      footnoteLine: analysisSucceeded
+          ? null
+          : BeliefUpdatePayoffCopy.analysisDeferredFootnote,
       stageLabel: threshold.stage.label,
     );
   }
@@ -237,7 +241,8 @@ abstract final class BeliefUpdatePayoffEngine {
     final priorTokens = prior.split(' ').where((w) => w.length > 4).toSet();
     final latestTokens = latest.split(' ').where((w) => w.length > 4).toSet();
     if (priorTokens.isEmpty || latestTokens.isEmpty) return false;
-    final overlap = priorTokens.intersection(latestTokens).length /
+    final overlap =
+        priorTokens.intersection(latestTokens).length /
         priorTokens.union(latestTokens).length;
     return overlap >= 0.15 && overlap < 0.55;
   }

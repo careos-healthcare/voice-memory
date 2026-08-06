@@ -24,9 +24,7 @@ abstract final class RevenueCatOfferingsDebugLog {
   }
 
   static void fetchOfferingsStarted({required bool billingConfigured}) {
-    _log(
-      'ARCHIVEME_RC_FETCH started billingConfigured=$billingConfigured',
-    );
+    _log('ARCHIVEME_RC_FETCH started billingConfigured=$billingConfigured');
   }
 
   static void fetchOfferingsFinished({

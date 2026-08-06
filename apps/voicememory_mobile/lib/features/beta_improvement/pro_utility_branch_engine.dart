@@ -30,11 +30,10 @@ abstract final class ProUtilityBranchEngine {
 
   static bool isBranchRecommended({
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      BetaImprovementRecommendationGate.isBranchActive(
-        BetaImprovementBranch.proUtility,
-        outcomesOverride: outcomesOverride,
-      );
+  }) => BetaImprovementRecommendationGate.isBranchActive(
+    BetaImprovementBranch.proUtility,
+    outcomesOverride: outcomesOverride,
+  );
 
   static bool hasExplicitUtilityAsk({
     List<BetaTesterOutcome>? outcomesOverride,
@@ -51,7 +50,9 @@ abstract final class ProUtilityBranchEngine {
     if (entryCount == 0) return false;
     if (!isBranchRecommended(outcomesOverride: outcomesOverride)) return false;
 
-    final explicitAsk = hasExplicitUtilityAsk(outcomesOverride: outcomesOverride);
+    final explicitAsk = hasExplicitUtilityAsk(
+      outcomesOverride: outcomesOverride,
+    );
     if (!hasMeaningfulProof && !explicitAsk) return false;
 
     return BetaImprovementRecommendationGate.shouldApplyBranch(
@@ -205,9 +206,6 @@ abstract final class ProUtilityBranchEngine {
     )) {
       return const [];
     }
-    return [
-      ProUtilityCopyFix.proofBridge,
-      ProUtilityCopyFix.notMoreAiLine,
-    ];
+    return [ProUtilityCopyFix.proofBridge, ProUtilityCopyFix.notMoreAiLine];
   }
 }

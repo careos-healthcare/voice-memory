@@ -49,8 +49,7 @@ abstract class EmptyArchiveCopy {
     'What changed',
     'What may have helped',
   ];
-  static const String intentionalEmptyClosing =
-      'Start with one short moment.';
+  static const String intentionalEmptyClosing = 'Start with one short moment.';
 }
 
 /// Max width for intentional empty copy — readable on tablets.

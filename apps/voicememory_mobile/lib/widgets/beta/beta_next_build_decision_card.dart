@@ -117,9 +117,9 @@ class _BetaNextBuildDecisionCardState extends State<BetaNextBuildDecisionCard> {
           Text(
             BetaDecisionCopy.cardTitle,
             key: const Key('beta_next_build_decision_card_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -135,9 +135,9 @@ class _BetaNextBuildDecisionCardState extends State<BetaNextBuildDecisionCard> {
           Text(
             result.nextActionCopy,
             key: const Key('beta_next_build_decision_action'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -149,9 +149,9 @@ class _BetaNextBuildDecisionCardState extends State<BetaNextBuildDecisionCard> {
             const SizedBox(height: 10),
             Text(
               'Failing branches (${result.testerCount} testers)',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
             for (final entry in result.failingBranchCounts.entries)

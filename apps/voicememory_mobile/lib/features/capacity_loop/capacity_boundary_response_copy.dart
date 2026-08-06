@@ -36,8 +36,7 @@ abstract final class CapacityBoundaryResponseCopy {
     ),
     CapacityBoundaryResponseTemplate(
       id: CapacityBoundaryResponseIds.wantToHelpCheck,
-      text:
-          'I want to help, but I need to check what I can realistically do.',
+      text: 'I want to help, but I need to check what I can realistically do.',
     ),
     CapacityBoundaryResponseTemplate(
       id: CapacityBoundaryResponseIds.needPauseBeforeYes,
@@ -57,15 +56,15 @@ abstract final class CapacityBoundaryResponseCopy {
       'Default pause: $responseText';
 
   static List<String> allVisibleStrings() => [
-        title,
-        subtitle,
-        body,
-        chooseResponseCta,
-        useNextTimeCta,
-        copyResponseCta,
-        cardEyebrow,
-        weeklyReviewSectionTitle,
-        loopSectionTitle,
-        ...templates.map((template) => template.text),
-      ];
+    title,
+    subtitle,
+    body,
+    chooseResponseCta,
+    useNextTimeCta,
+    copyResponseCta,
+    cardEyebrow,
+    weeklyReviewSectionTitle,
+    loopSectionTitle,
+    ...templates.map((template) => template.text),
+  ];
 }

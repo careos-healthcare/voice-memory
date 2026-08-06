@@ -20,8 +20,8 @@ abstract final class EarlyRepeatProgressEngine {
     if (eligible.length == 1) {
       final phrase =
           ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
-        eligible.first,
-      );
+            eligible.first,
+          );
       return EarlyRepeatProgressResult(
         kind: EarlyRepeatProgressKind.oneMoment,
         title: EarlyRepeatProgressCopy.oneMomentTitle,
@@ -38,8 +38,9 @@ abstract final class EarlyRepeatProgressEngine {
     }
 
     if (_signalEngine.hasGroundedRepeatMatch(eligible)) {
-      final phrase =
-          ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(eligible);
+      final phrase = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+        eligible,
+      );
       return EarlyRepeatProgressResult(
         kind: EarlyRepeatProgressKind.twoRelated,
         title: EarlyRepeatProgressCopy.twoRelatedTitle,

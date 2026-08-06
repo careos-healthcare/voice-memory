@@ -15,7 +15,7 @@ import 'package:voicememory_mobile/widgets/record/low_friction_return_card.dart'
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/low_friction_return/unused.json'));
+    : super(file: File('test/tmp/low_friction_return/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -32,23 +32,22 @@ JournalEntry _entry({
   required String id,
   required DateTime createdAt,
   String transcript = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 Map<String, Object> _baseVisibility({
   bool isReady = true,
@@ -62,22 +61,22 @@ Map<String, Object> _baseVisibility({
   int entryCount = 0,
   List<JournalEntry> entries = const [],
   bool dismissedForToday = false,
-}) =>
-    {
-      'isReady': isReady,
-      'isRecording': isRecording,
-      'isPostSave': isPostSave,
-      'isDegradedTranscriptState': isDegradedTranscriptState,
-      'firstProofPayoffVisible': firstProofPayoffVisible,
-      'whatChangedQuestionActive': whatChangedQuestionActive,
-      'patternReviewInboxHasActiveItems': patternReviewInboxHasActiveItems,
-      'isPermissionBlocked': isPermissionBlocked,
-      'entryCount': entryCount,
-      'entries': entries,
-      'dismissedForToday': dismissedForToday,
-    };
+}) => {
+  'isReady': isReady,
+  'isRecording': isRecording,
+  'isPostSave': isPostSave,
+  'isDegradedTranscriptState': isDegradedTranscriptState,
+  'firstProofPayoffVisible': firstProofPayoffVisible,
+  'whatChangedQuestionActive': whatChangedQuestionActive,
+  'patternReviewInboxHasActiveItems': patternReviewInboxHasActiveItems,
+  'isPermissionBlocked': isPermissionBlocked,
+  'entryCount': entryCount,
+  'entries': entries,
+  'dismissedForToday': dismissedForToday,
+};
 
-bool _shouldShow(Map<String, Object> args) => LowFrictionReturnEngine.shouldShow(
+bool _shouldShow(Map<String, Object> args) =>
+    LowFrictionReturnEngine.shouldShow(
       isReady: args['isReady']! as bool,
       isRecording: args['isRecording']! as bool,
       isPostSave: args['isPostSave']! as bool,
@@ -112,17 +111,11 @@ void main() {
 
   group('LowFrictionReturnEngine visibility', () {
     test('zero-entry user sees card', () {
-      expect(
-        _shouldShow(_baseVisibility(entryCount: 0)),
-        isTrue,
-      );
+      expect(_shouldShow(_baseVisibility(entryCount: 0)), isTrue);
     });
 
     test('early user sees card', () {
-      expect(
-        _shouldShow(_baseVisibility(entryCount: 7)),
-        isTrue,
-      );
+      expect(_shouldShow(_baseVisibility(entryCount: 7)), isTrue);
     });
 
     test('users over 7 entries do not see card by default', () {
@@ -138,9 +131,7 @@ void main() {
           patternReviewInboxHasActiveItems: false,
           isPermissionBlocked: false,
           entryCount: 8,
-          entries: [
-            _entry(id: 'e1', createdAt: DateTime(2026, 6, 12, 10)),
-          ],
+          entries: [_entry(id: 'e1', createdAt: DateTime(2026, 6, 12, 10))],
           dismissedForToday: false,
           now: now,
         ),
@@ -161,9 +152,7 @@ void main() {
           patternReviewInboxHasActiveItems: false,
           isPermissionBlocked: false,
           entryCount: 8,
-          entries: [
-            _entry(id: 'e1', createdAt: DateTime(2026, 6, 10, 12)),
-          ],
+          entries: [_entry(id: 'e1', createdAt: DateTime(2026, 6, 10, 12))],
           dismissedForToday: false,
           now: now,
         ),
@@ -173,24 +162,14 @@ void main() {
 
     test('hidden while recording', () {
       expect(
-        _shouldShow(
-          _baseVisibility(
-            isRecording: true,
-            entryCount: 2,
-          ),
-        ),
+        _shouldShow(_baseVisibility(isRecording: true, entryCount: 2)),
         isFalse,
       );
     });
 
     test('hidden post-save', () {
       expect(
-        _shouldShow(
-          _baseVisibility(
-            isPostSave: true,
-            entryCount: 2,
-          ),
-        ),
+        _shouldShow(_baseVisibility(isPostSave: true, entryCount: 2)),
         isFalse,
       );
     });
@@ -198,10 +177,7 @@ void main() {
     test('hidden during first proof payoff', () {
       expect(
         _shouldShow(
-          _baseVisibility(
-            firstProofPayoffVisible: true,
-            entryCount: 2,
-          ),
+          _baseVisibility(firstProofPayoffVisible: true, entryCount: 2),
         ),
         isFalse,
       );
@@ -210,10 +186,7 @@ void main() {
     test('hidden during What Changed', () {
       expect(
         _shouldShow(
-          _baseVisibility(
-            whatChangedQuestionActive: true,
-            entryCount: 2,
-          ),
+          _baseVisibility(whatChangedQuestionActive: true, entryCount: 2),
         ),
         isFalse,
       );
@@ -233,19 +206,17 @@ void main() {
 
     test('hidden when skipped for today', () {
       expect(
-        _shouldShow(
-          _baseVisibility(
-            entryCount: 2,
-            dismissedForToday: true,
-          ),
-        ),
+        _shouldShow(_baseVisibility(entryCount: 2, dismissedForToday: true)),
         isFalse,
       );
     });
   });
 
   group('LowFrictionReturnCard', () {
-    Future<void> pumpCard(WidgetTester tester, {LowFrictionReturnStore? store}) async {
+    Future<void> pumpCard(
+      WidgetTester tester, {
+      LowFrictionReturnStore? store,
+    }) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -302,7 +273,9 @@ void main() {
 
     testWidgets('tiny prompts expand', (tester) async {
       await pumpCard(tester);
-      await tester.tap(find.byKey(const Key('low_friction_return_use_tiny_prompt')));
+      await tester.tap(
+        find.byKey(const Key('low_friction_return_use_tiny_prompt')),
+      );
       await tester.pump();
 
       for (final prompt in LowFrictionReturnPromptType.all) {
@@ -313,9 +286,13 @@ void main() {
       }
     });
 
-    testWidgets('selecting prompt shows Start with one sentence', (tester) async {
+    testWidgets('selecting prompt shows Start with one sentence', (
+      tester,
+    ) async {
       await pumpCard(tester);
-      await tester.tap(find.byKey(const Key('low_friction_return_use_tiny_prompt')));
+      await tester.tap(
+        find.byKey(const Key('low_friction_return_use_tiny_prompt')),
+      );
       await tester.pumpAndSettle();
       final promptLabel = LowFrictionReturnCopy.promptTextFor(
         LowFrictionReturnPromptType.whatHelped,
@@ -324,7 +301,10 @@ void main() {
       await tester.tap(find.text(promptLabel));
       await tester.pumpAndSettle();
 
-      expect(find.text(LowFrictionReturnCopy.afterPromptSelected), findsOneWidget);
+      expect(
+        find.text(LowFrictionReturnCopy.afterPromptSelected),
+        findsOneWidget,
+      );
       expect(selectedPrompt, promptLabel);
     });
 
@@ -337,13 +317,20 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(LowFrictionReturnCopy.afterSkip), findsOneWidget);
-      expect(find.byKey(const Key('low_friction_return_save_one_sentence')), findsNothing);
+      expect(
+        find.byKey(const Key('low_friction_return_save_one_sentence')),
+        findsNothing,
+      );
       expect(LowFrictionReturnStore.isDismissedToday, isTrue);
     });
 
-    testWidgets('save one sentence uses callback without routing', (tester) async {
+    testWidgets('save one sentence uses callback without routing', (
+      tester,
+    ) async {
       await pumpCard(tester);
-      await tester.tap(find.byKey(const Key('low_friction_return_save_one_sentence')));
+      await tester.tap(
+        find.byKey(const Key('low_friction_return_save_one_sentence')),
+      );
       await tester.pump();
 
       expect(saveOneSentenceTapped, isTrue);
@@ -352,7 +339,9 @@ void main() {
 
     testWidgets('metadata-only analytics', (tester) async {
       await pumpCard(tester);
-      await tester.tap(find.byKey(const Key('low_friction_return_use_tiny_prompt')));
+      await tester.tap(
+        find.byKey(const Key('low_friction_return_use_tiny_prompt')),
+      );
       await tester.pump();
       await tester.tap(
         find.text(
@@ -372,8 +361,7 @@ void main() {
       expect(seen.props.keys, isNot(contains('body')));
 
       final action = analyticsEvents.firstWhere(
-        (event) =>
-            event.event == LowFrictionReturnAnalytics.actionTappedEvent,
+        (event) => event.event == LowFrictionReturnAnalytics.actionTappedEvent,
       );
       expect(action.props['action_type'], 'use_tiny_prompt');
 
@@ -387,21 +375,25 @@ void main() {
 
   group('Low friction return copy guard', () {
     test('no streak pressure copy', () {
-      final blob =
-          LowFrictionReturnCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = LowFrictionReturnCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('streak')));
       expect(blob, isNot(contains('day in a row')));
       expect(blob, isNot(contains('keep your streak')));
     });
 
     test('no daily requirement copy', () {
-      final blob =
-          LowFrictionReturnCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = LowFrictionReturnCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('must record every day')));
       expect(blob, isNot(contains('should record every day')));
       expect(blob, contains('not forced daily journaling'));
-      expect(LowFrictionReturnCopy.corePositioning.toLowerCase(),
-          contains('do not need to record every day'));
+      expect(
+        LowFrictionReturnCopy.corePositioning.toLowerCase(),
+        contains('do not need to record every day'),
+      );
     });
 
     test('no therapy/diagnosis/treatment claims', () {
@@ -441,10 +433,9 @@ void main() {
     });
 
     test('no transcript/body/private text in analytics', () {
-      final source =
-          File('lib/features/low_friction_return/low_friction_return_analytics.dart')
-              .readAsStringSync()
-              .toLowerCase();
+      final source = File(
+        'lib/features/low_friction_return/low_friction_return_analytics.dart',
+      ).readAsStringSync().toLowerCase();
       expect(source, isNot(contains('transcript')));
       expect(source, isNot(contains('entry_id')));
       expect(source, isNot(contains('body')));
@@ -476,8 +467,9 @@ void main() {
         '                        !firstUseSimplifiedRecord &&\n'
         '                        !showReturningWatchTargetFocusedUi)',
       );
-      final timelineIndex =
-          source.indexOf('if (!suppressLegacyEducationCardsForSpineOnRecord &&');
+      final timelineIndex = source.indexOf(
+        'if (!suppressLegacyEducationCardsForSpineOnRecord &&',
+      );
       expect(cardIndex, greaterThan(0));
       expect(freedomIndex, greaterThan(cardIndex));
       expect(timelineIndex, greaterThan(cardIndex));

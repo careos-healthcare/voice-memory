@@ -66,6 +66,8 @@ class EntryImportanceStore {
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
 
+  static void invalidateAfterRestore() => invalidateCache();
+
   @visibleForTesting
   static void invalidateCache() {
     _cached = {};

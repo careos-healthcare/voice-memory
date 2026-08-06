@@ -102,9 +102,9 @@ class _TestFlightMetricsDashboardCardState
           Text(
             dashboard.title,
             key: const Key('testflight_metrics_dashboard_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -119,9 +119,9 @@ class _TestFlightMetricsDashboardCardState
           const SizedBox(height: 12),
           Text(
             TestFlightMetricsCopy.coreMetricsTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (final row in dashboard.coreMetrics) ...[
@@ -131,9 +131,9 @@ class _TestFlightMetricsDashboardCardState
           const SizedBox(height: 8),
           Text(
             TestFlightMetricsCopy.retentionTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (final row in dashboard.retentionMetrics) ...[

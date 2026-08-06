@@ -185,20 +185,18 @@ abstract final class ChangeTrailClarity {
   static ChangeTrailClarityReport report(
     ChangeTrailClaritySummary summary,
     ChangeTrailClarityDecision decision,
-  ) =>
-      ChangeTrailClarityReport(
-        title: ChangeTrailClarityCopy.title,
-        body: ChangeTrailClarityCopy.body,
-        decision: decision,
-        guardrail: ChangeTrailClarityCopy.guardrail,
-      );
+  ) => ChangeTrailClarityReport(
+    title: ChangeTrailClarityCopy.title,
+    body: ChangeTrailClarityCopy.body,
+    decision: decision,
+    guardrail: ChangeTrailClarityCopy.guardrail,
+  );
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ChangeTrailClarityDecision {

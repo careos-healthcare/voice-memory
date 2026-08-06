@@ -142,7 +142,7 @@ class _FactEditorSheetState extends State<FactEditorSheet> {
             const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<FactType>(
               key: const Key('fact_type_dropdown'),
-              value: _type,
+              initialValue: _type,
               decoration: const InputDecoration(
                 labelText: FactLedgerCopy.typeField,
                 border: OutlineInputBorder(),

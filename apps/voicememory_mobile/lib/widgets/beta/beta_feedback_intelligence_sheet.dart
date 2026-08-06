@@ -102,13 +102,12 @@ class _BetaFeedbackIntelligenceSheetState
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final questionStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 16,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final questionStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 16);
 
     return SafeArea(
       child: Padding(
@@ -150,14 +149,17 @@ class _BetaFeedbackIntelligenceSheetState
                   ),
                 ],
                 selected: _chatGptAnswer,
-                onSelected: (value) =>
-                    setState(() => _chatGptAnswer = value as BetaChatGptDifferenceAnswer?),
+                onSelected: (value) => setState(
+                  () => _chatGptAnswer = value as BetaChatGptDifferenceAnswer?,
+                ),
                 questionStyle: questionStyle,
                 bodyStyle: bodyStyle,
               ),
               _QuestionSection(
                 title: BetaFeedbackIntelligenceCopy.differentiatorQuestion,
-                titleKey: const Key('beta_feedback_intelligence_q_differentiator'),
+                titleKey: const Key(
+                  'beta_feedback_intelligence_q_differentiator',
+                ),
                 options: const [
                   (
                     BetaDifferentiatorAnswer.showedRepeats,
@@ -187,7 +189,8 @@ class _BetaFeedbackIntelligenceSheetState
                 ],
                 selected: _differentiatorAnswer,
                 onSelected: (value) => setState(
-                  () => _differentiatorAnswer = value as BetaDifferentiatorAnswer?,
+                  () => _differentiatorAnswer =
+                      value as BetaDifferentiatorAnswer?,
                 ),
                 questionStyle: questionStyle,
                 bodyStyle: bodyStyle,
@@ -213,8 +216,9 @@ class _BetaFeedbackIntelligenceSheetState
                   ),
                 ],
                 selected: _wouldPayAnswer,
-                onSelected: (value) =>
-                    setState(() => _wouldPayAnswer = value as BetaWouldPayAnswer?),
+                onSelected: (value) => setState(
+                  () => _wouldPayAnswer = value as BetaWouldPayAnswer?,
+                ),
                 questionStyle: questionStyle,
                 bodyStyle: bodyStyle,
               ),

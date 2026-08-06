@@ -44,32 +44,32 @@ class _FirstProofMomentCardState extends State<FirstProofMomentCard> {
   Widget build(BuildContext context) {
     _trackSeen();
     final moment = widget.moment;
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
-    final evidenceLabelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
+    final evidenceLabelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('first_proof_moment_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             moment.primaryLabel,
             key: const Key('first_proof_moment_primary_label'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-              letterSpacing: 0.2,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary, letterSpacing: 0.2),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -83,7 +83,8 @@ class _FirstProofMomentCardState extends State<FirstProofMomentCard> {
             key: const Key('first_proof_moment_body'),
             style: bodyStyle,
           ),
-          if (moment.hasStrongEvidence && moment.evidencePhrases.isNotEmpty) ...[
+          if (moment.hasStrongEvidence &&
+              moment.evidencePhrases.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Semantics(
               button: true,
@@ -125,9 +126,9 @@ class _FirstProofMomentCardState extends State<FirstProofMomentCard> {
           Text(
             moment.whyLine,
             key: const Key('first_proof_moment_why_line'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

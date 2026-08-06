@@ -13,10 +13,7 @@ enum BetaRepairLabMode {
   evidenceTrailTimelineClarity,
 }
 
-enum BetaRepairLabProofVariant {
-  weak,
-  strong,
-}
+enum BetaRepairLabProofVariant { weak, strong }
 
 class BetaRepairLabModeInfo {
   const BetaRepairLabModeInfo({

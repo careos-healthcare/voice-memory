@@ -6,10 +6,8 @@ import 'live_audio_pipeline_log.dart';
 
 /// Listens for native AVAudioSession signals and pauses/resumes live capture.
 class NativeAudioLifecycleBridge {
-  NativeAudioLifecycleBridge(
-    this._service, {
-    MethodChannel? channel,
-  }) : _channel = channel ?? const MethodChannel(channelName) {
+  NativeAudioLifecycleBridge(this._service, {MethodChannel? channel})
+    : _channel = channel ?? const MethodChannel(channelName) {
     _channel.setMethodCallHandler(_handleNativeEvent);
   }
 

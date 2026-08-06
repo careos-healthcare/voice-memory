@@ -14,7 +14,8 @@ abstract final class PrivateArchiveReportCopy {
 
   static const whatHelpedHeading = PrivateReportCopy.whatHelpedHeading;
 
-  static const whatToWatchNextHeading = PrivateReportCopy.whatToWatchNextHeading;
+  static const whatToWatchNextHeading =
+      PrivateReportCopy.whatToWatchNextHeading;
 
   static const evidenceHeading = PrivateReportCopy.evidenceHeading;
 
@@ -26,7 +27,8 @@ abstract final class PrivateArchiveReportCopy {
 
   static const exportIncludedHeading = PrivateReportCopy.includedHeading;
 
-  static List<String> get exportIncludedItems => PrivateReportCopy.includedItems;
+  static List<String> get exportIncludedItems =>
+      PrivateReportCopy.includedItems;
 
   static const exportNotIncludedHeading = PrivateReportCopy.notIncludedHeading;
 

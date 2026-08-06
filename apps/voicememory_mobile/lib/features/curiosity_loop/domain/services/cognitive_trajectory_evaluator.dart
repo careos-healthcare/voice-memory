@@ -51,8 +51,8 @@ class CognitiveTrajectoryEvaluator {
         responseMetrics.lexicalDiversity - sourceMetrics.lexicalDiversity;
     final driftDelta =
         responseMetrics.cohesionDrift - sourceMetrics.cohesionDrift;
-    final volatilityDelta = responseMetrics.emotionalVolatility -
-        sourceMetrics.emotionalVolatility;
+    final volatilityDelta =
+        responseMetrics.emotionalVolatility - sourceMetrics.emotionalVolatility;
 
     CognitiveDirection direction;
 
@@ -80,7 +80,9 @@ class CognitiveTrajectoryEvaluator {
 
   /// Calculates a rolling cognitive stability index across historical summaries.
   /// Returns a score from 0.0 (critical drift) to 100.0 (optimal stability).
-  double calculateRollingHealthScore(List<WeeklyTelemetrySummary> weeklySummaries) {
+  double calculateRollingHealthScore(
+    List<WeeklyTelemetrySummary> weeklySummaries,
+  ) {
     if (weeklySummaries.isEmpty) return 100.0;
 
     // Take up to the 4 most recent weeks to calculate a rolling trends index
@@ -98,7 +100,8 @@ class CognitiveTrajectoryEvaluator {
       final regulationFactor = summary.downRegulationSuccessRate / 100.0;
 
       // Penalize higher drift or lexical variance
-      final deltaPenalty = (summary.averageLexicalDelta + summary.averageDriftDelta) / 2.0;
+      final deltaPenalty =
+          (summary.averageLexicalDelta + summary.averageDriftDelta) / 2.0;
       final stabilityFactor = (1.0 - deltaPenalty).clamp(0.0, 1.0);
 
       // Combine into a baseline index for the week

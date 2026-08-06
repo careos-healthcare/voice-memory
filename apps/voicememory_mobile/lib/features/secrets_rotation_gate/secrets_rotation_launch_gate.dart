@@ -29,26 +29,30 @@ abstract final class SecretsRotationLaunchGate {
       recommendation: SecretsRotationLaunchGateCopy.recommendationFor(status),
       checks: checks,
       earliestBlocker: checks
-          .where((check) => check.status == SecretsRotationLaunchGateCheckStatus.fail)
+          .where(
+            (check) =>
+                check.status == SecretsRotationLaunchGateCheckStatus.fail,
+          )
           .map((check) => check.id)
           .firstOrNull,
       productionSubmissionReady:
-          status == SecretsRotationLaunchGateStatus.readyForProductionSubmission,
+          status ==
+          SecretsRotationLaunchGateStatus.readyForProductionSubmission,
       testFlightAllowed:
-          status != SecretsRotationLaunchGateStatus.blockedForProductionSubmission,
+          status !=
+          SecretsRotationLaunchGateStatus.blockedForProductionSubmission,
     );
   }
 
   static SecretsRotationLaunchGateReport report(
     SecretsRotationLaunchGateResult result,
-  ) =>
-      SecretsRotationLaunchGateReport(
-        headline: SecretsRotationLaunchGateCopy.headline,
-        body: SecretsRotationLaunchGateCopy.body,
-        orderLine: SecretsRotationLaunchGateCopy.orderLine,
-        guardrail: SecretsRotationLaunchGateCopy.guardrail,
-        result: result,
-      );
+  ) => SecretsRotationLaunchGateReport(
+    headline: SecretsRotationLaunchGateCopy.headline,
+    body: SecretsRotationLaunchGateCopy.body,
+    orderLine: SecretsRotationLaunchGateCopy.orderLine,
+    guardrail: SecretsRotationLaunchGateCopy.guardrail,
+    result: result,
+  );
 
   static bool detectNoSecretValuesCommitted(String scannedSource) =>
       !_committedSecretPattern.hasMatch(scannedSource);
@@ -91,7 +95,9 @@ abstract final class SecretsRotationLaunchGate {
       envExampleSource.contains('STRIPE_WEBHOOK_SECRET') &&
       envExampleSource.contains('NEXT_PUBLIC_APP_URL');
 
-  static bool detectDeploySecretsCheckPresent(String deploySecretsCheckSource) =>
+  static bool detectDeploySecretsCheckPresent(
+    String deploySecretsCheckSource,
+  ) =>
       deploySecretsCheckSource.contains('validateDeploySecrets') &&
       deploySecretsCheckSource.contains('STRIPE_WEBHOOK_SECRET');
 
@@ -109,8 +115,9 @@ abstract final class SecretsRotationLaunchGate {
     bool? oldWebhookDisabled,
     bool? vercelEnvProductionVerified,
   }) {
-    final noSecretsCommitted =
-        detectNoSecretValuesCommitted(mobileLibAndDocsScanSource);
+    final noSecretsCommitted = detectNoSecretValuesCommitted(
+      mobileLibAndDocsScanSource,
+    );
     final noSecretsInLogs = detectNoSecretValuesPrintedInLogs(
       revenueCatServiceSource: revenueCatServiceSource,
       revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
@@ -122,21 +129,25 @@ abstract final class SecretsRotationLaunchGate {
       revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
       revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
     );
-    final envTemplatePresent = detectProductionEnvTemplatePresent(envExampleSource);
-    final deployCheckPresent =
-        detectDeploySecretsCheckPresent(deploySecretsCheckSource);
+    final envTemplatePresent = detectProductionEnvTemplatePresent(
+      envExampleSource,
+    );
+    final deployCheckPresent = detectDeploySecretsCheckPresent(
+      deploySecretsCheckSource,
+    );
 
     return SecretsRotationLaunchGateInput(
       stripeSecretKeyRotated: stripeSecretKeyRotated,
       stripeWebhookSecretRotated: stripeWebhookSecretRotated,
-      productionEnvUpdated: productionEnvUpdated ??
+      productionEnvUpdated:
+          productionEnvUpdated ??
           (envTemplatePresent && deployCheckPresent ? null : false),
       oldWebhookDisabled: oldWebhookDisabled,
       revenueCatApiKeySeparatedFromDocsLogs: revenueCatSeparated,
       noSecretValuesCommitted: noSecretsCommitted,
       noSecretValuesPrintedInLogs: noSecretsInLogs,
-      vercelEnvProductionVerified: vercelEnvProductionVerified ??
-          (envTemplatePresent ? null : false),
+      vercelEnvProductionVerified:
+          vercelEnvProductionVerified ?? (envTemplatePresent ? null : false),
     );
   }
 
@@ -204,10 +215,9 @@ abstract final class SecretsRotationLaunchGate {
           : SecretsRotationLaunchGateCheckStatus.fail;
     }
 
-    SecretsRotationLaunchGateCheckStatus repoBool(bool value) =>
-        value
-            ? SecretsRotationLaunchGateCheckStatus.pass
-            : SecretsRotationLaunchGateCheckStatus.fail;
+    SecretsRotationLaunchGateCheckStatus repoBool(bool value) => value
+        ? SecretsRotationLaunchGateCheckStatus.pass
+        : SecretsRotationLaunchGateCheckStatus.fail;
 
     SecretsRotationLaunchGateCheckStatus gatedTriState({
       required bool prerequisite,
@@ -273,7 +283,8 @@ abstract final class SecretsRotationLaunchGate {
         ),
       ),
       _check(
-        id: SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs,
+        id: SecretsRotationLaunchGateCheckId
+            .revenueCatApiKeySeparatedFromDocsLogs,
         status: repoBool(input.revenueCatApiKeySeparatedFromDocsLogs),
         detailLabel: input.revenueCatApiKeySeparatedFromDocsLogs
             ? SecretsRotationLaunchGateCopy.detailPass
@@ -307,7 +318,8 @@ abstract final class SecretsRotationLaunchGate {
         ),
       ),
       _check(
-        id: SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed,
+        id: SecretsRotationLaunchGateCheckId
+            .launchBlockedUntilRotationConfirmed,
         status: _launchBlockEnforced(input, status)
             ? SecretsRotationLaunchGateCheckStatus.pass
             : SecretsRotationLaunchGateCheckStatus.fail,
@@ -334,13 +346,12 @@ abstract final class SecretsRotationLaunchGate {
     required SecretsRotationLaunchGateCheckId id,
     required SecretsRotationLaunchGateCheckStatus status,
     required String detailLabel,
-  }) =>
-      SecretsRotationLaunchGateCheck(
-        id: id,
-        label: SecretsRotationLaunchGateCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => SecretsRotationLaunchGateCheck(
+    id: id,
+    label: SecretsRotationLaunchGateCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 }
 
 class SecretsRotationLaunchGateInput {

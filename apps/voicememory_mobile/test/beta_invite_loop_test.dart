@@ -37,16 +37,15 @@ BetaInviteLoopContext _context({
   bool dismissed = false,
   bool hasFirstProof = true,
   BetaInviteLoopTrigger? trigger = BetaInviteLoopTrigger.usefulFeedback,
-}) =>
-    BetaInviteLoopContext(
-      surface: surface,
-      source: 'test',
-      entryCount: entryCount,
-      betaMissionEnabled: betaMissionEnabled,
-      dismissed: dismissed,
-      hasFirstProof: hasFirstProof,
-      trigger: trigger,
-    );
+}) => BetaInviteLoopContext(
+  surface: surface,
+  source: 'test',
+  entryCount: entryCount,
+  betaMissionEnabled: betaMissionEnabled,
+  dismissed: dismissed,
+  hasFirstProof: hasFirstProof,
+  trigger: trigger,
+);
 
 BetaInviteLoopResult _visibleResult({BetaInviteLoopContext? context}) =>
     BetaInviteLoopEngine.build(context: context ?? _context());
@@ -59,10 +58,7 @@ Future<void> _pumpCard(
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
-        body: BetaInviteCard.test(
-          result: result,
-          onDismiss: onDismiss,
-        ),
+        body: BetaInviteCard.test(result: result, onDismiss: onDismiss),
       ),
     ),
   );
@@ -104,7 +100,10 @@ void main() {
 
   group('BetaInviteCopy loop', () {
     test('uses loop card copy', () {
-      expect(BetaInviteCopy.loopCardTitle, 'Know one person who would test this?');
+      expect(
+        BetaInviteCopy.loopCardTitle,
+        'Know one person who would test this?',
+      );
       expect(
         BetaInviteCopy.loopCardBody,
         'ArchiveMe works best when someone saves a few real moments and comes back when something returns.',
@@ -122,10 +121,7 @@ void main() {
     test('hidden before proof', () {
       expect(
         BetaInviteLoopEngine.shouldShowCard(
-          _context(
-            hasFirstProof: false,
-            trigger: null,
-          ),
+          _context(hasFirstProof: false, trigger: null),
         ),
         isFalse,
       );
@@ -214,7 +210,9 @@ void main() {
     });
 
     test('no private text or user-specific evidence', () {
-      final displayed = BetaInviteCopy.loopDisplayedStrings().join(' ').toLowerCase();
+      final displayed = BetaInviteCopy.loopDisplayedStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in BetaInviteCopy.loopBannedPrivateTerms) {
         expect(displayed, isNot(contains(banned)));
       }

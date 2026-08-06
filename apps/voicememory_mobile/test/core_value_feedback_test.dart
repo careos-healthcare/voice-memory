@@ -23,7 +23,8 @@ import 'package:voicememory_mobile/widgets/debug/beta_release_qa_card.dart';
 import 'package:voicememory_mobile/config/developer_settings_gate.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/core_value_feedback/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/core_value_feedback/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -36,43 +37,40 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry({
-  required String id,
-  String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12),
-      transcript: transcript ??
-          'A long enough transcript to count as a saved reflection for tests.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'You mentioned pressure in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+JournalEntry _entry({required String id, String? transcript}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12),
+  transcript:
+      transcript ??
+      'A long enough transcript to count as a saved reflection for tests.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'You mentioned pressure in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _relatedThree() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'Still agreed to one more thing even though I had no capacity left.',
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'Still agreed to one more thing even though I had no capacity left.',
+  ),
+];
 
 void main() {
   tearDown(() async {
@@ -238,8 +236,14 @@ void main() {
         'Did ArchiveMe show something repeating in your own words that was worth tracking?',
       );
       expect(CoreValueFeedbackCopy.title, 'Beta feedback');
-      expect(CoreValueFeedbackCopy.helper, 'This is the main thing I’m testing.');
-      expect(CoreValueFeedbackCopy.savedMessage, 'Beta feedback saved. Thank you.');
+      expect(
+        CoreValueFeedbackCopy.helper,
+        'This is the main thing I’m testing.',
+      );
+      expect(
+        CoreValueFeedbackCopy.savedMessage,
+        'Beta feedback saved. Thank you.',
+      );
       expect(CoreValueFeedbackCopy.answerYes, 'Yes');
       expect(CoreValueFeedbackCopy.answerNotYet, 'Not yet');
       expect(CoreValueFeedbackCopy.answerGeneric, 'Felt generic');
@@ -353,7 +357,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('core_value_feedback_saved')), findsOneWidget);
+      expect(
+        find.byKey(const Key('core_value_feedback_saved')),
+        findsOneWidget,
+      );
       expect(find.text(CoreValueFeedbackCopy.savedMessage), findsOneWidget);
       expect(find.text(CoreValueFeedbackCopy.question), findsNothing);
     });
@@ -373,7 +380,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('core_value_feedback_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('core_value_feedback_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('no duplicate primary CTA', (tester) async {
@@ -451,7 +461,9 @@ void main() {
 
   group('Developer diagnostics', () {
     test('beta release QA surfaces answer state', () async {
-      final tempDir = Directory.systemTemp.createTempSync('vm_core_value_diag_');
+      final tempDir = Directory.systemTemp.createTempSync(
+        'vm_core_value_diag_',
+      );
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
         skipRevenueCat: true,
@@ -464,10 +476,15 @@ void main() {
       );
 
       final report = BetaReleaseQaEngine.build();
-      expect(report.coreValueFeedbackAnswer, CoreValueFeedbackCopy.answerGeneric);
+      expect(
+        report.coreValueFeedbackAnswer,
+        CoreValueFeedbackCopy.answerGeneric,
+      );
     });
 
-    testWidgets('beta metrics decision card shows core value feedback', (tester) async {
+    testWidgets('beta metrics decision card shows core value feedback', (
+      tester,
+    ) async {
       DeveloperSettingsGate.applyLoadedUnlock(true);
       final store = CoreValueFeedbackStore(_MemoryPrefs());
       await store.saveAnswer(
@@ -497,7 +514,9 @@ void main() {
       expect(find.text(CoreValueFeedbackCopy.answerNotYet), findsOneWidget);
     });
 
-    testWidgets('beta release QA card shows core value feedback', (tester) async {
+    testWidgets('beta release QA card shows core value feedback', (
+      tester,
+    ) async {
       DeveloperSettingsGate.applyLoadedUnlock(true);
       await tester.pumpWidget(
         MaterialApp(

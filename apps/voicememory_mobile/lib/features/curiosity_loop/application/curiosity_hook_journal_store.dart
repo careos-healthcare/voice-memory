@@ -7,7 +7,8 @@ abstract interface class CuriosityHookJournalStore {
 }
 
 /// [JournalStore] adapter for curiosity hook orchestration.
-class JournalStoreCuriosityHookJournalStore implements CuriosityHookJournalStore {
+class JournalStoreCuriosityHookJournalStore
+    implements CuriosityHookJournalStore {
   JournalStoreCuriosityHookJournalStore(this._journalStore);
 
   final JournalStore _journalStore;

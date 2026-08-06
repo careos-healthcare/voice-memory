@@ -23,34 +23,37 @@ void main() {
       );
     });
 
-    test('shouldAttemptCaptureResume requires foreground and healthy session', () {
-      expect(
-        LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
-          state: AppLifecycleState.resumed,
-          sessionActive: true,
-          hasError: false,
-          isSaving: false,
-        ),
-        isTrue,
-      );
-      expect(
-        LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
-          state: AppLifecycleState.paused,
-          sessionActive: true,
-          hasError: false,
-          isSaving: false,
-        ),
-        isFalse,
-      );
-      expect(
-        LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
-          state: AppLifecycleState.resumed,
-          sessionActive: true,
-          hasError: true,
-          isSaving: false,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'shouldAttemptCaptureResume requires foreground and healthy session',
+      () {
+        expect(
+          LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
+            state: AppLifecycleState.resumed,
+            sessionActive: true,
+            hasError: false,
+            isSaving: false,
+          ),
+          isTrue,
+        );
+        expect(
+          LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
+            state: AppLifecycleState.paused,
+            sessionActive: true,
+            hasError: false,
+            isSaving: false,
+          ),
+          isFalse,
+        );
+        expect(
+          LiveVoiceLifecyclePolicy.shouldAttemptCaptureResume(
+            state: AppLifecycleState.resumed,
+            sessionActive: true,
+            hasError: true,
+            isSaving: false,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 }

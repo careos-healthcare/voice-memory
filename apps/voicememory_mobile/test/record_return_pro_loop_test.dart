@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.d
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/journal_screen.dart';
+import 'package:archiveme_research/screens/journal_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -116,7 +116,10 @@ void main() {
         contains('Come back when this shows up again'),
       );
       expect(RecordReturnProCopy.evidenceViewArchive, 'View archive');
-      expect(RecordReturnProCopy.evidenceRecordAnother, 'Record if it happens again');
+      expect(
+        RecordReturnProCopy.evidenceRecordAnother,
+        'Record if it happens again',
+      );
     });
 
     test('return cue copy is exact', () {
@@ -406,8 +409,7 @@ void main() {
           .map((w) => w.data ?? '')
           .join(' ')
           .toLowerCase();
-      final withoutAllowedNoPattern =
-          text.replaceAll('no pattern yet', '');
+      final withoutAllowedNoPattern = text.replaceAll('no pattern yet', '');
       expect(withoutAllowedNoPattern, isNot(contains('pattern')));
       expect(text, isNot(contains('changed')));
       expect(text, isNot(contains('returned')));
@@ -502,7 +504,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Free shows the first useful proof. Pro keeps the longer trail.'), findsOneWidget);
+      expect(
+        find.text(
+          'Free shows the first useful proof. Pro keeps the longer trail.',
+        ),
+        findsOneWidget,
+      );
       expect(
         find.text(
           'Free shows the first useful proof. Pro keeps older evidence and longer archive history.',

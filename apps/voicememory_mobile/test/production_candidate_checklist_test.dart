@@ -23,26 +23,25 @@ ProductionCandidateChecklist _checklist({
   bool productionSecretsRotated = true,
   bool physicalDeviceSmokeTestPassed = true,
   bool testFlightBuildUploaded = true,
-}) =>
-    ProductionCandidateChecklist(
-      betaResultsPassed: betaResultsPassed,
-      proofProtectionBaselineActive: proofProtectionBaselineActive,
-      usefulProofStable: usefulProofStable,
-      tooVagueNotRelevantLow: tooVagueNotRelevantLow,
-      firstSessionTargetMet: firstSessionTargetMet,
-      evidenceTrailClearTargetMet: evidenceTrailClearTargetMet,
-      proUnderstandingTargetMet: proUnderstandingTargetMet,
-      pricingSignalAcceptable: pricingSignalAcceptable,
-      restorePurchasesVerified: restorePurchasesVerified,
-      revenueCatProductsVerified: revenueCatProductsVerified,
-      appStoreSupportUrlReady: appStoreSupportUrlReady,
-      privacyPolicyReady: privacyPolicyReady,
-      appStoreScreenshotsReady: appStoreScreenshotsReady,
-      appStoreMetadataReady: appStoreMetadataReady,
-      productionSecretsRotated: productionSecretsRotated,
-      physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
-      testFlightBuildUploaded: testFlightBuildUploaded,
-    );
+}) => ProductionCandidateChecklist(
+  betaResultsPassed: betaResultsPassed,
+  proofProtectionBaselineActive: proofProtectionBaselineActive,
+  usefulProofStable: usefulProofStable,
+  tooVagueNotRelevantLow: tooVagueNotRelevantLow,
+  firstSessionTargetMet: firstSessionTargetMet,
+  evidenceTrailClearTargetMet: evidenceTrailClearTargetMet,
+  proUnderstandingTargetMet: proUnderstandingTargetMet,
+  pricingSignalAcceptable: pricingSignalAcceptable,
+  restorePurchasesVerified: restorePurchasesVerified,
+  revenueCatProductsVerified: revenueCatProductsVerified,
+  appStoreSupportUrlReady: appStoreSupportUrlReady,
+  privacyPolicyReady: privacyPolicyReady,
+  appStoreScreenshotsReady: appStoreScreenshotsReady,
+  appStoreMetadataReady: appStoreMetadataReady,
+  productionSecretsRotated: productionSecretsRotated,
+  physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
+  testFlightBuildUploaded: testFlightBuildUploaded,
+);
 
 void main() {
   group('ProductionCandidateChecklist.resolveStatus', () {
@@ -102,48 +101,54 @@ void main() {
       );
     });
 
-    test('beta passed but restore purchases missing returns betaReadyButStoreNotReady',
-        () {
-      expect(
-        _checklist(restorePurchasesVerified: false).resolveStatus(),
-        ProductionCandidateStatus.betaReadyButStoreNotReady,
-      );
-    });
-
-    test('beta passed but RevenueCat missing returns betaReadyButStoreNotReady',
-        () {
-      expect(
-        _checklist(revenueCatProductsVerified: false).resolveStatus(),
-        ProductionCandidateStatus.betaReadyButStoreNotReady,
-      );
-    });
-
     test(
-        'beta passed but screenshots metadata privacy support missing returns betaReadyButStoreNotReady',
-        () {
-      for (final checklist in [
-        _checklist(appStoreScreenshotsReady: false),
-        _checklist(appStoreMetadataReady: false),
-        _checklist(privacyPolicyReady: false),
-        _checklist(appStoreSupportUrlReady: false),
-        _checklist(physicalDeviceSmokeTestPassed: false),
-        _checklist(testFlightBuildUploaded: false),
-      ]) {
+      'beta passed but restore purchases missing returns betaReadyButStoreNotReady',
+      () {
         expect(
-          checklist.resolveStatus(),
+          _checklist(restorePurchasesVerified: false).resolveStatus(),
           ProductionCandidateStatus.betaReadyButStoreNotReady,
         );
-      }
-    });
+      },
+    );
 
     test(
-        'beta and store ready but productionSecretsRotated false returns storeReadyButSecretsNotReady',
-        () {
-      expect(
-        _checklist(productionSecretsRotated: false).resolveStatus(),
-        ProductionCandidateStatus.storeReadyButSecretsNotReady,
-      );
-    });
+      'beta passed but RevenueCat missing returns betaReadyButStoreNotReady',
+      () {
+        expect(
+          _checklist(revenueCatProductsVerified: false).resolveStatus(),
+          ProductionCandidateStatus.betaReadyButStoreNotReady,
+        );
+      },
+    );
+
+    test(
+      'beta passed but screenshots metadata privacy support missing returns betaReadyButStoreNotReady',
+      () {
+        for (final checklist in [
+          _checklist(appStoreScreenshotsReady: false),
+          _checklist(appStoreMetadataReady: false),
+          _checklist(privacyPolicyReady: false),
+          _checklist(appStoreSupportUrlReady: false),
+          _checklist(physicalDeviceSmokeTestPassed: false),
+          _checklist(testFlightBuildUploaded: false),
+        ]) {
+          expect(
+            checklist.resolveStatus(),
+            ProductionCandidateStatus.betaReadyButStoreNotReady,
+          );
+        }
+      },
+    );
+
+    test(
+      'beta and store ready but productionSecretsRotated false returns storeReadyButSecretsNotReady',
+      () {
+        expect(
+          _checklist(productionSecretsRotated: false).resolveStatus(),
+          ProductionCandidateStatus.storeReadyButSecretsNotReady,
+        );
+      },
+    );
 
     test('everything true returns readyForSubmission', () {
       expect(
@@ -165,12 +170,12 @@ void main() {
       expect(status, ProductionCandidateStatus.betaReadyButStoreNotReady);
       expect(
         report.missingItems,
-        containsAll([
-          'Restore purchases verified',
-          'App Store metadata ready',
-        ]),
+        containsAll(['Restore purchases verified', 'App Store metadata ready']),
       );
-      expect(report.missingItems, isNot(contains('Beta results reader passed')));
+      expect(
+        report.missingItems,
+        isNot(contains('Beta results reader passed')),
+      );
     });
 
     test('returns correct nextAction for each status', () {
@@ -187,18 +192,18 @@ void main() {
 
       for (final entry in cases.entries) {
         final checklist = switch (entry.key) {
-          ProductionCandidateStatus.notReady =>
-            _checklist(betaResultsPassed: false),
-          ProductionCandidateStatus.betaReadyButStoreNotReady =>
-            _checklist(restorePurchasesVerified: false),
-          ProductionCandidateStatus.storeReadyButSecretsNotReady =>
-            _checklist(productionSecretsRotated: false),
+          ProductionCandidateStatus.notReady => _checklist(
+            betaResultsPassed: false,
+          ),
+          ProductionCandidateStatus.betaReadyButStoreNotReady => _checklist(
+            restorePurchasesVerified: false,
+          ),
+          ProductionCandidateStatus.storeReadyButSecretsNotReady => _checklist(
+            productionSecretsRotated: false,
+          ),
           ProductionCandidateStatus.readyForSubmission => _checklist(),
         };
-        final report = ProductionCandidateCopy.report(
-          checklist,
-          entry.key,
-        );
+        final report = ProductionCandidateCopy.report(checklist, entry.key);
         expect(report.title, ProductionCandidateCopy.titleFor(entry.key));
         expect(report.nextAction, entry.value);
         expect(report.guardrail, ProductionCandidateCopy.guardrail);

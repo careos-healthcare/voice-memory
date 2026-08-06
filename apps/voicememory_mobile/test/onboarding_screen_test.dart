@@ -11,22 +11,17 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 3}) async {
 }
 
 void main() {
-  testWidgets('welcome screen uses landing positioning copy', (
-    tester,
-  ) async {
+  testWidgets('welcome screen uses landing positioning copy', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester, frames: 5);
 
-      expect(
-        find.text('When it repeats, save it'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('save one real moment'), findsOneWidget);
-      expect(
-        find.textContaining('Not a diary'),
-        findsOneWidget,
-      );
-    expect(find.text('Notice the pressure loops that keep repeating'), findsNothing);
+    expect(find.text('When it repeats, save it'), findsOneWidget);
+    expect(find.textContaining('save one real moment'), findsOneWidget);
+    expect(find.textContaining('Not a diary'), findsOneWidget);
+    expect(
+      find.text('Notice the pressure loops that keep repeating'),
+      findsNothing,
+    );
     expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
   });
 

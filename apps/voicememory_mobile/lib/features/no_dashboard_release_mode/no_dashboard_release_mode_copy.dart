@@ -32,7 +32,8 @@ abstract final class NoDashboardReleaseModeCopy {
   static const violatedLine =
       'Release mode is drifting toward dashboard positioning. Hide risky surfaces.';
 
-  static String labelFor(NoDashboardReleaseSurface surface) => switch (surface) {
+  static String labelFor(NoDashboardReleaseSurface surface) =>
+      switch (surface) {
         NoDashboardReleaseSurface.record => 'Record',
         NoDashboardReleaseSurface.typeInstead => 'Type instead',
         NoDashboardReleaseSurface.promptAssist => 'Prompt assist',
@@ -97,7 +98,4 @@ enum NoDashboardReleaseSurface {
   archiveAnalyst,
 }
 
-enum NoDashboardReleaseModeDecision {
-  hardened,
-  violated,
-}
+enum NoDashboardReleaseModeDecision { hardened, violated }

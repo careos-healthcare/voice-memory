@@ -11,10 +11,7 @@ import '../../theme/app_spacing.dart';
 
 /// Small first-use prompt inside the capture block — entry count 0 only.
 class RecordFirstUsePromptBlock extends StatelessWidget {
-  const RecordFirstUsePromptBlock({
-    super.key,
-    this.hideLeadCopy = false,
-  });
+  const RecordFirstUsePromptBlock({super.key, this.hideLeadCopy = false});
 
   /// When the archive journey explainer is visible, step 1 already covers the
   /// lead title and body — keep examples and footer only.
@@ -24,14 +21,12 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     unawaited(BetaActivationLoopTracker.trackFirstUsePromptSeen());
     final titleStyle = ArchiveMobileTypography.listTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final footerStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final footerStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Column(
       key: const Key('record_first_use_prompt_block'),

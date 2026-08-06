@@ -94,8 +94,7 @@ class BetaFeedbackResponseEngine {
       return BetaFeedbackIssueIds.weakAlternative;
     }
 
-    if (activationReached &&
-        (input.fitIsUnclear || input.fitNotAnswered)) {
+    if (activationReached && (input.fitIsUnclear || input.fitNotAnswered)) {
       return BetaFeedbackIssueIds.unclearPromise;
     }
 
@@ -103,54 +102,49 @@ class BetaFeedbackResponseEngine {
   }
 
   BetaFeedbackResponseResult _resultForIssue(String issueId) {
-    final (
-      problem,
-      change,
-      success,
-      notToChange,
-    ) = switch (issueId) {
+    final (problem, change, success, notToChange) = switch (issueId) {
       BetaFeedbackIssueIds.unclearPromise => (
-          BetaFeedbackResponseCopy.unclearPromiseProblem,
-          BetaFeedbackResponseCopy.unclearPromiseChange,
-          BetaFeedbackResponseCopy.unclearPromiseSuccess,
-          BetaFeedbackResponseCopy.doNotAddBackend,
-        ),
+        BetaFeedbackResponseCopy.unclearPromiseProblem,
+        BetaFeedbackResponseCopy.unclearPromiseChange,
+        BetaFeedbackResponseCopy.unclearPromiseSuccess,
+        BetaFeedbackResponseCopy.doNotAddBackend,
+      ),
       BetaFeedbackIssueIds.firstMomentBlocked => (
-          BetaFeedbackResponseCopy.firstMomentBlockedProblem,
-          BetaFeedbackResponseCopy.firstMomentBlockedChange,
-          BetaFeedbackResponseCopy.firstMomentBlockedSuccess,
-          BetaFeedbackResponseCopy.doNotEnablePayments,
-        ),
+        BetaFeedbackResponseCopy.firstMomentBlockedProblem,
+        BetaFeedbackResponseCopy.firstMomentBlockedChange,
+        BetaFeedbackResponseCopy.firstMomentBlockedSuccess,
+        BetaFeedbackResponseCopy.doNotEnablePayments,
+      ),
       BetaFeedbackIssueIds.activationDropoff => (
-          BetaFeedbackResponseCopy.activationDropoffProblem,
-          BetaFeedbackResponseCopy.activationDropoffChange,
-          BetaFeedbackResponseCopy.activationDropoffSuccess,
-          BetaFeedbackResponseCopy.doNotEnablePayments,
-        ),
+        BetaFeedbackResponseCopy.activationDropoffProblem,
+        BetaFeedbackResponseCopy.activationDropoffChange,
+        BetaFeedbackResponseCopy.activationDropoffSuccess,
+        BetaFeedbackResponseCopy.doNotEnablePayments,
+      ),
       BetaFeedbackIssueIds.repetitiveLoop => (
-          BetaFeedbackResponseCopy.repetitiveLoopProblem,
-          BetaFeedbackResponseCopy.repetitiveLoopChange,
-          BetaFeedbackResponseCopy.repetitiveLoopSuccess,
-          BetaFeedbackResponseCopy.doNotAddBackend,
-        ),
+        BetaFeedbackResponseCopy.repetitiveLoopProblem,
+        BetaFeedbackResponseCopy.repetitiveLoopChange,
+        BetaFeedbackResponseCopy.repetitiveLoopSuccess,
+        BetaFeedbackResponseCopy.doNotAddBackend,
+      ),
       BetaFeedbackIssueIds.weakAlternative => (
-          BetaFeedbackResponseCopy.weakAlternativeProblem,
-          BetaFeedbackResponseCopy.weakAlternativeChange,
-          BetaFeedbackResponseCopy.weakAlternativeSuccess,
-          BetaFeedbackResponseCopy.doNotEnablePayments,
-        ),
+        BetaFeedbackResponseCopy.weakAlternativeProblem,
+        BetaFeedbackResponseCopy.weakAlternativeChange,
+        BetaFeedbackResponseCopy.weakAlternativeSuccess,
+        BetaFeedbackResponseCopy.doNotEnablePayments,
+      ),
       BetaFeedbackIssueIds.paidSignalReady => (
-          BetaFeedbackResponseCopy.paidSignalReadyProblem,
-          BetaFeedbackResponseCopy.paidSignalReadyChange,
-          BetaFeedbackResponseCopy.paidSignalReadySuccess,
-          BetaFeedbackResponseCopy.doNotEnablePayments,
-        ),
+        BetaFeedbackResponseCopy.paidSignalReadyProblem,
+        BetaFeedbackResponseCopy.paidSignalReadyChange,
+        BetaFeedbackResponseCopy.paidSignalReadySuccess,
+        BetaFeedbackResponseCopy.doNotEnablePayments,
+      ),
       BetaFeedbackIssueIds.quickCaptureStillWork => (
-          BetaFeedbackResponseCopy.quickCaptureStillWorkProblem,
-          BetaFeedbackResponseCopy.quickCaptureStillWorkChange,
-          BetaFeedbackResponseCopy.quickCaptureStillWorkSuccess,
-          BetaFeedbackResponseCopy.doNotAddBackend,
-        ),
+        BetaFeedbackResponseCopy.quickCaptureStillWorkProblem,
+        BetaFeedbackResponseCopy.quickCaptureStillWorkChange,
+        BetaFeedbackResponseCopy.quickCaptureStillWorkSuccess,
+        BetaFeedbackResponseCopy.doNotAddBackend,
+      ),
       _ => ('', '', '', ''),
     };
 
@@ -161,7 +155,9 @@ class BetaFeedbackResponseEngine {
       issueId: issueId,
       localBetaSignalLabel:
           '${BetaFeedbackResponseCopy.localBetaSignalPrefix}: $issueId',
-      suggestedNextFixLabel: BetaFeedbackResponseCopy.suggestedFixForIssue(issueId),
+      suggestedNextFixLabel: BetaFeedbackResponseCopy.suggestedFixForIssue(
+        issueId,
+      ),
       recommendedResponseSummary: change,
       productProblemSummary: problem,
       whatToChangeSummary: change,

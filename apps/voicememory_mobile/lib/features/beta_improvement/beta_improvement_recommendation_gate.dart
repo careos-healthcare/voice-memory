@@ -1,4 +1,3 @@
-import '../beta/archive_beta_mission_gate.dart';
 import '../beta_decision/beta_decision_engine.dart';
 import '../beta_decision/beta_decision_model.dart';
 import '../beta_decision/beta_tester_outcome_store.dart';
@@ -30,26 +29,22 @@ abstract final class BetaImprovementRecommendationGate {
   static bool isBranchActive(
     BetaImprovementBranch branch, {
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      activeBranch(outcomesOverride: outcomesOverride) == branch;
+  }) => activeBranch(outcomesOverride: outcomesOverride) == branch;
 
   static bool evidenceAllowsBranch({
     required BetaImprovementBranch branch,
     required int entryCount,
     required bool hasMeaningfulProof,
     bool expansionAllowed = false,
-  }) =>
-      switch (branch) {
-        BetaImprovementBranch.recordOnboardingCopy => entryCount <= 1,
-        BetaImprovementBranch.captureFriction => entryCount == 0,
-        BetaImprovementBranch.returnReason =>
-          entryCount >= 1 && entryCount <= 2,
-        BetaImprovementBranch.proofEmotionalClarity => entryCount >= 3,
-        BetaImprovementBranch.proPackaging => hasMeaningfulProof,
-        BetaImprovementBranch.proUtility =>
-          hasMeaningfulProof && expansionAllowed,
-        BetaImprovementBranch.none => false,
-      };
+  }) => switch (branch) {
+    BetaImprovementBranch.recordOnboardingCopy => entryCount <= 1,
+    BetaImprovementBranch.captureFriction => entryCount == 0,
+    BetaImprovementBranch.returnReason => entryCount >= 1 && entryCount <= 2,
+    BetaImprovementBranch.proofEmotionalClarity => entryCount >= 3,
+    BetaImprovementBranch.proPackaging => hasMeaningfulProof,
+    BetaImprovementBranch.proUtility => hasMeaningfulProof && expansionAllowed,
+    BetaImprovementBranch.none => false,
+  };
 
   static bool shouldApplyBranch({
     required BetaImprovementBranch branch,
@@ -79,8 +74,7 @@ abstract final class BetaImprovementRecommendationGate {
       'recordOnboardingCopy' => BetaImprovementBranch.recordOnboardingCopy,
       'captureFriction' => BetaImprovementBranch.captureFriction,
       'returnReason' => BetaImprovementBranch.returnReason,
-      'proofEmotionalClarity' =>
-        BetaImprovementBranch.proofEmotionalClarity,
+      'proofEmotionalClarity' => BetaImprovementBranch.proofEmotionalClarity,
       'proPackaging' => BetaImprovementBranch.proPackaging,
       'proUtility' => BetaImprovementBranch.proUtility,
       'none' => BetaImprovementBranch.none,
@@ -91,42 +85,39 @@ abstract final class BetaImprovementRecommendationGate {
   static BetaImprovementBranch _mapRecommendation(
     BetaNextBuildRecommendation recommendation, {
     required bool expansionAllowed,
-  }) =>
-      switch (recommendation) {
-        BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
-          BetaImprovementBranch.recordOnboardingCopy,
-        BetaNextBuildRecommendation.fixCaptureFriction =>
-          BetaImprovementBranch.captureFriction,
-        BetaNextBuildRecommendation.addReturnReason =>
-          BetaImprovementBranch.returnReason,
-        BetaNextBuildRecommendation.improveProofEmotionalClarity =>
-          BetaImprovementBranch.proofEmotionalClarity,
-        BetaNextBuildRecommendation.sharpenProPackaging =>
-          BetaImprovementBranch.proPackaging,
-        BetaNextBuildRecommendation.expandProUtility =>
-          expansionAllowed
-              ? BetaImprovementBranch.proUtility
-              : BetaImprovementBranch.none,
-        BetaNextBuildRecommendation.holdDoNotExpand ||
-        BetaNextBuildRecommendation.insufficientData ||
-        BetaNextBuildRecommendation.noFailingBranch =>
-          BetaImprovementBranch.none,
-      };
+  }) => switch (recommendation) {
+    BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
+      BetaImprovementBranch.recordOnboardingCopy,
+    BetaNextBuildRecommendation.fixCaptureFriction =>
+      BetaImprovementBranch.captureFriction,
+    BetaNextBuildRecommendation.addReturnReason =>
+      BetaImprovementBranch.returnReason,
+    BetaNextBuildRecommendation.improveProofEmotionalClarity =>
+      BetaImprovementBranch.proofEmotionalClarity,
+    BetaNextBuildRecommendation.sharpenProPackaging =>
+      BetaImprovementBranch.proPackaging,
+    BetaNextBuildRecommendation.expandProUtility =>
+      expansionAllowed
+          ? BetaImprovementBranch.proUtility
+          : BetaImprovementBranch.none,
+    BetaNextBuildRecommendation.holdDoNotExpand ||
+    BetaNextBuildRecommendation.insufficientData ||
+    BetaNextBuildRecommendation.noFailingBranch => BetaImprovementBranch.none,
+  };
 
   static String branchLabel(BetaImprovementBranch branch) {
     if (ProofToProPathEngine.isProofToProOverride()) {
       return 'Proof-to-Pro path (paired)';
     }
     return switch (branch) {
-        BetaImprovementBranch.recordOnboardingCopy =>
-          'Record/onboarding copy fix',
-        BetaImprovementBranch.captureFriction => 'Capture friction fix',
-        BetaImprovementBranch.returnReason => 'Return reminder plan',
-        BetaImprovementBranch.proofEmotionalClarity =>
-          'Proof emotional clarity',
-        BetaImprovementBranch.proPackaging => 'Pro packaging',
-        BetaImprovementBranch.proUtility => 'Pro utility preview',
-        BetaImprovementBranch.none => 'None (baseline V1)',
-      };
+      BetaImprovementBranch.recordOnboardingCopy =>
+        'Record/onboarding copy fix',
+      BetaImprovementBranch.captureFriction => 'Capture friction fix',
+      BetaImprovementBranch.returnReason => 'Return reminder plan',
+      BetaImprovementBranch.proofEmotionalClarity => 'Proof emotional clarity',
+      BetaImprovementBranch.proPackaging => 'Pro packaging',
+      BetaImprovementBranch.proUtility => 'Pro utility preview',
+      BetaImprovementBranch.none => 'None (baseline V1)',
+    };
   }
 }

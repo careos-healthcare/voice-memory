@@ -46,28 +46,30 @@ class ArchiveChangeTimelineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.35,
-      fontSize: 13,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-      fontSize: 14,
-      height: 1.3,
-    );
-    final chipStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.35, fontSize: 13);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          height: 1.3,
+        );
+    final chipStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        );
 
     return Container(
       key: const Key('archive_change_timeline_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -144,8 +146,9 @@ class _TimelineRow extends StatelessWidget {
                     color: ArchiveChangeTimelineCard._railColor,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: ArchiveChangeTimelineCard._railColor
-                          .withValues(alpha: 0.35),
+                      color: ArchiveChangeTimelineCard._railColor.withValues(
+                        alpha: 0.35,
+                      ),
                       width: 3,
                     ),
                   ),
@@ -155,8 +158,9 @@ class _TimelineRow extends StatelessWidget {
                     child: Container(
                       width: railWidth,
                       margin: const EdgeInsets.symmetric(vertical: 2),
-                      color: ArchiveChangeTimelineCard._railColor
-                          .withValues(alpha: 0.22),
+                      color: ArchiveChangeTimelineCard._railColor.withValues(
+                        alpha: 0.22,
+                      ),
                     ),
                   )
                 else
@@ -167,9 +171,7 @@ class _TimelineRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: isLast ? 0 : AppSpacing.sm,
-              ),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

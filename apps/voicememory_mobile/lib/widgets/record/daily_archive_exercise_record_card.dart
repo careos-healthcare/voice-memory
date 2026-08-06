@@ -58,10 +58,9 @@ class DailyArchiveExerciseRecordCard extends StatelessWidget {
           Text(
             exercise.hint,
             key: const Key('daily_archive_exercise_record_hint'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.sm),
           OutlinedButton(

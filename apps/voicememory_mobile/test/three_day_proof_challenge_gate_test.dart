@@ -14,17 +14,15 @@ const _docsPath = 'docs/THREE_DAY_PROOF_CHALLENGE.md';
 ThreeDayProofChallengeGateInput _input({
   bool? paidIntentBetaComplete,
   bool? usersNeedThreeDayChallenge,
-}) =>
-    ThreeDayProofChallengeGateInput(
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
-    );
+}) => ThreeDayProofChallengeGateInput(
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
+);
 
 ThreeDayProofChallengeRule _rule(
   ThreeDayProofChallengeGateResult result,
   ThreeDayProofChallengeRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('ThreeDayProofChallengeGate.build', () {
@@ -49,26 +47,26 @@ void main() {
       expect(result.promise, ThreeDayProofChallengeCopy.promise);
     });
 
-    test('paid-intent beta complete without user need -> futureAcquisitionOnly', () {
-      final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: true,
-          usersNeedThreeDayChallenge: false,
-        ),
-      );
-      expect(
-        result.decision,
-        ThreeDayProofChallengeGateDecision.futureAcquisitionOnly,
-      );
-      expect(result.v1SurfacingBlocked, isTrue);
-    });
+    test(
+      'paid-intent beta complete without user need -> futureAcquisitionOnly',
+      () {
+        final result = ThreeDayProofChallengeGate.build(
+          _input(
+            paidIntentBetaComplete: true,
+            usersNeedThreeDayChallenge: false,
+          ),
+        );
+        expect(
+          result.decision,
+          ThreeDayProofChallengeGateDecision.futureAcquisitionOnly,
+        );
+        expect(result.v1SurfacingBlocked, isTrue);
+      },
+    );
 
     test('paid-intent beta and user need -> v1SurfacingAllowed', () {
       final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: true,
-          usersNeedThreeDayChallenge: true,
-        ),
+        _input(paidIntentBetaComplete: true, usersNeedThreeDayChallenge: true),
       );
       expect(
         result.decision,
@@ -79,10 +77,7 @@ void main() {
 
     test('user need without paid-intent beta -> futureAcquisitionOnly', () {
       final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: false,
-          usersNeedThreeDayChallenge: true,
-        ),
+        _input(paidIntentBetaComplete: false, usersNeedThreeDayChallenge: true),
       );
       expect(
         result.decision,
@@ -94,7 +89,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = ThreeDayProofChallengeGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, ThreeDayProofChallengeRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          ThreeDayProofChallengeRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

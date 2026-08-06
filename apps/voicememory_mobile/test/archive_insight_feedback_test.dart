@@ -10,7 +10,7 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/belief_evidence_screen.dart';
-import 'package:voicememory_mobile/screens/weekly_archive_review_screen.dart';
+import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/archive_home_summary_card.dart';
@@ -21,65 +21,64 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 List<JournalEntry> _fiveDistinctWorkEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-      _voiceEntry(
-        id: 'e5',
-        transcript:
-            'The same hurry showed up at home with my partner after a long day at work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day at the office.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I noticed the same hurry showing up before I answered anyone at work.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The deadline pressure returned, but I caught it earlier this time.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+  _voiceEntry(
+    id: 'e5',
+    transcript:
+        'The same hurry showed up at home with my partner after a long day at work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 const _bannedWords = [
   'diagnosis',
@@ -120,7 +119,10 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void _expectFeedbackControlsPresent(WidgetTester tester) {
-  expect(find.byKey(const Key('archive_insight_feedback_controls')), findsOneWidget);
+  expect(
+    find.byKey(const Key('archive_insight_feedback_controls')),
+    findsOneWidget,
+  );
   expect(find.text(ArchiveInsightFeedbackCopy.feelsRight), findsOneWidget);
   expect(find.text(ArchiveInsightFeedbackCopy.notQuite), findsOneWidget);
   expect(find.text(ArchiveInsightFeedbackCopy.hideThis), findsOneWidget);
@@ -128,7 +130,10 @@ void _expectFeedbackControlsPresent(WidgetTester tester) {
 }
 
 void _expectFeedbackControlsAbsent(WidgetTester tester) {
-  expect(find.byKey(const Key('archive_insight_feedback_controls')), findsNothing);
+  expect(
+    find.byKey(const Key('archive_insight_feedback_controls')),
+    findsNothing,
+  );
 }
 
 Future<void> _pumpArchiveHomeCard(
@@ -180,14 +185,18 @@ void main() {
         isTrue,
       );
       expect(
-        ArchiveInsightFeedbackGate.showForArchiveHome(ArchiveHomeStage.fivePlus),
+        ArchiveInsightFeedbackGate.showForArchiveHome(
+          ArchiveHomeStage.fivePlus,
+        ),
         isTrue,
       );
     });
 
     test('weekly review shows controls only with enough evidence', () {
       expect(
-        ArchiveInsightFeedbackGate.showForWeeklyReview(hasEnoughEvidence: false),
+        ArchiveInsightFeedbackGate.showForWeeklyReview(
+          hasEnoughEvidence: false,
+        ),
         isFalse,
       );
       expect(
@@ -228,7 +237,9 @@ void main() {
     testWidgets('render for 3+ entry archive home stages', (tester) async {
       for (final count in [3, 4, 5]) {
         ArchiveInsightFeedbackStore.resetForTest();
-        final summary = ArchiveHomeSummaryEngine.build(entries: _entries(count));
+        final summary = ArchiveHomeSummaryEngine.build(
+          entries: _entries(count),
+        );
         await _pumpArchiveHomeCard(tester, summary);
         _expectFeedbackControlsPresent(tester);
         await tester.pumpWidget(const SizedBox.shrink());
@@ -282,9 +293,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: WeeklyArchiveReviewCard(review: review),
-          ),
+          home: Scaffold(body: WeeklyArchiveReviewCard(review: review)),
         ),
       );
       await tester.pump();
@@ -293,7 +302,9 @@ void main() {
   });
 
   group('Feedback interactions', () {
-    testWidgets('why am I seeing this expands explanation copy', (tester) async {
+    testWidgets('why am I seeing this expands explanation copy', (
+      tester,
+    ) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
       await _pumpArchiveHomeCard(tester, summary);
 
@@ -312,15 +323,22 @@ void main() {
         find.byKey(const Key('archive_insight_feedback_why_not_conclusion')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('archive_insight_feedback_why_hide')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_insight_feedback_why_hide')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('feels right stores local positive feedback', (tester) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
-      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(summary.stage);
+      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(
+        summary.stage,
+      );
       await _pumpArchiveHomeCard(tester, summary);
 
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_feels_right')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_feels_right')),
+      );
       await tester.pump();
 
       expect(ArchiveInsightFeedbackStore.feelsRightCount(insightId), 1);
@@ -328,10 +346,14 @@ void main() {
 
     testWidgets('not quite stores local negative feedback', (tester) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
-      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(summary.stage);
+      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(
+        summary.stage,
+      );
       await _pumpArchiveHomeCard(tester, summary);
 
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_not_quite')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_not_quite')),
+      );
       await tester.pump();
 
       expect(ArchiveInsightFeedbackStore.notQuiteCount(insightId), 1);
@@ -339,10 +361,15 @@ void main() {
 
     testWidgets('hide this suppresses the insight locally', (tester) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
-      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(summary.stage);
+      final insightId = ArchiveInsightFeedbackStore.archiveHomeId(
+        summary.stage,
+      );
       await _pumpArchiveHomeCard(tester, summary);
 
-      expect(find.byKey(const Key('archive_home_summary_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_home_summary_card')),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('archive_insight_feedback_hide')));
       await tester.pump();
 
@@ -378,11 +405,16 @@ void main() {
         ArchiveInsightFeedbackCopy.whyNotConclusion,
         ArchiveInsightFeedbackCopy.whyHide,
       ]) {
-        expect(line.toLowerCase(), isNot(contains(_rawTranscriptSnippet.toLowerCase())));
+        expect(
+          line.toLowerCase(),
+          isNot(contains(_rawTranscriptSnippet.toLowerCase())),
+        );
       }
     });
 
-    testWidgets('why panel on card avoids banned and transcript copy', (tester) async {
+    testWidgets('why panel on card avoids banned and transcript copy', (
+      tester,
+    ) async {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
       await _pumpArchiveHomeCard(tester, summary);
       await tester.tap(find.byKey(const Key('archive_insight_feedback_why')));
@@ -459,13 +491,18 @@ void main() {
 
       _expectFeedbackControlsPresent(tester);
 
-      final cta = find.byKey(const Key('belief_update_payoff_view_evidence_cta'));
+      final cta = find.byKey(
+        const Key('belief_update_payoff_view_evidence_cta'),
+      );
       await tester.ensureVisible(cta);
       await tester.tap(cta);
       await tester.pumpAndSettle();
 
       expect(evidenceOpened, isTrue);
-      expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_card')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('view review CTA still fires on archive home', (tester) async {
@@ -515,7 +552,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(reviewOpened, isTrue);
-      expect(find.byKey(const Key('weekly_archive_review_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_card')),
+        findsOneWidget,
+      );
     });
   });
 }

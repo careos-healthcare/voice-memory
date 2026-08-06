@@ -8,11 +8,7 @@ import 'correction_informed_next_prompt.dart';
 enum NextMomentPromptStage { one, two, three, four, fivePlus }
 
 /// Navigation action for next-moment prompt CTAs.
-enum NextMomentPromptAction {
-  addMoment,
-  viewEvidence,
-  viewReview,
-}
+enum NextMomentPromptAction { addMoment, viewEvidence, viewReview }
 
 /// Tells users what kind of moment to capture next — evidence-based, not pressure.
 class NextMomentPrompt {
@@ -42,9 +38,7 @@ class NextMomentPrompt {
 abstract final class NextMomentPromptEngine {
   NextMomentPromptEngine._();
 
-  static NextMomentPrompt? build({
-    required List<JournalEntry> entries,
-  }) {
+  static NextMomentPrompt? build({required List<JournalEntry> entries}) {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     if (eligibleCount == 0) return null;
 

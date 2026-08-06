@@ -23,7 +23,7 @@ import 'package:voicememory_mobile/features/pressure_retention/thread_return_evi
 import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/fact_ledger_screen.dart';
+import 'package:archiveme_research/screens/fact_ledger_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';

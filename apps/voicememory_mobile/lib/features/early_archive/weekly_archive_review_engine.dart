@@ -28,8 +28,8 @@ abstract final class WeeklyArchiveWeekReviewEngine {
     bool viewingConfirmedRepeatOrTimeline = false,
   }) {
     final reviewEntries = _reviewEntries(entries);
-    final repeatSource = confirmedRepeat ??
-        EarlyFirstSignalEngine.build(entries: reviewEntries);
+    final repeatSource =
+        confirmedRepeat ?? EarlyFirstSignalEngine.build(entries: reviewEntries);
     final repeated = _repeatedSection(
       confirmedRepeat: repeatSource,
       entries: reviewEntries,
@@ -47,9 +47,10 @@ abstract final class WeeklyArchiveWeekReviewEngine {
       returnChecks: returnChecks,
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
-    final nextToWatch = dailyReason?.prompt ??
-        WeeklyArchiveWeekReviewCopy.nextToWatchFallback;
-    final guidedPrompt = dailyReason?.guidedRecordPrompt ??
+    final nextToWatch =
+        dailyReason?.prompt ?? WeeklyArchiveWeekReviewCopy.nextToWatchFallback;
+    final guidedPrompt =
+        dailyReason?.guidedRecordPrompt ??
         WeeklyArchiveWeekReviewCopy.recordGuidedPrompt;
 
     return WeeklyArchiveWeekReviewResult(
@@ -76,8 +77,9 @@ abstract final class WeeklyArchiveWeekReviewEngine {
 
     final anchor = eligible.last.createdAt;
     final weekStart = anchor.subtract(const Duration(days: weekWindowDays));
-    final weekEntries =
-        eligible.where((entry) => !entry.createdAt.isBefore(weekStart)).toList();
+    final weekEntries = eligible
+        .where((entry) => !entry.createdAt.isBefore(weekStart))
+        .toList();
     if (weekEntries.length >= 2) return weekEntries;
 
     if (eligible.length >= 3) {
@@ -86,7 +88,8 @@ abstract final class WeeklyArchiveWeekReviewEngine {
     return eligible;
   }
 
-  static ({String line, bool isFallback, List<String> phrases}) _repeatedSection({
+  static ({String line, bool isFallback, List<String> phrases})
+  _repeatedSection({
     EarlyFirstSignalModel? confirmedRepeat,
     required List<JournalEntry> entries,
   }) {
@@ -161,9 +164,6 @@ abstract final class WeeklyArchiveWeekReviewEngine {
         isFallback: false,
       );
     }
-    return (
-      line: WeeklyArchiveWeekReviewCopy.helpedFallback,
-      isFallback: true,
-    );
+    return (line: WeeklyArchiveWeekReviewCopy.helpedFallback, isFallback: true);
   }
 }

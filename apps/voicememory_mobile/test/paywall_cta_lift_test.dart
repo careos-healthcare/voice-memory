@@ -75,7 +75,9 @@ void main() {
   });
 
   group('PaywallCtaLiftBlock', () {
-    testWidgets('renders sharpened block above plans integration copy', (tester) async {
+    testWidgets('renders sharpened block above plans integration copy', (
+      tester,
+    ) async {
       final result = PaywallCtaLiftEngine.build(
         source: PaywallSource.valueMoment,
         analyticsSource: 'test',
@@ -83,9 +85,7 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PaywallCtaLiftBlock.test(result: result),
-          ),
+          home: Scaffold(body: PaywallCtaLiftBlock.test(result: result)),
         ),
       );
       await tester.pump();
@@ -113,7 +113,10 @@ void main() {
       PaywallCtaLiftAnalytics.seen(result: result);
 
       expect(events, [PaywallCtaLiftAnalytics.seenEvent]);
-      expect(properties.single.keys, containsAll(['source', 'proof_connected']));
+      expect(
+        properties.single.keys,
+        containsAll(['source', 'proof_connected']),
+      );
       expect(properties.single.containsKey('transcript'), isFalse);
     });
   });
@@ -128,8 +131,9 @@ void main() {
     });
 
     test('testing screen includes compact preview', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('PaywallCtaLiftBlock.test'));
     });
   });

@@ -14,9 +14,8 @@ abstract final class CapacityLaunchWedgeGates {
   static bool showAdvancedSurfaceOnArchiveHome({
     required bool capacityWedgeActive,
     required int capacityMomentCount,
-  }) =>
-      !inEarlyActivationPhase(
-        capacityWedgeActive: capacityWedgeActive,
-        capacityMomentCount: capacityMomentCount,
-      );
+  }) => !inEarlyActivationPhase(
+    capacityWedgeActive: capacityWedgeActive,
+    capacityMomentCount: capacityMomentCount,
+  );
 }

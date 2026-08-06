@@ -8,16 +8,13 @@ import '../current_relevance/current_relevance_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
-import '../pattern_match_quality/pattern_match_quality_copy.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
-import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
-import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../present_day_relevance/present_day_relevance_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
@@ -85,8 +82,7 @@ abstract final class ArchiveTimelineSpineEngine {
     final hasCorrection = correction != null;
 
     final rows = <ArchiveTimelineSpineRow>[
-      if (eligibleCount >= 1)
-        _row(ArchiveTimelineSpineRowId.firstSeen),
+      if (eligibleCount >= 1) _row(ArchiveTimelineSpineRowId.firstSeen),
       if (hasConfirmedRepeat) _row(ArchiveTimelineSpineRowId.returned),
       if (stillCurrent) _row(ArchiveTimelineSpineRowId.stillCurrent),
       if (hasCorrection) _row(ArchiveTimelineSpineRowId.correctedByYou),
@@ -112,7 +108,8 @@ abstract final class ArchiveTimelineSpineEngine {
         .map((row) => _applyAnchorHint(row, anchorHints))
         .toList();
 
-    final patternMatchQuality = evidenceWeighting?.patternMatchQuality ??
+    final patternMatchQuality =
+        evidenceWeighting?.patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -159,8 +156,9 @@ abstract final class ArchiveTimelineSpineEngine {
           ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
           : ArchiveTimelineSpineCopy.subtitle,
       explanation: proofConfidenceCalibration.displayCopy,
-      currentWeightLabel:
-          ArchiveTimelineSpineCopy.currentWeightLabelFor(currentWeight),
+      currentWeightLabel: ArchiveTimelineSpineCopy.currentWeightLabelFor(
+        currentWeight,
+      ),
       footer: ArchiveTimelineSpineCopy.footer,
       differentiationLine: ArchiveTimelineSpineCopy.differentiationLine,
       proBridgeCopy: ArchiveTimelineSpineCopy.proBridgeCopy,
@@ -197,16 +195,15 @@ abstract final class ArchiveTimelineSpineEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        isRecording: false,
-      );
+  }) => shouldShow(
+    result: result,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    isRecording: false,
+  );
 
   static bool shouldShowOnRecordReady({
     required ArchiveTimelineSpineResult? result,
@@ -215,31 +212,28 @@ abstract final class ArchiveTimelineSpineEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        isRecording: false,
-      );
+  }) => shouldShow(
+    result: result,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    isRecording: false,
+  );
 
   static bool suppressLegacyEducationCards({
     required ArchiveTimelineSpineResult? result,
     required bool visible,
-  }) =>
-      visible && result != null && result.shouldShow;
+  }) => visible && result != null && result.shouldShow;
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static ArchiveTimelineSpineRow _row(ArchiveTimelineSpineRowId id) =>
       ArchiveTimelineSpineRow(
@@ -352,8 +346,7 @@ abstract final class ArchiveTimelineSpineEngine {
     if (presentDayState == PresentDayRelevanceState.fading ||
         evidenceWeighting?.hasQuietSignal == true ||
         evidenceWeighting?.primaryState == EvidenceWeightState.oldSignal ||
-        evidenceWeighting?.displayStates
-                .contains(EvidenceWeightState.fading) ==
+        evidenceWeighting?.displayStates.contains(EvidenceWeightState.fading) ==
             true) {
       return ArchiveTimelineSpineCurrentWeight.fading;
     }

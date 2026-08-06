@@ -77,7 +77,8 @@ class EarlyFirstSignalCard extends StatelessWidget {
     EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
       entryCount: count,
       surface: surface,
-      hasRealTimeline: EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+      hasRealTimeline:
+          EarlyArchiveProofAnalytics.hasRealTimelineBeenSeenThisSession,
     );
   }
 
@@ -94,13 +95,12 @@ class EarlyFirstSignalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _trackSeen();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final timestampStyle = ArchiveMobileTypography.cardLabel(context);
     final returnPrompt = signal.returnPrompt;
     final whyReasons = signal.showsConfirmedRepeat && entriesForWhy != null
@@ -117,7 +117,9 @@ class EarlyFirstSignalCard extends StatelessWidget {
           key: ValueKey('early_first_signal_card_${signal.kind.name}'),
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+          decoration: VoiceMemoryCards.standard(
+            background: const Color(0xFFFFFBF5),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -155,7 +157,9 @@ class EarlyFirstSignalCard extends StatelessWidget {
                   children: [
                     for (final phrase in signal.evidencePhrases)
                       Chip(
-                        key: ValueKey('early_first_signal_evidence_phrase_$phrase'),
+                        key: ValueKey(
+                          'early_first_signal_evidence_phrase_$phrase',
+                        ),
                         label: Text(phrase),
                         backgroundColor: const Color(0xFFF4F7F4),
                         side: BorderSide.none,
@@ -173,11 +177,14 @@ class EarlyFirstSignalCard extends StatelessWidget {
                   style: bodyStyle,
                 ),
               ],
-              if (signal.evidencePhrases.isEmpty && signal.evidenceRows.isNotEmpty) ...[
+              if (signal.evidencePhrases.isEmpty &&
+                  signal.evidenceRows.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.sm),
                 for (final row in signal.evidenceRows)
                   Padding(
-                    key: ValueKey('early_first_signal_evidence_${row.timestampLabel}'),
+                    key: ValueKey(
+                      'early_first_signal_evidence_${row.timestampLabel}',
+                    ),
                     padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,9 +265,9 @@ class _ConfirmedRepeatReturnPromptSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('confirmed_repeat_return_prompt'),
@@ -273,9 +280,9 @@ class _ConfirmedRepeatReturnPromptSection extends StatelessWidget {
           Text(
             prompt.title,
             key: const Key('confirmed_repeat_return_prompt_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
-              fontSize: 17,
-            ),
+            style: ArchiveMobileTypography.responsiveSectionTitle(
+              context,
+            ).copyWith(fontSize: 17),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(

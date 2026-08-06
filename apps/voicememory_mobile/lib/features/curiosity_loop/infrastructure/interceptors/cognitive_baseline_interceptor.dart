@@ -1,28 +1,24 @@
 import '../../../../models/journal_entry.dart';
-import '../../../../services/app_services.dart';
 import '../../../journal/domain/interceptors/journal_save_interceptor.dart';
 import '../../domain/models/cognitive_biomarkers.dart';
 import '../../domain/services/moving_baseline_calculator.dart';
 import '../../repositories/cognitive_baseline_store.dart';
 import '../../services/cognitive_baseline_telemetry.dart';
 
-typedef CognitiveBaselineUpdateHandler = void Function(
-  CognitiveBaselineUpdateRecord record,
-);
+typedef CognitiveBaselineUpdateHandler =
+    void Function(CognitiveBaselineUpdateRecord record);
 
 /// Maintains a persisted EWMA macro baseline after verified biomarker saves.
 class CognitiveBaselineInterceptor implements JournalSaveInterceptor {
   CognitiveBaselineInterceptor({
-    CognitiveBaselineStore? baselineStore,
+    this._baselineStore,
     MovingBaselineCalculator? calculator,
     CognitiveBaselineTelemetry? telemetry,
-    CognitiveBaselineUpdateHandler? onBaselineUpdated,
+    this._onBaselineUpdated,
     DateTime Function()? clock,
-  })  : _baselineStore = baselineStore,
-        _calculator = calculator ?? const MovingBaselineCalculator(),
-        _telemetry = telemetry ?? const CognitiveBaselineTelemetry(),
-        _onBaselineUpdated = onBaselineUpdated,
-        _clock = clock ?? DateTime.now;
+  }) : _calculator = calculator ?? const MovingBaselineCalculator(),
+       _telemetry = telemetry ?? const CognitiveBaselineTelemetry(),
+       _clock = clock ?? DateTime.now;
 
   final CognitiveBaselineStore? _baselineStore;
   final MovingBaselineCalculator _calculator;

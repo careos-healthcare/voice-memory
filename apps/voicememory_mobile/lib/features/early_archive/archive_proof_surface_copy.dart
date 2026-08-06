@@ -5,8 +5,6 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../repeat_return_check/pattern_changed_copy.dart';
 import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
-import 'archive_change_timeline_copy.dart';
-import 'archive_change_timeline_engine.dart';
 import 'archive_change_timeline_model.dart';
 import 'archive_proof_surface_layout.dart';
 import 'archive_summary_copy.dart';
@@ -34,20 +32,19 @@ abstract final class ArchiveProofSurfaceCopy {
     bool showWeeklyReview = false,
     bool showPrivateReport = false,
     bool showPatternChanged = false,
-  }) =>
-      _stack(
-        layout: layout,
-        confirmedRepeat: confirmedRepeat,
-        timeline: timeline,
-        changeProof: changeProof,
-        patternChanged: patternChanged,
-        surfaceIsRecord: true,
-        showArchiveSummary: showArchiveSummary,
-        showDailyReturnReason: showDailyReturnReason,
-        showWeeklyReview: showWeeklyReview,
-        showPrivateReport: showPrivateReport,
-        showPatternChanged: showPatternChanged,
-      );
+  }) => _stack(
+    layout: layout,
+    confirmedRepeat: confirmedRepeat,
+    timeline: timeline,
+    changeProof: changeProof,
+    patternChanged: patternChanged,
+    surfaceIsRecord: true,
+    showArchiveSummary: showArchiveSummary,
+    showDailyReturnReason: showDailyReturnReason,
+    showWeeklyReview: showWeeklyReview,
+    showPrivateReport: showPrivateReport,
+    showPatternChanged: showPatternChanged,
+  );
 
   static List<String> patternsStack({
     required ArchiveProofSurfaceLayout layout,
@@ -56,15 +53,14 @@ abstract final class ArchiveProofSurfaceCopy {
     RepeatReturnCheckChangeProof? changeProof,
     PatternChangedResult? patternChanged,
     ArchiveChangeTimeline? changeTimeline,
-  }) =>
-      _stack(
-        layout: layout,
-        confirmedRepeat: confirmedRepeat,
-        timeline: timeline,
-        changeProof: changeProof,
-        patternChanged: patternChanged,
-        changeTimeline: changeTimeline,
-      );
+  }) => _stack(
+    layout: layout,
+    confirmedRepeat: confirmedRepeat,
+    timeline: timeline,
+    changeProof: changeProof,
+    patternChanged: patternChanged,
+    changeTimeline: changeTimeline,
+  );
 
   static List<String> _stack({
     required ArchiveProofSurfaceLayout layout,
@@ -82,7 +78,8 @@ abstract final class ArchiveProofSurfaceCopy {
   }) {
     final blocks = <String>[];
     final summaryVisible =
-        showArchiveSummary || (layout.archiveSummaryVisible && !surfaceIsRecord);
+        showArchiveSummary ||
+        (layout.archiveSummaryVisible && !surfaceIsRecord);
     final patternChangedVisible = surfaceIsRecord
         ? showPatternChanged
         : layout.effectivePatternChangedVisible;

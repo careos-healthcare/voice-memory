@@ -46,11 +46,14 @@ void main() {
     late InMemoryPrivateDataEncryptionKeyStore vaultKeyStore;
 
     setUp(() async {
-      ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 5));
+      ApiUsageGuard.resetForTest(
+        replacement: ApiUsageGuard(maxAttemptsPerScope: 5),
+      );
       vaultKeyStore = InMemoryPrivateDataEncryptionKeyStore();
       await vaultKeyStore.ensureKey();
-      vaultDirectory =
-          await Directory.systemTemp.createTemp('resilient_pipeline_vault_');
+      vaultDirectory = await Directory.systemTemp.createTemp(
+        'resilient_pipeline_vault_',
+      );
     });
 
     tearDown(() async {
@@ -67,8 +70,9 @@ void main() {
           keyStore: vaultKeyStore,
           resolveCacheDirectory: () async => vaultDirectory,
         );
-        final dummyFrame =
-            Int16List.fromList(List.generate(320, (i) => i % 100));
+        final dummyFrame = Int16List.fromList(
+          List.generate(320, (i) => i % 100),
+        );
 
         await vault.initializeVault('session_fallback_test');
         expect(vault.isActive, isTrue);
@@ -104,7 +108,10 @@ void main() {
 
           expect(harness.captureService.isOfflineVaultActive, isTrue);
           expect(harness.captureService.hasError, isTrue);
-          expect(harness.captureService.captureState, LiveVoiceCaptureState.active);
+          expect(
+            harness.captureService.captureState,
+            LiveVoiceCaptureState.active,
+          );
 
           harness.captureService.handleRawHardwareChunk(
             Int16List.fromList(
@@ -133,7 +140,9 @@ void main() {
           failReconnectMint: true,
         );
         final faults = <LiveVoiceSessionFault>[];
-        final faultSub = harness.captureService.sessionFaults.listen(faults.add);
+        final faultSub = harness.captureService.sessionFaults.listen(
+          faults.add,
+        );
 
         try {
           await harness.startConnected(hardwareSampleRate: 48000);
@@ -143,7 +152,10 @@ void main() {
           expect(faults, hasLength(1));
           expect(faults.first.errorState, LiveVoiceErrorState.networkTimeout);
           expect(harness.captureService.isOfflineVaultActive, isTrue);
-          expect(harness.captureService.captureState, LiveVoiceCaptureState.active);
+          expect(
+            harness.captureService.captureState,
+            LiveVoiceCaptureState.active,
+          );
 
           final sentBeforeFault = pcmSent.length;
           harness.captureService.handleIncomingPipelineFrame(
@@ -186,7 +198,9 @@ void main() {
 
           for (var i = 0; i < 40; i++) {
             harness.captureService.handleIncomingPipelineFrame(
-              Int16List.fromList(List<int>.generate(320, (j) => (i + j) & 0xff)),
+              Int16List.fromList(
+                List<int>.generate(320, (j) => (i + j) & 0xff),
+              ),
             );
           }
 
@@ -216,25 +230,25 @@ class _ResilientPipelineHarness {
     required this.vaultKeyStore,
     required List<List<int>> pcmSent,
     this.failReconnectMint = false,
-  })  : sinkController = StreamController<dynamic>(),
-        journalFile = File(
-          '${Directory.systemTemp.path}/resilient_pipeline_${DateTime.now().microsecondsSinceEpoch}.json',
-        ),
-        sessionApi = _CountingSessionApi(failReconnectMint: failReconnectMint),
-        journalPipeline = _RecordingPipeline(
-          api: _FakeApiClientWithAttest(),
-          attest: CaptureAttestService(
-            api: _FakeApiClientWithAttest(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache()
-              ..setToken('capture-token', expiresInSeconds: 3600),
-          ),
-          journalStore: JournalStore(
-            file: File(
-              '${Directory.systemTemp.path}/resilient_pipeline_${DateTime.now().microsecondsSinceEpoch}.json',
-            ),
-          ),
-        ) {
+  }) : sinkController = StreamController<dynamic>(),
+       journalFile = File(
+         '${Directory.systemTemp.path}/resilient_pipeline_${DateTime.now().microsecondsSinceEpoch}.json',
+       ),
+       sessionApi = _CountingSessionApi(failReconnectMint: failReconnectMint),
+       journalPipeline = _RecordingPipeline(
+         api: _FakeApiClientWithAttest(),
+         attest: CaptureAttestService(
+           api: _FakeApiClientWithAttest(),
+           deviceIds: _FakeDeviceIdStore(),
+           tokenCache: CaptureTokenCache()
+             ..setToken('capture-token', expiresInSeconds: 3600),
+         ),
+         journalStore: JournalStore(
+           file: File(
+             '${Directory.systemTemp.path}/resilient_pipeline_${DateTime.now().microsecondsSinceEpoch}.json',
+           ),
+         ),
+       ) {
     captureService = LiveVoiceCaptureService(
       controller: LiveAudioSessionController(
         LiveAudioSessionCoordinator(
@@ -274,7 +288,9 @@ class _ResilientPipelineHarness {
   final _RecordingPipeline journalPipeline;
   late final LiveVoiceCaptureService captureService;
 
-  Future<void> startConnected({int hardwareSampleRate = liveInputSampleRateHz}) async {
+  Future<void> startConnected({
+    int hardwareSampleRate = liveInputSampleRateHz,
+  }) async {
     final startFuture = captureService.start(
       hardwareSampleRate: hardwareSampleRate,
       enableIsolatePipeline: true,
@@ -374,9 +390,9 @@ class _InstrumentedWebSocketClient extends LiveAudioWebSocketClient {
     required StreamController<dynamic> socketEvents,
     this.onPcmSent,
   }) : super(
-          connectionFactory: (_, {headers}) =>
-              _FakeSocketConnection(socketEvents),
-        );
+         connectionFactory: (_, {headers}) =>
+             _FakeSocketConnection(socketEvents),
+       );
 
   final void Function(List<int> chunk)? onPcmSent;
 
@@ -434,6 +450,5 @@ class _FakeApiClientWithAttest extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

@@ -23,12 +23,9 @@ abstract final class CoreMetricsMinimumSet {
       for (final event in entry.value) event: entry.key,
   };
 
-  static const Map<CoreMetricsMinimumMetricId, List<String>> _metricEventAliases =
-      {
-    CoreMetricsMinimumMetricId.appOpened: [
-      'app_opened',
-      'invited_app_opened',
-    ],
+  static const Map<CoreMetricsMinimumMetricId, List<String>>
+  _metricEventAliases = {
+    CoreMetricsMinimumMetricId.appOpened: ['app_opened', 'invited_app_opened'],
     CoreMetricsMinimumMetricId.firstSave: [
       'first_recording_saved',
       'first_60_first_save_completed',
@@ -81,9 +78,7 @@ abstract final class CoreMetricsMinimumSet {
       'restore_started',
       'paywall_restore_tapped',
     ],
-    CoreMetricsMinimumMetricId.restoreSucceeded: [
-      'restore_completed',
-    ],
+    CoreMetricsMinimumMetricId.restoreSucceeded: ['restore_completed'],
     CoreMetricsMinimumMetricId.entitlementActive: [
       'entitlement_active',
       'entitlement_received',
@@ -156,27 +151,24 @@ abstract final class CoreMetricsMinimumSet {
   static bool isCoreBetaEvent(
     String eventName, {
     Map<String, Object>? properties,
-  }) =>
-      classify(eventName, properties: properties).isCoreBeta;
+  }) => classify(eventName, properties: properties).isCoreBeta;
 
   static CoreMetricsMinimumMetricId? metricIdFor(
     String eventName, {
     Map<String, Object>? properties,
-  }) =>
-      classify(eventName, properties: properties).coreMetricId;
+  }) => classify(eventName, properties: properties).coreMetricId;
 
   static CoreMetricsMinimumClassification _coreClassification({
     required String eventName,
     required CoreMetricsMinimumMetricId metricId,
-  }) =>
-      CoreMetricsMinimumClassification(
-        eventName: eventName,
-        coreMetricId: metricId,
-        isCoreBeta: true,
-        diagnosticOnly: false,
-        notReleaseBlocking: false,
-        notUsedForPaidIntentDecision: !_paidIntentMetricIds.contains(metricId),
-      );
+  }) => CoreMetricsMinimumClassification(
+    eventName: eventName,
+    coreMetricId: metricId,
+    isCoreBeta: true,
+    diagnosticOnly: false,
+    notReleaseBlocking: false,
+    notUsedForPaidIntentDecision: !_paidIntentMetricIds.contains(metricId),
+  );
 
   static CoreMetricsMinimumMetricId? _metricFromProperties(
     String eventName,
@@ -185,7 +177,9 @@ abstract final class CoreMetricsMinimumSet {
     if (properties == null) return null;
 
     if (eventName == 'recording_created') {
-      final saveIndex = _readInt(properties['save_index'] ?? properties['entry_count']);
+      final saveIndex = _readInt(
+        properties['save_index'] ?? properties['entry_count'],
+      );
       if (saveIndex == 1) return CoreMetricsMinimumMetricId.firstSave;
       if (saveIndex == 2) return CoreMetricsMinimumMetricId.secondSave;
     }
@@ -237,15 +231,14 @@ class CoreMetricsMinimumClassification {
 
   factory CoreMetricsMinimumClassification.diagnostic({
     required String eventName,
-  }) =>
-      CoreMetricsMinimumClassification(
-        eventName: eventName,
-        coreMetricId: null,
-        isCoreBeta: false,
-        diagnosticOnly: true,
-        notReleaseBlocking: true,
-        notUsedForPaidIntentDecision: true,
-      );
+  }) => CoreMetricsMinimumClassification(
+    eventName: eventName,
+    coreMetricId: null,
+    isCoreBeta: false,
+    diagnosticOnly: true,
+    notReleaseBlocking: true,
+    notUsedForPaidIntentDecision: true,
+  );
 
   final String eventName;
   final CoreMetricsMinimumMetricId? coreMetricId;

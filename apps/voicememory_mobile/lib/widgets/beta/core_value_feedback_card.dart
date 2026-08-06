@@ -35,10 +35,9 @@ class CoreValueFeedbackCard extends StatefulWidget {
     this.onChanged,
     this.store,
     bool dismissed = false,
-    CoreValueFeedbackRecord? initialRecord,
-  })  : skipPrefsLoad = true,
-        initialDismissed = dismissed,
-        initialRecord = initialRecord;
+    this.initialRecord,
+  }) : skipPrefsLoad = true,
+       initialDismissed = dismissed;
 
   final CoreValueFeedbackSource source;
   final int entryCount;
@@ -141,19 +140,18 @@ class _CoreValueFeedbackCardState extends State<CoreValueFeedbackCard> {
         child: Text(
           CoreValueFeedbackCopy.savedMessage,
           key: const Key('core_value_feedback_saved_message'),
-          style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-            height: 1.45,
-          ),
+          style: ArchiveMobileTypography.listSubtitle(
+            context,
+          ).copyWith(height: 1.45),
         ),
       );
     }
 
     _logSeenIfNeeded();
 
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('core_value_feedback_card'),
@@ -172,9 +170,9 @@ class _CoreValueFeedbackCardState extends State<CoreValueFeedbackCard> {
           Text(
             CoreValueFeedbackCopy.question,
             key: const Key('core_value_feedback_question'),
-            style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-              height: 1.45,
-            ),
+            style: ArchiveMobileTypography.listSubtitle(
+              context,
+            ).copyWith(height: 1.45),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -189,7 +187,8 @@ class _CoreValueFeedbackCardState extends State<CoreValueFeedbackCard> {
             children: [
               TextButton(
                 key: const Key('core_value_feedback_yes'),
-                onPressed: () => unawaited(_selectAnswer(CoreValueFeedbackAnswer.yes)),
+                onPressed: () =>
+                    unawaited(_selectAnswer(CoreValueFeedbackAnswer.yes)),
                 child: const Text(CoreValueFeedbackCopy.answerYes),
               ),
               TextButton(

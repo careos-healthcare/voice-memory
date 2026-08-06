@@ -5,15 +5,11 @@ import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../correction_memory/correction_memory_engine.dart';
 import '../correction_memory/correction_memory_model.dart';
 import '../early_archive/early_first_signal_engine.dart';
-import '../evidence_anchors/evidence_anchor_copy.dart';
 import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../evidence_anchors/evidence_anchor_model.dart';
 import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../evidence_weighting/evidence_weighting_model.dart';
-import '../pattern_match_quality/pattern_match_quality_copy.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
-import '../pattern_match_quality/pattern_match_quality_model.dart';
-import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
@@ -61,7 +57,8 @@ abstract final class BetaProofLiftEngine {
       entries: entries,
       now: now,
     );
-    final patternMatchQuality = evidenceWeighting?.patternMatchQuality ??
+    final patternMatchQuality =
+        evidenceWeighting?.patternMatchQuality ??
         PatternMatchQualityEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -96,8 +93,9 @@ abstract final class BetaProofLiftEngine {
       presentDay: presentDay,
       correction: correction,
       timelineProof: timelineProof,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
     );
 
     final sections = [
@@ -129,10 +127,11 @@ abstract final class BetaProofLiftEngine {
       level: proofConfidenceCalibration.level,
     );
 
-    final shouldShow = ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
-      calibration: proofConfidenceCalibration,
-      hasSafeAnchor: hasSafeAnchor,
-    );
+    final shouldShow =
+        ProofConfidenceCalibrationEngine.shouldShowUsefulProofSurface(
+          calibration: proofConfidenceCalibration,
+          hasSafeAnchor: hasSafeAnchor,
+        );
 
     return BetaProofLiftResult(
       shouldShow: shouldShow,
@@ -140,7 +139,8 @@ abstract final class BetaProofLiftEngine {
       source: source,
       surface: surface,
       title: sharpenedPayoff?.title ?? BetaProofLiftCopy.title,
-      body: sharpenedPayoff?.body ??
+      body:
+          sharpenedPayoff?.body ??
           (proofConfidenceCalibration.isWatchOnly
               ? ProofConfidenceCalibrationCopy.watchOnlySubtitle
               : proofConfidenceCalibration.displayCopy),
@@ -238,45 +238,43 @@ abstract final class BetaProofLiftEngine {
     required bool isPostSaveDegradedState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        parentVisible: parentVisible,
-        timelineProofVisible: timelineProofVisible,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        isRecording: isRecording,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    parentVisible: parentVisible,
+    timelineProofVisible: timelineProofVisible,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    isRecording: isRecording,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static ProofQualityResponseSurface qualitySurfaceFor(
     BetaProofLiftSurface surface,
-  ) =>
-      switch (surface) {
-        BetaProofLiftSurface.timelineProofMoment =>
-          ProofQualityResponseSurface.timelineProofMoment,
-        BetaProofLiftSurface.firstProofPayoff =>
-          ProofQualityResponseSurface.firstProofPayoff,
-        BetaProofLiftSurface.patterns => ProofQualityResponseSurface.patterns,
-      };
+  ) => switch (surface) {
+    BetaProofLiftSurface.timelineProofMoment =>
+      ProofQualityResponseSurface.timelineProofMoment,
+    BetaProofLiftSurface.firstProofPayoff =>
+      ProofQualityResponseSurface.firstProofPayoff,
+    BetaProofLiftSurface.patterns => ProofQualityResponseSurface.patterns,
+  };
 
-  static BetaProofFeedbackSurface betaSurfaceFor(BetaProofLiftSurface surface) =>
-      switch (surface) {
-        BetaProofLiftSurface.timelineProofMoment =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-        BetaProofLiftSurface.firstProofPayoff =>
-          BetaProofFeedbackSurface.firstProofPayoff,
-        BetaProofLiftSurface.patterns =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-      };
+  static BetaProofFeedbackSurface betaSurfaceFor(
+    BetaProofLiftSurface surface,
+  ) => switch (surface) {
+    BetaProofLiftSurface.timelineProofMoment =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+    BetaProofLiftSurface.firstProofPayoff =>
+      BetaProofFeedbackSurface.firstProofPayoff,
+    BetaProofLiftSurface.patterns =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+  };
 
   static bool _meetsEntryThreshold({
     required int entryCount,
     required bool firstProofPayoffVisible,
-  }) =>
-      entryCount >= 3 || firstProofPayoffVisible;
+  }) => entryCount >= 3 || firstProofPayoffVisible;
 
   static bool _hasFeedbackToday(BetaProofLiftSurface surface) =>
       BetaProofFeedbackStore.isAnsweredToday(betaSurfaceFor(surface));

@@ -68,17 +68,13 @@ class CapturePipelineResult {
 
 class CapturePipelineService {
   CapturePipelineService({
-    required ApiClient api,
-    required CaptureAttestService attest,
-    required JournalStore journalStore,
+    required this._api,
+    required this._attest,
+    required this._journalStore,
     ApiUsageGuard? usageGuard,
-    ProofScopeProvider scopeProvider = const AppServicesProofScopeProvider(),
+    this._scopeProvider = const AppServicesProofScopeProvider(),
     RemoteProcessingConsentStore? consentStore,
-  }) : _api = api,
-       _attest = attest,
-       _journalStore = journalStore,
-       _usageGuard = usageGuard ?? ApiUsageGuard.shared,
-       _scopeProvider = scopeProvider,
+  }) : _usageGuard = usageGuard ?? ApiUsageGuard.shared,
        _consentStoreOverride = consentStore;
 
   final ApiClient _api;
@@ -388,7 +384,7 @@ class CapturePipelineService {
       );
     }
 
-    final reason = TranscriptionService.failureReason(error);
+    final reason = TranscriptionService.classifyFailureReason(error);
     TranscriptionLog.failed(reason: reason);
     if (error is FormatException) {
       RecordPipelineLog.apiGuardBlocked(
@@ -421,7 +417,7 @@ class CapturePipelineService {
         reason ??
         (error == null
             ? 'analysis_unavailable'
-            : TranscriptionService.failureReason(error));
+            : TranscriptionService.classifyFailureReason(error));
     if (error is ApiException) {
       AnalysisLog.failed(
         status: error.statusCode,

@@ -21,7 +21,7 @@ import 'package:voicememory_mobile/widgets/patterns/proof_specificity_boost_card
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_too_vague_fix/unused.json'));
+    : super(file: File('test/tmp/proof_too_vague_fix/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -38,11 +38,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -86,13 +82,12 @@ ProofSpecificityBoostResult _boostResultFor(
   bool beliefSurfaceVisible = true,
   List<String> beliefEvidencePhrases = const [],
   String source = 'test',
-}) =>
-    ProofSpecificityBoostEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: source,
-      beliefEvidencePhrases: beliefEvidencePhrases,
-    );
+}) => ProofSpecificityBoostEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: source,
+  beliefEvidencePhrases: beliefEvidencePhrases,
+);
 
 Future<void> _pumpBoostCard(
   WidgetTester tester,
@@ -113,8 +108,8 @@ Future<void> _pumpBoostCard(
           source: source,
           hasConfirmedRepeat:
               EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-            _threeRelatedEntries(),
-          ),
+                _threeRelatedEntries(),
+              ),
           proofKey: proofKey,
           store: store,
           initialAnswer: initialAnswer,
@@ -156,11 +151,7 @@ void main() {
   group('ProofSpecificityBoostCopy', () {
     test('passes proof surface advice guard', () {
       for (final line in ProofSpecificityBoostCopy.all) {
-        expect(
-          ProofSurfaceAdviceGuard.passes(line),
-          isTrue,
-          reason: line,
-        );
+        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
       }
     });
 
@@ -330,7 +321,10 @@ void main() {
     testWidgets('renders "Why this is not just a guess"', (tester) async {
       await _pumpBoostCard(tester, _boostResultFor(_threeRelatedEntries()));
 
-      expect(find.byKey(const Key('proof_specificity_boost_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('proof_specificity_boost_card')),
+        findsOneWidget,
+      );
       expect(find.text(ProofSpecificityBoostCopy.title), findsOneWidget);
     });
 
@@ -341,7 +335,10 @@ void main() {
         find.byKey(const Key('proof_specificity_boost_evidence_heading')),
         findsOneWidget,
       );
-      expect(find.text(ProofSpecificityBoostCopy.evidenceHeading), findsOneWidget);
+      expect(
+        find.text(ProofSpecificityBoostCopy.evidenceHeading),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders safe fallback when no safe anchors', (tester) async {
@@ -361,7 +358,10 @@ void main() {
         find.byKey(const Key('proof_specificity_boost_fallback_anchor')),
         findsOneWidget,
       );
-      expect(find.text(ProofSpecificityBoostCopy.fallbackAnchor), findsOneWidget);
+      expect(
+        find.text(ProofSpecificityBoostCopy.fallbackAnchor),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders safe anchors when available', (tester) async {
@@ -393,7 +393,9 @@ void main() {
       }
     });
 
-    testWidgets('does not expose raw transcript/body/private text', (tester) async {
+    testWidgets('does not expose raw transcript/body/private text', (
+      tester,
+    ) async {
       await _pumpBoostCard(tester, _boostResultFor(_threeRelatedEntries()));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
@@ -420,7 +422,9 @@ void main() {
         store: store,
       );
 
-      await tester.tap(find.byKey(const Key('proof_specificity_boost_too_vague')));
+      await tester.tap(
+        find.byKey(const Key('proof_specificity_boost_too_vague')),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -435,8 +439,9 @@ void main() {
       );
     });
 
-    testWidgets('answer Not relevant stores light correction if safe',
-        (tester) async {
+    testWidgets('answer Not relevant stores light correction if safe', (
+      tester,
+    ) async {
       final entries = _threeRelatedEntries();
       final proofKey = CurrentRelevanceStore.proofKeyFor(entries);
       expect(proofKey, isNotEmpty);
@@ -495,7 +500,10 @@ void main() {
         expect(event.props.containsKey('entry_count'), isTrue);
         expect(event.props.containsKey('has_confirmed_repeat'), isTrue);
         expect(event.props.containsKey('has_safe_anchor'), isTrue);
-        expect(event.props.keys.any((key) => key.contains('transcript')), isFalse);
+        expect(
+          event.props.keys.any((key) => key.contains('transcript')),
+          isFalse,
+        );
         expect(event.props.keys.any((key) => key.contains('body')), isFalse);
       }
 

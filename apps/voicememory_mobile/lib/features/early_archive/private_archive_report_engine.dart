@@ -15,14 +15,13 @@ abstract final class PrivateArchiveReportEngine {
     bool viewingConfirmedRepeatOrTimeline = false,
     bool isRecording = false,
     bool isPostSave = false,
-  }) =>
-      PrivateReportBuilder.build(
-        entries: entries,
-        triggerCapturedMilestone: triggerCapturedMilestone,
-        helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-        returnChecks: returnChecks,
-        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
-        isRecording: isRecording,
-        isPostSave: isPostSave,
-      );
+  }) => PrivateReportBuilder.build(
+    entries: entries,
+    triggerCapturedMilestone: triggerCapturedMilestone,
+    helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+    returnChecks: returnChecks,
+    viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
+    isRecording: isRecording,
+    isPostSave: isPostSave,
+  );
 }

@@ -11,39 +11,36 @@ abstract final class PostSaveMomentDetailAnalytics {
   static Future<void> promptTapped({
     required String detailType,
     required int entryCount,
-  }) =>
-      ProductAnalytics.track(
-        promptTappedEvent,
-        parameters: {
-          'detail_type': detailType,
-          'entry_count': entryCount,
-          'source': 'record_post_save',
-        },
-      );
+  }) => ProductAnalytics.track(
+    promptTappedEvent,
+    parameters: {
+      'detail_type': detailType,
+      'entry_count': entryCount,
+      'source': 'record_post_save',
+    },
+  );
 
   static Future<void> saved({
     required String detailType,
     required int entryCount,
-  }) =>
-      ProductAnalytics.track(
-        savedEvent,
-        parameters: {
-          'detail_type': detailType,
-          'entry_count': entryCount,
-          'source': 'record_post_save',
-        },
-      );
+  }) => ProductAnalytics.track(
+    savedEvent,
+    parameters: {
+      'detail_type': detailType,
+      'entry_count': entryCount,
+      'source': 'record_post_save',
+    },
+  );
 
   static Future<void> failed({
     required String detailType,
     required int entryCount,
-  }) =>
-      ProductAnalytics.track(
-        failedEvent,
-        parameters: {
-          'detail_type': detailType,
-          'entry_count': entryCount,
-          'source': 'record_post_save',
-        },
-      );
+  }) => ProductAnalytics.track(
+    failedEvent,
+    parameters: {
+      'detail_type': detailType,
+      'entry_count': entryCount,
+      'source': 'record_post_save',
+    },
+  );
 }

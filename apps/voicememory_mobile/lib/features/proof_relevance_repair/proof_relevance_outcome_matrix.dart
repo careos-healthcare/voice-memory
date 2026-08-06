@@ -110,7 +110,9 @@ abstract final class ProofRelevanceOutcomeMatrix {
     return ProofRelevanceOutcomeDecision.proofNotUnderstood;
   }
 
-  static bool _tooVagueOrNotRelevantHigh(ProofRelevanceOutcomeSummary summary) =>
+  static bool _tooVagueOrNotRelevantHigh(
+    ProofRelevanceOutcomeSummary summary,
+  ) =>
       summary.tooVagueOrNotRelevantCount >=
       tooVagueHighTargetFor(summary.totalTesters);
 
@@ -144,8 +146,7 @@ abstract final class ProofRelevanceOutcomeMatrix {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ProofRelevanceOutcomeDecision {

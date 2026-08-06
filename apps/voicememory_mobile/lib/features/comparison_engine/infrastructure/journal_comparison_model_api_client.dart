@@ -8,9 +8,8 @@ import '../presentation/controllers/post_save_comparison_controller.dart';
 class JournalComparisonModelApiClient implements ModelApiClient {
   JournalComparisonModelApiClient({
     required List<JournalEntry> entries,
-    ComparisonEngine engine = const ComparisonEngine(),
-  })  : _entries = List<JournalEntry>.from(entries),
-        _engine = engine;
+    this._engine = const ComparisonEngine(),
+  }) : _entries = List<JournalEntry>.from(entries);
 
   final List<JournalEntry> _entries;
   final ComparisonEngine _engine;

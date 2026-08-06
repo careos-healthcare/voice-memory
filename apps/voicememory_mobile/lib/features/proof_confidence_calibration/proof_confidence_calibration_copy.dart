@@ -4,29 +4,23 @@ import 'proof_confidence_calibration_model.dart';
 abstract final class ProofConfidenceCalibrationCopy {
   ProofConfidenceCalibrationCopy._();
 
-  static const watchOnly =
-      'ArchiveMe is watching this for now.';
+  static const watchOnly = 'ArchiveMe is watching this for now.';
 
-  static const emerging =
-      'This may be starting to repeat.';
+  static const emerging = 'This may be starting to repeat.';
 
-  static const useful =
-      'This has returned in more than one saved moment.';
+  static const useful = 'This has returned in more than one saved moment.';
 
-  static const strong =
-      'This has a clearer timeline now.';
+  static const strong = 'This has a clearer timeline now.';
 
   static const corrected =
       'You corrected this, so ArchiveMe is treating it lightly.';
 
-  static const freshReturn =
-      'This returned after you marked it as background.';
+  static const freshReturn = 'This returned after you marked it as background.';
 
   static const changeDeltaLead =
       'Something changed between these saved moments.';
 
-  static const helpedSoftenedLead =
-      'Recent evidence looks lighter or helped.';
+  static const helpedSoftenedLead = 'Recent evidence looks lighter or helped.';
 
   static const watchOnlySubtitle =
       'ArchiveMe is watching this lightly until the overlap is clearer.';
@@ -63,13 +57,13 @@ abstract final class ProofConfidenceCalibrationCopy {
   ];
 
   static String primaryFor(ProofConfidenceLevel level) => switch (level) {
-        ProofConfidenceLevel.watchOnly => watchOnly,
-        ProofConfidenceLevel.emerging => emerging,
-        ProofConfidenceLevel.useful => useful,
-        ProofConfidenceLevel.strong => strong,
-        ProofConfidenceLevel.corrected => corrected,
-        ProofConfidenceLevel.freshReturn => freshReturn,
-      };
+    ProofConfidenceLevel.watchOnly => watchOnly,
+    ProofConfidenceLevel.emerging => emerging,
+    ProofConfidenceLevel.useful => useful,
+    ProofConfidenceLevel.strong => strong,
+    ProofConfidenceLevel.corrected => corrected,
+    ProofConfidenceLevel.freshReturn => freshReturn,
+  };
 
   static bool passesIdentityGuard(String copy) {
     final lower = copy.trim().toLowerCase();

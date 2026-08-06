@@ -43,9 +43,7 @@ Future<T> withBillingTimeoutRequired<T>(
     debugPrint(
       'Billing: timeout ($label) after ${billingOperationTimeout.inSeconds}s',
     );
-    throw BillingOperationException(
-      'Billing operation timed out ($label)',
-    );
+    throw BillingOperationException('Billing operation timed out ($label)');
   } catch (e, st) {
     debugPrint('Billing: error ($label): $e');
     if (kDebugMode) debugPrint('$st');

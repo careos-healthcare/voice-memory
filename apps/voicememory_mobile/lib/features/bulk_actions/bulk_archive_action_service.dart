@@ -13,12 +13,10 @@ import '../pressure_retention/pressure_check_in_store.dart';
 /// Controls, and nothing here logs entry text or collection names.
 class BulkArchiveActionService {
   BulkArchiveActionService({
-    required JournalStore journal,
-    PressureCheckInStore? checkIns,
-    ArchiveCollectionStore? collections,
-  }) : _journal = journal,
-       _checkIns = checkIns,
-       _collections = collections;
+    required this._journal,
+    this._checkIns,
+    this._collections,
+  });
 
   final JournalStore _journal;
   final PressureCheckInStore? _checkIns;

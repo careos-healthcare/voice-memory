@@ -19,10 +19,7 @@ void main() {
         SafeSharingCopy.noDiagnosisDisclaimer,
         contains('does not diagnose'),
       );
-      expect(
-        SafeSharingCopy.userControlIncluded,
-        contains('in control'),
-      );
+      expect(SafeSharingCopy.userControlIncluded, contains('in control'));
       expect(
         SafeSharingCopy.futureSharingPrinciple,
         contains('explicit, private, and reversible'),
@@ -63,7 +60,11 @@ void main() {
       );
       expect(
         SafeSharingCopy.futureFeatureLabel.toLowerCase(),
-        anyOf(contains('planned'), contains('future'), contains('not available')),
+        anyOf(
+          contains('planned'),
+          contains('future'),
+          contains('not available'),
+        ),
       );
     });
 
@@ -107,27 +108,29 @@ void main() {
   });
 
   group('Protected areas', () {
-    test('safe sharing foundation does not touch billing or protected integrations',
-        () {
-      const paths = [
-        'lib/features/safe_sharing/safe_sharing_copy.dart',
-        'lib/features/safe_sharing/safe_sharing_model.dart',
-      ];
-      for (final path in paths) {
-        final file = File(path);
-        expect(file.existsSync(), isTrue, reason: path);
-        final content = file.readAsStringSync().toLowerCase();
-        expect(content, isNot(contains('revenuecat')));
-        expect(content, isNot(contains('purchases_flutter')));
-        expect(content, isNot(contains('productid')));
-        expect(content, isNot(contains('entitlement')));
-        expect(content, isNot(contains('journalservice')));
-        expect(content, isNot(contains('proofthreshold')));
-        expect(content, isNot(contains('openai')));
-        expect(content, isNot(contains('contactspermission')));
-        expect(content, isNot(contains('share_plus')));
-      }
-    });
+    test(
+      'safe sharing foundation does not touch billing or protected integrations',
+      () {
+        const paths = [
+          'lib/features/safe_sharing/safe_sharing_copy.dart',
+          'lib/features/safe_sharing/safe_sharing_model.dart',
+        ];
+        for (final path in paths) {
+          final file = File(path);
+          expect(file.existsSync(), isTrue, reason: path);
+          final content = file.readAsStringSync().toLowerCase();
+          expect(content, isNot(contains('revenuecat')));
+          expect(content, isNot(contains('purchases_flutter')));
+          expect(content, isNot(contains('productid')));
+          expect(content, isNot(contains('entitlement')));
+          expect(content, isNot(contains('journalservice')));
+          expect(content, isNot(contains('proofthreshold')));
+          expect(content, isNot(contains('openai')));
+          expect(content, isNot(contains('contactspermission')));
+          expect(content, isNot(contains('share_plus')));
+        }
+      },
+    );
 
     test('no product integration beyond copy/model', () {
       expect(

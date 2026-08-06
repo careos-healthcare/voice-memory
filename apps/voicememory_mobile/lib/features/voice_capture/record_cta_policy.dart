@@ -187,7 +187,8 @@ abstract class RecordCtaPolicy {
     final effectivePermission =
         sessionRequiresOpenSettings ||
             userDeniedThisSession ||
-            micPermissionState == MicrophonePermissionState.deniedOpenSettings ||
+            micPermissionState ==
+                MicrophonePermissionState.deniedOpenSettings ||
             micPhase == RecordingPhase.permissionPermanentlyDenied
         ? MicrophonePermissionState.deniedOpenSettings
         : micPermissionState;
@@ -231,8 +232,8 @@ abstract class RecordCtaPolicy {
         showTypeInsteadSecondary: true,
         action: RecordCtaAction.openSettings,
         micPhase: micPhase,
-        micPermissionState: micPermissionState ==
-                MicrophonePermissionState.deniedCanAskAgain
+        micPermissionState:
+            micPermissionState == MicrophonePermissionState.deniedCanAskAgain
             ? MicrophonePermissionState.deniedOpenSettings
             : micPermissionState,
       );

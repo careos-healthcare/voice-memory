@@ -33,7 +33,7 @@ import 'package:voicememory_mobile/widgets/patterns/proof_quality_response_card.
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_quality_response/unused.json'));
+    : super(file: File('test/tmp/proof_quality_response/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -51,11 +51,7 @@ const _strongRepeat =
 const _patternLabelOnly = 'work pressure';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -100,12 +96,9 @@ Future<void> _saveBetaFeedback(
   BetaProofFeedbackSurface surface =
       BetaProofFeedbackSurface.timelineProofMoment,
   int entryCount = 3,
-}) =>
-    BetaProofFeedbackStore.forPrefs(prefs).saveAnswer(
-      surface: surface,
-      feedbackType: type,
-      entryCount: entryCount,
-    );
+}) => BetaProofFeedbackStore.forPrefs(
+  prefs,
+).saveAnswer(surface: surface, feedbackType: type, entryCount: entryCount);
 
 Future<void> _pumpCard(
   WidgetTester tester,
@@ -244,8 +237,9 @@ void main() {
       }
     });
 
-    testWidgets('renders evidence anchors when safe anchors exist',
-        (tester) async {
+    testWidgets('renders evidence anchors when safe anchors exist', (
+      tester,
+    ) async {
       const anchor = 'said yes again';
       final result = ProofQualityResponseResult(
         shouldShow: true,
@@ -272,7 +266,10 @@ void main() {
       await _pumpCard(tester, result);
 
       expect(find.text(anchor), findsOneWidget);
-      expect(find.text(ProofQualityResponseCopy.tooVagueFallback), findsNothing);
+      expect(
+        find.text(ProofQualityResponseCopy.tooVagueFallback),
+        findsNothing,
+      );
     });
   });
 
@@ -291,8 +288,9 @@ void main() {
       expect(result.body, contains(ProofQualityResponseCopy.alreadyKnewBody));
     });
 
-    testWidgets('renders change-focused rows without pattern label only',
-        (tester) async {
+    testWidgets('renders change-focused rows without pattern label only', (
+      tester,
+    ) async {
       final entries = _threeRelatedEntries();
       await _saveBetaFeedback(prefs, BetaProofFeedbackType.alreadyKnew);
       final result = ProofQualityResponseEngine.build(
@@ -303,9 +301,14 @@ void main() {
 
       await _pumpCard(tester, result);
 
-      expect(find.text(ProofQualityResponseCopy.alreadyKnewTitle), findsOneWidget);
-      expect(find.text(ProofQualityResponseCopy.alreadyKnewDeltaLine),
-          findsOneWidget);
+      expect(
+        find.text(ProofQualityResponseCopy.alreadyKnewTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ProofQualityResponseCopy.alreadyKnewDeltaLine),
+        findsOneWidget,
+      );
       for (final row in ProofQualityResponseCopy.alreadyKnewRows) {
         expect(find.text(row), findsOneWidget);
       }
@@ -355,7 +358,10 @@ void main() {
 
       await _pumpCard(tester, result);
 
-      expect(find.text(ProofQualityResponseCopy.notRelevantTitle), findsOneWidget);
+      expect(
+        find.text(ProofQualityResponseCopy.notRelevantTitle),
+        findsOneWidget,
+      );
       expect(
         find.text(ProofQualityResponseCopy.keepAsBackgroundLabel),
         findsOneWidget,
@@ -401,7 +407,9 @@ void main() {
 
     test('fresh return after background is not suppressed', () async {
       final entries = [
-        ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 10))),
+        ..._threeRelatedEntries(
+          anchor: _now.subtract(const Duration(days: 10)),
+        ),
         _entry(
           '4',
           'I said yes again even though I had no capacity for one more ask.',
@@ -426,7 +434,10 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(spine?.currentWeight, isNot(ArchiveTimelineSpineCurrentWeight.corrected));
+      expect(
+        spine?.currentWeight,
+        isNot(ArchiveTimelineSpineCurrentWeight.corrected),
+      );
       expect(
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
         isTrue,
@@ -688,7 +699,10 @@ void main() {
         ),
       );
 
-      expect(result.correctionSlot, SurfacePriorityCardKey.proofQualityResponse);
+      expect(
+        result.correctionSlot,
+        SurfacePriorityCardKey.proofQualityResponse,
+      );
       expect(
         result.isVisible(
           SurfacePriorityCardKey.notRelevantRecovery,
@@ -722,7 +736,10 @@ void main() {
         expect(event.props.containsKey('feedback_state'), isTrue);
         expect(event.props.containsKey('has_safe_anchor'), isTrue);
         expect(event.props.containsKey('has_confirmed_repeat'), isTrue);
-        expect(event.props.keys.any((key) => key.contains('transcript')), isFalse);
+        expect(
+          event.props.keys.any((key) => key.contains('transcript')),
+          isFalse,
+        );
       }
       expect(analyticsEvents.last.props['answer_type'], 'keep_as_background');
     });

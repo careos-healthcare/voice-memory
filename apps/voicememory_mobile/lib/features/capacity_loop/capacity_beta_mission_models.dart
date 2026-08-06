@@ -30,12 +30,7 @@ abstract final class CapacityBetaMissionTaskIds {
   static const all = [...coreTasks, proInterest];
 }
 
-enum CapacityBetaMissionTaskStatus {
-  notStarted,
-  ready,
-  done,
-  optional,
-}
+enum CapacityBetaMissionTaskStatus { notStarted, ready, done, optional }
 
 /// One mission task row — fixed labels and routes only.
 class CapacityBetaMissionTask {
@@ -79,10 +74,10 @@ class CapacityBetaMissionRecord {
   bool get isDismissed => dismissed;
 
   Map<String, dynamic> toJson() => {
-        if (startedAt != null) 'startedAt': startedAt!.toIso8601String(),
-        if (completedAt != null) 'completedAt': completedAt!.toIso8601String(),
-        'dismissed': dismissed,
-      };
+    if (startedAt != null) 'startedAt': startedAt!.toIso8601String(),
+    if (completedAt != null) 'completedAt': completedAt!.toIso8601String(),
+    'dismissed': dismissed,
+  };
 
   static CapacityBetaMissionRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -90,8 +85,9 @@ class CapacityBetaMissionRecord {
     final completedRaw = json['completedAt'];
     return CapacityBetaMissionRecord(
       startedAt: startedRaw is String ? DateTime.tryParse(startedRaw) : null,
-      completedAt:
-          completedRaw is String ? DateTime.tryParse(completedRaw) : null,
+      completedAt: completedRaw is String
+          ? DateTime.tryParse(completedRaw)
+          : null,
       dismissed: json['dismissed'] == true,
     );
   }
@@ -100,12 +96,11 @@ class CapacityBetaMissionRecord {
     DateTime? startedAt,
     DateTime? completedAt,
     bool? dismissed,
-  }) =>
-      CapacityBetaMissionRecord(
-        startedAt: startedAt ?? this.startedAt,
-        completedAt: completedAt ?? this.completedAt,
-        dismissed: dismissed ?? this.dismissed,
-      );
+  }) => CapacityBetaMissionRecord(
+    startedAt: startedAt ?? this.startedAt,
+    completedAt: completedAt ?? this.completedAt,
+    dismissed: dismissed ?? this.dismissed,
+  );
 }
 
 /// Engine input — counts and flags only.

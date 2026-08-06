@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/first_run_positioning/first_run_posi
 import 'package:voicememory_mobile/features/first_run_positioning/first_run_positioning_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/first_run_positioning_card.dart';
 
@@ -25,50 +25,48 @@ bool _shouldShow({
   bool isDegradedTranscriptState = false,
   bool firstProofSeen = false,
   bool isPermissionBlocked = false,
-}) =>
-    FirstRunPositioningEngine.shouldShow(
-      result: result,
-      isReady: isReady,
-      isRecording: isRecording,
-      isPostSave: isPostSave,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      firstProofSeen: firstProofSeen,
-      isPermissionBlocked: isPermissionBlocked,
-      entryCount: entryCount,
-    );
+}) => FirstRunPositioningEngine.shouldShow(
+  result: result,
+  isReady: isReady,
+  isRecording: isRecording,
+  isPostSave: isPostSave,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  firstProofSeen: firstProofSeen,
+  isPermissionBlocked: isPermissionBlocked,
+  entryCount: entryCount,
+);
 
 SurfacePriorityCandidates _recordCandidates({
   required bool firstRunPositioning,
   bool threeMomentCompletion = true,
   bool firstMomentCapture = false,
   bool secondMomentReturn = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      threeMomentCompletion: threeMomentCompletion,
-      firstMomentCapture: firstMomentCapture,
-      secondMomentReturn: secondMomentReturn,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      firstRunPositioning: firstRunPositioning,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  threeMomentCompletion: threeMomentCompletion,
+  firstMomentCapture: firstMomentCapture,
+  secondMomentReturn: secondMomentReturn,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  firstRunPositioning: firstRunPositioning,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -77,9 +75,7 @@ Future<void> _pumpCard(
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
-      home: Scaffold(
-        body: FirstRunPositioningCard.test(result: result),
-      ),
+      home: Scaffold(body: FirstRunPositioningCard.test(result: result)),
     ),
   );
   await tester.pump();
@@ -232,10 +228,15 @@ void main() {
   });
 
   group('FirstRunPositioningCard', () {
-    testWidgets('includes positioning copy without paywall CTA', (tester) async {
+    testWidgets('includes positioning copy without paywall CTA', (
+      tester,
+    ) async {
       await _pumpCard(tester, result: _result(entryCount: 0));
 
-      expect(find.byKey(const Key('first_run_positioning_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_run_positioning_card')),
+        findsOneWidget,
+      );
       expect(
         find.textContaining('Free shows the first useful proof'),
         findsOneWidget,
@@ -289,7 +290,10 @@ void main() {
     test('record screen wires first run positioning card', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       expect(source, contains('FirstRunPositioningCard'));
-      expect(source, contains('firstRunPositioning: showFirstRunPositioningCard'));
+      expect(
+        source,
+        contains('firstRunPositioning: showFirstRunPositioningCard'),
+      );
       expect(source, contains('SurfacePriorityCardKey.firstRunPositioning'));
     });
   });

@@ -71,7 +71,8 @@ abstract final class ProConversionAuditCopy {
       for (final term in bannedMedicalTerms) {
         if (term == 'therapy' && lower.contains('not therapy')) continue;
         if (term == 'diagnosis' && lower.contains('not a diagnosis')) continue;
-        if (term == 'diagnosis' && lower.contains('not advice or a diagnosis')) {
+        if (term == 'diagnosis' &&
+            lower.contains('not advice or a diagnosis')) {
           continue;
         }
         if (lower.contains(term)) return false;

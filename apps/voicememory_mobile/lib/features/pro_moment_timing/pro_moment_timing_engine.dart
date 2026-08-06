@@ -84,7 +84,9 @@ abstract final class ProMomentTimingEngine {
       );
     }
 
-    final trigger = ProBridgeTimingLoosenEngine.resolveTriggerForContext(context);
+    final trigger = ProBridgeTimingLoosenEngine.resolveTriggerForContext(
+      context,
+    );
     if (trigger == null) {
       return const ProMomentTimingResult.blocked(
         blockedReason: ProMomentTimingBlockedReason.noAllowedMoment,
@@ -163,8 +165,10 @@ abstract final class ProMomentTimingEngine {
     return switch (record.feedbackType!) {
       BetaProofFeedbackType.useful => ProofQualityFeedbackState.useful,
       BetaProofFeedbackType.tooVague => ProofQualityFeedbackState.tooVague,
-      BetaProofFeedbackType.notRelevant => ProofQualityFeedbackState.notRelevant,
-      BetaProofFeedbackType.alreadyKnew => ProofQualityFeedbackState.alreadyKnewThis,
+      BetaProofFeedbackType.notRelevant =>
+        ProofQualityFeedbackState.notRelevant,
+      BetaProofFeedbackType.alreadyKnew =>
+        ProofQualityFeedbackState.alreadyKnewThis,
     };
   }
 
@@ -175,12 +179,12 @@ abstract final class ProMomentTimingEngine {
       return true;
     }
     return resolveFeedbackFromBetaSurface(
-          BetaProofFeedbackSurface.timelineProofMoment,
-        ) ==
+              BetaProofFeedbackSurface.timelineProofMoment,
+            ) ==
             ProofQualityFeedbackState.notRelevant ||
         resolveFeedbackFromBetaSurface(
-          BetaProofFeedbackSurface.firstProofPayoff,
-        ) ==
+              BetaProofFeedbackSurface.firstProofPayoff,
+            ) ==
             ProofQualityFeedbackState.notRelevant;
   }
 

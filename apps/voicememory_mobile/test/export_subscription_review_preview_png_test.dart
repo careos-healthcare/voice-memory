@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/subscription_review_preview.dart';
+import 'package:archiveme_research/screens/subscription_review_preview.dart';
 
 /// Host golden export for App Store review (393×852 logical, @3x golden).
 void main() {

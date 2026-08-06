@@ -15,22 +15,19 @@ ProofRepairOutcomeSummary _summary({
   int evidenceTrailClearCount = 5,
   int paywallCtaTapCount = 2,
   int wouldPayYesMaybeCount = 4,
-}) =>
-    ProofRepairOutcomeSummary(
-      totalTesters: totalTesters,
-      firstSessionSaveCount: firstSessionSaveCount,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      sawProCount: sawProCount,
-      understandsProCount: understandsProCount,
-      evidenceTrailClearCount: evidenceTrailClearCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-    );
+}) => ProofRepairOutcomeSummary(
+  totalTesters: totalTesters,
+  firstSessionSaveCount: firstSessionSaveCount,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  sawProCount: sawProCount,
+  understandsProCount: understandsProCount,
+  evidenceTrailClearCount: evidenceTrailClearCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+);
 
-ProofRepairOutcomeSummary _productionPassingSummary({
-  int totalTesters = 30,
-}) =>
+ProofRepairOutcomeSummary _productionPassingSummary({int totalTesters = 30}) =>
     _summary(
       totalTesters: totalTesters,
       usefulProofCount: totalTesters == 20 ? 5 : 7,
@@ -88,33 +85,37 @@ void main() {
       );
     });
 
-    test('useful proof passes and vague low returns proofStableReturnToEvidenceTrail',
-        () {
-      expect(
-        ProofRepairOutcomeMatrix.resolve(
-          _summary(
-            usefulProofCount: 8,
-            tooVagueOrNotRelevantCount: 5,
-            evidenceTrailClearCount: 3,
+    test(
+      'useful proof passes and vague low returns proofStableReturnToEvidenceTrail',
+      () {
+        expect(
+          ProofRepairOutcomeMatrix.resolve(
+            _summary(
+              usefulProofCount: 8,
+              tooVagueOrNotRelevantCount: 5,
+              evidenceTrailClearCount: 3,
+            ),
           ),
-        ),
-        ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail,
-      );
-    });
+          ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail,
+        );
+      },
+    );
 
-    test('all proof evidence pro value targets pass returns productionCandidate',
-        () {
-      expect(
-        ProofRepairOutcomeMatrix.resolve(_productionPassingSummary()),
-        ProofRepairOutcomeDecision.productionCandidate,
-      );
-      expect(
-        ProofRepairOutcomeMatrix.resolve(
-          _productionPassingSummary(totalTesters: 20),
-        ),
-        ProofRepairOutcomeDecision.productionCandidate,
-      );
-    });
+    test(
+      'all proof evidence pro value targets pass returns productionCandidate',
+      () {
+        expect(
+          ProofRepairOutcomeMatrix.resolve(_productionPassingSummary()),
+          ProofRepairOutcomeDecision.productionCandidate,
+        );
+        expect(
+          ProofRepairOutcomeMatrix.resolve(
+            _productionPassingSummary(totalTesters: 20),
+          ),
+          ProofRepairOutcomeDecision.productionCandidate,
+        );
+      },
+    );
 
     test('useful proof failure beats vague pro and evidence signals', () {
       expect(

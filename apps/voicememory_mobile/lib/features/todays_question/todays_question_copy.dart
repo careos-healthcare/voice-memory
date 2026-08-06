@@ -27,8 +27,7 @@ abstract final class TodaysQuestionCopy {
   static const comparisonQuestion = 'What felt similar or different today?';
   static const betaFeedbackQuestion =
       'Did ArchiveMe show anything useful after your first few moments?';
-  static const watchThemeQuestion =
-      'Where did your watch theme show up today?';
+  static const watchThemeQuestion = 'Where did your watch theme show up today?';
   static const reviewChangeQuestion =
       'What changed since your earlier moments?';
 
@@ -36,10 +35,8 @@ abstract final class TodaysQuestionCopy {
       'This gives ArchiveMe one clean moment to compare later.';
 
   static const screenshotTitle = "Today's one question (sample)";
-  static const screenshotQuestion =
-      'What would be useful to compare later?';
-  static const screenshotHelper =
-      'Example only — no private data.';
+  static const screenshotQuestion = 'What would be useful to compare later?';
+  static const screenshotHelper = 'Example only — no private data.';
 
   static const supportSectionTitle = "Today's one question";
   static const supportSectionBody =
@@ -57,32 +54,32 @@ abstract final class TodaysQuestionCopy {
 
   static String weeklyReviewRoute({required bool weeklyReviewAvailable}) =>
       weeklyReviewAvailable
-          ? WeeklyArchiveReviewNavigation.route
-          : archiveHomeRoute;
+      ? WeeklyArchiveReviewNavigation.route
+      : archiveHomeRoute;
 
   static List<String> get allVisibleStrings => [
-        eyebrow,
-        helperText,
-        saveMomentCta,
-        saveComparisonCta,
-        saveThemeEvidenceCta,
-        openBetaFeedbackCta,
-        recordAnswerCta,
-        typeAnswerCta,
-        backToRecordCta,
-        viewQuestionCta,
-        futureArchiveQuestion,
-        comparisonQuestion,
-        betaFeedbackQuestion,
-        watchThemeQuestion,
-        reviewChangeQuestion,
-        fullScreenWhy,
-        screenshotTitle,
-        screenshotQuestion,
-        screenshotHelper,
-        supportSectionTitle,
-        supportSectionBody,
-        ...rotatedQuestions,
-        ...AdaptiveDailyQuestionCopy.allVisibleStrings,
-      ];
+    eyebrow,
+    helperText,
+    saveMomentCta,
+    saveComparisonCta,
+    saveThemeEvidenceCta,
+    openBetaFeedbackCta,
+    recordAnswerCta,
+    typeAnswerCta,
+    backToRecordCta,
+    viewQuestionCta,
+    futureArchiveQuestion,
+    comparisonQuestion,
+    betaFeedbackQuestion,
+    watchThemeQuestion,
+    reviewChangeQuestion,
+    fullScreenWhy,
+    screenshotTitle,
+    screenshotQuestion,
+    screenshotHelper,
+    supportSectionTitle,
+    supportSectionBody,
+    ...rotatedQuestions,
+    ...AdaptiveDailyQuestionCopy.allVisibleStrings,
+  ];
 }

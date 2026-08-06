@@ -15,14 +15,20 @@ abstract final class RevenueReadinessEngine {
     final snapshot = RevenueFunnelSnapshot.fromEvents(events);
     final eventTypes = events.map((record) => record.event).toSet();
 
-    final hasFirstProof = eventTypes.contains(RevenueFunnelEvent.firstProofSeen);
+    final hasFirstProof = eventTypes.contains(
+      RevenueFunnelEvent.firstProofSeen,
+    );
     final hasProInterest = _hasProInterest(eventTypes);
     final hasPaywallSeen = eventTypes.contains(RevenueFunnelEvent.paywallSeen);
-    final hasPurchaseIntent =
-        eventTypes.contains(RevenueFunnelEvent.paywallPurchaseCtaTapped);
-    final hasDismissed = eventTypes.contains(RevenueFunnelEvent.paywallDismissed);
-    final hasRestore =
-        eventTypes.contains(RevenueFunnelEvent.paywallRestoreTapped);
+    final hasPurchaseIntent = eventTypes.contains(
+      RevenueFunnelEvent.paywallPurchaseCtaTapped,
+    );
+    final hasDismissed = eventTypes.contains(
+      RevenueFunnelEvent.paywallDismissed,
+    );
+    final hasRestore = eventTypes.contains(
+      RevenueFunnelEvent.paywallRestoreTapped,
+    );
 
     return RevenueReadinessDashboard(
       title: RevenueReadinessCopy.title,
@@ -97,37 +103,36 @@ abstract final class RevenueReadinessEngine {
 
   static List<RevenueReadinessSurface> _surfaces(
     Set<RevenueFunnelEvent> eventTypes,
-  ) =>
-      [
-        RevenueReadinessSurface(
-          id: 'pro_lock',
-          label: RevenueReadinessCopy.surfaceProLock,
-          seen: eventTypes.contains(RevenueFunnelEvent.proLockSeen) ||
-              eventTypes.contains(RevenueFunnelEvent.proLockCtaTapped),
-        ),
-        RevenueReadinessSurface(
-          id: 'monthly_report_preview',
-          label: RevenueReadinessCopy.surfaceMonthlyReportPreview,
-          seen: eventTypes.contains(
-                RevenueFunnelEvent.monthlyReportPreviewSeen,
-              ) ||
-              eventTypes.contains(
-                RevenueFunnelEvent.monthlyReportPreviewCtaTapped,
-              ),
-        ),
-        RevenueReadinessSurface(
-          id: 'backup_bridge',
-          label: RevenueReadinessCopy.surfaceBackupBridge,
-          seen: eventTypes.contains(RevenueFunnelEvent.backupBridgeSeen) ||
-              eventTypes.contains(RevenueFunnelEvent.backupBridgeCtaTapped),
-        ),
-        RevenueReadinessSurface(
-          id: 'pro_evidence_value',
-          label: RevenueReadinessCopy.surfaceProEvidenceValue,
-          seen: eventTypes.contains(RevenueFunnelEvent.proEvidenceValueSeen) ||
-              eventTypes.contains(RevenueFunnelEvent.proEvidenceValueCtaTapped),
-        ),
-      ];
+  ) => [
+    RevenueReadinessSurface(
+      id: 'pro_lock',
+      label: RevenueReadinessCopy.surfaceProLock,
+      seen:
+          eventTypes.contains(RevenueFunnelEvent.proLockSeen) ||
+          eventTypes.contains(RevenueFunnelEvent.proLockCtaTapped),
+    ),
+    RevenueReadinessSurface(
+      id: 'monthly_report_preview',
+      label: RevenueReadinessCopy.surfaceMonthlyReportPreview,
+      seen:
+          eventTypes.contains(RevenueFunnelEvent.monthlyReportPreviewSeen) ||
+          eventTypes.contains(RevenueFunnelEvent.monthlyReportPreviewCtaTapped),
+    ),
+    RevenueReadinessSurface(
+      id: 'backup_bridge',
+      label: RevenueReadinessCopy.surfaceBackupBridge,
+      seen:
+          eventTypes.contains(RevenueFunnelEvent.backupBridgeSeen) ||
+          eventTypes.contains(RevenueFunnelEvent.backupBridgeCtaTapped),
+    ),
+    RevenueReadinessSurface(
+      id: 'pro_evidence_value',
+      label: RevenueReadinessCopy.surfaceProEvidenceValue,
+      seen:
+          eventTypes.contains(RevenueFunnelEvent.proEvidenceValueSeen) ||
+          eventTypes.contains(RevenueFunnelEvent.proEvidenceValueCtaTapped),
+    ),
+  ];
 
   static RevenueReadinessStatus _status({
     required bool present,

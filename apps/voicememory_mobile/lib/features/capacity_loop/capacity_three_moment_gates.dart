@@ -18,21 +18,17 @@ abstract final class CapacityThreeMomentGates {
   static bool showOnArchiveHome({
     required bool hasCard,
     required int capacityMomentCount,
-  }) =>
-      hasCard && capacityMomentCount < activationTarget;
+  }) => hasCard && capacityMomentCount < activationTarget;
 
   static bool showOnRecordProgress({
     required bool eligible,
     required bool capacityWedgeActive,
     required int capacityMomentCount,
   }) =>
-      eligible &&
-      capacityWedgeActive &&
-      capacityMomentCount < activationTarget;
+      eligible && capacityWedgeActive && capacityMomentCount < activationTarget;
 
   static bool showOnCapacityLoop({
     required bool eligible,
     required int capacityMomentCount,
-  }) =>
-      eligible && capacityMomentCount < activationTarget;
+  }) => eligible && capacityMomentCount < activationTarget;
 }

@@ -37,10 +37,7 @@ class ArchiveHistoryItem {
 
 /// Content for the archive history bottom sheet.
 class ArchiveHistoryContent {
-  const ArchiveHistoryContent({
-    required this.items,
-    required this.isEmpty,
-  });
+  const ArchiveHistoryContent({required this.items, required this.isEmpty});
 
   final List<ArchiveHistoryItem> items;
   final bool isEmpty;

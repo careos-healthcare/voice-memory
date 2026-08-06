@@ -11,14 +11,11 @@ import '../infrastructure/offline_vault_recovery_store.dart';
 /// Orchestrates pending offline vault queue jobs: scan → upload → server ack → delete.
 class OfflineVaultRecoveryService {
   OfflineVaultRecoveryService({
-    required OfflineVaultRecoveryStore store,
-    required ApiClient api,
-    required CaptureAttestService attest,
-    required CapturePipelineService pipeline,
-  }) : _store = store,
-       _api = api,
-       _attest = attest,
-       _pipeline = pipeline;
+    required this._store,
+    required this._api,
+    required this._attest,
+    required this._pipeline,
+  });
 
   final OfflineVaultRecoveryStore _store;
   final ApiClient _api;
@@ -93,7 +90,7 @@ class OfflineVaultRecoveryService {
         duplicate: serverResult.duplicate,
       );
       return pipelineResult;
-    } catch (error, stackTrace) {
+    } catch (error) {
       LiveAudioPipelineLog.offlineVaultRecoveryFailed(
         sessionId: manifest.sessionId,
         reason: error is Exception ? error.toString() : '$error',

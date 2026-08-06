@@ -87,14 +87,14 @@ abstract final class LoopPacksFutureGate {
     bool? paidIntentBetaComplete,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      LoopPacksFutureGateInput(
-        testFlightUploaded:
-            testFlightUploaded ?? launchChecklist?.testFlightUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-      );
+  }) => LoopPacksFutureGateInput(
+    testFlightUploaded:
+        testFlightUploaded ?? launchChecklist?.testFlightUploaded,
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+  );
 
   static LoopPacksFutureGateInput fromRepoSignals({
     required String loopPacksFutureDocSource,
@@ -102,18 +102,15 @@ abstract final class LoopPacksFutureGate {
     required String audienceWedgeModelSource,
     bool? testFlightUploaded,
     bool? paidIntentBetaComplete,
-  }) =>
-      LoopPacksFutureGateInput(
-        testFlightUploaded: testFlightUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        roadmapDocListsPacks: detectRoadmapDocListsPacks(
-          loopPacksFutureDocSource,
-        ),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        audienceWedgeIdsAligned: detectAudienceWedgeIdsAligned(
-          audienceWedgeModelSource,
-        ),
-      );
+  }) => LoopPacksFutureGateInput(
+    testFlightUploaded: testFlightUploaded,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    roadmapDocListsPacks: detectRoadmapDocListsPacks(loopPacksFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    audienceWedgeIdsAligned: detectAudienceWedgeIdsAligned(
+      audienceWedgeModelSource,
+    ),
+  );
 
   static bool detectRoadmapDocListsPacks(String docSource) {
     const markers = [
@@ -151,17 +148,16 @@ abstract final class LoopPacksFutureGate {
 
   static List<LoopPackFuturePrereq> _buildPrereqs(
     LoopPacksFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: LoopPackFuturePrereqId.testFlightUploaded,
-          value: input.testFlightUploaded,
-        ),
-        _prereq(
-          id: LoopPackFuturePrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: LoopPackFuturePrereqId.testFlightUploaded,
+      value: input.testFlightUploaded,
+    ),
+    _prereq(
+      id: LoopPackFuturePrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+  ];
 
   static List<LoopPackFuture> _buildPacks({required bool betaProofComplete}) =>
       canonicalPackOrder
@@ -182,10 +178,10 @@ abstract final class LoopPacksFutureGate {
           .toList();
 
   static LoopPackFuturePrereqStatus _statusFor(bool? value) => switch (value) {
-        true => LoopPackFuturePrereqStatus.pass,
-        false => LoopPackFuturePrereqStatus.fail,
-        null => LoopPackFuturePrereqStatus.pending,
-      };
+    true => LoopPackFuturePrereqStatus.pass,
+    false => LoopPackFuturePrereqStatus.fail,
+    null => LoopPackFuturePrereqStatus.pending,
+  };
 
   static LoopPackFuturePrereq _prereq({
     required LoopPackFuturePrereqId id,

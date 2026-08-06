@@ -1,4 +1,3 @@
-import '../beta/beta_activation_loop_tracker.dart';
 import '../beta_activation/beta_activation_summary_tracker.dart';
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_proof_feedback/beta_proof_feedback_store.dart';
@@ -45,7 +44,9 @@ abstract final class TestFlightMetricsEngine {
     );
   }
 
-  static TestFlightMetricsDashboard buildFromInput(TestFlightMetricsInput input) {
+  static TestFlightMetricsDashboard buildFromInput(
+    TestFlightMetricsInput input,
+  ) {
     final coreMetrics = <TestFlightMetricRow>[
       _row(
         id: TestFlightMetricId.firstSave,
@@ -146,12 +147,7 @@ abstract final class TestFlightMetricsEngine {
     required bool seen,
     int count = 0,
   }) {
-    return TestFlightMetricRow(
-      id: id,
-      label: label,
-      seen: seen,
-      count: count,
-    );
+    return TestFlightMetricRow(id: id, label: label, seen: seen, count: count);
   }
 
   static Map<BetaProofFeedbackType, int> _feedbackCountsByType() {

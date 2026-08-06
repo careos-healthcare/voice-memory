@@ -34,85 +34,99 @@ ProAccessEnforcementAuditInput _input({
   bool serverSideEntitlementCheckPresent = true,
   bool privacyLockIndependentOfPro = true,
   bool deviceSharingPrevented = false,
-}) =>
-    ProAccessEnforcementAuditInput(
-      revenueCatConfigured: revenueCatConfigured,
-      proEntitlementReadable: proEntitlementReadable,
-      restorePurchasesReachable: restorePurchasesReachable,
-      restoreNoCrashVerified: restoreNoCrashVerified,
-      localCachePreventsStalePro: localCachePreventsStalePro,
-      entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-      revenueCatLinkedToAccount: revenueCatLinkedToAccount,
-      serverSideEntitlementCheckPresent: serverSideEntitlementCheckPresent,
-      privacyLockIndependentOfPro: privacyLockIndependentOfPro,
-      deviceSharingPrevented: deviceSharingPrevented,
-    );
+}) => ProAccessEnforcementAuditInput(
+  revenueCatConfigured: revenueCatConfigured,
+  proEntitlementReadable: proEntitlementReadable,
+  restorePurchasesReachable: restorePurchasesReachable,
+  restoreNoCrashVerified: restoreNoCrashVerified,
+  localCachePreventsStalePro: localCachePreventsStalePro,
+  entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+  revenueCatLinkedToAccount: revenueCatLinkedToAccount,
+  serverSideEntitlementCheckPresent: serverSideEntitlementCheckPresent,
+  privacyLockIndependentOfPro: privacyLockIndependentOfPro,
+  deviceSharingPrevented: deviceSharingPrevented,
+);
 
 ProAccessEnforcementAuditItem _item(
   ProAccessEnforcementAuditResult result,
   ProAccessEnforcementAuditItemId id,
-) =>
-    result.items.firstWhere((item) => item.id == id);
+) => result.items.firstWhere((item) => item.id == id);
 
 void main() {
   group('ProAccessEnforcementAudit.build', () {
     test('audit has eight canonical items', () {
       final result = ProAccessEnforcementAudit.build(_input());
       expect(result.items.length, ProAccessEnforcementAudit.auditItemCount);
-      expect(
-        result.items.map((item) => item.id).toList(),
-        [
-          ProAccessEnforcementAuditItemId.revenueCatEntitlement,
-          ProAccessEnforcementAuditItemId.restoreEntitlement,
-          ProAccessEnforcementAuditItemId.localCache,
-          ProAccessEnforcementAuditItemId.reinstallBehavior,
-          ProAccessEnforcementAuditItemId.accountIdentity,
-          ProAccessEnforcementAuditItemId.deviceSharing,
-          ProAccessEnforcementAuditItemId.serverSideEntitlement,
-          ProAccessEnforcementAuditItemId.privacyLockSeparate,
-        ],
-      );
-    });
-
-    test('RevenueCat not configured -> acceptableForTestFlight on entitlement',
-        () {
-      final result = ProAccessEnforcementAudit.build(
-        _input(revenueCatConfigured: false),
-      );
-      expect(
-        _item(result, ProAccessEnforcementAuditItemId.revenueCatEntitlement)
-            .classification,
-        ProAccessEnforcementClassification.acceptableForTestFlight,
-      );
-      expect(result.decision, ProAccessEnforcementAuditDecision.testFlightAcceptable);
-      expect(result.hasProductionBlocker, isFalse);
-    });
-
-    test('RevenueCat configured but entitlement unreadable -> productionBlocker',
-        () {
-      final result = ProAccessEnforcementAudit.build(
-        _input(proEntitlementReadable: false),
-      );
-      expect(result.decision, ProAccessEnforcementAuditDecision.productionBlocked);
-      expect(
-        result.earliestBlocker,
+      expect(result.items.map((item) => item.id).toList(), [
         ProAccessEnforcementAuditItemId.revenueCatEntitlement,
-      );
-      expect(
-        _item(result, ProAccessEnforcementAuditItemId.revenueCatEntitlement)
-            .classification,
-        ProAccessEnforcementClassification.productionBlocker,
-      );
+        ProAccessEnforcementAuditItemId.restoreEntitlement,
+        ProAccessEnforcementAuditItemId.localCache,
+        ProAccessEnforcementAuditItemId.reinstallBehavior,
+        ProAccessEnforcementAuditItemId.accountIdentity,
+        ProAccessEnforcementAuditItemId.deviceSharing,
+        ProAccessEnforcementAuditItemId.serverSideEntitlement,
+        ProAccessEnforcementAuditItemId.privacyLockSeparate,
+      ]);
     });
+
+    test(
+      'RevenueCat not configured -> acceptableForTestFlight on entitlement',
+      () {
+        final result = ProAccessEnforcementAudit.build(
+          _input(revenueCatConfigured: false),
+        );
+        expect(
+          _item(
+            result,
+            ProAccessEnforcementAuditItemId.revenueCatEntitlement,
+          ).classification,
+          ProAccessEnforcementClassification.acceptableForTestFlight,
+        );
+        expect(
+          result.decision,
+          ProAccessEnforcementAuditDecision.testFlightAcceptable,
+        );
+        expect(result.hasProductionBlocker, isFalse);
+      },
+    );
+
+    test(
+      'RevenueCat configured but entitlement unreadable -> productionBlocker',
+      () {
+        final result = ProAccessEnforcementAudit.build(
+          _input(proEntitlementReadable: false),
+        );
+        expect(
+          result.decision,
+          ProAccessEnforcementAuditDecision.productionBlocked,
+        );
+        expect(
+          result.earliestBlocker,
+          ProAccessEnforcementAuditItemId.revenueCatEntitlement,
+        );
+        expect(
+          _item(
+            result,
+            ProAccessEnforcementAuditItemId.revenueCatEntitlement,
+          ).classification,
+          ProAccessEnforcementClassification.productionBlocker,
+        );
+      },
+    );
 
     test('restore broken when RevenueCat live -> productionBlocker', () {
       final result = ProAccessEnforcementAudit.build(
         _input(restorePurchasesReachable: false),
       );
-      expect(result.decision, ProAccessEnforcementAuditDecision.productionBlocked);
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.restoreEntitlement)
-            .classification,
+        result.decision,
+        ProAccessEnforcementAuditDecision.productionBlocked,
+      );
+      expect(
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.restoreEntitlement,
+        ).classification,
         ProAccessEnforcementClassification.productionBlocker,
       );
     });
@@ -122,7 +136,10 @@ void main() {
         _input(localCachePreventsStalePro: false),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.localCache).classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.localCache,
+        ).classification,
         ProAccessEnforcementClassification.productionBlocker,
       );
     });
@@ -130,7 +147,10 @@ void main() {
     test('local cache enforced when merge policy honored', () {
       final result = ProAccessEnforcementAudit.build(_input());
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.localCache).classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.localCache,
+        ).classification,
         ProAccessEnforcementClassification.enforcedLocally,
       );
     });
@@ -140,11 +160,16 @@ void main() {
         _input(entitlementPersistsAfterRestart: false),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.reinstallBehavior)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.reinstallBehavior,
+        ).classification,
         ProAccessEnforcementClassification.enforcedByRevenueCat,
       );
-      expect(result.decision, ProAccessEnforcementAuditDecision.testFlightAcceptable);
+      expect(
+        result.decision,
+        ProAccessEnforcementAuditDecision.testFlightAcceptable,
+      );
     });
 
     test('reinstall blocked when persistence and restore both missing', () {
@@ -155,8 +180,10 @@ void main() {
         ),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.reinstallBehavior)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.reinstallBehavior,
+        ).classification,
         ProAccessEnforcementClassification.productionBlocker,
       );
     });
@@ -164,8 +191,10 @@ void main() {
     test('account identity not linked -> notEnforcedYet', () {
       final result = ProAccessEnforcementAudit.build(_input());
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.accountIdentity)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.accountIdentity,
+        ).classification,
         ProAccessEnforcementClassification.notEnforcedYet,
       );
       expect(result.hasDocumentedGaps, isTrue);
@@ -176,8 +205,10 @@ void main() {
         _input(revenueCatLinkedToAccount: true),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.accountIdentity)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.accountIdentity,
+        ).classification,
         ProAccessEnforcementClassification.enforcedByRevenueCat,
       );
     });
@@ -185,29 +216,37 @@ void main() {
     test('device sharing not prevented -> notEnforcedYet', () {
       final result = ProAccessEnforcementAudit.build(_input());
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.deviceSharing)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.deviceSharing,
+        ).classification,
         ProAccessEnforcementClassification.notEnforcedYet,
       );
     });
 
-    test('server-side check present with RevenueCat live -> supplementary locally',
-        () {
-      final result = ProAccessEnforcementAudit.build(_input());
-      expect(
-        _item(result, ProAccessEnforcementAuditItemId.serverSideEntitlement)
-            .classification,
-        ProAccessEnforcementClassification.enforcedLocally,
-      );
-    });
+    test(
+      'server-side check present with RevenueCat live -> supplementary locally',
+      () {
+        final result = ProAccessEnforcementAudit.build(_input());
+        expect(
+          _item(
+            result,
+            ProAccessEnforcementAuditItemId.serverSideEntitlement,
+          ).classification,
+          ProAccessEnforcementClassification.enforcedLocally,
+        );
+      },
+    );
 
     test('server-side check absent -> notEnforcedYet', () {
       final result = ProAccessEnforcementAudit.build(
         _input(serverSideEntitlementCheckPresent: false),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.serverSideEntitlement)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.serverSideEntitlement,
+        ).classification,
         ProAccessEnforcementClassification.notEnforcedYet,
       );
     });
@@ -215,8 +254,10 @@ void main() {
     test('privacy lock separate from Pro -> enforcedLocally', () {
       final result = ProAccessEnforcementAudit.build(_input());
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.privacyLockSeparate)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.privacyLockSeparate,
+        ).classification,
         ProAccessEnforcementClassification.enforcedLocally,
       );
     });
@@ -226,26 +267,27 @@ void main() {
         _input(privacyLockIndependentOfPro: false),
       );
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.privacyLockSeparate)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.privacyLockSeparate,
+        ).classification,
         ProAccessEnforcementClassification.productionBlocker,
       );
     });
 
-    test('all mechanics verified with identity linked -> enforcementDocumented',
-        () {
-      final result = ProAccessEnforcementAudit.build(
-        _input(
-          revenueCatLinkedToAccount: true,
-          deviceSharingPrevented: true,
-        ),
-      );
-      expect(
-        result.decision,
-        ProAccessEnforcementAuditDecision.enforcementDocumented,
-      );
-      expect(result.hasProductionBlocker, isFalse);
-    });
+    test(
+      'all mechanics verified with identity linked -> enforcementDocumented',
+      () {
+        final result = ProAccessEnforcementAudit.build(
+          _input(revenueCatLinkedToAccount: true, deviceSharingPrevented: true),
+        );
+        expect(
+          result.decision,
+          ProAccessEnforcementAuditDecision.enforcementDocumented,
+        );
+        expect(result.hasProductionBlocker, isFalse);
+      },
+    );
   });
 
   group('ProAccessEnforcementAudit bridges', () {
@@ -272,15 +314,18 @@ void main() {
         paidIntentBetaReady: true,
         secretsRotated: true,
       );
-      final auditInput =
-          ProAccessEnforcementAudit.fromStoreReadinessInput(storeInput);
+      final auditInput = ProAccessEnforcementAudit.fromStoreReadinessInput(
+        storeInput,
+      );
       final result = ProAccessEnforcementAudit.build(auditInput);
 
       expect(auditInput.revenueCatConfigured, isTrue);
       expect(auditInput.proEntitlementReadable, isTrue);
       expect(
-        _item(result, ProAccessEnforcementAuditItemId.revenueCatEntitlement)
-            .classification,
+        _item(
+          result,
+          ProAccessEnforcementAuditItemId.revenueCatEntitlement,
+        ).classification,
         ProAccessEnforcementClassification.enforcedByRevenueCat,
       );
     });
@@ -303,21 +348,23 @@ void main() {
       );
     });
 
-    test('guardrail blocks account system backend sync and TestFlight over-blocking',
-        () {
-      expect(
-        ProAccessEnforcementAuditCopy.guardrail,
-        contains('Do not build account system'),
-      );
-      expect(
-        ProAccessEnforcementAuditCopy.guardrail,
-        contains('add backend sync'),
-      );
-      expect(
-        ProAccessEnforcementAuditCopy.guardrail,
-        contains('purchase, restore, or entitlement is broken'),
-      );
-    });
+    test(
+      'guardrail blocks account system backend sync and TestFlight over-blocking',
+      () {
+        expect(
+          ProAccessEnforcementAuditCopy.guardrail,
+          contains('Do not build account system'),
+        );
+        expect(
+          ProAccessEnforcementAuditCopy.guardrail,
+          contains('add backend sync'),
+        );
+        expect(
+          ProAccessEnforcementAuditCopy.guardrail,
+          contains('purchase, restore, or entitlement is broken'),
+        );
+      },
+    );
 
     test('copy avoids therapy diagnosis coaching and advice claims', () {
       for (final text in ProAccessEnforcementAuditCopy.allVisibleStrings()) {
@@ -337,7 +384,10 @@ void main() {
       expect(docs, contains('notEnforcedYet'));
       expect(docs, contains('productionBlocker'));
       expect(docs.toLowerCase(), contains('developer-diagnostics'));
-      expect(docs.toLowerCase(), contains('run_pro_access_enforcement_audit.sh'));
+      expect(
+        docs.toLowerCase(),
+        contains('run_pro_access_enforcement_audit.sh'),
+      );
       expect(docs.toLowerCase(), contains('validate_core.sh'));
     });
   });
@@ -351,29 +401,28 @@ void main() {
       bool restoreNoCrashVerified = true,
       bool proStateCanBeRead = true,
       bool entitlementPersistsAfterRestart = true,
-    }) =>
-        StoreReadinessSingleSourceInput(
-          signingConfigured: true,
-          appStoreMetadataReady: true,
-          supportUrlSet: true,
-          privacyUrlSet: true,
-          termsUrlSet: true,
-          screenshotsReady: true,
-          revenueCatApiKeyProvided: true,
-          revenueCatConfigured: revenueCatConfigured,
-          productsLoaded: productsLoaded,
-          proEntitlementConfigured: true,
-          purchaseFlowReachable: purchaseFlowReachable,
-          restorePurchasesReachable: restorePurchasesReachable,
-          restoreNoCrashVerified: restoreNoCrashVerified,
-          purchasesUnavailableFallbackVerified: true,
-          proStateCanBeRead: proStateCanBeRead,
-          entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-          physicalDeviceSmokePassed: true,
-          testFlightUploadReady: true,
-          paidIntentBetaReady: true,
-          secretsRotated: true,
-        );
+    }) => StoreReadinessSingleSourceInput(
+      signingConfigured: true,
+      appStoreMetadataReady: true,
+      supportUrlSet: true,
+      privacyUrlSet: true,
+      termsUrlSet: true,
+      screenshotsReady: true,
+      revenueCatApiKeyProvided: true,
+      revenueCatConfigured: revenueCatConfigured,
+      productsLoaded: productsLoaded,
+      proEntitlementConfigured: true,
+      purchaseFlowReachable: purchaseFlowReachable,
+      restorePurchasesReachable: restorePurchasesReachable,
+      restoreNoCrashVerified: restoreNoCrashVerified,
+      purchasesUnavailableFallbackVerified: true,
+      proStateCanBeRead: proStateCanBeRead,
+      entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+      physicalDeviceSmokePassed: true,
+      testFlightUploadReady: true,
+      paidIntentBetaReady: true,
+      secretsRotated: true,
+    );
 
     test('fromStoreReadiness tags four billing store steps', () {
       final bridge = ProAccessEnforcementAuditV3.fromStoreReadiness(
@@ -419,7 +468,9 @@ void main() {
         isTrue,
       );
       expect(
-        ProAccessEnforcementAuditV3.ciEnforcementPasses(bundleTestsGreen: false),
+        ProAccessEnforcementAuditV3.ciEnforcementPasses(
+          bundleTestsGreen: false,
+        ),
         isFalse,
       );
       expect(ProAccessEnforcementAuditV3.ciTestBundle, hasLength(3));
@@ -484,7 +535,9 @@ void main() {
           packageCount: 0,
         ),
       );
-      final dashboard = ProAccessEnforcementAuditV2.buildFromLocalSignals(signals);
+      final dashboard = ProAccessEnforcementAuditV2.buildFromLocalSignals(
+        signals,
+      );
 
       expect(dashboard.revenueCatConfigured, isFalse);
       expect(
@@ -534,8 +587,9 @@ void main() {
     });
 
     test('developer diagnostics wires store readiness bridge to card', () {
-      final source =
-          File('lib/screens/developer_diagnostics_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/developer_diagnostics_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('ProAccessEnforcementAuditV3.fromLocalSignals'));
       expect(source, contains('storeReadinessBridge'));
     });
@@ -554,10 +608,14 @@ void main() {
     });
 
     test('developer diagnostics screen wires pro access enforcement card', () {
-      final source =
-          File('lib/screens/developer_diagnostics_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/developer_diagnostics_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('ProAccessEnforcementAuditCard'));
-      expect(source, contains('ProAccessEnforcementAuditV2.buildFromLocalSignals'));
+      expect(
+        source,
+        contains('ProAccessEnforcementAuditV2.buildFromLocalSignals'),
+      );
     });
     test('module does not import purchase paywall or RevenueCat SDK paths', () {
       for (final path in [
@@ -581,13 +639,15 @@ void main() {
       expect(result.decision, FreezeDriftDecision.blocked);
     });
 
-    test('store readiness single source and sandbox proof regressions unchanged',
-        () {
-      expect(StoreReadinessSingleSourceCopy.headline, isNotEmpty);
-      expect(RevenueCatSandboxProofCopy.headline, isNotEmpty);
-      expect(ReleaseCandidateFreezeCopy.headline, isNotEmpty);
-      expect(PaidIntentBetaProofCopy.headline, isNotEmpty);
-    });
+    test(
+      'store readiness single source and sandbox proof regressions unchanged',
+      () {
+        expect(StoreReadinessSingleSourceCopy.headline, isNotEmpty);
+        expect(RevenueCatSandboxProofCopy.headline, isNotEmpty);
+        expect(ReleaseCandidateFreezeCopy.headline, isNotEmpty);
+        expect(PaidIntentBetaProofCopy.headline, isNotEmpty);
+      },
+    );
 
     test('proof selection principle still blocks ranking', () {
       expect(ProofSelectionPrinciple.allowsRankingUi(), isFalse);
@@ -597,38 +657,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

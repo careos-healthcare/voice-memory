@@ -23,9 +23,9 @@ class QuickCaptureFrictionCard extends StatefulWidget {
     super.key,
     required this.result,
     this.onSaved,
-    QuickCaptureFrictionStore? store,
+    this.store,
     this.sampleMode = false,
-  }) : store = store;
+  });
 
   final QuickCaptureFrictionResult result;
   final VoidCallback? onSaved;
@@ -90,8 +90,9 @@ class _QuickCaptureFrictionCardState extends State<QuickCaptureFrictionCard> {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('quick_capture_friction_save_button'),
-            onPressed:
-                _saving || _selectedResponseId == null ? null : _saveAnswer,
+            onPressed: _saving || _selectedResponseId == null
+                ? null
+                : _saveAnswer,
             child: Text(widget.result.primaryCtaLabel),
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -120,9 +121,7 @@ class _QuickCaptureFrictionCardState extends State<QuickCaptureFrictionCard> {
 
   Future<void> _skip() async {
     setState(() => _saving = true);
-    await _store.saveSkipped(
-      relatedEntryId: widget.result.relatedEntryId,
-    );
+    await _store.saveSkipped(relatedEntryId: widget.result.relatedEntryId);
     if (!mounted) return;
     setState(() => _saving = false);
     widget.onSaved?.call();

@@ -36,7 +36,8 @@ abstract final class EarlyArchiveReturnReminderService {
 
   static String confirmationMessage(ReminderScheduleOutcome outcome) {
     return switch (outcome) {
-      ReminderScheduleOutcome.scheduled => ConsumerUiCopy.reminderSetConfirmation,
+      ReminderScheduleOutcome.scheduled =>
+        ConsumerUiCopy.reminderSetConfirmation,
       ReminderScheduleOutcome.permissionDenied ||
       ReminderScheduleOutcome.notAvailable =>
         ConsumerUiCopy.reminderDeniedMessage,

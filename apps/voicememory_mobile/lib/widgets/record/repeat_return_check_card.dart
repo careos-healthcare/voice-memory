@@ -29,9 +29,8 @@ class RepeatReturnCheckCard extends StatefulWidget {
     required this.surface,
     this.store,
     this.onChanged,
-    RepeatReturnCheckRecord? initialRecord,
-  })  : skipPrefsLoad = true,
-        initialRecord = initialRecord;
+    this.initialRecord,
+  }) : skipPrefsLoad = true;
 
   final String entryId;
   final int entryCount;
@@ -119,9 +118,7 @@ class _RepeatReturnCheckCardState extends State<RepeatReturnCheckCard> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const SizedBox.shrink(
-        key: Key('repeat_return_check_loading'),
-      );
+      return const SizedBox.shrink(key: Key('repeat_return_check_loading'));
     }
 
     final record = _record;
@@ -132,22 +129,18 @@ class _RepeatReturnCheckCardState extends State<RepeatReturnCheckCard> {
           child: Text(
             RepeatReturnCheckCopy.saved,
             key: const Key('repeat_return_check_saved'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 12),
           ),
         );
       }
-      return const SizedBox.shrink(
-        key: Key('repeat_return_check_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('repeat_return_check_hidden'));
     }
 
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 13,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 13);
 
     return Container(
       key: const Key('repeat_return_check_card'),

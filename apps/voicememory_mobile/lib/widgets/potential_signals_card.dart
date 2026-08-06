@@ -4,7 +4,6 @@ import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../product/consumer_copy_guard.dart';
 import '../product/consumer_ui_copy.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
 

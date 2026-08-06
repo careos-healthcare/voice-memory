@@ -68,65 +68,66 @@ abstract final class CommercialProofExecutorCopy {
       'secrets rotation is confirmed.';
 
   static String labelFor(CommercialProofExecutorCheckId id) => switch (id) {
-        CommercialProofExecutorCheckId.productPromiseClear =>
-          checkProductPromiseClear,
-        CommercialProofExecutorCheckId.firstJourneyStable =>
-          checkFirstJourneyStable,
-        CommercialProofExecutorCheckId.firstProofUseful => checkFirstProofUseful,
-        CommercialProofExecutorCheckId.proPromiseClear => checkProPromiseClear,
-        CommercialProofExecutorCheckId.revenueCatProductsLoad =>
-          checkRevenueCatProductsLoad,
-        CommercialProofExecutorCheckId.paywallPriceVisible =>
-          checkPaywallPriceVisible,
-        CommercialProofExecutorCheckId.sandboxPurchaseWorks =>
-          checkSandboxPurchaseWorks,
-        CommercialProofExecutorCheckId.restoreWorks => checkRestoreWorks,
-        CommercialProofExecutorCheckId.entitlementPersists =>
-          checkEntitlementPersists,
-        CommercialProofExecutorCheckId.testFlightUploaded =>
-          checkTestFlightUploaded,
-        CommercialProofExecutorCheckId.paidIntentBetaComplete =>
-          checkPaidIntentBetaComplete,
-        CommercialProofExecutorCheckId.secretsRotationComplete =>
-          checkSecretsRotationComplete,
-      };
+    CommercialProofExecutorCheckId.productPromiseClear =>
+      checkProductPromiseClear,
+    CommercialProofExecutorCheckId.firstJourneyStable =>
+      checkFirstJourneyStable,
+    CommercialProofExecutorCheckId.firstProofUseful => checkFirstProofUseful,
+    CommercialProofExecutorCheckId.proPromiseClear => checkProPromiseClear,
+    CommercialProofExecutorCheckId.revenueCatProductsLoad =>
+      checkRevenueCatProductsLoad,
+    CommercialProofExecutorCheckId.paywallPriceVisible =>
+      checkPaywallPriceVisible,
+    CommercialProofExecutorCheckId.sandboxPurchaseWorks =>
+      checkSandboxPurchaseWorks,
+    CommercialProofExecutorCheckId.restoreWorks => checkRestoreWorks,
+    CommercialProofExecutorCheckId.entitlementPersists =>
+      checkEntitlementPersists,
+    CommercialProofExecutorCheckId.testFlightUploaded =>
+      checkTestFlightUploaded,
+    CommercialProofExecutorCheckId.paidIntentBetaComplete =>
+      checkPaidIntentBetaComplete,
+    CommercialProofExecutorCheckId.secretsRotationComplete =>
+      checkSecretsRotationComplete,
+  };
 
-  static String messageFor(CommercialProofExecutorStatus status) =>
-      switch (status) {
-        CommercialProofExecutorStatus.productReadyOnly => productReadyOnlyLine,
-        CommercialProofExecutorStatus.storeBlocked => storeBlockedLine,
-        CommercialProofExecutorStatus.purchaseBlocked => purchaseBlockedLine,
-        CommercialProofExecutorStatus.restoreBlocked => restoreBlockedLine,
-        CommercialProofExecutorStatus.entitlementBlocked =>
-          entitlementBlockedLine,
-        CommercialProofExecutorStatus.testFlightBlocked => testFlightBlockedLine,
-        CommercialProofExecutorStatus.betaBlocked => betaBlockedLine,
-        CommercialProofExecutorStatus.productionBlockedBySecrets =>
-          productionBlockedBySecretsLine,
-        CommercialProofExecutorStatus.commerciallyReady => commerciallyReadyLine,
-      };
+  static String messageFor(
+    CommercialProofExecutorStatus status,
+  ) => switch (status) {
+    CommercialProofExecutorStatus.productReadyOnly => productReadyOnlyLine,
+    CommercialProofExecutorStatus.storeBlocked => storeBlockedLine,
+    CommercialProofExecutorStatus.purchaseBlocked => purchaseBlockedLine,
+    CommercialProofExecutorStatus.restoreBlocked => restoreBlockedLine,
+    CommercialProofExecutorStatus.entitlementBlocked => entitlementBlockedLine,
+    CommercialProofExecutorStatus.testFlightBlocked => testFlightBlockedLine,
+    CommercialProofExecutorStatus.betaBlocked => betaBlockedLine,
+    CommercialProofExecutorStatus.productionBlockedBySecrets =>
+      productionBlockedBySecretsLine,
+    CommercialProofExecutorStatus.commerciallyReady => commerciallyReadyLine,
+  };
 
-  static String recommendationFor(CommercialProofExecutorStatus status) =>
-      switch (status) {
-        CommercialProofExecutorStatus.productReadyOnly =>
-          'Repair product promise, first journey, first proof, or Pro promise only.',
-        CommercialProofExecutorStatus.storeBlocked =>
-          'Finish RevenueCat product load before purchase validation.',
-        CommercialProofExecutorStatus.purchaseBlocked =>
-          'Fix paywall price visibility and sandbox purchase mechanics only.',
-        CommercialProofExecutorStatus.restoreBlocked =>
-          'Fix restore purchases before entitlement persistence proof.',
-        CommercialProofExecutorStatus.entitlementBlocked =>
-          'Fix entitlement persistence after purchase and restore.',
-        CommercialProofExecutorStatus.testFlightBlocked =>
-          'Upload TestFlight before paid-intent beta validation.',
-        CommercialProofExecutorStatus.betaBlocked =>
-          'Complete paid-intent beta validation on TestFlight.',
-        CommercialProofExecutorStatus.productionBlockedBySecrets =>
-          'Rotate production secrets before App Store submission.',
-        CommercialProofExecutorStatus.commerciallyReady =>
-          'Commercial proof passes. Proceed to production submission.',
-      };
+  static String recommendationFor(
+    CommercialProofExecutorStatus status,
+  ) => switch (status) {
+    CommercialProofExecutorStatus.productReadyOnly =>
+      'Repair product promise, first journey, first proof, or Pro promise only.',
+    CommercialProofExecutorStatus.storeBlocked =>
+      'Finish RevenueCat product load before purchase validation.',
+    CommercialProofExecutorStatus.purchaseBlocked =>
+      'Fix paywall price visibility and sandbox purchase mechanics only.',
+    CommercialProofExecutorStatus.restoreBlocked =>
+      'Fix restore purchases before entitlement persistence proof.',
+    CommercialProofExecutorStatus.entitlementBlocked =>
+      'Fix entitlement persistence after purchase and restore.',
+    CommercialProofExecutorStatus.testFlightBlocked =>
+      'Upload TestFlight before paid-intent beta validation.',
+    CommercialProofExecutorStatus.betaBlocked =>
+      'Complete paid-intent beta validation on TestFlight.',
+    CommercialProofExecutorStatus.productionBlockedBySecrets =>
+      'Rotate production secrets before App Store submission.',
+    CommercialProofExecutorStatus.commerciallyReady =>
+      'Commercial proof passes. Proceed to production submission.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -180,11 +181,7 @@ enum CommercialProofExecutorCheckId {
   secretsRotationComplete,
 }
 
-enum CommercialProofExecutorCheckStatus {
-  pass,
-  fail,
-  blocked,
-}
+enum CommercialProofExecutorCheckStatus { pass, fail, blocked }
 
 enum CommercialProofExecutorStatus {
   productReadyOnly,

@@ -21,52 +21,45 @@ SecretsRotationLaunchGateInput _launchInput({
   bool noSecretValuesCommitted = true,
   bool noSecretValuesPrintedInLogs = true,
   bool? vercelEnvProductionVerified = true,
-}) =>
-    SecretsRotationLaunchGateInput(
-      stripeSecretKeyRotated: stripeSecretKeyRotated,
-      stripeWebhookSecretRotated: stripeWebhookSecretRotated,
-      productionEnvUpdated: productionEnvUpdated,
-      oldWebhookDisabled: oldWebhookDisabled,
-      revenueCatApiKeySeparatedFromDocsLogs:
-          revenueCatApiKeySeparatedFromDocsLogs,
-      noSecretValuesCommitted: noSecretValuesCommitted,
-      noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
-      vercelEnvProductionVerified: vercelEnvProductionVerified,
-    );
+}) => SecretsRotationLaunchGateInput(
+  stripeSecretKeyRotated: stripeSecretKeyRotated,
+  stripeWebhookSecretRotated: stripeWebhookSecretRotated,
+  productionEnvUpdated: productionEnvUpdated,
+  oldWebhookDisabled: oldWebhookDisabled,
+  revenueCatApiKeySeparatedFromDocsLogs: revenueCatApiKeySeparatedFromDocsLogs,
+  noSecretValuesCommitted: noSecretValuesCommitted,
+  noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
+  vercelEnvProductionVerified: vercelEnvProductionVerified,
+);
 
 CommercialReadinessGateInput _commercialBase({
   bool secretsRotationDone = false,
-}) =>
-    CommercialReadinessGateInput(
-      productPromiseClear: true,
-      firstJourneyStable: true,
-      firstProofUsefulEnough: true,
-      proPromiseClear: true,
-      revenueCatProductLoads: true,
-      paywallPriceVisible: true,
-      sandboxPurchaseWorks: true,
-      restoreWorks: true,
-      entitlementPersists: true,
-      testFlightBuildUploaded: true,
-      paidIntentBetaComplete: true,
-      secretsRotationDone: secretsRotationDone,
-    );
+}) => CommercialReadinessGateInput(
+  productPromiseClear: true,
+  firstJourneyStable: true,
+  firstProofUsefulEnough: true,
+  proPromiseClear: true,
+  revenueCatProductLoads: true,
+  paywallPriceVisible: true,
+  sandboxPurchaseWorks: true,
+  restoreWorks: true,
+  entitlementPersists: true,
+  testFlightBuildUploaded: true,
+  paidIntentBetaComplete: true,
+  secretsRotationDone: secretsRotationDone,
+);
 
 SecretsProductionBlockRequirement _requirement(
   SecretsProductionBlockHardeningResult result,
   SecretsProductionBlockRequirementId id,
-) =>
-    result.requirements.firstWhere((requirement) => requirement.id == id);
+) => result.requirements.firstWhere((requirement) => requirement.id == id);
 
 void main() {
   group('SecretsProductionBlockHardening.build', () {
     test('tracks nine hardened requirements', () {
       final result = SecretsProductionBlockHardening.build(_launchInput());
       expect(result.requirements.length, 9);
-      expect(
-        SecretsProductionBlockHardening.requirementCount,
-        8,
-      );
+      expect(SecretsProductionBlockHardening.requirementCount, 8);
     });
 
     test('pending Stripe rotation blocks production', () {
@@ -80,7 +73,10 @@ void main() {
         ),
       );
       expect(result.productionSubmissionBlocked, isTrue);
-      expect(result.decision, SecretsProductionBlockHardeningDecision.testFlightSafeOnly);
+      expect(
+        result.decision,
+        SecretsProductionBlockHardeningDecision.testFlightSafeOnly,
+      );
       expect(result.internalTestFlightSafe, isTrue);
       expect(result.unavoidableProductionBlock, isTrue);
       expect(
@@ -128,7 +124,10 @@ void main() {
 
     test('all rotation confirmed -> production ready', () {
       final result = SecretsProductionBlockHardening.build(_launchInput());
-      expect(result.decision, SecretsProductionBlockHardeningDecision.productionReady);
+      expect(
+        result.decision,
+        SecretsProductionBlockHardeningDecision.productionReady,
+      );
       expect(result.productionSubmissionBlocked, isFalse);
       expect(result.unavoidableProductionBlock, isTrue);
     });
@@ -182,7 +181,10 @@ void main() {
         secrets: _launchInput(),
       );
       expect(bridge.productionSubmissionBlocked, isFalse);
-      expect(bridge.commercial.status, CommercialReadinessGateStatus.commerciallyReady);
+      expect(
+        bridge.commercial.status,
+        CommercialReadinessGateStatus.commerciallyReady,
+      );
       expect(bridge.commercial.commerciallyReady, isTrue);
     });
   });
@@ -209,8 +211,18 @@ void main() {
       final guardrail = SecretsProductionBlockHardening.guardrail.toLowerCase();
       expect(guardrail, contains('never print'));
       expect(guardrail, contains('never commit'));
-      expect(SecretsProductionBlockHardening.detectNeverPrintsSecrets(hardeningSource), isTrue);
-      expect(SecretsProductionBlockHardening.detectNeverCommitsSecrets(hardeningSource), isTrue);
+      expect(
+        SecretsProductionBlockHardening.detectNeverPrintsSecrets(
+          hardeningSource,
+        ),
+        isTrue,
+      );
+      expect(
+        SecretsProductionBlockHardening.detectNeverCommitsSecrets(
+          hardeningSource,
+        ),
+        isTrue,
+      );
     });
 
     test('no test contains real secret-looking values', () {
@@ -219,11 +231,22 @@ void main() {
         isTrue,
       );
       expect(
-        SecretsProductionBlockHardening.detectNoRealSecretsInSource(hardeningSource),
+        SecretsProductionBlockHardening.detectNoRealSecretsInSource(
+          hardeningSource,
+        ),
         isTrue,
       );
 
-      final stripePrefix = String.fromCharCodes([115, 107, 95, 108, 105, 118, 101, 95]);
+      final stripePrefix = String.fromCharCodes([
+        115,
+        107,
+        95,
+        108,
+        105,
+        118,
+        101,
+        95,
+      ]);
       expect(
         SecretsProductionBlockHardening.detectNoRealSecretsInSource(
           'STRIPE_SECRET_KEY=$stripePrefix${'x' * 24}',
@@ -237,7 +260,11 @@ void main() {
           .split('\n')
           .where((line) => line.trim().startsWith('import '));
       for (final line in importLines) {
-        expect(line.contains('package:purchases_flutter'), isFalse, reason: line);
+        expect(
+          line.contains('package:purchases_flutter'),
+          isFalse,
+          reason: line,
+        );
         expect(line.contains('../api/'), isFalse, reason: line);
       }
     });

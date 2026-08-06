@@ -46,33 +46,35 @@ CustomerInfo _customerInfoWithActiveEntitlements(List<String> activeIds) {
 void main() {
   final service = RevenueCatService.instance;
 
-  test(
-    'a customer entitled only under the primary archive_loop_pro id is '
-    'recognized as Pro (P0 — billing entitlement ID conflict)',
-    () {
-      final info = _customerInfoWithActiveEntitlements([
-        ArchiveLoopEntitlementIds.archiveLoopPro,
-      ]);
-
-      final mapped = service.mapCustomerInfoForTest(info);
-
-      expect(mapped.tier, BillingTier.pro);
-      expect(mapped.isPro, isTrue);
-      expect(mapped.entitlementIds, [ArchiveLoopEntitlementIds.archiveLoopPro]);
-    },
-  );
-
-  test('a customer entitled only under the legacy pro id is still recognized', () {
+  test('a customer entitled only under the primary archive_loop_pro id is '
+      'recognized as Pro (P0 — billing entitlement ID conflict)', () {
     final info = _customerInfoWithActiveEntitlements([
-      ArchiveLoopEntitlementIds.revenueCatLegacyPro,
+      ArchiveLoopEntitlementIds.archiveLoopPro,
     ]);
 
     final mapped = service.mapCustomerInfoForTest(info);
 
     expect(mapped.tier, BillingTier.pro);
     expect(mapped.isPro, isTrue);
-    expect(mapped.entitlementIds, [ArchiveLoopEntitlementIds.revenueCatLegacyPro]);
+    expect(mapped.entitlementIds, [ArchiveLoopEntitlementIds.archiveLoopPro]);
   });
+
+  test(
+    'a customer entitled only under the legacy pro id is still recognized',
+    () {
+      final info = _customerInfoWithActiveEntitlements([
+        ArchiveLoopEntitlementIds.revenueCatLegacyPro,
+      ]);
+
+      final mapped = service.mapCustomerInfoForTest(info);
+
+      expect(mapped.tier, BillingTier.pro);
+      expect(mapped.isPro, isTrue);
+      expect(mapped.entitlementIds, [
+        ArchiveLoopEntitlementIds.revenueCatLegacyPro,
+      ]);
+    },
+  );
 
   test('a customer with no active entitlement is free', () {
     final info = _customerInfoWithActiveEntitlements(const []);
@@ -85,7 +87,9 @@ void main() {
   });
 
   test('an unrelated active entitlement id does not grant Pro', () {
-    final info = _customerInfoWithActiveEntitlements(['some_other_entitlement']);
+    final info = _customerInfoWithActiveEntitlements([
+      'some_other_entitlement',
+    ]);
 
     final mapped = service.mapCustomerInfoForTest(info);
 

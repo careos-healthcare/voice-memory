@@ -85,9 +85,9 @@ class _RevenueReadinessDashboardV2CardState
           Text(
             dashboard.title,
             key: const Key('revenue_readiness_dashboard_v2_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -159,9 +159,9 @@ class _RepairFocusBlock extends StatelessWidget {
         children: [
           Text(
             FirstSessionProofRepairCopy.dashboardFocusSectionTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -211,14 +211,16 @@ class _DecisionRuleBlock extends StatelessWidget {
         children: [
           Text(
             RevenueReadinessDashboardV2Copy.sectionDecisionRule,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
             decisionRule.title,
-            key: const Key('revenue_readiness_dashboard_v2_decision_rule_title'),
+            key: const Key(
+              'revenue_readiness_dashboard_v2_decision_rule_title',
+            ),
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -228,7 +230,9 @@ class _DecisionRuleBlock extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             decisionRule.reason,
-            key: const Key('revenue_readiness_dashboard_v2_decision_rule_reason'),
+            key: const Key(
+              'revenue_readiness_dashboard_v2_decision_rule_reason',
+            ),
             style: const TextStyle(fontSize: 12, height: 1.35),
           ),
         ],
@@ -244,8 +248,9 @@ class _ValidationDecisionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playbook =
-        BetaFixPlaybookEngine.buildForOutcome(validationDecision.outcome);
+    final playbook = BetaFixPlaybookEngine.buildForOutcome(
+      validationDecision.outcome,
+    );
     return Container(
       key: const Key('revenue_readiness_dashboard_v2_validation_decision'),
       padding: const EdgeInsets.all(10),
@@ -259,9 +264,9 @@ class _ValidationDecisionBlock extends StatelessWidget {
         children: [
           Text(
             RevenueReadinessDashboardV2Copy.sectionValidationDecision,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -277,7 +282,9 @@ class _ValidationDecisionBlock extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            playbook.shouldShow ? playbook.diagnosis : validationDecision.reason,
+            playbook.shouldShow
+                ? playbook.diagnosis
+                : validationDecision.reason,
             key: const Key(
               'revenue_readiness_dashboard_v2_validation_decision_reason',
             ),
@@ -322,9 +329,9 @@ class _LiftFocusBlock extends StatelessWidget {
           Text(
             RevenueLiftExperimentV2Copy.liftFocusSectionTitle,
             key: const Key('revenue_readiness_dashboard_v2_lift_focus_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -353,9 +360,9 @@ class _SectionBlock extends StatelessWidget {
         Text(
           section.title,
           key: Key('revenue_readiness_dashboard_v2_section_${section.id.name}'),
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         for (final row in section.rows) ...[
@@ -380,9 +387,9 @@ class _DiagnosisBlock extends StatelessWidget {
         Text(
           RevenueReadinessDashboardV2Copy.sectionDiagnosis,
           key: const Key('revenue_readiness_dashboard_v2_section_diagnosis'),
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         if (diagnoses.isEmpty)
@@ -429,13 +436,17 @@ class _MetricRowTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   row.label,
-                  key: Key('revenue_readiness_dashboard_v2_label_${row.id.name}'),
+                  key: Key(
+                    'revenue_readiness_dashboard_v2_label_${row.id.name}',
+                  ),
                   style: const TextStyle(fontSize: 13),
                 ),
               ),
               Text(
                 row.status.label,
-                key: Key('revenue_readiness_dashboard_v2_status_${row.id.name}'),
+                key: Key(
+                  'revenue_readiness_dashboard_v2_status_${row.id.name}',
+                ),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

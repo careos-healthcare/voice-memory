@@ -54,32 +54,37 @@ void main() {
   });
 
   group('CognitiveAlertInterceptor', () {
-    test('emits clinical drift telemetry for high emotional volatility', () async {
-      final events = <String>[];
-      final warnings = <ClinicalDriftWarning>[];
-      final interceptor = CognitiveAlertInterceptor(
-        telemetry: ClinicalCognitiveTelemetry(
-          sink: (event, _) => events.add(event),
-        ),
-        onWarning: warnings.add,
-      );
-
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'volatile_entry',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.7,
-            cohesionDrift: 0.2,
-            emotionalVolatility: 0.91,
+    test(
+      'emits clinical drift telemetry for high emotional volatility',
+      () async {
+        final events = <String>[];
+        final warnings = <ClinicalDriftWarning>[];
+        final interceptor = CognitiveAlertInterceptor(
+          telemetry: ClinicalCognitiveTelemetry(
+            sink: (event, _) => events.add(event),
           ),
-        ),
-      );
+          onWarning: warnings.add,
+        );
 
-      expect(events, [ClinicalCognitiveTelemetry.clinicalDriftDetectedEvent]);
-      expect(warnings.single.driftType,
-          CognitiveAlertInterceptor.emotionalVolatilityDriftType);
-      expect(warnings.single.score, 0.91);
-    });
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'volatile_entry',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.7,
+              cohesionDrift: 0.2,
+              emotionalVolatility: 0.91,
+            ),
+          ),
+        );
+
+        expect(events, [ClinicalCognitiveTelemetry.clinicalDriftDetectedEvent]);
+        expect(
+          warnings.single.driftType,
+          CognitiveAlertInterceptor.emotionalVolatilityDriftType,
+        );
+        expect(warnings.single.score, 0.91);
+      },
+    );
 
     test('emits clinical drift telemetry for high cohesion drift', () async {
       final warnings = <ClinicalDriftWarning>[];
@@ -96,8 +101,10 @@ void main() {
         ),
       );
 
-      expect(warnings.single.driftType,
-          CognitiveAlertInterceptor.cohesionDriftType);
+      expect(
+        warnings.single.driftType,
+        CognitiveAlertInterceptor.cohesionDriftType,
+      );
       expect(warnings.single.score, 0.85);
     });
 

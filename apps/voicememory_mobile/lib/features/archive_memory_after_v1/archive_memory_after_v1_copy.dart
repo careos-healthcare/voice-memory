@@ -28,19 +28,22 @@ abstract final class ArchiveMemoryAfterV1Copy {
   static const detailPass = 'Pass';
   static const detailFail = 'Fail';
 
-  static const detailArchiveMemoryFrozen = 'Archive memory frozen before beta proof';
+  static const detailArchiveMemoryFrozen =
+      'Archive memory frozen before beta proof';
   static const detailFutureArchiveMemoryDocumented =
       'Future archive memory documented only';
 
   static String ruleLabelFor(ArchiveMemoryAfterV1RuleId id) => switch (id) {
-        ArchiveMemoryAfterV1RuleId.futureEnhancementOnly => 'Future enhancement only',
-        ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes =>
-          'Not part of first five minutes',
-        ArchiveMemoryAfterV1RuleId.notPrimaryProPromise => 'Not primary Pro promise',
-        ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage =>
-          'Supports proof trail, not storage',
-        ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui => 'No new live V1 UI',
-      };
+    ArchiveMemoryAfterV1RuleId.futureEnhancementOnly =>
+      'Future enhancement only',
+    ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes =>
+      'Not part of first five minutes',
+    ArchiveMemoryAfterV1RuleId.notPrimaryProPromise =>
+      'Not primary Pro promise',
+    ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage =>
+      'Supports proof trail, not storage',
+    ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui => 'No new live V1 UI',
+  };
 
   static String messageFor(ArchiveMemoryAfterV1GateDecision decision) =>
       switch (decision) {
@@ -50,13 +53,14 @@ abstract final class ArchiveMemoryAfterV1Copy {
           futureArchiveMemoryDocumentedLine,
       };
 
-  static String recommendationFor(ArchiveMemoryAfterV1GateDecision decision) =>
-      switch (decision) {
-        ArchiveMemoryAfterV1GateDecision.archiveMemoryFrozen =>
-          'Keep archive memory out of first five minutes and off the primary Pro promise until beta proof completes.',
-        ArchiveMemoryAfterV1GateDecision.futureArchiveMemoryDocumented =>
-          'Document archive memory as future enhancement only. Keep proof trail as the frame, not storage.',
-      };
+  static String recommendationFor(
+    ArchiveMemoryAfterV1GateDecision decision,
+  ) => switch (decision) {
+    ArchiveMemoryAfterV1GateDecision.archiveMemoryFrozen =>
+      'Keep archive memory out of first five minutes and off the primary Pro promise until beta proof completes.',
+    ArchiveMemoryAfterV1GateDecision.futureArchiveMemoryDocumented =>
+      'Document archive memory as future enhancement only. Keep proof trail as the frame, not storage.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -88,10 +92,7 @@ enum ArchiveMemoryAfterV1RuleId {
   noNewLiveV1Ui,
 }
 
-enum ArchiveMemoryAfterV1RuleStatus {
-  pass,
-  fail,
-}
+enum ArchiveMemoryAfterV1RuleStatus { pass, fail }
 
 enum ArchiveMemoryAfterV1GateDecision {
   archiveMemoryFrozen,

@@ -18,10 +18,7 @@ void main() {
       'Purchases are not available right now.',
     );
     expect(PaywallUnavailableFallback.benefits.length, 6);
-    expect(
-      PaywallUnavailableFallback.benefits.first,
-      'Longer proof trail',
-    );
+    expect(PaywallUnavailableFallback.benefits.first, 'Longer proof trail');
   });
 
   test('annual appears before monthly when both present', () {
@@ -49,10 +46,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.textContaining('VoiceMemory Pro'), findsNothing);
       expect(find.textContaining('VoiceMemory'), findsNothing);
-      expect(
-        find.byKey(const Key('paywall_unavailable_body')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       final unavailableBody = tester
           .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
           .data!;

@@ -36,7 +36,8 @@ class _OfflineVaultRecoveryHostState extends State<OfflineVaultRecoveryHost>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      AppServices.instance.liveVoiceRecoveryGateway.notifyConnectivityRestored();
+      AppServices.instance.liveVoiceRecoveryGateway
+          .notifyConnectivityRestored();
       unawaited(OfflineVaultRecoveryLaunchController.onAppResumed());
     }
   }

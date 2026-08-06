@@ -184,7 +184,8 @@ abstract final class PatternConfidenceEngine {
     if (!compact &&
         !result.hasConfirmedRepeat &&
         !result.hasBeliefSurface &&
-        result.confidenceState != PatternConfidenceExplanationState.earlySignal) {
+        result.confidenceState !=
+            PatternConfidenceExplanationState.earlySignal) {
       return false;
     }
     return true;
@@ -194,16 +195,15 @@ abstract final class PatternConfidenceEngine {
     required PatternConfidenceExplanationResult? result,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShowExplanation(
-        result: result,
-        isDegradedTranscriptState: false,
-        isPostSaveDegradedState: false,
-        firstProofPayoffVisible: false,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        otherEducationCardCount: 0,
-      );
+  }) => shouldShowExplanation(
+    result: result,
+    isDegradedTranscriptState: false,
+    isPostSaveDegradedState: false,
+    firstProofPayoffVisible: false,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    otherEducationCardCount: 0,
+  );
 
   static bool shouldShowExplanationOnRecordReady({
     required PatternConfidenceExplanationResult? result,
@@ -267,11 +267,10 @@ abstract final class PatternConfidenceEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static PatternConfidenceExplanationState _explanationStateFromWeighting(
     EvidenceWeightingResult weighting,
@@ -306,21 +305,20 @@ abstract final class PatternConfidenceEngine {
     required String source,
     required bool beliefSurfaceVisible,
     required bool hasConfirmedRepeat,
-  }) =>
-      PatternConfidenceExplanationResult(
-        shouldShow: true,
-        entryCount: entries.length,
-        source: source,
-        hasConfirmedRepeat: hasConfirmedRepeat,
-        hasBeliefSurface: beliefSurfaceVisible,
-        confidenceState: state,
-        title: PatternConfidenceCopy.explanationTitle,
-        intro: PatternConfidenceCopy.explanationIntro,
-        label: PatternConfidenceCopy.explanationLabelFor(state),
-        body: PatternConfidenceCopy.explanationBodyFor(state),
-        footer: PatternConfidenceCopy.explanationFooter,
-        differentiationLine: PatternConfidenceCopy.explanationDifferentiation,
-      );
+  }) => PatternConfidenceExplanationResult(
+    shouldShow: true,
+    entryCount: entries.length,
+    source: source,
+    hasConfirmedRepeat: hasConfirmedRepeat,
+    hasBeliefSurface: beliefSurfaceVisible,
+    confidenceState: state,
+    title: PatternConfidenceCopy.explanationTitle,
+    intro: PatternConfidenceCopy.explanationIntro,
+    label: PatternConfidenceCopy.explanationLabelFor(state),
+    body: PatternConfidenceCopy.explanationBodyFor(state),
+    footer: PatternConfidenceCopy.explanationFooter,
+    differentiationLine: PatternConfidenceCopy.explanationDifferentiation,
+  );
 
   static bool _shouldUseNotEnoughYet(List<JournalEntry> entries) {
     if (!ArchiveEvidenceQualityGate.allowsEarlySignals(entries)) return true;
@@ -386,7 +384,9 @@ abstract final class PatternConfidenceEngine {
     return beliefChange.changeType != BeliefChangeType.softened;
   }
 
-  static WhatChangedV2Option? _latestWhatChangedMarker(List<JournalEntry> entries) {
+  static WhatChangedV2Option? _latestWhatChangedMarker(
+    List<JournalEntry> entries,
+  ) {
     final ids = entries.map((entry) => entry.id).toSet();
     final marker = WhatChangedV2Store.cached
         .where((record) => ids.contains(record.entryId))

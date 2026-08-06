@@ -27,16 +27,16 @@ abstract final class LowEvidenceCopy {
       'Saved. ArchiveMe does not need every entry to become a pattern.';
 
   static List<String> allVisibleStrings() => [
-        oneEntryTitle,
-        oneEntryBody,
-        twoUnrelatedTitle,
-        twoUnrelatedBody,
-        twoRelatedTitle,
-        twoRelatedBody,
-        genericTestTitle,
-        genericTestBody,
-        quietDayTitle,
-        quietDayBody,
-        postSaveNoRepeat,
-      ];
+    oneEntryTitle,
+    oneEntryBody,
+    twoUnrelatedTitle,
+    twoUnrelatedBody,
+    twoRelatedTitle,
+    twoRelatedBody,
+    genericTestTitle,
+    genericTestBody,
+    quietDayTitle,
+    quietDayBody,
+    postSaveNoRepeat,
+  ];
 }

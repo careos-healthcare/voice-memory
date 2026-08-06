@@ -34,9 +34,8 @@ class CapacityCostStore {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => CapacityCostRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              CapacityCostRecord.fromJson(Map<String, dynamic>.from(entry)),
         )
         .whereType<CapacityCostRecord>()
         .toList()
@@ -108,8 +107,10 @@ class CapacityCostStore {
   static int countWithLaterCost([List<CapacityCostRecord>? records]) =>
       (records ?? _cached).where((record) => record.hasLaterCost).length;
 
-  static bool hasRecordFor(String entryId, [List<CapacityCostRecord>? records]) =>
-      (records ?? _cached).any((record) => record.sourceEntryId == entryId);
+  static bool hasRecordFor(
+    String entryId, [
+    List<CapacityCostRecord>? records,
+  ]) => (records ?? _cached).any((record) => record.sourceEntryId == entryId);
 
   static Future<void> clearAll() async {
     _cached = const [];

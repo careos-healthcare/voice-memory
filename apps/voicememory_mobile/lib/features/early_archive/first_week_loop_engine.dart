@@ -24,15 +24,15 @@ abstract final class FirstWeekLoopEngine {
     }
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
     if (!evidence.isStrong) return null;
 
-    final phrase =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(foundation);
-    final usesPhraseBody = phrase != null &&
+    final phrase = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      foundation,
+    );
+    final usesPhraseBody =
+        phrase != null &&
         ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase) &&
         !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase) &&
         !ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(

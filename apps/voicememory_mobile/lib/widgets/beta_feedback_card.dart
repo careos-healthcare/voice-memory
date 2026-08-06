@@ -10,7 +10,6 @@ import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
 import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../models/journal_entry.dart';
-import '../services/app_services.dart';
 
 /// Lightweight archive-home beta feedback card — local only, 3+ real entries.
 class BetaFeedbackCard extends StatefulWidget {
@@ -31,9 +30,8 @@ class BetaFeedbackCard extends StatefulWidget {
     this.engine = const BetaFeedbackEngine(),
     this.sampleMode = false,
     this.onChanged,
-    BetaFeedbackState? initialState,
-  })  : skipPrefsLoad = true,
-        _initialState = initialState;
+    this._initialState,
+  }) : skipPrefsLoad = true;
 
   final List<JournalEntry> entries;
   final BetaFeedbackStore? store;
@@ -170,33 +168,29 @@ class _BetaFeedbackCardState extends State<BetaFeedbackCard> {
                 key: const Key('beta_feedback_useful'),
                 label: BetaFeedbackCopy.usefulnessUseful,
                 selected: _usefulness == BetaFeedbackUsefulness.useful,
-                onTap: () => setState(
-                  () => _usefulness = BetaFeedbackUsefulness.useful,
-                ),
+                onTap: () =>
+                    setState(() => _usefulness = BetaFeedbackUsefulness.useful),
               ),
               _chip(
                 key: const Key('beta_feedback_not_yet'),
                 label: BetaFeedbackCopy.usefulnessNotYet,
                 selected: _usefulness == BetaFeedbackUsefulness.notYet,
-                onTap: () => setState(
-                  () => _usefulness = BetaFeedbackUsefulness.notYet,
-                ),
+                onTap: () =>
+                    setState(() => _usefulness = BetaFeedbackUsefulness.notYet),
               ),
               _chip(
                 key: const Key('beta_feedback_understood'),
                 label: BetaFeedbackCopy.clarityUnderstood,
                 selected: _clarity == BetaFeedbackClarity.understood,
-                onTap: () => setState(
-                  () => _clarity = BetaFeedbackClarity.understood,
-                ),
+                onTap: () =>
+                    setState(() => _clarity = BetaFeedbackClarity.understood),
               ),
               _chip(
                 key: const Key('beta_feedback_confused'),
                 label: BetaFeedbackCopy.clarityConfused,
                 selected: _clarity == BetaFeedbackClarity.confused,
-                onTap: () => setState(
-                  () => _clarity = BetaFeedbackClarity.confused,
-                ),
+                onTap: () =>
+                    setState(() => _clarity = BetaFeedbackClarity.confused),
               ),
             ],
           ),

@@ -8,10 +8,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Strongest evidence-backed moment — shown at most one per Patterns visit.
 class ArchiveOhWowMomentCard extends StatelessWidget {
-  const ArchiveOhWowMomentCard({
-    super.key,
-    required this.moment,
-  });
+  const ArchiveOhWowMomentCard({super.key, required this.moment});
 
   final ArchiveOhWowMoment moment;
 

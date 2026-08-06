@@ -21,9 +21,7 @@ class CognitiveTrajectoryRecord {
 
 /// Telemetry sink for curiosity loop recovery trajectory assessments.
 class CognitiveTrajectoryTelemetry {
-  const CognitiveTrajectoryTelemetry({
-    void Function(String event, Map<String, Object> meta)? sink,
-  }) : _sink = sink;
+  const CognitiveTrajectoryTelemetry({this._sink});
 
   static const logPrefix = '[TELEMETRY][COGNITIVE_TRAJECTORY]';
   static const trajectoryAssessedEvent = 'cognitive_trajectory_assessed';
@@ -37,19 +35,16 @@ class CognitiveTrajectoryTelemetry {
     required TrajectoryAssessment assessment,
     bool wasGrounded = false,
   }) {
-    _emit(
-      trajectoryAssessedEvent,
-      {
-        'entry_id': entryId,
-        'hook_id': hookId,
-        'source_entry_id': sourceEntryId,
-        'direction': assessment.direction.name,
-        'lexical_delta': assessment.lexicalDelta,
-        'drift_delta': assessment.driftDelta,
-        'volatility_delta': assessment.volatilityDelta,
-        if (wasGrounded) 'wasGrounded': true,
-      },
-    );
+    _emit(trajectoryAssessedEvent, {
+      'entry_id': entryId,
+      'hook_id': hookId,
+      'source_entry_id': sourceEntryId,
+      'direction': assessment.direction.name,
+      'lexical_delta': assessment.lexicalDelta,
+      'drift_delta': assessment.driftDelta,
+      'volatility_delta': assessment.volatilityDelta,
+      if (wasGrounded) 'wasGrounded': true,
+    });
   }
 
   void _emit(String event, Map<String, Object> meta) {

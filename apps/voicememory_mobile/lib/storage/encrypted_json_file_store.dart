@@ -20,10 +20,9 @@ class EncryptedJsonMigrationResult {
 class EncryptedJsonFileStore {
   EncryptedJsonFileStore({
     required this.file,
-    required PrivateDataEncryptionKeyStore keyStore,
+    required this._keyStore,
     AesGcm? algorithm,
-  }) : _keyStore = keyStore,
-       _algorithm = algorithm ?? AesGcm.with256bits();
+  }) : _algorithm = algorithm ?? AesGcm.with256bits();
 
   final File file;
   final PrivateDataEncryptionKeyStore _keyStore;
@@ -33,11 +32,11 @@ class EncryptedJsonFileStore {
 
   Future<void> ensureKey() async {
     if (_keyStore is SecurePrivateDataEncryptionKeyStore) {
-      await (_keyStore as SecurePrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     if (_keyStore is InMemoryPrivateDataEncryptionKeyStore) {
-      await (_keyStore as InMemoryPrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     final existing = await _keyStore.readKeyBytes();
@@ -62,7 +61,9 @@ class EncryptedJsonFileStore {
     final envelope = jsonDecode(raw) as Map<String, dynamic>;
     final version = envelope['v'] as int? ?? 0;
     if (version != envelopeVersion) {
-      throw FormatException('Unsupported encrypted JSON envelope version: $version');
+      throw FormatException(
+        'Unsupported encrypted JSON envelope version: $version',
+      );
     }
 
     final keyBytes = await _keyStore.readKeyBytes();
@@ -76,7 +77,10 @@ class EncryptedJsonFileStore {
       nonce: base64Decode(envelope['n'] as String),
       mac: Mac(base64Decode(envelope['m'] as String)),
     );
-    final clearBytes = await _algorithm.decrypt(secretBox, secretKey: secretKey);
+    final clearBytes = await _algorithm.decrypt(
+      secretBox,
+      secretKey: secretKey,
+    );
     return jsonDecode(utf8.decode(clearBytes));
   }
 

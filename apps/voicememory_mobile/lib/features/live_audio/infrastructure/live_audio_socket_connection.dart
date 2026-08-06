@@ -25,13 +25,12 @@ class WebSocketLiveAudioSocketConnection implements LiveAudioSocketConnection {
   Future<void> get ready => _channel.ready;
 
   @override
-  Future<void> close([int? code, String? reason]) => _channel.sink.close(code, reason);
+  Future<void> close([int? code, String? reason]) =>
+      _channel.sink.close(code, reason);
 }
 
-typedef LiveAudioSocketConnectionFactory = LiveAudioSocketConnection Function(
-  Uri uri, {
-  Map<String, String>? headers,
-});
+typedef LiveAudioSocketConnectionFactory =
+    LiveAudioSocketConnection Function(Uri uri, {Map<String, String>? headers});
 
 LiveAudioSocketConnection defaultLiveAudioSocketConnection(
   Uri uri, {

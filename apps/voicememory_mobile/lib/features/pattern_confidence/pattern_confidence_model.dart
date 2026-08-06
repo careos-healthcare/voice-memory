@@ -7,12 +7,12 @@ enum PatternConfidenceState {
   notEnoughYet;
 
   String get analyticsValue => switch (this) {
-        PatternConfidenceState.earlySignal => 'early_signal',
-        PatternConfidenceState.repeatedPattern => 'repeated_pattern',
-        PatternConfidenceState.changingPattern => 'changing_pattern',
-        PatternConfidenceState.softeningPattern => 'softening_pattern',
-        PatternConfidenceState.notEnoughYet => 'not_enough_yet',
-      };
+    PatternConfidenceState.earlySignal => 'early_signal',
+    PatternConfidenceState.repeatedPattern => 'repeated_pattern',
+    PatternConfidenceState.changingPattern => 'changing_pattern',
+    PatternConfidenceState.softeningPattern => 'softening_pattern',
+    PatternConfidenceState.notEnoughYet => 'not_enough_yet',
+  };
 }
 
 /// Grounded pattern confidence label from existing evidence gates.
@@ -41,14 +41,14 @@ enum PatternConfidenceExplanationState {
   needsFreshProof;
 
   String get analyticsValue => switch (this) {
-        PatternConfidenceExplanationState.earlySignal => 'early_signal',
-        PatternConfidenceExplanationState.repeated => 'repeated',
-        PatternConfidenceExplanationState.current => 'current',
-        PatternConfidenceExplanationState.fading => 'fading',
-        PatternConfidenceExplanationState.softened => 'softened',
-        PatternConfidenceExplanationState.changed => 'changed',
-        PatternConfidenceExplanationState.needsFreshProof => 'needs_fresh_proof',
-      };
+    PatternConfidenceExplanationState.earlySignal => 'early_signal',
+    PatternConfidenceExplanationState.repeated => 'repeated',
+    PatternConfidenceExplanationState.current => 'current',
+    PatternConfidenceExplanationState.fading => 'fading',
+    PatternConfidenceExplanationState.softened => 'softened',
+    PatternConfidenceExplanationState.changed => 'changed',
+    PatternConfidenceExplanationState.needsFreshProof => 'needs_fresh_proof',
+  };
 }
 
 /// Resolved pattern confidence explanation — labels only, no scores.

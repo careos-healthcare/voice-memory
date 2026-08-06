@@ -22,10 +22,7 @@ const _reflection = Reflection(
   repeatedSignal: 'said yes again',
 );
 
-JournalEntry _entry({
-  required String id,
-  required DateTime createdAt,
-}) {
+JournalEntry _entry({required String id, required DateTime createdAt}) {
   return JournalEntry(
     id: id,
     createdAt: createdAt,
@@ -37,22 +34,24 @@ JournalEntry _entry({
 }
 
 CuriosityHook _hook() => CuriosityHook(
-      id: 'hook_1',
-      entryId: 'entry_1',
-      createdAt: DateTime.utc(2026, 6, 11, 12),
-      primaryAnchor: 'said yes again',
-      hookType: CuriosityHookType.blocker,
-      dynamicPrompt:
-          'Before "said yes again" showed up again, what got in the way?',
-    );
+  id: 'hook_1',
+  entryId: 'entry_1',
+  createdAt: DateTime.utc(2026, 6, 11, 12),
+  primaryAnchor: 'said yes again',
+  hookType: CuriosityHookType.blocker,
+  dynamicPrompt:
+      'Before "said yes again" showed up again, what got in the way?',
+);
 
 Future<
-    ({
-      JournalService journal,
-      LocalCuriosityHookRepository hooks,
-      InMemoryCuriosityReactionRepository reactions,
-      Directory dir,
-    })> _openFixture() async {
+  ({
+    JournalService journal,
+    LocalCuriosityHookRepository hooks,
+    InMemoryCuriosityReactionRepository reactions,
+    Directory dir,
+  })
+>
+_openFixture() async {
   final dir = await Directory.systemTemp.createTemp('curiosity_export_test_');
   final journalStore = await JournalStore.open(
     '${dir.path}/journal.json',
@@ -82,7 +81,9 @@ void main() {
         '${fixture.dir.path}/journal.json',
         encryptAtRest: false,
       );
-      await journalStore.save(_entry(id: 'entry_1', createdAt: DateTime.utc(2026, 6, 12, 9)));
+      await journalStore.save(
+        _entry(id: 'entry_1', createdAt: DateTime.utc(2026, 6, 12, 9)),
+      );
       await fixture.hooks.saveHook(_hook());
       await fixture.reactions.logReaction(
         CuriosityReactionRecord(
@@ -117,59 +118,64 @@ void main() {
       expect(markdown, contains('Work pressure showed up again today.'));
     });
 
-    test('exportAsJson serializes backup schema with summary and entries', () async {
-      final fixture = await _openFixture();
-      addTearDown(() => fixture.dir.deleteSync(recursive: true));
+    test(
+      'exportAsJson serializes backup schema with summary and entries',
+      () async {
+        final fixture = await _openFixture();
+        addTearDown(() => fixture.dir.deleteSync(recursive: true));
 
-      final journalStore = await JournalStore.open(
-        '${fixture.dir.path}/journal.json',
-        encryptAtRest: false,
-      );
-      await journalStore.save(_entry(id: 'entry_1', createdAt: DateTime.utc(2026, 6, 12, 9)));
-      await fixture.hooks.saveHook(_hook());
-      await fixture.reactions.logReaction(
-        CuriosityReactionRecord(
-          id: 'reaction_1',
-          hookId: 'hook_1',
-          timestamp: DateTime.utc(2026, 6, 13, 8),
-          reactionType: YesterdaysSnapshotReaction.progressed,
-          primaryAnchor: 'finished the draft',
-          hookType: CuriosityHookType.momentum,
-        ),
-      );
+        final journalStore = await JournalStore.open(
+          '${fixture.dir.path}/journal.json',
+          encryptAtRest: false,
+        );
+        await journalStore.save(
+          _entry(id: 'entry_1', createdAt: DateTime.utc(2026, 6, 12, 9)),
+        );
+        await fixture.hooks.saveHook(_hook());
+        await fixture.reactions.logReaction(
+          CuriosityReactionRecord(
+            id: 'reaction_1',
+            hookId: 'hook_1',
+            timestamp: DateTime.utc(2026, 6, 13, 8),
+            reactionType: YesterdaysSnapshotReaction.progressed,
+            primaryAnchor: 'finished the draft',
+            hookType: CuriosityHookType.momentum,
+          ),
+        );
 
-      final exporter = CuriosityDataExporter(
-        journalService: JournalService(journalStore),
-        reactionRepository: fixture.reactions,
-        hookRepository: fixture.hooks,
-      );
+        final exporter = CuriosityDataExporter(
+          journalService: JournalService(journalStore),
+          reactionRepository: fixture.reactions,
+          hookRepository: fixture.hooks,
+        );
 
-      final json = await exporter.exportAsJson(
-        start: DateTime.utc(2026, 6, 11),
-        end: DateTime.utc(2026, 6, 18, 23, 59, 59),
-      );
+        final json = await exporter.exportAsJson(
+          start: DateTime.utc(2026, 6, 11),
+          end: DateTime.utc(2026, 6, 18, 23, 59, 59),
+        );
 
-      expect(json['schemaVersion'], CuriosityDataExporter.schemaVersion);
-      expect(json['window'], isA<Map>());
-      expect(json['summary'], isA<Map>());
-      expect((json['summary'] as Map)['totalReactions'], 1);
-      expect((json['summary'] as Map)['totalEntries'], 1);
-      expect(json['entries'], isA<List>());
-      expect((json['entries'] as List), hasLength(1));
+        expect(json['schemaVersion'], CuriosityDataExporter.schemaVersion);
+        expect(json['window'], isA<Map>());
+        expect(json['summary'], isA<Map>());
+        expect((json['summary'] as Map)['totalReactions'], 1);
+        expect((json['summary'] as Map)['totalEntries'], 1);
+        expect(json['entries'], isA<List>());
+        expect((json['entries'] as List), hasLength(1));
 
-      final entry = (json['entries'] as List).single as Map<String, dynamic>;
-      expect(entry['entryId'], 'entry_1');
-      expect(entry['primaryAnchor'], 'said yes again');
-      expect(entry['emotionalTone'], 'thoughtful');
-      expect(entry['reaction'], isA<Map>());
-      expect((entry['reaction'] as Map)['type'], 'progressed');
-      expect((entry['reaction'] as Map)['emoji'], '🟢');
+        final entry = (json['entries'] as List).single as Map<String, dynamic>;
+        expect(entry['entryId'], 'entry_1');
+        expect(entry['primaryAnchor'], 'said yes again');
+        expect(entry['emotionalTone'], 'thoughtful');
+        expect(entry['reaction'], isA<Map>());
+        expect((entry['reaction'] as Map)['type'], 'progressed');
+        expect((entry['reaction'] as Map)['emoji'], '🟢');
 
-      expect(json['reactions'], isA<List>());
-      expect((json['reactions'] as List), hasLength(1));
-      expect(json['hooks'], isA<List>());
-      expect((json['hooks'] as List), hasLength(1));
-    });
+        expect(json['reactions'], isA<List>());
+        expect((json['reactions'] as List), hasLength(1));
+        expect(json['hooks'], isA<List>());
+        expect((json['hooks'] as List), hasLength(1));
+      },
+    );
 
     test('handles empty windows without throwing', () async {
       final fixture = await _openFixture();
@@ -196,7 +202,10 @@ void main() {
       );
 
       expect(markdown, contains('_No return-day reactions in this window_'));
-      expect(markdown, contains('_No journal entries were saved during this window._'));
+      expect(
+        markdown,
+        contains('_No journal entries were saved during this window._'),
+      );
       expect((json['summary'] as Map)['totalReactions'], 0);
       expect((json['summary'] as Map)['totalEntries'], 0);
       expect(json['entries'], isEmpty);

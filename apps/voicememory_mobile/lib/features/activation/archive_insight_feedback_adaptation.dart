@@ -3,11 +3,7 @@ import 'archive_home_summary.dart';
 import 'archive_insight_feedback.dart';
 
 /// How much to soften insight copy after local negative feedback.
-enum ArchiveInsightCautionLevel {
-  none,
-  mild,
-  elevated,
-}
+enum ArchiveInsightCautionLevel { none, mild, elevated }
 
 /// User-facing copy when insights adapt to local feedback.
 abstract final class ArchiveInsightFeedbackAdaptationCopy {
@@ -47,10 +43,9 @@ abstract final class ArchiveInsightFeedbackAdaptation {
   static bool shouldSuppress(
     ArchiveInsightTarget target, {
     ArchiveHomeStage? archiveHomeStage,
-  }) =>
-      ArchiveInsightFeedbackStore.isHidden(
-        resolveInsightId(target, archiveHomeStage: archiveHomeStage),
-      );
+  }) => ArchiveInsightFeedbackStore.isHidden(
+    resolveInsightId(target, archiveHomeStage: archiveHomeStage),
+  );
 
   static bool hasNegativeFeedback(
     ArchiveInsightTarget target, {
@@ -92,11 +87,11 @@ abstract final class ArchiveInsightFeedbackAdaptation {
       ArchiveInsightCautionLevel.elevated =>
         ArchiveInsightFeedbackAdaptationCopy.stillTestingBelief,
       ArchiveInsightCautionLevel.mild => switch (target) {
-          ArchiveInsightTarget.beliefEvidence ||
-          ArchiveInsightTarget.beliefUpdate =>
-            ArchiveInsightFeedbackAdaptationCopy.needsAnotherMoment,
-          _ => ArchiveInsightFeedbackAdaptationCopy.mayNotBeQuiteRight,
-        },
+        ArchiveInsightTarget.beliefEvidence ||
+        ArchiveInsightTarget.beliefUpdate =>
+          ArchiveInsightFeedbackAdaptationCopy.needsAnotherMoment,
+        _ => ArchiveInsightFeedbackAdaptationCopy.mayNotBeQuiteRight,
+      },
     };
   }
 
@@ -113,7 +108,9 @@ abstract final class ArchiveInsightFeedbackAdaptation {
 
     final correctionBlock = correctionContextFor(insightId);
     if (correctionBlock != null &&
-        !baseCopy.contains(ArchiveInsightFeedbackCopy.correctionMarkedNotQuite)) {
+        !baseCopy.contains(
+          ArchiveInsightFeedbackCopy.correctionMarkedNotQuite,
+        )) {
       parts.add(correctionBlock);
     }
 

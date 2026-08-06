@@ -123,12 +123,15 @@ abstract class RecordMicrophonePermissionUi {
       userDenied: nextUserDenied,
       ui: nextUi,
       sessionRequiresOpenSettings: nextSessionRequiresOpenSettings,
-      initialDeniedCanAskAgain: !fromUserRequest &&
+      initialDeniedCanAskAgain:
+          !fromUserRequest &&
           phase == RecordingPhase.permissionDenied &&
           !nextUserDenied,
-      permanentDenied: phase == RecordingPhase.permissionPermanentlyDenied ||
+      permanentDenied:
+          phase == RecordingPhase.permissionPermanentlyDenied ||
           nextSessionRequiresOpenSettings,
-      userDeniedBlocked: fromUserRequest &&
+      userDeniedBlocked:
+          fromUserRequest &&
           phase == RecordingPhase.permissionDenied &&
           nextUserDenied,
     );
@@ -192,11 +195,7 @@ abstract class RecordMicrophonePermissionUi {
   }
 }
 
-enum MicrophoneBlockedPanelKind {
-  none,
-  allowMicrophone,
-  openSettings,
-}
+enum MicrophoneBlockedPanelKind { none, allowMicrophone, openSettings }
 
 class RecordMicRefreshApplyResult {
   const RecordMicRefreshApplyResult._({

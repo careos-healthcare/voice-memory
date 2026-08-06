@@ -1,6 +1,4 @@
 import '../beta_activation/beta_activation_summary_tracker.dart';
-import '../beta_proof_feedback/beta_proof_feedback_model.dart';
-import '../beta_proof_feedback/beta_proof_feedback_store.dart';
 import '../testflight_metrics/testflight_metrics_engine.dart';
 import 'beta_conversion_diagnosis_copy.dart';
 import 'beta_conversion_diagnosis_model.dart';
@@ -55,16 +53,27 @@ abstract final class BetaConversionDiagnosisEngine {
     final diagnoses = <BetaConversionDiagnosisItem>[];
 
     final firstSaveRate = _rate(input.firstMomentSaved, input.recordScreenSeen);
-    final secondSaveRate =
-        _rate(input.secondMomentSaved, input.firstMomentSaved);
-    final thirdSaveRate = _rate(input.thirdMomentSaved, input.secondMomentSaved);
-    final usefulFeedbackRate =
-        _rate(input.usefulCount, input.totalFeedbackCount);
+    final secondSaveRate = _rate(
+      input.secondMomentSaved,
+      input.firstMomentSaved,
+    );
+    final thirdSaveRate = _rate(
+      input.thirdMomentSaved,
+      input.secondMomentSaved,
+    );
+    final usefulFeedbackRate = _rate(
+      input.usefulCount,
+      input.totalFeedbackCount,
+    );
     final tooVagueRate = _rate(input.tooVagueCount, input.totalFeedbackCount);
-    final alreadyKnewRate =
-        _rate(input.alreadyKnewCount, input.totalFeedbackCount);
-    final notRelevantRate =
-        _rate(input.notRelevantCount, input.totalFeedbackCount);
+    final alreadyKnewRate = _rate(
+      input.alreadyKnewCount,
+      input.totalFeedbackCount,
+    );
+    final notRelevantRate = _rate(
+      input.notRelevantCount,
+      input.totalFeedbackCount,
+    );
     final returnAfterProofRate = _rate(
       input.returnedAfterFirstProof,
       input.confirmedRepeatSeen,
@@ -145,8 +154,7 @@ abstract final class BetaConversionDiagnosisEngine {
       );
     }
 
-    if (input.totalFeedbackCount > 0 &&
-        alreadyKnewRate > usefulFeedbackRate) {
+    if (input.totalFeedbackCount > 0 && alreadyKnewRate > usefulFeedbackRate) {
       diagnoses.add(
         _item(
           metricId: BetaConversionDiagnosisMetricId.alreadyKnewRate,
@@ -159,8 +167,7 @@ abstract final class BetaConversionDiagnosisEngine {
       );
     }
 
-    if (input.totalFeedbackCount > 0 &&
-        notRelevantRate > usefulFeedbackRate) {
+    if (input.totalFeedbackCount > 0 && notRelevantRate > usefulFeedbackRate) {
       diagnoses.add(
         _item(
           metricId: BetaConversionDiagnosisMetricId.notRelevantRate,

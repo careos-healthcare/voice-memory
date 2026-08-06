@@ -12,7 +12,8 @@ abstract class AcquisitionStartCopy {
   static const String capacityTimingFlex =
       ArchivePositioningCopy.firstUseTimingMicro;
   static const String capacityStartCta = ArchivePositioningCopy.firstUseCta;
-  static const String capacityHowItWorksCta = ArchivePositioningCopy.howItWorksCta;
+  static const String capacityHowItWorksCta =
+      ArchivePositioningCopy.howItWorksCta;
   static const List<String> capacityHowItWorksSteps =
       ArchivePositioningCopy.howItWorksSteps;
 
@@ -30,13 +31,13 @@ abstract class AcquisitionStartCopy {
   static const String chooseAnotherLoop = 'Choose another loop';
 
   static List<String> capacityVisibleStrings() => [
-        capacityTitle,
-        capacityBody,
-        capacityFirstPathLabel,
-        capacityFirstPathHeadline,
-        capacityTimingFlex,
-        capacityStartCta,
-        capacityHowItWorksCta,
-        ...capacityHowItWorksSteps,
-      ];
+    capacityTitle,
+    capacityBody,
+    capacityFirstPathLabel,
+    capacityFirstPathHeadline,
+    capacityTimingFlex,
+    capacityStartCta,
+    capacityHowItWorksCta,
+    ...capacityHowItWorksSteps,
+  ];
 }

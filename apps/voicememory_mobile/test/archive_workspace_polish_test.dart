@@ -22,23 +22,22 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctWorkEntries(int count) {
   final transcripts = [
@@ -63,12 +62,15 @@ List<JournalEntry> _distinctWorkEntries(int count) {
 
 ArchiveWorkspaceLayout _layout(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
-  final beliefHistory =
-      entries.length >= 5 ? BeliefHistoryTimelineEngine.build(entries: entries) : null;
-  final weeklyReview =
-      entries.length >= 5 ? WeeklyArchiveReviewEngine.build(entries: entries) : null;
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final beliefHistory = entries.length >= 5
+      ? BeliefHistoryTimelineEngine.build(entries: entries)
+      : null;
+  final weeklyReview = entries.length >= 5
+      ? WeeklyArchiveReviewEngine.build(entries: entries)
+      : null;
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
 
   return ArchiveWorkspaceLayoutEngine.build(
     entries: entries,

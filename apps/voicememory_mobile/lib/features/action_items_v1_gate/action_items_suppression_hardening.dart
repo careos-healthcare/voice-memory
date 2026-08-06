@@ -80,13 +80,12 @@ abstract final class ActionItemsSuppressionHardening {
 
   static ActionItemsSuppressionHardeningReport report(
     ActionItemsSuppressionHardeningResult result,
-  ) =>
-      ActionItemsSuppressionHardeningReport(
-        headline: headline,
-        body: body,
-        guardrail: guardrail,
-        result: result,
-      );
+  ) => ActionItemsSuppressionHardeningReport(
+    headline: headline,
+    body: body,
+    guardrail: guardrail,
+    result: result,
+  );
 
   static ActionItemsSuppressionHardeningInput fromRepoSignals({
     required String v1SurfaceScopeAuditSource,
@@ -108,7 +107,8 @@ abstract final class ActionItemsSuppressionHardening {
   }) {
     final secondary = ActionItemsV1SecondaryGate.fromRepoSignals(
       v1SurfaceScopeAuditSource: v1SurfaceScopeAuditSource,
-      firstFiveMinutesSimplificationSource: firstFiveMinutesSimplificationSource,
+      firstFiveMinutesSimplificationSource:
+          firstFiveMinutesSimplificationSource,
       proSinglePromiseCopySource: proSinglePromiseCopySource,
       featureNoiseReductionSource: featureNoiseReductionSource,
       onboardingPagesSource: onboardingPagesSource,
@@ -117,7 +117,8 @@ abstract final class ActionItemsSuppressionHardening {
       releaseCandidateFreezeCopySource: releaseCandidateFreezeCopySource,
       archiveActionItemSource: archiveActionItemSource,
       actionItemsInCoreTab: actionItemsInCoreTab,
-      actionItemsInFirstFiveMinutesByDefault: actionItemsInFirstFiveMinutesByDefault,
+      actionItemsInFirstFiveMinutesByDefault:
+          actionItemsInFirstFiveMinutesByDefault,
       actionItemsInProPromise: actionItemsInProPromise,
       actionItemsBlockFirstProof: actionItemsBlockFirstProof,
       actionItemsRequiredInOnboarding: actionItemsRequiredInOnboarding,
@@ -181,73 +182,71 @@ abstract final class ActionItemsSuppressionHardening {
 
   static ActionItemsV1SecondaryGateInput _toSecondaryInput(
     ActionItemsSuppressionHardeningInput input,
-  ) =>
-      ActionItemsV1SecondaryGateInput(
-        actionItemsSecondary: input.actionItemsSecondary,
-        hiddenInFirstFiveMinutes: input.hiddenInFirstFiveMinutes,
-        notInProPromise: input.notInProPromise,
-        notBlockingFirstProof: input.notBlockingFirstProof,
-        notRequiredOnboarding: input.notRequiredOnboarding,
-        notTaskManagementPositioning: input.notTaskManagerPositioning,
-        userConfirmedAccessOnly: input.userConfirmedAccessOnly,
-        noExpansionGuarded: input.noRemindersExpansion,
-      );
+  ) => ActionItemsV1SecondaryGateInput(
+    actionItemsSecondary: input.actionItemsSecondary,
+    hiddenInFirstFiveMinutes: input.hiddenInFirstFiveMinutes,
+    notInProPromise: input.notInProPromise,
+    notBlockingFirstProof: input.notBlockingFirstProof,
+    notRequiredOnboarding: input.notRequiredOnboarding,
+    notTaskManagementPositioning: input.notTaskManagerPositioning,
+    userConfirmedAccessOnly: input.userConfirmedAccessOnly,
+    noExpansionGuarded: input.noRemindersExpansion,
+  );
 
   static List<ActionItemsSuppressionRule> _buildRules(
     ActionItemsSuppressionHardeningInput input,
-  ) =>
-      [
-        _rule(
-          id: ActionItemsSuppressionRuleId.neverInFirstFiveMinutes,
-          passes: input.hiddenInFirstFiveMinutes,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.neverInProPromise,
-          passes: input.notInProPromise,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.neverRequiredOnboarding,
-          passes: input.notRequiredOnboarding,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.neverBlockFirstProof,
-          passes: input.notBlockingFirstProof,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.neverTaskManager,
-          passes: input.notTaskManagerPositioning,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.rememberThisUserConfirmed,
-          passes: input.userConfirmedAccessOnly,
-          isHardFailure: false,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.noRemindersExpansion,
-          passes: input.noRemindersExpansion,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.noTaskManagerLanguage,
-          passes: input.notTaskManagerPositioning,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.noNewSurfaces,
-          passes: input.actionItemsSecondary,
-          isHardFailure: true,
-        ),
-        _rule(
-          id: ActionItemsSuppressionRuleId.storagePreserved,
-          passes: input.storagePreserved,
-          isHardFailure: true,
-        ),
-      ];
+  ) => [
+    _rule(
+      id: ActionItemsSuppressionRuleId.neverInFirstFiveMinutes,
+      passes: input.hiddenInFirstFiveMinutes,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.neverInProPromise,
+      passes: input.notInProPromise,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.neverRequiredOnboarding,
+      passes: input.notRequiredOnboarding,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.neverBlockFirstProof,
+      passes: input.notBlockingFirstProof,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.neverTaskManager,
+      passes: input.notTaskManagerPositioning,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.rememberThisUserConfirmed,
+      passes: input.userConfirmedAccessOnly,
+      isHardFailure: false,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.noRemindersExpansion,
+      passes: input.noRemindersExpansion,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.noTaskManagerLanguage,
+      passes: input.notTaskManagerPositioning,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.noNewSurfaces,
+      passes: input.actionItemsSecondary,
+      isHardFailure: true,
+    ),
+    _rule(
+      id: ActionItemsSuppressionRuleId.storagePreserved,
+      passes: input.storagePreserved,
+      isHardFailure: true,
+    ),
+  ];
 
   static ActionItemsSuppressionHardeningDecision _resolveDecision(
     ActionItemsV1SecondaryGateDecision gateDecision,
@@ -257,8 +256,9 @@ abstract final class ActionItemsSuppressionHardening {
         ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate) {
       return ActionItemsSuppressionHardeningDecision.violated;
     }
-    final hardFailures =
-        rules.where((rule) => !rule.passes && rule.isHardFailure).toList();
+    final hardFailures = rules
+        .where((rule) => !rule.passes && rule.isHardFailure)
+        .toList();
     if (hardFailures.isNotEmpty) {
       return ActionItemsSuppressionHardeningDecision.violated;
     }
@@ -273,33 +273,32 @@ abstract final class ActionItemsSuppressionHardening {
     required ActionItemsSuppressionRuleId id,
     required bool passes,
     required bool isHardFailure,
-  }) =>
-      ActionItemsSuppressionRule(
-        id: id,
-        label: _labelFor(id),
-        passes: passes,
-        detailLabel: passes ? detailPass : detailFail,
-        isHardFailure: isHardFailure,
-      );
+  }) => ActionItemsSuppressionRule(
+    id: id,
+    label: _labelFor(id),
+    passes: passes,
+    detailLabel: passes ? detailPass : detailFail,
+    isHardFailure: isHardFailure,
+  );
 
   static String _labelFor(ActionItemsSuppressionRuleId id) => switch (id) {
-        ActionItemsSuppressionRuleId.neverInFirstFiveMinutes =>
-          ruleNeverInFirstFiveMinutes,
-        ActionItemsSuppressionRuleId.neverInProPromise => ruleNeverInProPromise,
-        ActionItemsSuppressionRuleId.neverRequiredOnboarding =>
-          ruleNeverRequiredOnboarding,
-        ActionItemsSuppressionRuleId.neverBlockFirstProof =>
-          ruleNeverBlockFirstProof,
-        ActionItemsSuppressionRuleId.neverTaskManager => ruleNeverTaskManager,
-        ActionItemsSuppressionRuleId.rememberThisUserConfirmed =>
-          ruleRememberThisUserConfirmed,
-        ActionItemsSuppressionRuleId.noRemindersExpansion =>
-          ruleNoRemindersExpansion,
-        ActionItemsSuppressionRuleId.noTaskManagerLanguage =>
-          ruleNoTaskManagerLanguage,
-        ActionItemsSuppressionRuleId.noNewSurfaces => ruleNoNewSurfaces,
-        ActionItemsSuppressionRuleId.storagePreserved => ruleStoragePreserved,
-      };
+    ActionItemsSuppressionRuleId.neverInFirstFiveMinutes =>
+      ruleNeverInFirstFiveMinutes,
+    ActionItemsSuppressionRuleId.neverInProPromise => ruleNeverInProPromise,
+    ActionItemsSuppressionRuleId.neverRequiredOnboarding =>
+      ruleNeverRequiredOnboarding,
+    ActionItemsSuppressionRuleId.neverBlockFirstProof =>
+      ruleNeverBlockFirstProof,
+    ActionItemsSuppressionRuleId.neverTaskManager => ruleNeverTaskManager,
+    ActionItemsSuppressionRuleId.rememberThisUserConfirmed =>
+      ruleRememberThisUserConfirmed,
+    ActionItemsSuppressionRuleId.noRemindersExpansion =>
+      ruleNoRemindersExpansion,
+    ActionItemsSuppressionRuleId.noTaskManagerLanguage =>
+      ruleNoTaskManagerLanguage,
+    ActionItemsSuppressionRuleId.noNewSurfaces => ruleNoNewSurfaces,
+    ActionItemsSuppressionRuleId.storagePreserved => ruleStoragePreserved,
+  };
 
   static String _messageFor(ActionItemsSuppressionHardeningDecision decision) =>
       switch (decision) {
@@ -310,22 +309,17 @@ abstract final class ActionItemsSuppressionHardening {
 
   static String _recommendationFor(
     ActionItemsSuppressionHardeningDecision decision,
-  ) =>
-      switch (decision) {
-        ActionItemsSuppressionHardeningDecision.hardened =>
-          'Keep action items in settings, entry detail, and user-confirmed remember-this paths only.',
-        ActionItemsSuppressionHardeningDecision.needsReview =>
-          'Review remember-this access before release. Do not widen visibility.',
-        ActionItemsSuppressionHardeningDecision.violated =>
-          'Restore suppression rules. Do not delete action item storage.',
-      };
+  ) => switch (decision) {
+    ActionItemsSuppressionHardeningDecision.hardened =>
+      'Keep action items in settings, entry detail, and user-confirmed remember-this paths only.',
+    ActionItemsSuppressionHardeningDecision.needsReview =>
+      'Review remember-this access before release. Do not widen visibility.',
+    ActionItemsSuppressionHardeningDecision.violated =>
+      'Restore suppression rules. Do not delete action item storage.',
+  };
 }
 
-enum ActionItemsSuppressionHardeningDecision {
-  hardened,
-  needsReview,
-  violated,
-}
+enum ActionItemsSuppressionHardeningDecision { hardened, needsReview, violated }
 
 enum ActionItemsSuppressionRuleId {
   neverInFirstFiveMinutes,

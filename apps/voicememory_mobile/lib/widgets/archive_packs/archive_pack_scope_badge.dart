@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../features/archive_packs/archive_pack.dart';
 import '../../theme/app_colors.dart';
 
 /// Local-only pack label chip — never logged.

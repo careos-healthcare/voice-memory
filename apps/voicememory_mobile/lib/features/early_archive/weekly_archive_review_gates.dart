@@ -17,7 +17,8 @@ abstract final class WeeklyArchiveWeekReviewGates {
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
   }) {
-    if (entryCount >= WeeklyArchiveWeekReviewEngine.minEntriesForFiveEntryGate) {
+    if (entryCount >=
+        WeeklyArchiveWeekReviewEngine.minEntriesForFiveEntryGate) {
       return true;
     }
     return EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries) &&
@@ -46,10 +47,9 @@ abstract final class WeeklyArchiveWeekReviewGates {
     required RecordCtaPolicyResolution policy,
     required bool hideCardRecordButtons,
     required bool promoteMicCaptureActions,
-  }) =>
-      !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
-        policy: policy,
-        hideCardRecordButtons: hideCardRecordButtons,
-        promoteMicCaptureActions: promoteMicCaptureActions,
-      );
+  }) => !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
+    policy: policy,
+    hideCardRecordButtons: hideCardRecordButtons,
+    promoteMicCaptureActions: promoteMicCaptureActions,
+  );
 }

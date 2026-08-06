@@ -26,22 +26,21 @@ JournalEntry _textEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   setUp(() async {
@@ -71,8 +70,9 @@ void main() {
       await EntryImportanceStore.clearAll();
       expect(EntryImportanceStore.isImportant('e1'), isFalse);
 
-      final source =
-          File('lib/security/local_privacy_data_controls.dart').readAsStringSync();
+      final source = File(
+        'lib/security/local_privacy_data_controls.dart',
+      ).readAsStringSync();
       expect(source, contains('EntryImportanceStore.clearAll'));
     });
   });
@@ -98,9 +98,7 @@ void main() {
       expect(content.items.first.entryId, 'older');
       expect(content.items.first.isImportant, isTrue);
       expect(
-        content.items.every(
-          (item) => item.status.toString().isNotEmpty,
-        ),
+        content.items.every((item) => item.status.toString().isNotEmpty),
         isTrue,
       );
     });

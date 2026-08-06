@@ -7,7 +7,6 @@ import '../features/activation/archive_evidence_map.dart';
 import '../features/demo/sample_archive_copy.dart';
 import '../features/demo/sample_archive_entries.dart';
 import '../features/demo/sample_archive_mode.dart';
-import '../features/post_save/post_save_recorded_summary_copy.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -16,10 +15,7 @@ import '../widgets/pushed_screen_shell.dart';
 
 /// Read-only Work/Home context drilldown for sample archive demo paths only.
 class SampleArchiveContextScreen extends StatelessWidget {
-  const SampleArchiveContextScreen({
-    super.key,
-    required this.contextTagId,
-  });
+  const SampleArchiveContextScreen({super.key, required this.contextTagId});
 
   final String contextTagId;
 

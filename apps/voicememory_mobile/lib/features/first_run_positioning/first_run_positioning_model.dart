@@ -1,5 +1,3 @@
-import 'first_run_positioning_copy.dart';
-
 class FirstRunPositioningResult {
   const FirstRunPositioningResult({
     required this.shouldShow,

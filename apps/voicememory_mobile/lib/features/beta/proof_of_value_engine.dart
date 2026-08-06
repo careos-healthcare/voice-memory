@@ -21,18 +21,34 @@ abstract final class ProofOfValueEngine {
 
   static ProofOfValueReport build({required ProofOfValueInput input}) {
     final total = _displayTotal(input.totalTesters);
-    final firstSaveTarget = _scaledTarget(firstSaveTargetForTen, input.totalTesters);
-    final secondSaveTarget =
-        _scaledTarget(secondSaveTargetForTen, input.totalTesters);
-    final firstProofTarget =
-        _scaledTarget(firstProofTargetForTen, input.totalTesters);
-    final coreValueYesTarget =
-        _scaledTarget(coreValueYesTargetForTen, input.totalTesters);
-    final wouldKeepUsingTarget =
-        _scaledTarget(wouldKeepUsingTargetForTen, input.totalTesters);
-    final wouldPayTarget = _scaledTarget(wouldPayTargetForTen, input.totalTesters);
-    final returnCheckTarget =
-        _scaledTarget(returnCheckTargetForTen, input.totalTesters);
+    final firstSaveTarget = _scaledTarget(
+      firstSaveTargetForTen,
+      input.totalTesters,
+    );
+    final secondSaveTarget = _scaledTarget(
+      secondSaveTargetForTen,
+      input.totalTesters,
+    );
+    final firstProofTarget = _scaledTarget(
+      firstProofTargetForTen,
+      input.totalTesters,
+    );
+    final coreValueYesTarget = _scaledTarget(
+      coreValueYesTargetForTen,
+      input.totalTesters,
+    );
+    final wouldKeepUsingTarget = _scaledTarget(
+      wouldKeepUsingTargetForTen,
+      input.totalTesters,
+    );
+    final wouldPayTarget = _scaledTarget(
+      wouldPayTargetForTen,
+      input.totalTesters,
+    );
+    final returnCheckTarget = _scaledTarget(
+      returnCheckTargetForTen,
+      input.totalTesters,
+    );
 
     final rows = [
       _firstSaveRow(input, total, firstSaveTarget),
@@ -91,10 +107,10 @@ abstract final class ProofOfValueEngine {
     String? localCoreValueAnswerLabel,
   }) {
     final counters = ActivationDropoffReviewEngine.fromBetaCounts(betaCounts);
-    final resolvedTotal = totalTesters ??
-        (counters.appOpened > 0 ? counters.appOpened : 0);
-    final localLabel = localCoreValueAnswerLabel ??
-        _localAnswerLabelFromStore();
+    final resolvedTotal =
+        totalTesters ?? (counters.appOpened > 0 ? counters.appOpened : 0);
+    final localLabel =
+        localCoreValueAnswerLabel ?? _localAnswerLabelFromStore();
 
     return ProofOfValueInput(
       totalTesters: resolvedTotal,
@@ -315,11 +331,11 @@ abstract final class ProofOfValueEngine {
     final currentValue = input.coreValueGeneric != null
         ? ProofOfValueCopy.valueLabel(generic, total)
         : (input.localCoreValueAnswerLabel ==
-                CoreValueFeedbackAnswer.generic.diagnosticsLabel
-            ? ProofOfValueCopy.localAnswerLabel(
-                input.localCoreValueAnswerLabel!,
-              )
-            : ProofOfValueCopy.valueLabel(generic, total));
+                  CoreValueFeedbackAnswer.generic.diagnosticsLabel
+              ? ProofOfValueCopy.localAnswerLabel(
+                  input.localCoreValueAnswerLabel!,
+                )
+              : ProofOfValueCopy.valueLabel(generic, total));
 
     final warning = _genericWarning(input, firstProofTarget);
     return ProofOfValueRow(
@@ -331,8 +347,8 @@ abstract final class ProofOfValueEngine {
       status: warning
           ? ProofOfValueRowStatus.warning
           : (generic > 0
-              ? ProofOfValueRowStatus.checkManually
-              : ProofOfValueRowStatus.proven),
+                ? ProofOfValueRowStatus.checkManually
+                : ProofOfValueRowStatus.proven),
     );
   }
 
@@ -440,7 +456,10 @@ abstract final class ProofOfValueEngine {
       id: ProofOfValueRowId.returnCheck,
       label: ProofOfValueCopy.rowReturnCheck,
       question: ProofOfValueCopy.questionReturnCheck,
-      currentValue: ProofOfValueCopy.valueLabel(input.returnCheckAnswered, total),
+      currentValue: ProofOfValueCopy.valueLabel(
+        input.returnCheckAnswered,
+        total,
+      ),
       targetValue: ProofOfValueCopy.targetLabel(target, total),
       status: status,
     );
@@ -490,7 +509,8 @@ abstract final class ProofOfValueEngine {
         _genericWarning(input, firstProofTarget)) {
       return ProofOfValueCopy.recommendationFixEvidence;
     }
-    if (input.wouldKeepUsing == null || input.wouldKeepUsing! < wouldKeepUsingTarget) {
+    if (input.wouldKeepUsing == null ||
+        input.wouldKeepUsing! < wouldKeepUsingTarget) {
       return ProofOfValueCopy.recommendationStrengthenRetention;
     }
     if ((input.wouldPay == null || input.wouldPay! < wouldPayTarget) &&
@@ -525,7 +545,8 @@ abstract final class ProofOfValueEngine {
         _genericWarning(input, firstProofTarget)) {
       return ProofOfValueSummaryState.specificityNotProven;
     }
-    if (input.wouldKeepUsing == null || input.wouldKeepUsing! < wouldKeepUsingTarget) {
+    if (input.wouldKeepUsing == null ||
+        input.wouldKeepUsing! < wouldKeepUsingTarget) {
       return ProofOfValueSummaryState.retentionNotProven;
     }
     if ((input.wouldPay == null || input.wouldPay! < wouldPayTarget) &&
@@ -539,19 +560,19 @@ abstract final class ProofOfValueEngine {
   }
 
   static String _summaryFor(ProofOfValueSummaryState state) => switch (state) {
-        ProofOfValueSummaryState.notEnoughEvidence =>
-          ProofOfValueCopy.summaryNotEnoughEvidence,
-        ProofOfValueSummaryState.activationNotProven =>
-          ProofOfValueCopy.summaryActivationNotProven,
-        ProofOfValueSummaryState.firstProofNotProven =>
-          ProofOfValueCopy.summaryFirstProofNotProven,
-        ProofOfValueSummaryState.specificityNotProven =>
-          ProofOfValueCopy.summarySpecificityNotProven,
-        ProofOfValueSummaryState.retentionNotProven =>
-          ProofOfValueCopy.summaryRetentionNotProven,
-        ProofOfValueSummaryState.paymentNotProven =>
-          ProofOfValueCopy.summaryPaymentNotProven,
-        ProofOfValueSummaryState.emerging => ProofOfValueCopy.summaryEmerging,
-        ProofOfValueSummaryState.strong => ProofOfValueCopy.summaryStrong,
-      };
+    ProofOfValueSummaryState.notEnoughEvidence =>
+      ProofOfValueCopy.summaryNotEnoughEvidence,
+    ProofOfValueSummaryState.activationNotProven =>
+      ProofOfValueCopy.summaryActivationNotProven,
+    ProofOfValueSummaryState.firstProofNotProven =>
+      ProofOfValueCopy.summaryFirstProofNotProven,
+    ProofOfValueSummaryState.specificityNotProven =>
+      ProofOfValueCopy.summarySpecificityNotProven,
+    ProofOfValueSummaryState.retentionNotProven =>
+      ProofOfValueCopy.summaryRetentionNotProven,
+    ProofOfValueSummaryState.paymentNotProven =>
+      ProofOfValueCopy.summaryPaymentNotProven,
+    ProofOfValueSummaryState.emerging => ProofOfValueCopy.summaryEmerging,
+    ProofOfValueSummaryState.strong => ProofOfValueCopy.summaryStrong,
+  };
 }

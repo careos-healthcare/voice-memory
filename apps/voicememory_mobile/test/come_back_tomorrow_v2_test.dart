@@ -35,7 +35,8 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/come_back_tomorrow_v2/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/come_back_tomorrow_v2/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -48,11 +49,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -74,46 +71,45 @@ JournalEntry _voiceEntry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedEntries({DateTime? lastCreatedAt}) => [
-      ..._threeRelatedEntries(),
-      _entry(
-        '4',
-        'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: lastCreatedAt ?? DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedEntries(),
+  _entry(
+    '4',
+    'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: lastCreatedAt ?? DateTime(2026, 6, 13, 12),
+  ),
+];
 
 void main() {
   tearDown(() async {
@@ -331,7 +327,9 @@ void main() {
       expect(find.text(ComeBackTomorrowV2Copy.helperCameBack), findsOneWidget);
     });
 
-    testWidgets('Not today stores answer and shows acknowledgement', (tester) async {
+    testWidgets('Not today stores answer and shows acknowledgement', (
+      tester,
+    ) async {
       final prefs = _MemoryPrefs();
       final returnDayPrefs = _MemoryPrefs();
       const question = ComeBackTomorrowReturnQuestion(
@@ -365,14 +363,18 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_watch_question_not_today')));
+      await tester.tap(
+        find.byKey(const Key('return_watch_question_not_today')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(ComeBackTomorrowV2Copy.helperNotToday), findsOneWidget);
       expect(ComeBackTomorrowV2Store.active?.lastResponseType, 'not_today');
     });
 
-    testWidgets('Different opens record flow with changed helper', (tester) async {
+    testWidgets('Different opens record flow with changed helper', (
+      tester,
+    ) async {
       var different = false;
       const question = ComeBackTomorrowReturnQuestion(
         title: ComeBackTomorrowV2Copy.returnQuestionTitle,
@@ -395,7 +397,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('return_watch_question_different')));
+      await tester.tap(
+        find.byKey(const Key('return_watch_question_different')),
+      );
       await tester.pump();
 
       expect(different, isTrue);
@@ -459,10 +463,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: ComeBackTomorrowCard.test(
-              watch: watch,
-              entryCount: 1,
-            ),
+            body: ComeBackTomorrowCard.test(watch: watch, entryCount: 1),
           ),
         ),
       );
@@ -476,8 +477,8 @@ void main() {
 
     testWidgets('analytics metadata only', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      ComeBackTomorrowV2Analytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      ComeBackTomorrowV2Analytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
 
       const watch = ComeBackTomorrowPostSaveWatch(
         title: ComeBackTomorrowV2Copy.postSaveTitle,
@@ -490,10 +491,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: ComeBackTomorrowCard.test(
-              watch: watch,
-              entryCount: 1,
-            ),
+            body: ComeBackTomorrowCard.test(watch: watch, entryCount: 1),
           ),
         ),
       );

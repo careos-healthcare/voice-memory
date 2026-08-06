@@ -16,32 +16,32 @@ enum EvidenceAnchorType {
 
 extension EvidenceAnchorTypeAnalytics on EvidenceAnchorType {
   String get analyticsValue => switch (this) {
-        EvidenceAnchorType.repeat => 'repeat',
-        EvidenceAnchorType.change => 'change',
-        EvidenceAnchorType.softening => 'softening',
-        EvidenceAnchorType.strengthening => 'strengthening',
-        EvidenceAnchorType.helped => 'helped',
-        EvidenceAnchorType.avoided => 'avoided',
-        EvidenceAnchorType.current => 'current',
-        EvidenceAnchorType.fading => 'fading',
-        EvidenceAnchorType.corrected => 'corrected',
-        EvidenceAnchorType.freshReturn => 'fresh_return',
-        EvidenceAnchorType.unknown => 'unknown',
-      };
+    EvidenceAnchorType.repeat => 'repeat',
+    EvidenceAnchorType.change => 'change',
+    EvidenceAnchorType.softening => 'softening',
+    EvidenceAnchorType.strengthening => 'strengthening',
+    EvidenceAnchorType.helped => 'helped',
+    EvidenceAnchorType.avoided => 'avoided',
+    EvidenceAnchorType.current => 'current',
+    EvidenceAnchorType.fading => 'fading',
+    EvidenceAnchorType.corrected => 'corrected',
+    EvidenceAnchorType.freshReturn => 'fresh_return',
+    EvidenceAnchorType.unknown => 'unknown',
+  };
 
   String get label => switch (this) {
-        EvidenceAnchorType.repeat => EvidenceAnchorCopy.labelRepeat,
-        EvidenceAnchorType.change => EvidenceAnchorCopy.labelChange,
-        EvidenceAnchorType.softening => EvidenceAnchorCopy.labelSoftening,
-        EvidenceAnchorType.strengthening => EvidenceAnchorCopy.labelStrengthening,
-        EvidenceAnchorType.helped => EvidenceAnchorCopy.labelHelped,
-        EvidenceAnchorType.avoided => EvidenceAnchorCopy.labelAvoided,
-        EvidenceAnchorType.current => EvidenceAnchorCopy.labelCurrent,
-        EvidenceAnchorType.fading => EvidenceAnchorCopy.labelFading,
-        EvidenceAnchorType.corrected => EvidenceAnchorCopy.labelCorrected,
-        EvidenceAnchorType.freshReturn => EvidenceAnchorCopy.labelFreshReturn,
-        EvidenceAnchorType.unknown => EvidenceAnchorCopy.labelUnknown,
-      };
+    EvidenceAnchorType.repeat => EvidenceAnchorCopy.labelRepeat,
+    EvidenceAnchorType.change => EvidenceAnchorCopy.labelChange,
+    EvidenceAnchorType.softening => EvidenceAnchorCopy.labelSoftening,
+    EvidenceAnchorType.strengthening => EvidenceAnchorCopy.labelStrengthening,
+    EvidenceAnchorType.helped => EvidenceAnchorCopy.labelHelped,
+    EvidenceAnchorType.avoided => EvidenceAnchorCopy.labelAvoided,
+    EvidenceAnchorType.current => EvidenceAnchorCopy.labelCurrent,
+    EvidenceAnchorType.fading => EvidenceAnchorCopy.labelFading,
+    EvidenceAnchorType.corrected => EvidenceAnchorCopy.labelCorrected,
+    EvidenceAnchorType.freshReturn => EvidenceAnchorCopy.labelFreshReturn,
+    EvidenceAnchorType.unknown => EvidenceAnchorCopy.labelUnknown,
+  };
 }
 
 class EvidenceAnchor {
@@ -87,19 +87,18 @@ class EvidenceAnchorExtractionResult {
   factory EvidenceAnchorExtractionResult.hidden({
     required String source,
     required int entryCount,
-  }) =>
-      EvidenceAnchorExtractionResult(
-        shouldExtract: false,
-        entryCount: entryCount,
-        source: source,
-        anchors: const [],
-        safeSummaries: const [],
-        usesFallback: false,
-        hasSafeAnchor: false,
-        hasRecentAnchor: false,
-        hasCorrectionAnchor: false,
-        hasChangeAnchor: false,
-      );
+  }) => EvidenceAnchorExtractionResult(
+    shouldExtract: false,
+    entryCount: entryCount,
+    source: source,
+    anchors: const [],
+    safeSummaries: const [],
+    usesFallback: false,
+    hasSafeAnchor: false,
+    hasRecentAnchor: false,
+    hasCorrectionAnchor: false,
+    hasChangeAnchor: false,
+  );
 
   final bool shouldExtract;
   final int entryCount;

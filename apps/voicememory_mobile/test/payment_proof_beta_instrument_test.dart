@@ -25,24 +25,23 @@ PaymentProofBetaInput _input({
   bool testerWouldPayYes = false,
   bool testerWouldPayMaybe = false,
   bool testerWouldPayNo = false,
-}) =>
-    PaymentProofBetaInput(
-      firstSave: firstSave,
-      secondSave: secondSave,
-      firstUsefulProofSeen: firstUsefulProofSeen,
-      proofAccepted: proofAccepted,
-      proofCorrected: proofCorrected,
-      proPromiseSeen: proPromiseSeen,
-      proTapped: proTapped,
-      purchaseStarted: purchaseStarted,
-      purchaseCompleted: purchaseCompleted,
-      restoreStarted: restoreStarted,
-      restoreCompleted: restoreCompleted,
-      entitlementActive: entitlementActive,
-      testerWouldPayYes: testerWouldPayYes,
-      testerWouldPayMaybe: testerWouldPayMaybe,
-      testerWouldPayNo: testerWouldPayNo,
-    );
+}) => PaymentProofBetaInput(
+  firstSave: firstSave,
+  secondSave: secondSave,
+  firstUsefulProofSeen: firstUsefulProofSeen,
+  proofAccepted: proofAccepted,
+  proofCorrected: proofCorrected,
+  proPromiseSeen: proPromiseSeen,
+  proTapped: proTapped,
+  purchaseStarted: purchaseStarted,
+  purchaseCompleted: purchaseCompleted,
+  restoreStarted: restoreStarted,
+  restoreCompleted: restoreCompleted,
+  entitlementActive: entitlementActive,
+  testerWouldPayYes: testerWouldPayYes,
+  testerWouldPayMaybe: testerWouldPayMaybe,
+  testerWouldPayNo: testerWouldPayNo,
+);
 
 PaymentProofBetaInput _proofPath({
   bool proTapped = false,
@@ -54,39 +53,34 @@ PaymentProofBetaInput _proofPath({
   bool testerWouldPayYes = false,
   bool testerWouldPayMaybe = false,
   bool testerWouldPayNo = false,
-}) =>
-    _input(
-      firstSave: true,
-      secondSave: true,
-      firstUsefulProofSeen: true,
-      proofAccepted: true,
-      proPromiseSeen: true,
-      proTapped: proTapped,
-      purchaseStarted: purchaseStarted,
-      purchaseCompleted: purchaseCompleted,
-      restoreStarted: restoreStarted,
-      restoreCompleted: restoreCompleted,
-      entitlementActive: entitlementActive,
-      testerWouldPayYes: testerWouldPayYes,
-      testerWouldPayMaybe: testerWouldPayMaybe,
-      testerWouldPayNo: testerWouldPayNo,
-    );
+}) => _input(
+  firstSave: true,
+  secondSave: true,
+  firstUsefulProofSeen: true,
+  proofAccepted: true,
+  proPromiseSeen: true,
+  proTapped: proTapped,
+  purchaseStarted: purchaseStarted,
+  purchaseCompleted: purchaseCompleted,
+  restoreStarted: restoreStarted,
+  restoreCompleted: restoreCompleted,
+  entitlementActive: entitlementActive,
+  testerWouldPayYes: testerWouldPayYes,
+  testerWouldPayMaybe: testerWouldPayMaybe,
+  testerWouldPayNo: testerWouldPayNo,
+);
 
 PaymentProofBetaSignal _signal(
   PaymentProofBetaResult result,
   PaymentProofBetaSignalId id,
-) =>
-    result.signals.firstWhere((signal) => signal.id == id);
+) => result.signals.firstWhere((signal) => signal.id == id);
 
 void main() {
   group('PaymentProofBetaInstrument.build', () {
     test('instrument tracks fifteen canonical signals', () {
       final result = PaymentProofBetaInstrument.build(_input());
       expect(result.signals.length, PaymentProofBetaInstrument.signalCount);
-      expect(
-        PaymentProofBetaCopy.canonicalTrackedSignals,
-        hasLength(15),
-      );
+      expect(PaymentProofBetaCopy.canonicalTrackedSignals, hasLength(15));
     });
 
     test('maybe alone returns interestOnly', () {
@@ -103,7 +97,9 @@ void main() {
     });
 
     test('Pro tap returns proCuriosity', () {
-      final result = PaymentProofBetaInstrument.build(_proofPath(proTapped: true));
+      final result = PaymentProofBetaInstrument.build(
+        _proofPath(proTapped: true),
+      );
       expect(result.decision, PaymentProofBetaDecision.proCuriosity);
       expect(result.hasPaymentProof, isFalse);
     });

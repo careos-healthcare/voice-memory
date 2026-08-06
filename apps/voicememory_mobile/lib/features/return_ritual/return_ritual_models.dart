@@ -1,9 +1,6 @@
 /// One preset return ritual option.
 class ReturnRitualPreset {
-  const ReturnRitualPreset({
-    required this.id,
-    required this.phrase,
-  });
+  const ReturnRitualPreset({required this.id, required this.phrase});
 
   final String id;
   final String phrase;
@@ -11,10 +8,7 @@ class ReturnRitualPreset {
 
 /// User's saved return ritual — local prefs only, never written to journal.
 class ReturnRitualChoice {
-  const ReturnRitualChoice({
-    required this.presetId,
-    this.customPhrase,
-  });
+  const ReturnRitualChoice({required this.presetId, this.customPhrase});
 
   static const customPresetId = 'custom';
 
@@ -40,10 +34,10 @@ class ReturnRitualChoice {
   }
 
   Map<String, dynamic> toJson() => {
-        'presetId': presetId,
-        if (customPhrase != null && customPhrase!.trim().isNotEmpty)
-          'customPhrase': customPhrase!.trim(),
-      };
+    'presetId': presetId,
+    if (customPhrase != null && customPhrase!.trim().isNotEmpty)
+      'customPhrase': customPhrase!.trim(),
+  };
 
   factory ReturnRitualChoice.fromJson(Map<String, dynamic>? json) {
     if (json == null) {

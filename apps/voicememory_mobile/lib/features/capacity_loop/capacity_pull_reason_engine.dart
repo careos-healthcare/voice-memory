@@ -32,16 +32,19 @@ class CapacityPullReasonEngine {
 
     return CapacityPullReasonResult(
       hasCard: true,
-      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
-        capacityWedgeActive: input.capacityWedgeActive,
-        capacityMomentCount: input.capacityMomentCount,
-      ),
+      showOnArchiveHome:
+          CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+            capacityWedgeActive: input.capacityWedgeActive,
+            capacityMomentCount: input.capacityMomentCount,
+          ),
       title: CapacityPullReasonCopy.cardTitle,
       body: CapacityPullReasonCopy.cardBody,
       primaryCtaLabel: CapacityPullReasonCopy.saveReasonCta,
       secondaryCtaLabel: CapacityPullReasonCopy.skipCta,
       pendingEntryId: pendingId,
-      recordedReasonCount: CapacityPullReasonStore.countWithReason(input.records),
+      recordedReasonCount: CapacityPullReasonStore.countWithReason(
+        input.records,
+      ),
     );
   }
 

@@ -355,7 +355,10 @@ void main() {
     Future<void> pumpUntilPurchaseCue(WidgetTester tester) async {
       for (var i = 0; i < 20; i++) {
         await tester.pump(const Duration(milliseconds: 100));
-        if (find.byKey(const Key('purchase_intent_return_cue')).evaluate().isNotEmpty) {
+        if (find
+            .byKey(const Key('purchase_intent_return_cue'))
+            .evaluate()
+            .isNotEmpty) {
           return;
         }
       }
@@ -410,18 +413,22 @@ void main() {
       expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
     });
 
-    testWidgets('cue suppressed on capture-first record even with pending intent', (
-      tester,
-    ) async {
-      await tester.runAsync(() async {
-        await seedPendingIntent();
-        await seedComparisonEntries();
-      });
-      await pumpRecordScreen(tester);
-      await pumpUntilPurchaseCue(tester);
-      expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'cue suppressed on capture-first record even with pending intent',
+      (tester) async {
+        await tester.runAsync(() async {
+          await seedPendingIntent();
+          await seedComparisonEntries();
+        });
+        await pumpRecordScreen(tester);
+        await pumpUntilPurchaseCue(tester);
+        expect(
+          find.byKey(const Key('purchase_intent_return_cue')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('cue appears after purchase start without completion', (
       tester,

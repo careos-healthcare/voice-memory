@@ -5,10 +5,7 @@ import '../../domain/services/telemetry_analytics_aggregator.dart';
 class ClinicalTelemetryTrendWidget extends StatelessWidget {
   final List<WeeklyTelemetrySummary> summaries;
 
-  const ClinicalTelemetryTrendWidget({
-    super.key,
-    required this.summaries,
-  });
+  const ClinicalTelemetryTrendWidget({super.key, required this.summaries});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +30,9 @@ class ClinicalTelemetryTrendWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
           child: Text(
             'Clinical Telemetry & Down-Regulation',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ListView.builder(
@@ -51,8 +48,8 @@ class ClinicalTelemetryTrendWidget extends StatelessWidget {
             final Color statusColor = summary.downRegulationSuccessRate >= 75.0
                 ? Colors.green
                 : summary.downRegulationSuccessRate >= 50.0
-                    ? Colors.orange
-                    : Colors.red;
+                ? Colors.orange
+                : Colors.red;
 
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 6.0),
@@ -99,7 +96,8 @@ class ClinicalTelemetryTrendWidget extends StatelessWidget {
                         _MetricStat(
                           label: 'Observations',
                           value: '${summary.totalObservations}',
-                          subtext: '${summary.groundedInterventionsCount} grounded',
+                          subtext:
+                              '${summary.groundedInterventionsCount} grounded',
                         ),
                         _MetricStat(
                           label: 'Avg Lexical Δ',
@@ -140,29 +138,14 @@ class _MetricStat extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 2),
-        Text(
-          subtext,
-          style: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 10,
-          ),
-        ),
+        Text(subtext, style: TextStyle(color: Colors.grey[500], fontSize: 10)),
       ],
     );
   }

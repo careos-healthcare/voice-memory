@@ -33,7 +33,8 @@ abstract class FirstThreeJourneyCoordinator {
       );
     }
     final count = await reflectionCount();
-    final entries = ScreenshotMode.enabled &&
+    final entries =
+        ScreenshotMode.enabled &&
             ScreenshotMode.screenshotJourneyReflectionCount >= 0
         ? <JournalEntry>[]
         : await AppServices.instance.journal.loadAll();

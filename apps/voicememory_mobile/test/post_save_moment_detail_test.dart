@@ -19,23 +19,25 @@ import 'package:voicememory_mobile/widgets/record/post_save_moment_detail_sheet.
 const _mediumText =
     'I noticed I kept checking my phone during dinner with my partner tonight.';
 
-JournalEntry _parentEntry({String id = 'parent1', String transcript = _mediumText}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+JournalEntry _parentEntry({
+  String id = 'parent1',
+  String transcript = _mediumText,
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 Future<void> _openSheet(
   WidgetTester tester, {
@@ -44,7 +46,8 @@ Future<void> _openSheet(
     required JournalEntry parentEntry,
     required PostSaveMomentDetailType detailType,
     required String detailText,
-  }) saveDetailOverride,
+  })
+  saveDetailOverride,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -78,11 +81,15 @@ void main() {
   group('PostSaveMomentDetailCopy', () {
     test('each detail type has correct prompt and helper', () {
       expect(
-        PostSaveMomentDetailCopy.promptTitle(PostSaveMomentDetailType.situation),
+        PostSaveMomentDetailCopy.promptTitle(
+          PostSaveMomentDetailType.situation,
+        ),
         'What was the situation?',
       );
       expect(
-        PostSaveMomentDetailCopy.promptHelper(PostSaveMomentDetailType.situation),
+        PostSaveMomentDetailCopy.promptHelper(
+          PostSaveMomentDetailType.situation,
+        ),
         'One short detail is enough.',
       );
       expect(
@@ -98,7 +105,9 @@ void main() {
         'What made this stand out?',
       );
       expect(
-        PostSaveMomentDetailCopy.promptHelper(PostSaveMomentDetailType.stoodOut),
+        PostSaveMomentDetailCopy.promptHelper(
+          PostSaveMomentDetailType.stoodOut,
+        ),
         contains('noticeable'),
       );
     });
@@ -148,26 +157,29 @@ void main() {
       );
     });
 
-    test('updates existing linked detail instead of creating duplicate', () async {
-      final parent = _parentEntry();
-      await journal.save(parent);
+    test(
+      'updates existing linked detail instead of creating duplicate',
+      () async {
+        final parent = _parentEntry();
+        await journal.save(parent);
 
-      await pipeline.savePostSaveMomentDetail(
-        parentEntry: parent,
-        detailType: PostSaveMomentDetailType.changed,
-        detailText: 'First version.',
-      );
-      await pipeline.savePostSaveMomentDetail(
-        parentEntry: parent,
-        detailType: PostSaveMomentDetailType.changed,
-        detailText: 'Updated version.',
-      );
+        await pipeline.savePostSaveMomentDetail(
+          parentEntry: parent,
+          detailType: PostSaveMomentDetailType.changed,
+          detailText: 'First version.',
+        );
+        await pipeline.savePostSaveMomentDetail(
+          parentEntry: parent,
+          detailType: PostSaveMomentDetailType.changed,
+          detailText: 'Updated version.',
+        );
 
-      final all = await journal.loadAll();
-      expect(all, hasLength(2));
-      final detail = all.firstWhere((e) => e.id != parent.id);
-      expect(detail.transcript, 'Updated version.');
-    });
+        final all = await journal.loadAll();
+        expect(all, hasLength(2));
+        final detail = all.firstWhere((e) => e.id != parent.id);
+        expect(detail.transcript, 'Updated version.');
+      },
+    );
   });
 
   group('PostSaveMomentDetailSheet', () {
@@ -176,14 +188,15 @@ void main() {
       await _openSheet(
         tester,
         detailType: PostSaveMomentDetailType.situation,
-        saveDetailOverride: ({
-          required parentEntry,
-          required detailType,
-          required detailText,
-        }) async {
-          saveCalls += 1;
-          return parentEntry;
-        },
+        saveDetailOverride:
+            ({
+              required parentEntry,
+              required detailType,
+              required detailText,
+            }) async {
+              saveCalls += 1;
+              return parentEntry;
+            },
       );
 
       await tester.tap(
@@ -200,15 +213,16 @@ void main() {
       await _openSheet(
         tester,
         detailType: PostSaveMomentDetailType.stoodOut,
-        saveDetailOverride: ({
-          required parentEntry,
-          required detailType,
-          required detailText,
-        }) async {
-          throw CapturePipelineFailure(
-            PostSaveMomentDetailCopy.saveFailedMessage,
-          );
-        },
+        saveDetailOverride:
+            ({
+              required parentEntry,
+              required detailType,
+              required detailText,
+            }) async {
+              throw CapturePipelineFailure(
+                PostSaveMomentDetailCopy.saveFailedMessage,
+              );
+            },
       );
 
       const draft = 'It felt louder than usual today.';
@@ -219,7 +233,10 @@ void main() {
       await tester.tap(find.byKey(const Key('post_save_detail_save_stoodOut')));
       await tester.pumpAndSettle();
 
-      expect(find.text(PostSaveMomentDetailCopy.saveFailedMessage), findsOneWidget);
+      expect(
+        find.text(PostSaveMomentDetailCopy.saveFailedMessage),
+        findsOneWidget,
+      );
       expect(find.textContaining(draft), findsOneWidget);
     });
 
@@ -228,15 +245,16 @@ void main() {
       await _openSheet(
         tester,
         detailType: PostSaveMomentDetailType.changed,
-        saveDetailOverride: ({
-          required parentEntry,
-          required detailType,
-          required detailText,
-        }) async {
-          saveCalls += 1;
-          await Future<void>.delayed(const Duration(milliseconds: 200));
-          return parentEntry;
-        },
+        saveDetailOverride:
+            ({
+              required parentEntry,
+              required detailType,
+              required detailText,
+            }) async {
+              saveCalls += 1;
+              await Future<void>.delayed(const Duration(milliseconds: 200));
+              return parentEntry;
+            },
       );
 
       await tester.enterText(
@@ -298,7 +316,9 @@ void main() {
       expect(opened, PostSaveMomentDetailType.changed);
     });
 
-    testWidgets('Add what made it stand out opens detail sheet', (tester) async {
+    testWidgets('Add what made it stand out opens detail sheet', (
+      tester,
+    ) async {
       PostSaveMomentDetailType? opened;
 
       await tester.pumpWidget(
@@ -327,7 +347,10 @@ void main() {
         PostSaveMomentDetailAnalytics.promptTappedEvent,
         'post_save_detail_prompt_tapped',
       );
-      expect(PostSaveMomentDetailAnalytics.savedEvent, 'post_save_detail_saved');
+      expect(
+        PostSaveMomentDetailAnalytics.savedEvent,
+        'post_save_detail_saved',
+      );
       expect(
         PostSaveMomentDetailAnalytics.failedEvent,
         'post_save_detail_failed',

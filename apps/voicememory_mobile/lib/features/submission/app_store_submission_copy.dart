@@ -12,12 +12,10 @@ abstract final class AppStoreSubmissionCopy {
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 
   static const screenshotCaptionSaveMoment = 'Save a private moment';
-  static const screenshotCaptionRepeatsOverTime =
-      'See what repeats over time';
+  static const screenshotCaptionRepeatsOverTime = 'See what repeats over time';
   static const screenshotCaptionEvidenceNotGuesses =
       'Review evidence, not guesses';
-  static const screenshotCaptionPrivateArchive =
-      'Explore your private archive';
+  static const screenshotCaptionPrivateArchive = 'Explore your private archive';
   static const screenshotCaptionExportWhenChoose =
       'Export only when you choose';
   static const screenshotCaptionSampleArchive =
@@ -54,12 +52,12 @@ abstract final class AppStoreSubmissionCopy {
   static const suggestedReviewPathTitle = 'Suggested review path';
 
   static List<String> get suggestedReviewPathBullets => [
-        'Use $typeInsteadLabel if microphone access is unavailable.',
-        'Open Sample Archive for example data that never writes to your journal.',
-        'Follow Good demo paths inside Sample Archive for screenshots or demos.',
-        reviewerNotePrivacyControls,
-        'Support and feedback are available from Settings.',
-      ];
+    'Use $typeInsteadLabel if microphone access is unavailable.',
+    'Open Sample Archive for example data that never writes to your journal.',
+    'Follow Good demo paths inside Sample Archive for screenshots or demos.',
+    reviewerNotePrivacyControls,
+    'Support and feedback are available from Settings.',
+  ];
 
   static const privacyExplanationTitle = 'Privacy for reviewers';
   static const privacyExplanationBody =
@@ -77,13 +75,13 @@ abstract final class AppStoreSubmissionCopy {
       'Open Support & feedback for help or issues';
 
   static List<String> get demoPathChecklist => const [
-        demoPathChecklistOpenSampleArchive,
-        demoPathChecklistFollowDemoPaths,
-        demoPathChecklistOpenEvidenceMap,
-        demoPathChecklistOpenWorkContext,
-        demoPathChecklistCopyDemoSummary,
-        demoPathChecklistSupportFeedback,
-      ];
+    demoPathChecklistOpenSampleArchive,
+    demoPathChecklistFollowDemoPaths,
+    demoPathChecklistOpenEvidenceMap,
+    demoPathChecklistOpenWorkContext,
+    demoPathChecklistCopyDemoSummary,
+    demoPathChecklistSupportFeedback,
+  ];
 
   static String get supportUrl => AppConfig.supportUrl;
 

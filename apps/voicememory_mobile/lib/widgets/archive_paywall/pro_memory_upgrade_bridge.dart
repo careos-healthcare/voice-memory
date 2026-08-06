@@ -51,9 +51,9 @@ class ProMemoryUpgradeBridge extends StatelessWidget {
           Text(
             ProMemoryBoundaryCopy.upgradeBridgeBody,
             key: const Key('pro_memory_upgrade_bridge_body'),
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.sm),
           Row(

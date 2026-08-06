@@ -71,8 +71,9 @@ abstract class AccountAuth {
     if (error is BackendNotConfiguredException) return 'backend_not_configured';
     if (error is NetworkOfflineException) return 'offline';
     if (error is ApiException) {
-      if (error.code == 'BACKEND_NOT_CONFIGURED')
+      if (error.code == 'BACKEND_NOT_CONFIGURED') {
         return 'backend_not_configured';
+      }
       final status = error.statusCode ?? 0;
       if (status == 401) return 'invalid_code';
       if (status == 429) return 'rate_limited';

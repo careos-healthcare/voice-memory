@@ -8,8 +8,8 @@ import 'package:voicememory_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/submission/app_store_submission_copy.dart';
 import 'package:voicememory_mobile/router/app_router.dart';
-import 'package:voicememory_mobile/screens/help_reviewer_guide_screen.dart';
-import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
+import 'package:archiveme_research/screens/help_reviewer_guide_screen.dart';
+import 'package:archiveme_research/screens/sample_archive_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -84,10 +84,7 @@ void main() {
     test('route is registered and sensitive', () {
       final src = File('lib/router/app_router.dart').readAsStringSync();
       expect(src, contains("path: '/help-reviewer-guide'"));
-      expect(
-        SensitiveRoutes.isSensitiveRoute('/help-reviewer-guide'),
-        isTrue,
-      );
+      expect(SensitiveRoutes.isSensitiveRoute('/help-reviewer-guide'), isTrue);
       final routes = appRouter.configuration.routes;
       final hasRoute = routes.any(
         (route) => route is GoRoute && route.path == '/help-reviewer-guide',
@@ -99,10 +96,7 @@ void main() {
   group('Help reviewer guide UI', () {
     testWidgets('Settings shows Help & reviewer guide row', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SettingsScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
       );
       await tester.pump();
 
@@ -125,14 +119,14 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('help_reviewer_guide_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('help_reviewer_guide_screen')),
+        findsOneWidget,
+      );
       expect(find.text(HelpReviewerGuideCopy.sectionWhatTitle), findsOneWidget);
       expect(
         find.text(HelpReviewerGuideCopy.sectionTypeInsteadBulletOne),
@@ -183,18 +177,20 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('settings_help_reviewer_guide_tile')));
+      await tester.tap(
+        find.byKey(const Key('settings_help_reviewer_guide_tile')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('help_reviewer_guide_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('help_reviewer_guide_screen')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('sample archive links to help guide', (tester) async {
@@ -215,10 +211,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -234,7 +227,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('help_reviewer_guide_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('help_reviewer_guide_screen')),
+        findsOneWidget,
+      );
     });
   });
 }

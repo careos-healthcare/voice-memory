@@ -15,35 +15,38 @@ CrossDeviceContinuityFutureGateInput _input({
   bool? privacyProof = true,
   bool? migrationProof = true,
   bool? v1ContinuitySurfacingRequested,
-}) =>
-    CrossDeviceContinuityFutureGateInput(
-      accountIdentityProof: accountIdentityProof,
-      restoreProof: restoreProof,
-      backupProof: backupProof,
-      privacyProof: privacyProof,
-      migrationProof: migrationProof,
-      v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
-    );
+}) => CrossDeviceContinuityFutureGateInput(
+  accountIdentityProof: accountIdentityProof,
+  restoreProof: restoreProof,
+  backupProof: backupProof,
+  privacyProof: privacyProof,
+  migrationProof: migrationProof,
+  v1ContinuitySurfacingRequested: v1ContinuitySurfacingRequested,
+);
 
 CrossDeviceContinuityFuturePrereq _prereq(
   CrossDeviceContinuityFutureGateResult result,
   CrossDeviceContinuityFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 CrossDeviceContinuityFutureRule _rule(
   CrossDeviceContinuityFutureGateResult result,
   CrossDeviceContinuityFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('CrossDeviceContinuityFutureGate.build', () {
     test('gate tracks five rules and five prerequisites in order', () {
       final result = CrossDeviceContinuityFutureGate.build(_input());
       expect(result.rules.length, CrossDeviceContinuityFutureGate.ruleCount);
-      expect(result.prereqs.length, CrossDeviceContinuityFutureGate.prereqCount);
-      expect(result.ruleOrder, CrossDeviceContinuityFutureGate.canonicalRuleOrder);
+      expect(
+        result.prereqs.length,
+        CrossDeviceContinuityFutureGate.prereqCount,
+      );
+      expect(
+        result.ruleOrder,
+        CrossDeviceContinuityFutureGate.canonicalRuleOrder,
+      );
       expect(
         result.prereqOrder,
         CrossDeviceContinuityFutureGate.canonicalPrereqOrder,
@@ -78,8 +81,10 @@ void main() {
         CrossDeviceContinuityFuturePrereqId.migrationProof,
       );
       expect(
-        _prereq(result, CrossDeviceContinuityFuturePrereqId.migrationProof)
-            .status,
+        _prereq(
+          result,
+          CrossDeviceContinuityFuturePrereqId.migrationProof,
+        ).status,
         CrossDeviceContinuityFuturePrereqStatus.pending,
       );
     });
@@ -103,10 +108,7 @@ void main() {
 
     test('v1 surfacing requested without proof fails futureOnly', () {
       final result = CrossDeviceContinuityFutureGate.build(
-        _input(
-          migrationProof: false,
-          v1ContinuitySurfacingRequested: true,
-        ),
+        _input(migrationProof: false, v1ContinuitySurfacingRequested: true),
       );
       expect(
         _rule(result, CrossDeviceContinuityFutureRuleId.futureOnly).status,
@@ -117,7 +119,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = CrossDeviceContinuityFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, CrossDeviceContinuityFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          CrossDeviceContinuityFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

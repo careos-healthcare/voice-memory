@@ -15,7 +15,7 @@ import 'package:voicememory_mobile/features/memory/memory_influence_level.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/action_items_screen.dart';
+import 'package:archiveme_research/screens/action_items_screen.dart';
 import 'package:voicememory_mobile/screens/entry_detail_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';

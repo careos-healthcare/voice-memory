@@ -23,22 +23,21 @@ JournalEntry _entry({
   String exactLanguage = '',
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: exactLanguage,
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: exactLanguage,
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('postSaveRecordedSummary', () {
@@ -55,9 +54,7 @@ void main() {
 
     test('uses observation when transcript is unavailable', () {
       final summary = postSaveRecordedSummary(
-        _entry(
-          observation: 'You sounded tired when talking about work.',
-        ),
+        _entry(observation: 'You sounded tired when talking about work.'),
       );
       expect(summary, 'You sounded tired when talking about work.');
       expect(summary.length, lessThanOrEqualTo(220));
@@ -94,13 +91,21 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('post_save_listening_card')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.listeningTitle), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.listeningBody), findsOneWidget);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.listeningTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.listeningBody),
+        findsOneWidget,
+      );
     });
   });
 
   group('PostSaveRecordedSummaryCard', () {
-    testWidgets('low-quality degraded card shows usable-words copy', (tester) async {
+    testWidgets('low-quality degraded card shows usable-words copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -118,9 +123,18 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_degraded_transcription_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveBody),
+        findsOneWidget,
+      );
     });
 
     testWidgets('degraded voice capture shows transcription fallback', (
@@ -142,16 +156,33 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_degraded_transcription_card')),
+        findsOneWidget,
+      );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsNothing);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
-      expect(find.byKey(const Key('post_save_type_what_you_said')), findsNothing);
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveBody),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VoiceCaptureCopy.transcriptionFailedIssue),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_type_what_you_said')),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
       expect(find.byKey(const Key('post_save_play_recording')), findsNothing);
       expect(find.byKey(const Key('post_save_share_audio')), findsNothing);
-      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.tap(
+        find.byKey(const Key('post_save_degraded_more_options')),
+      );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('post_save_play_recording')), findsOneWidget);
       expect(find.byKey(const Key('post_save_share_audio')), findsOneWidget);
@@ -182,7 +213,9 @@ void main() {
         find.text(PendingTranscriptRecoveryCopy.bluetoothAccessoryNote),
         findsNothing,
       );
-      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.tap(
+        find.byKey(const Key('post_save_degraded_more_options')),
+      );
       await tester.pumpAndSettle();
       expect(
         find.text(PendingTranscriptRecoveryCopy.bluetoothAccessoryNote),
@@ -194,30 +227,40 @@ void main() {
       );
     });
 
-    testWidgets('usable transcript after typed fallback shows What ArchiveMe heard', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: _entry(
-                transcript: 'I felt pressure before saying yes again.',
-                localAudioPath: '/tmp/audio.m4a',
+    testWidgets(
+      'usable transcript after typed fallback shows What ArchiveMe heard',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PostSaveRecordedSummaryCard(
+                entry: _entry(
+                  transcript: 'I felt pressure before saying yes again.',
+                  localAudioPath: '/tmp/audio.m4a',
+                ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsNothing);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
-      expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('post_save_recorded_summary_card')),
+          findsOneWidget,
+        );
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(
+          find.byKey(const Key('post_save_degraded_transcription_card')),
+          findsNothing,
+        );
+        expect(
+          find.text(VoiceCaptureCopy.transcriptionFailedIssue),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
+      },
+    );
 
     testWidgets('non-empty transcript shows What ArchiveMe heard', (
       tester,
@@ -237,13 +280,19 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_recorded_summary_card')),
+        findsOneWidget,
+      );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       expect(
         find.text('I felt pressure before saying yes again.'),
         findsOneWidget,
       );
-      expect(find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote), findsOneWidget);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote),
+        findsOneWidget,
+      );
       expect(find.textContaining('[draft]'), findsNothing);
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
     });
@@ -267,60 +316,83 @@ void main() {
       );
     });
 
-    testWidgets('offline voice with persisted transcript shows normal insight card', (
-      tester,
-    ) async {
-      const spoken = 'I felt pressure before saying yes again today.';
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: _entry(
-                transcript: spoken,
-                observation: spoken,
-                localAudioPath: '/tmp/audio.m4a',
+    testWidgets(
+      'offline voice with persisted transcript shows normal insight card',
+      (tester) async {
+        const spoken = 'I felt pressure before saying yes again today.';
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PostSaveRecordedSummaryCard(
+                entry: _entry(
+                  transcript: spoken,
+                  observation: spoken,
+                  localAudioPath: '/tmp/audio.m4a',
+                ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.text(spoken), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('post_save_recorded_summary_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('post_save_degraded_transcription_card')),
+          findsNothing,
+        );
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(find.text(spoken), findsOneWidget);
+        expect(
+          find.text(VoiceCaptureCopy.transcriptionFailedIssue),
+          findsNothing,
+        );
+      },
+    );
 
-    testWidgets('analysis pending note shows when transcript saved without insight', (
-      tester,
-    ) async {
-      const spoken = 'I felt pressure before saying yes again today.';
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: _entry(
-                transcript: spoken,
-                observation: spoken,
-                localAudioPath: '/tmp/audio.m4a',
+    testWidgets(
+      'analysis pending note shows when transcript saved without insight',
+      (tester) async {
+        const spoken = 'I felt pressure before saying yes again today.';
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PostSaveRecordedSummaryCard(
+                entry: _entry(
+                  transcript: spoken,
+                  observation: spoken,
+                  localAudioPath: '/tmp/audio.m4a',
+                ),
+                showAnalysisPendingNote: true,
               ),
-              showAnalysisPendingNote: true,
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsNothing);
-      expect(find.text(spoken), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.analysisUnavailableNote), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('post_save_recorded_summary_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('post_save_degraded_transcription_card')),
+          findsNothing,
+        );
+        expect(find.text(spoken), findsOneWidget);
+        expect(
+          find.text(VoiceCaptureCopy.analysisUnavailableNote),
+          findsOneWidget,
+        );
+        expect(
+          find.text(VoiceCaptureCopy.transcriptionFailedIssue),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('shows fallback copy when transcript and summary unavailable', (
       tester,
@@ -328,90 +400,128 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(entry: _entry()),
-          ),
+          home: Scaffold(body: PostSaveRecordedSummaryCard(entry: _entry())),
         ),
       );
       await tester.pump();
 
-      expect(find.text(PostSaveRecordedSummaryCopy.emptyFallback), findsOneWidget);
-    });
-
-    testWidgets('first entry shows heard but not What this added or What changed', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: _entry(
-                transcript: 'I felt pressure before saying yes again.',
-              ),
-              allEntries: [
-                _entry(transcript: 'I felt pressure before saying yes again.'),
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatChangedTitle), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsNothing);
-    });
-
-    testWidgets('low-signal Test save shows neutral state without repeat claims', (
-      tester,
-    ) async {
-      final prior = _entry(
-        id: 'a',
-        createdAt: DateTime(2026, 6, 1, 12),
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-      );
-      final latest = _entry(
-        id: 'b',
-        createdAt: DateTime(2026, 6, 2, 12),
-        transcript: 'Test',
-      );
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: latest,
-              allEntries: [latest, prior],
-              onAddMoreDetail: () {},
-              onBackToRecord: () {},
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.text('Test'), findsOneWidget);
       expect(
-        find.text(PostSaveRecordedSummaryCopy.lowSignalWhatThisAddedBody),
+        find.text(PostSaveRecordedSummaryCopy.emptyFallback),
         findsOneWidget,
       );
-      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalPrompt), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalAddDetailCta), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalBackToRecordCta), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsNothing);
-      expect(find.textContaining('Both moments mention'), findsNothing);
-      expect(find.textContaining('Your archive updated its belief'), findsNothing);
-      expect(find.textContaining('said yes'), findsNothing);
-      expect(find.textContaining('capacity'), findsNothing);
     });
+
+    testWidgets(
+      'first entry shows heard but not What this added or What changed',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PostSaveRecordedSummaryCard(
+                entry: _entry(
+                  transcript: 'I felt pressure before saying yes again.',
+                ),
+                allEntries: [
+                  _entry(
+                    transcript: 'I felt pressure before saying yes again.',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+          findsNothing,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+          findsNothing,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel),
+          findsNothing,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'low-signal Test save shows neutral state without repeat claims',
+      (tester) async {
+        final prior = _entry(
+          id: 'a',
+          createdAt: DateTime(2026, 6, 1, 12),
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+        );
+        final latest = _entry(
+          id: 'b',
+          createdAt: DateTime(2026, 6, 2, 12),
+          transcript: 'Test',
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PostSaveRecordedSummaryCard(
+                entry: latest,
+                allEntries: [latest, prior],
+                onAddMoreDetail: () {},
+                onBackToRecord: () {},
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(find.text('Test'), findsOneWidget);
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.lowSignalWhatThisAddedBody),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.lowSignalPrompt),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.lowSignalAddDetailCta),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.lowSignalBackToRecordCta),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel),
+          findsNothing,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel),
+          findsNothing,
+        );
+        expect(find.textContaining('Both moments mention'), findsNothing);
+        expect(
+          find.textContaining('Your archive updated its belief'),
+          findsNothing,
+        );
+        expect(find.textContaining('said yes'), findsNothing);
+        expect(find.textContaining('capacity'), findsNothing);
+      },
+    );
 
     testWidgets('meaningful latest save still shows repeat connection', (
       tester,
@@ -450,11 +560,26 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsOneWidget);
-      expect(find.byKey(const Key('post_save_what_this_added_loop')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_what_this_added_evidence')), findsOneWidget);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_what_this_added_loop')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_what_this_added_evidence')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('post_save_check_tomorrow')), findsOneWidget);
       expect(
         find.text(
@@ -462,7 +587,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(PostSaveRecordedSummaryCopy.whatChangedTitle), findsNothing);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+        findsNothing,
+      );
     });
 
     testWidgets('fourth changed entry shows What changed with evidence', (
@@ -508,12 +636,27 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(PostSaveRecordedSummaryCopy.whatChangedTitle), findsOneWidget);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+        findsOneWidget,
+      );
       expect(find.text(DailyMirrorCopy.whatChangedCaughtBody), findsOneWidget);
-      expect(find.byKey(const Key('post_save_what_changed_evidence')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsOneWidget);
-      expect(find.text(DailyMirrorCopy.whatChangedNextQuestion), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_what_changed_evidence')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(DailyMirrorCopy.whatChangedNextQuestion),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsNothing,
+      );
     });
 
     testWidgets('weak evidence shows safe no-guessing copy', (tester) async {
@@ -544,10 +687,22 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(PostSaveRecordedSummaryCopy.noPatternReassurance), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.safeNoGuessing), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatChangedTitle), findsNothing);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.noPatternReassurance),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.safeNoGuessing),
+        findsNothing,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsNothing,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+        findsNothing,
+      );
     });
 
     testWidgets('does not show full transcript beyond cap', (tester) async {
@@ -606,7 +761,9 @@ void main() {
       await tester.pump();
 
       final savedTitle = find.text(BeliefProductCopy.reflectionSavedTitle);
-      final summaryCard = find.byKey(const Key('post_save_recorded_summary_card'));
+      final summaryCard = find.byKey(
+        const Key('post_save_recorded_summary_card'),
+      );
       final doneCard = find.byKey(const Key('done_for_today_receipt_card'));
 
       expect(savedTitle, findsOneWidget);
@@ -662,8 +819,14 @@ void main() {
       await tester.pump();
 
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsNothing,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel),
+        findsNothing,
+      );
     });
   });
 }

@@ -18,10 +18,7 @@ import 'package:voicememory_mobile/widgets/pro/paywall_objection_section.dart';
 const _privateTranscript =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-Future<void> _pumpPaywall(
-  WidgetTester tester, {
-  PaywallRouteArgs? args,
-}) async {
+Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
   await tester.binding.setSurfaceSize(const Size(390, 2200));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
@@ -42,7 +39,10 @@ Future<void> _pumpPaywall(
   await tester.pumpAndSettle();
   for (var i = 0; i < 40; i++) {
     await tester.pump(const Duration(milliseconds: 50));
-    if (find.byKey(const Key('paywall_unavailable_body')).evaluate().isNotEmpty) {
+    if (find
+        .byKey(const Key('paywall_unavailable_body'))
+        .evaluate()
+        .isNotEmpty) {
       break;
     }
   }
@@ -66,16 +66,18 @@ void main() {
     });
 
     test('no therapy/medical claims', () {
-      final blob =
-          PaywallObjectionCopy.allDisplayedStrings().join(' ').toLowerCase();
+      final blob = PaywallObjectionCopy.allDisplayedStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in PaywallObjectionCopy.bannedMedicalTerms) {
         expect(blob, isNot(contains(banned)));
       }
     });
 
     test('no fake testimonial/scarcity', () {
-      final blob =
-          PaywallObjectionCopy.allDisplayedStrings().join(' ').toLowerCase();
+      final blob = PaywallObjectionCopy.allDisplayedStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in PaywallObjectionCopy.bannedFakeClaims) {
         expect(blob, isNot(contains(banned)));
       }
@@ -83,7 +85,10 @@ void main() {
 
     test('no private journal text', () {
       final blob = PaywallObjectionCopy.allDisplayedStrings().join('\n');
-      expect(blob.toLowerCase(), isNot(contains(_privateTranscript.toLowerCase())));
+      expect(
+        blob.toLowerCase(),
+        isNot(contains(_privateTranscript.toLowerCase())),
+      );
     });
   });
 
@@ -153,7 +158,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('paywall_objection_section')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_objection_section')),
+        findsOneWidget,
+      );
       for (final row in PaywallObjectionCopy.allRows()) {
         expect(find.text(row.question), findsOneWidget);
       }

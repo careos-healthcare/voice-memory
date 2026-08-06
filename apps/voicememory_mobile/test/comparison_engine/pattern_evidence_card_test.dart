@@ -8,8 +8,9 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 
 void main() {
   group('PatternEvidenceCard', () {
-    testWidgets('renders comparison evidence without pro prompt by default',
-        (tester) async {
+    testWidgets('renders comparison evidence without pro prompt by default', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -30,11 +31,15 @@ void main() {
 
       expect(find.text('Archive Comparison'), findsOneWidget);
       expect(find.text('Possible Repeat'), findsOneWidget);
-      expect(find.byKey(const Key('pattern_evidence_pro_trail_prompt')), findsNothing);
+      expect(
+        find.byKey(const Key('pattern_evidence_pro_trail_prompt')),
+        findsNothing,
+      );
     });
 
-    testWidgets('renders conversion headline when pro prompt is enabled',
-        (tester) async {
+    testWidgets('renders conversion headline when pro prompt is enabled', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -54,15 +59,19 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('pattern_evidence_pro_trail_prompt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_evidence_pro_trail_prompt')),
+        findsOneWidget,
+      );
       expect(
         find.text(ProConversionAuditCopy.proTrailCanonical),
         findsOneWidget,
       );
     });
 
-    testWidgets('invokes paywall callback when conversion headline is tapped',
-        (tester) async {
+    testWidgets('invokes paywall callback when conversion headline is tapped', (
+      tester,
+    ) async {
       var tapped = false;
 
       await tester.pumpWidget(
@@ -85,7 +94,9 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byKey(const Key('pattern_evidence_pro_trail_prompt')));
+      await tester.tap(
+        find.byKey(const Key('pattern_evidence_pro_trail_prompt')),
+      );
       await tester.pump();
 
       expect(tapped, isTrue);

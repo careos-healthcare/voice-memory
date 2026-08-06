@@ -29,8 +29,7 @@ abstract final class YesterdayWatchGates {
   static bool returnedOnLaterDay({
     required List<JournalEntry> entries,
     DateTime? now,
-  }) =>
-      ReturnTomorrowCueGates.isNextDayReturn(entries: entries, now: now);
+  }) => ReturnTomorrowCueGates.isNextDayReturn(entries: entries, now: now);
 
   static bool hasWatchTarget(List<JournalEntry> eligible) {
     if (eligible.isEmpty) return false;
@@ -49,7 +48,7 @@ abstract final class YesterdayWatchGates {
       return true;
     }
 
-    return eligible.length >= 1;
+    return eligible.isNotEmpty;
   }
 
   static bool shouldShow({
@@ -82,7 +81,10 @@ abstract final class YesterdayWatchEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (!YesterdayWatchGates.hasWatchTarget(eligible)) return null;
 
-    final days = CaptureRecoveryGates.daysSinceLastEntry(entries: entries, now: now);
+    final days = CaptureRecoveryGates.daysSinceLastEntry(
+      entries: entries,
+      now: now,
+    );
     final phrase = ReturnTomorrowCueEngine.groundedWatchingPhrase(eligible);
 
     return YesterdayWatch(

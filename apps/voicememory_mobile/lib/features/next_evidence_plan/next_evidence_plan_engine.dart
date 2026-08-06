@@ -17,9 +17,9 @@ class NextEvidencePlanEngine {
   final MomentQualityEngine momentQualityEngine;
 
   NextEvidencePlanTeaser buildTeaser() => const NextEvidencePlanTeaser(
-        title: NextEvidencePlanCopy.starterTitle,
-        body: NextEvidencePlanCopy.starterBody,
-      );
+    title: NextEvidencePlanCopy.starterTitle,
+    body: NextEvidencePlanCopy.starterBody,
+  );
 
   NextEvidencePlanResult build({
     required List<JournalEntry> entries,
@@ -29,20 +29,21 @@ class NextEvidencePlanEngine {
     final saved = _realEntries(entries);
     final savedCount = saved.length;
     final evidenceMap = ArchiveEvidenceMapEngine.build(entries: saved);
-    final primaryWatchlist = watchlistItems.isNotEmpty ? watchlistItems.first : null;
-    final watchLabel = primaryWatchlist?.resolveLabel(ArchiveWatchlistCopy.presets);
-
-    final body = _primaryBody(
-      savedCount: savedCount,
-      watchLabel: watchLabel,
+    final primaryWatchlist = watchlistItems.isNotEmpty
+        ? watchlistItems.first
+        : null;
+    final watchLabel = primaryWatchlist?.resolveLabel(
+      ArchiveWatchlistCopy.presets,
     );
+
+    final body = _primaryBody(savedCount: savedCount, watchLabel: watchLabel);
 
     final watchlistLine = watchLabel != null
         ? NextEvidencePlanCopy.watchingForLine(watchLabel)
         : null;
 
-    final ritualLine = returnRitualPhrase != null &&
-            returnRitualPhrase.trim().isNotEmpty
+    final ritualLine =
+        returnRitualPhrase != null && returnRitualPhrase.trim().isNotEmpty
         ? NextEvidencePlanCopy.returnRitualLine(returnRitualPhrase.trim())
         : null;
 
@@ -97,7 +98,8 @@ class NextEvidencePlanEngine {
         return NextEvidencePlanCopy.extraDetailSuggestion;
       }
     }
-    if (evidenceMap.untaggedLine != null || evidenceMap.thinContextsLine != null) {
+    if (evidenceMap.untaggedLine != null ||
+        evidenceMap.thinContextsLine != null) {
       return NextEvidencePlanCopy.contextImprovementSuggestion;
     }
     return null;
@@ -115,8 +117,6 @@ class NextEvidencePlanEngine {
 
   static JournalEntry? _mostRecent(List<JournalEntry> entries) {
     if (entries.isEmpty) return null;
-    return entries.reduce(
-      (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
-    );
+    return entries.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
   }
 }

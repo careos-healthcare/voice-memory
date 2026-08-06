@@ -2,10 +2,7 @@ import 'return_check_payoff_model.dart';
 
 /// One row in the compared-evidence section.
 class WhatChangedSinceLastTimeEvidenceRow {
-  const WhatChangedSinceLastTimeEvidenceRow({
-    required this.label,
-    this.phrase,
-  });
+  const WhatChangedSinceLastTimeEvidenceRow({required this.label, this.phrase});
 
   final String label;
   final String? phrase;

@@ -19,7 +19,8 @@ abstract final class RevenueCatSandboxProofCopy {
 
   static const checkIosApiKeyPresent = 'REVENUECAT_IOS_API_KEY present';
   static const checkOfferingLoads = 'Offering loads';
-  static const checkProductTitlePriceVisible = 'Product title and price visible';
+  static const checkProductTitlePriceVisible =
+      'Product title and price visible';
   static const checkStoreKitSheetAppears = 'StoreKit purchase sheet appears';
   static const checkSandboxPurchaseSucceeds = 'Sandbox purchase succeeds';
   static const checkProEntitlementActive =

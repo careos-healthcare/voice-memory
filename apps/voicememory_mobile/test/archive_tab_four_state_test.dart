@@ -10,22 +10,21 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ArchiveTabFourStateEngine', () {
@@ -58,7 +57,8 @@ void main() {
         entries: [
           _entry(
             id: 'a',
-            transcript: 'A calm afternoon walk helped me slow down before dinner.',
+            transcript:
+                'A calm afternoon walk helped me slow down before dinner.',
             createdAt: DateTime(2026, 6, 10, 12),
           ),
           _entry(
@@ -74,30 +74,33 @@ void main() {
       expect(model.showPrimaryCta, isFalse);
     });
 
-    test('state 4 two related entries includes thread, change, and view evidence', () {
-      final model = ArchiveTabFourStateEngine.build(
-        entries: [
-          _entry(
-            id: 'a',
-            transcript:
-                'I had no capacity but I said yes again to the extra meeting today.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          _entry(
-            id: 'b',
-            transcript:
-                'Same thing — said yes when I had no capacity for one more thing.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-        ],
-      )!;
+    test(
+      'state 4 two related entries includes thread, change, and view evidence',
+      () {
+        final model = ArchiveTabFourStateEngine.build(
+          entries: [
+            _entry(
+              id: 'a',
+              transcript:
+                  'I had no capacity but I said yes again to the extra meeting today.',
+              createdAt: DateTime(2026, 6, 10, 12),
+            ),
+            _entry(
+              id: 'b',
+              transcript:
+                  'Same thing — said yes when I had no capacity for one more thing.',
+              createdAt: DateTime(2026, 6, 11, 12),
+            ),
+          ],
+        )!;
 
-      expect(model.state, ArchiveTabFourState.twoRelated);
-      expect(model.body, startsWith('This may connect to:'));
-      expect(model.body, contains('What changed:'));
-      expect(model.primaryCta, ArchiveTabFourStateCopy.viewEvidenceCta);
-      expect(model.primaryAction.name, 'viewEvidence');
-    });
+        expect(model.state, ArchiveTabFourState.twoRelated);
+        expect(model.body, startsWith('This may connect to:'));
+        expect(model.body, contains('What changed:'));
+        expect(model.primaryCta, ArchiveTabFourStateCopy.viewEvidenceCta);
+        expect(model.primaryAction.name, 'viewEvidence');
+      },
+    );
   });
 
   group('ArchiveTabEntryStateCard', () {

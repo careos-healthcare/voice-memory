@@ -3,7 +3,6 @@ import '../acquisition/audience_wedge_model.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../loop_mode/loop_mode_engine.dart';
 import '../loop_mode/loop_mode_model.dart';
-import '../../product/loop_mode_copy.dart';
 import '../first_session/first_session_pattern_model.dart';
 import '../post_save_insight/selected_signal_model.dart';
 import '../post_save_insight/signal_feedback_model.dart';
@@ -56,7 +55,7 @@ class InterpretationQualityEngine {
     if (text.trim().isEmpty ||
         ComparableEvidenceText.entryHasPendingTranscript(latestEntry)) {
       return const InterpretationResult(
-        reads: const [],
+        reads: [],
         needsClearerMoment: true,
         clearerMomentTitle: 'Transcript pending',
         clearerMomentPrompt:

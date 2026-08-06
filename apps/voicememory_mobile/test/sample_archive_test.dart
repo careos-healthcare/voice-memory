@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/demo/sample_archive_copy.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
-import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
+import 'package:archiveme_research/screens/sample_archive_screen.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -121,7 +121,9 @@ void main() {
 
   group('Sample archive wiring', () {
     test('0-entry Archive/Patterns source includes sample archive card', () {
-      final src = File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('SampleArchiveEntryCard'));
       expect(src, contains("context.push('/sample-archive')"));
       expect(src, isNot(contains('sample_archive_demo_paths')));
@@ -143,14 +145,15 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: SampleArchiveEntryCard(onViewSample: () {}),
-          ),
+          home: Scaffold(body: SampleArchiveEntryCard(onViewSample: () {})),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('sample_archive_entry_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_entry_card')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.emptyStateTitle), findsOneWidget);
       expect(find.text(SampleArchiveCopy.emptyStateSubtitle), findsOneWidget);
     });
@@ -162,17 +165,20 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SampleArchiveScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SampleArchiveScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byKey(const Key('sample_archive_screen')), findsOneWidget);
-      expect(find.byKey(const Key('sample_archive_starter_prompts_card')), findsOneWidget);
-      expect(find.byKey(const Key('sample_archive_banner_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_starter_prompts_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('sample_archive_banner_title')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.bannerTitle), findsWidgets);
       expect(find.text(SampleArchiveCopy.bannerSubtitle), findsOneWidget);
       expect(find.text(SampleArchiveCopy.themeLabel), findsOneWidget);
@@ -180,7 +186,10 @@ void main() {
         find.byKey(const Key('sample_archive_demo_paths_card')),
         120,
       );
-      expect(find.byKey(const Key('sample_archive_demo_paths_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_demo_paths_card')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.emptyStateTitle), findsNothing);
     });
 
@@ -206,10 +215,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -229,9 +235,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => const Scaffold(
-              body: PrivacyDataControlsSection(),
-            ),
+            builder: (context, state) =>
+                const Scaffold(body: PrivacyDataControlsSection()),
           ),
           GoRoute(
             path: '/sample-archive',
@@ -241,10 +246,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 

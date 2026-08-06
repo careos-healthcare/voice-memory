@@ -27,12 +27,10 @@ abstract class ArchiveCopyGrammarGate {
   static bool passes({
     required PatternDisplayField field,
     required String text,
-  }) =>
-      checkForDisplayLog(field: field, text: text).approved;
+  }) => checkForDisplayLog(field: field, text: text).approved;
 
   static String displayOrFallback({
     required PatternDisplayField field,
     required String text,
-  }) =>
-      checkForDisplayLog(field: field, text: text).copy;
+  }) => checkForDisplayLog(field: field, text: text).copy;
 }

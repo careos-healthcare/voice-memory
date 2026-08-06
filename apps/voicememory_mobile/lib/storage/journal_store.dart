@@ -26,12 +26,11 @@ class JournalStore {
     required this.file,
     EncryptedJsonFileStore? encryptedStore,
     File? plaintextLegacyFile,
-    bool encryptAtRest = false,
+    this._encryptAtRest = false,
     CognitiveAnalyzer? cognitiveAnalyzer,
     JournalSaveInterceptorPipeline? saveInterceptorPipeline,
   }) : _encrypted = encryptedStore,
        _plaintextLegacy = plaintextLegacyFile,
-       _encryptAtRest = encryptAtRest,
        _cognitiveAnalyzer = cognitiveAnalyzer ?? const CognitiveAnalyzer(),
        _saveInterceptorPipeline =
            saveInterceptorPipeline ?? JournalSaveInterceptorPipeline.empty();
@@ -129,7 +128,7 @@ class JournalStore {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
     if (_encrypted != null) {
-      await _encrypted!.writeJson([]);
+      await _encrypted.writeJson([]);
       return;
     }
     await file.writeAsString('[]');
@@ -427,7 +426,7 @@ class JournalStore {
     _cache = List<JournalEntry>.from(entries);
     final encoded = entries.map((e) => e.toJson()).toList();
     if (_encrypted != null) {
-      await _encrypted!.writeJson(encoded);
+      await _encrypted.writeJson(encoded);
       return;
     }
     await file.writeAsString(jsonEncode(encoded));
@@ -435,7 +434,7 @@ class JournalStore {
 
   Future<List<JournalEntry>> _loadEntriesFromEncrypted() async {
     if (_encrypted == null) return [];
-    final decoded = await _encrypted!.readJson();
+    final decoded = await _encrypted.readJson();
     if (decoded == null) return [];
     return _decodeEntries(jsonEncode(decoded));
   }

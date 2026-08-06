@@ -7,10 +7,10 @@ enum PostSaveMomentDetailType {
   stoodOut;
 
   String get analyticsValue => switch (this) {
-        PostSaveMomentDetailType.situation => 'situation',
-        PostSaveMomentDetailType.changed => 'changed',
-        PostSaveMomentDetailType.stoodOut => 'stood_out',
-      };
+    PostSaveMomentDetailType.situation => 'situation',
+    PostSaveMomentDetailType.changed => 'changed',
+    PostSaveMomentDetailType.stoodOut => 'stood_out',
+  };
 
   static PostSaveMomentDetailType? forSuggestion(String label) {
     if (label == MomentQualityCopy.someDetailSuggestions[0]) {
@@ -28,6 +28,5 @@ enum PostSaveMomentDetailType {
   static String linkedCaptureContextTag({
     required PostSaveMomentDetailType type,
     required String parentEntryId,
-  }) =>
-      'post_save_detail_${type.analyticsValue}_$parentEntryId';
+  }) => 'post_save_detail_${type.analyticsValue}_$parentEntryId';
 }

@@ -5,8 +5,7 @@ abstract final class EarlySavedMomentsCopy {
   static const viewSavedMomentsCta = 'View saved moments';
 
   static const sheetTitle = 'Saved moments';
-  static const sheetSubtitle =
-      'ArchiveMe uses these to look for a repeat.';
+  static const sheetSubtitle = 'ArchiveMe uses these to look for a repeat.';
 
   static const savedMomentsSectionTitle = 'Saved moments';
   static const comparingSectionTitle = 'What ArchiveMe is comparing';
@@ -19,8 +18,7 @@ abstract final class EarlySavedMomentsCopy {
   static const comparingNoClearMatch =
       'ArchiveMe is still looking for a clearer match.';
 
-  static const nextActionOneEntry =
-      'Come back when something similar happens.';
+  static const nextActionOneEntry = 'Come back when something similar happens.';
   static const nextActionTwoUnrelated =
       'Record the next real moment. No need to force a pattern.';
   static const nextActionTwoRelated =

@@ -23,8 +23,7 @@ OUTPUT — answer these elements in order:
 Use observation language. Quote the user's words when possible. Never claim certainty.
 ''';
 
-  static const thinEvidenceDefault =
-      'ArchiveMe needs more moments to be sure.';
+  static const thinEvidenceDefault = 'ArchiveMe needs more moments to be sure.';
 
   static const allowedConfidenceLabels = [
     'Early signal',

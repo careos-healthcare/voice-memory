@@ -11,17 +11,10 @@ abstract final class BetaFeedbackAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void opened({
-    required String source,
-    required int entryCount,
-  }) {
-    _emit(
-      openedEvent,
-      source: source,
-      entryCount: entryCount,
-    );
+  static void opened({required String source, required int entryCount}) {
+    _emit(openedEvent, source: source, entryCount: entryCount);
   }
 
   static void submitted({
@@ -43,10 +36,7 @@ abstract final class BetaFeedbackAnalytics {
     required int entryCount,
     String? optionType,
   }) {
-    final props = <String, Object>{
-      'source': source,
-      'entry_count': entryCount,
-    };
+    final props = <String, Object>{'source': source, 'entry_count': entryCount};
     if (optionType != null) props['option_type'] = optionType;
 
     captureForTest?.call(event, props);

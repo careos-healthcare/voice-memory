@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/pattern_map/pattern_map_model.dart';
 import 'package:voicememory_mobile/features/archive_memory/memory_quality_model.dart';
 import 'package:voicememory_mobile/features/pattern_profile/pattern_profile_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/pattern_profile_screen.dart';
+import 'package:archiveme_research/screens/pattern_profile_screen.dart';
 
 PatternProfile _profile() => PatternProfile(
   patternTitle: 'Pressure before yes',

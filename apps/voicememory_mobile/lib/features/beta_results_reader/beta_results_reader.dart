@@ -38,40 +38,35 @@ abstract final class BetaResultsReader {
     );
   }
 
-  static int evidenceTrailClearTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: evidenceTrailClearNumerator,
-        denominator: scaleDenominator,
-      );
+  static int evidenceTrailClearTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: evidenceTrailClearNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int sawProTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: sawProNumerator,
-        denominator: scaleDenominator,
-      );
+  static int sawProTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: sawProNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int understandsProTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: understandsProNumerator,
-        denominator: scaleDenominator,
-      );
+  static int understandsProTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: understandsProNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int paywallCtaTapTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: paywallCtaTapNumerator,
-        denominator: scaleDenominator,
-      );
+  static int paywallCtaTapTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: paywallCtaTapNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int wouldPayTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: wouldPayNumerator,
-        denominator: scaleDenominator,
-      );
+  static int wouldPayTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: wouldPayNumerator,
+    denominator: scaleDenominator,
+  );
 
   static BetaResultsDecision resolve(BetaResultsSummary summary) {
     if (summary.totalTesters < minimumTesterCount) {
@@ -118,14 +113,11 @@ abstract final class BetaResultsReader {
       summary.totalTesters * tooVagueHighRatioNumerator;
 
   static bool _moreProofOverTimeStrongest(BetaResultsSummary summary) =>
-      _isLargest(
+      _isLargest(summary.moreProofOverTimeCount, [
         summary.moreProofOverTimeCount,
-        [
-          summary.moreProofOverTimeCount,
-          summary.clearerTimelineCount,
-          summary.lowerPriceCount,
-        ],
-      );
+        summary.clearerTimelineCount,
+        summary.lowerPriceCount,
+      ]);
 
   static bool _allProductionTargetsPass(BetaResultsSummary summary) {
     final total = summary.totalTesters;
@@ -149,6 +141,5 @@ abstract final class BetaResultsReader {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
@@ -93,10 +91,9 @@ class _ProBridgeVisibilityCardState extends State<ProBridgeVisibilityCard> {
   @override
   Widget build(BuildContext context) {
     _trackSeenOnce();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('pro_bridge_visibility_card'),

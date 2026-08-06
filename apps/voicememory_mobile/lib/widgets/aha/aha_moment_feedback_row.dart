@@ -4,7 +4,6 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/aha/aha_moment_candidate.dart';
 import '../../features/trust/aha_proof_share_eligibility.dart';
 import '../../features/memory/memory_connection_rules.dart';
-import '../../features/memory/memory_control_model.dart';
 import '../../features/memory/not_important_feedback.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../../theme/app_colors.dart';

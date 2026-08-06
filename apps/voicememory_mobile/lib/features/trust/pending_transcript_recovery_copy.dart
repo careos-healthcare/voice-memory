@@ -10,8 +10,7 @@ abstract final class PendingTranscriptRecoveryCopy {
   static const helper = 'One short sentence is enough.';
 
   /// Record post-save recovery card — one calm path after degraded voice save.
-  static const postSaveTitle =
-      'Saved, but ArchiveMe could not hear enough.';
+  static const postSaveTitle = 'Saved, but ArchiveMe could not hear enough.';
   static const postSaveBody =
       'Add one short sentence so ArchiveMe can compare this moment later.';
   static const moreOptionsLabel = 'More options';
@@ -19,8 +18,7 @@ abstract final class PendingTranscriptRecoveryCopy {
       'If this keeps happening, disconnect Bluetooth or audio accessories and try again.';
 
   static const inputTitle = 'What did you say?';
-  static const inputHelper =
-      'Add the part ArchiveMe should use as evidence.';
+  static const inputHelper = 'Add the part ArchiveMe should use as evidence.';
 
   static const saveButton = 'Save text';
   static const cancelButton = 'Cancel';

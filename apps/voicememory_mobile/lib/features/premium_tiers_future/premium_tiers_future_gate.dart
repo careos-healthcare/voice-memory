@@ -71,7 +71,9 @@ abstract final class PremiumTiersFutureGate {
     final decision = rulesPass && proPurchaseProofComplete
         ? PremiumTiersFutureGateDecision.futureTiersDocumented
         : PremiumTiersFutureGateDecision.tiersFrozen;
-    final tiers = _buildTiers(proPurchaseProofComplete: proPurchaseProofComplete);
+    final tiers = _buildTiers(
+      proPurchaseProofComplete: proPurchaseProofComplete,
+    );
     return PremiumTiersFutureGateResult(
       decision: decision,
       message: PremiumTiersFutureCopy.messageFor(decision),
@@ -101,7 +103,8 @@ abstract final class PremiumTiersFutureGate {
           .firstOrNull,
       documentedTierCount: tiers
           .where(
-            (tier) => tier.status == PremiumTierFutureStatus.futureTierDocumented,
+            (tier) =>
+                tier.status == PremiumTierFutureStatus.futureTierDocumented,
           )
           .length,
       blockedTierCount: tiers
@@ -115,17 +118,16 @@ abstract final class PremiumTiersFutureGate {
 
   static PremiumTiersFutureGateReport report(
     PremiumTiersFutureGateResult result,
-  ) =>
-      PremiumTiersFutureGateReport(
-        headline: PremiumTiersFutureCopy.headline,
-        body: PremiumTiersFutureCopy.body,
-        positioning: PremiumTiersFutureCopy.positioning,
-        futureTierIdeasLine: PremiumTiersFutureCopy.futureTierIdeasLine,
-        orderLine: PremiumTiersFutureCopy.orderLine,
-        prereqOrderLine: PremiumTiersFutureCopy.prereqOrderLine,
-        guardrail: PremiumTiersFutureCopy.guardrail,
-        result: result,
-      );
+  ) => PremiumTiersFutureGateReport(
+    headline: PremiumTiersFutureCopy.headline,
+    body: PremiumTiersFutureCopy.body,
+    positioning: PremiumTiersFutureCopy.positioning,
+    futureTierIdeasLine: PremiumTiersFutureCopy.futureTierIdeasLine,
+    orderLine: PremiumTiersFutureCopy.orderLine,
+    prereqOrderLine: PremiumTiersFutureCopy.prereqOrderLine,
+    guardrail: PremiumTiersFutureCopy.guardrail,
+    result: result,
+  );
 
   static PremiumTiersFutureGateInput composeInput({
     bool? simpleProPurchaseProofComplete,
@@ -133,14 +135,14 @@ abstract final class PremiumTiersFutureGate {
     bool? higherTierExpansionRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      PremiumTiersFutureGateInput(
-        simpleProPurchaseProofComplete: simpleProPurchaseProofComplete ??
-            launchChecklist?.sandboxPurchaseWorks ??
-            _simpleProPurchaseProofFrom(paidIntentBeta),
-        tierUiRequested: tierUiRequested,
-        higherTierExpansionRequested: higherTierExpansionRequested,
-      );
+  }) => PremiumTiersFutureGateInput(
+    simpleProPurchaseProofComplete:
+        simpleProPurchaseProofComplete ??
+        launchChecklist?.sandboxPurchaseWorks ??
+        _simpleProPurchaseProofFrom(paidIntentBeta),
+    tierUiRequested: tierUiRequested,
+    higherTierExpansionRequested: higherTierExpansionRequested,
+  );
 
   static PremiumTiersFutureGateInput fromRepoSignals({
     required String premiumTiersFutureDocSource,
@@ -148,16 +150,16 @@ abstract final class PremiumTiersFutureGate {
     bool? simpleProPurchaseProofComplete,
     bool? tierUiRequested,
     bool? higherTierExpansionRequested,
-  }) =>
-      PremiumTiersFutureGateInput(
-        simpleProPurchaseProofComplete: simpleProPurchaseProofComplete,
-        tierUiRequested: tierUiRequested,
-        higherTierExpansionRequested: higherTierExpansionRequested,
-        docListsRules: detectDocListsRules(premiumTiersFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        futureTierIdeasPresentInCopy:
-            detectFutureTierIdeasPresentInCopy(gateCopySource),
-      );
+  }) => PremiumTiersFutureGateInput(
+    simpleProPurchaseProofComplete: simpleProPurchaseProofComplete,
+    tierUiRequested: tierUiRequested,
+    higherTierExpansionRequested: higherTierExpansionRequested,
+    docListsRules: detectDocListsRules(premiumTiersFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    futureTierIdeasPresentInCopy: detectFutureTierIdeasPresentInCopy(
+      gateCopySource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -226,22 +228,26 @@ abstract final class PremiumTiersFutureGate {
     return [
       _rule(
         id: PremiumTiersFutureRuleId.noNewProductsOrPricesNow,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('do not add new products or prices now'),
       ),
       _rule(
         id: PremiumTiersFutureRuleId.noRevenueCatProductChanges,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('do not change revenuecat products'),
       ),
       _rule(
         id: PremiumTiersFutureRuleId.noTierUi,
-        passes: guardrailLower.contains('do not add tier ui') &&
+        passes:
+            guardrailLower.contains('do not add tier ui') &&
             (!(input.tierUiRequested ?? false) || proPurchaseProofComplete),
       ),
       _rule(
         id: PremiumTiersFutureRuleId.higherTiersRequireSimpleProPurchaseProof,
-        passes: guardrailLower.contains('simple pro purchase proof first') &&
+        passes:
+            guardrailLower.contains('simple pro purchase proof first') &&
             (!(input.higherTierExpansionRequested ?? false) ||
                 proPurchaseProofComplete),
       ),
@@ -250,32 +256,30 @@ abstract final class PremiumTiersFutureGate {
 
   static List<PremiumTiersFuturePrereq> _buildPrereqs(
     PremiumTiersFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: PremiumTiersFuturePrereqId.simpleProPurchaseProofComplete,
-          value: input.simpleProPurchaseProofComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: PremiumTiersFuturePrereqId.simpleProPurchaseProofComplete,
+      value: input.simpleProPurchaseProofComplete,
+    ),
+  ];
 
   static List<PremiumTierFuture> _buildTiers({
     required bool proPurchaseProofComplete,
-  }) =>
-      canonicalTierOrder
-          .map(
-            (id) => PremiumTierFuture(
-              id: id,
-              label: PremiumTiersFutureCopy.labelFor(id),
-              positioning: PremiumTiersFutureCopy.positioningFor(id),
-              status: proPurchaseProofComplete
-                  ? PremiumTierFutureStatus.futureTierDocumented
-                  : PremiumTierFutureStatus.blockedBeforeProProof,
-              detailLabel: proPurchaseProofComplete
-                  ? PremiumTiersFutureCopy.detailFutureTierDocumented
-                  : PremiumTiersFutureCopy.detailBlockedBeforeProProof,
-            ),
-          )
-          .toList();
+  }) => canonicalTierOrder
+      .map(
+        (id) => PremiumTierFuture(
+          id: id,
+          label: PremiumTiersFutureCopy.labelFor(id),
+          positioning: PremiumTiersFutureCopy.positioningFor(id),
+          status: proPurchaseProofComplete
+              ? PremiumTierFutureStatus.futureTierDocumented
+              : PremiumTierFutureStatus.blockedBeforeProProof,
+          detailLabel: proPurchaseProofComplete
+              ? PremiumTiersFutureCopy.detailFutureTierDocumented
+              : PremiumTiersFutureCopy.detailBlockedBeforeProProof,
+        ),
+      )
+      .toList();
 
   static bool _violatesNewProductsOrPrices(String copy) {
     final lower = copy.toLowerCase();
@@ -337,10 +341,12 @@ abstract final class PremiumTiersFutureGate {
       label: PremiumTiersFutureCopy.prereqLabelFor(id),
       status: status,
       detailLabel: switch (status) {
-        PremiumTiersFuturePrereqStatus.pass => PremiumTiersFutureCopy.detailPass,
+        PremiumTiersFuturePrereqStatus.pass =>
+          PremiumTiersFutureCopy.detailPass,
         PremiumTiersFuturePrereqStatus.pending =>
           PremiumTiersFutureCopy.detailPending,
-        PremiumTiersFuturePrereqStatus.fail => PremiumTiersFutureCopy.detailFail,
+        PremiumTiersFuturePrereqStatus.fail =>
+          PremiumTiersFutureCopy.detailFail,
       },
     );
   }
@@ -348,17 +354,16 @@ abstract final class PremiumTiersFutureGate {
   static PremiumTiersFutureRule _rule({
     required PremiumTiersFutureRuleId id,
     required bool passes,
-  }) =>
-      PremiumTiersFutureRule(
-        id: id,
-        label: PremiumTiersFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? PremiumTiersFutureRuleStatus.pass
-            : PremiumTiersFutureRuleStatus.fail,
-        detailLabel: passes
-            ? PremiumTiersFutureCopy.detailPass
-            : PremiumTiersFutureCopy.detailFail,
-      );
+  }) => PremiumTiersFutureRule(
+    id: id,
+    label: PremiumTiersFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? PremiumTiersFutureRuleStatus.pass
+        : PremiumTiersFutureRuleStatus.fail,
+    detailLabel: passes
+        ? PremiumTiersFutureCopy.detailPass
+        : PremiumTiersFutureCopy.detailFail,
+  );
 }
 
 class PremiumTiersFutureGateInput {

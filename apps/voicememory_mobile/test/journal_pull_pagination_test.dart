@@ -104,20 +104,23 @@ void main() {
     },
   );
 
-  test('listJournal() returns an empty list for an empty journal without looping', () async {
-    var callCount = 0;
-    final api = ApiClient(
-      httpClient: MockClient((request) async {
-        callCount++;
-        return http.Response(jsonEncode({'entries': []}), 200);
-      }),
-      baseUrl: 'https://voice-memory-iota.vercel.app',
-    );
-    api.setSessionCookie('session=user-1');
+  test(
+    'listJournal() returns an empty list for an empty journal without looping',
+    () async {
+      var callCount = 0;
+      final api = ApiClient(
+        httpClient: MockClient((request) async {
+          callCount++;
+          return http.Response(jsonEncode({'entries': []}), 200);
+        }),
+        baseUrl: 'https://voice-memory-iota.vercel.app',
+      );
+      api.setSessionCookie('session=user-1');
 
-    final result = await api.listJournal();
+      final result = await api.listJournal();
 
-    expect(callCount, 1);
-    expect(result, isEmpty);
-  });
+      expect(callCount, 1);
+      expect(result, isEmpty);
+    },
+  );
 }

@@ -22,7 +22,9 @@ import 'package:voicememory_mobile/widgets/record/return_after_proof_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/return_after_proof_strengthening/unused.json'));
+    : super(
+        file: File('test/tmp/return_after_proof_strengthening/unused.json'),
+      );
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -39,11 +41,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -86,14 +84,13 @@ ReturnAfterProofResult _resultFor(
   List<JournalEntry> entries, {
   bool firstProofSeen = true,
   bool timelineProofVisible = false,
-}) =>
-    ReturnAfterProofEngine.build(
-      entries: entries,
-      source: 'test',
-      firstProofSeen: firstProofSeen,
-      timelineProofVisible: timelineProofVisible,
-      betaTesterReportVisible: false,
-    );
+}) => ReturnAfterProofEngine.build(
+  entries: entries,
+  source: 'test',
+  firstProofSeen: firstProofSeen,
+  timelineProofVisible: timelineProofVisible,
+  betaTesterReportVisible: false,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -186,10 +183,7 @@ void main() {
       expect(result.shouldShow, isTrue);
       expect(
         result.confidenceLevel,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
     });
 
@@ -204,11 +198,12 @@ void main() {
     });
 
     test('picks repeat watch target', () {
-      final target = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.useful,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.repeat],
-      );
+      final target =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.useful,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.repeat],
+          );
       expect(target, ReturnAfterProofWatchTargetType.returnedAgain);
       expect(
         ReturnAfterProofCopy.bodyForWatchTarget(target),
@@ -217,45 +212,50 @@ void main() {
     });
 
     test('picks softening watch target', () {
-      final target = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.useful,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.softening],
-      );
+      final target =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.useful,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.softening],
+          );
       expect(target, ReturnAfterProofWatchTargetType.feltLighter);
     });
 
     test('picks strengthening watch target', () {
-      final target = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.useful,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.strengthening],
-      );
+      final target =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.useful,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.strengthening],
+          );
       expect(target, ReturnAfterProofWatchTargetType.feltHeavier);
     });
 
     test('picks helped watch target', () {
-      final target = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.useful,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.helped],
-      );
+      final target =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.useful,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.helped],
+          );
       expect(target, ReturnAfterProofWatchTargetType.helpedAgain);
     });
 
     test('picks corrected or fresh return watch target', () {
-      final corrected = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.useful,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.corrected],
-      );
+      final corrected =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.useful,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.corrected],
+          );
       expect(corrected, ReturnAfterProofWatchTargetType.notCurrent);
 
-      final freshReturn = ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
-        confidenceLevel: ProofConfidenceLevel.freshReturn,
-        hasSafeAnchor: true,
-        anchorTypes: const [EvidenceAnchorType.repeat],
-      );
+      final freshReturn =
+          ReturnAfterProofStrengtheningEngine.resolveWatchTargetForTest(
+            confidenceLevel: ProofConfidenceLevel.freshReturn,
+            hasSafeAnchor: true,
+            anchorTypes: const [EvidenceAnchorType.repeat],
+          );
       expect(freshReturn, ReturnAfterProofWatchTargetType.notCurrent);
     });
 
@@ -404,51 +404,54 @@ void main() {
   });
 
   group('SurfacePriorityEngine strengthened', () {
-    test('returnAfterProofStrengthened beats generic and other guidance cards', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 5,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          returnAfterProofStrengthened: true,
-          returnAfterProof: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
-      expect(
-        result.guidanceSlot,
-        SurfacePriorityCardKey.returnAfterProofStrengthened,
-      );
-      expect(
-        result.isVisible(
-          SurfacePriorityCardKey.returnAfterProof,
-          candidate: true,
-        ),
-        isFalse,
-      );
-      expect(result.visibleCardCount, greaterThan(0));
-      expect(result.guidanceCardKey, 'returnAfterProofStrengthened');
-    });
+    test(
+      'returnAfterProofStrengthened beats generic and other guidance cards',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 5,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            returnAfterProofStrengthened: true,
+            returnAfterProof: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
+        expect(
+          result.guidanceSlot,
+          SurfacePriorityCardKey.returnAfterProofStrengthened,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.returnAfterProof,
+            candidate: true,
+          ),
+          isFalse,
+        );
+        expect(result.visibleCardCount, greaterThan(0));
+        expect(result.guidanceCardKey, 'returnAfterProofStrengthened');
+      },
+    );
   });
 
   group('ReturnAfterProofCard strengthened', () {

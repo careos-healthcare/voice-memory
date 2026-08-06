@@ -31,56 +31,54 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I paused before replying this time and it felt a bit softer.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript: 'I paused before replying this time and it felt a bit softer.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoAdviceLanguage(String copy) {
   for (final phrase in ProofSurfaceAdviceGuard.bannedAdvicePhrases) {
@@ -125,7 +123,9 @@ void main() {
         NextBestActionCopy.returnCheckUnansweredTitle,
       );
       expect(
-        ArchiveStateActionCopy.nextLine(ArchiveStateActionCopy.returnCheckAnswered),
+        ArchiveStateActionCopy.nextLine(
+          ArchiveStateActionCopy.returnCheckAnswered,
+        ),
         NextBestActionCopy.returnCheckAnsweredTitle,
       );
       expect(
@@ -263,25 +263,25 @@ void main() {
       );
     });
 
-    test('return check answered routes to Patterns only after proof exists', () {
-      final result = ArchiveStateActionEngine.build(
-        entries: _fourRelatedRepeatEntries(),
-        returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
-        ],
-      );
+    test(
+      'return check answered routes to Patterns only after proof exists',
+      () {
+        final result = ArchiveStateActionEngine.build(
+          entries: _fourRelatedRepeatEntries(),
+          returnChecks: [
+            _choiceRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.softer,
+            ),
+          ],
+        );
 
-      expect(result.kind, ArchiveStateActionKind.returnCheckAnswered);
-      expect(result.actionLabel, ArchiveStateActionCopy.returnCheckAnswered);
-      expect(
-        result.baseDestination,
-        ArchiveStateActionDestination.patterns,
-      );
-      expect(result.routesToPatterns, isTrue);
-    });
+        expect(result.kind, ArchiveStateActionKind.returnCheckAnswered);
+        expect(result.actionLabel, ArchiveStateActionCopy.returnCheckAnswered);
+        expect(result.baseDestination, ArchiveStateActionDestination.patterns);
+        expect(result.routesToPatterns, isTrue);
+      },
+    );
 
     test('pattern changed maps to record when it returns on Record capture', () {
       final entries = [
@@ -296,10 +296,7 @@ void main() {
       final result = ArchiveStateActionEngine.build(
         entries: entries,
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.changed,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
         ],
       );
 
@@ -311,18 +308,26 @@ void main() {
       );
     });
 
-    test('helpful action maps to watch whether it appears again on Patterns', () {
-      final result = ArchiveStateActionEngine.build(
-        entries: _fourRelatedRepeatWithHelpfulAction(),
-      );
+    test(
+      'helpful action maps to watch whether it appears again on Patterns',
+      () {
+        final result = ArchiveStateActionEngine.build(
+          entries: _fourRelatedRepeatWithHelpfulAction(),
+        );
 
-      expect(result.kind, ArchiveStateActionKind.helpfulActionAppeared);
-      expect(result.actionLabel, ArchiveStateActionCopy.helpfulActionAppeared);
-      expect(
-        result.resolvedDestination(surface: ArchiveStateActionSurface.patterns),
-        ArchiveStateActionDestination.patternsOrTimeline,
-      );
-    });
+        expect(result.kind, ArchiveStateActionKind.helpfulActionAppeared);
+        expect(
+          result.actionLabel,
+          ArchiveStateActionCopy.helpfulActionAppeared,
+        );
+        expect(
+          result.resolvedDestination(
+            surface: ArchiveStateActionSurface.patterns,
+          ),
+          ArchiveStateActionDestination.patternsOrTimeline,
+        );
+      },
+    );
 
     test('private report forming routes by surface', () {
       final result = ArchiveStateActionEngine.build(

@@ -18,23 +18,22 @@ import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_car
 JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String? localAudioPath = '/tmp/audio.m4a',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('DegradedTranscriptPostSaveUiGates', () {
@@ -127,7 +126,9 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.tap(
+        find.byKey(const Key('post_save_degraded_more_options')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('post_save_play_recording')), findsOneWidget);
@@ -209,7 +210,10 @@ void main() {
         find.byKey(const Key('post_save_add_one_more_moment_cta')),
         findsNothing,
       );
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
+      expect(
+        find.byKey(const Key('done_for_today_receipt_card')),
+        findsNothing,
+      );
       expect(find.text('Done for today'), findsNothing);
     });
   });

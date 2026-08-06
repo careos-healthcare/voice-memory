@@ -10,7 +10,7 @@ import 'package:voicememory_mobile/features/onboarding/first_save_loop_store.dar
 import 'package:voicememory_mobile/features/retention/repeat_recording_nudge_state.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/journal_screen.dart';
+import 'package:archiveme_research/screens/journal_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -469,10 +469,15 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 200));
       });
       await tester.pump();
-      for (var i = 0;
-          i < 40 &&
-              find.byKey(const Key('first_archive_value_card')).evaluate().isEmpty;
-          i++) {
+      for (
+        var i = 0;
+        i < 40 &&
+            find
+                .byKey(const Key('first_archive_value_card'))
+                .evaluate()
+                .isEmpty;
+        i++
+      ) {
         await tester.pump(const Duration(milliseconds: 50));
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 25)),

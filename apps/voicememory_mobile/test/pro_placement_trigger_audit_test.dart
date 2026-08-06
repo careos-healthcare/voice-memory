@@ -30,28 +30,28 @@ ProPlacementTriggerAuditInput _input({
   bool proPlacementShown = true,
   bool proPlacementBlocked = false,
   bool hasProEngagement = false,
-}) =>
-    ProPlacementTriggerAuditInput(
-      betaMissionEnabled: betaMissionEnabled,
-      activeRepairMode: activeRepairMode,
-      entryCount: entryCount,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      hasMatchQuality: hasMatchQuality,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      feedbackType: feedbackType,
-      hasUsefulOrStrongProof: hasUsefulOrStrongProof ??
-          ProPlacementTriggerAuditEngine.hasUsefulOrStrongProof(
-            feedbackType: feedbackType,
-            confidenceLevel: confidenceLevel,
-          ),
-      proPlacementEligible: proPlacementEligible,
-      proPlacementShown: proPlacementShown,
-      proPlacementBlocked: proPlacementBlocked,
-      hasProEngagement: hasProEngagement,
-      source: 'test',
-    );
+}) => ProPlacementTriggerAuditInput(
+  betaMissionEnabled: betaMissionEnabled,
+  activeRepairMode: activeRepairMode,
+  entryCount: entryCount,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  hasMatchQuality: hasMatchQuality,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  feedbackType: feedbackType,
+  hasUsefulOrStrongProof:
+      hasUsefulOrStrongProof ??
+      ProPlacementTriggerAuditEngine.hasUsefulOrStrongProof(
+        feedbackType: feedbackType,
+        confidenceLevel: confidenceLevel,
+      ),
+  proPlacementEligible: proPlacementEligible,
+  proPlacementShown: proPlacementShown,
+  proPlacementBlocked: proPlacementBlocked,
+  hasProEngagement: hasProEngagement,
+  source: 'test',
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -63,9 +63,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: ProPlacementTriggerAuditCard(
-            inputOverride: input,
-          ),
+          child: ProPlacementTriggerAuditCard(inputOverride: input),
         ),
       ),
     ),
@@ -103,16 +101,21 @@ void main() {
       );
     });
 
-    test('eligibleAndShown when useful/strong proof exists and no block reason',
-        () {
-      expect(
-        ProPlacementTriggerAuditEngine.resolveOutcome(_input()),
-        ProPlacementTriggerAuditOutcome.eligibleAndShown,
-      );
-      final result = ProPlacementTriggerAuditEngine.build(input: _input());
-      expect(result.title, ProPlacementTriggerAuditCopy.eligibleAndShownTitle);
-      expect(result.blockReason, 'none');
-    });
+    test(
+      'eligibleAndShown when useful/strong proof exists and no block reason',
+      () {
+        expect(
+          ProPlacementTriggerAuditEngine.resolveOutcome(_input()),
+          ProPlacementTriggerAuditOutcome.eligibleAndShown,
+        );
+        final result = ProPlacementTriggerAuditEngine.build(input: _input());
+        expect(
+          result.title,
+          ProPlacementTriggerAuditCopy.eligibleAndShownTitle,
+        );
+        expect(result.blockReason, 'none');
+      },
+    );
 
     test('blockedNoUsefulProof when no useful proof exists', () {
       expect(
@@ -275,10 +278,7 @@ void main() {
         find.byKey(const Key('pro_placement_trigger_audit_warning')),
         findsOneWidget,
       );
-      expect(
-        find.text(ProPlacementTriggerAuditCopy.warning),
-        findsOneWidget,
-      );
+      expect(find.text(ProPlacementTriggerAuditCopy.warning), findsOneWidget);
       expect(
         find.textContaining('Pro placement after useful proof'),
         findsOneWidget,

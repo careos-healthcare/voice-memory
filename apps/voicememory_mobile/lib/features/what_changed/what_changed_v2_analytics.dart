@@ -12,7 +12,7 @@ abstract final class WhatChangedV2Analytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -54,7 +54,7 @@ abstract final class WhatChangedV2Analytics {
       'source': source,
       'entry_count': entryCount,
       'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
-      if (answer != null) 'answer': answer,
+      'answer': ?answer,
     };
     captureForTest?.call(event, props);
     ActivationFunnelAnalytics.track(

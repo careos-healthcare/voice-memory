@@ -71,8 +71,8 @@ class ArchiveBeliefSurfaceSource {
   const ArchiveBeliefSurfaceSource({
     ArchiveBeliefThreadEngine? beliefEngine,
     ArchiveDemoPreviewResolver? previewResolver,
-  })  : _beliefEngine = beliefEngine ?? const ArchiveBeliefThreadEngine(),
-        _previewResolver = previewResolver ?? const ArchiveDemoPreviewResolver();
+  }) : _beliefEngine = beliefEngine ?? const ArchiveBeliefThreadEngine(),
+       _previewResolver = previewResolver ?? const ArchiveDemoPreviewResolver();
 
   final ArchiveBeliefThreadEngine _beliefEngine;
   final ArchiveDemoPreviewResolver _previewResolver;
@@ -124,8 +124,9 @@ class ArchiveBeliefSurfaceSource {
     required bool isWeak,
   }) {
     final belief = ArchiveDisplayCopyGuard.displayOrEmpty(thread.currentBelief);
-    final evidence =
-        ArchiveDisplayCopyGuard.displayOrEmpty(thread.evidenceLine);
+    final evidence = ArchiveDisplayCopyGuard.displayOrEmpty(
+      thread.evidenceLine,
+    );
     if (belief.isEmpty || evidence.isEmpty) return ArchiveBeliefSurface.none;
 
     final whatChanged = ArchiveDisplayCopyGuard.sanitize(thread.whatChanged);

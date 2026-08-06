@@ -1,7 +1,5 @@
 import '../../models/journal_entry.dart';
 import '../activation/weekly_archive_review.dart';
-import '../archive_depth/archive_depth_engine.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'archive_milestones_copy.dart';
 import 'archive_milestones_gates.dart';
@@ -20,8 +18,9 @@ class ArchiveMilestonesEngine {
   }) {
     final saved = _realEntries(entries);
     final savedCount = saved.length;
-    final shareProof =
-        const ShareableArchiveProofEngine().buildFromJournal(entries: saved);
+    final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+      entries: saved,
+    );
     final weeklyReview = WeeklyArchiveReviewEngine.build(entries: saved);
 
     final completion = {
@@ -91,9 +90,11 @@ class ArchiveMilestonesEngine {
       ),
     );
 
-    for (var i = firstIncomplete + 1;
-        i < _milestoneOrder.length && rows.length < 5;
-        i++) {
+    for (
+      var i = firstIncomplete + 1;
+      i < _milestoneOrder.length && rows.length < 5;
+      i++
+    ) {
       final upcoming = _milestoneOrder[i];
       rows.add(
         ArchiveMilestoneRow(
@@ -108,14 +109,13 @@ class ArchiveMilestonesEngine {
     return rows;
   }
 
-  static List<JournalEntry> _realEntries(List<JournalEntry> entries) =>
-      entries
-          .where(
-            (e) =>
-                e.transcript.trim().isNotEmpty &&
-                !e.transcript.startsWith('[draft]'),
-          )
-          .toList();
+  static List<JournalEntry> _realEntries(List<JournalEntry> entries) => entries
+      .where(
+        (e) =>
+            e.transcript.trim().isNotEmpty &&
+            !e.transcript.startsWith('[draft]'),
+      )
+      .toList();
 
   /// Exposed for tests — whether a milestone is complete for given signals.
   static bool isComplete({
@@ -126,15 +126,14 @@ class ArchiveMilestonesEngine {
     required bool hasReturnRitual,
     required bool shareProofReady,
     required bool weeklyReviewReady,
-  }) =>
-      switch (id) {
-        ArchiveMilestoneId.firstMomentSaved => savedCount >= 1,
-        ArchiveMilestoneId.firstComparisonPossible => savedCount >= 2,
-        ArchiveMilestoneId.firstCautiousBelief => savedCount >= 3,
-        ArchiveMilestoneId.firstWeeklyReviewReady => weeklyReviewReady,
-        ArchiveMilestoneId.firstWatchlistTheme => watchlistCount >= 1,
-        ArchiveMilestoneId.firstReturnRitual => hasReturnRitual,
-        ArchiveMilestoneId.firstShareSafeProof => shareProofReady,
-        ArchiveMilestoneId.longTermArchiveBuilding => savedCount >= 10,
-      };
+  }) => switch (id) {
+    ArchiveMilestoneId.firstMomentSaved => savedCount >= 1,
+    ArchiveMilestoneId.firstComparisonPossible => savedCount >= 2,
+    ArchiveMilestoneId.firstCautiousBelief => savedCount >= 3,
+    ArchiveMilestoneId.firstWeeklyReviewReady => weeklyReviewReady,
+    ArchiveMilestoneId.firstWatchlistTheme => watchlistCount >= 1,
+    ArchiveMilestoneId.firstReturnRitual => hasReturnRitual,
+    ArchiveMilestoneId.firstShareSafeProof => shareProofReady,
+    ArchiveMilestoneId.longTermArchiveBuilding => savedCount >= 10,
+  };
 }

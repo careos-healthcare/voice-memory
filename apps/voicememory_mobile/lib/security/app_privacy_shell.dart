@@ -28,7 +28,9 @@ class _AppPrivacyShellState extends State<AppPrivacyShell> {
   Future<void> _loadSettings() async {
     try {
       final prefs = AppServices.instance.prefs;
-      final hide = await SensitiveScreenPrivacySettings.hideInAppSwitcher(prefs);
+      final hide = await SensitiveScreenPrivacySettings.hideInAppSwitcher(
+        prefs,
+      );
       if (mounted) setState(() => _hideInAppSwitcher = hide);
     } catch (_) {
       // Tests may run without AppServices — default stays false.

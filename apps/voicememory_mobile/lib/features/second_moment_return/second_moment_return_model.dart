@@ -49,10 +49,7 @@ class SecondMomentReturnResult {
 }
 
 class SecondMomentReturnPrompt {
-  const SecondMomentReturnPrompt({
-    required this.type,
-    required this.text,
-  });
+  const SecondMomentReturnPrompt({required this.type, required this.text});
 
   final SecondMomentReturnPromptType type;
   final String text;

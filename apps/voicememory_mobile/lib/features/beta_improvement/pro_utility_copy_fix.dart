@@ -27,8 +27,7 @@ abstract final class ProUtilityCopyFix {
   static const previewHonesty =
       'Preview only until your archive has enough evidence.';
 
-  static const unavailableHonesty =
-      'Purchases are not available right now.';
+  static const unavailableHonesty = 'Purchases are not available right now.';
 
   static const notMoreAiLine =
       'Not more AI — more of your own evidence kept over time.';

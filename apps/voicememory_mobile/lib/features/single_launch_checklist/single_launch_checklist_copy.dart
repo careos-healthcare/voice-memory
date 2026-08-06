@@ -56,54 +56,50 @@ abstract final class SingleLaunchChecklistCopy {
       'Ready for App Store submission. All launch checklist items are proven.';
 
   static String labelFor(SingleLaunchChecklistItemId id) => switch (id) {
-        SingleLaunchChecklistItemId.cleanGit => checkCleanGit,
-        SingleLaunchChecklistItemId.versionBuildSet => checkVersionBuildSet,
-        SingleLaunchChecklistItemId.physicalIphoneSmoke =>
-          checkPhysicalIphoneSmoke,
-        SingleLaunchChecklistItemId.physicalIpadSmoke => checkPhysicalIpadSmoke,
-        SingleLaunchChecklistItemId.productionApiWorks =>
-          checkProductionApiWorks,
-        SingleLaunchChecklistItemId.voiceSaveWorks => checkVoiceSaveWorks,
-        SingleLaunchChecklistItemId.typedSaveWorks => checkTypedSaveWorks,
-        SingleLaunchChecklistItemId.firstProofWorks => checkFirstProofWorks,
-        SingleLaunchChecklistItemId.proPromiseVisible => checkProPromiseVisible,
-        SingleLaunchChecklistItemId.revenueCatProductsLoad =>
-          checkRevenueCatProductsLoad,
-        SingleLaunchChecklistItemId.paywallPriceVisible =>
-          checkPaywallPriceVisible,
-        SingleLaunchChecklistItemId.sandboxPurchaseWorks =>
-          checkSandboxPurchaseWorks,
-        SingleLaunchChecklistItemId.entitlementUnlocks =>
-          checkEntitlementUnlocks,
-        SingleLaunchChecklistItemId.restoreWorks => checkRestoreWorks,
-        SingleLaunchChecklistItemId.entitlementPersists =>
-          checkEntitlementPersists,
-        SingleLaunchChecklistItemId.supportPrivacyTermsWork =>
-          checkSupportPrivacyTermsWork,
-        SingleLaunchChecklistItemId.screenshotsReady => checkScreenshotsReady,
-        SingleLaunchChecklistItemId.testFlightUploaded =>
-          checkTestFlightUploaded,
-        SingleLaunchChecklistItemId.paidIntentBetaComplete =>
-          checkPaidIntentBetaComplete,
-        SingleLaunchChecklistItemId.secretsRotatedBeforeProduction =>
-          checkSecretsRotatedBeforeProduction,
-      };
+    SingleLaunchChecklistItemId.cleanGit => checkCleanGit,
+    SingleLaunchChecklistItemId.versionBuildSet => checkVersionBuildSet,
+    SingleLaunchChecklistItemId.physicalIphoneSmoke => checkPhysicalIphoneSmoke,
+    SingleLaunchChecklistItemId.physicalIpadSmoke => checkPhysicalIpadSmoke,
+    SingleLaunchChecklistItemId.productionApiWorks => checkProductionApiWorks,
+    SingleLaunchChecklistItemId.voiceSaveWorks => checkVoiceSaveWorks,
+    SingleLaunchChecklistItemId.typedSaveWorks => checkTypedSaveWorks,
+    SingleLaunchChecklistItemId.firstProofWorks => checkFirstProofWorks,
+    SingleLaunchChecklistItemId.proPromiseVisible => checkProPromiseVisible,
+    SingleLaunchChecklistItemId.revenueCatProductsLoad =>
+      checkRevenueCatProductsLoad,
+    SingleLaunchChecklistItemId.paywallPriceVisible => checkPaywallPriceVisible,
+    SingleLaunchChecklistItemId.sandboxPurchaseWorks =>
+      checkSandboxPurchaseWorks,
+    SingleLaunchChecklistItemId.entitlementUnlocks => checkEntitlementUnlocks,
+    SingleLaunchChecklistItemId.restoreWorks => checkRestoreWorks,
+    SingleLaunchChecklistItemId.entitlementPersists => checkEntitlementPersists,
+    SingleLaunchChecklistItemId.supportPrivacyTermsWork =>
+      checkSupportPrivacyTermsWork,
+    SingleLaunchChecklistItemId.screenshotsReady => checkScreenshotsReady,
+    SingleLaunchChecklistItemId.testFlightUploaded => checkTestFlightUploaded,
+    SingleLaunchChecklistItemId.paidIntentBetaComplete =>
+      checkPaidIntentBetaComplete,
+    SingleLaunchChecklistItemId.secretsRotatedBeforeProduction =>
+      checkSecretsRotatedBeforeProduction,
+  };
 
-  static String messageFor(SingleLaunchChecklistStatus status) => switch (status) {
+  static String messageFor(SingleLaunchChecklistStatus status) =>
+      switch (status) {
         SingleLaunchChecklistStatus.notReady => notReadyLine,
         SingleLaunchChecklistStatus.readyForTestFlight => testFlightLine,
         SingleLaunchChecklistStatus.readyForSubmission => submissionLine,
       };
 
-  static String recommendationFor(SingleLaunchChecklistStatus status) =>
-      switch (status) {
-        SingleLaunchChecklistStatus.notReady =>
-          'Work the checklist in order. Bridge manual proof from existing readiness modules.',
-        SingleLaunchChecklistStatus.readyForTestFlight =>
-          'Upload to TestFlight and finish paid-intent beta before production submission.',
-        SingleLaunchChecklistStatus.readyForSubmission =>
-          'Proceed with App Store submission using the release evidence pack.',
-      };
+  static String recommendationFor(
+    SingleLaunchChecklistStatus status,
+  ) => switch (status) {
+    SingleLaunchChecklistStatus.notReady =>
+      'Work the checklist in order. Bridge manual proof from existing readiness modules.',
+    SingleLaunchChecklistStatus.readyForTestFlight =>
+      'Upload to TestFlight and finish paid-intent beta before production submission.',
+    SingleLaunchChecklistStatus.readyForSubmission =>
+      'Proceed with App Store submission using the release evidence pack.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -172,8 +168,4 @@ enum SingleLaunchChecklistStatus {
   readyForSubmission,
 }
 
-enum SingleLaunchChecklistCheckStatus {
-  pass,
-  fail,
-  pending,
-}
+enum SingleLaunchChecklistCheckStatus { pass, fail, pending }

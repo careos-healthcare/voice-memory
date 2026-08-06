@@ -13,7 +13,7 @@ abstract final class PricingValidationAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required PricingValidationResult result}) {
     _emit(seenEvent, result: result);
@@ -79,10 +79,7 @@ abstract final class PricingValidationAnalytics {
     _emit(ctaTappedEvent, result: result);
   }
 
-  static void _emit(
-    String event, {
-    required PricingValidationResult result,
-  }) {
+  static void _emit(String event, {required PricingValidationResult result}) {
     final props = <String, Object>{
       'source': result.source,
       'entry_count': result.entryCount,

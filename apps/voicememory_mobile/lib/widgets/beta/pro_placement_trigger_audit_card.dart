@@ -32,7 +32,8 @@ class ProPlacementTriggerAuditCard extends StatelessWidget {
       );
     }
 
-    final input = inputOverride ??
+    final input =
+        inputOverride ??
         ProPlacementTriggerAuditEngine.latestInput ??
         ProPlacementTriggerAuditInput(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
@@ -75,9 +76,9 @@ class ProPlacementTriggerAuditCard extends StatelessWidget {
           Text(
             ProPlacementTriggerAuditCopy.cardTitle,
             key: const Key('pro_placement_trigger_audit_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(

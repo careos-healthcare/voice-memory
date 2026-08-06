@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app.dart';
-import '../config/app_config.dart';
 import '../config/developer_settings_gate.dart';
 import '../config/trial_mode.dart';
+import '../core/config/v1_feature_flags.dart';
 import '../features/activation/activation_tracker.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/objective/current_objective_widget_refresh_service.dart';
@@ -42,10 +42,12 @@ Future<void> completeArchiveMeStartup() async {
     AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery(),
   );
   PrivateStorageAudit.logAuditReport();
-  await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
-  await CheckInReminderService.ensureInitialized();
-  await CuriosityNotificationLaunchController.ensureInitialized();
-  unawaited(BetaActivationLoopTracker.trackAppOpened());
+  if (!V1FeatureFlags.enableV1Only) {
+    await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
+    await CheckInReminderService.ensureInitialized();
+    await CuriosityNotificationLaunchController.ensureInitialized();
+    unawaited(BetaActivationLoopTracker.trackAppOpened());
+  }
   if (TrialMode.enabled) {
     onboardingGate.markComplete();
     await ActivationTracker.trackTrialAppOpened();

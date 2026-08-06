@@ -10,8 +10,7 @@ void main() {
         DailyMirrorResult(
           stage: DailyMirrorStage.possibleLoop,
           heroTitle: 'Repeat',
-          heroBody:
-              'Both moments mention is test to see and test to see if.',
+          heroBody: 'Both moments mention is test to see and test to see if.',
           evidenceLine: "You used the words 'is test to see'.",
           nextQuestion: 'Tomorrow, notice if "is test to see" shows up again.',
           primaryCta: 'Record',

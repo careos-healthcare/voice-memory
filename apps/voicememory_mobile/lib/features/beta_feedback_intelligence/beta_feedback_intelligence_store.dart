@@ -108,12 +108,14 @@ abstract final class BetaFeedbackIntelligenceStore {
     _proEvidenceSheetOpenedThisSession = false;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     _cached = BetaFeedbackIntelligenceState.empty;
     _loaded = false;
     invalidateSessionForTest();
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeMap(prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

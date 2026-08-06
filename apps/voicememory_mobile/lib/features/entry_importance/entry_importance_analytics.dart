@@ -11,18 +11,12 @@ abstract final class EntryImportanceAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void marked({
-    required String source,
-    required int entryCount,
-  }) =>
+  static void marked({required String source, required int entryCount}) =>
       _emit(markedEvent, source: source, entryCount: entryCount);
 
-  static void removed({
-    required String source,
-    required int entryCount,
-  }) =>
+  static void removed({required String source, required int entryCount}) =>
       _emit(removedEvent, source: source, entryCount: entryCount);
 
   static void _emit(
@@ -30,10 +24,7 @@ abstract final class EntryImportanceAnalytics {
     required String source,
     required int entryCount,
   }) {
-    final props = <String, Object>{
-      'source': source,
-      'entry_count': entryCount,
-    };
+    final props = <String, Object>{'source': source, 'entry_count': entryCount};
     captureForTest?.call(event, props);
     ActivationFunnelAnalytics.track(
       event,

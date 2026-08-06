@@ -1,4 +1,5 @@
 /// GPT-5 synthesis V2 — narrative layer on deterministic archive engines.
+library;
 
 enum ArchiveSynthesisType { monthly, milestone, deepDive, historian }
 

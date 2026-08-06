@@ -39,19 +39,13 @@ void main() {
     });
 
     test('doc contains canonical beta path', () {
-      expect(
-        guardrail.toLowerCase(),
-        contains('save one yes moment'),
-      );
+      expect(guardrail.toLowerCase(), contains('save one yes moment'));
       expect(guardrail.toLowerCase(), contains('save two more'));
       expect(guardrail.toLowerCase(), contains('review what repeated'));
     });
 
     test('under 3 moments show one primary path only', () {
-      expect(
-        guardrail.toLowerCase(),
-        contains('under 3 moments'),
-      );
+      expect(guardrail.toLowerCase(), contains('under 3 moments'));
       expect(guardrail.toLowerCase(), contains('one primary path'));
     });
 

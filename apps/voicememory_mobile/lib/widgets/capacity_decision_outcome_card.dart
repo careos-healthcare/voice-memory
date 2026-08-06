@@ -23,9 +23,9 @@ class CapacityDecisionOutcomeCard extends StatefulWidget {
     super.key,
     required this.result,
     this.onSaved,
-    CapacityDecisionOutcomeStore? store,
+    this.store,
     this.sampleMode = false,
-  }) : store = store;
+  });
 
   final CapacityDecisionOutcomeResult result;
   final VoidCallback? onSaved;
@@ -95,7 +95,9 @@ class _CapacityDecisionOutcomeCardState
                 for (final id in CapacityDecisionOutcomeIds.all)
                   FilterChip(
                     key: Key('capacity_decision_outcome_$id'),
-                    label: Text(CapacityDecisionOutcomeCopy.labelForOutcome(id)),
+                    label: Text(
+                      CapacityDecisionOutcomeCopy.labelForOutcome(id),
+                    ),
                     selected: _selectedOutcome == id,
                     onSelected: (_) => setState(() => _selectedOutcome = id),
                   ),
@@ -104,7 +106,9 @@ class _CapacityDecisionOutcomeCardState
             const SizedBox(height: AppSpacing.sm),
             FilledButton(
               key: const Key('capacity_decision_outcome_save_button'),
-              onPressed: _saving || _selectedOutcome == null ? null : _saveAnswer,
+              onPressed: _saving || _selectedOutcome == null
+                  ? null
+                  : _saveAnswer,
               child: Text(CapacityDecisionOutcomeCopy.saveOutcomeCta),
             ),
           ] else ...[

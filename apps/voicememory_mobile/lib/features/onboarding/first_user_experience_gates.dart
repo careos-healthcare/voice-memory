@@ -3,8 +3,10 @@ abstract class FirstUserExperienceGates {
   FirstUserExperienceGates._();
 
   /// True when the local archive has no saved entries yet.
-  static bool isEmptyFirstRun({required bool loaded, required int entryCount}) =>
-      loaded && entryCount == 0;
+  static bool isEmptyFirstRun({
+    required bool loaded,
+    required int entryCount,
+  }) => loaded && entryCount == 0;
 
   /// Returning-user prompts (session surveys, streaks, worth-checking lists)
   /// only after the user has saved at least one moment, or an explicit
@@ -13,25 +15,22 @@ abstract class FirstUserExperienceGates {
     required bool loaded,
     required int entryCount,
     bool explicitReturningSession = false,
-  }) =>
-      loaded && (entryCount > 0 || explicitReturningSession);
+  }) => loaded && (entryCount > 0 || explicitReturningSession);
 
   /// Session return survey — never on a blank archive.
   static bool showReturnSessionSurvey({
     required bool loaded,
     required int entryCount,
     bool explicitReturningSession = false,
-  }) =>
-      showReturningUserPrompts(
-        loaded: loaded,
-        entryCount: entryCount,
-        explicitReturningSession: explicitReturningSession,
-      );
+  }) => showReturningUserPrompts(
+    loaded: loaded,
+    entryCount: entryCount,
+    explicitReturningSession: explicitReturningSession,
+  );
 
   /// Pre-first-recording legal / advanced prompts stay hidden at count 0.
   static bool showPreFirstRecordingLegalPrompts({
     required bool loaded,
     required int entryCount,
-  }) =>
-      !isEmptyFirstRun(loaded: loaded, entryCount: entryCount);
+  }) => !isEmptyFirstRun(loaded: loaded, entryCount: entryCount);
 }

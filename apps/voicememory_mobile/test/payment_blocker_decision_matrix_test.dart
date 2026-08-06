@@ -29,56 +29,54 @@ PaymentBlockerSummary _summary({
   int needRankingBeforePayingCount = 1,
   int priceTooHighCount = 1,
   int worthPayingCount = 1,
-}) =>
-    PaymentBlockerSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      understoodLongerTrailCount: understoodLongerTrailCount,
-      understoodNotMoreAiCount: understoodNotMoreAiCount,
-      payYesCount: payYesCount,
-      payMaybeCount: payMaybeCount,
-      payNoCount: payNoCount,
-      needSeeOverTimeCount: needSeeOverTimeCount,
-      needStrongerProofCount: needStrongerProofCount,
-      needRankingBeforePayingCount: needRankingBeforePayingCount,
-      priceTooHighCount: priceTooHighCount,
-      worthPayingCount: worthPayingCount,
-    );
+}) => PaymentBlockerSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  understoodLongerTrailCount: understoodLongerTrailCount,
+  understoodNotMoreAiCount: understoodNotMoreAiCount,
+  payYesCount: payYesCount,
+  payMaybeCount: payMaybeCount,
+  payNoCount: payNoCount,
+  needSeeOverTimeCount: needSeeOverTimeCount,
+  needStrongerProofCount: needStrongerProofCount,
+  needRankingBeforePayingCount: needRankingBeforePayingCount,
+  priceTooHighCount: priceTooHighCount,
+  worthPayingCount: worthPayingCount,
+);
 
-PaymentBlockerSummary _corePassingSummary({
-  int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      usefulProofCount: totalTesters == 20 ? 5 : 7,
-      understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
-      understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
-    );
+PaymentBlockerSummary _corePassingSummary({int totalTesters = 30}) => _summary(
+  totalTesters: totalTesters,
+  usefulProofCount: totalTesters == 20 ? 5 : 7,
+  understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
+  understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
+);
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('PaymentBlockerDecisionMatrix thresholds', () {
     test('30 tester exact targets', () {
       expect(PaymentBlockerDecisionMatrix.usefulProofTargetFor(30), 7);
-      expect(PaymentBlockerDecisionMatrix.understoodLongerTrailTargetFor(30), 6);
+      expect(
+        PaymentBlockerDecisionMatrix.understoodLongerTrailTargetFor(30),
+        6,
+      );
       expect(PaymentBlockerDecisionMatrix.understoodNotMoreAiTargetFor(30), 6);
       expect(PaymentBlockerDecisionMatrix.payYesMaybeTargetFor(30), 3);
       expect(PaymentBlockerDecisionMatrix.worthPayingTargetFor(30), 3);
@@ -205,21 +203,18 @@ void main() {
       );
     });
 
-    test(
-      'pay yes/maybe and worth paying pass returns productionCandidate',
-      () {
-        expect(
-          PaymentBlockerDecisionMatrix.resolve(
-            _corePassingSummary().copyWith(
-              payYesCount: 2,
-              payMaybeCount: 1,
-              worthPayingCount: 3,
-            ),
+    test('pay yes/maybe and worth paying pass returns productionCandidate', () {
+      expect(
+        PaymentBlockerDecisionMatrix.resolve(
+          _corePassingSummary().copyWith(
+            payYesCount: 2,
+            payMaybeCount: 1,
+            worthPayingCount: 3,
           ),
-          PaymentBlockerDecision.productionCandidate,
-        );
-      },
-    );
+        ),
+        PaymentBlockerDecision.productionCandidate,
+      );
+    });
 
     test('conservative fallback returns sharpenProofValueProposition', () {
       expect(
@@ -381,39 +376,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -431,24 +429,22 @@ extension on PaymentBlockerSummary {
     int? needRankingBeforePayingCount,
     int? priceTooHighCount,
     int? worthPayingCount,
-  }) =>
-      PaymentBlockerSummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        usefulProofCount: usefulProofCount ?? this.usefulProofCount,
-        understoodLongerTrailCount:
-            understoodLongerTrailCount ?? this.understoodLongerTrailCount,
-        understoodNotMoreAiCount:
-            understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
-        payYesCount: payYesCount ?? this.payYesCount,
-        payMaybeCount: payMaybeCount ?? this.payMaybeCount,
-        payNoCount: payNoCount ?? this.payNoCount,
-        needSeeOverTimeCount:
-            needSeeOverTimeCount ?? this.needSeeOverTimeCount,
-        needStrongerProofCount:
-            needStrongerProofCount ?? this.needStrongerProofCount,
-        needRankingBeforePayingCount:
-            needRankingBeforePayingCount ?? this.needRankingBeforePayingCount,
-        priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
-        worthPayingCount: worthPayingCount ?? this.worthPayingCount,
-      );
+  }) => PaymentBlockerSummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    usefulProofCount: usefulProofCount ?? this.usefulProofCount,
+    understoodLongerTrailCount:
+        understoodLongerTrailCount ?? this.understoodLongerTrailCount,
+    understoodNotMoreAiCount:
+        understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
+    payYesCount: payYesCount ?? this.payYesCount,
+    payMaybeCount: payMaybeCount ?? this.payMaybeCount,
+    payNoCount: payNoCount ?? this.payNoCount,
+    needSeeOverTimeCount: needSeeOverTimeCount ?? this.needSeeOverTimeCount,
+    needStrongerProofCount:
+        needStrongerProofCount ?? this.needStrongerProofCount,
+    needRankingBeforePayingCount:
+        needRankingBeforePayingCount ?? this.needRankingBeforePayingCount,
+    priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
+    worthPayingCount: worthPayingCount ?? this.worthPayingCount,
+  );
 }

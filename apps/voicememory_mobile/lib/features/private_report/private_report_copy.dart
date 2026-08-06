@@ -64,20 +64,20 @@ abstract final class PrivateReportCopy {
   }
 
   static List<String> allVisibleStrings() => [
-        title,
-        subtitle,
-        whatRepeatedHeading,
-        whatChangedHeading,
-        whatHelpedHeading,
-        whatToWatchNextHeading,
-        evidenceHeading,
-        sectionFallback,
-        insufficientEvidence,
-        footer,
-        copyReportCta,
-        shareReportCta,
-        closeCta,
-        copySuccess,
-        openReportCta,
-      ];
+    title,
+    subtitle,
+    whatRepeatedHeading,
+    whatChangedHeading,
+    whatHelpedHeading,
+    whatToWatchNextHeading,
+    evidenceHeading,
+    sectionFallback,
+    insufficientEvidence,
+    footer,
+    copyReportCta,
+    shareReportCta,
+    closeCta,
+    copySuccess,
+    openReportCta,
+  ];
 }

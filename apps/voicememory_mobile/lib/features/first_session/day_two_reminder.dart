@@ -56,12 +56,10 @@ abstract class DayTwoReminder {
 /// Production resolves prefs/backend lazily; tests inject both.
 class DayTwoReminderCoordinator {
   DayTwoReminderCoordinator({
-    MobilePrefsStore? prefs,
-    CheckInReminderBackend? backend,
+    this._prefs,
+    this._backend,
     DateTime Function()? now,
-  }) : _prefs = prefs,
-       _backend = backend,
-       _now = now ?? DateTime.now;
+  }) : _now = now ?? DateTime.now;
 
   final MobilePrefsStore? _prefs;
   final CheckInReminderBackend? _backend;

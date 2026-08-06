@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/archive_review/archive_range_review_model.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/voicememory_typography.dart';
 
 /// Preset chips for choosing an archive review period.
 class ArchiveRangeSelector extends StatelessWidget {

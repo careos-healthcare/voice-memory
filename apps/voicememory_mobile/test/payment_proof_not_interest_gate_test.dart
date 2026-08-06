@@ -19,46 +19,41 @@ PaymentProofNotInterestGateInput _input({
   bool testerRestoresPurchase = false,
   bool testerAsksForPriceDetails = false,
   bool testerContinuesUsingAfterProof = false,
-}) =>
-    PaymentProofNotInterestGateInput(
-      testerSaysIdeaInteresting: testerSaysIdeaInteresting,
-      testerSaysWouldPayMaybe: testerSaysWouldPayMaybe,
-      testerSeesFirstUsefulProof: testerSeesFirstUsefulProof,
-      testerSeesProPromise: testerSeesProPromise,
-      testerTapsPro: testerTapsPro,
-      testerStartsPurchase: testerStartsPurchase,
-      testerCompletesSandboxPurchase: testerCompletesSandboxPurchase,
-      testerRestoresPurchase: testerRestoresPurchase,
-      testerAsksForPriceDetails: testerAsksForPriceDetails,
-      testerContinuesUsingAfterProof: testerContinuesUsingAfterProof,
-    );
+}) => PaymentProofNotInterestGateInput(
+  testerSaysIdeaInteresting: testerSaysIdeaInteresting,
+  testerSaysWouldPayMaybe: testerSaysWouldPayMaybe,
+  testerSeesFirstUsefulProof: testerSeesFirstUsefulProof,
+  testerSeesProPromise: testerSeesProPromise,
+  testerTapsPro: testerTapsPro,
+  testerStartsPurchase: testerStartsPurchase,
+  testerCompletesSandboxPurchase: testerCompletesSandboxPurchase,
+  testerRestoresPurchase: testerRestoresPurchase,
+  testerAsksForPriceDetails: testerAsksForPriceDetails,
+  testerContinuesUsingAfterProof: testerContinuesUsingAfterProof,
+);
 
 PaymentProofNotInterestGateSignal _signal(
   PaymentProofNotInterestGateResult result,
   PaymentProofNotInterestGateSignalId id,
-) =>
-    result.signals.firstWhere((signal) => signal.id == id);
+) => result.signals.firstWhere((signal) => signal.id == id);
 
 void main() {
   group('PaymentProofNotInterestGate.build', () {
     test('gate tracks ten canonical signals', () {
       final result = PaymentProofNotInterestGate.build(_input());
       expect(result.signals.length, PaymentProofNotInterestGate.signalCount);
-      expect(
-        result.signals.map((signal) => signal.id).toList(),
-        [
-          PaymentProofNotInterestGateSignalId.testerSaysIdeaInteresting,
-          PaymentProofNotInterestGateSignalId.testerSaysWouldPayMaybe,
-          PaymentProofNotInterestGateSignalId.testerSeesFirstUsefulProof,
-          PaymentProofNotInterestGateSignalId.testerSeesProPromise,
-          PaymentProofNotInterestGateSignalId.testerTapsPro,
-          PaymentProofNotInterestGateSignalId.testerStartsPurchase,
-          PaymentProofNotInterestGateSignalId.testerCompletesSandboxPurchase,
-          PaymentProofNotInterestGateSignalId.testerRestoresPurchase,
-          PaymentProofNotInterestGateSignalId.testerAsksForPriceDetails,
-          PaymentProofNotInterestGateSignalId.testerContinuesUsingAfterProof,
-        ],
-      );
+      expect(result.signals.map((signal) => signal.id).toList(), [
+        PaymentProofNotInterestGateSignalId.testerSaysIdeaInteresting,
+        PaymentProofNotInterestGateSignalId.testerSaysWouldPayMaybe,
+        PaymentProofNotInterestGateSignalId.testerSeesFirstUsefulProof,
+        PaymentProofNotInterestGateSignalId.testerSeesProPromise,
+        PaymentProofNotInterestGateSignalId.testerTapsPro,
+        PaymentProofNotInterestGateSignalId.testerStartsPurchase,
+        PaymentProofNotInterestGateSignalId.testerCompletesSandboxPurchase,
+        PaymentProofNotInterestGateSignalId.testerRestoresPurchase,
+        PaymentProofNotInterestGateSignalId.testerAsksForPriceDetails,
+        PaymentProofNotInterestGateSignalId.testerContinuesUsingAfterProof,
+      ]);
     });
 
     test('no signals -> notEnoughPaymentEvidence', () {
@@ -111,10 +106,7 @@ void main() {
 
     test('proof and pro promise without tap -> comprehensionOnly', () {
       final result = PaymentProofNotInterestGate.build(
-        _input(
-          testerSeesFirstUsefulProof: true,
-          testerSeesProPromise: true,
-        ),
+        _input(testerSeesFirstUsefulProof: true, testerSeesProPromise: true),
       );
       expect(
         result.decision,
@@ -160,7 +152,10 @@ void main() {
           testerCompletesSandboxPurchase: true,
         ),
       );
-      expect(result.decision, PaymentProofNotInterestGateDecision.purchaseProof);
+      expect(
+        result.decision,
+        PaymentProofNotInterestGateDecision.purchaseProof,
+      );
       expect(result.hasPaymentProof, isTrue);
     });
 
@@ -202,7 +197,10 @@ void main() {
           testerCompletesSandboxPurchase: true,
         ),
       );
-      expect(result.decision, PaymentProofNotInterestGateDecision.purchaseProof);
+      expect(
+        result.decision,
+        PaymentProofNotInterestGateDecision.purchaseProof,
+      );
       expect(result.maybeCountedAsPaymentProof, isFalse);
     });
 
@@ -244,7 +242,10 @@ void main() {
           ),
         ),
       );
-      expect(result.decision, PaymentProofNotInterestGateDecision.purchaseProof);
+      expect(
+        result.decision,
+        PaymentProofNotInterestGateDecision.purchaseProof,
+      );
     });
   });
 

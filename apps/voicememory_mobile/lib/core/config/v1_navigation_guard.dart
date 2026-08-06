@@ -9,39 +9,28 @@ abstract final class V1NavigationGuard {
   static const String archiveHome = RouteCatalog.archiveHome;
   static const String changesHome = RouteCatalog.changesHome;
 
+  /// V1 launch allowlist — every path must appear in [V1RouteInventory].
   static const Set<String> _exactAllowed = {
     '/',
     ...RouteCatalog.primaryRoutes,
-    '/details',
     '/settings',
     '/subscription',
     '/pricing',
     '/restore-purchases',
     '/delete-account',
+    '/export',
     '/privacy-trust-centre',
     '/privacy',
     '/terms',
     '/about',
     '/security',
     '/support-feedback',
-    '/sample-archive',
-    '/help-reviewer-guide',
-    '/testing-archiveme',
     '/belief-evidence',
     '/belief-detail',
     '/quick-capture',
-    '/quick-yes-capture',
-    '/live-voice',
     '/onboarding',
     '/onboarding-intent',
     '/onboarding-loop',
-    '/future-preview',
-    '/cold-start/seed',
-    '/start',
-    '/invite',
-    '/start/capacity-yes',
-    '/start/prove-enough',
-    '/start/generic',
   };
 
   static const List<String> _prefixAllowed = [
@@ -55,12 +44,18 @@ abstract final class V1NavigationGuard {
     '/pressure-check-in',
     '/pressure-insights',
     '/loop-mode',
+    '/quick-yes-capture',
+    '/live-voice',
+    '/start',
+    '/start/capacity-yes',
+    '/start/prove-enough',
+    '/start/generic',
+    '/invite',
   };
 
   static const List<String> _recordFallbackPrefixes = [
     '/record',
     '/quick-capture',
-    '/live-voice',
   ];
 
   /// Non-core routes blocked while [V1FeatureFlags.enableV1Only] is true.
@@ -83,7 +78,6 @@ abstract final class V1NavigationGuard {
     '/archive-deep-dive',
     '/weekly-story',
     '/updates',
-    '/export',
     '/archive-export',
     '/archive-packs',
     '/collections',
@@ -91,6 +85,27 @@ abstract final class V1NavigationGuard {
     '/yesterdays-snapshot',
     '/review-ritual',
     '/archive-calendar',
+    '/capacity-loop',
+    '/capacity-weekly-review',
+    '/capacity-boundary-response',
+    '/capacity-beta-mission',
+    '/capacity-beta-signals',
+    '/beta-feedback',
+    '/beta-outcomes',
+    '/beta-invite-pack',
+    '/first-week-path',
+    '/daily-archive-exercise',
+    '/archive-clarity-progress',
+    '/todays-one-question',
+    '/then-vs-now',
+    '/milestone-share-cards',
+    '/weekly-report',
+    '/testing-archiveme',
+    '/help-reviewer-guide',
+    '/sample-archive',
+    '/details',
+    '/prove-enough/evidence-trail',
+    '/loop-mode',
   };
 
   /// Returns a redirect target when [path] is outside the V1 allowlist.

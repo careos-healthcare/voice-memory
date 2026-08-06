@@ -137,7 +137,8 @@ void main() {
           suggestionId: 'belief',
           currentBelief: 'You may do more when follow a heavy should.',
           evidenceLine: '3 entries point toward this.',
-          whatChanged: 'Your latest moment may sit differently from the one before it.',
+          whatChanged:
+              'Your latest moment may sit differently from the one before it.',
           whatToTest:
               'Record another ordinary moment and notice whether follow a heavy should shows up again.',
           timeline: [],
@@ -154,9 +155,18 @@ void main() {
 
       expect(bundle.usedBlockFallback, isTrue);
       expect(bundle.ohWow.body, PatternDisplayCopyGate.heroFallback);
-      expect(bundle.belief.currentBelief, PatternDisplayCopyGate.currentBeliefFallback);
-      expect(bundle.belief.whatToTest, PatternDisplayCopyGate.whatToTestFallback);
-      expect(bundle.belief.currentBelief, isNot(contains('follow a heavy should')));
+      expect(
+        bundle.belief.currentBelief,
+        PatternDisplayCopyGate.currentBeliefFallback,
+      );
+      expect(
+        bundle.belief.whatToTest,
+        PatternDisplayCopyGate.whatToTestFallback,
+      );
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('follow a heavy should')),
+      );
     });
   });
 
@@ -209,26 +219,29 @@ void main() {
       await PatternDisplayCacheCleanup.resetForTest();
     });
 
-    test('clears cached bad active pattern thread from MobilePrefsStore', () async {
-      final prefs = AppServices.instance.prefs;
-      await prefs.writeMap('activePatternThreadCurrent', {
-        'id': 'bad-thread',
-        'title': 'You may do more when follow a heavy should.',
-        'createdAt': DateTime(2026, 6, 1).toIso8601String(),
-        'updatedAt': DateTime(2026, 6, 2).toIso8601String(),
-        'watchForText': 'whether follow a heavy should shows up again',
-        'chips': <String>[],
-        'status': 'active',
-        'daysActive': 2,
-        'lastResult': 'unclear',
-        'nextPrompt':
-            'Record another ordinary moment and notice whether follow a heavy should shows up again.',
-      });
+    test(
+      'clears cached bad active pattern thread from MobilePrefsStore',
+      () async {
+        final prefs = AppServices.instance.prefs;
+        await prefs.writeMap('activePatternThreadCurrent', {
+          'id': 'bad-thread',
+          'title': 'You may do more when follow a heavy should.',
+          'createdAt': DateTime(2026, 6, 1).toIso8601String(),
+          'updatedAt': DateTime(2026, 6, 2).toIso8601String(),
+          'watchForText': 'whether follow a heavy should shows up again',
+          'chips': <String>[],
+          'status': 'active',
+          'daysActive': 2,
+          'lastResult': 'unclear',
+          'nextPrompt':
+              'Record another ordinary moment and notice whether follow a heavy should shows up again.',
+        });
 
-      await PatternDisplayCacheCleanup.runOnceIfNeeded();
+        await PatternDisplayCacheCleanup.runOnceIfNeeded();
 
-      final cleared = await prefs.readMap('activePatternThreadCurrent');
-      expect(cleared == null || cleared.isEmpty, isTrue);
-    });
+        final cleared = await prefs.readMap('activePatternThreadCurrent');
+        expect(cleared == null || cleared.isEmpty, isTrue);
+      },
+    );
   });
 }

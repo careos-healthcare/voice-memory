@@ -43,11 +43,11 @@ abstract final class ArchiveReturnChangesCopy {
   }
 
   static String titleFor(ArchiveReturnChangeType type) => switch (type) {
-        ArchiveReturnChangeType.newEvidence => newEvidenceTitle,
-        ArchiveReturnChangeType.beliefUpdated => beliefUpdatedTitle,
-        ArchiveReturnChangeType.contextChanged => contextChangedTitle,
-        ArchiveReturnChangeType.weeklyReviewReady => weeklyReviewTitle,
-      };
+    ArchiveReturnChangeType.newEvidence => newEvidenceTitle,
+    ArchiveReturnChangeType.beliefUpdated => beliefUpdatedTitle,
+    ArchiveReturnChangeType.contextChanged => contextChangedTitle,
+    ArchiveReturnChangeType.weeklyReviewReady => weeklyReviewTitle,
+  };
 
   static String bodyFor(ArchiveReturnChangeType type, {int newMoments = 1}) =>
       switch (type) {

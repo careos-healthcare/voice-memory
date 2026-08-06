@@ -18,12 +18,11 @@ abstract final class WhatToNoticeNextSurfacePriorityAudit {
     required bool lowFrictionReturnVisible,
     required bool betaTodaySummaryVisible,
     required bool openCapturePromptChipsVisible,
-  }) =>
-      SurfacePriorityEngine.allowsWhatToNoticeNextOnRecord(
-        lowFrictionReturnVisible: lowFrictionReturnVisible,
-        betaTodaySummaryVisible: betaTodaySummaryVisible,
-        openCapturePromptChipsVisible: openCapturePromptChipsVisible,
-      );
+  }) => SurfacePriorityEngine.allowsWhatToNoticeNextOnRecord(
+    lowFrictionReturnVisible: lowFrictionReturnVisible,
+    betaTodaySummaryVisible: betaTodaySummaryVisible,
+    openCapturePromptChipsVisible: openCapturePromptChipsVisible,
+  );
 }
 
 /// Observation guidance from existing archive signals — no proof changes.
@@ -43,7 +42,8 @@ abstract final class WhatToNoticeNextEngine {
     final entryCount = entries.length;
     final hasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
-    final spine = timelineSpine ??
+    final spine =
+        timelineSpine ??
         (entryCount >= 3
             ? ArchiveTimelineSpineEngine.build(
                 entries: entries,
@@ -134,9 +134,8 @@ abstract final class WhatToNoticeNextEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      OpenCaptureEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => OpenCaptureEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

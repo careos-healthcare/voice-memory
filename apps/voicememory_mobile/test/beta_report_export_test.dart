@@ -36,15 +36,14 @@ BetaActivationLoopCounts _loopCounts({
   int thirdMomentSaved = 4,
   int returnCheckAnswered = 3,
   int purchaseTapped = 1,
-}) =>
-    BetaActivationLoopCounts(
-      appOpened: appOpened,
-      firstMomentSaved: firstMomentSaved,
-      secondMomentSaved: secondMomentSaved,
-      thirdMomentSaved: thirdMomentSaved,
-      returnCheckAnswered: returnCheckAnswered,
-      purchaseTapped: purchaseTapped,
-    );
+}) => BetaActivationLoopCounts(
+  appOpened: appOpened,
+  firstMomentSaved: firstMomentSaved,
+  secondMomentSaved: secondMomentSaved,
+  thirdMomentSaved: thirdMomentSaved,
+  returnCheckAnswered: returnCheckAnswered,
+  purchaseTapped: purchaseTapped,
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -57,9 +56,7 @@ void main() {
 
   group('BetaReportExportEngine', () {
     test('copied report includes tester loop counts', () {
-      final report = BetaReportExportEngine.build(
-        betaCounts: _loopCounts(),
-      );
+      final report = BetaReportExportEngine.build(betaCounts: _loopCounts());
       final text = report.formattedText;
       expect(text, contains('- App opened: 10'));
       expect(text, contains('- First moment saved: 8'));
@@ -91,25 +88,25 @@ void main() {
       );
     });
 
-    test('copied report includes proof of value summary and recommendation', () {
-      final report = BetaReportExportEngine.build(
-        betaCounts: _loopCounts(
-          firstMomentSaved: 6,
-          secondMomentSaved: 4,
-        ),
-      );
-      final text = report.formattedText;
-      expect(text, contains('Proof of value:'));
-      expect(text, contains('- Summary: ${report.proofOfValueSummary}'));
-      expect(
-        text,
-        contains('- Recommendation: ${report.proofOfValueRecommendation}'),
-      );
-      expect(
-        report.proofOfValueRecommendation,
-        ProofOfValueCopy.recommendationFixFirstUse,
-      );
-    });
+    test(
+      'copied report includes proof of value summary and recommendation',
+      () {
+        final report = BetaReportExportEngine.build(
+          betaCounts: _loopCounts(firstMomentSaved: 6, secondMomentSaved: 4),
+        );
+        final text = report.formattedText;
+        expect(text, contains('Proof of value:'));
+        expect(text, contains('- Summary: ${report.proofOfValueSummary}'));
+        expect(
+          text,
+          contains('- Recommendation: ${report.proofOfValueRecommendation}'),
+        );
+        expect(
+          report.proofOfValueRecommendation,
+          ProofOfValueCopy.recommendationFixFirstUse,
+        );
+      },
+    );
 
     test('copied report includes manual questions', () {
       final text = BetaReportExportEngine.build(
@@ -177,7 +174,9 @@ void main() {
       ).formattedText;
       expect(
         text,
-        contains('- Local answer: ${CoreValueFeedbackCopy.diagnosticsNoAnswer}'),
+        contains(
+          '- Local answer: ${CoreValueFeedbackCopy.diagnosticsNoAnswer}',
+        ),
       );
     });
   });
@@ -191,15 +190,16 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BetaReportExportCard(
-              report: BetaReportExportEngine.build(
-                betaCounts: _loopCounts(),
-              ),
+              report: BetaReportExportEngine.build(betaCounts: _loopCounts()),
             ),
           ),
         ),
       );
 
-      expect(find.byKey(const Key('beta_report_export_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_report_export_hidden')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('beta_report_export_copy_button')),
         findsNothing,
@@ -213,9 +213,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BetaReportExportCard(
-              report: BetaReportExportEngine.build(
-                betaCounts: _loopCounts(),
-              ),
+              report: BetaReportExportEngine.build(betaCounts: _loopCounts()),
             ),
           ),
         ),
@@ -231,9 +229,7 @@ void main() {
     testWidgets('copy shows confirmation', (tester) async {
       DeveloperSettingsGate.applyLoadedUnlock(true);
       var copiedText = '';
-      final report = BetaReportExportEngine.build(
-        betaCounts: _loopCounts(),
-      );
+      final report = BetaReportExportEngine.build(betaCounts: _loopCounts());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -253,7 +249,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(copiedText, report.formattedText);
-      expect(find.text(BetaReportExportCopy.copiedConfirmation), findsOneWidget);
+      expect(
+        find.text(BetaReportExportCopy.copiedConfirmation),
+        findsOneWidget,
+      );
     });
   });
 }

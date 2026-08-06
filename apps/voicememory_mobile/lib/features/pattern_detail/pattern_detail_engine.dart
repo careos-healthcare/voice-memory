@@ -64,19 +64,19 @@ abstract final class PatternDetailEngine {
     if (grounded.isEmpty) return null;
 
     final primaryPhrase = grounded.first.trim();
-    final patternKey = ArchiveExclusionEngine.normalizePatternKey(primaryPhrase);
-    final patternLabel =
-        PatternNameEngine.displayLabelForGroundedPhrase(primaryPhrase);
+    final patternKey = ArchiveExclusionEngine.normalizePatternKey(
+      primaryPhrase,
+    );
+    final patternLabel = PatternNameEngine.displayLabelForGroundedPhrase(
+      primaryPhrase,
+    );
 
     final changed = _whatChanged(
       entries: entries,
       changeProof: changeProof,
       returnChecks: returnChecks,
     );
-    final helped = _whatHelped(
-      entries: entries,
-      returnChecks: returnChecks,
-    );
+    final helped = _whatHelped(entries: entries, returnChecks: returnChecks);
     final watchNext = _whatToWatchNext(
       entries: entries,
       changeProof: changeProof,
@@ -153,8 +153,9 @@ abstract final class PatternDetailEngine {
       return _SectionBody(body: v2.body.trim(), isSupported: true);
     }
 
-    final changeNotice =
-        EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
+    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(
+      entries: entries,
+    );
     if (changeNotice != null && changeNotice.body.trim().isNotEmpty) {
       return _SectionBody(body: changeNotice.body.trim(), isSupported: true);
     }
@@ -226,7 +227,7 @@ abstract final class PatternDetailEngine {
       returnChecks: returnChecks,
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
-    final prompt = dailyReason?.prompt?.trim();
+    final prompt = dailyReason?.prompt.trim();
     if (prompt != null && prompt.isNotEmpty) return prompt;
     return WeeklyArchiveReviewCopy.watchBeforeAgree;
   }
@@ -304,10 +305,7 @@ abstract final class PatternDetailEngine {
 }
 
 class _SectionBody {
-  const _SectionBody({
-    required this.body,
-    required this.isSupported,
-  });
+  const _SectionBody({required this.body, required this.isSupported});
 
   final String body;
   final bool isSupported;

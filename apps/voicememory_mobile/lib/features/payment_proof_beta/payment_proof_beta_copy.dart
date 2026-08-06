@@ -84,25 +84,25 @@ abstract final class PaymentProofBetaCopy {
   ];
 
   static String labelFor(PaymentProofBetaSignalId id) => switch (id) {
-        PaymentProofBetaSignalId.firstSave => signalFirstSave,
-        PaymentProofBetaSignalId.secondSave => signalSecondSave,
-        PaymentProofBetaSignalId.firstUsefulProofSeen =>
-          signalFirstUsefulProofSeen,
-        PaymentProofBetaSignalId.proofAccepted => signalProofAccepted,
-        PaymentProofBetaSignalId.proofCorrected => signalProofCorrected,
-        PaymentProofBetaSignalId.proPromiseSeen => signalProPromiseSeen,
-        PaymentProofBetaSignalId.proTapped => signalProTapped,
-        PaymentProofBetaSignalId.purchaseStarted => signalPurchaseStarted,
-        PaymentProofBetaSignalId.purchaseCompleted => signalPurchaseCompleted,
-        PaymentProofBetaSignalId.restoreStarted => signalRestoreStarted,
-        PaymentProofBetaSignalId.restoreCompleted => signalRestoreCompleted,
-        PaymentProofBetaSignalId.entitlementActive => signalEntitlementActive,
-        PaymentProofBetaSignalId.testerWouldPayYes => signalTesterWouldPayYes,
-        PaymentProofBetaSignalId.testerWouldPayMaybe => signalTesterWouldPayMaybe,
-        PaymentProofBetaSignalId.testerWouldPayNo => signalTesterWouldPayNo,
-      };
+    PaymentProofBetaSignalId.firstSave => signalFirstSave,
+    PaymentProofBetaSignalId.secondSave => signalSecondSave,
+    PaymentProofBetaSignalId.firstUsefulProofSeen => signalFirstUsefulProofSeen,
+    PaymentProofBetaSignalId.proofAccepted => signalProofAccepted,
+    PaymentProofBetaSignalId.proofCorrected => signalProofCorrected,
+    PaymentProofBetaSignalId.proPromiseSeen => signalProPromiseSeen,
+    PaymentProofBetaSignalId.proTapped => signalProTapped,
+    PaymentProofBetaSignalId.purchaseStarted => signalPurchaseStarted,
+    PaymentProofBetaSignalId.purchaseCompleted => signalPurchaseCompleted,
+    PaymentProofBetaSignalId.restoreStarted => signalRestoreStarted,
+    PaymentProofBetaSignalId.restoreCompleted => signalRestoreCompleted,
+    PaymentProofBetaSignalId.entitlementActive => signalEntitlementActive,
+    PaymentProofBetaSignalId.testerWouldPayYes => signalTesterWouldPayYes,
+    PaymentProofBetaSignalId.testerWouldPayMaybe => signalTesterWouldPayMaybe,
+    PaymentProofBetaSignalId.testerWouldPayNo => signalTesterWouldPayNo,
+  };
 
-  static String messageFor(PaymentProofBetaDecision decision) => switch (decision) {
+  static String messageFor(PaymentProofBetaDecision decision) =>
+      switch (decision) {
         PaymentProofBetaDecision.interestOnly => interestOnlyLine,
         PaymentProofBetaDecision.proofNotReached => proofNotReachedLine,
         PaymentProofBetaDecision.proofReachedNoProTap =>
@@ -184,13 +184,7 @@ enum PaymentProofBetaSignalId {
   testerWouldPayNo,
 }
 
-enum PaymentProofBetaSignalStatus {
-  pass,
-  fail,
-  blocked,
-  interestOnly,
-  tracked,
-}
+enum PaymentProofBetaSignalStatus { pass, fail, blocked, interestOnly, tracked }
 
 enum PaymentProofBetaDecision {
   interestOnly,

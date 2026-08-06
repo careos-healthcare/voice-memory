@@ -179,16 +179,18 @@ abstract class IosNativeRecorderPlatform {
   Future<NativeRecordingLevel> currentNativeLevel();
 }
 
-class MethodChannelIosNativeRecorderPlatform implements IosNativeRecorderPlatform {
-  MethodChannelIosNativeRecorderPlatform({
-    MethodChannel? channel,
-  }) : _channel = channel ?? const MethodChannel(IosNativeRecorder.channelName);
+class MethodChannelIosNativeRecorderPlatform
+    implements IosNativeRecorderPlatform {
+  MethodChannelIosNativeRecorderPlatform({MethodChannel? channel})
+    : _channel = channel ?? const MethodChannel(IosNativeRecorder.channelName);
 
   final MethodChannel _channel;
 
   @override
   Future<bool> isNativeRecorderAvailable() async {
-    final result = await _channel.invokeMethod<bool>('isNativeRecorderAvailable');
+    final result = await _channel.invokeMethod<bool>(
+      'isNativeRecorderAvailable',
+    );
     return result ?? false;
   }
 
@@ -267,6 +269,8 @@ abstract class IosNativeRecorder {
   IosNativeRecorder._();
 
   static const channelName = 'archive_me/ios_native_recorder';
+
+  static bool get hasInjectedTestPlatform => testPlatform != null;
 
   @visibleForTesting
   static IosNativeRecorderPlatform? testPlatform;

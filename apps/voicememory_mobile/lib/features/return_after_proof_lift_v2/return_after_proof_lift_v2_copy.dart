@@ -33,17 +33,13 @@ abstract final class ReturnAfterProofLiftV2Copy {
       'Watch for the next moment that feels connected.';
 }
 
-enum ReturnAfterProofLiftV2ActionType {
-  saveNextReturn,
-  expandWatch,
-  dismiss,
-}
+enum ReturnAfterProofLiftV2ActionType { saveNextReturn, expandWatch, dismiss }
 
 extension ReturnAfterProofLiftV2ActionTypeStorage
     on ReturnAfterProofLiftV2ActionType {
   String get analyticsValue => switch (this) {
-        ReturnAfterProofLiftV2ActionType.saveNextReturn => 'save_next_return',
-        ReturnAfterProofLiftV2ActionType.expandWatch => 'expand_watch',
-        ReturnAfterProofLiftV2ActionType.dismiss => 'dismiss',
-      };
+    ReturnAfterProofLiftV2ActionType.saveNextReturn => 'save_next_return',
+    ReturnAfterProofLiftV2ActionType.expandWatch => 'expand_watch',
+    ReturnAfterProofLiftV2ActionType.dismiss => 'dismiss',
+  };
 }

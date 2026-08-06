@@ -28,25 +28,24 @@ JournalEntry _entry({
   String observation = '',
   String exactLanguage = '',
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 14, 30),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: Reflection(
-        mood: mood,
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: exactLanguage,
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-      entryAboutness: aboutness,
-      memorySurfacing: surfacing,
-      preserveOriginal: preserveOriginal,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 14, 30),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: Reflection(
+    mood: mood,
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: exactLanguage,
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+  entryAboutness: aboutness,
+  memorySurfacing: surfacing,
+  preserveOriginal: preserveOriginal,
+);
 
 Future<void> _saveEntry(JournalEntry entry) async {
   await AppServices.instance.journalStore.save(entry);
@@ -116,15 +115,14 @@ void main() {
       expect(find.textContaining('[draft]'), findsNothing);
       expect(find.textContaining('Mood: neutral'), findsNothing);
       expect(find.text(MemorySurfacingCopy.surfacingTitle), findsNothing);
-      expect(
-        find.text(EntryAboutnessCopy.projectMaterialLabel),
-        findsNothing,
-      );
+      expect(find.text(EntryAboutnessCopy.projectMaterialLabel), findsNothing);
       expect(find.text(CuratedMemoryCopy.preserveOriginalLabel), findsNothing);
       expect(find.text(FactLedgerCopy.saveDetail), findsNothing);
     });
 
-    testWidgets('voice draft entry shows degraded transcription copy', (tester) async {
+    testWidgets('voice draft entry shows degraded transcription copy', (
+      tester,
+    ) async {
       await _saveAndPump(
         tester,
         entry: _entry(
@@ -142,11 +140,11 @@ void main() {
         find.text(TranscriptPendingCopy.savedLocallyTitle),
         findsOneWidget,
       );
+      expect(find.text(TranscriptPendingCopy.savedLocallyBody), findsOneWidget);
       expect(
-        find.text(TranscriptPendingCopy.savedLocallyBody),
+        find.byKey(const Key('entry_detail_type_what_you_said')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('entry_detail_type_what_you_said')), findsOneWidget);
     });
 
     testWidgets('typed transcript shows plainly', (tester) async {
@@ -156,12 +154,16 @@ void main() {
         entry: _entry(id: 'typed', transcript: typed),
       );
 
-      expect(find.byKey(const Key('entry_detail_recorded_body')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_detail_recorded_body')),
+        findsOneWidget,
+      );
       expect(find.text(typed), findsOneWidget);
     });
 
-    testWidgets('expanding advanced details reveals metadata controls',
-        (tester) async {
+    testWidgets('expanding advanced details reveals metadata controls', (
+      tester,
+    ) async {
       await _saveAndPump(
         tester,
         entry: _entry(
@@ -196,8 +198,9 @@ void main() {
   });
 
   group('Entry detail actions', () {
-    testWidgets('remember this button stays available on entry detail',
-        (tester) async {
+    testWidgets('remember this button stays available on entry detail', (
+      tester,
+    ) async {
       await _saveAndPump(tester, entry: _entry(id: 'remember'));
 
       expect(find.byKey(const Key('remember_this_button')), findsOneWidget);
@@ -227,13 +230,19 @@ void main() {
     testWidgets('delete shows confirmation dialog', (tester) async {
       await _saveAndPump(tester, entry: _entry(id: 'delete-me'));
 
-      expect(find.byKey(const Key('entry_detail_delete_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_detail_delete_button')),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('entry_detail_delete_button')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.text(EntryDetailCopy.deleteConfirmTitle), findsOneWidget);
-      expect(find.byKey(const Key('entry_detail_delete_confirm')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_detail_delete_confirm')),
+        findsOneWidget,
+      );
     });
   });
 }

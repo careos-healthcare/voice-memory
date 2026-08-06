@@ -9,28 +9,31 @@ import 'package:voicememory_mobile/features/monetization/presentation/services/r
 
 void main() {
   group('RevenueCatPaywallPresenter', () {
-    testWidgets('falls back to subscription route when paywall gate is closed',
-        (tester) async {
-      var fallbackCalls = 0;
-      PaywallRouteArgs? capturedArgs;
-      final presenter = RevenueCatPaywallPresenter(
-        canOpenPaywall: () async => false,
-        openFallbackRouteOverride: (context, args) async {
-          fallbackCalls++;
-          capturedArgs = args;
-        },
-      );
+    testWidgets(
+      'falls back to subscription route when paywall gate is closed',
+      (tester) async {
+        var fallbackCalls = 0;
+        PaywallRouteArgs? capturedArgs;
+        final presenter = RevenueCatPaywallPresenter(
+          canOpenPaywall: () async => false,
+          openFallbackRouteOverride: (context, args) async {
+            fallbackCalls++;
+            capturedArgs = args;
+          },
+        );
 
-      final result = await _triggerFromHost(tester, presenter);
+        final result = await _triggerFromHost(tester, presenter);
 
-      expect(result, PaywallResult.fallbackRoute);
-      expect(fallbackCalls, 1);
-      expect(capturedArgs?.source, PaywallSource.valueMoment);
-      expect(capturedArgs?.sourceRoute, '/record');
-    });
+        expect(result, PaywallResult.fallbackRoute);
+        expect(fallbackCalls, 1);
+        expect(capturedArgs?.source, PaywallSource.valueMoment);
+        expect(capturedArgs?.sourceRoute, '/record');
+      },
+    );
 
-    testWidgets('presents native paywall with close button when gate opens',
-        (tester) async {
+    testWidgets('presents native paywall with close button when gate opens', (
+      tester,
+    ) async {
       var paywallCalls = 0;
       var closeButtonEnabled = false;
       final presenter = RevenueCatPaywallPresenter(
@@ -67,8 +70,9 @@ void main() {
       expect(result, PaywallResult.fallbackRoute);
     });
 
-    testWidgets('returns purchased when entitlement verification succeeds',
-        (tester) async {
+    testWidgets('returns purchased when entitlement verification succeeds', (
+      tester,
+    ) async {
       final presenter = RevenueCatPaywallPresenter(
         canOpenPaywall: () async => true,
         presentPaywallOverride: ({offering, displayCloseButton = false}) async {
@@ -86,8 +90,9 @@ void main() {
       expect(result, PaywallResult.purchased);
     });
 
-    testWidgets('returns restored when native restore verifies entitlement',
-        (tester) async {
+    testWidgets('returns restored when native restore verifies entitlement', (
+      tester,
+    ) async {
       final presenter = RevenueCatPaywallPresenter(
         canOpenPaywall: () async => true,
         presentPaywallOverride: ({offering, displayCloseButton = false}) async {
@@ -105,20 +110,25 @@ void main() {
       expect(result, PaywallResult.restored);
     });
 
-    testWidgets('presentIfNeeded delegates to native conditional presenter',
-        (tester) async {
+    testWidgets('presentIfNeeded delegates to native conditional presenter', (
+      tester,
+    ) async {
       var ifNeededCalls = 0;
       String? capturedEntitlement;
       var closeButtonEnabled = false;
       final presenter = RevenueCatPaywallPresenter(
         canOpenPaywall: () async => true,
         presentPaywallIfNeededOverride:
-            (requiredEntitlementIdentifier, {offering, displayCloseButton = false}) async {
-          ifNeededCalls++;
-          capturedEntitlement = requiredEntitlementIdentifier;
-          closeButtonEnabled = displayCloseButton;
-          return purchases_ui.PaywallResult.notPresented;
-        },
+            (
+              requiredEntitlementIdentifier, {
+              offering,
+              displayCloseButton = false,
+            }) async {
+              ifNeededCalls++;
+              capturedEntitlement = requiredEntitlementIdentifier;
+              closeButtonEnabled = displayCloseButton;
+              return purchases_ui.PaywallResult.notPresented;
+            },
       );
 
       PaywallResult? result;
@@ -203,8 +213,9 @@ CustomerInfo _customerInfo({required bool proActive}) {
         ? <String, dynamic>{'pro_monthly': '2026-01-01T00:00:00Z'}
         : <String, dynamic>{},
     'activeSubscriptions': proActive ? <String>['pro_monthly'] : <String>[],
-    'allPurchasedProductIdentifiers':
-        proActive ? <String>['pro_monthly'] : <String>[],
+    'allPurchasedProductIdentifiers': proActive
+        ? <String>['pro_monthly']
+        : <String>[],
     'nonSubscriptionTransactions': <dynamic>[],
     'firstSeen': '2026-01-01T00:00:00Z',
     'originalAppUserId': 'test-user',

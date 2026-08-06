@@ -69,15 +69,16 @@ class _BetaActivationPathCardState extends State<BetaActivationPathCard> {
   @override
   Widget build(BuildContext context) {
     if (_dismissedToday || !widget.result.shouldShow) {
-      return const SizedBox.shrink(key: Key('beta_activation_path_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('beta_activation_path_card_hidden'),
+      );
     }
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('beta_activation_path_card'),
@@ -91,9 +92,9 @@ class _BetaActivationPathCardState extends State<BetaActivationPathCard> {
             Text(
               widget.result.diagnosis,
               key: const Key('beta_activation_path_diagnosis'),
-              style: ArchiveMobileTypography.caption(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.caption(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.xs),
           ],

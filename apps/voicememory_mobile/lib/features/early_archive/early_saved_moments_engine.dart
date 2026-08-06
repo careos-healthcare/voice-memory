@@ -29,8 +29,9 @@ abstract final class EarlySavedMomentsEngine {
           previewText: _previewText(sorted[i]),
           savedAt: sorted[i].createdAt,
           entryId: sorted[i].id,
-          isPendingTranscript:
-              PendingTranscriptRecoveryGate.entryNeedsRecovery(sorted[i]),
+          isPendingTranscript: PendingTranscriptRecoveryGate.entryNeedsRecovery(
+            sorted[i],
+          ),
         ),
     ];
 

@@ -1,10 +1,7 @@
 import 'first_session_lift_copy.dart';
 
 class FirstSessionLiftChip {
-  const FirstSessionLiftChip({
-    required this.id,
-    required this.text,
-  });
+  const FirstSessionLiftChip({required this.id, required this.text});
 
   final FirstSessionLiftChipId id;
   final String text;

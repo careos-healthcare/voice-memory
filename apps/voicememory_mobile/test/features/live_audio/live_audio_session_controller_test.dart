@@ -19,7 +19,9 @@ import 'package:voicememory_mobile/storage/device_id.dart';
 
 void main() {
   test('controller mirrors coordinator state transitions', () async {
-    ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+    ApiUsageGuard.resetForTest(
+      replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+    );
 
     final sinkController = StreamController<dynamic>();
     final coordinator = LiveAudioSessionCoordinator(
@@ -108,8 +110,7 @@ class _FakeApiClientWithAttest extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }
 
 class _FakeCaptureForController implements LivePcm16CaptureSource {

@@ -106,11 +106,11 @@ void main() {
       (tester) async {
         await pumpPaywall(tester);
 
-      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(
-        find.textContaining('Purchases are not available right now'),
-        findsOneWidget,
-      );
+        expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+        expect(
+          find.textContaining('Purchases are not available right now'),
+          findsOneWidget,
+        );
 
         await tester.ensureVisible(find.text(ConsumerUiCopy.restorePurchases));
         await tester.tap(find.text(ConsumerUiCopy.restorePurchases));
@@ -138,10 +138,7 @@ void main() {
     ) async {
       await pumpPaywall(tester);
 
-      expect(
-        find.byKey(const Key('paywall_unavailable_body')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       expect(
         tester
             .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))

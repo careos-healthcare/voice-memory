@@ -61,7 +61,9 @@ void main() {
     expect(next.type, ResultNextCheckType.repeatBefore);
     expect(
       next.whyUseful,
-      contains('This is useful because it makes tomorrow\u2019s check specific.'),
+      contains(
+        'This is useful because it makes tomorrow\u2019s check specific.',
+      ),
     );
   });
 
@@ -99,7 +101,9 @@ void main() {
     expect(next.type, ResultNextCheckType.repeatBefore);
     expect(
       next.whyUseful,
-      contains('This is useful because it makes tomorrow\u2019s check specific.'),
+      contains(
+        'This is useful because it makes tomorrow\u2019s check specific.',
+      ),
     );
   });
 

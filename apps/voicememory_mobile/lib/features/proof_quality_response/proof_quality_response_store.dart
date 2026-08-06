@@ -18,8 +18,7 @@ class ProofQualityResponseStore {
   static String recordKey({
     required ProofQualityResponseSurface surface,
     required String proofKey,
-  }) =>
-      '${surface.storageValue}|$proofKey';
+  }) => '${surface.storageValue}|$proofKey';
 
   static ProofQualityResponseRecord recordFor({
     required ProofQualityResponseSurface surface,
@@ -31,14 +30,12 @@ class ProofQualityResponseStore {
   static bool isAnswered({
     required ProofQualityResponseSurface surface,
     required String proofKey,
-  }) =>
-      recordFor(surface: surface, proofKey: proofKey).answered;
+  }) => recordFor(surface: surface, proofKey: proofKey).answered;
 
   static bool stillTooVagueFor({
     required ProofQualityResponseSurface surface,
     required String proofKey,
-  }) =>
-      recordFor(surface: surface, proofKey: proofKey).stillTooVague;
+  }) => recordFor(surface: surface, proofKey: proofKey).stillTooVague;
 
   static ProofQualityResponseStore instance() =>
       ProofQualityResponseStore(AppServices.instance.prefs);

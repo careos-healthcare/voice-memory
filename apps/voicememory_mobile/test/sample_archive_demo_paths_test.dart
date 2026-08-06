@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
 import 'package:voicememory_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:voicememory_mobile/screens/sample_archive_context_screen.dart';
-import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
+import 'package:archiveme_research/screens/sample_archive_screen.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/demo/sample_archive_demo_paths_card.dart';
@@ -104,21 +104,26 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SampleArchiveScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SampleArchiveScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('sample_archive_demo_paths_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_demo_paths_card')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.demoPathsTitle), findsOneWidget);
       expect(find.text(SampleArchiveCopy.demoPathsIntro), findsOneWidget);
-      expect(find.byKey(const Key('sample_archive_demo_path_work_context')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_demo_path_work_context')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('Open Work context routes to sample context screen', (tester) async {
+    testWidgets('Open Work context routes to sample context screen', (
+      tester,
+    ) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -139,24 +144,27 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      final workPath = find.byKey(const Key('sample_archive_demo_path_work_context'));
+      final workPath = find.byKey(
+        const Key('sample_archive_demo_path_work_context'),
+      );
       await tester.ensureVisible(workPath);
       await tester.tap(workPath);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('sample_archive_context_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('sample_archive_context_screen')),
+        findsOneWidget,
+      );
       expect(find.text(SampleArchiveCopy.sampleContextBanner), findsOneWidget);
       for (final entry in SampleArchiveEntries.build()) {
-        if (entry.captureContextTag == SampleArchiveDemoPaths.workContextTagId) {
+        if (entry.captureContextTag ==
+            SampleArchiveDemoPaths.workContextTagId) {
           expect(
             find.byKey(Key('sample_archive_context_item_${entry.id}')),
             findsOneWidget,
@@ -178,8 +186,10 @@ void main() {
         },
       );
       addTearDown(
-        () => tester.binding.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.platform, null),
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
       );
 
       await tester.binding.setSurfaceSize(const Size(390, 3000));
@@ -198,7 +208,9 @@ void main() {
       );
       await tester.pump();
 
-      final copyPath = find.byKey(const Key('sample_archive_demo_path_copy_summary'));
+      final copyPath = find.byKey(
+        const Key('sample_archive_demo_path_copy_summary'),
+      );
       await tester.ensureVisible(copyPath);
       await tester.tap(copyPath);
       await tester.pump();

@@ -85,44 +85,43 @@ abstract final class ReturnTomorrowRitualGate {
 
   static ReturnTomorrowRitualGateReport report(
     ReturnTomorrowRitualGateResult result,
-  ) =>
-      ReturnTomorrowRitualGateReport(
-        headline: ReturnTomorrowRitualCopy.headline,
-        body: ReturnTomorrowRitualCopy.body,
-        positioning: ReturnTomorrowRitualCopy.positioning,
-        allowedLanguageLine: ReturnTomorrowRitualCopy.allowedLanguageLine,
-        orderLine: ReturnTomorrowRitualCopy.orderLine,
-        guardrail: ReturnTomorrowRitualCopy.guardrail,
-        result: result,
-      );
+  ) => ReturnTomorrowRitualGateReport(
+    headline: ReturnTomorrowRitualCopy.headline,
+    body: ReturnTomorrowRitualCopy.body,
+    positioning: ReturnTomorrowRitualCopy.positioning,
+    allowedLanguageLine: ReturnTomorrowRitualCopy.allowedLanguageLine,
+    orderLine: ReturnTomorrowRitualCopy.orderLine,
+    guardrail: ReturnTomorrowRitualCopy.guardrail,
+    result: result,
+  );
 
   static ReturnTomorrowRitualGateInput composeInput({
     bool? paidIntentBetaComplete,
     bool? v1RitualUiRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      ReturnTomorrowRitualGateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        v1RitualUiRequested: v1RitualUiRequested,
-      );
+  }) => ReturnTomorrowRitualGateInput(
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    v1RitualUiRequested: v1RitualUiRequested,
+  );
 
   static ReturnTomorrowRitualGateInput fromRepoSignals({
     required String returnTomorrowRitualDocSource,
     required String gateCopySource,
     bool? paidIntentBetaComplete,
     bool? v1RitualUiRequested,
-  }) =>
-      ReturnTomorrowRitualGateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        v1RitualUiRequested: v1RitualUiRequested,
-        docListsRules: detectDocListsRules(returnTomorrowRitualDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        allowedLanguagePresentInCopy:
-            detectAllowedLanguagePresentInCopy(gateCopySource),
-      );
+  }) => ReturnTomorrowRitualGateInput(
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    v1RitualUiRequested: v1RitualUiRequested,
+    docListsRules: detectDocListsRules(returnTomorrowRitualDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    allowedLanguagePresentInCopy: detectAllowedLanguagePresentInCopy(
+      gateCopySource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -177,7 +176,9 @@ abstract final class ReturnTomorrowRitualGate {
     return [
       _rule(
         id: ReturnTomorrowRitualRuleId.allowedLanguageDocumented,
-        passes: canonicalAllowedLanguage.every(copyBundle.toLowerCase().contains),
+        passes: canonicalAllowedLanguage.every(
+          copyBundle.toLowerCase().contains,
+        ),
       ),
       _rule(
         id: ReturnTomorrowRitualRuleId.noBlockedRetentionPressure,
@@ -189,7 +190,8 @@ abstract final class ReturnTomorrowRitualGate {
       ),
       _rule(
         id: ReturnTomorrowRitualRuleId.noNewLiveV1Ui,
-        passes: guardrailLower.contains('no new live v1 ui') &&
+        passes:
+            guardrailLower.contains('no new live v1 ui') &&
             (!(input.v1RitualUiRequested ?? false) || betaProofComplete),
       ),
     ];
@@ -269,17 +271,16 @@ abstract final class ReturnTomorrowRitualGate {
   static ReturnTomorrowRitualRule _rule({
     required ReturnTomorrowRitualRuleId id,
     required bool passes,
-  }) =>
-      ReturnTomorrowRitualRule(
-        id: id,
-        label: ReturnTomorrowRitualCopy.ruleLabelFor(id),
-        status: passes
-            ? ReturnTomorrowRitualRuleStatus.pass
-            : ReturnTomorrowRitualRuleStatus.fail,
-        detailLabel: passes
-            ? ReturnTomorrowRitualCopy.detailPass
-            : ReturnTomorrowRitualCopy.detailFail,
-      );
+  }) => ReturnTomorrowRitualRule(
+    id: id,
+    label: ReturnTomorrowRitualCopy.ruleLabelFor(id),
+    status: passes
+        ? ReturnTomorrowRitualRuleStatus.pass
+        : ReturnTomorrowRitualRuleStatus.fail,
+    detailLabel: passes
+        ? ReturnTomorrowRitualCopy.detailPass
+        : ReturnTomorrowRitualCopy.detailFail,
+  );
 }
 
 class ReturnTomorrowRitualGateInput {

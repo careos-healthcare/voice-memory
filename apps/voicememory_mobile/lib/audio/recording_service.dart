@@ -92,14 +92,12 @@ class RecordingService {
     AudioRecorder? recorder,
     bool testMode = false,
     MicrophonePermissionGateway? permissionGateway,
-    bool? hasRecorderOverride,
-    @visibleForTesting bool? useNativeRecorderOverride,
+    this._hasRecorderOverride,
+    @visibleForTesting this._useNativeRecorderOverride,
   }) : _testMode = testMode,
        _recorder = testMode ? null : (recorder ?? AudioRecorder()),
        _permissionGateway =
-           permissionGateway ?? PermissionHandlerMicrophoneGateway(),
-       _hasRecorderOverride = hasRecorderOverride,
-       _useNativeRecorderOverride = useNativeRecorderOverride;
+           permissionGateway ?? PermissionHandlerMicrophoneGateway();
 
   final bool _testMode;
   final AudioRecorder? _recorder;
@@ -184,7 +182,9 @@ class RecordingService {
       );
     }
     if (allowPhysicalRecorderMismatch) {
-      MicrophonePermissionEnvironment.logPhysicalMismatchWarning(status: status);
+      MicrophonePermissionEnvironment.logPhysicalMismatchWarning(
+        status: status,
+      );
     }
     final state = MicrophonePermissionResolver.resolve(
       status: status,
@@ -366,9 +366,7 @@ class RecordingService {
       status: beforeStatus,
       hasRecorder: beforeHas,
     )) {
-      _recordLog(
-        'permission request skipped — physical iOS recorder verified',
-      );
+      _recordLog('permission request skipped — physical iOS recorder verified');
       final preferSimulator = await _preferSimulatorRecorderOverride(
         status: beforeStatus,
         hasRecorder: beforeHas,
@@ -433,13 +431,17 @@ class RecordingService {
       if (!resolution.isRecordable) {
         _recordLog('start failed — microphone phase=${resolution.phase}');
         RecordPipelineLog.microphonePermissionBlocked(blocked: true);
-        throw RecordingException('Microphone not available: ${resolution.phase}');
+        throw RecordingException(
+          'Microphone not available: ${resolution.phase}',
+        );
       }
     } else {
       if (await _usesNativeMicPermission()) {
         final resolution = await evaluateMicrophonePermission();
         if (!resolution.isRecordable) {
-          _recordLog('start failed — native microphone phase=${resolution.phase}');
+          _recordLog(
+            'start failed — native microphone phase=${resolution.phase}',
+          );
           RecordPipelineLog.microphonePermissionBlocked(blocked: true);
           throw RecordingException(
             'Microphone not available: ${resolution.phase}',
@@ -464,7 +466,7 @@ class RecordingService {
         _usingNativeRecorder = true;
         nativeStartCallCount++;
         _activePath = _testRecordingPath(native: true);
-        if (IosNativeRecorder.testPlatform != null) {
+        if (IosNativeRecorder.hasInjectedTestPlatform) {
           _activePath = await IosNativeRecorder.startRecording(_activePath!);
         }
       }
@@ -515,9 +517,7 @@ class RecordingService {
       _silenceRetryTimer = null;
       _audioLevelMonitor.stop(logSummary: false);
       if (e is NativeRecorderException) {
-        _recordLog(
-          'native start failed step=${e.step} reason=${e.reason}',
-        );
+        _recordLog('native start failed step=${e.step} reason=${e.reason}');
         RecordPipelineLog.recorderStart(
           success: false,
           detail: 'step=${e.step} reason=${e.reason}',
@@ -538,16 +538,20 @@ class RecordingService {
 
   Future<RecordingResult> stopRecording() async {
     if (_testMode) {
-      final path = _activePath ?? _testRecordingPath(native: _usingNativeRecorder);
+      final path =
+          _activePath ?? _testRecordingPath(native: _usingNativeRecorder);
       final file = File(path);
       if (!file.existsSync()) {
         await file.writeAsBytes(const [0, 1, 2, 3, 4]);
       }
-      if (_usingNativeRecorder && IosNativeRecorder.testPlatform != null) {
+      if (_usingNativeRecorder && IosNativeRecorder.hasInjectedTestPlatform) {
         final nativeResult = await IosNativeRecorder.stopRecording();
         return RecordingResult(
           file: File(nativeResult.path),
-          durationSeconds: (nativeResult.durationMs / 1000).ceil().clamp(1, 9999),
+          durationSeconds: (nativeResult.durationMs / 1000).ceil().clamp(
+            1,
+            9999,
+          ),
           likelySilentInput: nativeResult.likelySilent,
           audioLevelSummary: nativeResult.toAudioLevelSummary(),
           captureInputPortName: nativeResult.inputPortName,
@@ -627,10 +631,7 @@ class RecordingService {
       exists: true,
       byteLength: byteLength,
     );
-    AudioCaptureDiagnostics.logCapturedFile(
-      file,
-      durationMs: durationMs,
-    );
+    AudioCaptureDiagnostics.logCapturedFile(file, durationMs: durationMs);
     _startedAt = null;
     _activePath = null;
     _usingNativeRecorder = false;
@@ -671,18 +672,13 @@ class RecordingService {
   Future<void> _maybeRetrySilentCapture() async {
     if (_testMode || _silenceRetryAttempted || _usingNativeRecorder) return;
     if (!await MicrophonePermissionEnvironment.isIosPhysicalDevice()) return;
-    if (!_audioLevelMonitor.shouldRetryForInitialSilence(
-      isIosPhysical: true,
-    )) {
+    if (!_audioLevelMonitor.shouldRetryForInitialSilence(isIosPhysical: true)) {
       return;
     }
 
     _silenceRetryAttempted = true;
     final oldMaxDb = _audioLevelMonitor.currentMaxDb;
-    AudioDiagLog.silenceRetry(
-      reason: 'low_initial_db',
-      oldMaxDb: oldMaxDb,
-    );
+    AudioDiagLog.silenceRetry(reason: 'low_initial_db', oldMaxDb: oldMaxDb);
 
     _audioLevelMonitor.stop(logSummary: false);
     final partialPath = await _activeRecorder.stop();

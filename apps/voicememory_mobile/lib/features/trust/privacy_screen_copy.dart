@@ -1,4 +1,6 @@
 /// In-app privacy and trust copy — ArchiveMe product voice only.
+library;
+
 import '../../security/privacy_copy_policy.dart';
 
 abstract class PrivacyScreenCopy {

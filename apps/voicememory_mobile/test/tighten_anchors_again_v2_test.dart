@@ -24,7 +24,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/tighten_anchors_again_v2/unused.json'));
+    : super(file: File('test/tmp/tighten_anchors_again_v2/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -47,23 +47,22 @@ JournalEntry _entry(
   DateTime? createdAt,
   String mood = 'thoughtful',
   String concreteObservation = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: mood,
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: concreteObservation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: mood,
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: concreteObservation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _specificRepeatEntries({DateTime? anchor}) {
   final base = anchor ?? _now;
@@ -113,25 +112,25 @@ List<JournalEntry> _genericWorkPressureEntries() {
 BetaRepairLabVisibilityInput _repairInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   BetaProofFeedbackType? feedbackType,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 void main() {
   late _MemoryPrefs prefs;
@@ -207,9 +206,12 @@ void main() {
     });
 
     test('generic-density rule rejects mostly generic phrases', () {
-      expect(AnchorSpecificityGuard.hasGenericDensityTooHigh(
-        'felt pressure again at work',
-      ), isTrue);
+      expect(
+        AnchorSpecificityGuard.hasGenericDensityTooHigh(
+          'felt pressure again at work',
+        ),
+        isTrue,
+      );
       expect(
         AnchorSpecificityGuard.isProofLevelEligible(
           'felt pressure again at work',
@@ -219,7 +221,10 @@ void main() {
     });
 
     test('weak-context-only phrase fails', () {
-      expect(AnchorSpecificityGuard.isWeakContextOnly('office pressure again'), isTrue);
+      expect(
+        AnchorSpecificityGuard.isWeakContextOnly('office pressure again'),
+        isTrue,
+      );
       expect(
         AnchorSpecificityGuard.isProofLevelEligible('office pressure again'),
         isFalse,
@@ -311,57 +316,57 @@ void main() {
       );
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.watchOnly,
-          ProofConfidenceLevel.corrected,
-        ),
+        anyOf(ProofConfidenceLevel.watchOnly, ProofConfidenceLevel.corrected),
       );
     });
 
-    test('pro evidence-trail pricing modes cannot override rejected anchor', () {
-      expect(
-        EvidenceTrailClarityEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-          ),
-          hasSafeAnchor: false,
-        ),
-        isFalse,
-      );
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
-      expect(
-        PricingValidationEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-            feedbackType: BetaProofFeedbackType.tooVague,
-          ),
-          hasProEngagement: true,
-        ),
-        isFalse,
-      );
-      expect(
-        ProofFloorRescueEngine.blocksProMonetization(
-          ProofFloorRescueInput(
-            entryCount: 4,
-            source: 'test',
-            isPro: false,
-            hasTimelineProofVisible: true,
-            hasConfirmedRepeat: true,
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
+    test(
+      'pro evidence-trail pricing modes cannot override rejected anchor',
+      () {
+        expect(
+          EvidenceTrailClarityEngine.shouldShow(
+            input: _repairInput(
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+            ),
             hasSafeAnchor: false,
-            hasLowMatchQuality: true,
-            usefulFeedbackCount: 0,
-            latestFeedbackType: BetaProofFeedbackType.tooVague,
-            feedbackAnsweredToday: true,
-            isRecording: false,
-            isDegradedTranscriptState: false,
-            whatChangedQuestionActive: false,
-            patternReviewInboxHasActiveItems: false,
           ),
-        ),
-        isTrue,
-      );
-    });
+          isFalse,
+        );
+        BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+        expect(
+          PricingValidationEngine.shouldShow(
+            input: _repairInput(
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+              feedbackType: BetaProofFeedbackType.tooVague,
+            ),
+            hasProEngagement: true,
+          ),
+          isFalse,
+        );
+        expect(
+          ProofFloorRescueEngine.blocksProMonetization(
+            ProofFloorRescueInput(
+              entryCount: 4,
+              source: 'test',
+              isPro: false,
+              hasTimelineProofVisible: true,
+              hasConfirmedRepeat: true,
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+              hasSafeAnchor: false,
+              hasLowMatchQuality: true,
+              usefulFeedbackCount: 0,
+              latestFeedbackType: BetaProofFeedbackType.tooVague,
+              feedbackAnsweredToday: true,
+              isRecording: false,
+              isDegradedTranscriptState: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems: false,
+            ),
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('existing confirmed-repeat specific proof still passes', () {
       final calibration = ProofConfidenceCalibrationEngine.build(
@@ -373,10 +378,7 @@ void main() {
       expect(calibration.hasSafeAnchor, isTrue);
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
       final timeline = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),

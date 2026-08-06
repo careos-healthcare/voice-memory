@@ -298,6 +298,9 @@ abstract class TranscriptionService {
     );
   }
 
+  /// Classifies a transcription failure for logging and degraded-save metadata.
+  static String classifyFailureReason(Object error) => failureReason(error);
+
   @visibleForTesting
   static String failureReason(Object error) {
     if (error is FormatException &&

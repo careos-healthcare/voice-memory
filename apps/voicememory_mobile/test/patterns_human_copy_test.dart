@@ -81,7 +81,10 @@ void main() {
 
       expect(copy.kind, PatternHumanCopyKind.fallback);
       expect(copy.heroTitle, PatternHumanCopy.fallbackEvidenceFirstHeroTitle);
-      expect(copy.mainObservation, PatternHumanCopy.fallbackMainObservationEvidence);
+      expect(
+        copy.mainObservation,
+        PatternHumanCopy.fallbackMainObservationEvidence,
+      );
     });
 
     test('allows natural short evidence words in isolation', () {
@@ -123,8 +126,14 @@ void main() {
         ),
       ]);
 
-      expect(bundle.belief.currentBelief, isNot(contains('follow a heavy should')));
-      expect(bundle.belief.currentBelief, isNot(contains('You may do more when')));
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('follow a heavy should')),
+      );
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('You may do more when')),
+      );
       expect(bundle.humanCopy?.exactEvidencePhrases, isNotEmpty);
     });
   });

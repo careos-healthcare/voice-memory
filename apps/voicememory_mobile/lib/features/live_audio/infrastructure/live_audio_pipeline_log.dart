@@ -42,9 +42,7 @@ abstract final class LiveAudioPipelineLog {
     required int sampleRateHz,
     required int numChannels,
   }) {
-    log(
-      'capture started sampleRateHz=$sampleRateHz numChannels=$numChannels',
-    );
+    log('capture started sampleRateHz=$sampleRateHz numChannels=$numChannels');
   }
 
   static void captureStopped() {

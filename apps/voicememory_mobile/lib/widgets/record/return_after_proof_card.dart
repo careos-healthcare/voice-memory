@@ -107,10 +107,9 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
     if (!widget.result.shouldShow) return const SizedBox.shrink();
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     if (_showStrengthenedLayout) {
       final strengthened = _strengthened!;
@@ -118,8 +117,9 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
         key: const Key('return_after_proof_strengthened_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration:
-            VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAFC),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -138,7 +138,9 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
             if (_dismissedToday) ...[
               Text(
                 ReturnAfterProofCopy.afterNotTodayDismiss,
-                key: const Key('return_after_proof_strengthened_after_not_today'),
+                key: const Key(
+                  'return_after_proof_strengthened_after_not_today',
+                ),
                 style: bodyStyle.copyWith(color: AppColors.textPrimary),
               ),
             ] else ...[
@@ -157,7 +159,9 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   strengthened.promptLine,
-                  key: const Key('return_after_proof_strengthened_selected_line'),
+                  key: const Key(
+                    'return_after_proof_strengthened_selected_line',
+                  ),
                   style: bodyStyle.copyWith(color: AppColors.textPrimary),
                 ),
               ],
@@ -171,7 +175,9 @@ class _ReturnAfterProofCardState extends State<ReturnAfterProofCard> {
       key: const Key('return_after_proof_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -13,7 +13,9 @@ void main() {
     late LocalAudioVault vault;
 
     setUp(() async {
-      vaultDirectory = await Directory.systemTemp.createTemp('local_audio_vault_');
+      vaultDirectory = await Directory.systemTemp.createTemp(
+        'local_audio_vault_',
+      );
       keyStore = InMemoryPrivateDataEncryptionKeyStore();
       await keyStore.ensureKey();
       vault = LocalAudioVault(
@@ -46,8 +48,10 @@ void main() {
       final bytes = await files.first.readAsBytes();
       expect(bytes.sublist(0, 4), [0x41, 0x56, 0x4d, 0x45]);
       expect(bytes[4], 1);
-      expect(bytes.buffer.asByteData().getUint32(5, Endian.little),
-          liveInputSampleRateHz);
+      expect(
+        bytes.buffer.asByteData().getUint32(5, Endian.little),
+        liveInputSampleRateHz,
+      );
       expect(bytes[9], liveInputNumChannels);
 
       final plaintextNeedle = frame.buffer.asUint8List(
@@ -71,7 +75,9 @@ void main() {
     test('closeVault flushes pending encrypted writes', () async {
       await vault.initializeVault('session_flush');
       for (var i = 0; i < 20; i++) {
-        vault.appendFrame(Int16List.fromList(List<int>.generate(320, (j) => j + i)));
+        vault.appendFrame(
+          Int16List.fromList(List<int>.generate(320, (j) => j + i)),
+        );
       }
 
       final file = await vault.closeVault();

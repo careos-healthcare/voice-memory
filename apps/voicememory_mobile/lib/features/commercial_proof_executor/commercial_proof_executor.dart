@@ -37,7 +37,9 @@ abstract final class CommercialProofExecutor {
       checks: checks,
       checklistOrder: canonicalChecklistOrder,
       earliestBlocker: checks
-          .where((check) => check.status == CommercialProofExecutorCheckStatus.fail)
+          .where(
+            (check) => check.status == CommercialProofExecutorCheckStatus.fail,
+          )
           .map((check) => check.id)
           .firstOrNull,
       commerciallyReady: commerciallyReady,
@@ -49,35 +51,33 @@ abstract final class CommercialProofExecutor {
   static CommercialProofExecutorResult fromCommercialReadinessGateInput(
     CommercialReadinessGateInput input, {
     bool secretsRotationRepoSafe = true,
-  }) =>
-      build(
-        CommercialProofExecutorInput(
-          productPromiseClear: input.productPromiseClear,
-          firstJourneyStable: input.firstJourneyStable,
-          firstProofUseful: input.firstProofUsefulEnough,
-          proPromiseClear: input.proPromiseClear,
-          revenueCatProductsLoad: input.revenueCatProductLoads,
-          paywallPriceVisible: input.paywallPriceVisible,
-          sandboxPurchaseWorks: input.sandboxPurchaseWorks,
-          restoreWorks: input.restoreWorks,
-          entitlementPersists: input.entitlementPersists,
-          testFlightUploaded: input.testFlightBuildUploaded,
-          paidIntentBetaComplete: input.paidIntentBetaComplete,
-          secretsRotationComplete: input.secretsRotationDone,
-          secretsRotationRepoSafe: secretsRotationRepoSafe,
-        ),
-      );
+  }) => build(
+    CommercialProofExecutorInput(
+      productPromiseClear: input.productPromiseClear,
+      firstJourneyStable: input.firstJourneyStable,
+      firstProofUseful: input.firstProofUsefulEnough,
+      proPromiseClear: input.proPromiseClear,
+      revenueCatProductsLoad: input.revenueCatProductLoads,
+      paywallPriceVisible: input.paywallPriceVisible,
+      sandboxPurchaseWorks: input.sandboxPurchaseWorks,
+      restoreWorks: input.restoreWorks,
+      entitlementPersists: input.entitlementPersists,
+      testFlightUploaded: input.testFlightBuildUploaded,
+      paidIntentBetaComplete: input.paidIntentBetaComplete,
+      secretsRotationComplete: input.secretsRotationDone,
+      secretsRotationRepoSafe: secretsRotationRepoSafe,
+    ),
+  );
 
   static CommercialProofExecutorReport report(
     CommercialProofExecutorResult result,
-  ) =>
-      CommercialProofExecutorReport(
-        headline: CommercialProofExecutorCopy.headline,
-        body: CommercialProofExecutorCopy.body,
-        orderLine: CommercialProofExecutorCopy.orderLine,
-        guardrail: CommercialProofExecutorCopy.guardrail,
-        result: result,
-      );
+  ) => CommercialProofExecutorReport(
+    headline: CommercialProofExecutorCopy.headline,
+    body: CommercialProofExecutorCopy.body,
+    orderLine: CommercialProofExecutorCopy.orderLine,
+    guardrail: CommercialProofExecutorCopy.guardrail,
+    result: result,
+  );
 
   static bool _internalTestFlightReady(
     CommercialProofExecutorInput input,
@@ -159,14 +159,14 @@ abstract final class CommercialProofExecutor {
           : CommercialProofExecutorCheckStatus.fail;
     }
 
-    final productOk = input.productPromiseClear &&
+    final productOk =
+        input.productPromiseClear &&
         input.firstJourneyStable &&
         input.firstProofUseful &&
         input.proPromiseClear;
     final storeOk = productOk && input.revenueCatProductsLoad;
-    final purchaseOk = storeOk &&
-        input.paywallPriceVisible &&
-        input.sandboxPurchaseWorks;
+    final purchaseOk =
+        storeOk && input.paywallPriceVisible && input.sandboxPurchaseWorks;
     final restoreOk = purchaseOk && input.restoreWorks;
     final entitlementOk = restoreOk && input.entitlementPersists;
     final testFlightOk = entitlementOk && input.testFlightUploaded;
@@ -248,20 +248,19 @@ abstract final class CommercialProofExecutor {
   static CommercialProofExecutorCheck _check({
     required CommercialProofExecutorCheckId id,
     required CommercialProofExecutorCheckStatus status,
-  }) =>
-      CommercialProofExecutorCheck(
-        id: id,
-        label: CommercialProofExecutorCopy.labelFor(id),
-        status: status,
-        detailLabel: switch (status) {
-          CommercialProofExecutorCheckStatus.pass =>
-            CommercialProofExecutorCopy.detailPass,
-          CommercialProofExecutorCheckStatus.fail =>
-            CommercialProofExecutorCopy.detailFail,
-          CommercialProofExecutorCheckStatus.blocked =>
-            CommercialProofExecutorCopy.detailBlocked,
-        },
-      );
+  }) => CommercialProofExecutorCheck(
+    id: id,
+    label: CommercialProofExecutorCopy.labelFor(id),
+    status: status,
+    detailLabel: switch (status) {
+      CommercialProofExecutorCheckStatus.pass =>
+        CommercialProofExecutorCopy.detailPass,
+      CommercialProofExecutorCheckStatus.fail =>
+        CommercialProofExecutorCopy.detailFail,
+      CommercialProofExecutorCheckStatus.blocked =>
+        CommercialProofExecutorCopy.detailBlocked,
+    },
+  );
 }
 
 class CommercialProofExecutorInput {

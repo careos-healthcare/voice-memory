@@ -114,14 +114,12 @@ class _ArchiveInsightFeedbackControlsState
 
   @override
   Widget build(BuildContext context) {
-    final chipStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontWeight: FontWeight.w600,
-    );
-    final explainStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final chipStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.accentPrimary, fontWeight: FontWeight.w600);
+    final explainStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Column(
       key: const Key('archive_insight_feedback_controls'),
@@ -223,8 +221,7 @@ class _ArchiveInsightFeedbackControlsState
             ],
           ),
         ],
-        if (!_showCorrectionEditor)
-          _buildCorrectionContext(explainStyle),
+        if (!_showCorrectionEditor) _buildCorrectionContext(explainStyle),
         if (_whyExpanded) ...[
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -244,7 +241,9 @@ class _ArchiveInsightFeedbackControlsState
             key: const Key('archive_insight_feedback_why_hide'),
             style: explainStyle,
           ),
-          if (ArchiveInsightFeedbackStore.hasCorrectionNote(widget.insightId)) ...[
+          if (ArchiveInsightFeedbackStore.hasCorrectionNote(
+            widget.insightId,
+          )) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
               ArchiveInsightFeedbackCopy.correctionMarkedNotQuite,
@@ -292,7 +291,8 @@ class ArchiveInsightFeedbackHost extends StatefulWidget {
       _ArchiveInsightFeedbackHostState();
 }
 
-class _ArchiveInsightFeedbackHostState extends State<ArchiveInsightFeedbackHost> {
+class _ArchiveInsightFeedbackHostState
+    extends State<ArchiveInsightFeedbackHost> {
   late bool _hidden;
 
   @override

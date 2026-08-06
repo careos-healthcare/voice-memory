@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/paid_intent/paid_intent_confirmation_copy.dart';
-import '../features/paid_intent/paid_intent_confirmation_engine.dart';
 import '../features/paid_intent/paid_intent_confirmation_models.dart';
 import '../features/paid_intent/paid_intent_confirmation_store.dart';
 import '../theme/app_colors.dart';
@@ -44,7 +43,8 @@ class PaidIntentConfirmationCard extends StatefulWidget {
       _PaidIntentConfirmationCardState();
 }
 
-class _PaidIntentConfirmationCardState extends State<PaidIntentConfirmationCard> {
+class _PaidIntentConfirmationCardState
+    extends State<PaidIntentConfirmationCard> {
   String? _selectedLabel;
   bool _saving = false;
 
@@ -62,7 +62,8 @@ class _PaidIntentConfirmationCardState extends State<PaidIntentConfirmationCard>
       );
     }
 
-    if (!widget.result.showCard && widget.result.answeredSummaryLine.isNotEmpty) {
+    if (!widget.result.showCard &&
+        widget.result.answeredSummaryLine.isNotEmpty) {
       return Text(
         widget.result.answeredSummaryLine,
         key: const Key('paid_intent_confirmation_answered_line'),

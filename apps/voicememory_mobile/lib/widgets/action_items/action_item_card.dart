@@ -5,7 +5,6 @@ import '../../features/action_items/action_item_store.dart';
 import '../../features/action_items/archive_action_item.dart';
 import '../../features/archive_search/archive_search_filters.dart';
 import '../../models/journal_entry.dart';
-import '../../services/activation_funnel_analytics.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import 'action_item_editor_sheet.dart';

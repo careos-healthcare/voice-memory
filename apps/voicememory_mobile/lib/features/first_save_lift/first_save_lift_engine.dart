@@ -9,23 +9,22 @@ abstract final class FirstSaveLiftEngine {
   static FirstSaveLiftResult build({
     required int entryCount,
     required String source,
-  }) =>
-      FirstSaveLiftResult(
-        shouldShow: entryCount == 0,
-        title: FirstSaveLiftCopy.title,
-        body: FirstSaveLiftCopy.body,
-        primaryCta: FirstSaveLiftCopy.primaryCta,
-        secondaryCta: FirstSaveLiftCopy.secondaryCta,
-        examples: [
-          for (final id in FirstSaveLiftCopy.exampleOrder)
-            FirstSaveLiftExample(
-              id: id,
-              text: FirstSaveLiftCopy.exampleTextFor(id),
-            ),
-        ],
-        entryCount: entryCount,
-        source: source,
-      );
+  }) => FirstSaveLiftResult(
+    shouldShow: entryCount == 0,
+    title: FirstSaveLiftCopy.title,
+    body: FirstSaveLiftCopy.body,
+    primaryCta: FirstSaveLiftCopy.primaryCta,
+    secondaryCta: FirstSaveLiftCopy.secondaryCta,
+    examples: [
+      for (final id in FirstSaveLiftCopy.exampleOrder)
+        FirstSaveLiftExample(
+          id: id,
+          text: FirstSaveLiftCopy.exampleTextFor(id),
+        ),
+    ],
+    entryCount: entryCount,
+    source: source,
+  );
 
   static bool shouldShow({
     required FirstSaveLiftResult? result,

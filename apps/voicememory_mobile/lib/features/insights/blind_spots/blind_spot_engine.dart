@@ -73,7 +73,7 @@ class BlindSpotInsightEngine {
     final title = _topicLabel(topic);
     final summary =
         '$title appears in $pct% of reflections, but enjoyment or satisfaction '
-        'language appears rarely (${positiveMentions} of ${mentions.length} mentions).';
+        'language appears rarely ($positiveMentions of ${mentions.length} mentions).';
 
     return BlindSpotInsight(
       id: 'blind-$topic-frequency',

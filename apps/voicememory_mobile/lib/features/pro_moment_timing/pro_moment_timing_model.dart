@@ -10,11 +10,11 @@ enum ProMomentTimingSurface {
 
 extension ProMomentTimingSurfaceStorage on ProMomentTimingSurface {
   String get analyticsValue => switch (this) {
-        ProMomentTimingSurface.recordReady => 'record_ready',
-        ProMomentTimingSurface.recordPostSave => 'record_post_save',
-        ProMomentTimingSurface.archivePatterns => 'archive_patterns',
-        ProMomentTimingSurface.paywall => 'paywall',
-      };
+    ProMomentTimingSurface.recordReady => 'record_ready',
+    ProMomentTimingSurface.recordPostSave => 'record_post_save',
+    ProMomentTimingSurface.archivePatterns => 'archive_patterns',
+    ProMomentTimingSurface.paywall => 'paywall',
+  };
 }
 
 enum ProMomentTimingTrigger {
@@ -34,25 +34,25 @@ enum ProMomentTimingTrigger {
 
 extension ProMomentTimingTriggerStorage on ProMomentTimingTrigger {
   String get analyticsValue => switch (this) {
-        ProMomentTimingTrigger.timelineProofMoment => 'timeline_proof_moment',
-        ProMomentTimingTrigger.firstProofPayoff => 'first_proof_payoff',
-        ProMomentTimingTrigger.betaTesterReport => 'beta_tester_report',
-        ProMomentTimingTrigger.monthlyPrivateReportPreview =>
-          'monthly_private_report_preview',
-        ProMomentTimingTrigger.usefulFeedback => 'useful_feedback',
-        ProMomentTimingTrigger.correctionImprovedTimeline =>
-          'correction_improved_timeline',
-        ProMomentTimingTrigger.betaProofLiftUnderValidProof =>
-          'beta_proof_lift_under_valid_proof',
-        ProMomentTimingTrigger.returnAfterProofStrengthened =>
-          'return_after_proof_strengthened',
-        ProMomentTimingTrigger.freshReturnAfterCorrection =>
-          'fresh_return_after_correction',
-        ProMomentTimingTrigger.usefulProofConfidence => 'useful_proof_confidence',
-        ProMomentTimingTrigger.strongProofConfidence => 'strong_proof_confidence',
-        ProMomentTimingTrigger.solidStrongPatternWithSafeAnchors =>
-          'solid_strong_pattern_with_safe_anchors',
-      };
+    ProMomentTimingTrigger.timelineProofMoment => 'timeline_proof_moment',
+    ProMomentTimingTrigger.firstProofPayoff => 'first_proof_payoff',
+    ProMomentTimingTrigger.betaTesterReport => 'beta_tester_report',
+    ProMomentTimingTrigger.monthlyPrivateReportPreview =>
+      'monthly_private_report_preview',
+    ProMomentTimingTrigger.usefulFeedback => 'useful_feedback',
+    ProMomentTimingTrigger.correctionImprovedTimeline =>
+      'correction_improved_timeline',
+    ProMomentTimingTrigger.betaProofLiftUnderValidProof =>
+      'beta_proof_lift_under_valid_proof',
+    ProMomentTimingTrigger.returnAfterProofStrengthened =>
+      'return_after_proof_strengthened',
+    ProMomentTimingTrigger.freshReturnAfterCorrection =>
+      'fresh_return_after_correction',
+    ProMomentTimingTrigger.usefulProofConfidence => 'useful_proof_confidence',
+    ProMomentTimingTrigger.strongProofConfidence => 'strong_proof_confidence',
+    ProMomentTimingTrigger.solidStrongPatternWithSafeAnchors =>
+      'solid_strong_pattern_with_safe_anchors',
+  };
 }
 
 enum ProMomentTimingBlockedReason {
@@ -70,20 +70,18 @@ enum ProMomentTimingBlockedReason {
 
 extension ProMomentTimingBlockedReasonStorage on ProMomentTimingBlockedReason {
   String get analyticsValue => switch (this) {
-        ProMomentTimingBlockedReason.beforeFirstSave => 'before_first_save',
-        ProMomentTimingBlockedReason.beforeFirstProof => 'before_first_proof',
-        ProMomentTimingBlockedReason.recording => 'recording',
-        ProMomentTimingBlockedReason.postSaveDegraded => 'post_save_degraded',
-        ProMomentTimingBlockedReason.feedbackTooVague => 'feedback_too_vague',
-        ProMomentTimingBlockedReason.feedbackNotRelevant =>
-          'feedback_not_relevant',
-        ProMomentTimingBlockedReason.whatChangedActive => 'what_changed_active',
-        ProMomentTimingBlockedReason.patternReviewInboxActive =>
-          'pattern_review_inbox_active',
-        ProMomentTimingBlockedReason.proSlotAlreadyUsed =>
-          'pro_slot_already_used',
-        ProMomentTimingBlockedReason.noAllowedMoment => 'no_allowed_moment',
-      };
+    ProMomentTimingBlockedReason.beforeFirstSave => 'before_first_save',
+    ProMomentTimingBlockedReason.beforeFirstProof => 'before_first_proof',
+    ProMomentTimingBlockedReason.recording => 'recording',
+    ProMomentTimingBlockedReason.postSaveDegraded => 'post_save_degraded',
+    ProMomentTimingBlockedReason.feedbackTooVague => 'feedback_too_vague',
+    ProMomentTimingBlockedReason.feedbackNotRelevant => 'feedback_not_relevant',
+    ProMomentTimingBlockedReason.whatChangedActive => 'what_changed_active',
+    ProMomentTimingBlockedReason.patternReviewInboxActive =>
+      'pattern_review_inbox_active',
+    ProMomentTimingBlockedReason.proSlotAlreadyUsed => 'pro_slot_already_used',
+    ProMomentTimingBlockedReason.noAllowedMoment => 'no_allowed_moment',
+  };
 }
 
 class ProMomentTimingContext {
@@ -174,14 +172,14 @@ class ProMomentTimingContext {
           hasBetaTesterReportVisible ?? this.hasBetaTesterReportVisible,
       hasMonthlyPrivateReportPreviewVisible:
           hasMonthlyPrivateReportPreviewVisible ??
-              this.hasMonthlyPrivateReportPreviewVisible,
+          this.hasMonthlyPrivateReportPreviewVisible,
       hasCorrectionMemoryVisible:
           hasCorrectionMemoryVisible ?? this.hasCorrectionMemoryVisible,
       hasBetaProofLiftVisible:
           hasBetaProofLiftVisible ?? this.hasBetaProofLiftVisible,
       hasReturnAfterProofStrengthenedVisible:
           hasReturnAfterProofStrengthenedVisible ??
-              this.hasReturnAfterProofStrengthenedVisible,
+          this.hasReturnAfterProofStrengthenedVisible,
       feedbackState: feedbackState ?? this.feedbackState,
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
@@ -192,7 +190,7 @@ class ProMomentTimingContext {
           hasFreshReturnAfterCorrection ?? this.hasFreshReturnAfterCorrection,
       hasSolidStrongPatternWithSafeAnchors:
           hasSolidStrongPatternWithSafeAnchors ??
-              this.hasSolidStrongPatternWithSafeAnchors,
+          this.hasSolidStrongPatternWithSafeAnchors,
     );
   }
 }
@@ -211,22 +209,22 @@ class ProMomentTimingResult {
     required String reason,
     bool hasTimelineProof = false,
   }) : this(
-          allowed: true,
-          trigger: trigger,
-          reason: reason,
-          hasTimelineProof: hasTimelineProof,
-        );
+         allowed: true,
+         trigger: trigger,
+         reason: reason,
+         hasTimelineProof: hasTimelineProof,
+       );
 
   const ProMomentTimingResult.blocked({
     required ProMomentTimingBlockedReason blockedReason,
     required String reason,
     bool hasTimelineProof = false,
   }) : this(
-          allowed: false,
-          blockedReason: blockedReason,
-          reason: reason,
-          hasTimelineProof: hasTimelineProof,
-        );
+         allowed: false,
+         blockedReason: blockedReason,
+         reason: reason,
+         hasTimelineProof: hasTimelineProof,
+       );
 
   final bool allowed;
   final ProMomentTimingTrigger? trigger;

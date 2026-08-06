@@ -7,7 +7,6 @@ import '../../features/beta/archive_beta_mission_gate.dart';
 import '../../features/beta_activation/beta_activation_summary_copy.dart';
 import '../../features/beta_feedback/beta_feedback_engine.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
-import '../../features/early_archive/private_archive_report_engine.dart';
 import '../../features/local_backup/local_backup_copy.dart';
 import '../../features/local_backup/local_backup_restore_service.dart';
 import '../../features/privacy_trust/privacy_trust_copy.dart';
@@ -52,9 +51,8 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
   LocalPrivacyDataControls get _controls =>
       widget.controls ?? LocalPrivacyDataControls.instance();
 
-  LocalBackupRestoreService get _backupService => LocalBackupRestoreService(
-        controls: widget.controls,
-      );
+  LocalBackupRestoreService get _backupService =>
+      LocalBackupRestoreService(controls: widget.controls);
 
   @override
   void initState() {
@@ -172,10 +170,9 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final showBetaSummary = ArchiveBetaMissionGate.isEnabled;
 
     return PushedScreenShell(
@@ -290,10 +287,7 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
       key: key,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          heading,
-          style: ArchiveMobileTypography.listTitle(context),
-        ),
+        Text(heading, style: ArchiveMobileTypography.listTitle(context)),
         const SizedBox(height: AppSpacing.xs),
         Text(body, style: bodyStyle),
       ],

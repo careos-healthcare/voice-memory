@@ -12,15 +12,15 @@ class RecordTopArchivePromiseHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stepStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 15,
-      height: 1.35,
-    );
-    final numberStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontWeight: FontWeight.w700,
-      fontSize: 13,
-    );
+    final stepStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 15, height: 1.35);
+    final numberStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.accentPrimary,
+          fontWeight: FontWeight.w700,
+          fontSize: 13,
+        );
 
     return Container(
       key: const Key('record_top_archive_promise_hero'),
@@ -38,7 +38,11 @@ class RecordTopArchivePromiseHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (var i = 0; i < VisibleArchiveProofCopy.firstRunPromiseSteps.length; i++) ...[
+          for (
+            var i = 0;
+            i < VisibleArchiveProofCopy.firstRunPromiseSteps.length;
+            i++
+          ) ...[
             if (i > 0) const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,9 +12,9 @@ class ThrottledTelemetryViewModel extends ChangeNotifier {
     required LiveVoiceTelemetrySource captureService,
     Stream<LiveVoiceDiagnosticsSnapshot>? diagnosticsStream,
     this.refreshInterval = const Duration(milliseconds: 100),
-  })  : _captureService = captureService,
-        _diagnosticsStream =
-            diagnosticsStream ?? captureService.diagnosticsStream {
+  }) : _captureService = captureService,
+       _diagnosticsStream =
+           diagnosticsStream ?? captureService.diagnosticsStream {
     _initTelemetryLoop();
   }
 

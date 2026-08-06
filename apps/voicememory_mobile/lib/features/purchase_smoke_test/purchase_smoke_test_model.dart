@@ -7,11 +7,11 @@ enum PurchaseSmokeTestStatus {
   unknown;
 
   String get label => switch (this) {
-        PurchaseSmokeTestStatus.ready => PurchaseSmokeTestCopy.statusReady,
-        PurchaseSmokeTestStatus.warning => PurchaseSmokeTestCopy.statusWarning,
-        PurchaseSmokeTestStatus.blocked => PurchaseSmokeTestCopy.statusBlocked,
-        PurchaseSmokeTestStatus.unknown => PurchaseSmokeTestCopy.statusUnknown,
-      };
+    PurchaseSmokeTestStatus.ready => PurchaseSmokeTestCopy.statusReady,
+    PurchaseSmokeTestStatus.warning => PurchaseSmokeTestCopy.statusWarning,
+    PurchaseSmokeTestStatus.blocked => PurchaseSmokeTestCopy.statusBlocked,
+    PurchaseSmokeTestStatus.unknown => PurchaseSmokeTestCopy.statusUnknown,
+  };
 }
 
 enum PurchaseSmokeTestCheckId {
@@ -87,14 +87,14 @@ class PurchaseSmokeTestSnapshot {
   final String? lastErrorSafe;
 
   List<String> get allDisplayedText => [
-        title,
-        body,
-        for (final check in checks) ...[
-          check.label,
-          check.detailLabel,
-          check.status.label,
-        ],
-        if (lastErrorSafe != null) lastErrorSafe!,
-        PurchaseSmokeTestCopy.localNote,
-      ];
+    title,
+    body,
+    for (final check in checks) ...[
+      check.label,
+      check.detailLabel,
+      check.status.label,
+    ],
+    ?lastErrorSafe,
+    PurchaseSmokeTestCopy.localNote,
+  ];
 }

@@ -20,13 +20,13 @@ abstract final class MomentQualityFeedbackCopy {
       'Add what you said so ArchiveMe can use this later.';
 
   static List<String> allVisibleCopy() => [
-        specificUsableTitle,
-        specificUsableBody,
-        savedTitle,
-        tooShortBody,
-        quietDayTitle,
-        quietDayBody,
-        genericTestBody,
-        pendingTranscriptBody,
-      ];
+    specificUsableTitle,
+    specificUsableBody,
+    savedTitle,
+    tooShortBody,
+    quietDayTitle,
+    quietDayBody,
+    genericTestBody,
+    pendingTranscriptBody,
+  ];
 }

@@ -52,7 +52,9 @@ void main() {
     });
 
     test('avoids therapy positioning beyond safety disclaimer', () {
-      final blob = PurchaseConfidenceCopy.allCardStrings().join(' ').toLowerCase();
+      final blob = PurchaseConfidenceCopy.allCardStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('does not make medical'));
       expect(blob, isNot(contains('therapy session')));
       expect(blob, isNot(contains('diagnosis')));
@@ -122,7 +124,9 @@ void main() {
   });
 
   group('Paywall placement', () {
-    testWidgets('paywall renders purchase confidence card once', (tester) async {
+    testWidgets('paywall renders purchase confidence card once', (
+      tester,
+    ) async {
       await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.generalPro),
@@ -167,7 +171,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('purchase_confidence_compact_trust')), findsOneWidget);
+      expect(
+        find.byKey(const Key('purchase_confidence_compact_trust')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('purchase_confidence_card')), findsNothing);
       expect(
         find.text(PurchaseConfidenceCopy.compactTrustLine),

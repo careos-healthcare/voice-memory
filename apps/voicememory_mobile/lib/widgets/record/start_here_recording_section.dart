@@ -149,8 +149,7 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
         const SizedBox(height: 10),
         Semantics(
           container: true,
-          label:
-              '${StartHereCatalog.sectionTitle}. ${prompts.length} options.',
+          label: '${StartHereCatalog.sectionTitle}. ${prompts.length} options.',
           child: promptOptions(),
         ),
       ],
@@ -187,9 +186,7 @@ class _StartHereOption extends StatelessWidget {
           borderRadius: BorderRadius.circular(compact ? 10 : 12),
           child: Container(
             width: compact ? null : double.infinity,
-            constraints: compact
-                ? const BoxConstraints(maxWidth: 320)
-                : null,
+            constraints: compact ? const BoxConstraints(maxWidth: 320) : null,
             padding: EdgeInsets.symmetric(
               horizontal: compact ? 12 : 14,
               vertical: compact ? 8 : 12,

@@ -61,10 +61,9 @@ class _FirstSessionCaptureRepairCardState
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('first_session_capture_repair_card'),
@@ -164,9 +163,9 @@ class ProofQualityRepairCard extends StatefulWidget {
     this.store,
     bool answered = false,
     BetaProofFeedbackType? answerType,
-  })  : skipPrefsLoad = true,
-        initialAnswered = answered,
-        initialAnswerType = answerType;
+  }) : skipPrefsLoad = true,
+       initialAnswered = answered,
+       initialAnswerType = answerType;
 
   final ProofQualityRepairResult result;
   final VoidCallback? onChanged;
@@ -237,15 +236,16 @@ class _ProofQualityRepairCardState extends State<ProofQualityRepairCard> {
   @override
   Widget build(BuildContext context) {
     if (!widget.result.shouldShow) {
-      return const SizedBox.shrink(key: Key('proof_quality_repair_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('proof_quality_repair_card_hidden'),
+      );
     }
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('proof_quality_repair_card'),
@@ -292,7 +292,9 @@ class _ProofQualityRepairCardState extends State<ProofQualityRepairCard> {
               children: [
                 for (final type in BetaProofFeedbackType.values)
                   TextButton(
-                    key: Key('proof_quality_repair_option_${type.storageValue}'),
+                    key: Key(
+                      'proof_quality_repair_option_${type.storageValue}',
+                    ),
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                       textStyle: const TextStyle(fontSize: 13),

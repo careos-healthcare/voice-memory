@@ -16,30 +16,25 @@ PostProofProCtaHardeningInput _input({
   bool? proCtaRequested,
   bool? pricingChangeRequested,
   bool? revenueCatChangeRequested,
-}) =>
-    PostProofProCtaHardeningInput(
-      firstUsefulProofSeen: firstUsefulProofSeen,
-      proofAcceptedOrCorrected: proofAcceptedOrCorrected,
-      clearLongerTrailMoment: clearLongerTrailMoment,
-      userExplicitlyOpenedPro: userExplicitlyOpenedPro,
-      proCtaRequested: proCtaRequested,
-      pricingChangeRequested: pricingChangeRequested,
-      revenueCatChangeRequested: revenueCatChangeRequested,
-    );
+}) => PostProofProCtaHardeningInput(
+  firstUsefulProofSeen: firstUsefulProofSeen,
+  proofAcceptedOrCorrected: proofAcceptedOrCorrected,
+  clearLongerTrailMoment: clearLongerTrailMoment,
+  userExplicitlyOpenedPro: userExplicitlyOpenedPro,
+  proCtaRequested: proCtaRequested,
+  pricingChangeRequested: pricingChangeRequested,
+  revenueCatChangeRequested: revenueCatChangeRequested,
+);
 
 PostProofProCtaRule _rule(
   PostProofProCtaHardeningResult result,
   PostProofProCtaRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('PostProofProCtaHardening.shouldShowProCta', () {
     test('hidden before first useful proof', () {
-      expect(
-        PostProofProCtaHardening.shouldShowProCta(_input()),
-        isFalse,
-      );
+      expect(PostProofProCtaHardening.shouldShowProCta(_input()), isFalse);
     });
 
     test('shown after first useful proof', () {
@@ -88,10 +83,7 @@ void main() {
 
     test('default input -> proCtaBlocked', () {
       final result = PostProofProCtaHardening.build(_input());
-      expect(
-        result.decision,
-        PostProofProCtaHardeningDecision.proCtaBlocked,
-      );
+      expect(result.decision, PostProofProCtaHardeningDecision.proCtaBlocked);
       expect(result.shouldShowProCta, isFalse);
       expect(result.urgencyLanguageBlocked, isTrue);
       expect(result.storageLanguageBlocked, isTrue);
@@ -104,50 +96,37 @@ void main() {
       final result = PostProofProCtaHardening.build(
         _input(firstUsefulProofSeen: true),
       );
-      expect(
-        result.decision,
-        PostProofProCtaHardeningDecision.proCtaHardened,
-      );
+      expect(result.decision, PostProofProCtaHardeningDecision.proCtaHardened);
       expect(result.canonicalCta, PostProofProCtaCopy.canonicalCta);
       expect(result.canonicalBody, PostProofProCtaCopy.canonicalBody);
     });
 
-    test('pro CTA requested before proof without explicit open fails hide rule',
-        () {
-      final result = PostProofProCtaHardening.build(
-        _input(
-          firstUsefulProofSeen: false,
-          proCtaRequested: true,
-        ),
-      );
-      expect(
-        _rule(
-          result,
-          PostProofProCtaRuleId.hideBeforeFirstUsefulProofUnlessExplicitOpen,
-        ).status,
-        PostProofProCtaRuleStatus.fail,
-      );
-    });
+    test(
+      'pro CTA requested before proof without explicit open fails hide rule',
+      () {
+        final result = PostProofProCtaHardening.build(
+          _input(firstUsefulProofSeen: false, proCtaRequested: true),
+        );
+        expect(
+          _rule(
+            result,
+            PostProofProCtaRuleId.hideBeforeFirstUsefulProofUnlessExplicitOpen,
+          ).status,
+          PostProofProCtaRuleStatus.fail,
+        );
+      },
+    );
 
     test('explicit Pro open allows CTA before proof value', () {
       final result = PostProofProCtaHardening.build(
-        _input(
-          userExplicitlyOpenedPro: true,
-          proCtaRequested: true,
-        ),
+        _input(userExplicitlyOpenedPro: true, proCtaRequested: true),
       );
-      expect(
-        result.decision,
-        PostProofProCtaHardeningDecision.proCtaHardened,
-      );
+      expect(result.decision, PostProofProCtaHardeningDecision.proCtaHardened);
     });
 
     test('pricing change requested fails pricing rule', () {
       final result = PostProofProCtaHardening.build(
-        _input(
-          firstUsefulProofSeen: true,
-          pricingChangeRequested: true,
-        ),
+        _input(firstUsefulProofSeen: true, pricingChangeRequested: true),
       );
       expect(
         _rule(
@@ -163,7 +142,11 @@ void main() {
         _input(firstUsefulProofSeen: true),
       );
       for (final rule in result.rules) {
-        expect(rule.status, PostProofProCtaRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          PostProofProCtaRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -269,10 +252,7 @@ void main() {
           hardeningCopySource: copySource,
         ),
       );
-      expect(
-        result.decision,
-        PostProofProCtaHardeningDecision.proCtaBlocked,
-      );
+      expect(result.decision, PostProofProCtaHardeningDecision.proCtaBlocked);
     });
   });
 
@@ -330,10 +310,7 @@ void main() {
       final guardSource = File(
         'lib/features/archive_proof/proof_surface_advice_guard.dart',
       ).readAsStringSync();
-      expect(
-        guardSource,
-        contains('PostProofProCtaCopy.allVisibleStrings()'),
-      );
+      expect(guardSource, contains('PostProofProCtaCopy.allVisibleStrings()'));
     });
   });
 }

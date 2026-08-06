@@ -12,7 +12,6 @@ import 'memory_scope.dart';
 import 'memory_scope_policy.dart';
 import 'next_entry_fresh_mode.dart';
 import 'treat_as_new.dart';
-import '../pressure_retention/pressure_check_in_record.dart';
 import '../pressure_retention/pressure_check_in_store.dart';
 import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';

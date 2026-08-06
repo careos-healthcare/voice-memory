@@ -89,7 +89,11 @@ void _expectNoBannedCopy(String text, {bool checkPrivacyPolicy = true}) {
           (lower.contains('no therapy') || lower.contains('not therapy'))) {
         continue;
       }
-      expect(lower, isNot(contains(phrase)), reason: '"$line" contains "$phrase"');
+      expect(
+        lower,
+        isNot(contains(phrase)),
+        reason: '"$line" contains "$phrase"',
+      );
     }
     if (!isProhibitionLine && checkPrivacyPolicy && !_skipPrivacyScan(lower)) {
       expect(lower, isNot(contains(_privateSnippet)));
@@ -231,19 +235,19 @@ void main() {
   });
 
   group('Dependency maintenance deferral', () {
-    test('plan says no upgrades before TestFlight unless crash/store/security blocker', () {
-      final lower = dependency.toLowerCase();
-      expect(lower, contains('deferred during testflight'));
-      expect(lower, contains('crash'));
-      expect(lower, contains('app store rejection'));
-      expect(lower, contains('critical security'));
-    });
+    test(
+      'plan says no upgrades before TestFlight unless crash/store/security blocker',
+      () {
+        final lower = dependency.toLowerCase();
+        expect(lower, contains('deferred during testflight'));
+        expect(lower, contains('crash'));
+        expect(lower, contains('app store rejection'));
+        expect(lower, contains('critical security'));
+      },
+    );
 
     test('RevenueCat upgrade tied to RevenueCat readiness branch', () {
-      expect(
-        dependency.toLowerCase(),
-        contains('revenuecat readiness branch'),
-      );
+      expect(dependency.toLowerCase(), contains('revenuecat readiness branch'));
       expect(dependency.toLowerCase(), contains('paid-intent proof'));
     });
 

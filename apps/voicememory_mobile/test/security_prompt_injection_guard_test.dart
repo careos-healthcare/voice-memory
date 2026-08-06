@@ -71,7 +71,9 @@ void main() {
 
     test('log summary avoids full private text', () {
       const privateText = 'A long private reflection about family conflict.';
-      final prepared = AiPromptBoundary.prepareUserReflectionForApi(privateText);
+      final prepared = AiPromptBoundary.prepareUserReflectionForApi(
+        privateText,
+      );
       final summary = AiPromptBoundary.logSummary(prepared);
       expect(summary, contains('userTextLength='));
       expect(summary, contains('hash='));

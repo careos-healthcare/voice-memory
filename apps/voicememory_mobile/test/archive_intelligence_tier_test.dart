@@ -75,10 +75,7 @@ void main() {
       final resolver = ArchiveIntelligenceTierResolver(
         reader: FakeArchiveEntitlementReader(pro: true),
       );
-      expect(
-        resolver.resolveSync(isPro: true),
-        ArchiveIntelligenceTier.proMax,
-      );
+      expect(resolver.resolveSync(isPro: true), ArchiveIntelligenceTier.proMax);
     });
   });
 
@@ -90,11 +87,7 @@ void main() {
       expect(analysis.possibleRepeat, isTrue);
       expect(
         analysis.beliefLine.toLowerCase(),
-        anyOf(
-          contains('say yes'),
-          contains('capacity'),
-          contains('may'),
-        ),
+        anyOf(contains('say yes'), contains('capacity'), contains('may')),
       );
     });
 
@@ -127,7 +120,10 @@ void main() {
         fadedEntries,
         tier: ArchiveIntelligenceTier.proMax,
       );
-      expect(analysis.whatFadedLine, 'This has not shown up in the latest entry.');
+      expect(
+        analysis.whatFadedLine,
+        'This has not shown up in the latest entry.',
+      );
     });
 
     test('free window uses fewer entries than pro', () {
@@ -210,10 +206,7 @@ void main() {
         tier: ArchiveIntelligenceTier.freeMedium,
       );
       expect(review.hasReview, isTrue);
-      expect(
-        FirstThreeSessionGates.minEntriesForUsefulArchive,
-        3,
-      );
+      expect(FirstThreeSessionGates.minEntriesForUsefulArchive, 3);
     });
 
     test('pro weekly review may include what faded', () {

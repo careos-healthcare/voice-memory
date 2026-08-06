@@ -13,7 +13,8 @@ abstract final class ReleaseCandidateFreeze {
         input.changeType == ReleaseCandidateChangeType.crash) {
       return _allowed(ReleaseCandidateFreezeReason.allowCrashFix);
     }
-    if (input.blocksRelease || _isReleaseInfrastructureChange(input.changeType)) {
+    if (input.blocksRelease ||
+        _isReleaseInfrastructureChange(input.changeType)) {
       return _allowReleaseInfrastructure(input.changeType);
     }
     if (input.blocksPurchase ||
@@ -89,7 +90,8 @@ abstract final class ReleaseCandidateFreeze {
         !input.fixesFirstJourneyComprehension) {
       return _blocked(ReleaseCandidateFreezeReason.blockRecordLayoutChange);
     }
-    if ((input.changeType == ReleaseCandidateChangeType.paywallMechanicsChange ||
+    if ((input.changeType ==
+                ReleaseCandidateChangeType.paywallMechanicsChange ||
             input.changesPricingOrPaywall) &&
         !_isPurchasePathBlocker(input)) {
       return _blocked(ReleaseCandidateFreezeReason.blockPaywallMechanicsChange);
@@ -106,19 +108,22 @@ abstract final class ReleaseCandidateFreeze {
     return _blocked(ReleaseCandidateFreezeReason.blockReleaseFreezeDefault);
   }
 
-  static ReleaseCandidateFreezeReport report(ReleaseCandidateFreezeResult result) =>
-      ReleaseCandidateFreezeReport(
-        headline: ReleaseCandidateFreezeCopy.headline,
-        body: ReleaseCandidateFreezeCopy.body,
-        allowedLine: ReleaseCandidateFreezeCopy.allowedLine,
-        blockedLine: ReleaseCandidateFreezeCopy.blockedLine,
-        firstJourneyLine: ReleaseCandidateFreezeCopy.firstJourneyLine,
-        proLine: ReleaseCandidateFreezeCopy.proLine,
-        guardrail: ReleaseCandidateFreezeCopy.guardrail,
-        result: result,
-      );
+  static ReleaseCandidateFreezeReport report(
+    ReleaseCandidateFreezeResult result,
+  ) => ReleaseCandidateFreezeReport(
+    headline: ReleaseCandidateFreezeCopy.headline,
+    body: ReleaseCandidateFreezeCopy.body,
+    allowedLine: ReleaseCandidateFreezeCopy.allowedLine,
+    blockedLine: ReleaseCandidateFreezeCopy.blockedLine,
+    firstJourneyLine: ReleaseCandidateFreezeCopy.firstJourneyLine,
+    proLine: ReleaseCandidateFreezeCopy.proLine,
+    guardrail: ReleaseCandidateFreezeCopy.guardrail,
+    result: result,
+  );
 
-  static bool _isReleaseInfrastructureChange(ReleaseCandidateChangeType changeType) =>
+  static bool _isReleaseInfrastructureChange(
+    ReleaseCandidateChangeType changeType,
+  ) =>
       changeType == ReleaseCandidateChangeType.storeReadinessBlocker ||
       changeType == ReleaseCandidateChangeType.buildSigningBlocker ||
       changeType == ReleaseCandidateChangeType.testFlightBlocker ||
@@ -127,17 +132,19 @@ abstract final class ReleaseCandidateFreeze {
 
   static ReleaseCandidateFreezeResult _allowReleaseInfrastructure(
     ReleaseCandidateChangeType changeType,
-  ) =>
-      switch (changeType) {
-        ReleaseCandidateChangeType.buildSigningBlocker =>
-          _allowed(ReleaseCandidateFreezeReason.allowBuildSigningFix),
-        ReleaseCandidateChangeType.testFlightBlocker =>
-          _allowed(ReleaseCandidateFreezeReason.allowTestFlightFix),
-        ReleaseCandidateChangeType.metadataBlocker ||
-        ReleaseCandidateChangeType.privacySupportBlocker =>
-          _allowed(ReleaseCandidateFreezeReason.allowMetadataPrivacySupportFix),
-        _ => _allowed(ReleaseCandidateFreezeReason.allowStoreReadinessBlocker),
-      };
+  ) => switch (changeType) {
+    ReleaseCandidateChangeType.buildSigningBlocker => _allowed(
+      ReleaseCandidateFreezeReason.allowBuildSigningFix,
+    ),
+    ReleaseCandidateChangeType.testFlightBlocker => _allowed(
+      ReleaseCandidateFreezeReason.allowTestFlightFix,
+    ),
+    ReleaseCandidateChangeType.metadataBlocker ||
+    ReleaseCandidateChangeType.privacySupportBlocker => _allowed(
+      ReleaseCandidateFreezeReason.allowMetadataPrivacySupportFix,
+    ),
+    _ => _allowed(ReleaseCandidateFreezeReason.allowStoreReadinessBlocker),
+  };
 
   static bool _isPurchasePathBlocker(ReleaseCandidateFreezeInput input) =>
       input.blocksPurchase ||
@@ -147,16 +154,20 @@ abstract final class ReleaseCandidateFreeze {
       input.changeType == ReleaseCandidateChangeType.restoreBlocker ||
       input.changeType == ReleaseCandidateChangeType.entitlementBlocker;
 
-  static bool _isStoreOrPurchasePathBlocker(ReleaseCandidateFreezeInput input) =>
+  static bool _isStoreOrPurchasePathBlocker(
+    ReleaseCandidateFreezeInput input,
+  ) =>
       input.blocksRelease ||
       _isPurchasePathBlocker(input) ||
       input.changeType == ReleaseCandidateChangeType.storeReadinessBlocker;
 
-  static ReleaseCandidateFreezeResult _allowed(ReleaseCandidateFreezeReason reason) =>
-      ReleaseCandidateFreezeResult(allowed: true, reason: reason);
+  static ReleaseCandidateFreezeResult _allowed(
+    ReleaseCandidateFreezeReason reason,
+  ) => ReleaseCandidateFreezeResult(allowed: true, reason: reason);
 
-  static ReleaseCandidateFreezeResult _blocked(ReleaseCandidateFreezeReason reason) =>
-      ReleaseCandidateFreezeResult(allowed: false, reason: reason);
+  static ReleaseCandidateFreezeResult _blocked(
+    ReleaseCandidateFreezeReason reason,
+  ) => ReleaseCandidateFreezeResult(allowed: false, reason: reason);
 }
 
 enum ReleaseCandidateChangeType {

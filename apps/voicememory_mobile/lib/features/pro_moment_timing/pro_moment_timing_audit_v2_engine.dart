@@ -256,48 +256,43 @@ abstract final class ProMomentTimingAuditV2Engine {
     return !beforeProof && !zeroEntry;
   }
 
-  static bool _afterUsefulProofPasses() =>
-      ProBridgeVisibilityEngine.shouldShow(
-        input: _input(
-          hasTimelineProofVisible: false,
-          feedbackState: ProofQualityFeedbackState.useful,
-        ),
-      );
+  static bool _afterUsefulProofPasses() => ProBridgeVisibilityEngine.shouldShow(
+    input: _input(
+      hasTimelineProofVisible: false,
+      feedbackState: ProofQualityFeedbackState.useful,
+    ),
+  );
 
-  static bool _afterStrongProofPasses() =>
-      ProBridgeVisibilityEngine.shouldShow(
-        input: _input(
-          hasTimelineProofVisible: false,
-          confidenceLevel: ProofConfidenceLevel.strong,
-          hasSafeAnchor: true,
-        ),
-      );
+  static bool _afterStrongProofPasses() => ProBridgeVisibilityEngine.shouldShow(
+    input: _input(
+      hasTimelineProofVisible: false,
+      confidenceLevel: ProofConfidenceLevel.strong,
+      hasSafeAnchor: true,
+    ),
+  );
 
-  static bool _afterFreshReturnPasses() =>
-      ProBridgeVisibilityEngine.shouldShow(
-        input: _input(
-          hasTimelineProofVisible: false,
-          hasFreshReturnAfterCorrection: true,
-          confidenceLevel: ProofConfidenceLevel.freshReturn,
-          hasSafeAnchor: true,
-        ),
-      );
+  static bool _afterFreshReturnPasses() => ProBridgeVisibilityEngine.shouldShow(
+    input: _input(
+      hasTimelineProofVisible: false,
+      hasFreshReturnAfterCorrection: true,
+      confidenceLevel: ProofConfidenceLevel.freshReturn,
+      hasSafeAnchor: true,
+    ),
+  );
 
-  static bool _afterCorrectionPasses() =>
-      ProBridgeVisibilityEngine.shouldShow(
-        input: _input(
-          hasTimelineProofVisible: false,
-          hasCorrectionMemoryVisible: true,
-        ),
-      );
+  static bool _afterCorrectionPasses() => ProBridgeVisibilityEngine.shouldShow(
+    input: _input(
+      hasTimelineProofVisible: false,
+      hasCorrectionMemoryVisible: true,
+    ),
+  );
 
-  static bool _blockedTooVaguePasses() =>
-      !ProBridgeVisibilityEngine.shouldShow(
-        input: _input(
-          feedbackState: ProofQualityFeedbackState.tooVague,
-          hasTimelineProofVisible: true,
-        ),
-      );
+  static bool _blockedTooVaguePasses() => !ProBridgeVisibilityEngine.shouldShow(
+    input: _input(
+      feedbackState: ProofQualityFeedbackState.tooVague,
+      hasTimelineProofVisible: true,
+    ),
+  );
 
   static bool _blockedNotRelevantPasses() =>
       !ProBridgeVisibilityEngine.shouldShow(
@@ -410,38 +405,36 @@ abstract final class ProMomentTimingAuditV2Engine {
     bool proSlotAvailable = true,
     bool hasSeenFirstRepeat = true,
     bool hasOpenedEvidenceTrail = true,
-  }) =>
-      ProBridgeVisibilityInput(
-        surface: surface,
-        source: 'pro_moment_timing_audit_v2',
-        entryCount: entryCount,
-        isPro: isPro,
-        postProofProBridgeEnabled: postProofProBridgeEnabled,
-        hasFirstProof: hasFirstProof,
-        hasTimelineProofVisible: hasTimelineProofVisible,
-        hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
-        hasBetaTesterReportVisible: hasBetaTesterReportVisible,
-        hasCorrectionMemoryVisible: hasCorrectionMemoryVisible,
-        hasBetaProofLiftVisible: hasBetaProofLiftVisible,
-        hasReturnAfterProofStrengthenedVisible:
-            hasReturnAfterProofStrengthenedVisible,
-        feedbackState: feedbackState,
-        confidenceLevel: confidenceLevel,
-        hasSafeAnchor: hasSafeAnchor,
-        hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
-        hasSolidStrongPatternWithSafeAnchors:
-            hasSolidStrongPatternWithSafeAnchors,
-        isRecording: isRecording,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        proSlotAvailable: proSlotAvailable,
-        hasSeenFirstRepeat: hasSeenFirstRepeat,
-        hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
-      );
+  }) => ProBridgeVisibilityInput(
+    surface: surface,
+    source: 'pro_moment_timing_audit_v2',
+    entryCount: entryCount,
+    isPro: isPro,
+    postProofProBridgeEnabled: postProofProBridgeEnabled,
+    hasFirstProof: hasFirstProof,
+    hasTimelineProofVisible: hasTimelineProofVisible,
+    hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
+    hasBetaTesterReportVisible: hasBetaTesterReportVisible,
+    hasCorrectionMemoryVisible: hasCorrectionMemoryVisible,
+    hasBetaProofLiftVisible: hasBetaProofLiftVisible,
+    hasReturnAfterProofStrengthenedVisible:
+        hasReturnAfterProofStrengthenedVisible,
+    feedbackState: feedbackState,
+    confidenceLevel: confidenceLevel,
+    hasSafeAnchor: hasSafeAnchor,
+    hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
+    hasSolidStrongPatternWithSafeAnchors: hasSolidStrongPatternWithSafeAnchors,
+    isRecording: isRecording,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    proSlotAvailable: proSlotAvailable,
+    hasSeenFirstRepeat: hasSeenFirstRepeat,
+    hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
+  );
 
   static SurfacePriorityCandidates _recordReadyWithGuidanceAndPro() =>
       SurfacePriorityCandidates.recordReady(
@@ -479,11 +472,10 @@ abstract final class ProMomentTimingAuditV2Engine {
     required String label,
     required ProMomentTimingAuditV2Status status,
     required String detailLabel,
-  }) =>
-      ProMomentTimingAuditV2Check(
-        id: id,
-        label: label,
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => ProMomentTimingAuditV2Check(
+    id: id,
+    label: label,
+    status: status,
+    detailLabel: detailLabel,
+  );
 }

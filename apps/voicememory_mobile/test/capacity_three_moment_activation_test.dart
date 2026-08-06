@@ -35,52 +35,50 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityThreeMomentResult _visibleResult({
   int count = 0,
   bool showOnArchiveHome = true,
-}) =>
-    CapacityThreeMomentResult(
-      hasCard: true,
-      showOnArchiveHome: showOnArchiveHome,
-      showOnRecordProgress: count < 3,
-      showOnCapacityLoop: count < 3,
-      title: CapacityThreeMomentCopy.cardTitle,
-      subtitle: CapacityThreeMomentCopy.cardSubtitle,
-      progressLabel: CapacityThreeMomentCopy.progressLabel(count, target: 3),
-      emptyBody: count <= 0 ? CapacityThreeMomentCopy.emptyBody : '',
-      primaryCtaLabel: count >= 3
-          ? CapacityThreeMomentCopy.reviewLoopCta
-          : CapacityThreeMomentCopy.saveYesMomentCta,
-      primaryRoute: count >= 3
-          ? CapacityThreeMomentCopy.loopRoute
-          : CapacityThreeMomentCopy.recordRoute,
-      primaryDismisses: count >= 1 && count < 3,
-      showQuickSaveSecondary: count < 3,
-      quickSaveRoute: '/quick-yes-capture',
-      showReviewSecondary: count >= 1 && count < 3,
-      reviewSecondaryLabel: count == 2
-          ? 'Save next yes moment'
-          : 'Save another',
-      reviewSecondaryRoute: '/record',
-      capacityMomentCount: count,
-      activationTarget: 3,
-    );
+}) => CapacityThreeMomentResult(
+  hasCard: true,
+  showOnArchiveHome: showOnArchiveHome,
+  showOnRecordProgress: count < 3,
+  showOnCapacityLoop: count < 3,
+  title: CapacityThreeMomentCopy.cardTitle,
+  subtitle: CapacityThreeMomentCopy.cardSubtitle,
+  progressLabel: CapacityThreeMomentCopy.progressLabel(count, target: 3),
+  emptyBody: count <= 0 ? CapacityThreeMomentCopy.emptyBody : '',
+  primaryCtaLabel: count >= 3
+      ? CapacityThreeMomentCopy.reviewLoopCta
+      : CapacityThreeMomentCopy.saveYesMomentCta,
+  primaryRoute: count >= 3
+      ? CapacityThreeMomentCopy.loopRoute
+      : CapacityThreeMomentCopy.recordRoute,
+  primaryDismisses: count >= 1 && count < 3,
+  showQuickSaveSecondary: count < 3,
+  quickSaveRoute: '/quick-yes-capture',
+  showReviewSecondary: count >= 1 && count < 3,
+  reviewSecondaryLabel: count == 2 ? 'Save next yes moment' : 'Save another',
+  reviewSecondaryRoute: '/record',
+  capacityMomentCount: count,
+  activationTarget: 3,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -103,33 +101,32 @@ ArchiveHomePriorityInput _priorityInput({
   bool capacityThreeMomentActivationVisible = false,
   bool capacityLoopVisible = false,
   bool capacityPullReasonVisible = false,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: savedEntryCount,
-      usableEvidenceCount: savedEntryCount,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: false,
-      weeklyReviewAvailable: false,
-      sampleMode: false,
-      proPreviewPromoVisible: false,
-      showEmptySample: savedEntryCount == 0,
-      firstWeekPathVisible: savedEntryCount < 7,
-      dailyArchiveExerciseVisible: true,
-      archiveClarityProgressVisible: true,
-      capacityThreeMomentActivationVisible: capacityThreeMomentActivationVisible,
-      capacityLoopVisible: capacityLoopVisible,
-      capacityPullReasonVisible: capacityPullReasonVisible,
-      capacityDecisionOutcomeVisible: false,
-      capacityCostLaterCheckinVisible: false,
-      capacityActivationFitVisible: false,
-      beforeYouSayYesPauseVisible: false,
-      capacityWeeklyReviewVisible: false,
-      capacityBoundaryResponseVisible: false,
-      thenVsNowVisible: false,
-      archiveCalendarVisible: false,
-      reviewRitualVisible: false,
-      milestoneShareVisible: false,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: savedEntryCount,
+  usableEvidenceCount: savedEntryCount,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: false,
+  weeklyReviewAvailable: false,
+  sampleMode: false,
+  proPreviewPromoVisible: false,
+  showEmptySample: savedEntryCount == 0,
+  firstWeekPathVisible: savedEntryCount < 7,
+  dailyArchiveExerciseVisible: true,
+  archiveClarityProgressVisible: true,
+  capacityThreeMomentActivationVisible: capacityThreeMomentActivationVisible,
+  capacityLoopVisible: capacityLoopVisible,
+  capacityPullReasonVisible: capacityPullReasonVisible,
+  capacityDecisionOutcomeVisible: false,
+  capacityCostLaterCheckinVisible: false,
+  capacityActivationFitVisible: false,
+  beforeYouSayYesPauseVisible: false,
+  capacityWeeklyReviewVisible: false,
+  capacityBoundaryResponseVisible: false,
+  thenVsNowVisible: false,
+  archiveCalendarVisible: false,
+  reviewRitualVisible: false,
+  milestoneShareVisible: false,
+);
 
 void main() {
   const engine = CapacityThreeMomentEngine();
@@ -200,10 +197,7 @@ void main() {
       expect(one.showQuickSaveSecondary, isFalse);
 
       final two = engine.buildFromJournal(
-        entries: [
-          _capacityEntry('real_0'),
-          _capacityEntry('real_1'),
-        ],
+        entries: [_capacityEntry('real_0'), _capacityEntry('real_1')],
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
@@ -227,7 +221,10 @@ void main() {
       );
       expect(result.primaryCtaLabel, CapacityThreeMomentCopy.reviewLoopCta);
       expect(result.primaryRoute, CapacityThreeMomentCopy.loopRoute);
-      expect(result.progressLabel, '3 of 3 yes moments saved — review your yes loop');
+      expect(
+        result.progressLabel,
+        '3 of 3 yes moments saved — review your yes loop',
+      );
       expect(result.showOnArchiveHome, isFalse);
     });
 
@@ -251,7 +248,10 @@ void main() {
       );
       expect(result.title.toLowerCase(), isNot(contains(_privateSnippet)));
       expect(result.subtitle.toLowerCase(), isNot(contains(_privateSnippet)));
-      expect(result.progressLabel.toLowerCase(), isNot(contains(_privateSnippet)));
+      expect(
+        result.progressLabel.toLowerCase(),
+        isNot(contains(_privateSnippet)),
+      );
     });
 
     test('copy passes language guard', () {
@@ -273,10 +273,15 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('capacity_three_moment_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('capacity_three_moment_card_hidden')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('secondary routes to Record when under 3 at 1/3', (tester) async {
+    testWidgets('secondary routes to Record when under 3 at 1/3', (
+      tester,
+    ) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -294,7 +299,9 @@ void main() {
       );
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.tap(find.byKey(const Key('capacity_three_moment_card_review_button')));
+      await tester.tap(
+        find.byKey(const Key('capacity_three_moment_card_review_button')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('record screen'), findsOneWidget);
@@ -320,7 +327,9 @@ void main() {
       );
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.tap(find.byKey(const Key('capacity_three_moment_card_primary_button')));
+      await tester.tap(
+        find.byKey(const Key('capacity_three_moment_card_primary_button')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('capacity loop screen'), findsOneWidget);
@@ -345,23 +354,30 @@ void main() {
 
     test('activation precedes pull reason in sticky loop order', () {
       final ranked = [
-        ...priorityEngine.build(
-          _priorityInput(
-            savedEntryCount: 1,
-            capacityThreeMomentActivationVisible: true,
-            capacityPullReasonVisible: true,
-          ),
-        ).primarySections,
-        ...priorityEngine.build(
-          _priorityInput(
-            savedEntryCount: 1,
-            capacityThreeMomentActivationVisible: true,
-            capacityPullReasonVisible: true,
-          ),
-        ).secondarySections,
+        ...priorityEngine
+            .build(
+              _priorityInput(
+                savedEntryCount: 1,
+                capacityThreeMomentActivationVisible: true,
+                capacityPullReasonVisible: true,
+              ),
+            )
+            .primarySections,
+        ...priorityEngine
+            .build(
+              _priorityInput(
+                savedEntryCount: 1,
+                capacityThreeMomentActivationVisible: true,
+                capacityPullReasonVisible: true,
+              ),
+            )
+            .secondarySections,
       ];
 
-      expect(ranked, contains(ArchiveHomeSectionId.capacityThreeMomentActivation));
+      expect(
+        ranked,
+        contains(ArchiveHomeSectionId.capacityThreeMomentActivation),
+      );
       expect(ranked, contains(ArchiveHomeSectionId.capacityPullReason));
       expect(
         ranked.indexOf(ArchiveHomeSectionId.capacityThreeMomentActivation),

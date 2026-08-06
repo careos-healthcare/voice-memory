@@ -46,34 +46,32 @@ JournalEntry _entry(
   String id, {
   String? transcript,
   List<String> themes = const ['work'],
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ?? _longTranscript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: themes,
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript ?? _longTranscript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: themes,
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 ArchiveWatchlistItem _watchItem({
   String id = 'w1',
   String presetId = 'work_patterns',
   String? customLabel,
-}) =>
-    ArchiveWatchlistItem(
-      id: id,
-      presetId: presetId,
-      customLabel: customLabel,
-      createdAt: DateTime(2026, 6, 10),
-    );
+}) => ArchiveWatchlistItem(
+  id: id,
+  presetId: presetId,
+  customLabel: customLabel,
+  createdAt: DateTime(2026, 6, 10),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -148,9 +146,9 @@ void main() {
     });
 
     test('does not use JournalStore', () {
-      final storeSrc =
-          File('lib/features/archive_watchlist/archive_watchlist_store.dart')
-              .readAsStringSync();
+      final storeSrc = File(
+        'lib/features/archive_watchlist/archive_watchlist_store.dart',
+      ).readAsStringSync();
       expect(storeSrc, isNot(contains('JournalStore')));
       expect(storeSrc, contains('archiveWatchlistItems'));
     });
@@ -319,16 +317,11 @@ void main() {
 
       expect(find.byKey(const Key('archive_watchlist_card')), findsOneWidget);
       await tester.tap(
-        find.byKey(
-          const Key('archive_watchlist_option_unclear_decisions'),
-        ),
+        find.byKey(const Key('archive_watchlist_option_unclear_decisions')),
       );
       await tester.pump();
 
-      expect(
-        find.text('Watching for: Unclear decisions'),
-        findsOneWidget,
-      );
+      expect(find.text('Watching for: Unclear decisions'), findsOneWidget);
     });
 
     testWidgets('Pro preview routes from card at ten entries', (tester) async {
@@ -350,14 +343,14 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_watchlist_pro_line')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_watchlist_pro_line')),
+        findsOneWidget,
+      );
       await tester.tap(
         find.byKey(const Key('archive_watchlist_pro_preview_button')),
       );
@@ -366,7 +359,9 @@ void main() {
       expect(find.text('pro-preview'), findsOneWidget);
     });
 
-    testWidgets('does not include Buy now or Subscribe now text', (tester) async {
+    testWidgets('does not include Buy now or Subscribe now text', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -396,8 +391,9 @@ void main() {
   group('Archive watchlist privacy boundaries', () {
     test('share-safe proof does not include watchlist data', () {
       final entries = List.generate(5, (i) => _entry('e$i'));
-      final proof =
-          const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+      final proof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: entries,
+      );
       expect(proof.shareText, isNot(contains('Watching for:')));
       expect(proof.shareText, isNot(contains('archiveWatchlistItems')));
       expect(proof.shareText, isNot(contains('Unclear decisions')));
@@ -411,19 +407,24 @@ void main() {
       );
       expect(pack.plainText, isNot(contains('Watching for:')));
       expect(pack.plainText, isNot(contains('archiveWatchlistItems')));
-      expect(pack.plainText, isNot(contains('What should ArchiveMe watch for?')));
+      expect(
+        pack.plainText,
+        isNot(contains('What should ArchiveMe watch for?')),
+      );
     });
 
     test('archive belief screen wires watchlist card', () {
-      final src =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('ArchiveWatchlistCard'));
       expect(src, isNot(contains('JournalStore')));
     });
 
     test('journal store source is separate from watchlist store', () {
-      final journalSrc =
-          File('lib/storage/journal_store.dart').readAsStringSync();
+      final journalSrc = File(
+        'lib/storage/journal_store.dart',
+      ).readAsStringSync();
       expect(journalSrc, isNot(contains('archiveWatchlistItems')));
     });
   });

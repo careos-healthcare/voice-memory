@@ -26,45 +26,43 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctWorkEntries(int count) {
   final transcripts = [
@@ -90,10 +88,12 @@ List<JournalEntry> _distinctWorkEntries(int count) {
 ArchiveWorkspaceQuickActions _quickActions(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
   final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
-  final weeklyReview =
-      entries.length >= 5 ? WeeklyArchiveReviewEngine.build(entries: entries) : null;
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final weeklyReview = entries.length >= 5
+      ? WeeklyArchiveReviewEngine.build(entries: entries)
+      : null;
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
   final workspaceLayout = ArchiveWorkspaceLayoutEngine.build(
     entries: entries,
     archiveHome: archiveHome,
@@ -120,8 +120,9 @@ ArchiveWorkspaceQuickActions _quickActions(List<JournalEntry> entries) {
   );
 }
 
-List<ArchiveWorkspaceQuickActionKind> _kinds(ArchiveWorkspaceQuickActions actions) =>
-    actions.actions.map((action) => action.kind).toList();
+List<ArchiveWorkspaceQuickActionKind> _kinds(
+  ArchiveWorkspaceQuickActions actions,
+) => actions.actions.map((action) => action.kind).toList();
 
 const _bannedWords = [
   'diagnosis',
@@ -179,23 +180,25 @@ void main() {
           createdAt: DateTime(2026, 6, 11),
         ),
       ]);
-      expect(
-        _kinds(actions),
-        [ArchiveWorkspaceQuickActionKind.tagUntagged],
-      );
+      expect(_kinds(actions), [ArchiveWorkspaceQuickActionKind.tagUntagged]);
       expect(
         actions.actions.first.resolveRoute(),
-        ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+        ArchiveEvidenceMapNavigation.contextPath(
+          ArchiveEvidenceMapRowIds.untagged,
+        ),
       );
     });
 
-    test('2 entries does not duplicate archive home add-moment quick action', () {
-      final actions = _quickActions(_distinctWorkEntries(2));
-      expect(
-        _kinds(actions),
-        isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
-      );
-    });
+    test(
+      '2 entries does not duplicate archive home add-moment quick action',
+      () {
+        final actions = _quickActions(_distinctWorkEntries(2));
+        expect(
+          _kinds(actions),
+          isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
+        );
+      },
+    );
 
     test('3+ entries shows View evidence map', () {
       final actions = _quickActions(_distinctWorkEntries(3));
@@ -204,7 +207,8 @@ void main() {
         contains(ArchiveWorkspaceQuickActionKind.viewEvidenceMap),
       );
       final mapAction = actions.actions.firstWhere(
-        (action) => action.kind == ArchiveWorkspaceQuickActionKind.viewEvidenceMap,
+        (action) =>
+            action.kind == ArchiveWorkspaceQuickActionKind.viewEvidenceMap,
       );
       expect(mapAction.resolveRoute(), '/archive-belief');
     });
@@ -291,14 +295,11 @@ void main() {
           captureContextTag: CaptureContextTagIds.home,
         ),
       ]);
-      expect(
-        _kinds(actions),
-        [
-          ArchiveWorkspaceQuickActionKind.tagUntagged,
-          ArchiveWorkspaceQuickActionKind.reviewCorrections,
-          ArchiveWorkspaceQuickActionKind.viewEvidenceMap,
-        ],
-      );
+      expect(_kinds(actions), [
+        ArchiveWorkspaceQuickActionKind.tagUntagged,
+        ArchiveWorkspaceQuickActionKind.reviewCorrections,
+        ArchiveWorkspaceQuickActionKind.viewEvidenceMap,
+      ]);
     });
 
     test('degraded entries do not trigger usable evidence cleanup', () {
@@ -311,16 +312,22 @@ void main() {
           captureContextTag: CaptureContextTagIds.work,
         ),
       ]);
-      expect(_kinds(actions), isNot(contains(ArchiveWorkspaceQuickActionKind.tagUntagged)));
-    });
-
-    test('share proof action stays hidden when archive home already shows proof', () {
-      final actions = _quickActions(_distinctWorkEntries(5));
       expect(
         _kinds(actions),
-        isNot(contains(ArchiveWorkspaceQuickActionKind.shareProofSafely)),
+        isNot(contains(ArchiveWorkspaceQuickActionKind.tagUntagged)),
       );
     });
+
+    test(
+      'share proof action stays hidden when archive home already shows proof',
+      () {
+        final actions = _quickActions(_distinctWorkEntries(5));
+        expect(
+          _kinds(actions),
+          isNot(contains(ArchiveWorkspaceQuickActionKind.shareProofSafely)),
+        );
+      },
+    );
 
     test('copy avoids banned language', () {
       final actions = _quickActions(_distinctWorkEntries(5));
@@ -339,7 +346,9 @@ void main() {
   });
 
   group('ArchiveWorkspaceQuickActionsCard navigation', () {
-    testWidgets('tapping Tag untagged routes to untagged drilldown', (tester) async {
+    testWidgets('tapping Tag untagged routes to untagged drilldown', (
+      tester,
+    ) async {
       final actions = _quickActions([
         _voiceEntry(
           id: 'e1',

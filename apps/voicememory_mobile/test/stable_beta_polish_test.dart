@@ -24,25 +24,25 @@ import 'package:voicememory_mobile/widgets/beta/beta_repair_lab_card.dart';
 BetaRepairLabVisibilityInput _input({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.strong,
   BetaProofFeedbackType? feedbackType = BetaProofFeedbackType.useful,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.proofSpecificityCaution,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.proofSpecificityCaution,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 void main() {
   setUp(() async {
@@ -59,7 +59,10 @@ void main() {
   group('first-session clarity', () {
     test('first-session copy says Save one real moment', () {
       expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
-      expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Save one real moment.');
+      expect(
+        RecordScreenFramingCopy.emptyArchiveTitle,
+        'Save one real moment.',
+      );
       expect(
         RecordFirstUsePromptCopy.body,
         contains('returned, changed, faded, or corrected'),
@@ -67,14 +70,11 @@ void main() {
     });
 
     test('first-session examples are concrete', () {
-      expect(
-        RecordFirstUsePromptCopy.examples,
-        [
-          'I kept checking even after I was done.',
-          'I avoided replying again.',
-          'I felt pressure before starting.',
-        ],
-      );
+      expect(RecordFirstUsePromptCopy.examples, [
+        'I kept checking even after I was done.',
+        'I avoided replying again.',
+        'I felt pressure before starting.',
+      ]);
     });
 
     test('first-session copy avoids journal therapy coach advice language', () {
@@ -134,14 +134,14 @@ void main() {
       );
     });
 
-    testWidgets('proof card shows feedback prompt and why appeared', (tester) async {
+    testWidgets('proof card shows feedback prompt and why appeared', (
+      tester,
+    ) async {
       final result = BetaRepairLabEngine.buildProof(input: _input());
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: BetaRepairLabProofCard.test(result: result),
-          ),
+          home: Scaffold(body: BetaRepairLabProofCard.test(result: result)),
         ),
       );
       await tester.pump();
@@ -153,7 +153,9 @@ void main() {
       expect(find.text(result.whyAppearedLine), findsOneWidget);
     });
 
-    testWidgets('proof card shows correction response after Too vague', (tester) async {
+    testWidgets('proof card shows correction response after Too vague', (
+      tester,
+    ) async {
       final result = BetaRepairLabEngine.buildProof(input: _input());
       await tester.pumpWidget(
         MaterialApp(

@@ -99,25 +99,26 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
   }
 
   Widget _buildPayoffCard(BuildContext context, WhatChangedV2Option option) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
     final comparison = widget.prompt.comparison;
-    final emotionalHeadline = ProofEmotionalClarityEngine.payoffHeadlineForWhatChanged(
-      entryCount: widget.prompt.entryCount,
-      option: option,
-    );
+    final emotionalHeadline =
+        ProofEmotionalClarityEngine.payoffHeadlineForWhatChanged(
+          entryCount: widget.prompt.entryCount,
+          option: option,
+        );
 
     return Container(
       key: const Key('what_changed_v2_payoff_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -174,16 +175,17 @@ class _WhatChangedV2CardState extends State<WhatChangedV2Card> {
       return _buildPayoffCard(context, answered);
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('what_changed_v2_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

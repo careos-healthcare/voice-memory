@@ -79,13 +79,12 @@ class _ProPreviewCardState extends State<ProPreviewCard> {
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final rowStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      height: 1.35,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final rowStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(height: 1.35);
 
     return Container(
       key: const Key('pro_preview_card'),

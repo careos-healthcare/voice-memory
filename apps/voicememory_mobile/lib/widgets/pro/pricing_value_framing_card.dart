@@ -61,10 +61,9 @@ class _PricingValueFramingCardState extends State<PricingValueFramingCard> {
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('pricing_value_framing_card'),
@@ -98,7 +97,10 @@ class _PricingValueFramingCardState extends State<PricingValueFramingCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('• ', style: bodyStyle.copyWith(color: AppColors.textPrimary)),
+                  Text(
+                    '• ',
+                    style: bodyStyle.copyWith(color: AppColors.textPrimary),
+                  ),
                   Expanded(
                     child: Text(
                       bullet,

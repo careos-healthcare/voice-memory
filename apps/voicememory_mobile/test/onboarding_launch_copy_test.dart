@@ -12,10 +12,7 @@ void main() {
     final page = OnboardingPages.pages[0];
     expect(page.title, ConsumerUiCopy.onboardingPositioningHeadline);
     expect(page.body, ConsumerUiCopy.onboardingPositioningBody);
-    expect(
-      page.title,
-      'When it repeats, save it',
-    );
+    expect(page.title, 'When it repeats, save it');
     expect(page.body, contains('save one real moment'));
     expect(page.body, contains('Not a diary'));
     expect(page.title.toLowerCase(), isNot(contains('pressure loops')));

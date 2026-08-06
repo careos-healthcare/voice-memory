@@ -121,9 +121,7 @@ class _YesterdaysSnapshotScreenState extends State<YesterdaysSnapshotScreen> {
         loading = false;
       }
     } else if (seeded == null) {
-      summaries = YesterdaysSnapshotEngine.build(
-        hook: widget.hook,
-      ).summaries;
+      summaries = YesterdaysSnapshotEngine.build(hook: widget.hook).summaries;
       loading = false;
     }
 
@@ -194,10 +192,7 @@ class _YesterdaysSnapshotScreenState extends State<YesterdaysSnapshotScreen> {
     if (_recordingHandoffAttempted) return;
     _recordingHandoffAttempted = true;
 
-    _telemetry.trackMicAutostarted(
-      hookId: widget.hook.id,
-      source: source,
-    );
+    _telemetry.trackMicAutostarted(hookId: widget.hook.id, source: source);
 
     final route = YesterdaysSnapshotRoutes.recordHandoff(
       prompt: _displayPrompt,
@@ -222,8 +217,9 @@ class _YesterdaysSnapshotScreenState extends State<YesterdaysSnapshotScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final onSnapshotExit =
-        _phase == _YesterdaysSnapshotPhase.snapshot ? _dismissSnapshot : null;
+    final onSnapshotExit = _phase == _YesterdaysSnapshotPhase.snapshot
+        ? _dismissSnapshot
+        : null;
     return PushedScreenShell(
       title: _phase == _YesterdaysSnapshotPhase.snapshot
           ? YesterdaysSnapshotCopy.title
@@ -252,9 +248,9 @@ class _YesterdaysSnapshotScreenState extends State<YesterdaysSnapshotScreen> {
         children: [
           Text(
             YesterdaysSnapshotCopy.hookEyebrow,
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -382,7 +378,8 @@ class _MicroReviewCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (i != summaries.length - 1) const SizedBox(height: AppSpacing.xs),
+            if (i != summaries.length - 1)
+              const SizedBox(height: AppSpacing.xs),
           ],
         ],
       ),
@@ -476,9 +473,9 @@ class _ReactionChip extends StatelessWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Text(
                     reaction.label,
-                    style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                      color: AppColors.textPrimary,
-                    ),
+                    style: ArchiveMobileTypography.cardLabel(
+                      context,
+                    ).copyWith(color: AppColors.textPrimary),
                   ),
                 ],
               ),

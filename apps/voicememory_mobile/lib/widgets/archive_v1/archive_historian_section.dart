@@ -7,7 +7,6 @@ import '../../features/archive_synthesis/archive_synthesis_pro_gate.dart';
 import '../../features/archive_synthesis/archive_synthesis_service.dart';
 import '../../features/archive_synthesis/archive_synthesis_store.dart';
 import '../../features/archive_v1/archive_v1_models.dart';
-import '../../models/entitlement.dart';
 import '../../services/app_services.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/voicememory_colors.dart';

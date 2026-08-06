@@ -48,10 +48,7 @@ void main() {
       find.text(localized('reflectionLanguageTitle', 'gu')),
       findsOneWidget,
     );
-    expect(
-      find.text(localized('useDetectedLanguage', 'gu')),
-      findsOneWidget,
-    );
+    expect(find.text(localized('useDetectedLanguage', 'gu')), findsOneWidget);
 
     await tester.tap(find.text('English'));
     await tester.pump();

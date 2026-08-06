@@ -44,36 +44,34 @@ FirstWeekPathInput _input({
   bool betaFeedbackCaptured = false,
   bool hasWeeklyReviewAvailable = false,
   bool sampleMode = false,
-}) =>
-    FirstWeekPathInput(
-      realSavedMomentCount: realSavedMomentCount,
-      hasWatchTheme: hasWatchTheme,
-      betaFeedbackCaptured: betaFeedbackCaptured,
-      hasWeeklyReviewAvailable: hasWeeklyReviewAvailable,
-      sampleMode: sampleMode,
-    );
+}) => FirstWeekPathInput(
+  realSavedMomentCount: realSavedMomentCount,
+  hasWatchTheme: hasWatchTheme,
+  betaFeedbackCaptured: betaFeedbackCaptured,
+  hasWeeklyReviewAvailable: hasWeeklyReviewAvailable,
+  sampleMode: sampleMode,
+);
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _realEntries(int count) => List.generate(
-      count,
-      (i) => _entry('real_$i'),
-    );
+List<JournalEntry> _realEntries(int count) =>
+    List.generate(count, (i) => _entry('real_$i'));
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -160,10 +158,7 @@ void main() {
 
     test('7 entries marks first week path complete and weekly review', () {
       final result = engine.build(
-        _input(
-          realSavedMomentCount: 7,
-          hasWeeklyReviewAvailable: true,
-        ),
+        _input(realSavedMomentCount: 7, hasWeeklyReviewAvailable: true),
       );
 
       expect(result.isComplete, isTrue);
@@ -174,10 +169,7 @@ void main() {
     });
 
     test('sample entries are excluded from real counts', () {
-      final entries = [
-        ..._realEntries(2),
-        ...SampleArchiveEntries.build(),
-      ];
+      final entries = [..._realEntries(2), ...SampleArchiveEntries.build()];
       expect(engine.realSavedMomentCount(entries), 2);
     });
 
@@ -231,10 +223,15 @@ void main() {
         ),
       );
 
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.firstWeekPath),
+      );
     });
 
-    testWidgets('Archive Home shows compact card for early users', (tester) async {
+    testWidgets('Archive Home shows compact card for early users', (
+      tester,
+    ) async {
       final entries = _realEntries(1);
       await tester.pumpWidget(
         MaterialApp(
@@ -270,10 +267,10 @@ void main() {
     });
 
     test('router registers first week path route', () {
-      final router =
-          File('lib/router/app_router.dart').readAsStringSync();
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final router = File('lib/router/app_router.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(router, contains("path: '/first-week-path'"));
       expect(support, contains('FirstWeekPathCopy.route'));
     });

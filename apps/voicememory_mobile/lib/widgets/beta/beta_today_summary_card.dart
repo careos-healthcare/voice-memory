@@ -9,15 +9,9 @@ import '../../theme/voicememory_cards.dart';
 
 /// Compact beta today summary — optional recording, existing signals only.
 class BetaTodaySummaryCard extends StatefulWidget {
-  const BetaTodaySummaryCard({
-    super.key,
-    required this.result,
-  });
+  const BetaTodaySummaryCard({super.key, required this.result});
 
-  const BetaTodaySummaryCard.test({
-    super.key,
-    required this.result,
-  });
+  const BetaTodaySummaryCard.test({super.key, required this.result});
 
   final BetaTodaySummaryResult result;
 
@@ -38,20 +32,20 @@ class _BetaTodaySummaryCardState extends State<BetaTodaySummaryCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final rowStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final rowStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('beta_today_summary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

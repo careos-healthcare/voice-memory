@@ -23,18 +23,18 @@ abstract final class FirstSessionLiftCopy {
   ];
 
   static String exampleTextFor(FirstSessionLiftChipId id) => switch (id) {
-        FirstSessionLiftChipId.keptCheckingAgain => exampleKeptCheckingAgain,
-        FirstSessionLiftChipId.avoidedReplying => exampleAvoidedReplying,
-        FirstSessionLiftChipId.wantedControl => exampleWantedControl,
-        FirstSessionLiftChipId.feltFamiliar => exampleFeltFamiliar,
-      };
+    FirstSessionLiftChipId.keptCheckingAgain => exampleKeptCheckingAgain,
+    FirstSessionLiftChipId.avoidedReplying => exampleAvoidedReplying,
+    FirstSessionLiftChipId.wantedControl => exampleWantedControl,
+    FirstSessionLiftChipId.feltFamiliar => exampleFeltFamiliar,
+  };
 
   static String chipAnalyticsId(FirstSessionLiftChipId id) => switch (id) {
-        FirstSessionLiftChipId.keptCheckingAgain => 'kept_checking_again',
-        FirstSessionLiftChipId.avoidedReplying => 'avoided_replying',
-        FirstSessionLiftChipId.wantedControl => 'wanted_control',
-        FirstSessionLiftChipId.feltFamiliar => 'felt_familiar',
-      };
+    FirstSessionLiftChipId.keptCheckingAgain => 'kept_checking_again',
+    FirstSessionLiftChipId.avoidedReplying => 'avoided_replying',
+    FirstSessionLiftChipId.wantedControl => 'wanted_control',
+    FirstSessionLiftChipId.feltFamiliar => 'felt_familiar',
+  };
 
   static const diagnosisFixFirstSessionCapture = 'Fix first-session capture';
   static const diagnosisFixProUnderstanding = 'Fix Pro understanding';
@@ -69,8 +69,8 @@ enum FirstSessionLiftActionType {
   chipTapped;
 
   String get analyticsValue => switch (this) {
-        FirstSessionLiftActionType.typeOneSentence => 'type_one_sentence',
-        FirstSessionLiftActionType.useVoiceInstead => 'use_voice_instead',
-        FirstSessionLiftActionType.chipTapped => 'chip_tapped',
-      };
+    FirstSessionLiftActionType.typeOneSentence => 'type_one_sentence',
+    FirstSessionLiftActionType.useVoiceInstead => 'use_voice_instead',
+    FirstSessionLiftActionType.chipTapped => 'chip_tapped',
+  };
 }

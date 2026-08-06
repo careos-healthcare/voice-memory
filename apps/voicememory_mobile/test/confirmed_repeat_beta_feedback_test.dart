@@ -13,7 +13,8 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/confirmed_repeat_beta/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/confirmed_repeat_beta/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -156,7 +157,9 @@ void main() {
 
   group('ConfirmedRepeatBetaFeedbackCopy', () {
     test('no hard or therapy language', () {
-      _expectNoDiagnosticLanguage(ConfirmedRepeatBetaFeedbackCopy.all.join(' '));
+      _expectNoDiagnosticLanguage(
+        ConfirmedRepeatBetaFeedbackCopy.all.join(' '),
+      );
       for (final line in ConfirmedRepeatBetaFeedbackCopy.all) {
         for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
           fail('"$line": $reason');
@@ -183,8 +186,14 @@ void main() {
 
       expect(find.text(ConfirmedRepeatBetaFeedbackCopy.prompt), findsOneWidget);
       expect(find.text(ConfirmedRepeatBetaFeedbackCopy.yes), findsOneWidget);
-      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.somewhat), findsOneWidget);
-      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.notReally), findsOneWidget);
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.somewhat),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.notReally),
+        findsOneWidget,
+      );
     });
 
     testWidgets('yes answer stores safe metadata', (tester) async {
@@ -212,7 +221,9 @@ void main() {
       await tester.pump();
 
       await tester.runAsync(() async {
-        await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_yes')));
+        await tester.tap(
+          find.byKey(const Key('confirmed_repeat_beta_feedback_yes')),
+        );
         await Future<void>.delayed(const Duration(milliseconds: 50));
       });
       await tester.pump();
@@ -293,7 +304,9 @@ void main() {
       );
     });
 
-    testWidgets('follow-up reasons stored without transcript text', (tester) async {
+    testWidgets('follow-up reasons stored without transcript text', (
+      tester,
+    ) async {
       final prefs = _MemoryPrefs();
       final store = ConfirmedRepeatBetaFeedbackStore(prefs);
       Map<String, Object>? captured;
@@ -361,7 +374,9 @@ void main() {
       await tester.pump();
 
       await tester.runAsync(() async {
-        await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_dismiss')));
+        await tester.tap(
+          find.byKey(const Key('confirmed_repeat_beta_feedback_dismiss')),
+        );
         await Future<void>.delayed(const Duration(milliseconds: 50));
       });
       await tester.pump();

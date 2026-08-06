@@ -5,6 +5,5 @@ abstract final class ThenNowGates {
   static bool showOnArchiveHome({
     required bool hasCard,
     required bool sampleMode,
-  }) =>
-      hasCard && !sampleMode;
+  }) => hasCard && !sampleMode;
 }

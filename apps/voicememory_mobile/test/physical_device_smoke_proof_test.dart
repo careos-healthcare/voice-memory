@@ -28,64 +28,59 @@ PhysicalDeviceSmokeProofInput _input({
   bool? offlineLaunchSafe = true,
   bool? noCrash = true,
   bool noPrivateTextLeakedInLogs = true,
-}) =>
-    PhysicalDeviceSmokeProofInput(
-      freshInstallOpens: freshInstallOpens,
-      appNameArchiveMe: appNameArchiveMe,
-      launchScreenOk: launchScreenOk,
-      micPermissionAcceptPath: micPermissionAcceptPath,
-      micPermissionDenyPath: micPermissionDenyPath,
-      typedSave: typedSave,
-      voiceSave: voiceSave,
-      transcriptAppears: transcriptAppears,
-      postSaveReinforcementAppears: postSaveReinforcementAppears,
-      firstProofPath: firstProofPath,
-      correctionPath: correctionPath,
-      proScreenOpens: proScreenOpens,
-      revenueCatProductLoad: revenueCatProductLoad,
-      purchaseUnavailableCopySafe: purchaseUnavailableCopySafe,
-      restorePathOpens: restorePathOpens,
-      privacyTermsSupportRoutesOpen: privacyTermsSupportRoutesOpen,
-      offlineLaunchSafe: offlineLaunchSafe,
-      noCrash: noCrash,
-      noPrivateTextLeakedInLogs: noPrivateTextLeakedInLogs,
-    );
+}) => PhysicalDeviceSmokeProofInput(
+  freshInstallOpens: freshInstallOpens,
+  appNameArchiveMe: appNameArchiveMe,
+  launchScreenOk: launchScreenOk,
+  micPermissionAcceptPath: micPermissionAcceptPath,
+  micPermissionDenyPath: micPermissionDenyPath,
+  typedSave: typedSave,
+  voiceSave: voiceSave,
+  transcriptAppears: transcriptAppears,
+  postSaveReinforcementAppears: postSaveReinforcementAppears,
+  firstProofPath: firstProofPath,
+  correctionPath: correctionPath,
+  proScreenOpens: proScreenOpens,
+  revenueCatProductLoad: revenueCatProductLoad,
+  purchaseUnavailableCopySafe: purchaseUnavailableCopySafe,
+  restorePathOpens: restorePathOpens,
+  privacyTermsSupportRoutesOpen: privacyTermsSupportRoutesOpen,
+  offlineLaunchSafe: offlineLaunchSafe,
+  noCrash: noCrash,
+  noPrivateTextLeakedInLogs: noPrivateTextLeakedInLogs,
+);
 
 PhysicalDeviceSmokeProofCheck _check(
   PhysicalDeviceSmokeProofResult result,
   PhysicalDeviceSmokeProofCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('PhysicalDeviceSmokeProof.build', () {
     test('checklist has nineteen canonical items', () {
       final result = PhysicalDeviceSmokeProof.build(_input());
       expect(result.checks.length, PhysicalDeviceSmokeProof.checkCount);
-      expect(
-        result.checks.map((check) => check.id).toList(),
-        [
-          PhysicalDeviceSmokeProofCheckId.freshInstallOpens,
-          PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
-          PhysicalDeviceSmokeProofCheckId.launchScreenOk,
-          PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath,
-          PhysicalDeviceSmokeProofCheckId.micPermissionDenyPath,
-          PhysicalDeviceSmokeProofCheckId.typedSave,
-          PhysicalDeviceSmokeProofCheckId.voiceSave,
-          PhysicalDeviceSmokeProofCheckId.transcriptAppears,
-          PhysicalDeviceSmokeProofCheckId.postSaveReinforcementAppears,
-          PhysicalDeviceSmokeProofCheckId.firstProofPath,
-          PhysicalDeviceSmokeProofCheckId.correctionPath,
-          PhysicalDeviceSmokeProofCheckId.proScreenOpens,
-          PhysicalDeviceSmokeProofCheckId.revenueCatProductLoad,
-          PhysicalDeviceSmokeProofCheckId.purchaseUnavailableCopySafe,
-          PhysicalDeviceSmokeProofCheckId.restorePathOpens,
-          PhysicalDeviceSmokeProofCheckId.privacyTermsSupportRoutesOpen,
-          PhysicalDeviceSmokeProofCheckId.offlineLaunchSafe,
-          PhysicalDeviceSmokeProofCheckId.noCrash,
-          PhysicalDeviceSmokeProofCheckId.noPrivateTextLeakedInLogs,
-        ],
-      );
+      expect(result.checks.map((check) => check.id).toList(), [
+        PhysicalDeviceSmokeProofCheckId.freshInstallOpens,
+        PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
+        PhysicalDeviceSmokeProofCheckId.launchScreenOk,
+        PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath,
+        PhysicalDeviceSmokeProofCheckId.micPermissionDenyPath,
+        PhysicalDeviceSmokeProofCheckId.typedSave,
+        PhysicalDeviceSmokeProofCheckId.voiceSave,
+        PhysicalDeviceSmokeProofCheckId.transcriptAppears,
+        PhysicalDeviceSmokeProofCheckId.postSaveReinforcementAppears,
+        PhysicalDeviceSmokeProofCheckId.firstProofPath,
+        PhysicalDeviceSmokeProofCheckId.correctionPath,
+        PhysicalDeviceSmokeProofCheckId.proScreenOpens,
+        PhysicalDeviceSmokeProofCheckId.revenueCatProductLoad,
+        PhysicalDeviceSmokeProofCheckId.purchaseUnavailableCopySafe,
+        PhysicalDeviceSmokeProofCheckId.restorePathOpens,
+        PhysicalDeviceSmokeProofCheckId.privacyTermsSupportRoutesOpen,
+        PhysicalDeviceSmokeProofCheckId.offlineLaunchSafe,
+        PhysicalDeviceSmokeProofCheckId.noCrash,
+        PhysicalDeviceSmokeProofCheckId.noPrivateTextLeakedInLogs,
+      ]);
     });
 
     test('all checks pass -> proved', () {
@@ -185,17 +180,18 @@ void main() {
 
     setUpAll(() {
       infoPlistSource = File('ios/Runner/Info.plist').readAsStringSync();
-      launchScreenSource =
-          File('ios/Runner/Base.lproj/LaunchScreen.storyboard')
-              .readAsStringSync();
+      launchScreenSource = File(
+        'ios/Runner/Base.lproj/LaunchScreen.storyboard',
+      ).readAsStringSync();
       micPermissionCopySource = File(
         'lib/features/voice_capture/microphone_permission_copy.dart',
       ).readAsStringSync();
       visibleArchiveProofCopySource = File(
         'lib/features/archive_proof/visible_archive_proof_copy.dart',
       ).readAsStringSync();
-      recordFramingCopySource =
-          File('lib/record/record_screen_framing_copy.dart').readAsStringSync();
+      recordFramingCopySource = File(
+        'lib/record/record_screen_framing_copy.dart',
+      ).readAsStringSync();
       transcriptCorrectionCopySource = File(
         'lib/features/transcript_correction/transcript_correction_copy.dart',
       ).readAsStringSync();
@@ -206,12 +202,15 @@ void main() {
         'lib/features/post_save_reinforcement/post_save_reinforcement_placement_copy.dart',
       ).readAsStringSync();
       appRouterSource = File('lib/router/app_router.dart').readAsStringSync();
-      securitySettingsSource =
-          File('lib/screens/security_settings_screen.dart').readAsStringSync();
-      proValueCopySource =
-          File('lib/features/pro_value/pro_value_copy.dart').readAsStringSync();
-      recordPipelineLogSource =
-          File('lib/services/record_pipeline_log.dart').readAsStringSync();
+      securitySettingsSource = File(
+        'lib/screens/security_settings_screen.dart',
+      ).readAsStringSync();
+      proValueCopySource = File(
+        'lib/features/pro_value/pro_value_copy.dart',
+      ).readAsStringSync();
+      recordPipelineLogSource = File(
+        'lib/services/record_pipeline_log.dart',
+      ).readAsStringSync();
     });
 
     test('repo signals detect ArchiveMe name and trust routes', () {
@@ -236,7 +235,9 @@ void main() {
         isTrue,
       );
       expect(
-        PhysicalDeviceSmokeProof.detectLogPrivacyPolicy(recordPipelineLogSource),
+        PhysicalDeviceSmokeProof.detectLogPrivacyPolicy(
+          recordPipelineLogSource,
+        ),
         isTrue,
       );
     });

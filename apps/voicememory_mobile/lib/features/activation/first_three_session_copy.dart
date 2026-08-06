@@ -49,8 +49,7 @@ abstract class FirstThreeSessionCopy {
   // Session 3 — archive becoming useful.
   static const String session3Title =
       'Your archive is starting to show a thread.';
-  static const String session3KeepsReturning =
-      "Here's what keeps coming back.";
+  static const String session3KeepsReturning = "Here's what keeps coming back.";
   static const String session3ChangedSince =
       "Here's what changed since last time.";
   static const String session3HonestMoment =

@@ -10,6 +10,8 @@ class EarlyArchiveReturnReminderSession {
 
   static void dismiss() => _dismissed = true;
 
+  static void resetSessionState() => _dismissed = false;
+
   @visibleForTesting
-  static void resetForTest() => _dismissed = false;
+  static void resetForTest() => resetSessionState();
 }

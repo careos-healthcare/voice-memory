@@ -27,25 +27,24 @@ class ArchiveSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sectionLabelStyle = ArchiveMobileTypography.cardLabel(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final secondaryStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final secondaryStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final unknownStyle = secondaryStyle.copyWith(fontStyle: FontStyle.italic);
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('archive_summary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -101,13 +100,17 @@ class ArchiveSummaryCard extends StatelessWidget {
                   for (final row in summary.loopRows) ...[
                     Text(
                       row.label,
-                      key: Key('archive_summary_loop_label_${row.sectionId.name}'),
+                      key: Key(
+                        'archive_summary_loop_label_${row.sectionId.name}',
+                      ),
                       style: sectionLabelStyle.copyWith(fontSize: 12),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       row.displayText,
-                      key: Key('archive_summary_loop_body_${row.sectionId.name}'),
+                      key: Key(
+                        'archive_summary_loop_body_${row.sectionId.name}',
+                      ),
                       style: row.isKnown ? bodyStyle : unknownStyle,
                     ),
                     if (row != summary.loopRows.last)
@@ -158,7 +161,10 @@ class ArchiveSummaryCard extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.accentPrimary,
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 2,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

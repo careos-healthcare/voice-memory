@@ -70,7 +70,7 @@ abstract class InviteAttributionLink {
 /// fixed ref and a whitelisted source id; later invite opens never
 /// overwrite the first one.
 class InviteAttributionStore {
-  InviteAttributionStore({MobilePrefsStore? prefs}) : _prefs = prefs;
+  InviteAttributionStore({this._prefs});
 
   final MobilePrefsStore? _prefs;
 

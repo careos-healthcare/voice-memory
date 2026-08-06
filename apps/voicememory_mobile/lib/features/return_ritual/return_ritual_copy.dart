@@ -62,5 +62,6 @@ abstract final class ReturnRitualCopy {
     return savedBodyDefault;
   }
 
-  static String savedComeBackLine(String phrase) => '$savedComeBackPrefix $phrase';
+  static String savedComeBackLine(String phrase) =>
+      '$savedComeBackPrefix $phrase';
 }

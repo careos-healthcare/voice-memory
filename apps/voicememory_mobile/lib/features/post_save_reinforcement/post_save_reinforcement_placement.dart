@@ -17,7 +17,8 @@ abstract final class PostSaveReinforcementPlacement {
       return _hidden(PostSaveReinforcementPlacementReason.hidePrivateRawText);
     }
     if (input.userCorrectedProofRecently ||
-        input.surface == PostSaveReinforcementPlacementSurface.afterCorrection) {
+        input.surface ==
+            PostSaveReinforcementPlacementSurface.afterCorrection) {
       return _hidden(PostSaveReinforcementPlacementReason.hideAfterCorrection);
     }
     if (input.isWatchOnly ||
@@ -44,7 +45,8 @@ abstract final class PostSaveReinforcementPlacement {
     if (input.isRelatedToPreviousRepeat && input.hasSafeRepeat) {
       return _shown(
         message: PostSaveReinforcementPlacementCopy.repeatRelatedLine,
-        reason: PostSaveReinforcementPlacementReason.showRepeatRelatedMomentSaved,
+        reason:
+            PostSaveReinforcementPlacementReason.showRepeatRelatedMomentSaved,
       );
     }
     if (!input.hasEnoughArchiveSignal) {
@@ -61,38 +63,35 @@ abstract final class PostSaveReinforcementPlacement {
 
   static PostSaveReinforcementPlacementReport report(
     PostSaveReinforcementPlacementResult result,
-  ) =>
-      PostSaveReinforcementPlacementReport(
-        headline: PostSaveReinforcementPlacementCopy.headline,
-        body: PostSaveReinforcementPlacementCopy.body,
-        firstMomentLine: PostSaveReinforcementPlacementCopy.firstMomentLine,
-        simpleMomentLine: PostSaveReinforcementPlacementCopy.simpleMomentLine,
-        repeatRelatedLine: PostSaveReinforcementPlacementCopy.repeatRelatedLine,
-        notEnoughProofLine: PostSaveReinforcementPlacementCopy.notEnoughProofLine,
-        noPressureLine: PostSaveReinforcementPlacementCopy.noPressureLine,
-        nextLine: PostSaveReinforcementPlacementCopy.nextLine,
-        guardrail: PostSaveReinforcementPlacementCopy.guardrail,
-        result: result,
-      );
+  ) => PostSaveReinforcementPlacementReport(
+    headline: PostSaveReinforcementPlacementCopy.headline,
+    body: PostSaveReinforcementPlacementCopy.body,
+    firstMomentLine: PostSaveReinforcementPlacementCopy.firstMomentLine,
+    simpleMomentLine: PostSaveReinforcementPlacementCopy.simpleMomentLine,
+    repeatRelatedLine: PostSaveReinforcementPlacementCopy.repeatRelatedLine,
+    notEnoughProofLine: PostSaveReinforcementPlacementCopy.notEnoughProofLine,
+    noPressureLine: PostSaveReinforcementPlacementCopy.noPressureLine,
+    nextLine: PostSaveReinforcementPlacementCopy.nextLine,
+    guardrail: PostSaveReinforcementPlacementCopy.guardrail,
+    result: result,
+  );
 
   static PostSaveReinforcementPlacementResult _shown({
     required String message,
     required PostSaveReinforcementPlacementReason reason,
-  }) =>
-      PostSaveReinforcementPlacementResult(
-        shouldShow: true,
-        message: message,
-        reason: reason,
-      );
+  }) => PostSaveReinforcementPlacementResult(
+    shouldShow: true,
+    message: message,
+    reason: reason,
+  );
 
   static PostSaveReinforcementPlacementResult _hidden(
     PostSaveReinforcementPlacementReason reason,
-  ) =>
-      PostSaveReinforcementPlacementResult(
-        shouldShow: false,
-        message: '',
-        reason: reason,
-      );
+  ) => PostSaveReinforcementPlacementResult(
+    shouldShow: false,
+    message: '',
+    reason: reason,
+  );
 }
 
 enum PostSaveReinforcementPlacementSurface {

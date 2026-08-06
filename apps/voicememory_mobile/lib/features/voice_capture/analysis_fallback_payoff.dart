@@ -23,8 +23,7 @@ abstract final class AnalysisFallbackPayoffCopy {
   static const evidenceOneEntry =
       'One piece of evidence saved from your own words.';
 
-  static const evidenceTwoEntries =
-      'ArchiveMe has two moments to compare.';
+  static const evidenceTwoEntries = 'ArchiveMe has two moments to compare.';
 
   static const evidenceTwoEntriesOverlap =
       'Some of your own words appear in both moments.';

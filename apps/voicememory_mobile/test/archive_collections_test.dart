@@ -18,10 +18,10 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
-import 'package:voicememory_mobile/screens/collection_detail_screen.dart';
-import 'package:voicememory_mobile/screens/collections_screen.dart';
+import 'package:archiveme_research/screens/collection_detail_screen.dart';
+import 'package:archiveme_research/screens/collections_screen.dart';
 import 'package:voicememory_mobile/screens/entry_detail_screen.dart';
-import 'package:voicememory_mobile/screens/pinned_evidence_screen.dart';
+import 'package:archiveme_research/screens/pinned_evidence_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -406,7 +406,10 @@ void main() {
         }
       }
 
-      expect(find.byKey(Key('add_to_collection_$collectionId')), findsOneWidget);
+      expect(
+        find.byKey(Key('add_to_collection_$collectionId')),
+        findsOneWidget,
+      );
       final tile = tester.widget<CheckboxListTile>(
         find.byKey(Key('add_to_collection_$collectionId')),
       );

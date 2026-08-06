@@ -23,8 +23,9 @@ void main() {
     late OfflineVaultRecoveryService service;
 
     setUp(() async {
-      vaultDirectory =
-          await Directory.systemTemp.createTemp('offline_vault_service_');
+      vaultDirectory = await Directory.systemTemp.createTemp(
+        'offline_vault_service_',
+      );
       manifestFile = File('${vaultDirectory.path}/manifests.json');
       store = OfflineVaultRecoveryStore(
         manifestFile: manifestFile,
@@ -58,25 +59,29 @@ void main() {
       }
     });
 
-    test('recoverVault uploads, saves journal entry, then deletes vault on ack', () async {
-      final vaultFile =
-          File('${vaultDirectory.path}/audio_vault_session_ack.vault.enc');
-      await vaultFile.writeAsBytes([1, 2, 3, 4, 5]);
+    test(
+      'recoverVault uploads, saves journal entry, then deletes vault on ack',
+      () async {
+        final vaultFile = File(
+          '${vaultDirectory.path}/audio_vault_session_ack.vault.enc',
+        );
+        await vaultFile.writeAsBytes([1, 2, 3, 4, 5]);
 
-      final manifest = await store.registerVault(
-        sessionId: 'session_ack',
-        vaultFile: vaultFile,
-        frameCount: 5,
-        durationSeconds: 4,
-      );
+        final manifest = await store.registerVault(
+          sessionId: 'session_ack',
+          vaultFile: vaultFile,
+          frameCount: 5,
+          durationSeconds: 4,
+        );
 
-      final result = await service.recoverVault(manifest);
-      expect(result.localSaved, isTrue);
-      expect(result.entry.transcript, 'recovered transcript');
-      expect(await File(manifest.vaultPath).exists(), isFalse);
-      expect(await store.listPending(), isEmpty);
-      expect(api.uploadCount, 1);
-    });
+        final result = await service.recoverVault(manifest);
+        expect(result.localSaved, isTrue);
+        expect(result.entry.transcript, 'recovered transcript');
+        expect(await File(manifest.vaultPath).exists(), isFalse);
+        expect(await store.listPending(), isEmpty);
+        expect(api.uploadCount, 1);
+      },
+    );
 
     test('recoverVault sends recovery_secret for offline_* sessions', () async {
       final recoverySecret = List<int>.generate(32, (index) => index + 1);
@@ -99,26 +104,29 @@ void main() {
       expect(await File(manifest.vaultPath).exists(), isFalse);
     });
 
-    test('recoverVault rejects offline_* sessions missing recovery_secret', () async {
-      final vaultFile = File(
-        '${vaultDirectory.path}/audio_vault_offline_orphan.vault.enc',
-      );
-      await vaultFile.writeAsBytes([1, 2, 3]);
+    test(
+      'recoverVault rejects offline_* sessions missing recovery_secret',
+      () async {
+        final vaultFile = File(
+          '${vaultDirectory.path}/audio_vault_offline_orphan.vault.enc',
+        );
+        await vaultFile.writeAsBytes([1, 2, 3]);
 
-      final manifest = await store.registerVault(
-        sessionId: 'offline_orphan',
-        vaultFile: vaultFile,
-        frameCount: 3,
-        durationSeconds: 2,
-        serverRecoverable: false,
-      );
+        final manifest = await store.registerVault(
+          sessionId: 'offline_orphan',
+          vaultFile: vaultFile,
+          frameCount: 3,
+          durationSeconds: 2,
+          serverRecoverable: false,
+        );
 
-      expect(
-        () => service.recoverVault(manifest),
-        throwsA(isA<StateError>()),
-      );
-      expect(api.uploadCount, 0);
-    });
+        expect(
+          () => service.recoverVault(manifest),
+          throwsA(isA<StateError>()),
+        );
+        expect(api.uploadCount, 0);
+      },
+    );
   });
 }
 
@@ -172,6 +180,5 @@ class _RecordingPipeline extends CapturePipelineService {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

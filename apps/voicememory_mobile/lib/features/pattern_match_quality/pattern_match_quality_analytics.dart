@@ -11,11 +11,9 @@ abstract final class PatternMatchQualityAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void resolved({
-    required PatternMatchQualityResult result,
-  }) {
+  static void resolved({required PatternMatchQualityResult result}) {
     if (!result.shouldResolve) return;
 
     final props = <String, Object>{

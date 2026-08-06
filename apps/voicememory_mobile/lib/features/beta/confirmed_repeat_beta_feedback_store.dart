@@ -12,7 +12,8 @@ class ConfirmedRepeatBetaFeedbackStore {
 
   final MobilePrefsStore _prefs;
 
-  static ConfirmedRepeatBetaFeedbackState _cached = ConfirmedRepeatBetaFeedbackState.empty;
+  static ConfirmedRepeatBetaFeedbackState _cached =
+      ConfirmedRepeatBetaFeedbackState.empty;
   static bool _loaded = false;
 
   static ConfirmedRepeatBetaFeedbackState get cached => _cached;
@@ -58,11 +59,13 @@ class ConfirmedRepeatBetaFeedbackStore {
     );
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     _cached = ConfirmedRepeatBetaFeedbackState.empty;
     _loaded = false;
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeMap(_prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

@@ -40,19 +40,19 @@ abstract final class PostProofProCtaCopy {
   static const detailProCtaHardened = 'Pro CTA hardened after proof value';
 
   static String ruleLabelFor(PostProofProCtaRuleId id) => switch (id) {
-        PostProofProCtaRuleId.hideBeforeFirstUsefulProofUnlessExplicitOpen =>
-          'Hide before first useful proof unless explicit Pro open',
-        PostProofProCtaRuleId.showAfterProofValueMoment =>
-          'Show after proof value moment',
-        PostProofProCtaRuleId.canonicalCtaAndBody => 'Canonical CTA and body',
-        PostProofProCtaRuleId.noMoreAiLanguage => 'No more AI language',
-        PostProofProCtaRuleId.noDashboardLanguage => 'No life-dashboard framing',
-        PostProofProCtaRuleId.noStorageLanguage => 'No storage framing',
-        PostProofProCtaRuleId.noUrgencyScarcityLanguage =>
-          'No urgency or scarcity language',
-        PostProofProCtaRuleId.noPricingOrRevenueCatChanges =>
-          'No pricing or RevenueCat changes',
-      };
+    PostProofProCtaRuleId.hideBeforeFirstUsefulProofUnlessExplicitOpen =>
+      'Hide before first useful proof unless explicit Pro open',
+    PostProofProCtaRuleId.showAfterProofValueMoment =>
+      'Show after proof value moment',
+    PostProofProCtaRuleId.canonicalCtaAndBody => 'Canonical CTA and body',
+    PostProofProCtaRuleId.noMoreAiLanguage => 'No more AI language',
+    PostProofProCtaRuleId.noDashboardLanguage => 'No life-dashboard framing',
+    PostProofProCtaRuleId.noStorageLanguage => 'No storage framing',
+    PostProofProCtaRuleId.noUrgencyScarcityLanguage =>
+      'No urgency or scarcity language',
+    PostProofProCtaRuleId.noPricingOrRevenueCatChanges =>
+      'No pricing or RevenueCat changes',
+  };
 
   static String messageFor(PostProofProCtaHardeningDecision decision) =>
       switch (decision) {
@@ -60,13 +60,14 @@ abstract final class PostProofProCtaCopy {
         PostProofProCtaHardeningDecision.proCtaHardened => proCtaHardenedLine,
       };
 
-  static String recommendationFor(PostProofProCtaHardeningDecision decision) =>
-      switch (decision) {
-        PostProofProCtaHardeningDecision.proCtaBlocked =>
-          'Wait for first useful proof or explicit Pro open before surfacing the CTA.',
-        PostProofProCtaHardeningDecision.proCtaHardened =>
-          'Use canonical post-proof CTA and body only. Keep pricing and RevenueCat unchanged.',
-      };
+  static String recommendationFor(
+    PostProofProCtaHardeningDecision decision,
+  ) => switch (decision) {
+    PostProofProCtaHardeningDecision.proCtaBlocked =>
+      'Wait for first useful proof or explicit Pro open before surfacing the CTA.',
+    PostProofProCtaHardeningDecision.proCtaHardened =>
+      'Use canonical post-proof CTA and body only. Keep pricing and RevenueCat unchanged.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -103,12 +104,6 @@ enum PostProofProCtaRuleId {
   noPricingOrRevenueCatChanges,
 }
 
-enum PostProofProCtaRuleStatus {
-  pass,
-  fail,
-}
+enum PostProofProCtaRuleStatus { pass, fail }
 
-enum PostProofProCtaHardeningDecision {
-  proCtaBlocked,
-  proCtaHardened,
-}
+enum PostProofProCtaHardeningDecision { proCtaBlocked, proCtaHardened }

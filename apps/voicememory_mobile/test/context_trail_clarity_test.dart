@@ -24,17 +24,16 @@ ContextTrailClarityInput _input({
   bool isFirstSession = false,
   bool isRecordScreen = false,
   bool userAskedForContext = false,
-}) =>
-    ContextTrailClarityInput(
-      eligibleEntryCount: eligibleEntryCount,
-      taggedContextCount: taggedContextCount,
-      distinctContextCount: distinctContextCount,
-      hasStrongProof: hasStrongProof,
-      hasUserCorrection: hasUserCorrection,
-      isFirstSession: isFirstSession,
-      isRecordScreen: isRecordScreen,
-      userAskedForContext: userAskedForContext,
-    );
+}) => ContextTrailClarityInput(
+  eligibleEntryCount: eligibleEntryCount,
+  taggedContextCount: taggedContextCount,
+  distinctContextCount: distinctContextCount,
+  hasStrongProof: hasStrongProof,
+  hasUserCorrection: hasUserCorrection,
+  isFirstSession: isFirstSession,
+  isRecordScreen: isRecordScreen,
+  userAskedForContext: userAskedForContext,
+);
 
 void main() {
   group('ContextTrailClarity.build', () {
@@ -53,18 +52,14 @@ void main() {
     });
 
     test('not enough evidence hides context', () {
-      final result = ContextTrailClarity.build(
-        _input(eligibleEntryCount: 2),
-      );
+      final result = ContextTrailClarity.build(_input(eligibleEntryCount: 2));
       expect(result.shouldSurfaceContext, isFalse);
       expect(result.shouldKeepQuiet, isTrue);
       expect(result.reason, ContextTrailClarityReason.hiddenNotEnoughEvidence);
     });
 
     test('recent correction hides context', () {
-      final result = ContextTrailClarity.build(
-        _input(hasUserCorrection: true),
-      );
+      final result = ContextTrailClarity.build(_input(hasUserCorrection: true));
       expect(result.shouldSurfaceContext, isFalse);
       expect(result.shouldKeepQuiet, isTrue);
       expect(result.reason, ContextTrailClarityReason.hiddenAfterCorrection);
@@ -72,10 +67,7 @@ void main() {
 
     test('user asked for context with enough evidence surfaces context', () {
       final result = ContextTrailClarity.build(
-        _input(
-          eligibleEntryCount: 2,
-          userAskedForContext: true,
-        ),
+        _input(eligibleEntryCount: 2, userAskedForContext: true),
       );
       expect(result.shouldSurfaceContext, isTrue);
       expect(result.shouldKeepQuiet, isFalse);
@@ -83,9 +75,7 @@ void main() {
     });
 
     test('no tagged context stays quiet optional', () {
-      final result = ContextTrailClarity.build(
-        _input(taggedContextCount: 0),
-      );
+      final result = ContextTrailClarity.build(_input(taggedContextCount: 0));
       expect(result.shouldSurfaceContext, isFalse);
       expect(result.shouldKeepQuiet, isTrue);
       expect(result.reason, ContextTrailClarityReason.quietOptionalContext);
@@ -107,48 +97,49 @@ void main() {
       );
     });
 
-    test('varied contexts with strong proof surfaces varied context evidence',
-        () {
-      final result = ContextTrailClarity.build(
-        _input(
-          taggedContextCount: 3,
-          distinctContextCount: 2,
-          hasStrongProof: true,
-        ),
-      );
-      expect(result.shouldSurfaceContext, isTrue);
-      expect(result.shouldKeepQuiet, isFalse);
-      expect(
-        result.reason,
-        ContextTrailClarityReason.surfaceVariedContextEvidence,
-      );
-    });
+    test(
+      'varied contexts with strong proof surfaces varied context evidence',
+      () {
+        final result = ContextTrailClarity.build(
+          _input(
+            taggedContextCount: 3,
+            distinctContextCount: 2,
+            hasStrongProof: true,
+          ),
+        );
+        expect(result.shouldSurfaceContext, isTrue);
+        expect(result.shouldKeepQuiet, isFalse);
+        expect(
+          result.reason,
+          ContextTrailClarityReason.surfaceVariedContextEvidence,
+        );
+      },
+    );
   });
 
   group('ContextTrailClarityCopy', () {
     test('headline says where the repeat shows up', () {
-      expect(
-        ContextTrailClarityCopy.headline,
-        'Where the repeat shows up',
-      );
+      expect(ContextTrailClarityCopy.headline, 'Where the repeat shows up');
     });
 
-    test('body includes work/home/family/money/health/decisions/relationships/other',
-        () {
-      final body = ContextTrailClarityCopy.body.toLowerCase();
-      for (final context in [
-        'work',
-        'home',
-        'family',
-        'money',
-        'health',
-        'decisions',
-        'relationships',
-        'somewhere else',
-      ]) {
-        expect(body, contains(context), reason: context);
-      }
-    });
+    test(
+      'body includes work/home/family/money/health/decisions/relationships/other',
+      () {
+        final body = ContextTrailClarityCopy.body.toLowerCase();
+        for (final context in [
+          'work',
+          'home',
+          'family',
+          'money',
+          'health',
+          'decisions',
+          'relationships',
+          'somewhere else',
+        ]) {
+          expect(body, contains(context), reason: context);
+        }
+      },
+    );
 
     test('body says user does not need to tag everything', () {
       expect(
@@ -347,39 +338,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -398,7 +392,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

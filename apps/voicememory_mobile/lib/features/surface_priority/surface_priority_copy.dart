@@ -15,9 +15,11 @@ abstract final class SurfacePriorityCopy {
   static const hiddenReasonReportWithMultipleProof =
       'report_with_multiple_proof';
   static const hiddenReasonProCap = 'pro_cap_one';
-  static const hiddenReasonProofFloorBlocksPro = 'proof_floor_rescue_blocks_pro';
+  static const hiddenReasonProofFloorBlocksPro =
+      'proof_floor_rescue_blocks_pro';
   static const hiddenReasonPostSaveGuidance = 'post_save_no_guidance';
-  static const hiddenReasonPostSaveFirstProofWins = 'post_save_first_proof_wins';
+  static const hiddenReasonPostSaveFirstProofWins =
+      'post_save_first_proof_wins';
   static const hiddenReasonPostSaveWhatChangedWins =
       'post_save_what_changed_wins';
   static const hiddenReasonPostSaveReturnPayoffWins =
@@ -32,8 +34,8 @@ abstract final class SurfacePriorityCopy {
       'first_run_education_slot_blocked';
 
   static List<String> allVisibleStrings() => [
-        coreRule,
-        paidReason,
-        debugSummaryTitle,
-      ];
+    coreRule,
+    paidReason,
+    debugSummaryTitle,
+  ];
 }

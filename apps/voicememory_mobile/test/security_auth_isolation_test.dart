@@ -13,8 +13,7 @@ class _FreeStoreBilling implements StoreBillingPort {
   bool get isConfigured => false;
 
   @override
-  Stream<PremiumEntitlements> get entitlementStream =>
-      const Stream.empty();
+  Stream<PremiumEntitlements> get entitlementStream => const Stream.empty();
 
   @override
   Future<PremiumEntitlements> refreshEntitlements() async =>
@@ -30,35 +29,33 @@ class _FreeStoreBilling implements StoreBillingPort {
 }
 
 void main() {
-  test('resetCachedEntitlementsForAuthChange clears memory and disk cache',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch;
-    final cache = await EntitlementCache.open('/tmp/vm_ent_auth_$stamp.json');
-    await cache.save(
-      const PremiumEntitlements(
-        tier: BillingTier.pro,
-        entitlementIds: ['pro'],
-        billingConnected: true,
-        source: 'test',
-      ),
-    );
+  test(
+    'resetCachedEntitlementsForAuthChange clears memory and disk cache',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch;
+      final cache = await EntitlementCache.open('/tmp/vm_ent_auth_$stamp.json');
+      await cache.save(
+        const PremiumEntitlements(
+          tier: BillingTier.pro,
+          entitlementIds: ['pro'],
+          billingConnected: true,
+          source: 'test',
+        ),
+      );
 
-    final billing = BillingService(
-      ApiClient(),
-      cache,
-      _FreeStoreBilling(),
-    );
+      final billing = BillingService(ApiClient(), cache, _FreeStoreBilling());
 
-    billing.startListening();
-    final loaded = await billing.loadEntitlements(forceRefresh: true);
-    expect(loaded.isPro, isFalse);
+      billing.startListening();
+      final loaded = await billing.loadEntitlements(forceRefresh: true);
+      expect(loaded.isPro, isFalse);
 
-    await billing.resetCachedEntitlementsForAuthChange();
-    expect(await cache.load(), isNull);
-    expect(await billing.loadCachedEntitlements(), isNull);
+      await billing.resetCachedEntitlementsForAuthChange();
+      expect(await cache.load(), isNull);
+      expect(await billing.loadCachedEntitlements(), isNull);
 
-    if (await File('/tmp/vm_ent_auth_$stamp.json').exists()) {
-      await File('/tmp/vm_ent_auth_$stamp.json').delete();
-    }
-  });
+      if (await File('/tmp/vm_ent_auth_$stamp.json').exists()) {
+        await File('/tmp/vm_ent_auth_$stamp.json').delete();
+      }
+    },
+  );
 }

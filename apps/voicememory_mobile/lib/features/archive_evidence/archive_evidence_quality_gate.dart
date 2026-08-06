@@ -14,17 +14,20 @@ abstract final class ArchiveEvidenceQualityGate {
     List<JournalEntry> entries, {
     String analyticsSource = 'archive_evidence_quality_gate',
   }) {
-    final usable = entries
-        .where((e) => ArchiveEvidenceQuality.assess(e).allowsInsights)
-        .toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final usable =
+        entries
+            .where((e) => ArchiveEvidenceQuality.assess(e).allowsInsights)
+            .toList()
+          ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     final skipped = entries.length - usable.length;
     if (skipped > 0 &&
         ComparableEvidenceText.countPendingTranscriptEntries(entries) > 0) {
       ArchiveEvidenceAnalytics.evidenceSkippedPlaceholder(
         source: analyticsSource,
-        entryCount: ComparableEvidenceText.countPendingTranscriptEntries(entries),
+        entryCount: ComparableEvidenceText.countPendingTranscriptEntries(
+          entries,
+        ),
       );
     }
 
@@ -104,7 +107,7 @@ abstract final class ArchiveEvidenceQualityGate {
     return entries.every(
       (e) =>
           ArchiveEvidenceQuality.assess(e).reason ==
-          ArchiveEvidenceQualityReason.placeholderOrPending ||
+              ArchiveEvidenceQualityReason.placeholderOrPending ||
           ArchiveEvidenceQuality.assess(e).reason ==
               ArchiveEvidenceQualityReason.degradedVoice,
     );

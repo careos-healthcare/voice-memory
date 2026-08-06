@@ -79,8 +79,7 @@ abstract final class ArchiveDailyChangeCopy {
 
   static const changeNewYesMoment =
       'You added another yes moment. This may be worth comparing with earlier saves.';
-  static const changeLaterCost =
-      'You marked a later cost on one moment.';
+  static const changeLaterCost = 'You marked a later cost on one moment.';
   static const changeBoundarySelected = boundaryResponseSelectedLine;
   static const changeYesLoopReady =
       'Your yes loop has enough evidence to review.';
@@ -96,15 +95,12 @@ abstract final class ArchiveDailyChangeCopy {
       'Ask what would need to move before saying yes.';
   static const altOpportunity =
       'Check what this opportunity would displace before accepting.';
-  static const altAnsweredTooQuickly =
-      'Do not answer in the first moment.';
+  static const altAnsweredTooQuickly = 'Do not answer in the first moment.';
   static const altQuickCaptureStillWork =
       'Skip the full story. Save only what pulled you toward yes.';
-  static const altSomethingElse =
-      'Save the moment first. Name the pull later.';
+  static const altSomethingElse = 'Save the moment first. Name the pull later.';
 
-  static const bodyDelayBeforeReplying =
-      'Delay the answer before replying.';
+  static const bodyDelayBeforeReplying = 'Delay the answer before replying.';
   static const bodyUrgencyCheckCapacity =
       'When urgency appears, do not answer immediately. Come back after checking your capacity.';
   static const bodyUsePauseAgain =
@@ -113,8 +109,7 @@ abstract final class ArchiveDailyChangeCopy {
       'One more real yes moment will make the loop clearer.';
   static const bodyWatchSamePull =
       'Watch for the same pull before agreeing again.';
-  static const bodyMarkPull =
-      'Mark what pulled you toward yes.';
+  static const bodyMarkPull = 'Mark what pulled you toward yes.';
   static const bodyBeforeReplyingTemplate =
       'Before replying, use: ‘Let me check my capacity and come back to you.’';
 
@@ -122,8 +117,7 @@ abstract final class ArchiveDailyChangeCopy {
       'Watch for urgent requests where you feel responsible.';
   static const watchAnswerBeforeCapacity =
       'Watch for moments where you answer before checking capacity.';
-  static const watchHardToDelay =
-      'Watch for requests that feel hard to delay.';
+  static const watchHardToDelay = 'Watch for requests that feel hard to delay.';
   static const watchSamePullMayRepeat =
       'This suggests the same pull may be the one to watch next.';
 
@@ -135,107 +129,104 @@ abstract final class ArchiveDailyChangeCopy {
   static String changeLineForResponseType(
     ArchiveDailyChangeResponseType type, {
     String? pullShortLabel,
-  }) =>
-      switch (type) {
-        ArchiveDailyChangeResponseType.repeatedPullWithLaterCost =>
-          samePullLaterCostLine,
-        ArchiveDailyChangeResponseType.repeatedPullWithSaidYes =>
-          samePullSameOutcomeLine,
-        ArchiveDailyChangeResponseType.patternInterrupted =>
-          repeatedPullNewOutcomeLine,
-        ArchiveDailyChangeResponseType.stillForming => stillFormingLine,
-        ArchiveDailyChangeResponseType.waitingForNextMoment =>
-          waitingForNextMomentLine,
-        ArchiveDailyChangeResponseType.fitConfirmed => fitConfirmedLine,
-        ArchiveDailyChangeResponseType.fitPartlyNewMoment =>
-          fitPartlyNewMomentLine,
-        ArchiveDailyChangeResponseType.quickCaptureStillWork =>
-          quickCaptureStillWorkLine,
-        ArchiveDailyChangeResponseType.noPullReasonYet => noPullReasonLine,
-        ArchiveDailyChangeResponseType.recentChange => changeNewYesMoment,
-        ArchiveDailyChangeResponseType.boundaryResponseSelected =>
-          boundaryResponseSelectedLine,
-      };
+  }) => switch (type) {
+    ArchiveDailyChangeResponseType.repeatedPullWithLaterCost =>
+      samePullLaterCostLine,
+    ArchiveDailyChangeResponseType.repeatedPullWithSaidYes =>
+      samePullSameOutcomeLine,
+    ArchiveDailyChangeResponseType.patternInterrupted =>
+      repeatedPullNewOutcomeLine,
+    ArchiveDailyChangeResponseType.stillForming => stillFormingLine,
+    ArchiveDailyChangeResponseType.waitingForNextMoment =>
+      waitingForNextMomentLine,
+    ArchiveDailyChangeResponseType.fitConfirmed => fitConfirmedLine,
+    ArchiveDailyChangeResponseType.fitPartlyNewMoment => fitPartlyNewMomentLine,
+    ArchiveDailyChangeResponseType.quickCaptureStillWork =>
+      quickCaptureStillWorkLine,
+    ArchiveDailyChangeResponseType.noPullReasonYet => noPullReasonLine,
+    ArchiveDailyChangeResponseType.recentChange => changeNewYesMoment,
+    ArchiveDailyChangeResponseType.boundaryResponseSelected =>
+      boundaryResponseSelectedLine,
+  };
 
   static String alternativeLabelForPull(String? pullId) => switch (pullId) {
-        CapacityPullReasonIds.soundedUrgent => labelDelayBeforeReplying,
-        CapacityPullReasonIds.feltResponsible => labelCheckCapacityFirst,
-        CapacityPullReasonIds.avoidDisappoint => labelNameTheLimit,
-        CapacityPullReasonIds.squeezeItIn => labelMoveSomethingFirst,
-        CapacityPullReasonIds.wantedOpportunity => labelCheckTradeOff,
-        CapacityPullReasonIds.answeredTooQuickly => labelPauseFirstAnswer,
-        CapacityPullReasonIds.somethingElse => labelMarkPullFirst,
-        _ => labelMarkPullFirst,
-      };
+    CapacityPullReasonIds.soundedUrgent => labelDelayBeforeReplying,
+    CapacityPullReasonIds.feltResponsible => labelCheckCapacityFirst,
+    CapacityPullReasonIds.avoidDisappoint => labelNameTheLimit,
+    CapacityPullReasonIds.squeezeItIn => labelMoveSomethingFirst,
+    CapacityPullReasonIds.wantedOpportunity => labelCheckTradeOff,
+    CapacityPullReasonIds.answeredTooQuickly => labelPauseFirstAnswer,
+    CapacityPullReasonIds.somethingElse => labelMarkPullFirst,
+    _ => labelMarkPullFirst,
+  };
 
   static String alternativeBodyForPull(String? pullId) => switch (pullId) {
-        CapacityPullReasonIds.soundedUrgent => altUrgency,
-        CapacityPullReasonIds.feltResponsible => altResponsibility,
-        CapacityPullReasonIds.avoidDisappoint => altDisappointment,
-        CapacityPullReasonIds.squeezeItIn => altSqueezeItIn,
-        CapacityPullReasonIds.wantedOpportunity => altOpportunity,
-        CapacityPullReasonIds.answeredTooQuickly => altAnsweredTooQuickly,
-        CapacityPullReasonIds.somethingElse => altSomethingElse,
-        _ => altSomethingElse,
-      };
+    CapacityPullReasonIds.soundedUrgent => altUrgency,
+    CapacityPullReasonIds.feltResponsible => altResponsibility,
+    CapacityPullReasonIds.avoidDisappoint => altDisappointment,
+    CapacityPullReasonIds.squeezeItIn => altSqueezeItIn,
+    CapacityPullReasonIds.wantedOpportunity => altOpportunity,
+    CapacityPullReasonIds.answeredTooQuickly => altAnsweredTooQuickly,
+    CapacityPullReasonIds.somethingElse => altSomethingElse,
+    _ => altSomethingElse,
+  };
 
   static String watchNextForPullReason(String? reasonId) => switch (reasonId) {
-        CapacityPullReasonIds.soundedUrgent ||
-        CapacityPullReasonIds.feltResponsible =>
-          watchUrgentResponsible,
-        CapacityPullReasonIds.answeredTooQuickly => watchAnswerBeforeCapacity,
-        _ => watchHardToDelay,
-      };
+    CapacityPullReasonIds.soundedUrgent ||
+    CapacityPullReasonIds.feltResponsible => watchUrgentResponsible,
+    CapacityPullReasonIds.answeredTooQuickly => watchAnswerBeforeCapacity,
+    _ => watchHardToDelay,
+  };
 
   static List<String> allVisibleStrings() => [
-        title,
-        alternativeSectionTitle,
-        loopSectionTitle,
-        weeklySectionTitle,
-        labelDelayBeforeReplying,
-        labelCheckCapacityFirst,
-        labelNameTheLimit,
-        labelMoveSomethingFirst,
-        labelCheckTradeOff,
-        labelPauseFirstAnswer,
-        labelSaveOnlyPull,
-        labelMarkPullFirst,
-        labelUseDefaultPause,
-        labelReviewLoop,
-        labelWatchPull,
-        repeatedPullNewOutcomeLine,
-        samePullSameOutcomeLine,
-        samePullLaterCostLine,
-        patternInterruptedLine,
-        stillFormingLine,
-        waitingForNextMomentLine,
-        fitConfirmedLine,
-        fitPartlyNewMomentLine,
-        quickCaptureStillWorkLine,
-        boundaryResponseSelectedLine,
-        noPullReasonLine,
-        changeNewYesMoment,
-        changeLaterCost,
-        changeBoundarySelected,
-        changeYesLoopReady,
-        altUrgency,
-        altResponsibility,
-        altDisappointment,
-        altSqueezeItIn,
-        altOpportunity,
-        altAnsweredTooQuickly,
-        altQuickCaptureStillWork,
-        altSomethingElse,
-        bodyDelayBeforeReplying,
-        bodyUrgencyCheckCapacity,
-        bodyUsePauseAgain,
-        bodyOneMoreMoment,
-        bodyWatchSamePull,
-        bodyMarkPull,
-        bodyBeforeReplyingTemplate,
-        watchUrgentResponsible,
-        watchAnswerBeforeCapacity,
-        watchHardToDelay,
-        watchSamePullMayRepeat,
-      ];
+    title,
+    alternativeSectionTitle,
+    loopSectionTitle,
+    weeklySectionTitle,
+    labelDelayBeforeReplying,
+    labelCheckCapacityFirst,
+    labelNameTheLimit,
+    labelMoveSomethingFirst,
+    labelCheckTradeOff,
+    labelPauseFirstAnswer,
+    labelSaveOnlyPull,
+    labelMarkPullFirst,
+    labelUseDefaultPause,
+    labelReviewLoop,
+    labelWatchPull,
+    repeatedPullNewOutcomeLine,
+    samePullSameOutcomeLine,
+    samePullLaterCostLine,
+    patternInterruptedLine,
+    stillFormingLine,
+    waitingForNextMomentLine,
+    fitConfirmedLine,
+    fitPartlyNewMomentLine,
+    quickCaptureStillWorkLine,
+    boundaryResponseSelectedLine,
+    noPullReasonLine,
+    changeNewYesMoment,
+    changeLaterCost,
+    changeBoundarySelected,
+    changeYesLoopReady,
+    altUrgency,
+    altResponsibility,
+    altDisappointment,
+    altSqueezeItIn,
+    altOpportunity,
+    altAnsweredTooQuickly,
+    altQuickCaptureStillWork,
+    altSomethingElse,
+    bodyDelayBeforeReplying,
+    bodyUrgencyCheckCapacity,
+    bodyUsePauseAgain,
+    bodyOneMoreMoment,
+    bodyWatchSamePull,
+    bodyMarkPull,
+    bodyBeforeReplyingTemplate,
+    watchUrgentResponsible,
+    watchAnswerBeforeCapacity,
+    watchHardToDelay,
+    watchSamePullMayRepeat,
+  ];
 }

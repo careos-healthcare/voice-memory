@@ -79,7 +79,8 @@ class RecordHomeSurfacePolicy {
       return const RecordHomeSurfacePolicy();
     }
 
-    final mapWouldShow = dailyArchiveExercise != null &&
+    final mapWouldShow =
+        dailyArchiveExercise != null &&
         dailyArchiveExercise.showOnRecord &&
         RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
           loaded: loaded,
@@ -97,7 +98,8 @@ class RecordHomeSurfacePolicy {
       return const RecordHomeSurfacePolicy(showReturningUserToday: true);
     }
 
-    final questionWouldShow = todaysOneQuestion != null &&
+    final questionWouldShow =
+        todaysOneQuestion != null &&
         todaysOneQuestion.showOnRecord &&
         RecordEmptyArchiveGates.showTodaysQuestionOnRecord(
           loaded: loaded,

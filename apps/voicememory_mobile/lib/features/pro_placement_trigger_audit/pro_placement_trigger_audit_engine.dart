@@ -37,8 +37,9 @@ abstract final class ProPlacementTriggerAuditEngine {
       title: ProPlacementTriggerAuditCopy.titleFor(outcome),
       body: ProPlacementTriggerAuditCopy.bodyFor(outcome),
       blockReason: ProPlacementTriggerAuditCopy.blockReasonFor(outcome),
-      activeRepairModeLabel:
-          BetaRepairLabCopy.modeLabel(input.activeRepairMode),
+      activeRepairModeLabel: BetaRepairLabCopy.modeLabel(
+        input.activeRepairMode,
+      ),
       warning: ProPlacementTriggerAuditCopy.warning,
       source: input.source,
       entryCount: input.entryCount,
@@ -51,7 +52,8 @@ abstract final class ProPlacementTriggerAuditEngine {
     if (!input.betaMissionEnabled) {
       return ProPlacementTriggerAuditOutcome.inactive;
     }
-    if (input.activeRepairMode != BetaRepairLabMode.proPlacementAfterUsefulProof) {
+    if (input.activeRepairMode !=
+        BetaRepairLabMode.proPlacementAfterUsefulProof) {
       return ProPlacementTriggerAuditOutcome.inactive;
     }
     if (input.feedbackType == BetaProofFeedbackType.tooVague ||

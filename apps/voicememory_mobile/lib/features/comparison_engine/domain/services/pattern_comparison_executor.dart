@@ -12,11 +12,10 @@ class PatternComparisonExecutor {
   final int maxHistoricalContextItems;
 
   const PatternComparisonExecutor({
-    ComparisonEngineConfig config = const ComparisonEngineConfig(),
-    ComparisonOutputParser parser = const ComparisonOutputParser(),
+    this._config = const ComparisonEngineConfig(),
+    this._parser = const ComparisonOutputParser(),
     this.maxHistoricalContextItems = 30,
-  }) : _config = config,
-       _parser = parser;
+  });
 
   /// System prompt from [ComparisonEngineConfig] for model evaluation.
   String get systemPrompt => _config.buildSystemPrompt();

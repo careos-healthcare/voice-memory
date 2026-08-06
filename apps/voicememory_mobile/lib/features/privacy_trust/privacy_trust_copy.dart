@@ -7,8 +7,7 @@ abstract final class PrivacyTrustCopy {
   static const title = 'Privacy & your archive';
 
   static const whatStoresHeading = 'What ArchiveMe stores';
-  static const whatStoresBody =
-      'Your saved moments and local archive signals.';
+  static const whatStoresBody = 'Your saved moments and local archive signals.';
 
   static const whatNotIncludedHeading = 'What is not included';
   static const whatNotIncludedBody =
@@ -36,22 +35,22 @@ abstract final class PrivacyTrustCopy {
   static const deleteArchiveDone = 'Local archive cleared.';
 
   static List<String> allVisibleStrings() => [
-        title,
-        whatStoresHeading,
-        whatStoresBody,
-        whatNotIncludedHeading,
-        whatNotIncludedBody,
-        whatStaysPrivateHeading,
-        whatStaysPrivateBody,
-        yourControlsHeading,
-        correctTranscriptControl,
-        deleteArchiveControl,
-        copyPrivateReportControl,
-        sendBetaFeedbackControl,
-        betaMeasurementHeading,
-        betaMeasurementBody,
-        betaProgressSummaryControl,
-        notEnoughReportEvidence,
-        deleteArchiveDone,
-      ];
+    title,
+    whatStoresHeading,
+    whatStoresBody,
+    whatNotIncludedHeading,
+    whatNotIncludedBody,
+    whatStaysPrivateHeading,
+    whatStaysPrivateBody,
+    yourControlsHeading,
+    correctTranscriptControl,
+    deleteArchiveControl,
+    copyPrivateReportControl,
+    sendBetaFeedbackControl,
+    betaMeasurementHeading,
+    betaMeasurementBody,
+    betaProgressSummaryControl,
+    notEnoughReportEvidence,
+    deleteArchiveDone,
+  ];
 }

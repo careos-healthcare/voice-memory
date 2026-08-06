@@ -20,10 +20,9 @@ class LocalAudioVault {
     PrivateDataEncryptionKeyStore? keyStore,
     AesGcm? algorithm,
     VaultDirectoryResolver? resolveCacheDirectory,
-  })  : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
-        _algorithm = algorithm ?? AesGcm.with256bits(),
-        _resolveCacheDirectory =
-            resolveCacheDirectory ?? _defaultVaultDirectory;
+  }) : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
+       _algorithm = algorithm ?? AesGcm.with256bits(),
+       _resolveCacheDirectory = resolveCacheDirectory ?? _defaultVaultDirectory;
 
   static const _magic = [0x41, 0x56, 0x4d, 0x45]; // AVME
   static const _formatVersion = 1;
@@ -43,7 +42,8 @@ class LocalAudioVault {
   bool get isActive => _isVaultingActive;
   int get frameCount => _frameCount;
   File? get activeFile => _activeFile;
-  List<int>? get uploadableRecoverySecretBytes => _uploadableRecoverySecretBytes == null
+  List<int>? get uploadableRecoverySecretBytes =>
+      _uploadableRecoverySecretBytes == null
       ? null
       : List<int>.from(_uploadableRecoverySecretBytes!);
 
@@ -54,8 +54,7 @@ class LocalAudioVault {
   }) async {
     if (recoverySecretKeyBytes != null && recoverySecretKeyBytes.length == 32) {
       _secretKey = SecretKey(recoverySecretKeyBytes);
-      _uploadableRecoverySecretBytes =
-          List<int>.from(recoverySecretKeyBytes);
+      _uploadableRecoverySecretBytes = List<int>.from(recoverySecretKeyBytes);
     } else {
       _uploadableRecoverySecretBytes = null;
       await _ensureKey();
@@ -100,7 +99,9 @@ class LocalAudioVault {
       return;
     }
 
-    final bytes = pcmBytes is Uint8List ? pcmBytes : Uint8List.fromList(pcmBytes);
+    final bytes = pcmBytes is Uint8List
+        ? pcmBytes
+        : Uint8List.fromList(pcmBytes);
     _enqueueFrame(bytes);
   }
 
@@ -130,9 +131,9 @@ class LocalAudioVault {
 
   Future<void> _ensureKey() async {
     if (_keyStore is SecurePrivateDataEncryptionKeyStore) {
-      await (_keyStore as SecurePrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
     } else if (_keyStore is InMemoryPrivateDataEncryptionKeyStore) {
-      await (_keyStore as InMemoryPrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
     }
 
     final keyBytes = await _keyStore.readKeyBytes();
@@ -260,8 +261,10 @@ class LocalAudioVault {
       if (offset + 4 > bytes.length) {
         break;
       }
-      final cipherLength =
-          bytes.buffer.asByteData().getUint32(offset, Endian.little);
+      final cipherLength = bytes.buffer.asByteData().getUint32(
+        offset,
+        Endian.little,
+      );
       offset += 4;
       const nonceLength = 12;
       const macLength = 16;

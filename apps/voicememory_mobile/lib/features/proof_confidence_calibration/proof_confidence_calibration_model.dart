@@ -11,13 +11,13 @@ enum ProofConfidenceLevel {
 
 extension ProofConfidenceLevelAnalytics on ProofConfidenceLevel {
   String get analyticsValue => switch (this) {
-        ProofConfidenceLevel.watchOnly => 'watch_only',
-        ProofConfidenceLevel.emerging => 'emerging',
-        ProofConfidenceLevel.useful => 'useful',
-        ProofConfidenceLevel.strong => 'strong',
-        ProofConfidenceLevel.corrected => 'corrected',
-        ProofConfidenceLevel.freshReturn => 'fresh_return',
-      };
+    ProofConfidenceLevel.watchOnly => 'watch_only',
+    ProofConfidenceLevel.emerging => 'emerging',
+    ProofConfidenceLevel.useful => 'useful',
+    ProofConfidenceLevel.strong => 'strong',
+    ProofConfidenceLevel.corrected => 'corrected',
+    ProofConfidenceLevel.freshReturn => 'fresh_return',
+  };
 }
 
 class ProofConfidenceCalibrationResult {
@@ -38,19 +38,18 @@ class ProofConfidenceCalibrationResult {
   factory ProofConfidenceCalibrationResult.hidden({
     required String source,
     required int entryCount,
-  }) =>
-      ProofConfidenceCalibrationResult(
-        shouldCalibrate: false,
-        entryCount: entryCount,
-        source: source,
-        level: ProofConfidenceLevel.watchOnly,
-        primaryCopy: ProofConfidenceCalibrationCopy.watchOnly,
-        displayCopy: ProofConfidenceCalibrationCopy.watchOnly,
-        hasSafeAnchor: false,
-        hasMatchQuality: false,
-        hasCorrection: false,
-        hasFreshReturn: false,
-      );
+  }) => ProofConfidenceCalibrationResult(
+    shouldCalibrate: false,
+    entryCount: entryCount,
+    source: source,
+    level: ProofConfidenceLevel.watchOnly,
+    primaryCopy: ProofConfidenceCalibrationCopy.watchOnly,
+    displayCopy: ProofConfidenceCalibrationCopy.watchOnly,
+    hasSafeAnchor: false,
+    hasMatchQuality: false,
+    hasCorrection: false,
+    hasFreshReturn: false,
+  );
 
   final bool shouldCalibrate;
   final int entryCount;

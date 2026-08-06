@@ -50,7 +50,10 @@ void main() {
   group('PrivateDataEncryptionKeyStore', () {
     test('stores key only in secure key store abstraction', () async {
       final keyBytes = await keyStore.ensureKey();
-      expect(keyBytes.length, SecurePrivateDataEncryptionKeyStore.keyByteLength);
+      expect(
+        keyBytes.length,
+        SecurePrivateDataEncryptionKeyStore.keyByteLength,
+      );
 
       final roundTrip = await keyStore.readKeyBytes();
       expect(roundTrip, keyBytes);
@@ -63,7 +66,10 @@ void main() {
   group('EncryptedJsonFileStore', () {
     test('does not write plaintext private text to disk', () async {
       final encryptedFile = File('${tempDir.path}/private.enc');
-      final store = EncryptedJsonFileStore(file: encryptedFile, keyStore: keyStore);
+      final store = EncryptedJsonFileStore(
+        file: encryptedFile,
+        keyStore: keyStore,
+      );
       const secret = 'Private reflection text must not appear on disk';
 
       await store.writeJson([
@@ -83,7 +89,10 @@ void main() {
 
     test('round-trips JSON payloads', () async {
       final encryptedFile = File('${tempDir.path}/roundtrip.enc');
-      final store = EncryptedJsonFileStore(file: encryptedFile, keyStore: keyStore);
+      final store = EncryptedJsonFileStore(
+        file: encryptedFile,
+        keyStore: keyStore,
+      );
       final payload = [
         {'id': 'a', 'transcript': 'Saved moment'},
       ];
@@ -95,43 +104,37 @@ void main() {
   });
 
   group('JournalStore encryption migration', () {
-    test('migrates plaintext journal and removes private transcript from legacy file',
-        () async {
-      const secret = 'Secret transcript after migration';
-      final legacyPath = '${tempDir.path}/journal_entries.json';
-      final legacyFile = File(legacyPath);
-      await legacyFile.writeAsString(
-        jsonEncode([
-          _entry(id: 'm1', transcript: secret).toJson(),
-        ]),
-      );
+    test(
+      'migrates plaintext journal and removes private transcript from legacy file',
+      () async {
+        const secret = 'Secret transcript after migration';
+        final legacyPath = '${tempDir.path}/journal_entries.json';
+        final legacyFile = File(legacyPath);
+        await legacyFile.writeAsString(
+          jsonEncode([_entry(id: 'm1', transcript: secret).toJson()]),
+        );
 
-      final store = await JournalStore.open(
-        legacyPath,
-        keyStore: keyStore,
-      );
+        final store = await JournalStore.open(legacyPath, keyStore: keyStore);
 
-      final loaded = await store.loadAll();
-      expect(loaded.single.transcript, secret);
+        final loaded = await store.loadAll();
+        expect(loaded.single.transcript, secret);
 
-      final encryptedFile = File(JournalStore.encryptedPathFor(legacyPath));
-      expect(await encryptedFile.exists(), isTrue);
-      expect(
-        await EncryptedJsonFileStore.fileOmitsPlaintextNeedle(
-          encryptedFile,
-          secret,
-        ),
-        isTrue,
-      );
-      expect(legacyFile.existsSync(), isFalse);
-    });
+        final encryptedFile = File(JournalStore.encryptedPathFor(legacyPath));
+        expect(await encryptedFile.exists(), isTrue);
+        expect(
+          await EncryptedJsonFileStore.fileOmitsPlaintextNeedle(
+            encryptedFile,
+            secret,
+          ),
+          isTrue,
+        );
+        expect(legacyFile.existsSync(), isFalse);
+      },
+    );
 
     test('new journal writes encrypted file only', () async {
       final legacyPath = '${tempDir.path}/fresh_journal.json';
-      final store = await JournalStore.open(
-        legacyPath,
-        keyStore: keyStore,
-      );
+      final store = await JournalStore.open(legacyPath, keyStore: keyStore);
       await store.save(_entry(id: 'n1'));
 
       final legacyFile = File(legacyPath);
@@ -180,8 +183,12 @@ void main() {
           localAudioPath: tempRecording.path,
         ),
       );
-      await prefs.writeMap('archiveCollections', {'packs': ['a']});
-      await prefs.writeMap('archiveFacts', {'facts': ['x']});
+      await prefs.writeMap('archiveCollections', {
+        'packs': ['a'],
+      });
+      await prefs.writeMap('archiveFacts', {
+        'facts': ['x'],
+      });
 
       await service.wipeAllLocalArchive(
         confirmationPhrase: PrivateDataService.wipeConfirmationPhrase,
@@ -195,10 +202,7 @@ void main() {
 
     test('export remains sanitized', () async {
       await journal.save(
-        _entry(
-          id: 'secret-id',
-          localAudioPath: '/tmp/secret.m4a',
-        ),
+        _entry(id: 'secret-id', localAudioPath: '/tmp/secret.m4a'),
       );
 
       final payload = await service.buildSanitizedExport();

@@ -71,10 +71,7 @@ abstract final class CoreMetricsBetaReducer {
       );
     }
 
-    return _coreClassification(
-      betaMetricId,
-      eventName: minimum.eventName,
-    );
+    return _coreClassification(betaMetricId, eventName: minimum.eventName);
   }
 
   static CoreMetricsBetaClassification classifyActivationCounter(
@@ -83,27 +80,20 @@ abstract final class CoreMetricsBetaReducer {
     final normalized = counterField.trim();
     final betaMetricId = _activationCounterCoreMap[normalized];
     if (betaMetricId == null) {
-      return CoreMetricsBetaClassification.diagnostic(
-        eventName: normalized,
-      );
+      return CoreMetricsBetaClassification.diagnostic(eventName: normalized);
     }
 
-    return _coreClassification(
-      betaMetricId,
-      eventName: normalized,
-    );
+    return _coreClassification(betaMetricId, eventName: normalized);
   }
 
   static CoreMetricsBetaClassification classifyMetric(
     CoreMetricsBetaMetricId metricId,
-  ) =>
-      _coreClassification(metricId, eventName: metricId.name);
+  ) => _coreClassification(metricId, eventName: metricId.name);
 
   static bool isBetaDecisionEvent(
     String eventName, {
     Map<String, Object>? properties,
-  }) =>
-      !classifyEvent(eventName, properties: properties).notDecisionMetric;
+  }) => !classifyEvent(eventName, properties: properties).notDecisionMetric;
 
   static bool detectMinimumClassifierPreserved(String minimumSetSource) =>
       minimumSetSource.contains(
@@ -127,7 +117,8 @@ abstract final class CoreMetricsBetaReducer {
     return switch (minimumId) {
       CoreMetricsMinimumMetricId.appOpened => CoreMetricsBetaMetricId.appOpened,
       CoreMetricsMinimumMetricId.firstSave => CoreMetricsBetaMetricId.firstSave,
-      CoreMetricsMinimumMetricId.secondSave => CoreMetricsBetaMetricId.secondSave,
+      CoreMetricsMinimumMetricId.secondSave =>
+        CoreMetricsBetaMetricId.secondSave,
       CoreMetricsMinimumMetricId.firstUsefulProofSeen =>
         CoreMetricsBetaMetricId.firstUsefulProofSeen,
       CoreMetricsMinimumMetricId.proofAccepted =>
@@ -179,15 +170,14 @@ class CoreMetricsBetaClassification {
 
   factory CoreMetricsBetaClassification.diagnostic({
     required String eventName,
-  }) =>
-      CoreMetricsBetaClassification(
-        eventName: eventName,
-        coreMetricId: null,
-        bucket: CoreMetricsBetaBucket.diagnosticOnly,
-        diagnosticOnly: true,
-        notDecisionMetric: true,
-        notReleaseBlocking: true,
-      );
+  }) => CoreMetricsBetaClassification(
+    eventName: eventName,
+    coreMetricId: null,
+    bucket: CoreMetricsBetaBucket.diagnosticOnly,
+    diagnosticOnly: true,
+    notDecisionMetric: true,
+    notReleaseBlocking: true,
+  );
 
   final String eventName;
   final CoreMetricsBetaMetricId? coreMetricId;
@@ -198,8 +188,7 @@ class CoreMetricsBetaClassification {
 
   bool get isDecisionMetric => bucket == CoreMetricsBetaBucket.decisionMetric;
   bool get isRevenueMetric => bucket == CoreMetricsBetaBucket.revenueMetric;
-  bool get isReleaseBlocking =>
-      bucket == CoreMetricsBetaBucket.releaseBlocking;
+  bool get isReleaseBlocking => bucket == CoreMetricsBetaBucket.releaseBlocking;
 }
 
 class CoreMetricsBetaMetricDefinition {
@@ -233,25 +222,15 @@ class CoreMetricsBetaReducerResult {
 
   int get coreMetricCount => metrics.length;
 
-  List<CoreMetricsBetaMetricDefinition> get decisionMetrics =>
-      metrics
-          .where(
-            (metric) => metric.bucket == CoreMetricsBetaBucket.decisionMetric,
-          )
-          .toList();
+  List<CoreMetricsBetaMetricDefinition> get decisionMetrics => metrics
+      .where((metric) => metric.bucket == CoreMetricsBetaBucket.decisionMetric)
+      .toList();
 
-  List<CoreMetricsBetaMetricDefinition> get revenueMetrics =>
-      metrics
-          .where(
-            (metric) => metric.bucket == CoreMetricsBetaBucket.revenueMetric,
-          )
-          .toList();
+  List<CoreMetricsBetaMetricDefinition> get revenueMetrics => metrics
+      .where((metric) => metric.bucket == CoreMetricsBetaBucket.revenueMetric)
+      .toList();
 
-  List<CoreMetricsBetaMetricDefinition> get releaseBlockingMetrics =>
-      metrics
-          .where(
-            (metric) =>
-                metric.bucket == CoreMetricsBetaBucket.releaseBlocking,
-          )
-          .toList();
+  List<CoreMetricsBetaMetricDefinition> get releaseBlockingMetrics => metrics
+      .where((metric) => metric.bucket == CoreMetricsBetaBucket.releaseBlocking)
+      .toList();
 }

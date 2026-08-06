@@ -33,10 +33,7 @@ void main() {
       ]);
 
       expect(phrases.length, greaterThanOrEqualTo(2));
-      expect(
-        phrases.any((p) => p.toLowerCase().contains('pressure')),
-        isTrue,
-      );
+      expect(phrases.any((p) => p.toLowerCase().contains('pressure')), isTrue);
     });
 
     test('does not surface malformed n-grams', () {
@@ -72,8 +69,14 @@ void main() {
       expect(copy.source, PatternCopySource.evidenceFirst);
       expect(copy.heroTitle, PatternHumanCopy.evidenceFirstHeroTitle);
       expect(copy.exactEvidencePhrases.length, greaterThanOrEqualTo(2));
-      expect(copy.interpretation, PatternHumanCopy.evidenceFirstInterpretationPressure);
-      expect(copy.interpretation, isNot(contains('pushing past your own stopping point')));
+      expect(
+        copy.interpretation,
+        PatternHumanCopy.evidenceFirstInterpretationPressure,
+      );
+      expect(
+        copy.interpretation,
+        isNot(contains('pushing past your own stopping point')),
+      );
       expect(copy.interpretation, isNot(contains('doing more than you want')));
     });
 
@@ -94,11 +97,11 @@ void main() {
 
       expect(bundle.exactEvidencePhrases, isNotEmpty);
       expect(bundle.mainObservation, isNot(contains('pushing past')));
-      expect(bundle.mainObservation, isNot(contains('doing more than you want')));
       expect(
         bundle.mainObservation,
-        contains('may be less about the task'),
+        isNot(contains('doing more than you want')),
       );
+      expect(bundle.mainObservation, contains('may be less about the task'));
     });
 
     test('weak evidence uses fallback copy', () {
@@ -143,7 +146,10 @@ void main() {
         bundle.belief.currentBelief,
         contains('may be less about the task'),
       );
-      expect(bundle.belief.currentBelief, isNot(contains('You may do more when')));
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('You may do more when')),
+      );
       expect(bundle.belief.currentBelief, isNot(contains('pushing past')));
     });
   });

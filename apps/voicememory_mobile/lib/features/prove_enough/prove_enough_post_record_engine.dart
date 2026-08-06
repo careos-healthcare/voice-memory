@@ -200,8 +200,9 @@ class ProveEnoughPostRecordEngine {
     final from = (wordIndex - 2).clamp(0, words.length);
     final to = (wordIndex + 4).clamp(0, words.length);
     final snippet = words.sublist(from, to).join(' ').trim();
-    if (snippet.isEmpty)
+    if (snippet.isEmpty) {
       return transcript.substring(0, transcript.length.clamp(0, 80));
+    }
     return snippet.length > 90 ? '${snippet.substring(0, 87)}…' : snippet;
   }
 

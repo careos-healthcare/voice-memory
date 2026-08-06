@@ -10,7 +10,7 @@ abstract final class FirstProofTruthAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void answered({
     required String source,

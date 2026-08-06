@@ -12,11 +12,7 @@ enum TodaysQuestionId {
 }
 
 /// How the Record screen should open capture for this question.
-enum TodaysQuestionCaptureMode {
-  voice,
-  text,
-  any,
-}
+enum TodaysQuestionCaptureMode { voice, text, any }
 
 /// Local inputs for today's one question — metadata only.
 class TodaysQuestionInput {

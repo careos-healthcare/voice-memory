@@ -21,14 +21,13 @@ BetaDecisionRuleInput _input({
   int sawProCount = 0,
   int understandsProYesMaybeCount = 0,
   int usefulProofCount = 0,
-}) =>
-    BetaDecisionRuleInput(
-      testerCount: testerCount,
-      firstSessionSaveCount: firstSessionSaveCount,
-      sawProCount: sawProCount,
-      understandsProYesMaybeCount: understandsProYesMaybeCount,
-      usefulProofCount: usefulProofCount,
-    );
+}) => BetaDecisionRuleInput(
+  testerCount: testerCount,
+  firstSessionSaveCount: firstSessionSaveCount,
+  sawProCount: sawProCount,
+  understandsProYesMaybeCount: understandsProYesMaybeCount,
+  usefulProofCount: usefulProofCount,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -40,9 +39,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: BetaDecisionRuleCard(
-            resultOverride: result,
-          ),
+          child: BetaDecisionRuleCard(resultOverride: result),
         ),
       ),
     ),
@@ -69,35 +66,40 @@ void main() {
       expect(result.outcome, BetaDecisionRuleOutcome.protectProof);
     });
 
-    test('fixOpeningScreenOnly wins when first-session save <= 1 and proof safe', () {
-      final result = BetaDecisionRuleEngine.buildFromInput(
-        _input(firstSessionSaveCount: 1, usefulProofCount: 3),
-      );
-      expect(result.outcome, BetaDecisionRuleOutcome.fixOpeningScreenOnly);
-    });
+    test(
+      'fixOpeningScreenOnly wins when first-session save <= 1 and proof safe',
+      () {
+        final result = BetaDecisionRuleEngine.buildFromInput(
+          _input(firstSessionSaveCount: 1, usefulProofCount: 3),
+        );
+        expect(result.outcome, BetaDecisionRuleOutcome.fixOpeningScreenOnly);
+      },
+    );
 
-    test('fixProPlacement wins when first-session save >= 2 and saw Pro <= 1', () {
-      final result = BetaDecisionRuleEngine.buildFromInput(
-        _input(
-          firstSessionSaveCount: 2,
-          sawProCount: 1,
-          usefulProofCount: 3,
-        ),
-      );
-      expect(result.outcome, BetaDecisionRuleOutcome.fixProPlacement);
-    });
+    test(
+      'fixProPlacement wins when first-session save >= 2 and saw Pro <= 1',
+      () {
+        final result = BetaDecisionRuleEngine.buildFromInput(
+          _input(firstSessionSaveCount: 2, sawProCount: 1, usefulProofCount: 3),
+        );
+        expect(result.outcome, BetaDecisionRuleOutcome.fixProPlacement);
+      },
+    );
 
-    test('fixProExplanation wins when saw Pro >= 3 and understands Pro <= 1', () {
-      final result = BetaDecisionRuleEngine.buildFromInput(
-        _input(
-          firstSessionSaveCount: 4,
-          sawProCount: 3,
-          understandsProYesMaybeCount: 1,
-          usefulProofCount: 4,
-        ),
-      );
-      expect(result.outcome, BetaDecisionRuleOutcome.fixProExplanation);
-    });
+    test(
+      'fixProExplanation wins when saw Pro >= 3 and understands Pro <= 1',
+      () {
+        final result = BetaDecisionRuleEngine.buildFromInput(
+          _input(
+            firstSessionSaveCount: 4,
+            sawProCount: 3,
+            understandsProYesMaybeCount: 1,
+            usefulProofCount: 4,
+          ),
+        );
+        expect(result.outcome, BetaDecisionRuleOutcome.fixProExplanation);
+      },
+    );
 
     test('continueMoreTesters when all gates pass', () {
       final result = BetaDecisionRuleEngine.buildFromInput(
@@ -120,11 +122,7 @@ void main() {
 
     test('priority order puts fixOpeningScreenOnly above fixProPlacement', () {
       final result = BetaDecisionRuleEngine.buildFromInput(
-        _input(
-          firstSessionSaveCount: 1,
-          sawProCount: 0,
-          usefulProofCount: 3,
-        ),
+        _input(firstSessionSaveCount: 1, sawProCount: 0, usefulProofCount: 3),
       );
       expect(result.outcome, BetaDecisionRuleOutcome.fixOpeningScreenOnly);
     });
@@ -155,7 +153,9 @@ void main() {
         contains('Useful proof dropped below the safe floor'),
       );
       expect(
-        BetaDecisionRuleCopy.ctaFor(BetaDecisionRuleOutcome.continueMoreTesters),
+        BetaDecisionRuleCopy.ctaFor(
+          BetaDecisionRuleOutcome.continueMoreTesters,
+        ),
         'Invite more testers',
       );
     });
@@ -253,8 +253,9 @@ void main() {
 
   group('Integration wiring', () {
     test('testing screen renders decision card', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('BetaDecisionRuleCard'));
       expect(source, contains('RevenueReadinessDashboardV2Card'));
     });

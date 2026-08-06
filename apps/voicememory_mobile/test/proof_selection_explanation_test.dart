@@ -28,7 +28,7 @@ import 'package:voicememory_mobile/widgets/patterns/timeline_proof_moment_card.d
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_selection_explanation/unused.json'));
+    : super(file: File('test/tmp/proof_selection_explanation/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -41,8 +41,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-const _behaviorPhrase =
-    'said yes when I had no capacity for one more thing';
+const _behaviorPhrase = 'said yes when I had no capacity for one more thing';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
@@ -52,41 +51,36 @@ JournalEntry _entry(
   String transcript, {
   DateTime? createdAt,
   String concreteObservation = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: concreteObservation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: concreteObservation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _specificRepeatEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: _now.subtract(const Duration(days: 2)),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: _now,
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: _now.subtract(const Duration(days: 2))),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: _now,
+  ),
+];
 
 List<JournalEntry> _keptCheckingEntries() {
   final base = _now;
@@ -112,30 +106,29 @@ List<JournalEntry> _keptCheckingEntries() {
   ];
 }
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 ProofDetailRepairResult _strongDetail() => ProofDetailRepairEngine.build(
-      level: ProofConfidenceLevel.strong,
-      hasSafeAnchor: true,
-      behaviorPhrase: _behaviorPhrase,
-    );
+  level: ProofConfidenceLevel.strong,
+  hasSafeAnchor: true,
+  behaviorPhrase: _behaviorPhrase,
+);
 
 void main() {
   late _MemoryPrefs prefs;
@@ -175,7 +168,10 @@ void main() {
 
     test('detail includes Why this one', () {
       expect(_strongDetail().body, contains('Why this one'));
-      expect(_strongDetail().body, contains(ProofDetailRepairCopy.whyThisOneLine));
+      expect(
+        _strongDetail().body,
+        contains(ProofDetailRepairCopy.whyThisOneLine),
+      );
     });
 
     test('detail says clearest specific repeat', () {
@@ -187,7 +183,10 @@ void main() {
     });
 
     test('detail says it is not ranking every past mention yet', () {
-      expect(_strongDetail().body, contains('not ranking every past mention yet'));
+      expect(
+        _strongDetail().body,
+        contains('not ranking every past mention yet'),
+      );
     });
 
     test('detail says it is not the most important thing', () {
@@ -202,7 +201,10 @@ void main() {
     });
 
     test('detail keeps Too vague Not relevant correction reassurance', () {
-      expect(_strongDetail().body, contains(ProofDetailRepairCopy.correctionLine));
+      expect(
+        _strongDetail().body,
+        contains(ProofDetailRepairCopy.correctionLine),
+      );
       expect(_strongDetail().body, contains('Too vague'));
       expect(_strongDetail().body, contains('Not relevant'));
     });
@@ -214,23 +216,27 @@ void main() {
       expect(lower.contains('top pattern'), isFalse);
     });
 
-    test('detail avoids key issue should need therapy diagnosis coach language',
-        () {
-      for (final text in ProofDetailRepairCopy.allVisibleStrings()) {
-        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
-        final lower = text.toLowerCase();
-        for (final banned in ProofDetailRepairCopy.bannedDetailPhrases) {
-          expect(lower.contains(banned), isFalse, reason: text);
+    test(
+      'detail avoids key issue should need therapy diagnosis coach language',
+      () {
+        for (final text in ProofDetailRepairCopy.allVisibleStrings()) {
+          expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
+          final lower = text.toLowerCase();
+          for (final banned in ProofDetailRepairCopy.bannedDetailPhrases) {
+            expect(lower.contains(banned), isFalse, reason: text);
+          }
         }
-      }
-    });
+      },
+    );
 
-    test('detail does not expose raw private journal text beyond safe anchor',
-        () {
-      final detail = _strongDetail();
-      expect(detail.body, isNot(contains(_strongRepeat)));
-      expect(detail.body, isNot(contains('extra meeting today')));
-    });
+    test(
+      'detail does not expose raw private journal text beyond safe anchor',
+      () {
+        final detail = _strongDetail();
+        expect(detail.body, isNot(contains(_strongRepeat)));
+        expect(detail.body, isNot(contains('extra meeting today')));
+      },
+    );
   });
 
   group('Proof selection explanation visibility', () {
@@ -305,39 +311,42 @@ void main() {
       expect(detail.body, contains('no capacity'));
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 
   group('Proof selection explanation protected areas', () {
@@ -376,8 +385,9 @@ void main() {
   });
 
   group('Proof selection explanation widget', () {
-    testWidgets('timeline proof card expands selection explanation copy',
-        (tester) async {
+    testWidgets('timeline proof card expands selection explanation copy', (
+      tester,
+    ) async {
       final moment = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
         beliefSurfaceVisible: true,
@@ -406,10 +416,7 @@ void main() {
       await tester.pump();
 
       expect(find.textContaining('Why this one'), findsOneWidget);
-      expect(
-        find.textContaining('clearest specific repeat'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('clearest specific repeat'), findsOneWidget);
     });
   });
 }

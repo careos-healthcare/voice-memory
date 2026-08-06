@@ -76,20 +76,18 @@ abstract final class ProofQualityResponseCopy {
         ProofQualityAlreadyKnewAnswer.noChange => noChangeLabel,
       };
 
-  static String alreadyKnewFollowUp(ProofQualityAlreadyKnewAnswer answer) =>
-      switch (answer) {
-        ProofQualityAlreadyKnewAnswer.cameBackStronger =>
-          cameBackStrongerFollowUp,
-        ProofQualityAlreadyKnewAnswer.feltLighter => feltLighterFollowUp,
-        ProofQualityAlreadyKnewAnswer.somethingHelped =>
-          somethingHelpedFollowUp,
-        ProofQualityAlreadyKnewAnswer.noChange => noChangeFollowUp,
-      };
+  static String alreadyKnewFollowUp(
+    ProofQualityAlreadyKnewAnswer answer,
+  ) => switch (answer) {
+    ProofQualityAlreadyKnewAnswer.cameBackStronger => cameBackStrongerFollowUp,
+    ProofQualityAlreadyKnewAnswer.feltLighter => feltLighterFollowUp,
+    ProofQualityAlreadyKnewAnswer.somethingHelped => somethingHelpedFollowUp,
+    ProofQualityAlreadyKnewAnswer.noChange => noChangeFollowUp,
+  };
 
   static String notRelevantActionLabel(ProofQualityNotRelevantAction action) =>
       switch (action) {
-        ProofQualityNotRelevantAction.keepAsBackground =>
-          keepAsBackgroundLabel,
+        ProofQualityNotRelevantAction.keepAsBackground => keepAsBackgroundLabel,
         ProofQualityNotRelevantAction.watchLightly => watchLightlyLabel,
         ProofQualityNotRelevantAction.relevantAgain => relevantAgainLabel,
       };
@@ -141,13 +139,14 @@ enum ProofQualityAlreadyKnewAnswer {
   noChange,
 }
 
-extension ProofQualityAlreadyKnewAnswerStorage on ProofQualityAlreadyKnewAnswer {
+extension ProofQualityAlreadyKnewAnswerStorage
+    on ProofQualityAlreadyKnewAnswer {
   String get storageValue => switch (this) {
-        ProofQualityAlreadyKnewAnswer.cameBackStronger => 'came_back_stronger',
-        ProofQualityAlreadyKnewAnswer.feltLighter => 'felt_lighter',
-        ProofQualityAlreadyKnewAnswer.somethingHelped => 'something_helped',
-        ProofQualityAlreadyKnewAnswer.noChange => 'no_change',
-      };
+    ProofQualityAlreadyKnewAnswer.cameBackStronger => 'came_back_stronger',
+    ProofQualityAlreadyKnewAnswer.feltLighter => 'felt_lighter',
+    ProofQualityAlreadyKnewAnswer.somethingHelped => 'something_helped',
+    ProofQualityAlreadyKnewAnswer.noChange => 'no_change',
+  };
 
   String get analyticsValue => storageValue;
 }
@@ -158,12 +157,13 @@ enum ProofQualityNotRelevantAction {
   relevantAgain,
 }
 
-extension ProofQualityNotRelevantActionStorage on ProofQualityNotRelevantAction {
+extension ProofQualityNotRelevantActionStorage
+    on ProofQualityNotRelevantAction {
   String get storageValue => switch (this) {
-        ProofQualityNotRelevantAction.keepAsBackground => 'keep_as_background',
-        ProofQualityNotRelevantAction.watchLightly => 'watch_lightly',
-        ProofQualityNotRelevantAction.relevantAgain => 'relevant_again',
-      };
+    ProofQualityNotRelevantAction.keepAsBackground => 'keep_as_background',
+    ProofQualityNotRelevantAction.watchLightly => 'watch_lightly',
+    ProofQualityNotRelevantAction.relevantAgain => 'relevant_again',
+  };
 
   String get analyticsValue => storageValue;
 }

@@ -13,32 +13,31 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -53,8 +52,7 @@ const _bannedWords = [
   'must come back',
 ];
 
-const _privateNote =
-    'This is not about work - it is more about family.';
+const _privateNote = 'This is not about work - it is more about family.';
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -78,10 +76,7 @@ Future<void> _pumpArchiveHomeCard(WidgetTester tester) async {
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: ArchiveHomeSummaryCard(
-            summary: summary,
-            onPrimary: () {},
-          ),
+          child: ArchiveHomeSummaryCard(summary: summary, onPrimary: () {}),
         ),
       ),
     ),
@@ -154,7 +149,9 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_not_quite')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_not_quite')),
+      );
       await tester.pump();
 
       expect(
@@ -162,23 +159,35 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Tell ArchiveMe what it missed'), findsOneWidget);
-      expect(find.byKey(const Key('archive_insight_feedback_correction_field')),
-          findsOneWidget);
-      expect(find.byKey(const Key('archive_insight_feedback_correction_save')),
-          findsOneWidget);
-      expect(find.byKey(const Key('archive_insight_feedback_correction_skip')),
-          findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_insight_feedback_correction_field')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_insight_feedback_correction_save')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_insight_feedback_correction_skip')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('empty correction note is not saved from editor', (tester) async {
+    testWidgets('empty correction note is not saved from editor', (
+      tester,
+    ) async {
       await _pumpArchiveHomeCard(tester);
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_not_quite')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_not_quite')),
+      );
       await tester.pump();
       await tester.enterText(
         find.byKey(const Key('archive_insight_feedback_correction_field')),
         '   ',
       );
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_correction_save')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_correction_save')),
+      );
       await tester.pump();
 
       expect(
@@ -191,24 +200,34 @@ void main() {
       );
     });
 
-    testWidgets('saved correction note appears in feedback area', (tester) async {
+    testWidgets('saved correction note appears in feedback area', (
+      tester,
+    ) async {
       await _pumpArchiveHomeCard(tester);
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_not_quite')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_not_quite')),
+      );
       await tester.pump();
       await tester.enterText(
         find.byKey(const Key('archive_insight_feedback_correction_field')),
         _privateNote,
       );
-      await tester.tap(find.byKey(const Key('archive_insight_feedback_correction_save')));
+      await tester.tap(
+        find.byKey(const Key('archive_insight_feedback_correction_save')),
+      );
       await tester.pump();
 
       expect(
         find.byKey(const Key('archive_insight_feedback_correction_marked')),
         findsOneWidget,
       );
-      final savedNoteText = tester.widget<Text>(
-        find.byKey(const Key('archive_insight_feedback_correction_saved_note')),
-      ).data!;
+      final savedNoteText = tester
+          .widget<Text>(
+            find.byKey(
+              const Key('archive_insight_feedback_correction_saved_note'),
+            ),
+          )
+          .data!;
       expect(savedNoteText, startsWith('Your note:'));
       expect(savedNoteText, contains('family'));
     });
@@ -231,9 +250,13 @@ void main() {
         find.byKey(const Key('archive_insight_feedback_why_correction_note')),
         findsOneWidget,
       );
-      final whyNoteText = tester.widget<Text>(
-        find.byKey(const Key('archive_insight_feedback_why_correction_note')),
-      ).data!;
+      final whyNoteText = tester
+          .widget<Text>(
+            find.byKey(
+              const Key('archive_insight_feedback_why_correction_note'),
+            ),
+          )
+          .data!;
       expect(whyNoteText, startsWith('Your note:'));
       expect(whyNoteText, contains('family'));
     });
@@ -283,7 +306,10 @@ void main() {
         entries: _entries(5),
       );
       final shareText = proof.lines.join('\n');
-      expect(shareText.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
+      expect(
+        shareText.toLowerCase(),
+        isNot(contains(_privateNote.toLowerCase())),
+      );
       expect(shareText.toLowerCase(), isNot(contains('your note:')));
       expect(shareText.toLowerCase(), isNot(contains('not quite right')));
     });

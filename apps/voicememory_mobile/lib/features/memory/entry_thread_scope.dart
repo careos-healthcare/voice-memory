@@ -117,13 +117,15 @@ abstract class EntryThreadScopeSession {
     pendingNewThreadName = null;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     selectedScope = EntryThreadScope.noThread;
     selectedThreadId = null;
     pendingNewThreadName = null;
     scopeExplicitlyChosen = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 }
 
 abstract class EntryThreadScopeCopy {

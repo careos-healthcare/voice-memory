@@ -99,8 +99,6 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
   String? _lastCorrectionLearningId;
   String? _selectedVariantId;
   String? _selectedSharpnessLabel;
-  bool _variantShownTracked = false;
-  bool _sharperShownTracked = false;
   bool _showOriginal = false;
   bool _showSharpenChooser = false;
 
@@ -181,15 +179,6 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
   void _onCompellingSharpnessSelected(CompellingCheckQuestion option) {
     setState(() => _selectedSharpnessLabel = option.sharpnessLabel);
     ActivationTracker.trackActivationTomorrowCheckSharpened();
-  }
-
-  void _trackVariantShownOnce(WatchForPrompt prompt) {
-    if (_variantShownTracked || prompt.questionVariants.isEmpty) return;
-    _variantShownTracked = true;
-    ActivationTracker.trackTomorrowQuestionVariantShown(
-      variantId: _effectiveVariantId(prompt),
-      categoryId: _selected.categoryId,
-    );
   }
 
   String _effectiveVariantId(WatchForPrompt prompt) =>
@@ -291,122 +280,6 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
     reflectionText: widget.reflectionText,
     intensity: widget.sharperIntensity,
   );
-
-  void _onVariantSelected(String variantId, String categoryId) {
-    if (_selectedVariantId == variantId) return;
-    setState(() => _selectedVariantId = variantId);
-    ActivationTracker.trackTomorrowQuestionVariantSelected(
-      variantId: variantId,
-      categoryId: categoryId,
-    );
-    ActivationTracker.trackActivationTomorrowCheckSharpened();
-  }
-
-  Widget _questionVariantChooser(WatchForPrompt tomorrow) {
-    if (!_showSharpenChooser) return const SizedBox.shrink();
-    _trackVariantShownOnce(tomorrow);
-    if (_sharper && !_sharperShownTracked) {
-      _sharperShownTracked = true;
-      ActivationTracker.trackSharperQuestionShown();
-      if (_aggressive) {
-        ActivationTracker.trackSharperQuestionAggressiveShown();
-      } else {
-        ActivationTracker.trackSharperQuestionElevatedShown();
-      }
-    }
-    final effectiveId = _effectiveVariantId(tomorrow);
-    final selected = tomorrow.questionVariants.firstWhere(
-      (v) => v.id == effectiveId,
-      orElse: () => tomorrow.questionVariants.first,
-    );
-
-    // aggressive: show the sharper question first.
-    final variants = List<WatchForQuestionVariant>.of(
-      tomorrow.questionVariants,
-    );
-    if (_aggressive) {
-      variants.sort((a, b) {
-        if (a.id == WatchForQuestionVariantId.sharper) return -1;
-        if (b.id == WatchForQuestionVariantId.sharper) return 1;
-        return 0;
-      });
-    }
-
-    final helper = _aggressive
-        ? ConsumerUiCopy.chooseSharperQuestionHelperAggressive
-        : ConsumerUiCopy.chooseSharperQuestionHelper;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          ConsumerUiCopy.chooseTomorrowQuestionLabel,
-          style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.textSecondary,
-          ).copyWith(fontWeight: FontWeight.w600),
-        ),
-        if (_sharper) ...[
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            helper,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
-            ).copyWith(fontSize: 13, height: 1.4),
-          ),
-        ],
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final variant in variants)
-              ChoiceChip(
-                label: Text(_variantLabel(variant)),
-                selected: variant.id == effectiveId,
-                showCheckmark: false,
-                onSelected: _saving
-                    ? null
-                    : (_) =>
-                          _onVariantSelected(variant.id, _selected.categoryId),
-                backgroundColor: Colors.white,
-                selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
-                side: BorderSide(
-                  color: variant.id == effectiveId
-                      ? AppColors.accentPrimary
-                      : AppColors.warmBorder,
-                ),
-                labelStyle:
-                    VoiceMemoryTypography.bodyStyle(
-                      color: variant.id == effectiveId
-                          ? AppColors.accentPrimary
-                          : AppColors.textSecondary,
-                    ).copyWith(
-                      fontSize: 13,
-                      fontWeight: variant.id == effectiveId
-                          ? FontWeight.w600
-                          : null,
-                    ),
-              ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          selected.question,
-          style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
-          ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
-        ),
-      ],
-    );
-  }
-
-  String _variantLabel(WatchForQuestionVariant variant) {
-    if (_aggressive && variant.id == WatchForQuestionVariantId.sharper) {
-      return ConsumerUiCopy.bestQuestionLabel;
-    }
-    return variant.label;
-  }
 
   Widget _promptContent(List<String> chips) {
     final ambiguous = _selected.isAmbiguousMatch;
@@ -756,7 +629,6 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
     setState(() {
       _selected = picked.pattern;
       _selectedVariantId = null;
-      _variantShownTracked = false;
     });
     widget.onPatternChanged?.call(_selected);
 

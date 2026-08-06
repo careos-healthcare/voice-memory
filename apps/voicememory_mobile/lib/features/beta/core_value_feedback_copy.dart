@@ -25,15 +25,15 @@ abstract final class CoreValueFeedbackCopy {
   static const diagnosticsNoAnswer = 'No answer yet';
 
   static List<String> get all => [
-        title,
-        question,
-        helper,
-        answerYes,
-        answerNotYet,
-        answerGeneric,
-        hideForNow,
-        savedMessage,
-        diagnosticsLabel,
-        diagnosticsNoAnswer,
-      ];
+    title,
+    question,
+    helper,
+    answerYes,
+    answerNotYet,
+    answerGeneric,
+    hideForNow,
+    savedMessage,
+    diagnosticsLabel,
+    diagnosticsNoAnswer,
+  ];
 }

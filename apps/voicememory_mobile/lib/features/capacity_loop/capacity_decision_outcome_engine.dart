@@ -31,15 +31,17 @@ class CapacityDecisionOutcomeEngine {
       return CapacityDecisionOutcomeResult.hidden;
     }
 
-    final recordedCount =
-        CapacityDecisionOutcomeStore.countWithOutcome(input.records);
+    final recordedCount = CapacityDecisionOutcomeStore.countWithOutcome(
+      input.records,
+    );
 
     return CapacityDecisionOutcomeResult(
       hasCard: true,
-      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
-        capacityWedgeActive: input.capacityWedgeActive,
-        capacityMomentCount: input.capacityMomentCount,
-      ),
+      showOnArchiveHome:
+          CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+            capacityWedgeActive: input.capacityWedgeActive,
+            capacityMomentCount: input.capacityMomentCount,
+          ),
       title: CapacityDecisionOutcomeCopy.cardTitle,
       body: CapacityDecisionOutcomeCopy.cardBody,
       helperText: CapacityDecisionOutcomeCopy.cardHelper,

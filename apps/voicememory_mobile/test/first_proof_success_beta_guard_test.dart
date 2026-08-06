@@ -23,51 +23,46 @@ FirstProofSuccessBetaInput _input({
   bool proPromiseSeen = false,
   bool proofThresholdStillThree = true,
   bool betaReadinessStillGuardsThree = true,
-}) =>
-    FirstProofSuccessBetaInput(
-      usableMomentCount: usableMomentCount,
-      hasSafeAnchor: hasSafeAnchor,
-      hasMatchQuality: hasMatchQuality,
-      proofConfidence: proofConfidence,
-      proofShown: proofShown,
-      proofAccepted: proofAccepted,
-      proofCorrected: proofCorrected,
-      tooVagueSelected: tooVagueSelected,
-      notRelevantSelected: notRelevantSelected,
-      userUnderstoodWhy: userUnderstoodWhy,
-      userSavedAnotherAfterProof: userSavedAnotherAfterProof,
-      proPromiseSeen: proPromiseSeen,
-      proofThresholdStillThree: proofThresholdStillThree,
-      betaReadinessStillGuardsThree: betaReadinessStillGuardsThree,
-    );
+}) => FirstProofSuccessBetaInput(
+  usableMomentCount: usableMomentCount,
+  hasSafeAnchor: hasSafeAnchor,
+  hasMatchQuality: hasMatchQuality,
+  proofConfidence: proofConfidence,
+  proofShown: proofShown,
+  proofAccepted: proofAccepted,
+  proofCorrected: proofCorrected,
+  tooVagueSelected: tooVagueSelected,
+  notRelevantSelected: notRelevantSelected,
+  userUnderstoodWhy: userUnderstoodWhy,
+  userSavedAnotherAfterProof: userSavedAnotherAfterProof,
+  proPromiseSeen: proPromiseSeen,
+  proofThresholdStillThree: proofThresholdStillThree,
+  betaReadinessStillGuardsThree: betaReadinessStillGuardsThree,
+);
 
 FirstProofSuccessBetaSignal _signal(
   FirstProofSuccessBetaResult result,
   FirstProofSuccessBetaSignalId id,
-) =>
-    result.signals.firstWhere((signal) => signal.id == id);
+) => result.signals.firstWhere((signal) => signal.id == id);
 
 void main() {
   group('FirstProofSuccessBetaGuard.build', () {
     test('engine tracks eleven canonical signals', () {
       final result = FirstProofSuccessBetaGuard.build(_input());
       expect(result.signals.length, FirstProofSuccessBetaGuard.signalCount);
-      expect(
-        result.signals.map((signal) => signal.id).toList(),
-        [
-          FirstProofSuccessBetaSignalId.usableMomentsReady,
-          FirstProofSuccessBetaSignalId.safeAnchorPresent,
-          FirstProofSuccessBetaSignalId.matchQualityPresent,
-          FirstProofSuccessBetaSignalId.proofConfidenceStrong,
-          FirstProofSuccessBetaSignalId.proofShown,
-          FirstProofSuccessBetaSignalId.proofAccepted,
-          FirstProofSuccessBetaSignalId.proofCorrected,
-          FirstProofSuccessBetaSignalId.tooVagueSelected,
-          FirstProofSuccessBetaSignalId.notRelevantSelected,
-          FirstProofSuccessBetaSignalId.userUnderstoodWhy,
-          FirstProofSuccessBetaSignalId.userSavedAnotherAfterProof,
-        ],
-      );
+      expect(result.signals.map((signal) => signal.id).toList(), [
+        FirstProofSuccessBetaSignalId.usableMomentsReady,
+        FirstProofSuccessBetaSignalId.safeAnchorPresent,
+        FirstProofSuccessBetaSignalId.matchQualityPresent,
+        FirstProofSuccessBetaSignalId.proofConfidenceStrong,
+        FirstProofSuccessBetaSignalId.proofShown,
+        FirstProofSuccessBetaSignalId.proofAccepted,
+        FirstProofSuccessBetaSignalId.proofCorrected,
+        FirstProofSuccessBetaSignalId.tooVagueSelected,
+        FirstProofSuccessBetaSignalId.notRelevantSelected,
+        FirstProofSuccessBetaSignalId.userUnderstoodWhy,
+        FirstProofSuccessBetaSignalId.userSavedAnotherAfterProof,
+      ]);
     });
 
     test('no safe anchor does not loosen proof', () {
@@ -80,10 +75,7 @@ void main() {
         _signal(result, FirstProofSuccessBetaSignalId.safeAnchorPresent).status,
         FirstProofSuccessBetaSignalStatus.concern,
       );
-      expect(
-        FirstProofSuccessBetaGuard.requiredUsableMoments,
-        3,
-      );
+      expect(FirstProofSuccessBetaGuard.requiredUsableMoments, 3);
     });
 
     test('not enough moments routes to more real moments', () {
@@ -96,8 +88,10 @@ void main() {
         contains('more real moments'),
       );
       expect(
-        _signal(result, FirstProofSuccessBetaSignalId.usableMomentsReady)
-            .status,
+        _signal(
+          result,
+          FirstProofSuccessBetaSignalId.usableMomentsReady,
+        ).status,
         FirstProofSuccessBetaSignalStatus.concern,
       );
     });
@@ -114,10 +108,7 @@ void main() {
 
     test('too vague routes to proof trust repair', () {
       final result = FirstProofSuccessBetaGuard.build(
-        _input(
-          proofAccepted: false,
-          tooVagueSelected: true,
-        ),
+        _input(proofAccepted: false, tooVagueSelected: true),
       );
       expect(result.decision, FirstProofSuccessBetaDecision.proofTooVagueRisk);
       expect(
@@ -132,19 +123,21 @@ void main() {
 
     test('not relevant routes to proof trust repair', () {
       final result = FirstProofSuccessBetaGuard.build(
-        _input(
-          proofAccepted: false,
-          notRelevantSelected: true,
-        ),
+        _input(proofAccepted: false, notRelevantSelected: true),
       );
-      expect(result.decision, FirstProofSuccessBetaDecision.proofNotRelevantRisk);
+      expect(
+        result.decision,
+        FirstProofSuccessBetaDecision.proofNotRelevantRisk,
+      );
       expect(
         FirstProofSuccessBetaCopy.recommendationFor(result.decision),
         contains('proof trust repair'),
       );
       expect(
-        _signal(result, FirstProofSuccessBetaSignalId.notRelevantSelected)
-            .status,
+        _signal(
+          result,
+          FirstProofSuccessBetaSignalId.notRelevantSelected,
+        ).status,
         FirstProofSuccessBetaSignalStatus.concern,
       );
     });

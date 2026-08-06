@@ -29,16 +29,12 @@ class _EarlyArchiveInsightWhySectionState
   Widget build(BuildContext context) {
     if (widget.reasons.isEmpty) return const SizedBox.shrink();
 
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.4,
-    );
-    final reasonStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 13,
-      height: 1.45,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.4);
+    final reasonStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 13, height: 1.45);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,7 +56,9 @@ class _EarlyArchiveInsightWhySectionState
               EarlyArchiveInsightWhyCopy.linkLabel,
               style: helperStyle.copyWith(
                 decoration: TextDecoration.underline,
-                decorationColor: AppColors.textSecondary.withValues(alpha: 0.45),
+                decorationColor: AppColors.textSecondary.withValues(
+                  alpha: 0.45,
+                ),
               ),
             ),
           ),

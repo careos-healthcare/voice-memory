@@ -21,8 +21,9 @@ class ShareableArchiveProofEngine {
     required List<JournalEntry> entries,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
-    final eligibleCount =
-        ArchiveEvidenceGuard.eligibleReflectionCount(realEntries);
+    final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(
+      realEntries,
+    );
     if (eligibleCount < _minJournalEligibleCount) {
       return ShareableArchiveProof.none();
     }

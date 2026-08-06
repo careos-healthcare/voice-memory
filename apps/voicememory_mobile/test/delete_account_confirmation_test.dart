@@ -229,7 +229,9 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      await tester.ensureVisible(find.byKey(const Key('delete_account_button')));
+      await tester.ensureVisible(
+        find.byKey(const Key('delete_account_button')),
+      );
       await tester.tap(find.byKey(const Key('delete_account_button')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));

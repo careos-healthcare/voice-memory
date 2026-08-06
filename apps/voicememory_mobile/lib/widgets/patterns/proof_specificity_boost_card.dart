@@ -37,7 +37,7 @@ class ProofSpecificityBoostCard extends StatefulWidget {
     this.onChanged,
     this.store,
     this.initialAnswer,
-  })  : skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final ProofSpecificityBoostResult result;
   final ProofSpecificityBoostSurface surface;
@@ -61,7 +61,8 @@ class _ProofSpecificityBoostCardState extends State<ProofSpecificityBoostCard> {
   @override
   void initState() {
     super.initState();
-    _selectedAnswer = widget.initialAnswer ??
+    _selectedAnswer =
+        widget.initialAnswer ??
         (widget.skipPrefsLoad
             ? null
             : ProofSpecificityBoostStore.recordFor(widget.surface).answerType);
@@ -74,8 +75,9 @@ class _ProofSpecificityBoostCardState extends State<ProofSpecificityBoostCard> {
     await ProofSpecificityBoostStore.ensureLoaded();
     if (!mounted) return;
     setState(() {
-      _selectedAnswer ??=
-          ProofSpecificityBoostStore.recordFor(widget.surface).answerType;
+      _selectedAnswer ??= ProofSpecificityBoostStore.recordFor(
+        widget.surface,
+      ).answerType;
     });
   }
 
@@ -129,10 +131,9 @@ class _ProofSpecificityBoostCardState extends State<ProofSpecificityBoostCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final answered = _selectedAnswer;
 
     if (answered != null) {
@@ -140,11 +141,14 @@ class _ProofSpecificityBoostCardState extends State<ProofSpecificityBoostCard> {
         key: Key('proof_specificity_boost_answered_${widget.surface.name}'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration:
-            VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
+        ),
         child: Text(
           ProofSpecificityBoostCopy.followUpFor(answered),
-          key: Key('proof_specificity_boost_follow_up_${answered.storageValue}'),
+          key: Key(
+            'proof_specificity_boost_follow_up_${answered.storageValue}',
+          ),
           style: bodyStyle.copyWith(color: AppColors.textPrimary),
         ),
       );
@@ -154,7 +158,9 @@ class _ProofSpecificityBoostCardState extends State<ProofSpecificityBoostCard> {
       key: const Key('proof_specificity_boost_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -24,7 +24,7 @@ import 'package:voicememory_mobile/widgets/record/first_session_proof_repair_car
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/first_session_proof_repair/unused.json'));
+    : super(file: File('test/tmp/first_session_proof_repair/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -46,58 +46,56 @@ ProofQualityRepairVisibilityInput _proofInput({
   int negativeFeedbackCount = 0,
   bool betaProofFeedbackRowVisible = false,
   bool isRecording = false,
-}) =>
-    ProofQualityRepairVisibilityInput(
-      entryCount: entryCount,
-      source: 'test',
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      usefulFeedbackCount: usefulFeedbackCount,
-      negativeFeedbackCount: negativeFeedbackCount,
-      betaProofFeedbackRowVisible: betaProofFeedbackRowVisible,
-      isRecording: isRecording,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-    );
+}) => ProofQualityRepairVisibilityInput(
+  entryCount: entryCount,
+  source: 'test',
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  usefulFeedbackCount: usefulFeedbackCount,
+  negativeFeedbackCount: negativeFeedbackCount,
+  betaProofFeedbackRowVisible: betaProofFeedbackRowVisible,
+  isRecording: isRecording,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+);
 
 SurfacePriorityCandidates _recordCandidates({
   bool firstSessionProofRepair = false,
   bool firstSessionLift = false,
   bool firstSaveLift = false,
   bool betaActivationPath = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      firstSessionProofRepair: firstSessionProofRepair,
-      firstSessionLift: firstSessionLift,
-      firstSaveLift: firstSaveLift,
-      betaActivationPath: betaActivationPath,
-      threeMomentCompletion: false,
-      firstMomentCapture: false,
-      secondMomentReturn: false,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      proofQualityRepair: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  firstSessionProofRepair: firstSessionProofRepair,
+  firstSessionLift: firstSessionLift,
+  firstSaveLift: firstSaveLift,
+  betaActivationPath: betaActivationPath,
+  threeMomentCompletion: false,
+  firstMomentCapture: false,
+  secondMomentReturn: false,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  proofQualityRepair: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 Future<void> _pumpCaptureCard(
   WidgetTester tester, {
@@ -239,7 +237,10 @@ void main() {
         SurfacePriorityCardKey.firstSessionProofRepair,
       );
       expect(
-        result.isVisible(SurfacePriorityCardKey.firstSessionLift, candidate: true),
+        result.isVisible(
+          SurfacePriorityCardKey.firstSessionLift,
+          candidate: true,
+        ),
         isFalse,
       );
       expect(
@@ -253,7 +254,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonGuidanceCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonGuidanceCap),
+      );
     });
   });
 
@@ -339,8 +343,9 @@ void main() {
       );
     });
 
-    testWidgets('already knew answer produces changed-not-repeated copy',
-        (tester) async {
+    testWidgets('already knew answer produces changed-not-repeated copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -471,7 +476,10 @@ void main() {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       expect(source, contains('FirstSessionCaptureRepairCard'));
       expect(source, contains('ProofQualityRepairCard'));
-      expect(source, contains('SurfacePriorityCardKey.firstSessionProofRepair'));
+      expect(
+        source,
+        contains('SurfacePriorityCardKey.firstSessionProofRepair'),
+      );
       expect(source, contains('SurfacePriorityCardKey.proofQualityRepair'));
     });
 
@@ -486,14 +494,18 @@ void main() {
       final start = source.indexOf('ProofQualityRepairCard');
       final end = source.indexOf('BetaProofFeedbackRow', start);
       final repairBlock = source.substring(start, end);
-      expect(repairBlock.contains('_openProEvidenceValueSubscription'), isFalse);
+      expect(
+        repairBlock.contains('_openProEvidenceValueSubscription'),
+        isFalse,
+      );
       expect(repairBlock.contains('ProUnderstandingLiftCard'), isFalse);
       expect(repairBlock.contains('ProVisibilityLiftCard'), isFalse);
     });
 
     test('testing screen renders previews', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('_FirstSessionProofRepairTestingPanel'));
       expect(source, contains('FirstSessionCaptureRepairCard.test'));
       expect(source, contains('ProofQualityRepairCard.test'));

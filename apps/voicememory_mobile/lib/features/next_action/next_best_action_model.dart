@@ -26,7 +26,4 @@ class NextBestActionResult {
 }
 
 /// Where the next best action may render.
-enum NextBestActionSurface {
-  record,
-  patterns,
-}
+enum NextBestActionSurface { record, patterns }

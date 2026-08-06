@@ -64,8 +64,9 @@ void main() {
   });
 
   group('ConnectedClinicalTelemetryTrendWidget', () {
-    testWidgets('aggregates trajectory points into weekly summaries',
-        (tester) async {
+    testWidgets('aggregates trajectory points into weekly summaries', (
+      tester,
+    ) async {
       final dataPoints = [
         TelemetryDataPoint(
           date: DateTime.utc(2026, 6, 10),
@@ -87,15 +88,16 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ConnectedClinicalTelemetryTrendWidget(
-              history: dataPoints,
-            ),
+            body: ConnectedClinicalTelemetryTrendWidget(history: dataPoints),
           ),
         ),
       );
 
       expect(find.text('Clinical Telemetry & Down-Regulation'), findsOneWidget);
-      expect(find.byKey(const Key('clinical_telemetry_rolling_health_score')), findsOneWidget);
+      expect(
+        find.byKey(const Key('clinical_telemetry_rolling_health_score')),
+        findsOneWidget,
+      );
       expect(find.text('Rolling Stability Index'), findsOneWidget);
       expect(find.text('100 / 100'), findsOneWidget);
       expect(find.text('Stable'), findsOneWidget);

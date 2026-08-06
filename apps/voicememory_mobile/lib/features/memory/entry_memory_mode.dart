@@ -133,10 +133,12 @@ abstract class EntryMemoryModeSession {
     keepSeparate: keepSeparate,
   );
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     selectedMode = EntryMemoryMode.useArchiveContext;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 }
 
 abstract class EntryMemoryModeCopy {

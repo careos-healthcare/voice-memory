@@ -46,9 +46,9 @@ class _CaptureContextTagCardState extends State<CaptureContextTagCard> {
           Text(
             VisibleArchiveProofCopy.captureContextTagHelper,
             key: const Key('capture_context_tag_helper'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
@@ -60,9 +60,8 @@ class _CaptureContextTagCardState extends State<CaptureContextTagCard> {
                   key: Key('capture_context_tag_${tag.id}'),
                   label: Text(tag.label),
                   selected: _selectedId == tag.id,
-                  onSelected: (selected) => setState(
-                    () => _selectedId = selected ? tag.id : null,
-                  ),
+                  onSelected: (selected) =>
+                      setState(() => _selectedId = selected ? tag.id : null),
                 ),
             ],
           ),

@@ -68,9 +68,9 @@ class _ComeBackTomorrowQuietSignalCardState
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('come_back_tomorrow_quiet_signal_card'),
@@ -114,11 +114,12 @@ class _ComeBackTomorrowQuietSignalCardState
               ),
               child: Text(
                 widget.signal.cta,
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.accentPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
+                style: ArchiveMobileTypography.responsiveHelper(context)
+                    .copyWith(
+                      color: AppColors.accentPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
               ),
             ),
           ),

@@ -90,12 +90,11 @@ class ArchivePromptAssistResult {
 
   factory ArchivePromptAssistResult.hidden({
     required ArchivePromptAssistReason reason,
-  }) =>
-      ArchivePromptAssistResult(
-        shouldShowPrompt: false,
-        promptText: '',
-        reason: reason,
-      );
+  }) => ArchivePromptAssistResult(
+    shouldShowPrompt: false,
+    promptText: '',
+    reason: reason,
+  );
 
   final bool shouldShowPrompt;
   final String promptText;

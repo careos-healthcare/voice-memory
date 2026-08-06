@@ -21,7 +21,8 @@ abstract class DailyMirrorCopy {
   static const String weakStartedFootnote =
       'Nothing is guessed. Patterns only appear when your own words support them.';
 
-  static const String possibleLoopHeroTitleDefault = 'This may be your first repeat';
+  static const String possibleLoopHeroTitleDefault =
+      'This may be your first repeat';
   static const String possibleLoopEvidenceLabel = 'Your words:';
   static const String possibleLoopNextLabel = 'Tomorrow, check this:';
   static const String possibleLoopPrimaryCta = "Record today's moment";

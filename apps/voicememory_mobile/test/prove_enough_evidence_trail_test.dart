@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/prove_enough/prove_enough_evidence_t
 import 'package:voicememory_mobile/features/signal_review/signal_review_model.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/screens/prove_enough_evidence_trail_screen.dart';
+import 'package:archiveme_research/screens/prove_enough_evidence_trail_screen.dart';
 
 import 'signal_review_engine_test.dart' show entry, journey;
 

@@ -60,7 +60,7 @@ class ArchiveInsightsEngine {
 
     final strongest = beliefInsights.isEmpty ? null : beliefInsights.first;
     final all = [
-      if (strongest != null) strongest,
+      ?strongest,
       ...contradictions,
       ...evolution,
       ...blindSpots,

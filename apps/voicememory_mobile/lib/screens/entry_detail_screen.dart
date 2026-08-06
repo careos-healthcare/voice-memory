@@ -158,10 +158,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                       SizedBox(height: 8),
                       Text(
                         EntryDetailCopy.archiveNoteHelper,
-                        style: TextStyle(
-                          color: AppTheme.muted,
-                          height: 1.45,
-                        ),
+                        style: TextStyle(color: AppTheme.muted, height: 1.45),
                       ),
                     ],
                   ),
@@ -270,10 +267,8 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
             width: double.infinity,
             child: OutlinedButton(
               key: const Key('entry_detail_type_what_you_said'),
-              onPressed: () => context.push(
-                '/quick-capture',
-                extra: {'entryId': entry.id},
-              ),
+              onPressed: () =>
+                  context.push('/quick-capture', extra: {'entryId': entry.id}),
               child: const Text(VoiceCaptureCopy.typeWhatYouSaid),
             ),
           ),

@@ -30,8 +30,7 @@ abstract final class QuietSignalGates {
   static bool shouldShowOnPatterns({
     required QuietSignal? signal,
     required bool viewingConfirmedRepeatOrTimeline,
-  }) =>
-      signal != null && viewingConfirmedRepeatOrTimeline;
+  }) => signal != null && viewingConfirmedRepeatOrTimeline;
 }
 
 /// Detects when an active watch target has not appeared in recent saves.
@@ -65,7 +64,10 @@ abstract final class QuietSignalEngine {
     final shouldShow = unrelatedCount >= 2 || daysSinceSet >= 3;
     if (!shouldShow) return null;
 
-    final lastSeenDateKey = _resolveLastSeenDateKey(entries: entries, target: target);
+    final lastSeenDateKey = _resolveLastSeenDateKey(
+      entries: entries,
+      target: target,
+    );
     final daysSinceSeen = lastSeenDateKey == null
         ? daysSinceSet
         : ComeBackTomorrowV2Store.daysSinceDateKey(lastSeenDateKey, now: clock);

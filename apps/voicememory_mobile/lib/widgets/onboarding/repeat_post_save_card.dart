@@ -61,17 +61,13 @@ class _RepeatPostSaveCardState extends State<RepeatPostSaveCard> {
   Widget build(BuildContext context) {
     final phrase = _repeatPhrase;
     final heardSummary = postSaveRecordedSummary(widget.entry);
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final quoteStyle = bodyStyle.copyWith(
-      fontStyle: FontStyle.italic,
-    );
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final quoteStyle = bodyStyle.copyWith(fontStyle: FontStyle.italic);
 
     return Container(
       key: const Key('repeat_post_save_card'),
@@ -154,13 +150,14 @@ class _RepeatPostSaveCardState extends State<RepeatPostSaveCard> {
             Text(
               heardSummary,
               key: const Key('repeat_post_save_heard_body'),
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textPrimary,
-                height: 1.45,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textPrimary, height: 1.45),
             ),
             if (widget.onCorrectTranscript != null &&
-                TranscriptCorrectionGate.entryAllowsCorrection(widget.entry)) ...[
+                TranscriptCorrectionGate.entryAllowsCorrection(
+                  widget.entry,
+                )) ...[
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
@@ -216,7 +213,9 @@ class _RepeatPostSaveCardState extends State<RepeatPostSaveCard> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 minimumSize: const Size(0, 36),
               ),
-              child: const Text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+              child: const Text(
+                VisibleArchiveProofCopy.firstSaveDoneForTodayCta,
+              ),
             ),
           ),
         ],

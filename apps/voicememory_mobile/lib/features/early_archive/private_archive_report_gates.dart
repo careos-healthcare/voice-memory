@@ -32,12 +32,11 @@ abstract final class PrivateArchiveReportGates {
     required int entryCount,
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      WeeklyArchiveWeekReviewGates.hasEnoughEvidence(
-        entryCount: entryCount,
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => WeeklyArchiveWeekReviewGates.hasEnoughEvidence(
+    entryCount: entryCount,
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static bool showFullExport({required bool isPro}) => isPro;
 
@@ -47,8 +46,7 @@ abstract final class PrivateArchiveReportGates {
     required int sectionIndex,
     required bool isPro,
     int previewSectionCount = 1,
-  }) =>
-      isPro || sectionIndex < previewSectionCount;
+  }) => isPro || sectionIndex < previewSectionCount;
 
   static bool passesActivationGate(int entryCount) =>
       entryCount > FirstThreeSessionGates.minEntriesForUsefulArchive;

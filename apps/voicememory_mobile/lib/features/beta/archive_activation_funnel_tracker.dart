@@ -46,15 +46,15 @@ class ArchiveActivationFunnelEvent {
   final Map<String, String> metadata;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toIso8601String(),
-        'type': type.name,
-        if (entryId != null && entryId!.isNotEmpty) 'entryId': entryId,
-        if (mapId != null && mapId!.isNotEmpty) 'mapId': mapId,
-        if (proofId != null && proofId!.isNotEmpty) 'proofId': proofId,
-        if (source != null && source!.isNotEmpty) 'source': source,
-        if (metadata.isNotEmpty) 'metadata': metadata,
-      };
+    'id': id,
+    'createdAt': createdAt.toIso8601String(),
+    'type': type.name,
+    if (entryId != null && entryId!.isNotEmpty) 'entryId': entryId,
+    if (mapId != null && mapId!.isNotEmpty) 'mapId': mapId,
+    if (proofId != null && proofId!.isNotEmpty) 'proofId': proofId,
+    if (source != null && source!.isNotEmpty) 'source': source,
+    if (metadata.isNotEmpty) 'metadata': metadata,
+  };
 
   static ArchiveActivationFunnelEvent? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -176,7 +176,8 @@ abstract class ArchiveActivationFunnelSummaryResolver {
       counts[event.type] = (counts[event.type] ?? 0) + 1;
     }
 
-    final firstStarted = counts[ArchiveActivationFunnelEventType.firstRecordingStarted] ?? 0;
+    final firstStarted =
+        counts[ArchiveActivationFunnelEventType.firstRecordingStarted] ?? 0;
     final firstCompleted =
         counts[ArchiveActivationFunnelEventType.firstRecordingCompleted] ?? 0;
     final firstPreview =
@@ -227,7 +228,8 @@ abstract class ArchiveActivationFunnelSummaryResolver {
       firstPreviewShownCount: firstPreview,
       secondRecordingStartedCount: secondStarted,
       secondRecordingCompletedCount:
-          counts[ArchiveActivationFunnelEventType.secondRecordingCompleted] ?? 0,
+          counts[ArchiveActivationFunnelEventType.secondRecordingCompleted] ??
+          0,
       thirdRecordingCompletedCount: thirdCompleted,
       fullMapShownCount: fullMap,
       nodeConfirmedOrEditedCount:
@@ -249,7 +251,9 @@ abstract class ArchiveActivationFunnelSummaryResolver {
       activationReadinessLabel: readiness,
     );
 
-    ArchiveActivationFunnelLog.summaryReady(readiness: summary.activationReadinessLabel);
+    ArchiveActivationFunnelLog.summaryReady(
+      readiness: summary.activationReadinessLabel,
+    );
     return summary;
   }
 

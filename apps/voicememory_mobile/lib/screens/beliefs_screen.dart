@@ -95,14 +95,10 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: ArchiveMobileSpacing.pagePadding.copyWith(
-                  bottom: 0,
-                ),
+                padding: ArchiveMobileSpacing.pagePadding.copyWith(bottom: 0),
                 child: _backHeader(),
               ),
-              const Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              const Expanded(child: Center(child: CircularProgressIndicator())),
             ],
           ),
         ),

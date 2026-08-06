@@ -31,7 +31,7 @@ import 'package:voicememory_mobile/widgets/patterns/not_relevant_recovery_card.d
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/not_relevant_recovery/unused.json'));
+    : super(file: File('test/tmp/not_relevant_recovery/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -48,11 +48,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -172,8 +168,10 @@ void main() {
         CorrectionMemoryState.faded,
       );
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isTrue,
       );
     });
@@ -192,8 +190,10 @@ void main() {
       );
 
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isTrue,
       );
     });
@@ -201,8 +201,10 @@ void main() {
     test('hidden without correction state', () {
       final entries = _threeRelatedEntries();
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isFalse,
       );
     });
@@ -273,29 +275,37 @@ void main() {
 
   group('NotRelevantRecoveryCard', () {
     NotRelevantRecoveryResult _visibleResult() => NotRelevantRecoveryResult(
-          shouldShow: true,
-          proofKey: '1|2|3',
-          entryCount: 3,
-          source: 'test',
-          hasConfirmedRepeat: true,
-          hasFreshReturn: false,
-          title: NotRelevantRecoveryCopy.title,
-          body: NotRelevantRecoveryCopy.body,
-          correctionLine: NotRelevantRecoveryCopy.correctionLine,
-          returnLine: NotRelevantRecoveryCopy.returnLine,
-          returnedAfterCorrectionLine:
-              NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
-        );
+      shouldShow: true,
+      proofKey: '1|2|3',
+      entryCount: 3,
+      source: 'test',
+      hasConfirmedRepeat: true,
+      hasFreshReturn: false,
+      title: NotRelevantRecoveryCopy.title,
+      body: NotRelevantRecoveryCopy.body,
+      correctionLine: NotRelevantRecoveryCopy.correctionLine,
+      returnLine: NotRelevantRecoveryCopy.returnLine,
+      returnedAfterCorrectionLine:
+          NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
+    );
 
     testWidgets('renders title and background copy', (tester) async {
       await _pumpCard(tester, _visibleResult());
 
-      expect(find.byKey(const Key('not_relevant_recovery_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('not_relevant_recovery_card')),
+        findsOneWidget,
+      );
       expect(find.text(NotRelevantRecoveryCopy.title), findsOneWidget);
-      expect(find.textContaining('background unless it returns'), findsOneWidget);
+      expect(
+        find.textContaining('background unless it returns'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('renders correction changes timeline weighting', (tester) async {
+    testWidgets('renders correction changes timeline weighting', (
+      tester,
+    ) async {
       await _pumpCard(tester, _visibleResult());
 
       expect(find.text(NotRelevantRecoveryCopy.correctionLine), findsOneWidget);
@@ -343,7 +353,9 @@ void main() {
       );
     });
 
-    testWidgets('It is relevant again persists stillCurrent state', (tester) async {
+    testWidgets('It is relevant again persists stillCurrent state', (
+      tester,
+    ) async {
       final entries = _threeRelatedEntries();
       final store = NotRelevantRecoveryStore.forPrefs(prefs);
       await _pumpCard(tester, _visibleResult(), store: store);
@@ -464,7 +476,9 @@ void main() {
 
     test('fresh return is not permanently suppressed', () async {
       final entries = [
-        ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 10))),
+        ..._threeRelatedEntries(
+          anchor: _now.subtract(const Duration(days: 10)),
+        ),
         _entry(
           '4',
           'I said yes again even though I had no capacity for one more ask.',
@@ -486,7 +500,10 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(spine?.currentWeight, isNot(ArchiveTimelineSpineCurrentWeight.corrected));
+      expect(
+        spine?.currentWeight,
+        isNot(ArchiveTimelineSpineCurrentWeight.corrected),
+      );
       expect(
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
         isTrue,
@@ -529,7 +546,10 @@ void main() {
         expect(event.props.containsKey('entry_count'), isTrue);
         expect(event.props.containsKey('has_confirmed_repeat'), isTrue);
         expect(event.props.containsKey('has_fresh_return'), isTrue);
-        expect(event.props.keys.any((key) => key.contains('transcript')), isFalse);
+        expect(
+          event.props.keys.any((key) => key.contains('transcript')),
+          isFalse,
+        );
       }
       expect(analyticsEvents.last.props['action_type'], 'keep_as_background');
     });
@@ -537,7 +557,8 @@ void main() {
 }
 
 extension _TestResultHelpers on NotRelevantRecoveryResult {
-  NotRelevantRecoveryResult copyWithHiddenAsVisible() => NotRelevantRecoveryResult(
+  NotRelevantRecoveryResult copyWithHiddenAsVisible() =>
+      NotRelevantRecoveryResult(
         shouldShow: true,
         proofKey: proofKey.isEmpty ? '1|2|3' : proofKey,
         entryCount: entryCount == 0 ? 3 : entryCount,
@@ -554,18 +575,17 @@ extension _TestResultHelpers on NotRelevantRecoveryResult {
   NotRelevantRecoveryResult copyWithForcedVisible({
     required String proofKey,
     required int entryCount,
-  }) =>
-      NotRelevantRecoveryResult(
-        shouldShow: true,
-        proofKey: proofKey,
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: true,
-        hasFreshReturn: false,
-        title: title,
-        body: body,
-        correctionLine: correctionLine,
-        returnLine: returnLine,
-        returnedAfterCorrectionLine: returnedAfterCorrectionLine,
-      );
+  }) => NotRelevantRecoveryResult(
+    shouldShow: true,
+    proofKey: proofKey,
+    entryCount: entryCount,
+    source: source,
+    hasConfirmedRepeat: true,
+    hasFreshReturn: false,
+    title: title,
+    body: body,
+    correctionLine: correctionLine,
+    returnLine: returnLine,
+    returnedAfterCorrectionLine: returnedAfterCorrectionLine,
+  );
 }

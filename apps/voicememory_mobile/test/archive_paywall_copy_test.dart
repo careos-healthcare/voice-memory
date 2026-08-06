@@ -9,10 +9,7 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
   test('paywall headline sells full timeline continuity', () {
-    expect(
-      ConsumerUiCopy.paywallHeadline,
-      PaywallAlignmentCopy.headline,
-    );
+    expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
     expect(
       ArchivePaywallVariantConfig.headline(ArchivePaywallVariant.b),
       ConsumerUiCopy.paywallHeadline,
@@ -24,25 +21,13 @@ void main() {
   });
 
   test('paywall subhead sells timeline value', () {
-    expect(
-      ConsumerUiCopy.paywallSubhead,
-      PaywallAlignmentCopy.body,
-    );
+    expect(ConsumerUiCopy.paywallSubhead, PaywallAlignmentCopy.body);
   });
 
   test('paywall benefits include aligned timeline bullets', () {
-    expect(
-      ConsumerUiCopy.paywallBullets,
-      PaywallAlignmentCopy.benefitBullets,
-    );
-    expect(
-      ConsumerUiCopy.paywallBullets,
-      contains('Longer evidence history'),
-    );
-    expect(
-      ConsumerUiCopy.paywallBullets,
-      contains('Weekly archive reviews'),
-    );
+    expect(ConsumerUiCopy.paywallBullets, PaywallAlignmentCopy.benefitBullets);
+    expect(ConsumerUiCopy.paywallBullets, contains('Longer evidence history'));
+    expect(ConsumerUiCopy.paywallBullets, contains('Weekly archive reviews'));
     expect(ConsumerUiCopy.paywallBullets.length, 3);
     expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });

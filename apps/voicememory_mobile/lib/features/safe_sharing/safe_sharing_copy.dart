@@ -10,8 +10,7 @@ abstract final class SafeSharingCopy {
   static const noDiagnosisDisclaimer =
       'ArchiveMe does not diagnose, treat, or replace professional support.';
 
-  static const userControlIncluded =
-      'You stay in control of what is included.';
+  static const userControlIncluded = 'You stay in control of what is included.';
 
   static const futureSharingPrinciple =
       'Future sharing should be explicit, private, and reversible.';
@@ -39,15 +38,15 @@ abstract final class SafeSharingCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        shareOnlyWhatYouChoose,
-        privateReportExplainPattern,
-        noDiagnosisDisclaimer,
-        userControlIncluded,
-        futureSharingPrinciple,
-        futureFeatureLabel,
-        foundationHeadline,
-        foundationBody,
-      ];
+    shareOnlyWhatYouChoose,
+    privateReportExplainPattern,
+    noDiagnosisDisclaimer,
+    userControlIncluded,
+    futureSharingPrinciple,
+    futureFeatureLabel,
+    foundationHeadline,
+    foundationBody,
+  ];
 
   static bool containsConsentLanguage(Iterable<String> strings) {
     final blob = strings.join(' ').toLowerCase();

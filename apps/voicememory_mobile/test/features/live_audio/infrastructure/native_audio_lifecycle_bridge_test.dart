@@ -32,7 +32,9 @@ void main() {
     late File journalFile;
 
     setUp(() {
-      ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+      ApiUsageGuard.resetForTest(
+        replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+      );
       sinkController = StreamController<dynamic>();
       journalFile = File(
         '${Directory.systemTemp.path}/native_lifecycle_${DateTime.now().microsecondsSinceEpoch}.json',
@@ -72,32 +74,38 @@ void main() {
       await startFuture;
     }
 
-    test('onAudioInterruptionBegan pauses microphone capture for focus', () async {
-      await startConnected();
-      final bridge = NativeAudioLifecycleBridge(service);
+    test(
+      'onAudioInterruptionBegan pauses microphone capture for focus',
+      () async {
+        await startConnected();
+        final bridge = NativeAudioLifecycleBridge(service);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
 
-      expect(service.isPausedByAudioFocus, isTrue);
-      await bridge.dispose();
-    });
+        expect(service.isPausedByAudioFocus, isTrue);
+        await bridge.dispose();
+      },
+    );
 
-    test('onAudioInterruptionEnded resumes capture when session is healthy', () async {
-      await startConnected();
-      final bridge = NativeAudioLifecycleBridge(service);
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
+    test(
+      'onAudioInterruptionEnded resumes capture when session is healthy',
+      () async {
+        await startConnected();
+        final bridge = NativeAudioLifecycleBridge(service);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionEnded'),
-      );
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionEnded'),
+        );
 
-      expect(service.isPausedByAudioFocus, isFalse);
-      await bridge.dispose();
-    });
+        expect(service.isPausedByAudioFocus, isFalse);
+        await bridge.dispose();
+      },
+    );
   });
 }
 
@@ -168,15 +176,15 @@ class _SilentPlayback extends LivePcm24PlaybackEngine {
 
 class _NoopPipeline extends CapturePipelineService {
   _NoopPipeline({required File journalFile})
-      : super(
+    : super(
+        api: _FakeApi(),
+        attest: CaptureAttestService(
           api: _FakeApi(),
-          attest: CaptureAttestService(
-            api: _FakeApi(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache(),
-          ),
-          journalStore: JournalStore(file: journalFile),
-        );
+          deviceIds: _FakeDeviceIdStore(),
+          tokenCache: CaptureTokenCache(),
+        ),
+        journalStore: JournalStore(file: journalFile),
+      );
 }
 
 class _FakeApi extends ApiClient {
@@ -190,6 +198,5 @@ class _FakeApi extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

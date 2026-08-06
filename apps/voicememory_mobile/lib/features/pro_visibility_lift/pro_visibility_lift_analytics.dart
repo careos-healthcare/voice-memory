@@ -13,7 +13,7 @@ abstract final class ProVisibilityLiftAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required ProVisibilityLiftResult result}) {
     _emit(seenEvent, result: result);

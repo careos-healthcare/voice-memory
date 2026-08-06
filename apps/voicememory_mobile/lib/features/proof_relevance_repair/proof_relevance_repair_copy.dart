@@ -8,8 +8,7 @@ abstract final class ProofRelevanceRepairCopy {
   static const softerLead = 'ArchiveMe may be noticing this:';
 
   static const whyAppearedPrefix = 'Why this appeared:';
-  static const whyAppearedBody =
-      'similar moments mention this same behaviour.';
+  static const whyAppearedBody = 'similar moments mention this same behaviour.';
 
   static String get whyAppearedLine => '$whyAppearedPrefix $whyAppearedBody';
 
@@ -50,17 +49,17 @@ abstract final class ProofRelevanceRepairCopy {
   }
 
   static String labelFor(BetaProofFeedbackType type) => switch (type) {
-        BetaProofFeedbackType.useful => answerYes,
-        BetaProofFeedbackType.tooVague => answerTooVague,
-        BetaProofFeedbackType.alreadyKnew => answerYes,
-        BetaProofFeedbackType.notRelevant => answerNotRelevant,
-      };
+    BetaProofFeedbackType.useful => answerYes,
+    BetaProofFeedbackType.tooVague => answerTooVague,
+    BetaProofFeedbackType.alreadyKnew => answerYes,
+    BetaProofFeedbackType.notRelevant => answerNotRelevant,
+  };
 
   static String responseFor(BetaProofFeedbackType type) => switch (type) {
-        BetaProofFeedbackType.tooVague => tooVagueResponse,
-        BetaProofFeedbackType.notRelevant => notRelevantResponse,
-        _ => 'Thanks — this helps tune what ArchiveMe shows next.',
-      };
+    BetaProofFeedbackType.tooVague => tooVagueResponse,
+    BetaProofFeedbackType.notRelevant => notRelevantResponse,
+    _ => 'Thanks — this helps tune what ArchiveMe shows next.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield strongLead;

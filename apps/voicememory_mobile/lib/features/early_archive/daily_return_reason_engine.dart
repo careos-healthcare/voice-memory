@@ -6,7 +6,6 @@ import 'confirmed_repeat_thought_map_models.dart';
 import 'daily_return_reason_copy.dart';
 import 'daily_return_reason_model.dart';
 import 'positive_pattern_engine.dart';
-import 'positive_pattern_models.dart';
 
 /// Chooses one grounded reason to record today from archive gaps.
 abstract final class DailyReturnReasonEngine {
@@ -69,37 +68,37 @@ abstract final class DailyReturnReasonEngine {
   static DailyReturnReasonResult _forMissingSection(ThoughtMapSection section) {
     return switch (section.id) {
       ThoughtMapSectionId.trigger => DailyReturnReasonResult(
-          title: DailyReturnReasonCopy.title,
-          body: DailyReturnReasonCopy.missingTriggerBody,
-          prompt: DailyReturnReasonCopy.missingTriggerPrompt,
-          guidedRecordPrompt: section.guidedRecordPrompt,
-          kind: DailyReturnReasonKind.missingTrigger,
-          targetSection: section.id,
-        ),
+        title: DailyReturnReasonCopy.title,
+        body: DailyReturnReasonCopy.missingTriggerBody,
+        prompt: DailyReturnReasonCopy.missingTriggerPrompt,
+        guidedRecordPrompt: section.guidedRecordPrompt,
+        kind: DailyReturnReasonKind.missingTrigger,
+        targetSection: section.id,
+      ),
       ThoughtMapSectionId.thought => DailyReturnReasonResult(
-          title: DailyReturnReasonCopy.title,
-          body: DailyReturnReasonCopy.missingThoughtBody,
-          prompt: DailyReturnReasonCopy.missingThoughtPrompt,
-          guidedRecordPrompt: section.guidedRecordPrompt,
-          kind: DailyReturnReasonKind.missingThought,
-          targetSection: section.id,
-        ),
+        title: DailyReturnReasonCopy.title,
+        body: DailyReturnReasonCopy.missingThoughtBody,
+        prompt: DailyReturnReasonCopy.missingThoughtPrompt,
+        guidedRecordPrompt: section.guidedRecordPrompt,
+        kind: DailyReturnReasonKind.missingThought,
+        targetSection: section.id,
+      ),
       ThoughtMapSectionId.action => DailyReturnReasonResult(
-          title: DailyReturnReasonCopy.title,
-          body: DailyReturnReasonCopy.missingActionBody,
-          prompt: DailyReturnReasonCopy.missingActionPrompt,
-          guidedRecordPrompt: section.guidedRecordPrompt,
-          kind: DailyReturnReasonKind.missingAction,
-          targetSection: section.id,
-        ),
+        title: DailyReturnReasonCopy.title,
+        body: DailyReturnReasonCopy.missingActionBody,
+        prompt: DailyReturnReasonCopy.missingActionPrompt,
+        guidedRecordPrompt: section.guidedRecordPrompt,
+        kind: DailyReturnReasonKind.missingAction,
+        targetSection: section.id,
+      ),
       ThoughtMapSectionId.result => DailyReturnReasonResult(
-          title: DailyReturnReasonCopy.title,
-          body: DailyReturnReasonCopy.missingResultBody,
-          prompt: DailyReturnReasonCopy.missingResultPrompt,
-          guidedRecordPrompt: section.guidedRecordPrompt,
-          kind: DailyReturnReasonKind.missingResult,
-          targetSection: section.id,
-        ),
+        title: DailyReturnReasonCopy.title,
+        body: DailyReturnReasonCopy.missingResultBody,
+        prompt: DailyReturnReasonCopy.missingResultPrompt,
+        guidedRecordPrompt: section.guidedRecordPrompt,
+        kind: DailyReturnReasonKind.missingResult,
+        targetSection: section.id,
+      ),
     };
   }
 }

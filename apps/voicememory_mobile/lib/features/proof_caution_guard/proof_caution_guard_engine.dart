@@ -155,10 +155,9 @@ abstract final class ProofCautionGuardEngine {
     );
   }
 
-  static bool entriesAreDegraded(List<JournalEntry> entries) =>
-      entries.any(
-        (entry) => !ArchiveEvidenceQuality.assess(entry).allowsProofSurfaces,
-      );
+  static bool entriesAreDegraded(List<JournalEntry> entries) => entries.any(
+    (entry) => !ArchiveEvidenceQuality.assess(entry).allowsProofSurfaces,
+  );
 
   static bool _isRollbackCandidate(ProofConfidenceLevel level) =>
       level == ProofConfidenceLevel.watchOnly ||
@@ -189,16 +188,19 @@ abstract final class ProofCautionGuardEngine {
       return ProofCautionGuardBlockedReason.userMarkedNotRelevant;
     }
     if (!hasSafeAnchor ||
-        matchQuality.weakReasons
-            .contains(PatternMatchWeakReason.noSafeAnchorAvailable)) {
+        matchQuality.weakReasons.contains(
+          PatternMatchWeakReason.noSafeAnchorAvailable,
+        )) {
       return ProofCautionGuardBlockedReason.noSafeAnchor;
     }
-    if (matchQuality.weakReasons
-        .contains(PatternMatchWeakReason.onlyGenericWordingOverlaps)) {
+    if (matchQuality.weakReasons.contains(
+      PatternMatchWeakReason.onlyGenericWordingOverlaps,
+    )) {
       return ProofCautionGuardBlockedReason.genericWordingOnly;
     }
-    if (matchQuality.weakReasons
-        .contains(PatternMatchWeakReason.entriesTooUnrelated)) {
+    if (matchQuality.weakReasons.contains(
+      PatternMatchWeakReason.entriesTooUnrelated,
+    )) {
       return ProofCautionGuardBlockedReason.entriesUnrelated;
     }
     if (isDegraded) {
@@ -212,7 +214,7 @@ abstract final class ProofCautionGuardEngine {
   }
 
   static (ProofConfidenceLevel, bool, ProofCautionGuardUpgradeReason)?
-      _resolveUpgrade({
+  _resolveUpgrade({
     required ProofConfidenceLevel originalLevel,
     required int entryCount,
     required bool hasSafeAnchor,
@@ -226,8 +228,8 @@ abstract final class ProofCautionGuardEngine {
       if (entryCount < watchOnlyMinEntryCount || !hasSafeAnchor) {
         return null;
       }
-      final hasOverlapSignal = matchQuality.matchedDimensions.length >= 2 ||
-          hasConfirmedRepeat;
+      final hasOverlapSignal =
+          matchQuality.matchedDimensions.length >= 2 || hasConfirmedRepeat;
       if (!hasOverlapSignal) return null;
 
       if (hasConfirmedRepeat &&
@@ -292,9 +294,9 @@ abstract final class ProofCautionGuardEngine {
         : ProofConfidenceCalibrationCopy.primaryFor(level);
     final leadCopy =
         level == ProofConfidenceLevel.watchOnly ||
-                level == ProofConfidenceLevel.corrected
-            ? null
-            : calibration.leadCopy;
+            level == ProofConfidenceLevel.corrected
+        ? null
+        : calibration.leadCopy;
     final displayCopy = leadCopy == null || leadCopy.trim().isEmpty
         ? primaryCopy
         : '$leadCopy $primaryCopy';

@@ -38,27 +38,27 @@ abstract final class AndroidAfterIosProofCopy {
   static const detailAndroidExpansionUnblocked = 'Android expansion unblocked';
 
   static String prereqLabelFor(AndroidAfterIosProofPrereqId id) => switch (id) {
-        AndroidAfterIosProofPrereqId.iosTestFlightUploaded =>
-          'iOS TestFlight uploaded',
-        AndroidAfterIosProofPrereqId.iosRevenueCatProductsLoad =>
-          'iOS RevenueCat products load',
-        AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks =>
-          'iOS sandbox purchase works',
-        AndroidAfterIosProofPrereqId.iosRestoreWorks => 'iOS restore works',
-        AndroidAfterIosProofPrereqId.iosEntitlementPersists =>
-          'iOS entitlement persists',
-        AndroidAfterIosProofPrereqId.paidIntentBetaPromising =>
-          'Paid-intent beta promising',
-        AndroidAfterIosProofPrereqId.noProductionSecretsBlocker =>
-          'No production secrets blocker',
-      };
+    AndroidAfterIosProofPrereqId.iosTestFlightUploaded =>
+      'iOS TestFlight uploaded',
+    AndroidAfterIosProofPrereqId.iosRevenueCatProductsLoad =>
+      'iOS RevenueCat products load',
+    AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks =>
+      'iOS sandbox purchase works',
+    AndroidAfterIosProofPrereqId.iosRestoreWorks => 'iOS restore works',
+    AndroidAfterIosProofPrereqId.iosEntitlementPersists =>
+      'iOS entitlement persists',
+    AndroidAfterIosProofPrereqId.paidIntentBetaPromising =>
+      'Paid-intent beta promising',
+    AndroidAfterIosProofPrereqId.noProductionSecretsBlocker =>
+      'No production secrets blocker',
+  };
 
   static String ruleLabelFor(AndroidAfterIosProofRuleId id) => switch (id) {
-        AndroidAfterIosProofRuleId.androidWorkBlockedUntilPrereqsPass =>
-          'Android work blocked until prerequisites pass',
-        AndroidAfterIosProofRuleId.androidSetupDocumentedNotPrioritised =>
-          'Android setup documented but not prioritised',
-      };
+    AndroidAfterIosProofRuleId.androidWorkBlockedUntilPrereqsPass =>
+      'Android work blocked until prerequisites pass',
+    AndroidAfterIosProofRuleId.androidSetupDocumentedNotPrioritised =>
+      'Android setup documented but not prioritised',
+  };
 
   static String messageFor(AndroidAfterIosProofGateDecision decision) =>
       switch (decision) {
@@ -67,13 +67,14 @@ abstract final class AndroidAfterIosProofCopy {
           androidExpansionUnblockedLine,
       };
 
-  static String recommendationFor(AndroidAfterIosProofGateDecision decision) =>
-      switch (decision) {
-        AndroidAfterIosProofGateDecision.androidFrozen =>
-          'Finish iOS TestFlight, RevenueCat, purchase, restore, entitlement, paid intent, and secrets safety before Android work.',
-        AndroidAfterIosProofGateDecision.androidExpansionUnblocked =>
-          'Android expansion may proceed. Keep setup documentation separate from launch prioritisation until ready.',
-      };
+  static String recommendationFor(
+    AndroidAfterIosProofGateDecision decision,
+  ) => switch (decision) {
+    AndroidAfterIosProofGateDecision.androidFrozen =>
+      'Finish iOS TestFlight, RevenueCat, purchase, restore, entitlement, paid intent, and secrets safety before Android work.',
+    AndroidAfterIosProofGateDecision.androidExpansionUnblocked =>
+      'Android expansion may proceed. Keep setup documentation separate from launch prioritisation until ready.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -112,21 +113,14 @@ enum AndroidAfterIosProofPrereqId {
   noProductionSecretsBlocker,
 }
 
-enum AndroidAfterIosProofPrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum AndroidAfterIosProofPrereqStatus { pass, pending, fail }
 
 enum AndroidAfterIosProofRuleId {
   androidWorkBlockedUntilPrereqsPass,
   androidSetupDocumentedNotPrioritised,
 }
 
-enum AndroidAfterIosProofRuleStatus {
-  pass,
-  fail,
-}
+enum AndroidAfterIosProofRuleStatus { pass, fail }
 
 enum AndroidAfterIosProofGateDecision {
   androidFrozen,

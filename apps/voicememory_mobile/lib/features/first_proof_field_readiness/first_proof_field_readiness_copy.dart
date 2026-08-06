@@ -64,66 +64,65 @@ abstract final class FirstProofFieldReadinessCopy {
       'Do not loosen anchors, expand proof volume, or change thresholds.';
 
   static String labelFor(FirstProofFieldReadinessSignalId id) => switch (id) {
-        FirstProofFieldReadinessSignalId.userSavedThreeUsableMoments =>
-          checkThreeUsableMoments,
-        FirstProofFieldReadinessSignalId.strongProofAppeared =>
-          checkStrongProofAppeared,
-        FirstProofFieldReadinessSignalId.watchOnlyAppearedInstead =>
-          checkWatchOnlyInstead,
-        FirstProofFieldReadinessSignalId.noSafeAnchor => checkNoSafeAnchor,
-        FirstProofFieldReadinessSignalId.proofAccepted => checkProofAccepted,
-        FirstProofFieldReadinessSignalId.proofCorrected => checkProofCorrected,
-        FirstProofFieldReadinessSignalId.proofTooVague => checkProofTooVague,
-        FirstProofFieldReadinessSignalId.proofNotRelevant =>
-          checkProofNotRelevant,
-        FirstProofFieldReadinessSignalId.userUnderstoodWhyAppeared =>
-          checkUnderstoodWhyAppeared,
-        FirstProofFieldReadinessSignalId.userUnderstoodWhatToSaveNext =>
-          checkUnderstoodWhatToSaveNext,
-      };
+    FirstProofFieldReadinessSignalId.userSavedThreeUsableMoments =>
+      checkThreeUsableMoments,
+    FirstProofFieldReadinessSignalId.strongProofAppeared =>
+      checkStrongProofAppeared,
+    FirstProofFieldReadinessSignalId.watchOnlyAppearedInstead =>
+      checkWatchOnlyInstead,
+    FirstProofFieldReadinessSignalId.noSafeAnchor => checkNoSafeAnchor,
+    FirstProofFieldReadinessSignalId.proofAccepted => checkProofAccepted,
+    FirstProofFieldReadinessSignalId.proofCorrected => checkProofCorrected,
+    FirstProofFieldReadinessSignalId.proofTooVague => checkProofTooVague,
+    FirstProofFieldReadinessSignalId.proofNotRelevant => checkProofNotRelevant,
+    FirstProofFieldReadinessSignalId.userUnderstoodWhyAppeared =>
+      checkUnderstoodWhyAppeared,
+    FirstProofFieldReadinessSignalId.userUnderstoodWhatToSaveNext =>
+      checkUnderstoodWhatToSaveNext,
+  };
 
-  static String messageFor(FirstProofFieldReadinessDecision decision) =>
-      switch (decision) {
-        FirstProofFieldReadinessDecision.insufficientCapture =>
-          insufficientCaptureLine,
-        FirstProofFieldReadinessDecision.repairAnchorSafety =>
-          repairAnchorSafetyLine,
-        FirstProofFieldReadinessDecision.repairProofClarity =>
-          repairProofClarityLine,
-        FirstProofFieldReadinessDecision.repairProofRelevance =>
-          repairProofRelevanceLine,
-        FirstProofFieldReadinessDecision.repairProofStrength =>
-          repairProofStrengthLine,
-        FirstProofFieldReadinessDecision.repairSaveNextGuidance =>
-          repairSaveNextGuidanceLine,
-        FirstProofFieldReadinessDecision.repairWhyAppeared =>
-          repairWhyAppearedLine,
-        FirstProofFieldReadinessDecision.fieldReady => fieldReadyLine,
-        FirstProofFieldReadinessDecision.needsManualReview =>
-          needsManualReviewLine,
-      };
+  static String messageFor(
+    FirstProofFieldReadinessDecision decision,
+  ) => switch (decision) {
+    FirstProofFieldReadinessDecision.insufficientCapture =>
+      insufficientCaptureLine,
+    FirstProofFieldReadinessDecision.repairAnchorSafety =>
+      repairAnchorSafetyLine,
+    FirstProofFieldReadinessDecision.repairProofClarity =>
+      repairProofClarityLine,
+    FirstProofFieldReadinessDecision.repairProofRelevance =>
+      repairProofRelevanceLine,
+    FirstProofFieldReadinessDecision.repairProofStrength =>
+      repairProofStrengthLine,
+    FirstProofFieldReadinessDecision.repairSaveNextGuidance =>
+      repairSaveNextGuidanceLine,
+    FirstProofFieldReadinessDecision.repairWhyAppeared => repairWhyAppearedLine,
+    FirstProofFieldReadinessDecision.fieldReady => fieldReadyLine,
+    FirstProofFieldReadinessDecision.needsManualReview => needsManualReviewLine,
+  };
 
-  static String recommendationFor(FirstProofFieldReadinessDecision decision) =>
-      switch (decision) {
-        FirstProofFieldReadinessDecision.insufficientCapture =>
-          'Route to first-session capture repair and three-moment guidance.',
-        FirstProofFieldReadinessDecision.repairAnchorSafety =>
-          'Route to anchor extraction and evidence display repair.',
-        FirstProofFieldReadinessDecision.repairProofClarity =>
-          'Route to proof explanation and specificity repair.',
-        FirstProofFieldReadinessDecision.repairProofRelevance =>
-          'Route to proof relevance repair.',
-        FirstProofFieldReadinessDecision.repairProofStrength =>
-          'Route to capture specificity repair without lowering proof thresholds.',
-        FirstProofFieldReadinessDecision.repairSaveNextGuidance =>
-          'Route to save-next guidance repair.',
-        FirstProofFieldReadinessDecision.repairWhyAppeared =>
-          'Route to why-appeared explanation repair.',
-        FirstProofFieldReadinessDecision.fieldReady =>
-          'Continue beta testing. No proof-threshold changes needed.',
-        FirstProofFieldReadinessDecision.needsManualReview =>
-          'Review tester notes before any proof-threshold change.',
-      };
+  static String recommendationFor(
+    FirstProofFieldReadinessDecision decision,
+  ) => switch (decision) {
+    FirstProofFieldReadinessDecision.insufficientCapture =>
+      'Route to first-session capture repair and three-moment guidance.',
+    FirstProofFieldReadinessDecision.repairAnchorSafety =>
+      'Route to anchor extraction and evidence display repair.',
+    FirstProofFieldReadinessDecision.repairProofClarity =>
+      'Route to proof explanation and specificity repair.',
+    FirstProofFieldReadinessDecision.repairProofRelevance =>
+      'Route to proof relevance repair.',
+    FirstProofFieldReadinessDecision.repairProofStrength =>
+      'Route to capture specificity repair without lowering proof thresholds.',
+    FirstProofFieldReadinessDecision.repairSaveNextGuidance =>
+      'Route to save-next guidance repair.',
+    FirstProofFieldReadinessDecision.repairWhyAppeared =>
+      'Route to why-appeared explanation repair.',
+    FirstProofFieldReadinessDecision.fieldReady =>
+      'Continue beta testing. No proof-threshold changes needed.',
+    FirstProofFieldReadinessDecision.needsManualReview =>
+      'Review tester notes before any proof-threshold change.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -172,11 +171,7 @@ enum FirstProofFieldReadinessSignalId {
   userUnderstoodWhatToSaveNext,
 }
 
-enum FirstProofFieldReadinessSignalStatus {
-  pass,
-  concern,
-  notObserved,
-}
+enum FirstProofFieldReadinessSignalStatus { pass, concern, notObserved }
 
 enum FirstProofFieldReadinessDecision {
   insufficientCapture,

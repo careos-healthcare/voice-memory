@@ -1,4 +1,10 @@
 import '../features/recording/recording_dependencies.dart';
+import '../features/recording/v1/recording_session_controller.dart';
+import '../features/recording/v1/microphone_permission_controller.dart';
+import '../features/recording/v1/capture_processing_controller.dart';
+import '../features/recording/v1/post_save_result_controller.dart';
+import '../features/recording/v1/record_view_state_mapper.dart';
+import '../features/recording/v1/record_view_state.dart';
 import '../features/weekly_review/weekly_archive_review_engine.dart'
     as weekly_review_surface;
 import '../widgets/weekly_review/weekly_archive_review_card.dart'
@@ -11,6 +17,9 @@ part '../features/recording/recording_state_controller.dart';
 part '../features/recording/recording_audio_visualizer.dart';
 part '../features/recording/recording_transcription_view.dart';
 
+/// Warm light record surface — background token applied in recording_state_controller.
+const Color recordScreenBackground = AppColors.backgroundPrimary;
+
 void _recordLog(String message) {
   debugPrint('RECORD: $message');
 }
@@ -21,14 +30,6 @@ void _recordPermissionUiLog(String message) {
 
 void _recordCtaLog(String message) {
   debugPrint('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
-}
-
-final class _RecordScreenLogger {
-  const _RecordScreenLogger();
-
-  void info(String message) {
-    RecordPipelineLog.log(message);
-  }
 }
 
 class RecordScreen extends StatefulWidget {

@@ -1,7 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_clarity/archive_clarity_engine.dart';
 import '../activation/weekly_archive_review.dart';
-import '../beta_feedback/beta_feedback_engine.dart';
 import '../demo/sample_archive_mode.dart';
 import '../archive_clarity/archive_clarity_models.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
@@ -183,8 +182,9 @@ class TodaysQuestionEngine {
       );
     }
 
-    final rotated = TodaysQuestionCopy.rotatedQuestions[
-        input.dayKey % TodaysQuestionCopy.rotatedQuestions.length];
+    final rotated =
+        TodaysQuestionCopy.rotatedQuestions[input.dayKey %
+            TodaysQuestionCopy.rotatedQuestions.length];
     return _TodaysQuestionSelection(
       questionId: TodaysQuestionId.rotated,
       questionText: rotated,

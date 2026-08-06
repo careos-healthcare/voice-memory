@@ -4,7 +4,6 @@ import '../design/archive_mobile_typography.dart';
 import '../features/moment_quality/moment_quality_copy.dart';
 import '../features/moment_quality/moment_quality_engine.dart';
 import '../features/moment_quality/moment_quality_gates.dart';
-import '../features/moment_quality/moment_quality_models.dart';
 import '../features/moment_quality/post_save_moment_detail_model.dart';
 import '../models/journal_entry.dart';
 import '../theme/app_colors.dart';
@@ -78,7 +77,9 @@ class MomentQualityCard extends StatelessWidget {
               children: [
                 for (final suggestion in result.suggestions)
                   _SuggestionChip(
-                    key: Key('moment_quality_suggestion_${suggestion.hashCode}'),
+                    key: Key(
+                      'moment_quality_suggestion_${suggestion.hashCode}',
+                    ),
                     label: suggestion,
                     onTap: _onTapFor(suggestion),
                   ),
@@ -98,11 +99,7 @@ class MomentQualityCard extends StatelessWidget {
 }
 
 class _SuggestionChip extends StatelessWidget {
-  const _SuggestionChip({
-    super.key,
-    required this.label,
-    this.onTap,
-  });
+  const _SuggestionChip({super.key, required this.label, this.onTap});
 
   final String label;
   final VoidCallback? onTap;
@@ -131,9 +128,7 @@ class _SuggestionChip extends StatelessWidget {
 
     return Material(
       color: Colors.white,
-      shape: StadiumBorder(
-        side: BorderSide(color: MomentQualityCard._border),
-      ),
+      shape: StadiumBorder(side: BorderSide(color: MomentQualityCard._border)),
       child: InkWell(
         key: Key('moment_quality_suggestion_tap_${label.hashCode}'),
         onTap: onTap,

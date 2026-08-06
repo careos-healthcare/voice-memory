@@ -38,47 +38,46 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
   int entryCountAtCapture = 4,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: entryCountAtCapture,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: entryCountAtCapture,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoDiagnosticLanguage(String copy) {
   final lower = copy.toLowerCase();
@@ -319,15 +318,15 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ReturnCheckPayoffCard(
-              payoff: payoff,
-              entryCount: 4,
-            ),
+            body: ReturnCheckPayoffCard(payoff: payoff, entryCount: 4),
           ),
         ),
       );
 
-      expect(find.byKey(const Key('return_check_payoff_card_softer')), findsOneWidget);
+      expect(
+        find.byKey(const Key('return_check_payoff_card_softer')),
+        findsOneWidget,
+      );
       expect(find.byType(FilledButton), findsNothing);
       expect(find.byType(ElevatedButton), findsNothing);
     });
@@ -339,7 +338,8 @@ void main() {
     setUp(() {
       captured = [];
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -355,13 +355,19 @@ void main() {
 
       expect(captured, hasLength(1));
       final payload = captured.single.properties;
-      expect(captured.single.event, EarlyArchiveProofAnalytics.returnCheckPayoffSeenEvent);
+      expect(
+        captured.single.event,
+        EarlyArchiveProofAnalytics.returnCheckPayoffSeenEvent,
+      );
       expect(payload['entry_count'], 4);
       expect(payload['source'], 'record');
       expect(payload['comparison_state'], 'softer');
       expect(payload['has_phrase'], 1);
       expect(payload['has_confirmed_repeat'], 1);
-      expect(payload.values.whereType<String>(), isNot(contains('said yes again')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('said yes again')),
+      );
     });
   });
 
@@ -384,21 +390,28 @@ void main() {
       expect(joined, contains('what changed'));
     });
 
-    test('post-save payoff avoids repeating intensity labels in body and footer', () {
-      final payoff = ReturnCheckPayoffEngine.build(
-        entries: _fourRelatedRepeatEntries(),
-        returnChecks: [
-          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
-      )!;
-      final combined = '${payoff.title}\n${payoff.body}\n${payoff.footer}'.toLowerCase();
-      expect(
-        ArchiveProofCopyDedup.countPhrase(combined, 'softer'),
-        lessThanOrEqualTo(2),
-      );
-      expect(combined, isNot(contains('you should')));
-      expect(combined, isNot(contains('try to')));
-    });
+    test(
+      'post-save payoff avoids repeating intensity labels in body and footer',
+      () {
+        final payoff = ReturnCheckPayoffEngine.build(
+          entries: _fourRelatedRepeatEntries(),
+          returnChecks: [
+            _choiceRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.softer,
+            ),
+          ],
+        )!;
+        final combined = '${payoff.title}\n${payoff.body}\n${payoff.footer}'
+            .toLowerCase();
+        expect(
+          ArchiveProofCopyDedup.countPhrase(combined, 'softer'),
+          lessThanOrEqualTo(2),
+        );
+        expect(combined, isNot(contains('you should')));
+        expect(combined, isNot(contains('try to')));
+      },
+    );
 
     test('payoff copy uses evidence comparison language', () {
       final joined = [
@@ -438,7 +451,9 @@ void main() {
 
   group('Patterns screen isolation', () {
     test('archive belief screen does not import return check payoff card', () {
-      final source = File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source.contains('return_check_payoff'), isFalse);
       expect(source.contains('ReturnCheckPayoffCard'), isFalse);
     });

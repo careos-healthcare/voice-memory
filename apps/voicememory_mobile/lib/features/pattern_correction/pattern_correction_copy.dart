@@ -30,25 +30,23 @@ abstract final class PatternCorrectionCopy {
   static const betaFeedbackAction = BetaFeedbackCopy.sheetLinkLabel;
   static const keepRecordingAction = FirstProofActionLoopCopy.keepRecordingCta;
 
-  static String reasonLabel(PatternCorrectionReason reason) =>
-      switch (reason) {
-        PatternCorrectionReason.wrongPattern => wrongPatternReason,
-        PatternCorrectionReason.wrongWording => wrongWordingReason,
-        PatternCorrectionReason.tooPersonal => tooPersonalReason,
-        PatternCorrectionReason.doesNotBelong => doesNotBelongReason,
-        PatternCorrectionReason.notUseful => notUsefulReason,
-      };
+  static String reasonLabel(PatternCorrectionReason reason) => switch (reason) {
+    PatternCorrectionReason.wrongPattern => wrongPatternReason,
+    PatternCorrectionReason.wrongWording => wrongWordingReason,
+    PatternCorrectionReason.tooPersonal => tooPersonalReason,
+    PatternCorrectionReason.doesNotBelong => doesNotBelongReason,
+    PatternCorrectionReason.notUseful => notUsefulReason,
+  };
 
-  static String actionLabel(PatternCorrectionAction action) =>
-      switch (action) {
-        PatternCorrectionAction.renamePattern => renamePatternAction,
-        PatternCorrectionAction.removeFromPattern => removeFromPatternAction,
-        PatternCorrectionAction.correctTranscript => correctTranscriptAction,
-        PatternCorrectionAction.deleteMoment => deleteMomentAction,
-        PatternCorrectionAction.privacyCentre => privacyCentreAction,
-        PatternCorrectionAction.betaFeedback => betaFeedbackAction,
-        PatternCorrectionAction.keepRecording => keepRecordingAction,
-      };
+  static String actionLabel(PatternCorrectionAction action) => switch (action) {
+    PatternCorrectionAction.renamePattern => renamePatternAction,
+    PatternCorrectionAction.removeFromPattern => removeFromPatternAction,
+    PatternCorrectionAction.correctTranscript => correctTranscriptAction,
+    PatternCorrectionAction.deleteMoment => deleteMomentAction,
+    PatternCorrectionAction.privacyCentre => privacyCentreAction,
+    PatternCorrectionAction.betaFeedback => betaFeedbackAction,
+    PatternCorrectionAction.keepRecording => keepRecordingAction,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield controlLabel;

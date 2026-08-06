@@ -53,9 +53,9 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
       PrivateArchiveReportGates.showFullExport(isPro: widget.isPro);
 
   String get _exportText => widget.report.visiblePlainText(
-        isPro: _isFullExport,
-        previewSectionCount: widget.report.previewSectionCount,
-      );
+    isPro: _isFullExport,
+    previewSectionCount: widget.report.previewSectionCount,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -68,21 +68,21 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final sectionLabelStyle = ArchiveMobileTypography.cardLabel(context);
-    final previewStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final previewStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('private_archive_report_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7F8FA)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7F8FA),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -109,14 +109,16 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
                 labelStyle: sectionLabelStyle,
                 bodyStyle: bodyStyle,
               ),
-          if (PrivateArchiveReportGates.showPreviewNote(isPro: widget.isPro)) ...[
+          if (PrivateArchiveReportGates.showPreviewNote(
+            isPro: widget.isPro,
+          )) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               PrivateArchiveReportCopy.previewTitle,
               key: const Key('private_archive_report_preview_title'),
-              style: ArchiveMobileTypography.listTitle(context).copyWith(
-                fontSize: 16,
-              ),
+              style: ArchiveMobileTypography.listTitle(
+                context,
+              ).copyWith(fontSize: 16),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
@@ -134,7 +136,10 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.accentPrimary,
                     visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 2,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -147,7 +152,9 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
           _ExportScopeList(
             heading: PrivateArchiveReportCopy.exportIncludedHeading,
             items: PrivateArchiveReportCopy.exportIncludedItems,
-            headingKey: const Key('private_archive_report_export_included_heading'),
+            headingKey: const Key(
+              'private_archive_report_export_included_heading',
+            ),
             listKey: const Key('private_archive_report_export_included'),
             labelStyle: sectionLabelStyle,
             bodyStyle: bodyStyle,
@@ -156,8 +163,9 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
           _ExportScopeList(
             heading: PrivateArchiveReportCopy.exportNotIncludedHeading,
             items: PrivateArchiveReportCopy.exportNotIncludedItems,
-            headingKey:
-                const Key('private_archive_report_export_not_included_heading'),
+            headingKey: const Key(
+              'private_archive_report_export_not_included_heading',
+            ),
             listKey: const Key('private_archive_report_export_not_included'),
             labelStyle: sectionLabelStyle,
             bodyStyle: bodyStyle,

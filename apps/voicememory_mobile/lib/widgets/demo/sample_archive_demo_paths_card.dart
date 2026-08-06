@@ -60,10 +60,7 @@ class SampleArchiveDemoPathsCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           for (final path in SampleArchiveDemoPaths.paths) ...[
-            _DemoPathRow(
-              path: path,
-              onTap: () => _onPathTap(context, path.id),
-            ),
+            _DemoPathRow(path: path, onTap: () => _onPathTap(context, path.id)),
             if (path.id != SampleArchiveDemoPaths.paths.last.id)
               const SizedBox(height: AppSpacing.xs),
           ],
@@ -86,10 +83,7 @@ class SampleArchiveDemoPathsCard extends StatelessWidget {
 }
 
 class _DemoPathRow extends StatelessWidget {
-  const _DemoPathRow({
-    required this.path,
-    required this.onTap,
-  });
+  const _DemoPathRow({required this.path, required this.onTap});
 
   final SampleArchiveDemoPath path;
   final VoidCallback onTap;

@@ -47,7 +47,9 @@ void main() {
       expect(coordinator.isCapturingMicrophone, isTrue);
 
       capture.emitChunk(const [1, 2, 3, 4]);
-      expect(chunksSent, [const [1, 2, 3, 4]]);
+      expect(chunksSent, [
+        const [1, 2, 3, 4],
+      ]);
       expect(coordinator.state, LiveSessionState.streaming);
 
       await coordinator.stopMicrophoneCapture();
@@ -95,34 +97,37 @@ void main() {
       expect(capture.stopCalls, 1);
     });
 
-    test('pauseMicrophoneCaptureForFocus stops mic without ending stream', () async {
-      final capture = _FakeLivePcm16CaptureSource();
-      final socketEvents = StreamController<dynamic>();
-      final coordinator = _buildCoordinator(
-        capture: capture,
-        socketEvents: socketEvents,
-      );
+    test(
+      'pauseMicrophoneCaptureForFocus stops mic without ending stream',
+      () async {
+        final capture = _FakeLivePcm16CaptureSource();
+        final socketEvents = StreamController<dynamic>();
+        final coordinator = _buildCoordinator(
+          capture: capture,
+          socketEvents: socketEvents,
+        );
 
-      final connectFuture = coordinator.connect();
-      await Future<void>.delayed(Duration.zero);
-      socketEvents.add(jsonEncode({'setupComplete': {}}));
-      await connectFuture;
+        final connectFuture = coordinator.connect();
+        await Future<void>.delayed(Duration.zero);
+        socketEvents.add(jsonEncode({'setupComplete': {}}));
+        await connectFuture;
 
-      await coordinator.startMicrophoneCapture();
-      expect(coordinator.isCapturingMicrophone, isTrue);
+        await coordinator.startMicrophoneCapture();
+        expect(coordinator.isCapturingMicrophone, isTrue);
 
-      await coordinator.pauseMicrophoneCaptureForFocus();
-      expect(coordinator.isCapturingMicrophone, isFalse);
-      expect(coordinator.isPausedByAudioFocus, isTrue);
-      expect(capture.stopCalls, 1);
+        await coordinator.pauseMicrophoneCaptureForFocus();
+        expect(coordinator.isCapturingMicrophone, isFalse);
+        expect(coordinator.isPausedByAudioFocus, isTrue);
+        expect(capture.stopCalls, 1);
 
-      await coordinator.resumeMicrophoneCaptureAfterFocus();
-      expect(coordinator.isCapturingMicrophone, isTrue);
-      expect(coordinator.isPausedByAudioFocus, isFalse);
-      expect(capture.startCalls, 2);
+        await coordinator.resumeMicrophoneCaptureAfterFocus();
+        expect(coordinator.isCapturingMicrophone, isTrue);
+        expect(coordinator.isPausedByAudioFocus, isFalse);
+        expect(capture.startCalls, 2);
 
-      await coordinator.dispose();
-    });
+        await coordinator.dispose();
+      },
+    );
   });
 }
 
@@ -131,7 +136,9 @@ LiveAudioSessionCoordinator _buildCoordinator({
   required StreamController<dynamic> socketEvents,
   void Function(List<int> chunk)? onPcmSent,
 }) {
-  ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+  ApiUsageGuard.resetForTest(
+    replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+  );
 
   final webSocketClient = _InstrumentedWebSocketClient(
     socketEvents: socketEvents,
@@ -152,9 +159,9 @@ class _InstrumentedWebSocketClient extends LiveAudioWebSocketClient {
     required StreamController<dynamic> socketEvents,
     this.onPcmSent,
   }) : super(
-          connectionFactory: (_, {headers}) =>
-              _FakeSocketForCapture(socketEvents),
-        );
+         connectionFactory: (_, {headers}) =>
+             _FakeSocketForCapture(socketEvents),
+       );
 
   final void Function(List<int> chunk)? onPcmSent;
 
@@ -235,12 +242,12 @@ class _FakeSessionApiForCapture implements LiveAudioSessionApiClient {
 
 class _FakeAttestForCapture extends CaptureAttestService {
   _FakeAttestForCapture()
-      : super(
-          api: _FakeApiForCapture(),
-          deviceIds: _FakeDeviceIdForCapture(),
-          tokenCache: CaptureTokenCache()
-            ..setToken('capture-token', expiresInSeconds: 3600),
-        );
+    : super(
+        api: _FakeApiForCapture(),
+        deviceIds: _FakeDeviceIdForCapture(),
+        tokenCache: CaptureTokenCache()
+          ..setToken('capture-token', expiresInSeconds: 3600),
+      );
 }
 
 class _FakeApiForCapture extends ApiClient {
@@ -254,6 +261,5 @@ class _FakeApiForCapture extends ApiClient {
 
 class _FakeDeviceIdForCapture extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

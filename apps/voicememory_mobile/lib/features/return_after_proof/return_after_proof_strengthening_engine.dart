@@ -53,7 +53,8 @@ abstract final class ReturnAfterProofStrengtheningEngine {
       );
     }
 
-    final proofConfidence = calibration ??
+    final proofConfidence =
+        calibration ??
         ProofConfidenceCalibrationEngine.build(
           entries: entries,
           beliefSurfaceVisible: timelineProofVisible || firstProofSeen,
@@ -145,11 +146,10 @@ abstract final class ReturnAfterProofStrengtheningEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ReturnAfterProofEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ReturnAfterProofEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   @visibleForTesting
   static ReturnAfterProofWatchTargetType resolveWatchTargetForTest({
@@ -236,21 +236,18 @@ abstract final class ReturnAfterProofStrengtheningEngine {
 
   static ReturnAfterProofWatchTargetType _targetForAnchorType(
     EvidenceAnchorType type,
-  ) =>
-      switch (type) {
-        EvidenceAnchorType.softening => ReturnAfterProofWatchTargetType.feltLighter,
-        EvidenceAnchorType.strengthening =>
-          ReturnAfterProofWatchTargetType.feltHeavier,
-        EvidenceAnchorType.helped => ReturnAfterProofWatchTargetType.helpedAgain,
-        EvidenceAnchorType.avoided => ReturnAfterProofWatchTargetType.avoidedAgain,
-        EvidenceAnchorType.corrected ||
-        EvidenceAnchorType.freshReturn ||
-        EvidenceAnchorType.fading =>
-          ReturnAfterProofWatchTargetType.notCurrent,
-        EvidenceAnchorType.repeat ||
-        EvidenceAnchorType.change ||
-        EvidenceAnchorType.current ||
-        EvidenceAnchorType.unknown =>
-          ReturnAfterProofWatchTargetType.returnedAgain,
-      };
+  ) => switch (type) {
+    EvidenceAnchorType.softening => ReturnAfterProofWatchTargetType.feltLighter,
+    EvidenceAnchorType.strengthening =>
+      ReturnAfterProofWatchTargetType.feltHeavier,
+    EvidenceAnchorType.helped => ReturnAfterProofWatchTargetType.helpedAgain,
+    EvidenceAnchorType.avoided => ReturnAfterProofWatchTargetType.avoidedAgain,
+    EvidenceAnchorType.corrected ||
+    EvidenceAnchorType.freshReturn ||
+    EvidenceAnchorType.fading => ReturnAfterProofWatchTargetType.notCurrent,
+    EvidenceAnchorType.repeat ||
+    EvidenceAnchorType.change ||
+    EvidenceAnchorType.current ||
+    EvidenceAnchorType.unknown => ReturnAfterProofWatchTargetType.returnedAgain,
+  };
 }

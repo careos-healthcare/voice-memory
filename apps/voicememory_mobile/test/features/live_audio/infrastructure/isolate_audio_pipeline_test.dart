@@ -9,14 +9,13 @@ void main() {
   group('resampleLinearInt16', () {
     test('returns input unchanged when rates match', () {
       final input = Int16List.fromList(const [100, 200, 300, 400]);
-      expect(
-        resampleLinearInt16(input, 16000, 16000),
-        same(input),
-      );
+      expect(resampleLinearInt16(input, 16000, 16000), same(input));
     });
 
     test('preserves first sample when downsampling 48 kHz to 16 kHz', () {
-      final input = Int16List.fromList(List<int>.generate(480, (i) => i % 1000));
+      final input = Int16List.fromList(
+        List<int>.generate(480, (i) => i % 1000),
+      );
       final output = resampleLinearInt16(input, 48000, 16000);
 
       expect(output.length, 160);
@@ -32,7 +31,9 @@ void main() {
 
     test('scales output length by sample-rate ratio', () {
       const inputLength = 1920;
-      final input = Int16List.fromList(List<int>.generate(inputLength, (i) => i));
+      final input = Int16List.fromList(
+        List<int>.generate(inputLength, (i) => i),
+      );
       final output = resampleLinearInt16(input, 48000, 16000);
 
       expect(output.length, inputLength ~/ 3);
@@ -173,60 +174,66 @@ void main() {
       },
     );
 
-    test('survives repeated stress payloads without growing frame batches', () async {
-      const config = PipelineConfig(
-        inputSampleRate: 16000,
-        targetSampleRate: 16000,
-        frameDurationMs: 20,
-        maxRingBufferSize: 2,
-      );
+    test(
+      'survives repeated stress payloads without growing frame batches',
+      () async {
+        const config = PipelineConfig(
+          inputSampleRate: 16000,
+          targetSampleRate: 16000,
+          frameDurationMs: 20,
+          maxRingBufferSize: 2,
+        );
 
-      pipeline = IsolateAudioPipeline(config);
-      await pipeline.start();
+        pipeline = IsolateAudioPipeline(config);
+        await pipeline.start();
 
-      final receivedFrames = <Int16List>[];
-      pipeline.processedAudioStream.listen(receivedFrames.add);
+        final receivedFrames = <Int16List>[];
+        pipeline.processedAudioStream.listen(receivedFrames.add);
 
-      final stressBuffer = Int16List.fromList(
-        List<int>.generate(320 * 4, (i) => i & 0x7fff),
-      );
+        final stressBuffer = Int16List.fromList(
+          List<int>.generate(320 * 4, (i) => i & 0x7fff),
+        );
 
-      for (var i = 0; i < 20; i++) {
-        pipeline.pushRawHardwareBuffer(stressBuffer);
-      }
+        for (var i = 0; i < 20; i++) {
+          pipeline.pushRawHardwareBuffer(stressBuffer);
+        }
 
-      await Future<void>.delayed(const Duration(milliseconds: 300));
+        await Future<void>.delayed(const Duration(milliseconds: 300));
 
-      expect(pipeline.isRunning, isTrue);
-      expect(receivedFrames.length, lessThanOrEqualTo(40));
-      for (final frame in receivedFrames) {
-        expect(frame, hasLength(320));
-      }
-    });
+        expect(pipeline.isRunning, isTrue);
+        expect(receivedFrames.length, lessThanOrEqualTo(40));
+        for (final frame in receivedFrames) {
+          expect(frame, hasLength(320));
+        }
+      },
+    );
 
-    test('supports injected isolate spawn for deterministic worker execution', () async {
-      pipeline = IsolateAudioPipeline(
-        const PipelineConfig(inputSampleRate: liveInputSampleRateHz),
-        spawnIsolate: (entryPoint, mainSendPort) async {
-          entryPoint(mainSendPort);
-          return null;
-        },
-      );
+    test(
+      'supports injected isolate spawn for deterministic worker execution',
+      () async {
+        pipeline = IsolateAudioPipeline(
+          const PipelineConfig(inputSampleRate: liveInputSampleRateHz),
+          spawnIsolate: (entryPoint, mainSendPort) async {
+            entryPoint(mainSendPort);
+            return null;
+          },
+        );
 
-      await pipeline.start();
+        await pipeline.start();
 
-      final receivedFrames = <Int16List>[];
-      pipeline.processedAudioStream.listen(receivedFrames.add);
+        final receivedFrames = <Int16List>[];
+        pipeline.processedAudioStream.listen(receivedFrames.add);
 
-      pipeline.pushRawHardwareBuffer(
-        Int16List.fromList(List<int>.generate(640, (i) => i)),
-      );
+        pipeline.pushRawHardwareBuffer(
+          Int16List.fromList(List<int>.generate(640, (i) => i)),
+        );
 
-      await pumpEventQueue(times: 5);
+        await pumpEventQueue(times: 5);
 
-      expect(pipeline.isRunning, isTrue);
-      expect(receivedFrames, hasLength(2));
-      expect(receivedFrames.every((frame) => frame.length == 320), isTrue);
-    });
+        expect(pipeline.isRunning, isTrue);
+        expect(receivedFrames, hasLength(2));
+        expect(receivedFrames.every((frame) => frame.length == 320), isTrue);
+      },
+    );
   });
 }

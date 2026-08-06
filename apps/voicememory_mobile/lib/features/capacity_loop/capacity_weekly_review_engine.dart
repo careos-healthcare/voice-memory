@@ -44,7 +44,8 @@ class CapacityWeeklyReviewEngine {
     final momentCount = input.capacityMomentCount > 0
         ? input.capacityMomentCount
         : input.capacityEvidenceCount;
-    final whatRepeated = input.capacityEvidenceCount >=
+    final whatRepeated =
+        input.capacityEvidenceCount >=
             CapacityLoopGates.minRealMomentsForFullCard
         ? CapacityWeeklyReviewCopy.whatRepeatedStrong
         : CapacityWeeklyReviewCopy.whatRepeatedForming;
@@ -74,8 +75,9 @@ class CapacityWeeklyReviewEngine {
       showOnCapacityLoop: showOnCapacityLoop,
       title: CapacityWeeklyReviewCopy.title,
       subtitle: CapacityWeeklyReviewCopy.subtitle,
-      evidenceCountLabel:
-          CapacityWeeklyReviewCopy.evidenceCountLabel(momentCount),
+      evidenceCountLabel: CapacityWeeklyReviewCopy.evidenceCountLabel(
+        momentCount,
+      ),
       outcomeLine: input.outcomeRecordedCount > 0
           ? CapacityWeeklyReviewCopy.outcomesMarkedLine(
               input.outcomeRecordedCount,
@@ -116,17 +118,24 @@ class CapacityWeeklyReviewEngine {
 
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realSavedCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
-    final capacityMomentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final capacityMomentCount = loopEngine
+        .eligibleCapacityEntryIds(realEntries)
+        .length;
     final capacityEvidenceCount = loopEngine.countCapacityEvidence(realEntries);
     final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final costs = costRecords ?? CapacityCostStore.cached;
-    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(outcomes);
+    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(
+      outcomes,
+    );
     final costCount = CapacityCostStore.countWithLaterCost(costs);
-    final answeredOutcomes =
-        outcomes.where((record) => record.hasOutcome).toList();
-    final hasPatternChange =
-        CapacityDecisionOutcomeStore.hasAnyPatternChange(outcomes);
-    final allYes = answeredOutcomes.isNotEmpty &&
+    final answeredOutcomes = outcomes
+        .where((record) => record.hasOutcome)
+        .toList();
+    final hasPatternChange = CapacityDecisionOutcomeStore.hasAnyPatternChange(
+      outcomes,
+    );
+    final allYes =
+        answeredOutcomes.isNotEmpty &&
         answeredOutcomes.every(
           (record) => record.outcomeId == CapacityDecisionOutcomeIds.saidYes,
         );
@@ -149,8 +158,9 @@ class CapacityWeeklyReviewEngine {
         pendingCostCheckin: pendingCostCheckin,
         beforeYesPauseOnHome: beforeYesPauseOnHome,
         pendingPullReasonOnHome: pendingPullReasonOnHome,
-        pullReasonSummary:
-            CapacityPullReasonEngine.weeklyPullSummary(pullReasons),
+        pullReasonSummary: CapacityPullReasonEngine.weeklyPullSummary(
+          pullReasons,
+        ),
       ),
     );
   }

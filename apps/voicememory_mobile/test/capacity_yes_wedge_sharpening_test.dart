@@ -18,11 +18,7 @@ const _wedgeCopyPaths = [
   'lib/features/beta_invite/beta_invite_copy.dart',
 ];
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 const _forbiddenScoreTerms = [
   'mental health score',
@@ -98,7 +94,10 @@ void main() {
       expect(scorecard.toLowerCase(), contains('no-go'));
       expect(scorecard, contains('5/20 save 3 moments'));
       expect(scorecard, contains('10/20 save 3 moments'));
-      expect(scorecard.toLowerCase(), contains('fewer than 3/20 save 3 moments'));
+      expect(
+        scorecard.toLowerCase(),
+        contains('fewer than 3/20 save 3 moments'),
+      );
     });
   });
 
@@ -142,9 +141,18 @@ void main() {
     });
 
     test('beta success copy includes pay question', () {
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('real moments'));
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('return'));
-      expect(BetaInviteCopy.betaSuccessChecklist.toLowerCase(), contains('returned'));
+      expect(
+        BetaInviteCopy.betaSuccessChecklist.toLowerCase(),
+        contains('real moments'),
+      );
+      expect(
+        BetaInviteCopy.betaSuccessChecklist.toLowerCase(),
+        contains('return'),
+      );
+      expect(
+        BetaInviteCopy.betaSuccessChecklist.toLowerCase(),
+        contains('returned'),
+      );
       expect(
         BetaInviteCopy.betaSuccessChecklist.toLowerCase(),
         contains('would pay to keep'),
@@ -164,7 +172,11 @@ void main() {
     });
 
     test('no forbidden score language', () {
-      final lower = [onePager, scorecard, wedgeDartSources].join('\n').toLowerCase();
+      final lower = [
+        onePager,
+        scorecard,
+        wedgeDartSources,
+      ].join('\n').toLowerCase();
       for (final term in _forbiddenScoreTerms) {
         expect(lower, isNot(contains(term)), reason: 'must not contain $term');
       }
@@ -173,7 +185,11 @@ void main() {
     test('no fake testimonials or invented user counts in docs', () {
       final lower = [onePager, scorecard].join('\n').toLowerCase();
       for (final phrase in _forbiddenHypePhrases) {
-        expect(lower, isNot(contains(phrase)), reason: 'must not contain $phrase');
+        expect(
+          lower,
+          isNot(contains(phrase)),
+          reason: 'must not contain $phrase',
+        );
       }
     });
 

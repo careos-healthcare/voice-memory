@@ -21,28 +21,23 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-const _homeworkBanned = [
-  'Day 1 of 7',
-  'check tomorrow',
-  '1 of 3',
-];
+const _homeworkBanned = ['Day 1 of 7', 'check tomorrow', '1 of 3'];
 
 void _expectNoHomeworkCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -85,7 +80,10 @@ void main() {
         RecordReturnProCopy.evidenceSecondLine,
         contains('You do not need to keep working on this now'),
       );
-      expect(RecordReturnProCopy.evidenceRecordAnother, 'Record if it happens again');
+      expect(
+        RecordReturnProCopy.evidenceRecordAnother,
+        'Record if it happens again',
+      );
     });
 
     test('first-save path suppresses noisy homework cards', () {

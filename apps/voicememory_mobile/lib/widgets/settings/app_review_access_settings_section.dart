@@ -8,10 +8,7 @@ import '../../theme/app_spacing.dart';
 
 /// Hidden App Store review unlock — only when review mode dart-define is set.
 class AppReviewAccessSettingsSection extends StatefulWidget {
-  const AppReviewAccessSettingsSection({
-    super.key,
-    this.onUnlocked,
-  });
+  const AppReviewAccessSettingsSection({super.key, this.onUnlocked});
 
   final VoidCallback? onUnlocked;
 

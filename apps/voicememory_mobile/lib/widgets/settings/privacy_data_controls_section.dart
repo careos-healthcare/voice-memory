@@ -9,10 +9,7 @@ import '../../theme/app_spacing.dart';
 import 'privacy_data_controls_dialogs.dart';
 
 class PrivacyDataControlsSection extends StatefulWidget {
-  const PrivacyDataControlsSection({
-    super.key,
-    this.controls,
-  });
+  const PrivacyDataControlsSection({super.key, this.controls});
 
   final LocalPrivacyDataControls? controls;
 
@@ -21,7 +18,8 @@ class PrivacyDataControlsSection extends StatefulWidget {
       _PrivacyDataControlsSectionState();
 }
 
-class _PrivacyDataControlsSectionState extends State<PrivacyDataControlsSection> {
+class _PrivacyDataControlsSectionState
+    extends State<PrivacyDataControlsSection> {
   bool _resetTipsBusy = false;
 
   LocalPrivacyDataControls get _controls =>
@@ -37,9 +35,7 @@ class _PrivacyDataControlsSectionState extends State<PrivacyDataControlsSection>
       await _controls.resetDismissedTips();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(PrivacyDataControlsCopy.resetTipsDone),
-        ),
+        const SnackBar(content: Text(PrivacyDataControlsCopy.resetTipsDone)),
       );
     } finally {
       if (mounted) setState(() => _resetTipsBusy = false);

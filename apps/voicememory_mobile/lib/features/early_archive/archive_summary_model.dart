@@ -40,10 +40,8 @@ class ArchiveSummaryRecordNext {
   final String guidedRecordPrompt;
   final ThoughtMapSectionId? targetSection;
 
-  bool get needsTriggerCapture =>
-      targetSection == ThoughtMapSectionId.trigger;
-  bool get needsResultCapture =>
-      targetSection == ThoughtMapSectionId.result;
+  bool get needsTriggerCapture => targetSection == ThoughtMapSectionId.trigger;
+  bool get needsResultCapture => targetSection == ThoughtMapSectionId.result;
 }
 
 /// Unified archive overview composed from existing proof engines.

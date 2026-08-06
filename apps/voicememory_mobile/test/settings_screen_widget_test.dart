@@ -50,7 +50,10 @@ void main() {
       const Offset(0, -300),
     );
     await tester.pump();
-    expect(find.text(PrivacyDataControlsCopy.exportArchiveTitle), findsOneWidget);
+    expect(
+      find.text(PrivacyDataControlsCopy.exportArchiveTitle),
+      findsOneWidget,
+    );
     expect(find.text('Developer'), findsNothing);
     expect(find.text('RevenueCat verification'), findsNothing);
     expect(find.text('API base URL'), findsNothing);

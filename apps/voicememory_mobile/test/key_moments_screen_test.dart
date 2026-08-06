@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/key_moments_screen.dart';
+import 'package:archiveme_research/screens/key_moments_screen.dart';
 
 KeyMoment _moment(
   String id,

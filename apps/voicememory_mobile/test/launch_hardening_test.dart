@@ -43,9 +43,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 void main() {
   group('generated file guard', () {
     test('gitignore ignores test journal/prefs patterns', () {
-      final gitignore = File(
-        '../../.gitignore',
-      ).readAsStringSync();
+      final gitignore = File('../../.gitignore').readAsStringSync();
       expect(gitignore, contains('apps/voicememory_mobile/*_journal.json'));
       expect(gitignore, contains('apps/voicememory_mobile/*_prefs.json'));
       expect(gitignore, contains('apps/voicememory_mobile/_journal.json'));
@@ -53,7 +51,9 @@ void main() {
     });
 
     test('validation script exists and is executable', () {
-      final script = File('../../scripts/validate-mobile-clean-working-tree.sh');
+      final script = File(
+        '../../scripts/validate-mobile-clean-working-tree.sh',
+      );
       expect(script.existsSync(), isTrue);
       expect(script.readAsStringSync(), contains('*_journal.json'));
       expect(script.readAsStringSync(), contains('*_prefs.json'));
@@ -69,12 +69,15 @@ void main() {
       expect(doc, contains('validate-mobile-clean-working-tree.sh'));
     });
 
-    test('REVENUECAT_LAUNCH_BLOCKERS.md says purchases unavailable until setup', () {
-      final doc = File('REVENUECAT_LAUNCH_BLOCKERS.md').readAsStringSync();
-      expect(doc, contains('Purchases are not available'));
-      expect(doc, contains('pro'));
-      expect(doc, contains('| Paid launch ready | **No** |'));
-    });
+    test(
+      'REVENUECAT_LAUNCH_BLOCKERS.md says purchases unavailable until setup',
+      () {
+        final doc = File('REVENUECAT_LAUNCH_BLOCKERS.md').readAsStringSync();
+        expect(doc, contains('Purchases are not available'));
+        expect(doc, contains('pro'));
+        expect(doc, contains('| Paid launch ready | **No** |'));
+      },
+    );
 
     test('docs do not claim purchases are ready', () {
       for (final path in [
@@ -106,7 +109,10 @@ void main() {
   group('first two-session copy', () {
     test('0-entry archive home mentions sample archive calmly', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: const []);
-      expect(summary.footnoteLine, VisibleArchiveProofCopy.archiveHomeEmptySampleHint);
+      expect(
+        summary.footnoteLine,
+        VisibleArchiveProofCopy.archiveHomeEmptySampleHint,
+      );
       expect(summary.footnoteLine!.toLowerCase(), contains('sample archive'));
       _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
     });
@@ -132,7 +138,10 @@ void main() {
           ),
         ],
       );
-      expect(summary.nextActionLine, VisibleArchiveProofCopy.secondMomentWhyLine);
+      expect(
+        summary.nextActionLine,
+        VisibleArchiveProofCopy.secondMomentWhyLine,
+      );
       expect(
         RecordReturnProCopy.returnBody,
         VisibleArchiveProofCopy.firstSaveReturnTomorrowBody,

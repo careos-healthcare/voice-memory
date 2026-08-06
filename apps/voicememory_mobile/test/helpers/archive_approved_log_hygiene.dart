@@ -7,17 +7,15 @@ import 'package:voicememory_mobile/features/archive_reactivity/archive_copy_norm
 void assertNoMalformedApprovedArchiveLogs(List<String> logs) {
   final tokens = ArchiveCopyNormalizer.residualMalformedTokens;
 
-  final approvedLines = logs.where(
-    (line) {
-      final isDisplayCopyApproved = line.contains(
-            'ARCHIVEME_PATTERN_DISPLAY_COPY_CHECK',
-          ) &&
-          line.contains('decision=approved');
-      final isMinimumBarApproved = line.contains('ARCHIVEME_COPY_MINIMUM_BAR') &&
-          line.contains('approved=true');
-      return isDisplayCopyApproved || isMinimumBarApproved;
-    },
-  );
+  final approvedLines = logs.where((line) {
+    final isDisplayCopyApproved =
+        line.contains('ARCHIVEME_PATTERN_DISPLAY_COPY_CHECK') &&
+        line.contains('decision=approved');
+    final isMinimumBarApproved =
+        line.contains('ARCHIVEME_COPY_MINIMUM_BAR') &&
+        line.contains('approved=true');
+    return isDisplayCopyApproved || isMinimumBarApproved;
+  });
 
   for (final line in approvedLines) {
     final lower = line.toLowerCase();

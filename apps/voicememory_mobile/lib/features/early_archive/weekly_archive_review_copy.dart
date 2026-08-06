@@ -19,7 +19,8 @@ abstract final class WeeklyArchiveWeekReviewCopy {
 
   static const helpedLabel = 'Appeared to help';
   static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
-  static const helpedFallback = 'No repeated helpful evidence in your words yet.';
+  static const helpedFallback =
+      'No repeated helpful evidence in your words yet.';
 
   static const nextToWatchLabel = 'What ArchiveMe is watching next';
   static const nextToWatchFallback = 'Record the next real moment.';

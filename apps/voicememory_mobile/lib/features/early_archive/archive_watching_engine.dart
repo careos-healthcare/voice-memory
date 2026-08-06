@@ -5,7 +5,6 @@ import 'archive_watching_copy.dart';
 import 'confirmed_repeat_thought_map_engine.dart';
 import 'confirmed_repeat_thought_map_models.dart';
 import 'positive_pattern_engine.dart';
-import 'positive_pattern_models.dart';
 
 /// What the archive is currently watching — grounded gap detection only.
 enum ArchiveWatchingKind {
@@ -16,10 +15,7 @@ enum ArchiveWatchingKind {
 }
 
 class ArchiveWatchingResult {
-  const ArchiveWatchingResult({
-    required this.line,
-    required this.kind,
-  });
+  const ArchiveWatchingResult({required this.line, required this.kind});
 
   final String line;
   final ArchiveWatchingKind kind;

@@ -60,7 +60,12 @@ class DoneForTodayReceiptEngine {
                 'or changed.'
           : VisibleArchiveProofCopy.oneEntryTomorrowLine,
       tomorrowCueTitle: DoneForTodayReceipt.defaultTomorrowCueTitle,
-      tomorrowCueLine: _tomorrowCue(records, term, now, isSingleEntry: isSingleEntry),
+      tomorrowCueLine: _tomorrowCue(
+        records,
+        term,
+        now,
+        isSingleEntry: isSingleEntry,
+      ),
       sourceTerms: terms,
       entryIds: source.entryIds,
     );

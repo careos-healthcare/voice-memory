@@ -38,9 +38,7 @@ class ReturningUserToday {
 abstract final class ReturningUserTodayEngine {
   ReturningUserTodayEngine._();
 
-  static ReturningUserToday? build({
-    required List<JournalEntry> entries,
-  }) {
+  static ReturningUserToday? build({required List<JournalEntry> entries}) {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     if (eligibleCount == 0) return null;
 

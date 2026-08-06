@@ -7,8 +7,8 @@ import 'package:voicememory_mobile/features/pressure_retention/shareable_archive
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/belief_evidence_screen.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
-import 'package:voicememory_mobile/screens/weekly_archive_review_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
@@ -36,79 +36,78 @@ PressureCheckInRecord _record({
 }
 
 List<PressureCheckInRecord> _sensitiveThread3() => [
-      _record(
-        id: 'a',
-        daysAgo: 7,
-        contextIds: const ['work'],
-        fear: 'Maria said the divorce paperwork is late again',
-      ),
-      _record(
-        id: 'b',
-        daysAgo: 3,
-        contextIds: const ['work'],
-        fear: 'Argued with Maria about money at the hospital',
-      ),
-      _record(
-        id: 'c',
-        daysAgo: 0,
-        contextIds: const ['work'],
-        fear: 'I kept checking the divorce emails after midnight',
-      ),
-    ];
+  _record(
+    id: 'a',
+    daysAgo: 7,
+    contextIds: const ['work'],
+    fear: 'Maria said the divorce paperwork is late again',
+  ),
+  _record(
+    id: 'b',
+    daysAgo: 3,
+    contextIds: const ['work'],
+    fear: 'Argued with Maria about money at the hospital',
+  ),
+  _record(
+    id: 'c',
+    daysAgo: 0,
+    contextIds: const ['work'],
+    fear: 'I kept checking the divorce emails after midnight',
+  ),
+];
 
 List<PressureCheckInRecord> _unrelatedRecords() => [
-      _record(id: 'u0', daysAgo: 2, optionId: 'could_not_stop'),
-      _record(id: 'u1', daysAgo: 1, optionId: 'guilty_resting'),
-      _record(id: 'u2', daysAgo: 0, optionId: 'had_to_prove_enough'),
-    ];
+  _record(id: 'u0', daysAgo: 2, optionId: 'could_not_stop'),
+  _record(id: 'u1', daysAgo: 1, optionId: 'guilty_resting'),
+  _record(id: 'u2', daysAgo: 0, optionId: 'had_to_prove_enough'),
+];
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _journalEntries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired number $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired number $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -182,28 +181,40 @@ void main() {
       expect(proof.lines, [ShareableArchiveProof.variantC]);
     });
 
-    test('pressure connected thread uses cautious variant without user text', () {
-      final proof = engine.build(_sensitiveThread3(), now: _base);
-      expect(proof.hasProof, isTrue);
-      expect(proof.lines, [ShareableArchiveProof.variantC]);
-    });
+    test(
+      'pressure connected thread uses cautious variant without user text',
+      () {
+        final proof = engine.build(_sensitiveThread3(), now: _base);
+        expect(proof.hasProof, isTrue);
+        expect(proof.lines, [ShareableArchiveProof.variantC]);
+      },
+    );
 
-    test('no share card for unrelated pressure records without three entries', () {
-      expect(
-        engine.build(_unrelatedRecords(), savedToday: true, entryCount: 1, now: _base)
-            .hasProof,
-        isFalse,
-      );
-      expect(engine.build(_unrelatedRecords(), now: _base).hasProof, isFalse);
-    });
+    test(
+      'no share card for unrelated pressure records without three entries',
+      () {
+        expect(
+          engine
+              .build(
+                _unrelatedRecords(),
+                savedToday: true,
+                entryCount: 1,
+                now: _base,
+              )
+              .hasProof,
+          isFalse,
+        );
+        expect(engine.build(_unrelatedRecords(), now: _base).hasProof, isFalse);
+      },
+    );
 
-    test('degraded journal entries do not count toward three usable entries', () {
-      final entries = [
-        ..._journalEntries(2),
-        _degradedVoiceEntry(id: 'e3'),
-      ];
-      expect(engine.buildFromJournal(entries: entries).hasProof, isFalse);
-    });
+    test(
+      'degraded journal entries do not count toward three usable entries',
+      () {
+        final entries = [..._journalEntries(2), _degradedVoiceEntry(id: 'e3')];
+        expect(engine.buildFromJournal(entries: entries).hasProof, isFalse);
+      },
+    );
   });
 
   group('Shareable archive proof — privacy safeguards', () {
@@ -330,7 +341,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsOneWidget,
+      );
       expect(find.text('Share-safe proof'), findsOneWidget);
       expect(find.text(ShareableArchiveProof.variantC), findsOneWidget);
       expect(find.text('No private entries shared.'), findsOneWidget);
@@ -338,7 +352,10 @@ void main() {
         find.text('ArchiveMe — your private evidence-based life archive.'),
         findsOneWidget,
       );
-      expect(find.byWidgetPredicate((w) => w is ButtonStyleButton), findsNWidgets(2));
+      expect(
+        find.byWidgetPredicate((w) => w is ButtonStyleButton),
+        findsNWidgets(2),
+      );
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
@@ -407,37 +424,49 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsNothing,
+      );
     });
   });
 
   group('Activation screen integration', () {
-    testWidgets('weekly review screen shows optional share proof at five entries', (
-      tester,
-    ) async {
-      final review = WeeklyArchiveReviewEngine.build(entries: _journalEntries(5));
-      final shareProof = engine.buildFromJournal(entries: _journalEntries(5));
+    testWidgets(
+      'weekly review screen shows optional share proof at five entries',
+      (tester) async {
+        final review = WeeklyArchiveReviewEngine.build(
+          entries: _journalEntries(5),
+        );
+        final shareProof = engine.buildFromJournal(entries: _journalEntries(5));
 
-      await tester.binding.setSurfaceSize(const Size(390, 2200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: WeeklyArchiveReviewScreen(
-            previewReview: review,
+        await tester.binding.setSurfaceSize(const Size(390, 2200));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: WeeklyArchiveReviewScreen(previewReview: review),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_card')), findsOneWidget);
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('weekly_archive_review_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('shareable_archive_proof_card')),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('belief evidence preview does not crash without share load', (
       tester,
     ) async {
-      final trail = BeliefEvidenceTrailEngine.build(entries: _journalEntries(4));
+      final trail = BeliefEvidenceTrailEngine.build(
+        entries: _journalEntries(4),
+      );
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -446,39 +475,46 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsNothing,
+      );
     });
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('share card renders near proof counter with connected evidence', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(390, 6000));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: PressureInsightsScreen(
-            entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            records: _sensitiveThread3(),
+    testWidgets(
+      'share card renders near proof counter with connected evidence',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(390, 6000));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: PressureInsightsScreen(
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              records: _sensitiveThread3(),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      final shareCard = find.byKey(const Key('shareable_archive_proof_card'));
-      final proofCard = find.byKey(const Key('archive_proof_counter_card'));
-      expect(shareCard, findsOneWidget);
-      expect(proofCard, findsOneWidget);
-      expect(
-        tester.getTopLeft(proofCard).dy,
-        lessThan(tester.getTopLeft(shareCard).dy),
-      );
-      _expectPrivacySafe(
-        engine.build(_sensitiveThread3(), now: _base).shareText,
-      );
-    });
+        final shareCard = find.byKey(const Key('shareable_archive_proof_card'));
+        final proofCard = find.byKey(const Key('archive_proof_counter_card'));
+        expect(shareCard, findsOneWidget);
+        expect(proofCard, findsOneWidget);
+        expect(
+          tester.getTopLeft(proofCard).dy,
+          lessThan(tester.getTopLeft(shareCard).dy),
+        );
+        _expectPrivacySafe(
+          engine.build(_sensitiveThread3(), now: _base).shareText,
+        );
+      },
+    );
 
     testWidgets('no share card without connected evidence', (tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 6000));
@@ -493,7 +529,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsNothing,
+      );
     });
   });
 }

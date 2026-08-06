@@ -45,22 +45,43 @@ void main() {
     testWidgets('shows all trust sections and controls', (tester) async {
       await pumpCentre(tester);
 
-      expect(find.byKey(const Key('privacy_trust_centre_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_trust_centre_screen')),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.title), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.whatStoresHeading), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.whatStoresBody), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.whatNotIncludedHeading), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.whatNotIncludedHeading),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.whatNotIncludedBody), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.whatStaysPrivateHeading), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.whatStaysPrivateHeading),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.whatStaysPrivateBody), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.yourControlsHeading), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.correctTranscriptControl), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.correctTranscriptControl),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.deleteArchiveControl), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.copyPrivateReportControl), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.copyPrivateReportControl),
+        findsOneWidget,
+      );
       expect(find.text(LocalBackupCopy.exportControl), findsOneWidget);
       expect(find.text(LocalBackupCopy.restoreControl), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.sendBetaFeedbackControl), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.betaMeasurementHeading), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.sendBetaFeedbackControl),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PrivacyTrustCopy.betaMeasurementHeading),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.betaMeasurementBody), findsOneWidget);
     });
 
@@ -116,10 +137,7 @@ void main() {
       final router = GoRouter(
         initialLocation: initialLocation,
         routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => home,
-          ),
+          GoRoute(path: '/', builder: (context, state) => home),
           GoRoute(
             path: '/privacy-trust-centre',
             builder: (context, state) => const PrivacyTrustCentreScreen(),
@@ -151,10 +169,15 @@ void main() {
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('privacy_trust_centre_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_trust_centre_screen')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('settings screen links to privacy trust centre', (tester) async {
+    testWidgets('settings screen links to privacy trust centre', (
+      tester,
+    ) async {
       await pumpWithRouter(
         tester,
         initialLocation: '/',
@@ -167,18 +190,21 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PrivacyTrustCopy.title), findsOneWidget);
-      await tester.tap(find.byKey(const Key('settings_privacy_trust_centre_tile')));
+      await tester.tap(
+        find.byKey(const Key('settings_privacy_trust_centre_tile')),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('privacy_trust_centre_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_trust_centre_screen')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('settings still links to full privacy policy separately', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: SettingsScreen()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
       await tester.pump();
 
       expect(find.text(ConsumerUiCopy.privacy), findsOneWidget);
@@ -204,7 +230,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

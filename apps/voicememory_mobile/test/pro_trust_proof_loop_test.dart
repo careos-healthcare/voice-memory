@@ -188,7 +188,10 @@ void main() {
 
   group('Pro value clarity', () {
     test('copy is exact', () {
-      expect(ProTrustCopy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(
+        ProTrustCopy.proTitle,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(
         ProTrustCopy.proBody,
         'Unlock deeper history, saved evidence, and continuity as your '

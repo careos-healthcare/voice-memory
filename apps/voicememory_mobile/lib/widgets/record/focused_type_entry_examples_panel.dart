@@ -20,16 +20,15 @@ class FocusedTypeEntryExamplesPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final linkStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      decoration: TextDecoration.underline,
-      fontSize: 13,
-    );
-    final starterStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      fontSize: 14,
-      height: 1.4,
-    );
+    final linkStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          decoration: TextDecoration.underline,
+          fontSize: 13,
+        );
+    final starterStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontSize: 14, height: 1.4);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -57,7 +56,8 @@ class FocusedTypeEntryExamplesPanel extends StatelessWidget {
                 alignment: Alignment.center,
                 child: InkWell(
                   key: Key('focused_type_entry_example_$i'),
-                  onTap: () => onStarterSelected(QuickTextCaptureCopy.examples[i]),
+                  onTap: () =>
+                      onStarterSelected(QuickTextCaptureCopy.examples[i]),
                   child: Text(
                     QuickTextCaptureCopy.examples[i],
                     style: starterStyle,

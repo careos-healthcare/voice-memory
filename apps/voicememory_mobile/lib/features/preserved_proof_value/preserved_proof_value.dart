@@ -63,11 +63,10 @@ abstract final class PreservedProofValue {
 
   static PreservedProofValueResult _result(
     PreservedProofValueDecision decision,
-  ) =>
-      PreservedProofValueResult(
-        decision: decision,
-        message: _messageFor(decision),
-      );
+  ) => PreservedProofValueResult(
+    decision: decision,
+    message: _messageFor(decision),
+  );
 
   static String _messageFor(PreservedProofValueDecision decision) =>
       switch (decision) {

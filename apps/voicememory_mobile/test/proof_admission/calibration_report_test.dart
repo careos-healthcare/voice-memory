@@ -36,13 +36,11 @@ void main() {
 
   group('cohort separation', () {
     test('samples from another cohort are dropped, not merged', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.consentedRealUser,
-        [
-          ...many(20, cohort: CalibrationCohort.consentedRealUser),
-          ...many(50, cohort: CalibrationCohort.syntheticFixture),
-        ],
-      );
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.consentedRealUser, [
+            ...many(20, cohort: CalibrationCohort.consentedRealUser),
+            ...many(50, cohort: CalibrationCohort.syntheticFixture),
+          ]);
 
       expect(report.sampleCount, 20);
       expect(report.cohort, CalibrationCohort.consentedRealUser);
@@ -120,14 +118,12 @@ void main() {
 
   group('rates', () {
     test('choice rates are shares of corrected proofs', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...many(10, choice: ArchiveCorrectionChoice.exactlyRight),
-          ...many(10, choice: ArchiveCorrectionChoice.wrong),
-          ...many(10),
-        ],
-      );
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...many(10, choice: ArchiveCorrectionChoice.exactlyRight),
+            ...many(10, choice: ArchiveCorrectionChoice.wrong),
+            ...many(10),
+          ]);
 
       expect(report.correctedCount, 20);
       expect(report.rateFor(ArchiveCorrectionChoice.exactlyRight), 0.5);
@@ -136,105 +132,92 @@ void main() {
     });
 
     test('outcome rates are shares of all samples', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...List.generate(
-            5,
-            (_) => sample(outcome: ProofAdmissionOutcome.invalidEvidence),
-          ),
-          ...List.generate(15, (_) => sample()),
-        ],
-      );
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...List.generate(
+              5,
+              (_) => sample(outcome: ProofAdmissionOutcome.invalidEvidence),
+            ),
+            ...List.generate(15, (_) => sample()),
+          ]);
 
       expect(report.invalidEvidenceRate, 0.25);
     });
 
     test('contradiction rate counts only admitted proofs', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...List.generate(5, (_) => sample(contradictions: 2)),
-          ...List.generate(5, (_) => sample()),
-          ...List.generate(
-            10,
-            (_) => sample(
-              outcome: ProofAdmissionOutcome.suppressed,
-              contradictions: 9,
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...List.generate(5, (_) => sample(contradictions: 2)),
+            ...List.generate(5, (_) => sample()),
+            ...List.generate(
+              10,
+              (_) => sample(
+                outcome: ProofAdmissionOutcome.suppressed,
+                contradictions: 9,
+              ),
             ),
-          ),
-        ],
-      );
+          ]);
 
       expect(report.contradictionRate, 0.5);
     });
 
     test('acceptance is broken out by confidence band', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...many(
-            10,
-            band: ProofConfidenceBand.high,
-            choice: ArchiveCorrectionChoice.exactlyRight,
-          ),
-          ...many(
-            10,
-            band: ProofConfidenceBand.low,
-            choice: ArchiveCorrectionChoice.wrong,
-          ),
-        ],
-      );
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...many(
+              10,
+              band: ProofConfidenceBand.high,
+              choice: ArchiveCorrectionChoice.exactlyRight,
+            ),
+            ...many(
+              10,
+              band: ProofConfidenceBand.low,
+              choice: ArchiveCorrectionChoice.wrong,
+            ),
+          ]);
 
       expect(report.acceptanceByBand[ProofConfidenceBand.high], 1.0);
       expect(report.acceptanceByBand[ProofConfidenceBand.low], 0.0);
     });
 
     test('acceptance is broken out by source count band', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...List.generate(
-            10,
-            (_) => sample(
-              sources: 1,
-              choice: ArchiveCorrectionChoice.wrong,
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...List.generate(
+              10,
+              (_) => sample(sources: 1, choice: ArchiveCorrectionChoice.wrong),
             ),
-          ),
-          ...List.generate(
-            10,
-            (_) => sample(
-              sources: 3,
-              choice: ArchiveCorrectionChoice.exactlyRight,
+            ...List.generate(
+              10,
+              (_) => sample(
+                sources: 3,
+                choice: ArchiveCorrectionChoice.exactlyRight,
+              ),
             ),
-          ),
-        ],
-      );
+          ]);
 
       expect(report.acceptanceBySourceCount['single'], 0.0);
       expect(report.acceptanceBySourceCount['few'], 1.0);
     });
 
     test('acceptance is broken out by claim kind', () {
-      final report = CalibrationReport.forCohort(
-        CalibrationCohort.syntheticFixture,
-        [
-          ...List.generate(
-            10,
-            (_) => sample(
-              claimKind: ProofClaimKind.repeated,
-              choice: ArchiveCorrectionChoice.exactlyRight,
+      final report =
+          CalibrationReport.forCohort(CalibrationCohort.syntheticFixture, [
+            ...List.generate(
+              10,
+              (_) => sample(
+                claimKind: ProofClaimKind.repeated,
+                choice: ArchiveCorrectionChoice.exactlyRight,
+              ),
             ),
-          ),
-          ...List.generate(
-            10,
-            (_) => sample(
-              claimKind: ProofClaimKind.mainObservation,
-              choice: ArchiveCorrectionChoice.partlyRight,
+            ...List.generate(
+              10,
+              (_) => sample(
+                claimKind: ProofClaimKind.mainObservation,
+                choice: ArchiveCorrectionChoice.partlyRight,
+              ),
             ),
-          ),
-        ],
-      );
+          ]);
 
       expect(report.acceptanceByClaimKind[ProofClaimKind.repeated], 1.0);
       expect(report.acceptanceByClaimKind[ProofClaimKind.mainObservation], 0.0);

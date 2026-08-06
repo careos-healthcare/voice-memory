@@ -1,5 +1,4 @@
 import '../../design/user_facing_date.dart';
-import 'archive_surprises_models.dart';
 
 /// User-facing Archive Surprises strings.
 abstract class ArchiveSurprisesCopy {

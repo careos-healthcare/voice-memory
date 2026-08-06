@@ -25,10 +25,7 @@ class NextEvidencePlanResult {
 
 /// Starter prompt at zero entries.
 class NextEvidencePlanTeaser {
-  const NextEvidencePlanTeaser({
-    required this.title,
-    required this.body,
-  });
+  const NextEvidencePlanTeaser({required this.title, required this.body});
 
   final String title;
   final String body;

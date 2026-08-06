@@ -38,12 +38,12 @@ class EarlyEvidenceTimeline {
   final List<String> evidencePhrases;
 
   bool get showsSofterReturn => items.any(
-        (item) => item.kind == EarlyEvidenceTimelineItemKind.softerReturn,
-      );
+    (item) => item.kind == EarlyEvidenceTimelineItemKind.softerReturn,
+  );
 
   bool get showsHelpfulAction => items.any(
-        (item) => item.kind == EarlyEvidenceTimelineItemKind.helpfulAction,
-      );
+    (item) => item.kind == EarlyEvidenceTimelineItemKind.helpfulAction,
+  );
 }
 
 abstract final class EarlyEvidenceTimelineEngine {
@@ -69,7 +69,8 @@ abstract final class EarlyEvidenceTimelineEngine {
       EarlyEvidenceTimelineItem(
         kind: EarlyEvidenceTimelineItemKind.repeatConfirmed,
         title: EarlyEvidenceTimelineCopy.repeatConfirmedTitle,
-        body: insight.repeatSummary ??
+        body:
+            insight.repeatSummary ??
             EarlyArchiveInsightQualityCopy.timelineRepeatFallback,
       ),
     ];
@@ -82,7 +83,8 @@ abstract final class EarlyEvidenceTimelineEngine {
         EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.triggerCaptured,
           title: EarlyEvidenceTimelineCopy.triggerCapturedTitle,
-          body: insight.triggerSummary ??
+          body:
+              insight.triggerSummary ??
               EarlyArchiveInsightQualityCopy.triggerFallback,
         ),
       );
@@ -93,7 +95,8 @@ abstract final class EarlyEvidenceTimelineEngine {
         EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.softerReturn,
           title: EarlyEvidenceTimelineCopy.softerReturnTitle,
-          body: insight.softeningSummary ??
+          body:
+              insight.softeningSummary ??
               EarlyArchiveInsightQualityCopy.softeningFallback,
         ),
       );
@@ -107,7 +110,8 @@ abstract final class EarlyEvidenceTimelineEngine {
         EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.helpfulAction,
           title: EarlyEvidenceTimelineCopy.helpfulActionTitle,
-          body: insight.helpfulActionSummary ??
+          body:
+              insight.helpfulActionSummary ??
               EarlyArchiveInsightQualityCopy.helpfulActionFallback,
         ),
       );
@@ -115,7 +119,8 @@ abstract final class EarlyEvidenceTimelineEngine {
 
     return EarlyEvidenceTimeline(
       title: EarlyEvidenceTimelineCopy.title,
-      subtitle: insight.timelineSubtitle ??
+      subtitle:
+          insight.timelineSubtitle ??
           EarlyArchiveInsightQualityCopy.timelineSubtitleFallback,
       items: items,
       evidencePhrases: evidence.phrases,

@@ -111,7 +111,10 @@ void main() {
     await tester.pump();
     for (var i = 0; i < 40; i++) {
       await tester.pump(const Duration(milliseconds: 50));
-      if (find.byKey(const Key('paywall_objection_follow_up')).evaluate().isNotEmpty) {
+      if (find
+          .byKey(const Key('paywall_objection_follow_up'))
+          .evaluate()
+          .isNotEmpty) {
         break;
       }
     }

@@ -232,7 +232,9 @@ void main() {
         onRecordInstead: () {},
         onExampleSelected: (_) {},
       );
-      await tester.tap(find.byKey(const Key('first_moment_capture_save_one_sentence')));
+      await tester.tap(
+        find.byKey(const Key('first_moment_capture_save_one_sentence')),
+      );
       await tester.pump();
       expect(saveTapped, isTrue);
     });
@@ -247,7 +249,9 @@ void main() {
         onRecordInstead: () => recordTapped = true,
         onExampleSelected: (_) {},
       );
-      await tester.tap(find.byKey(const Key('first_moment_capture_record_instead')));
+      await tester.tap(
+        find.byKey(const Key('first_moment_capture_record_instead')),
+      );
       await tester.pump();
       expect(recordTapped, isTrue);
     });
@@ -261,9 +265,7 @@ void main() {
         onExampleSelected: (prompt) => selected = prompt,
       );
       await tester.tap(
-        find.byKey(
-          const Key('first_moment_capture_example_keptPuttingOff'),
-        ),
+        find.byKey(const Key('first_moment_capture_example_keptPuttingOff')),
       );
       await tester.pump();
       expect(selected, FirstMomentCaptureCopy.keptPuttingOffExample);
@@ -276,7 +278,9 @@ void main() {
         onRecordInstead: () {},
         onExampleSelected: (_) {},
       );
-      await tester.tap(find.byKey(const Key('first_moment_capture_save_one_sentence')));
+      await tester.tap(
+        find.byKey(const Key('first_moment_capture_save_one_sentence')),
+      );
       await tester.pump();
 
       expect(analyticsEvents, isNotEmpty);
@@ -318,21 +322,26 @@ void main() {
   });
 
   group('First moment capture placement', () {
-    test('appears above other guidance cards on Record when not simplified', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final cardIndex = source.indexOf(
-        'if (showFirstMomentCaptureCard && !firstUseSimplifiedRecord)',
-      );
-      final openCaptureIndex = source.indexOf(
-        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
-      );
-      final lowFrictionIndex = source.indexOf(
-        'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
-      );
-      expect(cardIndex, greaterThan(0));
-      expect(cardIndex, lessThan(openCaptureIndex));
-      expect(cardIndex, lessThan(lowFrictionIndex));
-    });
+    test(
+      'appears above other guidance cards on Record when not simplified',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        final cardIndex = source.indexOf(
+          'if (showFirstMomentCaptureCard && !firstUseSimplifiedRecord)',
+        );
+        final openCaptureIndex = source.indexOf(
+          'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+        );
+        final lowFrictionIndex = source.indexOf(
+          'if (showLowFrictionReturnCard && !firstUseSimplifiedRecord)',
+        );
+        expect(cardIndex, greaterThan(0));
+        expect(cardIndex, lessThan(openCaptureIndex));
+        expect(cardIndex, lessThan(lowFrictionIndex));
+      },
+    );
 
     test('uses navigateToTypeInsteadCapture for save one sentence', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
@@ -340,74 +349,86 @@ void main() {
       expect(source, contains("source: 'first_moment_capture'"));
     });
 
-    test('SurfacePriorityAudit gives three moment completion highest guidance priority for zero entry', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 0,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: true,
-          firstMomentCapture: true,
-          secondMomentReturn: false,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
-      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.firstMomentCapture,
-        candidate: true,
-      ), isFalse);
-    });
+    test(
+      'SurfacePriorityAudit gives three moment completion highest guidance priority for zero entry',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 0,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: true,
+            firstMomentCapture: true,
+            secondMomentReturn: false,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
+        expect(
+          result.guidanceSlot,
+          SurfacePriorityCardKey.threeMomentCompletion,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.firstMomentCapture,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('first moment capture still wins when three moment completion inactive', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 0,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: false,
-          firstMomentCapture: true,
-          secondMomentReturn: false,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
-      expect(result.guidanceSlot, SurfacePriorityCardKey.firstMomentCapture);
-    });
+    test(
+      'first moment capture still wins when three moment completion inactive',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 0,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: false,
+            firstMomentCapture: true,
+            secondMomentReturn: false,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
+        expect(result.guidanceSlot, SurfacePriorityCardKey.firstMomentCapture);
+      },
+    );
   });
 }

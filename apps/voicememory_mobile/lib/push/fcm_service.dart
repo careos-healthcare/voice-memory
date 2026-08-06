@@ -13,22 +13,10 @@ import 'push_deep_link_handler.dart';
 class FcmService {
   FcmService({
     required NativePushVerificationStore store,
-    required Future<String> Function() getDeviceId,
-    required Future<void> Function({
-      required String deviceId,
-      required String platform,
-      required String fcmToken,
-    })
-    registerToken,
-    required Future<Map<String, dynamic>> Function({
-      required String deviceId,
-      required String targetRoute,
-    })
-    sendTestPush,
+    required this._getDeviceId,
+    required this._registerToken,
+    required this._sendTestPush,
   }) : _store = store,
-       _getDeviceId = getDeviceId,
-       _registerToken = registerToken,
-       _sendTestPush = sendTestPush,
        deepLink = PushDeepLinkHandler(store);
 
   final NativePushVerificationStore _store;

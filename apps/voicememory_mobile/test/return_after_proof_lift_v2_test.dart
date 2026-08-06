@@ -18,7 +18,7 @@ import 'package:voicememory_mobile/widgets/record/return_after_proof_lift_v2_car
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/return_after_proof_lift_v2/unused.json'));
+    : super(file: File('test/tmp/return_after_proof_lift_v2/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -35,11 +35,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -88,7 +84,10 @@ void main() {
 
   group('ReturnAfterProofLiftV2Copy', () {
     test('uses stronger return hook copy', () {
-      expect(ReturnAfterProofLiftV2Copy.title, 'Come back when it happens again');
+      expect(
+        ReturnAfterProofLiftV2Copy.title,
+        'Come back when it happens again',
+      );
       expect(
         ReturnAfterProofLiftV2Copy.body,
         'The next save is what tells ArchiveMe whether this is getting louder, softer, or fading.',
@@ -249,7 +248,10 @@ void main() {
         ),
       );
 
-      expect(result.guidanceSlot, SurfacePriorityCardKey.returnAfterProofLiftV2);
+      expect(
+        result.guidanceSlot,
+        SurfacePriorityCardKey.returnAfterProofLiftV2,
+      );
       expect(
         result.isVisible(
           SurfacePriorityCardKey.returnAfterProof,

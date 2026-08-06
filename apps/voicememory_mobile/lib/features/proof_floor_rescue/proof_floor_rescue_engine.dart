@@ -17,9 +17,7 @@ abstract final class ProofFloorRescueEngine {
   static const usefulProofConcernThreshold =
       FirstSessionProofRepairEngine.usefulProofConcernThreshold;
 
-  static ProofFloorRescueResult build({
-    required ProofFloorRescueInput input,
-  }) {
+  static ProofFloorRescueResult build({required ProofFloorRescueInput input}) {
     final state = resolveState(input);
     if (state == null) {
       return ProofFloorRescueResult.hidden;
@@ -133,7 +131,8 @@ abstract final class ProofFloorRescueEngine {
     required bool isDegradedTranscriptState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-    BetaProofFeedbackSurface surface = BetaProofFeedbackSurface.timelineProofMoment,
+    BetaProofFeedbackSurface surface =
+        BetaProofFeedbackSurface.timelineProofMoment,
   }) {
     final counts = FirstSessionProofRepairEngine.feedbackCountsFromStore();
     final record = BetaProofFeedbackStore.recordFor(surface);
@@ -157,15 +156,13 @@ abstract final class ProofFloorRescueEngine {
     );
   }
 
-  static String proBlockStatusLabel({required bool blocked}) =>
-      blocked
-          ? ProofFloorRescueCopy.statusProBlocked
-          : ProofFloorRescueCopy.statusProAllowed;
+  static String proBlockStatusLabel({required bool blocked}) => blocked
+      ? ProofFloorRescueCopy.statusProBlocked
+      : ProofFloorRescueCopy.statusProAllowed;
 
-  static String proofSafeStatusLabel({required bool safe}) =>
-      safe
-          ? ProofFloorRescueCopy.statusProofSafe
-          : ProofFloorRescueCopy.statusProofNotSafe;
+  static String proofSafeStatusLabel({required bool safe}) => safe
+      ? ProofFloorRescueCopy.statusProofSafe
+      : ProofFloorRescueCopy.statusProofNotSafe;
 
   static String stateStatusLabel(ProofFloorRescueState? state) =>
       state == null ? 'inactive' : ProofFloorRescueCopy.stateLabel(state);
@@ -209,33 +206,33 @@ abstract final class ProofFloorRescueEngine {
       type == BetaProofFeedbackType.notRelevant;
 
   static String _titleFor(ProofFloorRescueState state) => switch (state) {
-        ProofFloorRescueState.waitForClearerEvidence =>
-          ProofFloorRescueCopy.waitTitle,
-        ProofFloorRescueState.needsSpecificFeedback =>
-          ProofFloorRescueCopy.feedbackTitle,
-        ProofFloorRescueState.sharpenNextReturn =>
-          ProofFloorRescueCopy.sharpenTitle,
-        ProofFloorRescueState.suppressThread =>
-          ProofFloorRescueCopy.suppressTitle,
-      };
+    ProofFloorRescueState.waitForClearerEvidence =>
+      ProofFloorRescueCopy.waitTitle,
+    ProofFloorRescueState.needsSpecificFeedback =>
+      ProofFloorRescueCopy.feedbackTitle,
+    ProofFloorRescueState.sharpenNextReturn =>
+      ProofFloorRescueCopy.sharpenTitle,
+    ProofFloorRescueState.suppressThread => ProofFloorRescueCopy.suppressTitle,
+  };
 
   static String _bodyFor(ProofFloorRescueState state) => switch (state) {
-        ProofFloorRescueState.waitForClearerEvidence => ProofFloorRescueCopy.waitBody,
-        ProofFloorRescueState.needsSpecificFeedback =>
-          ProofFloorRescueCopy.feedbackBody,
-        ProofFloorRescueState.sharpenNextReturn => ProofFloorRescueCopy.sharpenBody,
-        ProofFloorRescueState.suppressThread => ProofFloorRescueCopy.suppressBody,
-      };
+    ProofFloorRescueState.waitForClearerEvidence =>
+      ProofFloorRescueCopy.waitBody,
+    ProofFloorRescueState.needsSpecificFeedback =>
+      ProofFloorRescueCopy.feedbackBody,
+    ProofFloorRescueState.sharpenNextReturn => ProofFloorRescueCopy.sharpenBody,
+    ProofFloorRescueState.suppressThread => ProofFloorRescueCopy.suppressBody,
+  };
 
   static String _primaryCtaFor(ProofFloorRescueState state) => switch (state) {
-        ProofFloorRescueState.waitForClearerEvidence =>
-          ProofFloorRescueCopy.waitPrimaryCta,
-        ProofFloorRescueState.needsSpecificFeedback => '',
-        ProofFloorRescueState.sharpenNextReturn =>
-          ProofFloorRescueCopy.sharpenPrimaryCta,
-        ProofFloorRescueState.suppressThread =>
-          ProofFloorRescueCopy.suppressPrimaryCta,
-      };
+    ProofFloorRescueState.waitForClearerEvidence =>
+      ProofFloorRescueCopy.waitPrimaryCta,
+    ProofFloorRescueState.needsSpecificFeedback => '',
+    ProofFloorRescueState.sharpenNextReturn =>
+      ProofFloorRescueCopy.sharpenPrimaryCta,
+    ProofFloorRescueState.suppressThread =>
+      ProofFloorRescueCopy.suppressPrimaryCta,
+  };
 
   static String? _secondaryCtaFor(ProofFloorRescueState state) =>
       switch (state) {

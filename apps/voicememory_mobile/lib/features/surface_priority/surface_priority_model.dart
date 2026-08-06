@@ -113,56 +113,54 @@ class SurfacePriorityCandidates {
     required bool privateReportProBridge,
     required bool suppressLegacyEducation,
     bool betaFeedbackCapture = false,
-  }) =>
-      SurfacePriorityCandidates({
-        SurfacePriorityCardKey.threeMomentCompletion: threeMomentCompletion,
-        SurfacePriorityCardKey.firstMomentCapture: firstMomentCapture,
-        SurfacePriorityCardKey.secondMomentReturn: secondMomentReturn,
-        SurfacePriorityCardKey.returnAfterProofStrengthened:
-            returnAfterProofStrengthened,
-        SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
-        SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
-        SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
-        SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
-        SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
-        SurfacePriorityCardKey.openCapturePromptChips: openCapturePromptChips,
-        SurfacePriorityCardKey.captureFreedomLine: captureFreedomLine,
-        SurfacePriorityCardKey.firstSessionProofRepair: firstSessionProofRepair,
-        SurfacePriorityCardKey.firstSessionLift: firstSessionLift,
-        SurfacePriorityCardKey.firstSaveLift: firstSaveLift,
-        SurfacePriorityCardKey.betaActivationPath: betaActivationPath,
-        SurfacePriorityCardKey.betaActivationPathRevenue:
-            betaActivationPathRevenue,
-        SurfacePriorityCardKey.firstRunPositioning: firstRunPositioning,
-        SurfacePriorityCardKey.timelineProofMoment: timelineProofMoment,
-        SurfacePriorityCardKey.archiveTimelineSpine: archiveTimelineSpine,
-        SurfacePriorityCardKey.timelinePositioning:
-            timelinePositioning && !suppressLegacyEducation,
-        SurfacePriorityCardKey.currentRelevance:
-            currentRelevance && !suppressLegacyEducation,
-        SurfacePriorityCardKey.correctionMemory:
-            correctionMemory && !suppressLegacyEducation,
-        SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
-        SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
-        SurfacePriorityCardKey.betaProofLift: betaProofLift,
-        SurfacePriorityCardKey.proofQualityRepair: proofQualityRepair,
-        SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
-        SurfacePriorityCardKey.evidenceWeighting:
-            evidenceWeighting && !suppressLegacyEducation,
-        SurfacePriorityCardKey.proofSpecificity:
-            proofSpecificity && !suppressLegacyEducation,
-        SurfacePriorityCardKey.presentDayRelevance:
-            presentDayRelevance && !suppressLegacyEducation,
-        SurfacePriorityCardKey.patternConfidence:
-            patternConfidence && !suppressLegacyEducation,
-        SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
-        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
-        SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
-        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
-        SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
-        SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
-        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
-      });
+  }) => SurfacePriorityCandidates({
+    SurfacePriorityCardKey.threeMomentCompletion: threeMomentCompletion,
+    SurfacePriorityCardKey.firstMomentCapture: firstMomentCapture,
+    SurfacePriorityCardKey.secondMomentReturn: secondMomentReturn,
+    SurfacePriorityCardKey.returnAfterProofStrengthened:
+        returnAfterProofStrengthened,
+    SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
+    SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
+    SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
+    SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
+    SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
+    SurfacePriorityCardKey.openCapturePromptChips: openCapturePromptChips,
+    SurfacePriorityCardKey.captureFreedomLine: captureFreedomLine,
+    SurfacePriorityCardKey.firstSessionProofRepair: firstSessionProofRepair,
+    SurfacePriorityCardKey.firstSessionLift: firstSessionLift,
+    SurfacePriorityCardKey.firstSaveLift: firstSaveLift,
+    SurfacePriorityCardKey.betaActivationPath: betaActivationPath,
+    SurfacePriorityCardKey.betaActivationPathRevenue: betaActivationPathRevenue,
+    SurfacePriorityCardKey.firstRunPositioning: firstRunPositioning,
+    SurfacePriorityCardKey.timelineProofMoment: timelineProofMoment,
+    SurfacePriorityCardKey.archiveTimelineSpine: archiveTimelineSpine,
+    SurfacePriorityCardKey.timelinePositioning:
+        timelinePositioning && !suppressLegacyEducation,
+    SurfacePriorityCardKey.currentRelevance:
+        currentRelevance && !suppressLegacyEducation,
+    SurfacePriorityCardKey.correctionMemory:
+        correctionMemory && !suppressLegacyEducation,
+    SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
+    SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
+    SurfacePriorityCardKey.betaProofLift: betaProofLift,
+    SurfacePriorityCardKey.proofQualityRepair: proofQualityRepair,
+    SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
+    SurfacePriorityCardKey.evidenceWeighting:
+        evidenceWeighting && !suppressLegacyEducation,
+    SurfacePriorityCardKey.proofSpecificity:
+        proofSpecificity && !suppressLegacyEducation,
+    SurfacePriorityCardKey.presentDayRelevance:
+        presentDayRelevance && !suppressLegacyEducation,
+    SurfacePriorityCardKey.patternConfidence:
+        patternConfidence && !suppressLegacyEducation,
+    SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
+    SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
+    SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
+    SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
+    SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
+    SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
+    SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
+  });
 
   factory SurfacePriorityCandidates.recordPostSave({
     required bool lowFrictionReturn,
@@ -190,37 +188,35 @@ class SurfacePriorityCandidates {
     required bool proEvidenceValue,
     required bool proLockMoment,
     required bool privateReportProBridge,
-  }) =>
-      SurfacePriorityCandidates({
-        SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
-        SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
-        SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
-        SurfacePriorityCardKey.openCapturePromptChips: openCapturePromptChips,
-        SurfacePriorityCardKey.captureFreedomLine: captureFreedomLine,
-        SurfacePriorityCardKey.firstProofPayoff: firstProofPayoff,
-        SurfacePriorityCardKey.whatChanged: whatChanged,
-        SurfacePriorityCardKey.returnPayoff: returnPayoff,
-        SurfacePriorityCardKey.timelineProofMomentPostSave:
-            timelineProofMomentPostSave,
-        SurfacePriorityCardKey.proofSpecificityPostSave:
-            proofSpecificityPostSave,
-        SurfacePriorityCardKey.betaProofFeedback: betaProofFeedback,
-        SurfacePriorityCardKey.betaInviteLoop: betaInviteLoop,
-        SurfacePriorityCardKey.betaProofLift: betaProofLift,
-        SurfacePriorityCardKey.returnAfterProofStrengthened:
-            returnAfterProofStrengthened,
-        SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
-        SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
-        SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
-        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
-        SurfacePriorityCardKey.proPreview: proPreview,
-        SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
-        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
-        SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
-        SurfacePriorityCardKey.proLockMoment: proLockMoment,
-        SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
-        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
-      });
+  }) => SurfacePriorityCandidates({
+    SurfacePriorityCardKey.lowFrictionReturn: lowFrictionReturn,
+    SurfacePriorityCardKey.whatToNoticeNext: whatToNoticeNext,
+    SurfacePriorityCardKey.betaTodaySummary: betaTodaySummary,
+    SurfacePriorityCardKey.openCapturePromptChips: openCapturePromptChips,
+    SurfacePriorityCardKey.captureFreedomLine: captureFreedomLine,
+    SurfacePriorityCardKey.firstProofPayoff: firstProofPayoff,
+    SurfacePriorityCardKey.whatChanged: whatChanged,
+    SurfacePriorityCardKey.returnPayoff: returnPayoff,
+    SurfacePriorityCardKey.timelineProofMomentPostSave:
+        timelineProofMomentPostSave,
+    SurfacePriorityCardKey.proofSpecificityPostSave: proofSpecificityPostSave,
+    SurfacePriorityCardKey.betaProofFeedback: betaProofFeedback,
+    SurfacePriorityCardKey.betaInviteLoop: betaInviteLoop,
+    SurfacePriorityCardKey.betaProofLift: betaProofLift,
+    SurfacePriorityCardKey.returnAfterProofStrengthened:
+        returnAfterProofStrengthened,
+    SurfacePriorityCardKey.returnAfterProofLiftV2: returnAfterProofLiftV2,
+    SurfacePriorityCardKey.returnAfterProof: returnAfterProof,
+    SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
+    SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
+    SurfacePriorityCardKey.proPreview: proPreview,
+    SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
+    SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
+    SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
+    SurfacePriorityCardKey.proLockMoment: proLockMoment,
+    SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
+    SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
+  });
 
   factory SurfacePriorityCandidates.patterns({
     required bool archiveBeliefSurface,
@@ -249,55 +245,53 @@ class SurfacePriorityCandidates {
     required bool privateReportProBridge,
     required bool archiveBackupBridge,
     required bool suppressLegacyEducation,
-  }) =>
-      SurfacePriorityCandidates({
-        SurfacePriorityCardKey.archiveBeliefSurface: archiveBeliefSurface,
-        SurfacePriorityCardKey.timelineProofMoment: timelineProofMoment,
-        SurfacePriorityCardKey.archiveTimelineSpine: archiveTimelineSpine,
-        SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
-        SurfacePriorityCardKey.correctionMemory:
-            correctionMemory && !suppressLegacyEducation,
-        SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
-        SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
-        SurfacePriorityCardKey.betaProofLift: betaProofLift,
-        SurfacePriorityCardKey.patternConfidence:
-            patternConfidence && !suppressLegacyEducation,
-        SurfacePriorityCardKey.evidenceWeighting:
-            evidenceWeighting && !suppressLegacyEducation,
-        SurfacePriorityCardKey.currentRelevance:
-            currentRelevance && !suppressLegacyEducation,
-        SurfacePriorityCardKey.proofSpecificity:
-            proofSpecificity && !suppressLegacyEducation,
-        SurfacePriorityCardKey.presentDayRelevance:
-            presentDayRelevance && !suppressLegacyEducation,
-        SurfacePriorityCardKey.timelinePositioning:
-            timelinePositioning && !suppressLegacyEducation,
-        SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
-        SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
-        SurfacePriorityCardKey.proPreview: proPreview,
-        SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
-        SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
-        SurfacePriorityCardKey.betaInviteLoop: betaInviteLoop,
-        SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
-        SurfacePriorityCardKey.archiveIntelligenceProBridge:
-            archiveIntelligenceProBridge,
-        SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
-        SurfacePriorityCardKey.archiveBackupBridge: archiveBackupBridge,
-        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
-      });
+  }) => SurfacePriorityCandidates({
+    SurfacePriorityCardKey.archiveBeliefSurface: archiveBeliefSurface,
+    SurfacePriorityCardKey.timelineProofMoment: timelineProofMoment,
+    SurfacePriorityCardKey.archiveTimelineSpine: archiveTimelineSpine,
+    SurfacePriorityCardKey.betaTesterReport: betaTesterReport,
+    SurfacePriorityCardKey.correctionMemory:
+        correctionMemory && !suppressLegacyEducation,
+    SurfacePriorityCardKey.notRelevantRecovery: notRelevantRecovery,
+    SurfacePriorityCardKey.proofQualityResponse: proofQualityResponse,
+    SurfacePriorityCardKey.betaProofLift: betaProofLift,
+    SurfacePriorityCardKey.patternConfidence:
+        patternConfidence && !suppressLegacyEducation,
+    SurfacePriorityCardKey.evidenceWeighting:
+        evidenceWeighting && !suppressLegacyEducation,
+    SurfacePriorityCardKey.currentRelevance:
+        currentRelevance && !suppressLegacyEducation,
+    SurfacePriorityCardKey.proofSpecificity:
+        proofSpecificity && !suppressLegacyEducation,
+    SurfacePriorityCardKey.presentDayRelevance:
+        presentDayRelevance && !suppressLegacyEducation,
+    SurfacePriorityCardKey.timelinePositioning:
+        timelinePositioning && !suppressLegacyEducation,
+    SurfacePriorityCardKey.proofFloorRescue: proofFloorRescue,
+    SurfacePriorityCardKey.proBridgeVisibility: proBridgeVisibility,
+    SurfacePriorityCardKey.proPreview: proPreview,
+    SurfacePriorityCardKey.proUnderstandingLift: proUnderstandingLift,
+    SurfacePriorityCardKey.proVisibilityLift: proVisibilityLift,
+    SurfacePriorityCardKey.betaInviteLoop: betaInviteLoop,
+    SurfacePriorityCardKey.proEvidenceValue: proEvidenceValue,
+    SurfacePriorityCardKey.archiveIntelligenceProBridge:
+        archiveIntelligenceProBridge,
+    SurfacePriorityCardKey.privateReportProBridge: privateReportProBridge,
+    SurfacePriorityCardKey.archiveBackupBridge: archiveBackupBridge,
+    SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
+  });
 
   factory SurfacePriorityCandidates.paywall({
     required bool primaryReason,
     required bool secondaryReason,
     bool paywallCtaLift = false,
     bool betaFeedbackCapture = false,
-  }) =>
-      SurfacePriorityCandidates({
-        SurfacePriorityCardKey.paywallPrimaryReason: primaryReason,
-        SurfacePriorityCardKey.paywallSecondaryReason: secondaryReason,
-        SurfacePriorityCardKey.paywallCtaLift: paywallCtaLift,
-        SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
-      });
+  }) => SurfacePriorityCandidates({
+    SurfacePriorityCardKey.paywallPrimaryReason: primaryReason,
+    SurfacePriorityCardKey.paywallSecondaryReason: secondaryReason,
+    SurfacePriorityCardKey.paywallCtaLift: paywallCtaLift,
+    SurfacePriorityCardKey.betaFeedbackCapture: betaFeedbackCapture,
+  });
 }
 
 /// Priority audit result for one surface.
@@ -344,6 +338,5 @@ class SurfacePriorityResult {
   bool wasCandidate(
     SurfacePriorityCardKey key,
     SurfacePriorityCandidates candidates,
-  ) =>
-      candidates.candidate(key);
+  ) => candidates.candidate(key);
 }

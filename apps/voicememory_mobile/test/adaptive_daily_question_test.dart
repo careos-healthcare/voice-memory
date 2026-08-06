@@ -30,56 +30,54 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I paused before replying this time and it felt a bit softer.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript: 'I paused before replying this time and it felt a bit softer.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoAdviceLanguage(String copy) {
   for (final phrase in ProofSurfaceAdviceGuard.bannedAdvicePhrases) {
@@ -100,10 +98,7 @@ void main() {
       final result = AdaptiveDailyQuestionEngine.build(entries: const []);
 
       expect(result.kind, AdaptiveDailyQuestionKind.noEntries);
-      expect(
-        result.questionText,
-        AdaptiveDailyQuestionCopy.noEntriesQuestion,
-      );
+      expect(result.questionText, AdaptiveDailyQuestionCopy.noEntriesQuestion);
       expect(result.helperText, AdaptiveDailyQuestionCopy.noEntriesHelper);
     });
 
@@ -180,7 +175,10 @@ void main() {
         result.questionText,
         AdaptiveDailyQuestionCopy.confirmedRepeatQuestion('said yes again'),
       );
-      expect(result.helperText, AdaptiveDailyQuestionCopy.confirmedRepeatHelper);
+      expect(
+        result.helperText,
+        AdaptiveDailyQuestionCopy.confirmedRepeatHelper,
+      );
     });
 
     test('first proof fallback works without phrase', () {
@@ -221,15 +219,15 @@ void main() {
       final result = AdaptiveDailyQuestionEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
       );
 
       expect(result.kind, AdaptiveDailyQuestionKind.returnSofter);
-      expect(result.questionText, AdaptiveDailyQuestionCopy.returnSofterQuestion);
+      expect(
+        result.questionText,
+        AdaptiveDailyQuestionCopy.returnSofterQuestion,
+      );
       expect(result.helperText, AdaptiveDailyQuestionCopy.returnSofterHelper);
     });
 
@@ -255,10 +253,7 @@ void main() {
       final result = AdaptiveDailyQuestionEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.same,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same),
         ],
       );
 
@@ -279,10 +274,7 @@ void main() {
       final result = AdaptiveDailyQuestionEngine.build(
         entries: entries,
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.changed,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
         ],
       );
 
@@ -291,40 +283,28 @@ void main() {
         result.questionText,
         AdaptiveDailyQuestionCopy.patternChangedQuestion,
       );
-      expect(
-        result.helperText,
-        AdaptiveDailyQuestionCopy.patternChangedHelper,
-      );
+      expect(result.helperText, AdaptiveDailyQuestionCopy.patternChangedHelper);
     });
 
     test('helpful action question takes highest priority', () {
       final result = AdaptiveDailyQuestionEngine.build(
         entries: _fourRelatedRepeatWithHelpfulAction(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
       );
 
       expect(result.kind, AdaptiveDailyQuestionKind.helpfulActionAppeared);
       expect(result.usesPhrase, isTrue);
       expect(result.questionText, contains('paused before replying'));
-      expect(
-        result.helperText,
-        AdaptiveDailyQuestionCopy.helpfulActionHelper,
-      );
+      expect(result.helperText, AdaptiveDailyQuestionCopy.helpfulActionHelper);
     });
 
     test('helpful action fallback when milestone captured without phrase', () {
       final result = AdaptiveDailyQuestionEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
         helpfulActionCapturedMilestone: true,
       );

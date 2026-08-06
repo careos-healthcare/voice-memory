@@ -42,8 +42,8 @@ abstract final class ArchiveSummaryCopy {
       'Record whether it helped, cost you, or changed.';
   static const recordNextChangeUnknown =
       'Record the next return to see what changed.';
-  static const recordNextPositiveMissing = 'Record what showed up as helpful in your words.';
+  static const recordNextPositiveMissing =
+      'Record what showed up as helpful in your words.';
 
-  static const recordNextChangeGuided =
-      'What changed when this came up again?';
+  static const recordNextChangeGuided = 'What changed when this came up again?';
 }

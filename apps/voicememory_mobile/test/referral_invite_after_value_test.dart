@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/billing/pro_retention_check.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/referral/invite_attribution.dart';
 import 'package:voicememory_mobile/features/referral/referral_invite_after_value.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/value_accuracy_feedback_row.dart';

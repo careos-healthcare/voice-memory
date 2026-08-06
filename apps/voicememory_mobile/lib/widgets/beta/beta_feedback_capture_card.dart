@@ -41,7 +41,8 @@ class BetaFeedbackCaptureCard extends StatefulWidget {
   final BetaFeedbackCaptureStore? store;
 
   @override
-  State<BetaFeedbackCaptureCard> createState() => _BetaFeedbackCaptureCardState();
+  State<BetaFeedbackCaptureCard> createState() =>
+      _BetaFeedbackCaptureCardState();
 }
 
 class _BetaFeedbackCaptureCardState extends State<BetaFeedbackCaptureCard> {
@@ -77,8 +78,9 @@ class _BetaFeedbackCaptureCardState extends State<BetaFeedbackCaptureCard> {
     );
     if (widget.result.moment == BetaFeedbackCaptureMoment.afterTimelineProof &&
         widget.proofFeedbackSurface != null) {
-      final proofType =
-          BetaFeedbackCaptureEngine.proofFeedbackTypeForAnswer(answerId);
+      final proofType = BetaFeedbackCaptureEngine.proofFeedbackTypeForAnswer(
+        answerId,
+      );
       if (proofType != null) {
         await BetaProofFeedbackStore.instance().saveAnswer(
           surface: widget.proofFeedbackSurface!,
@@ -107,15 +109,16 @@ class _BetaFeedbackCaptureCardState extends State<BetaFeedbackCaptureCard> {
   @override
   Widget build(BuildContext context) {
     if (_resolved || !widget.result.shouldShow) {
-      return const SizedBox.shrink(key: Key('beta_feedback_capture_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('beta_feedback_capture_card_hidden'),
+      );
     }
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('beta_feedback_capture_card'),

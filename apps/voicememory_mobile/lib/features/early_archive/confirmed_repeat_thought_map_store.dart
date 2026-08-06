@@ -41,11 +41,13 @@ class ConfirmedRepeatThoughtMapStore {
     });
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     _cachedLastMissingSection = null;
     _loaded = false;
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeMap(prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

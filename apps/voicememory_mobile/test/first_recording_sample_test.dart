@@ -304,17 +304,18 @@ void main() {
       expect(find.text(FirstRecordingSample.title), findsNothing);
     });
 
-    testWidgets('record screen keeps standard capture path without legacy sample', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(
-        find.byKey(const Key('first_recording_sample_card')),
-        findsNothing,
-      );
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'record screen keeps standard capture path without legacy sample',
+      (tester) async {
+        await pumpRecordScreen(tester);
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(
+          find.byKey(const Key('first_recording_sample_card')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('normal recording path stays unchanged', (tester) async {
       await pumpRecordScreen(tester);

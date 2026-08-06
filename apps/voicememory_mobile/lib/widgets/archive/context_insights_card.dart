@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Compact card showing where tagged archive moments show up.
 class ContextInsightsCard extends StatelessWidget {
-  const ContextInsightsCard({
-    super.key,
-    required this.insights,
-  });
+  const ContextInsightsCard({super.key, required this.insights});
 
   final ContextInsights insights;
 
@@ -21,14 +18,12 @@ class ContextInsightsCard extends StatelessWidget {
     if (!insights.showCard) return const SizedBox.shrink();
 
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('context_insights_card'),
@@ -87,7 +82,9 @@ class ContextInsightsCard extends StatelessWidget {
                 child: Text(
                   '${insights.topContexts[i].label}: '
                   '${ContextInsightsEngine.momentCountLabel(insights.topContexts[i].count)}',
-                  key: Key('context_insights_top_${insights.topContexts[i].tagId}'),
+                  key: Key(
+                    'context_insights_top_${insights.topContexts[i].tagId}',
+                  ),
                   style: bodyStyle,
                 ),
               ),

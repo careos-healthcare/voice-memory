@@ -64,22 +64,21 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 const _bannedStrongBelief = [
   'your archive believes',
@@ -89,106 +88,104 @@ const _bannedStrongBelief = [
 ];
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithTriggerCapture() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The extra ask came in right before I said yes again without checking capacity.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'The extra ask came in right before I said yes again without checking capacity.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithSofterRelatedReturn() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'Same yes pattern came back but it felt less urgent and easier to stop this time.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'Same yes pattern came back but it felt less urgent and easier to stop this time.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithNormalRelatedReturn() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithUnrelatedSofterEntry() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'Weather was nice on my walk through the park and felt calmer outside.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'Weather was nice on my walk through the park and felt calmer outside.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fiveEntriesWithHelpfulActionCapture() => [
-      ..._fourEntriesWithSofterRelatedReturn(),
-      _entry(
-        id: 'e5',
-        transcript:
-            'I paused before saying yes and asked for help, which made it easier to stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._fourEntriesWithSofterRelatedReturn(),
+  _entry(
+    id: 'e5',
+    transcript:
+        'I paused before saying yes and asked for help, which made it easier to stop.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 List<JournalEntry> _threeCheckingUncertaintyEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I kept checking my phone when things felt uncertain today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same checking came back when everything still felt uncertain.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I was checking again because things felt uncertain about the decision.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: 'I kept checking my phone when things felt uncertain today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript: 'Same checking came back when everything still felt uncertain.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I was checking again because things felt uncertain about the decision.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveEntriesWithWaitingHelpfulAction() => [
-      ..._fourEntriesWithSofterRelatedReturn(),
-      _entry(
-        id: 'e5',
-        transcript:
-            'I waited two minutes before responding and that helped me stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._fourEntriesWithSofterRelatedReturn(),
+  _entry(
+    id: 'e5',
+    transcript:
+        'I waited two minutes before responding and that helped me stop.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 void _expectNoDiagnosticLanguage(String joined) {
   final lower = joined.toLowerCase();
@@ -360,7 +357,10 @@ void main() {
         ),
       ];
 
-      expect(EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(entries), isTrue);
+      expect(
+        EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(entries),
+        isTrue,
+      );
 
       final model = EarlyFirstSignalEngine.build(entries: entries);
       expect(model!.kind, EarlyFirstSignalKind.threeEntryConfirmedRepeat);
@@ -372,7 +372,10 @@ void main() {
       expect(model.evidenceHeading, EarlyFirstSignalCopy.evidenceHeading);
       expect(model.evidencePhrases.length, greaterThanOrEqualTo(2));
       expect(model.evidencePhrases.length, lessThanOrEqualTo(3));
-      expect(model.evidenceSupportLine, EarlyFirstSignalCopy.evidenceSupportLine);
+      expect(
+        model.evidenceSupportLine,
+        EarlyFirstSignalCopy.evidenceSupportLine,
+      );
       expect(model.evidenceRows, isEmpty);
       expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
       expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -380,7 +383,10 @@ void main() {
       expect(model.returnPrompt, isNotNull);
       expect(model.returnPrompt!.title, EarlyFirstSignalCopy.returnPromptTitle);
       expect(model.returnPrompt!.body, EarlyFirstSignalCopy.returnPromptBody);
-      expect(model.returnPrompt!.cta, EarlyFirstSignalCopy.recordTriggerNextTimeCta);
+      expect(
+        model.returnPrompt!.cta,
+        EarlyFirstSignalCopy.recordTriggerNextTimeCta,
+      );
       expect(
         model.returnPrompt!.guidedRecordPrompt,
         EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
@@ -502,19 +508,14 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EarlyFirstSignalCard(
-              signal: model!,
-              onPrimary: () {},
-            ),
+            body: EarlyFirstSignalCard(signal: model!, onPrimary: () {}),
           ),
         ),
       );
       await tester.pump();
 
       expect(
-        find.byKey(
-          const Key('early_first_signal_card_twoEntryFirstSignal'),
-        ),
+        find.byKey(const Key('early_first_signal_card_twoEntryFirstSignal')),
         findsOneWidget,
       );
       expect(
@@ -525,10 +526,7 @@ void main() {
         find.text(EarlyFirstSignalCopy.twoEntryRelatedBody),
         findsOneWidget,
       );
-      expect(
-        find.text(EarlyFirstSignalCopy.confirmRepeatCta),
-        findsOneWidget,
-      );
+      expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsOneWidget);
     });
 
     testWidgets('renders confirmed repeat with evidence and view CTA', (
@@ -583,10 +581,16 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(EarlyFirstSignalCopy.evidenceHeading), findsOneWidget);
-      expect(find.byKey(const Key('early_first_signal_evidence_phrases')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_first_signal_evidence_phrases')),
+        findsOneWidget,
+      );
       expect(find.text('Jun 10'), findsNothing);
       expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
-      expect(find.byKey(const Key('confirmed_repeat_return_prompt')), findsNothing);
+      expect(
+        find.byKey(const Key('confirmed_repeat_return_prompt')),
+        findsNothing,
+      );
     });
 
     testWidgets('renders return prompt for confirmed repeat and fires CTA', (
@@ -633,7 +637,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('confirmed_repeat_return_prompt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('confirmed_repeat_return_prompt')),
+        findsOneWidget,
+      );
       expect(find.text(EarlyFirstSignalCopy.returnPromptTitle), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.returnPromptBody), findsOneWidget);
       expect(
@@ -644,7 +651,9 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const Key('confirmed_repeat_return_prompt_cta')),
       );
-      await tester.tap(find.byKey(const Key('confirmed_repeat_return_prompt_cta')));
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_return_prompt_cta')),
+      );
       await tester.pump();
 
       expect(returnPromptTapped, isTrue);
@@ -670,14 +679,8 @@ void main() {
       expect(payoff!.title, EarlyFirstSignalCopy.triggerPayoffTitle);
       expect(payoff.body, contains('trigger seems to be'));
       expect(payoff.body, contains('stronger evidence'));
-      expect(
-        payoff.evidenceLines.first,
-        contains('keeps coming back'),
-      );
-      expect(
-        payoff.evidenceLines.last,
-        contains('trigger seems to be'),
-      );
+      expect(payoff.evidenceLines.first, contains('keeps coming back'));
+      expect(payoff.evidenceLines.last, contains('trigger seems to be'));
       expect(payoff.primaryCta, EarlyFirstSignalCopy.triggerPayoffPrimaryCta);
       expect(payoff.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
     });
@@ -754,7 +757,9 @@ void main() {
       await tester.pump();
 
       await tester.tap(
-        find.byKey(const Key('confirmed_repeat_trigger_payoff_view_evidence_cta')),
+        find.byKey(
+          const Key('confirmed_repeat_trigger_payoff_view_evidence_cta'),
+        ),
       );
       await tester.pump();
 
@@ -764,35 +769,35 @@ void main() {
   });
 
   group('ConfirmedRepeatChangeNotice', () {
-    test('confirmed repeat plus softer later entry shows change noticed card', () {
-      final notice = EarlyFirstSignalEngine.buildChangeNotice(
-        entries: _fourEntriesWithSofterRelatedReturn(),
-      );
+    test(
+      'confirmed repeat plus softer later entry shows change noticed card',
+      () {
+        final notice = EarlyFirstSignalEngine.buildChangeNotice(
+          entries: _fourEntriesWithSofterRelatedReturn(),
+        );
 
-      expect(notice, isNotNull);
-      expect(notice!.title, EarlyFirstSignalCopy.changeNoticeTitle);
-      expect(notice.body, contains('came back'));
-      expect(notice.body, contains('less urgent'));
-      expect(
-        notice.evidenceLines.first,
-        contains('keeps coming back'),
-      );
-      expect(
-        notice.evidenceLines.last,
-        contains('less urgent'),
-      );
-      expect(notice.primaryCta, EarlyFirstSignalCopy.recordWhatHelpedCta);
-      expect(notice.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
-    });
+        expect(notice, isNotNull);
+        expect(notice!.title, EarlyFirstSignalCopy.changeNoticeTitle);
+        expect(notice.body, contains('came back'));
+        expect(notice.body, contains('less urgent'));
+        expect(notice.evidenceLines.first, contains('keeps coming back'));
+        expect(notice.evidenceLines.last, contains('less urgent'));
+        expect(notice.primaryCta, EarlyFirstSignalCopy.recordWhatHelpedCta);
+        expect(notice.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
+      },
+    );
 
-    test('confirmed repeat plus normal later entry does not show change card', () {
-      expect(
-        EarlyFirstSignalEngine.buildChangeNotice(
-          entries: _fourEntriesWithNormalRelatedReturn(),
-        ),
-        isNull,
-      );
-    });
+    test(
+      'confirmed repeat plus normal later entry does not show change card',
+      () {
+        expect(
+          EarlyFirstSignalEngine.buildChangeNotice(
+            entries: _fourEntriesWithNormalRelatedReturn(),
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('unrelated softer entry does not show change noticed card', () {
       expect(
@@ -824,7 +829,9 @@ void main() {
       expect(
         route,
         contains(
-          Uri.encodeComponent(EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt),
+          Uri.encodeComponent(
+            EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+          ),
         ),
       );
       expect(route, startsWith('/record?prompt='));
@@ -858,7 +865,10 @@ void main() {
       await tester.pump();
 
       expect(recordWhatHelpedTapped, isTrue);
-      expect(find.text(EarlyFirstSignalCopy.recordWhatHelpedCta), findsOneWidget);
+      expect(
+        find.text(EarlyFirstSignalCopy.recordWhatHelpedCta),
+        findsOneWidget,
+      );
     });
   });
 
@@ -879,7 +889,10 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.title, EarlyFirstSignalCopy.helpfulActionPayoffTitle);
-      expect(payoff.body, anyOf(contains('may have helped'), contains('may have softened')));
+      expect(
+        payoff.body,
+        anyOf(contains('may have helped'), contains('may have softened')),
+      );
       expect(
         payoff.evidenceLines.last,
         anyOf(contains('may have helped'), contains('may have softened')),
@@ -1001,8 +1014,14 @@ void main() {
       expect(timeline.subtitle, contains('tracking'));
       expect(timeline.subtitle, contains('saying yes'));
       expect(timeline.items.length, 1);
-      expect(timeline.items.single.kind, EarlyEvidenceTimelineItemKind.repeatConfirmed);
-      expect(timeline.items.single.title, EarlyEvidenceTimelineCopy.repeatConfirmedTitle);
+      expect(
+        timeline.items.single.kind,
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+      );
+      expect(
+        timeline.items.single.title,
+        EarlyEvidenceTimelineCopy.repeatConfirmedTitle,
+      );
       expect(timeline.items.single.body, contains('keeps coming back'));
     });
 
@@ -1121,30 +1140,34 @@ void main() {
       expect(joined, isNot(contains('healed')));
     });
 
-    test('trigger payoff priority test still passes with timeline milestones', () {
-      EarlyEvidenceMilestoneStore.useTestFlags = true;
-      EarlyEvidenceMilestoneStore.testTriggerCaptured = true;
-      EarlyEvidenceMilestoneStore.testHelpfulActionCaptured = true;
+    test(
+      'trigger payoff priority test still passes with timeline milestones',
+      () {
+        EarlyEvidenceMilestoneStore.useTestFlags = true;
+        EarlyEvidenceMilestoneStore.testTriggerCaptured = true;
+        EarlyEvidenceMilestoneStore.testHelpfulActionCaptured = true;
 
-      final timeline = EarlyEvidenceTimelineEngine.build(
-        entries: _fourEntriesWithTriggerCapture(),
-        triggerCapturedMilestone: true,
-        helpfulActionCapturedMilestone: true,
-      );
+        final timeline = EarlyEvidenceTimelineEngine.build(
+          entries: _fourEntriesWithTriggerCapture(),
+          triggerCapturedMilestone: true,
+          helpfulActionCapturedMilestone: true,
+        );
 
-      expect(
-        timeline!.items.any(
-          (item) => item.kind == EarlyEvidenceTimelineItemKind.triggerCaptured,
-        ),
-        isTrue,
-      );
-      expect(
-        timeline.items.any(
-          (item) => item.kind == EarlyEvidenceTimelineItemKind.helpfulAction,
-        ),
-        isFalse,
-      );
-    });
+        expect(
+          timeline!.items.any(
+            (item) =>
+                item.kind == EarlyEvidenceTimelineItemKind.triggerCaptured,
+          ),
+          isTrue,
+        );
+        expect(
+          timeline.items.any(
+            (item) => item.kind == EarlyEvidenceTimelineItemKind.helpfulAction,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('EarlyEvidenceTimelineCard', () {
@@ -1157,16 +1180,17 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: EarlyEvidenceTimelineCard(timeline: timeline!),
-          ),
+          home: Scaffold(body: EarlyEvidenceTimelineCard(timeline: timeline!)),
         ),
       );
       await tester.pump();
 
       expect(find.text('Your archive is building evidence.'), findsOneWidget);
       expect(find.textContaining('tracking'), findsOneWidget);
-      expect(find.byKey(const Key('early_evidence_timeline_chip_trail')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_evidence_timeline_chip_trail')),
+        findsOneWidget,
+      );
       expect(find.text('Repeat'), findsWidgets);
       expect(find.text('Change'), findsWidgets);
       expect(find.text('Helped'), findsWidgets);
@@ -1182,16 +1206,16 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EarlyEvidenceTimelineCard(
-              timeline: timeline!,
-              compact: true,
-            ),
+            body: EarlyEvidenceTimelineCard(timeline: timeline!, compact: true),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('early_evidence_timeline_chip_trail')), findsNothing);
+      expect(
+        find.byKey(const Key('early_evidence_timeline_chip_trail')),
+        findsNothing,
+      );
       expect(
         find.text(
           'ArchiveMe is tracking what repeats, what starts it, and what may help '
@@ -1199,32 +1223,46 @@ void main() {
         ),
         findsNothing,
       );
-      expect(find.byKey(const Key('early_evidence_timeline_row_chip_softerReturn')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_evidence_timeline_row_chip_softerReturn')),
+        findsOneWidget,
+      );
       expect(find.text('Change'), findsOneWidget);
     });
   });
 
   group('EarlyFirstSignalRecordRoutes', () {
-    test('trigger and helpful routes support autostart for Patterns handoff', () {
-      expect(
-        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
-        contains('autostart=1'),
-      );
-      expect(
-        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
-        contains(Uri.encodeComponent(EarlyFirstSignalCopy.recordTriggerGuidedPrompt)),
-      );
-      expect(
-        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
-        contains('autostart=1'),
-      );
-      expect(
-        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
-        contains(
-          Uri.encodeComponent(EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt),
-        ),
-      );
-    });
+    test(
+      'trigger and helpful routes support autostart for Patterns handoff',
+      () {
+        expect(
+          EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+          contains('autostart=1'),
+        );
+        expect(
+          EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+          contains(
+            Uri.encodeComponent(EarlyFirstSignalCopy.recordTriggerGuidedPrompt),
+          ),
+        );
+        expect(
+          EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(
+            autostart: true,
+          ),
+          contains('autostart=1'),
+        );
+        expect(
+          EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(
+            autostart: true,
+          ),
+          contains(
+            Uri.encodeComponent(
+              EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('FirstUserJourney hardening', () {
@@ -1242,63 +1280,77 @@ void main() {
       }
     }
 
-    test('three related entries show timeline on Patterns not duplicate early card', () async {
-      await saveRelatedRepeatEntries();
+    test(
+      'three related entries show timeline on Patterns not duplicate early card',
+      () async {
+        await saveRelatedRepeatEntries();
 
-      final loaded = await AppServices.instance.journalStore.loadAll();
-      expect(loaded.length, 3);
+        final loaded = await AppServices.instance.journalStore.loadAll();
+        expect(loaded.length, 3);
 
-      final timeline = EarlyEvidenceTimelineEngine.build(
-        entries: loaded,
-      );
-      expect(timeline, isNotNull);
+        final timeline = EarlyEvidenceTimelineEngine.build(entries: loaded);
+        expect(timeline, isNotNull);
 
-      final earlySignal = EarlyFirstSignalEngine.build(
-        entries: loaded,
-      );
-      expect(earlySignal?.kind, EarlyFirstSignalKind.threeEntryConfirmedRepeat);
-      expect(EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(loaded), isTrue);
-    });
+        final earlySignal = EarlyFirstSignalEngine.build(entries: loaded);
+        expect(
+          earlySignal?.kind,
+          EarlyFirstSignalKind.threeEntryConfirmedRepeat,
+        );
+        expect(
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(loaded),
+          isTrue,
+        );
+      },
+    );
 
-    test('patterns early proof scaffold eligible at three confirmed entries', () {
-      final entries = _threeRelatedRepeatEntries();
-      expect(
-        FirstSessionCoordinator.shouldShowMinimalPatterns(
-          reflectionCount: entries.length,
-        ),
-        isFalse,
-      );
-      expect(entries.length >= 3 && entries.length <= 5, isTrue);
-      expect(EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries), isTrue);
-      expect(EarlyEvidenceTimelineEngine.build(entries: entries), isNotNull);
-    });
+    test(
+      'patterns early proof scaffold eligible at three confirmed entries',
+      () {
+        final entries = _threeRelatedRepeatEntries();
+        expect(
+          FirstSessionCoordinator.shouldShowMinimalPatterns(
+            reflectionCount: entries.length,
+          ),
+          isFalse,
+        );
+        expect(entries.length >= 3 && entries.length <= 5, isTrue);
+        expect(
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+          isTrue,
+        );
+        expect(EarlyEvidenceTimelineEngine.build(entries: entries), isNotNull);
+      },
+    );
 
-    test('Record compact timeline gate keeps early signal card at three entries', () {
-      expect(
-        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
-          loaded: true,
-          entryCount: 3,
-          isPostSave: false,
-        ),
-        isTrue,
-      );
-      expect(
-        RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
-          loaded: true,
-          entryCount: 3,
-          isPostSave: false,
-        ),
-        isFalse,
-      );
-      expect(
-        RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
-          loaded: true,
-          entryCount: 4,
-          isPostSave: false,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'Record compact timeline gate keeps early signal card at three entries',
+      () {
+        expect(
+          RecordEmptyArchiveGates.showEarlyFirstSignalCard(
+            loaded: true,
+            entryCount: 3,
+            isPostSave: false,
+          ),
+          isTrue,
+        );
+        expect(
+          RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+            loaded: true,
+            entryCount: 3,
+            isPostSave: false,
+          ),
+          isFalse,
+        );
+        expect(
+          RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+            loaded: true,
+            entryCount: 4,
+            isPostSave: false,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('EarlyEvidenceTimelineDemo', () {
@@ -1362,15 +1414,12 @@ void main() {
       expect(timeline.title.toLowerCase(), contains('example'));
       expect(timeline.subtitle.toLowerCase(), contains('sample'));
       expect(timeline.items, hasLength(4));
-      expect(
-        timeline.items.map((item) => item.kind),
-        [
-          EarlyEvidenceTimelineItemKind.repeatConfirmed,
-          EarlyEvidenceTimelineItemKind.triggerCaptured,
-          EarlyEvidenceTimelineItemKind.softerReturn,
-          EarlyEvidenceTimelineItemKind.helpfulAction,
-        ],
-      );
+      expect(timeline.items.map((item) => item.kind), [
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+        EarlyEvidenceTimelineItemKind.triggerCaptured,
+        EarlyEvidenceTimelineItemKind.softerReturn,
+        EarlyEvidenceTimelineItemKind.helpfulAction,
+      ]);
     });
 
     testWidgets('empty Patterns footer shows demo CTA', (tester) async {
@@ -1395,7 +1444,9 @@ void main() {
       expect(find.byKey(const Key('early_evidence_demo_cta')), findsOneWidget);
     });
 
-    testWidgets('tapping demo CTA shows labelled sample timeline', (tester) async {
+    testWidgets('tapping demo CTA shows labelled sample timeline', (
+      tester,
+    ) async {
       var demoVisible = false;
 
       await tester.pumpWidget(
@@ -1424,16 +1475,13 @@ void main() {
       await tester.tap(find.byKey(const Key('early_evidence_demo_cta')));
       await tester.pump();
 
-      expect(find.byKey(const Key('early_evidence_demo_section')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_evidence_demo_section')),
+        findsOneWidget,
+      );
       expect(find.text('Sample'), findsOneWidget);
-      expect(
-        find.text(EarlyEvidenceTimelineDemoCopy.title),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EarlyEvidenceTimelineDemoCopy.subtitle),
-        findsOneWidget,
-      );
+      expect(find.text(EarlyEvidenceTimelineDemoCopy.title), findsOneWidget);
+      expect(find.text(EarlyEvidenceTimelineDemoCopy.subtitle), findsOneWidget);
     });
 
     test('demo preview does not write journal entries', () async {
@@ -1460,7 +1508,8 @@ void main() {
       ActivationFunnelAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.resetForTest();
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -1495,7 +1544,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(eventsNamed(EarlyArchiveProofAnalytics.demoCtaSeenEvent), hasLength(1));
+      expect(
+        eventsNamed(EarlyArchiveProofAnalytics.demoCtaSeenEvent),
+        hasLength(1),
+      );
       expect(captured.single.properties['entry_count'], 0);
       expect(captured.single.properties['source'], 'patterns');
     });
@@ -1513,7 +1565,9 @@ void main() {
         source: 'paywall_screen',
       );
       expect(
-        eventsNamed(EarlyArchiveProofAnalytics.proScreenOpenedAfterTimelineEvent),
+        eventsNamed(
+          EarlyArchiveProofAnalytics.proScreenOpenedAfterTimelineEvent,
+        ),
         hasLength(1),
       );
     });
@@ -1630,7 +1684,8 @@ void main() {
       ActivationFunnelAnalytics.resetForTest();
       await EarlyArchiveInsightFeedbackStore.resetForTest();
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -1672,7 +1727,9 @@ void main() {
       );
     });
 
-    testWidgets('feedback row renders on confirmed repeat card', (tester) async {
+    testWidgets('feedback row renders on confirmed repeat card', (
+      tester,
+    ) async {
       final model = EarlyFirstSignalEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
@@ -1728,7 +1785,9 @@ void main() {
       expect(joined, isNot(contains('said yes')));
     });
 
-    testWidgets('wrong pattern shows uncertainty acknowledgement', (tester) async {
+    testWidgets('wrong pattern shows uncertainty acknowledgement', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -1777,7 +1836,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('early_archive_insight_feedback_row_timeline')), findsNothing);
+      expect(
+        find.byKey(const Key('early_archive_insight_feedback_row_timeline')),
+        findsNothing,
+      );
     });
   });
 
@@ -1864,12 +1926,16 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('early_archive_insight_why_reason_confirmedRepeat_0')),
+        find.byKey(
+          const Key('early_archive_insight_why_reason_confirmedRepeat_0'),
+        ),
         findsNothing,
       );
     });
 
-    testWidgets('expanding why shows grounded evidence reasons', (tester) async {
+    testWidgets('expanding why shows grounded evidence reasons', (
+      tester,
+    ) async {
       final entries = _fiveEntriesWithHelpfulActionCapture();
       final timeline = EarlyEvidenceTimelineEngine.build(entries: entries);
 
@@ -1931,7 +1997,9 @@ void main() {
       expect(find.text(EarlyArchiveInsightWhyCopy.linkLabel), findsNothing);
     });
 
-    testWidgets('trigger payoff shows why when trigger evidence exists', (tester) async {
+    testWidgets('trigger payoff shows why when trigger evidence exists', (
+      tester,
+    ) async {
       final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
         entries: _fourEntriesWithTriggerCapture(),
         savedFromTriggerPrompt: true,
@@ -1979,7 +2047,9 @@ void main() {
       await tester.pump();
 
       await tester.tap(
-        find.byKey(const Key('early_archive_insight_why_link_helpfulActionPayoff')),
+        find.byKey(
+          const Key('early_archive_insight_why_link_helpfulActionPayoff'),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2045,9 +2115,15 @@ void main() {
         AppServices.instance.prefs,
       );
 
-      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isTrue);
+      expect(
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer(),
+        isTrue,
+      );
       await EarlyArchiveReturnReminderStore.instance().markNotNow();
-      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+      expect(
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer(),
+        isFalse,
+      );
     });
 
     test('session dismiss hides reminder until reset', () async {
@@ -2060,7 +2136,10 @@ void main() {
       );
 
       EarlyArchiveReturnReminderSession.dismiss();
-      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+      expect(
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer(),
+        isFalse,
+      );
     });
 
     testWidgets('reminder card shows calm copy and actions', (tester) async {
@@ -2078,15 +2157,23 @@ void main() {
 
       expect(find.text(EarlyArchiveReturnReminderCopy.title), findsOneWidget);
       expect(find.text(EarlyArchiveReturnReminderCopy.body), findsOneWidget);
-      expect(find.text(EarlyArchiveReturnReminderCopy.primaryCta), findsOneWidget);
-      expect(find.text(EarlyArchiveReturnReminderCopy.secondaryCta), findsOneWidget);
+      expect(
+        find.text(EarlyArchiveReturnReminderCopy.primaryCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlyArchiveReturnReminderCopy.secondaryCta),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('early_archive_return_reminder_card_patterns')),
         findsOneWidget,
       );
     });
 
-    testWidgets('only one reminder with timeline card in column', (tester) async {
+    testWidgets('only one reminder with timeline card in column', (
+      tester,
+    ) async {
       final timeline = EarlyEvidenceTimelineEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
@@ -2110,7 +2197,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('early_evidence_timeline_card_full')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_evidence_timeline_card_full')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('early_archive_return_reminder_card_patterns')),
         findsOneWidget,
@@ -2134,7 +2224,10 @@ void main() {
       expect(outcome, ReminderScheduleOutcome.scheduled);
       expect(backend.scheduleCalls, 1);
       expect(backend.lastTitle, EarlyArchiveReturnReminderCopy.title);
-      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+      expect(
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer(),
+        isFalse,
+      );
     });
   });
 
@@ -2216,48 +2309,51 @@ void main() {
       );
     });
 
-    test('proof stack includes why matters without duplicating proof phrases', () {
-      final confirmed = EarlyFirstSignalEngine.build(
-        entries: _threeRelatedRepeatEntries(),
-      );
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: true,
-        timelineVisible: false,
-        changeProofVisible: false,
-        proBridgeVisible: false,
-        whyMattersVisible: true,
-      );
-      final blocks = ArchiveProofSurfaceCopy.patternsStack(
-        layout: layout,
-        confirmedRepeat: confirmed,
-      );
-      final joined = blocks.join('\n');
+    test(
+      'proof stack includes why matters without duplicating proof phrases',
+      () {
+        final confirmed = EarlyFirstSignalEngine.build(
+          entries: _threeRelatedRepeatEntries(),
+        );
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: true,
+          timelineVisible: false,
+          changeProofVisible: false,
+          proBridgeVisible: false,
+          whyMattersVisible: true,
+        );
+        final blocks = ArchiveProofSurfaceCopy.patternsStack(
+          layout: layout,
+          confirmedRepeat: confirmed,
+        );
+        final joined = blocks.join('\n');
 
-      expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.title));
-      expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.body));
-      expect(
-        ArchiveProofCopyDedup.phrasesWithinLimit(
-          copyBlocks: blocks,
-          onceOnlyPhrases: [
+        expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.title));
+        expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.body));
+        expect(
+          ArchiveProofCopyDedup.phrasesWithinLimit(
+            copyBlocks: blocks,
+            onceOnlyPhrases: [
+              EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
+              EarlyFirstSignalCopy.evidenceHeading,
+              ConfirmedRepeatWhyMattersCopy.title,
+            ],
+          ),
+          isTrue,
+        );
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            joined,
             EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
-            EarlyFirstSignalCopy.evidenceHeading,
-            ConfirmedRepeatWhyMattersCopy.title,
-          ],
-        ),
-        isTrue,
-      );
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          joined,
-          EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
-        ),
-        1,
-      );
-      expect(
-        ConfirmedRepeatWhyMattersCopy.body,
-        isNot(contains(EarlyFirstSignalCopy.evidenceHeading)),
-      );
-    });
+          ),
+          1,
+        );
+        expect(
+          ConfirmedRepeatWhyMattersCopy.body,
+          isNot(contains(EarlyFirstSignalCopy.evidenceHeading)),
+        );
+      },
+    );
 
     testWidgets('card renders below proof copy and dismiss persists', (
       tester,
@@ -2266,9 +2362,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ConfirmedRepeatWhyMattersCard.test(
-              store: ConfirmedRepeatWhyMattersStore(
-                AppServices.instance.prefs,
-              ),
+              store: ConfirmedRepeatWhyMattersStore(AppServices.instance.prefs),
             ),
           ),
         ),
@@ -2282,7 +2376,10 @@ void main() {
       expect(find.text(ConfirmedRepeatWhyMattersCopy.title), findsOneWidget);
       expect(find.text(ConfirmedRepeatWhyMattersCopy.body), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.evidenceHeading), findsNothing);
-      expect(find.byKey(const Key('early_first_signal_primary_cta')), findsNothing);
+      expect(
+        find.byKey(const Key('early_first_signal_primary_cta')),
+        findsNothing,
+      );
 
       await tester.tap(find.text(ConfirmedRepeatWhyMattersCopy.hideCta));
       await tester.pumpAndSettle();
@@ -2470,9 +2567,15 @@ void main() {
         entryCount: 3,
       );
       expect(captured, isNotNull);
-      expect(captured!.keys, containsAll(['section', 'surface', 'entry_count']));
+      expect(
+        captured!.keys,
+        containsAll(['section', 'surface', 'entry_count']),
+      );
       expect(captured!.keys, isNot(contains('transcript')));
-      expect(captured!.values.whereType<String>(), everyElement(isNot(contains('said yes'))));
+      expect(
+        captured!.values.whereType<String>(),
+        everyElement(isNot(contains('said yes'))),
+      );
     });
 
     test('store persists section id only', () async {
@@ -2485,7 +2588,9 @@ void main() {
       );
     });
 
-    testWidgets('card renders loop sections and subtle record CTA', (tester) async {
+    testWidgets('card renders loop sections and subtle record CTA', (
+      tester,
+    ) async {
       final map = ConfirmedRepeatThoughtMapEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
@@ -2504,11 +2609,26 @@ void main() {
       );
 
       expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsOneWidget);
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.triggerLabel), findsOneWidget);
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.thoughtLabel), findsOneWidget);
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.actionLabel), findsOneWidget);
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.resultLabel), findsOneWidget);
-      expect(find.text(ConfirmedRepeatThoughtMapCopy.triggerUnknown), findsOneWidget);
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.triggerLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.thoughtLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.actionLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.resultLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.triggerUnknown),
+        findsOneWidget,
+      );
       expect(
         find.text(ConfirmedRepeatThoughtMapCopy.recordMissingPieceCta),
         findsOneWidget,

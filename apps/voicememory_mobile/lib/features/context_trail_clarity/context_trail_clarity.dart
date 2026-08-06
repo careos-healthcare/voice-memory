@@ -106,30 +106,27 @@ class ContextTrailClarityResult {
 
   factory ContextTrailClarityResult.hidden({
     required ContextTrailClarityReason reason,
-  }) =>
-      ContextTrailClarityResult(
-        shouldSurfaceContext: false,
-        shouldKeepQuiet: true,
-        reason: reason,
-      );
+  }) => ContextTrailClarityResult(
+    shouldSurfaceContext: false,
+    shouldKeepQuiet: true,
+    reason: reason,
+  );
 
   factory ContextTrailClarityResult.quiet({
     required ContextTrailClarityReason reason,
-  }) =>
-      ContextTrailClarityResult(
-        shouldSurfaceContext: false,
-        shouldKeepQuiet: true,
-        reason: reason,
-      );
+  }) => ContextTrailClarityResult(
+    shouldSurfaceContext: false,
+    shouldKeepQuiet: true,
+    reason: reason,
+  );
 
   factory ContextTrailClarityResult.surface({
     required ContextTrailClarityReason reason,
-  }) =>
-      ContextTrailClarityResult(
-        shouldSurfaceContext: true,
-        shouldKeepQuiet: false,
-        reason: reason,
-      );
+  }) => ContextTrailClarityResult(
+    shouldSurfaceContext: true,
+    shouldKeepQuiet: false,
+    reason: reason,
+  );
 
   final bool shouldSurfaceContext;
   final bool shouldKeepQuiet;

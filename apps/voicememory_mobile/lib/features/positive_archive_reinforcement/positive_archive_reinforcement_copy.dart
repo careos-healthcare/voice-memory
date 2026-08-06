@@ -7,8 +7,7 @@ abstract final class PositiveArchiveReinforcementCopy {
   static const body =
       'That one moment is enough. ArchiveMe now has something real to compare later.';
 
-  static const noticedLine =
-      'You noticed it and saved it. That matters.';
+  static const noticedLine = 'You noticed it and saved it. That matters.';
 
   static const smallMomentLine =
       'Small moments are how the trail becomes clear.';

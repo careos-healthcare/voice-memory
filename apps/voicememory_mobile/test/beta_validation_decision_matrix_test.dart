@@ -20,16 +20,15 @@ BetaValidationDecisionMatrixInput _input({
   int understandsProYesMaybeCount = 0,
   int paywallCtaTapCount = 0,
   int? wouldPayYesMaybeCount,
-}) =>
-    BetaValidationDecisionMatrixInput(
-      testerCount: testerCount,
-      firstSessionSaveCount: firstSessionSaveCount,
-      usefulProofCount: usefulProofCount,
-      sawProCount: sawProCount,
-      understandsProYesMaybeCount: understandsProYesMaybeCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-    );
+}) => BetaValidationDecisionMatrixInput(
+  testerCount: testerCount,
+  firstSessionSaveCount: firstSessionSaveCount,
+  usefulProofCount: usefulProofCount,
+  sawProCount: sawProCount,
+  understandsProYesMaybeCount: understandsProYesMaybeCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -41,9 +40,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: BetaValidationDecisionMatrixCard(
-            resultOverride: result,
-          ),
+          child: BetaValidationDecisionMatrixCard(resultOverride: result),
         ),
       ),
     ),
@@ -101,54 +98,59 @@ void main() {
       expect(result.outcome, BetaValidationDecisionOutcome.protectProof);
     });
 
-    test('fixOpeningScreenOnly wins after proof passes but first-session fails', () {
-      final result = BetaValidationDecisionMatrixEngine.buildFromInput(
-        _input(
-          usefulProofCount: 5,
-          firstSessionSaveCount: 4,
-        ),
-      );
-      expect(
-        result.outcome,
-        BetaValidationDecisionOutcome.fixOpeningScreenOnly,
-      );
-    });
+    test(
+      'fixOpeningScreenOnly wins after proof passes but first-session fails',
+      () {
+        final result = BetaValidationDecisionMatrixEngine.buildFromInput(
+          _input(usefulProofCount: 5, firstSessionSaveCount: 4),
+        );
+        expect(
+          result.outcome,
+          BetaValidationDecisionOutcome.fixOpeningScreenOnly,
+        );
+      },
+    );
 
-    test('fixProPlacement wins after proof and first-session pass but saw Pro fails', () {
-      final result = BetaValidationDecisionMatrixEngine.buildFromInput(
-        _input(
-          usefulProofCount: 5,
-          firstSessionSaveCount: 5,
-          sawProCount: 2,
-        ),
-      );
-      expect(result.outcome, BetaValidationDecisionOutcome.fixProPlacement);
-    });
+    test(
+      'fixProPlacement wins after proof and first-session pass but saw Pro fails',
+      () {
+        final result = BetaValidationDecisionMatrixEngine.buildFromInput(
+          _input(usefulProofCount: 5, firstSessionSaveCount: 5, sawProCount: 2),
+        );
+        expect(result.outcome, BetaValidationDecisionOutcome.fixProPlacement);
+      },
+    );
 
-    test('fixProExplanation wins after saw Pro passes but understands Pro fails', () {
-      final result = BetaValidationDecisionMatrixEngine.buildFromInput(
-        _input(
-          usefulProofCount: 5,
-          firstSessionSaveCount: 5,
-          sawProCount: 3,
-          understandsProYesMaybeCount: 2,
-        ),
-      );
-      expect(result.outcome, BetaValidationDecisionOutcome.fixProExplanation);
-    });
+    test(
+      'fixProExplanation wins after saw Pro passes but understands Pro fails',
+      () {
+        final result = BetaValidationDecisionMatrixEngine.buildFromInput(
+          _input(
+            usefulProofCount: 5,
+            firstSessionSaveCount: 5,
+            sawProCount: 3,
+            understandsProYesMaybeCount: 2,
+          ),
+        );
+        expect(result.outcome, BetaValidationDecisionOutcome.fixProExplanation);
+      },
+    );
 
-    test('fixPaywallValue wins when earlier gates pass and paywall CTA tap is 0', () {
-      final result = BetaValidationDecisionMatrixEngine.buildFromInput(
-        _input(
-          usefulProofCount: 5,
-          firstSessionSaveCount: 5,
-          sawProCount: 3,
-          understandsProYesMaybeCount: 3,
-          paywallCtaTapCount: 0,
-        ),
-      );
-      expect(result.outcome, BetaValidationDecisionOutcome.fixPaywallValue);
-    });
+    test(
+      'fixPaywallValue wins when earlier gates pass and paywall CTA tap is 0',
+      () {
+        final result = BetaValidationDecisionMatrixEngine.buildFromInput(
+          _input(
+            usefulProofCount: 5,
+            firstSessionSaveCount: 5,
+            sawProCount: 3,
+            understandsProYesMaybeCount: 3,
+            paywallCtaTapCount: 0,
+          ),
+        );
+        expect(result.outcome, BetaValidationDecisionOutcome.fixPaywallValue);
+      },
+    );
 
     test('widenBetaAndValidatePricing when all pass', () {
       final result = BetaValidationDecisionMatrixEngine.buildFromInput(
@@ -222,8 +224,9 @@ void main() {
     });
 
     test('testing screen renders card', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('BetaValidationDecisionMatrixCard'));
     });
 

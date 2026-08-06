@@ -159,9 +159,15 @@ void main() {
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_memory_scope_picker')),
+        findsOneWidget,
+      );
       expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
-      expect(EntryMemoryModeSession.selectedMode, EntryMemoryMode.useArchiveContext);
+      expect(
+        EntryMemoryModeSession.selectedMode,
+        EntryMemoryMode.useArchiveContext,
+      );
       expect(
         _eventsNamed(ActivationFunnelAnalytics.entryMemoryScopeSeen),
         hasLength(1),
@@ -171,7 +177,10 @@ void main() {
 
     testWidgets('control appears for later saves too', (tester) async {
       await pumpRecordScreen(tester, seededEntries: 2);
-      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_memory_scope_picker')),
+        findsOneWidget,
+      );
       expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

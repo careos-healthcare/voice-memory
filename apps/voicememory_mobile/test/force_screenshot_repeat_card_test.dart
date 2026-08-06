@@ -15,9 +15,7 @@ void main() {
 
   setUp(() async {
     tempDir = Directory.systemTemp.createTempSync('vm_force_repeat_');
-    await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
-    );
+    await AppServices.resetForTest(journalPath: '${tempDir.path}/journal.json');
   });
 
   tearDown(() {
@@ -47,43 +45,53 @@ void main() {
   });
 
   group('ArchiveBeliefScreen forced repeat card', () {
-    testWidgets('shows only SecondSessionComparisonCard when override enabled', (
-      tester,
-    ) async {
-      ForceScreenshotRepeatCard.testOverride = true;
+    testWidgets(
+      'shows only SecondSessionComparisonCard when override enabled',
+      (tester) async {
+        ForceScreenshotRepeatCard.testOverride = true;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const ArchiveBeliefScreen(),
-        ),
-      );
-      await tester.pump();
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: const ArchiveBeliefScreen(),
+          ),
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('force_screenshot_repeat_card_view')), findsOneWidget);
-      expect(find.byKey(const Key('force_screenshot_repeat_card')), findsOneWidget);
-      expect(find.byType(SecondSessionComparisonCard), findsOneWidget);
-      expect(
-        find.text(ConsumerUiCopy.secondSessionPossibleRepeatTitle),
-        findsOneWidget,
-      );
-      expect(find.text(ConsumerUiCopy.secondSessionSoundsClose), findsOneWidget);
-      expect(
-        find.text(ConsumerUiCopy.secondSessionFallbackWhatRepeated),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ConsumerUiCopy.secondSessionFallbackWhatChanged),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ConsumerUiCopy.secondSessionFallbackWhatToTestNext),
-        findsOneWidget,
-      );
-      expect(find.text(ConsumerUiCopy.archiveHomeTitle), findsNothing);
-      expect(find.text(FirstPatternQualityTitles.fallback), findsNothing);
-      expect(find.text('Your words sound like'), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('force_screenshot_repeat_card_view')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('force_screenshot_repeat_card')),
+          findsOneWidget,
+        );
+        expect(find.byType(SecondSessionComparisonCard), findsOneWidget);
+        expect(
+          find.text(ConsumerUiCopy.secondSessionPossibleRepeatTitle),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ConsumerUiCopy.secondSessionSoundsClose),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ConsumerUiCopy.secondSessionFallbackWhatRepeated),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ConsumerUiCopy.secondSessionFallbackWhatChanged),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ConsumerUiCopy.secondSessionFallbackWhatToTestNext),
+          findsOneWidget,
+        );
+        expect(find.text(ConsumerUiCopy.archiveHomeTitle), findsNothing);
+        expect(find.text(FirstPatternQualityTitles.fallback), findsNothing);
+        expect(find.text('Your words sound like'), findsNothing);
+      },
+    );
 
     testWidgets('override disabled keeps normal archive loading path', (
       tester,
@@ -91,14 +99,14 @@ void main() {
       ForceScreenshotRepeatCard.testOverride = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const ArchiveBeliefScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const ArchiveBeliefScreen()),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('force_screenshot_repeat_card')), findsNothing);
+      expect(
+        find.byKey(const Key('force_screenshot_repeat_card')),
+        findsNothing,
+      );
     });
   });
 }

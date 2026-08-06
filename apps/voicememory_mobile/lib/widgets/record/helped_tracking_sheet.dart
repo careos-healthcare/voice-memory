@@ -8,10 +8,7 @@ import '../../theme/app_spacing.dart';
 
 /// Sheet for free-text helped evidence — stays local/private.
 class HelpedTrackingSheet extends StatefulWidget {
-  const HelpedTrackingSheet({
-    super.key,
-    required this.onSave,
-  });
+  const HelpedTrackingSheet({super.key, required this.onSave});
 
   final Future<void> Function(String text) onSave;
 
@@ -56,8 +53,7 @@ class _HelpedTrackingSheetState extends State<HelpedTrackingSheet> {
   }
 
   Future<void> _save() async {
-    final normalized =
-        HelpedTrackingStore.normalizeFreeText(_controller.text);
+    final normalized = HelpedTrackingStore.sanitizeFreeText(_controller.text);
     if (normalized == null || _saving) return;
     setState(() => _saving = true);
     await widget.onSave(normalized);
@@ -67,11 +63,6 @@ class _HelpedTrackingSheetState extends State<HelpedTrackingSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -109,14 +100,14 @@ class _HelpedTrackingSheetState extends State<HelpedTrackingSheet> {
                 backgroundColor: AppColors.accentPrimary,
                 foregroundColor: Colors.white,
               ),
-              child: Text(
-                _saving ? 'Saving…' : HelpedTrackingCopy.saveCta,
-              ),
+              child: Text(_saving ? 'Saving…' : HelpedTrackingCopy.saveCta),
             ),
             const SizedBox(height: AppSpacing.xs),
             TextButton(
               key: const Key('helped_tracking_sheet_cancel'),
-              onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+              onPressed: _saving
+                  ? null
+                  : () => Navigator.of(context).pop(false),
               child: const Text(HelpedTrackingCopy.cancelCta),
             ),
           ],

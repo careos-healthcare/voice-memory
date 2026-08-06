@@ -24,19 +24,16 @@ class ArchiveFirstComparisonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final evidenceStyle = bodyStyle.copyWith(fontStyle: FontStyle.italic);
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final detailStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final detailStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
 
     return Container(
       key: const Key('archive_first_comparison_card'),
@@ -71,8 +68,10 @@ class ArchiveFirstComparisonCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               display.hasGroundedPattern
-                  ? VisibleArchiveProofCopy.archiveFirstComparisonWhatChangedLabel
-                  : VisibleArchiveProofCopy.archiveFirstComparisonWhyMattersLabel,
+                  ? VisibleArchiveProofCopy
+                        .archiveFirstComparisonWhatChangedLabel
+                  : VisibleArchiveProofCopy
+                        .archiveFirstComparisonWhyMattersLabel,
               key: const Key('archive_first_comparison_detail_label'),
               style: labelStyle,
             ),

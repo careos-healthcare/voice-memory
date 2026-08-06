@@ -28,7 +28,9 @@ abstract class ApiResponseSafety {
   /// Throws [FormatException] when the host returned HTML (wrong API base URL).
   static void ensureJsonResponse(http.Response response) {
     if (responseLooksLikeHtml(response)) {
-      debugPrint('ApiClient: $htmlResponseMessage (status=${response.statusCode})');
+      debugPrint(
+        'ApiClient: $htmlResponseMessage (status=${response.statusCode})',
+      );
       throw FormatException(htmlResponseMessage);
     }
   }

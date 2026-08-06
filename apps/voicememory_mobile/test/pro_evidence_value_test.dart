@@ -28,42 +28,41 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 ProEvidenceValueContext _context({
   required ProEvidenceValueSurface surface,
@@ -82,28 +81,28 @@ ProEvidenceValueContext _context({
   bool whatChangedQuestionActive = false,
   bool currentRelevanceQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
-}) =>
-    ProEvidenceValueContext(
-      surface: surface,
-      entryCount: entryCount,
-      isPro: isPro,
-      dismissed: dismissed,
-      firstProofPayoffSeen: firstProofPayoffVisible ||
-          ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries),
-      hasConfirmedRepeatEvidence:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
-      privateReportPreviewVisible: privateReportPreviewVisible,
-      weeklyReviewPreviewVisible: weeklyReviewPreviewVisible,
-      isZeroEntryState: isZeroEntryState,
-      isFirstRecordingState: isFirstRecordingState,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      firstProofTruthQuestionActive: firstProofTruthQuestionActive,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      currentRelevanceQuestionActive: currentRelevanceQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      exportReportsLive: true,
-    );
+}) => ProEvidenceValueContext(
+  surface: surface,
+  entryCount: entryCount,
+  isPro: isPro,
+  dismissed: dismissed,
+  firstProofPayoffSeen:
+      firstProofPayoffVisible ||
+      ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries),
+  hasConfirmedRepeatEvidence:
+      EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+  privateReportPreviewVisible: privateReportPreviewVisible,
+  weeklyReviewPreviewVisible: weeklyReviewPreviewVisible,
+  isZeroEntryState: isZeroEntryState,
+  isFirstRecordingState: isFirstRecordingState,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  firstProofTruthQuestionActive: firstProofTruthQuestionActive,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  currentRelevanceQuestionActive: currentRelevanceQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  exportReportsLive: true,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -130,7 +129,10 @@ void main() {
 
   group('ProEvidenceValueCopy', () {
     test('defines required bridge copy', () {
-      expect(ProEvidenceValueCopy.title, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(
+        ProEvidenceValueCopy.title,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(
         ProEvidenceValueCopy.body,
         PaywallAlignmentCopy.secondaryReassurance,
@@ -324,7 +326,10 @@ void main() {
         entryCount: 3,
         actionType: 'open_sheet',
       );
-      ProEvidenceValueAnalytics.dismissed(source: 'record_ready', entryCount: 3);
+      ProEvidenceValueAnalytics.dismissed(
+        source: 'record_ready',
+        entryCount: 3,
+      );
 
       expect(analyticsEvents, hasLength(3));
       for (final captured in analyticsEvents) {
@@ -338,8 +343,9 @@ void main() {
   });
 
   group('ProEvidenceValueCard', () {
-    testWidgets('renders copy and opens sheet with ChatGPT differentiation',
-        (tester) async {
+    testWidgets('renders copy and opens sheet with ChatGPT differentiation', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -431,7 +437,10 @@ void main() {
       expect(find.text('Basic correction'), findsOneWidget);
       expect(find.text('Current vs fading signals'), findsOneWidget);
       expect(find.text('What returned over time'), findsOneWidget);
-      expect(find.text(PaywallAlignmentCopy.benefitBullets.first), findsOneWidget);
+      expect(
+        find.text(PaywallAlignmentCopy.benefitBullets.first),
+        findsOneWidget,
+      );
     });
   });
 
@@ -440,10 +449,9 @@ void main() {
       analyticsEvents.clear();
       final entries = _threeRelatedEntries();
       final proofKey = FirstProofTruthStore.proofKeyForFirstProof(entries);
-      await FirstProofTruthStore.forPrefs(AppServices.instance.prefs).saveAnswer(
-        proofKey: proofKey,
-        answer: FirstProofTruthAnswer.yes,
-      );
+      await FirstProofTruthStore.forPrefs(
+        AppServices.instance.prefs,
+      ).saveAnswer(proofKey: proofKey, answer: FirstProofTruthAnswer.yes);
 
       ProEvidenceValueAnalytics.seen(source: 'record_ready', entryCount: 3);
       final seen = analyticsEvents.single;

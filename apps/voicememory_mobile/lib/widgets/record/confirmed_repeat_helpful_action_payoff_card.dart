@@ -42,14 +42,12 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
       );
     }
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final whyReasons = entriesForWhy != null
         ? EarlyArchiveInsightQualityEngine.whyReasonsFor(
             insightType: EarlyArchiveInsightType.helpfulActionPayoff,
@@ -61,7 +59,9 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
       key: const Key('confirmed_repeat_helpful_action_payoff_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -90,7 +90,9 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
             ),
           const SizedBox(height: AppSpacing.md),
           FilledButton(
-            key: const Key('confirmed_repeat_helpful_action_payoff_primary_cta'),
+            key: const Key(
+              'confirmed_repeat_helpful_action_payoff_primary_cta',
+            ),
             onPressed: onKeepWatching,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.accentPrimary,
@@ -108,8 +110,8 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
                 EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
                   entryCount: count,
                   surface: surface,
-                  hasRealTimeline:
-                      EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+                  hasRealTimeline: EarlyArchiveProofAnalytics
+                      .hasRealTimelineBeenSeenThisSession,
                 );
               }
               onViewEvidence();
@@ -126,8 +128,8 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
             ),
             EarlyArchiveInsightFeedbackRow(
               insightType: EarlyArchiveInsightType.helpfulActionPayoff,
-              surface: surface!,
-              entryCount: count!,
+              surface: surface,
+              entryCount: count,
             ),
           ],
         ],

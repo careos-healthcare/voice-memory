@@ -31,7 +31,7 @@ class NotRelevantRecoveryCard extends StatefulWidget {
     this.store,
     this.onChanged,
     this.initialAction,
-  })  : skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final NotRelevantRecoveryResult result;
   final String source;
@@ -52,11 +52,13 @@ class _NotRelevantRecoveryCardState extends State<NotRelevantRecoveryCard> {
   @override
   void initState() {
     super.initState();
-    _selectedAction = widget.initialAction ??
+    _selectedAction =
+        widget.initialAction ??
         (widget.skipPrefsLoad
             ? null
-            : NotRelevantRecoveryStore.recordFor(widget.result.proofKey)
-                .actionType);
+            : NotRelevantRecoveryStore.recordFor(
+                widget.result.proofKey,
+              ).actionType);
     if (!widget.skipPrefsLoad) {
       unawaited(_load());
     }
@@ -66,8 +68,9 @@ class _NotRelevantRecoveryCardState extends State<NotRelevantRecoveryCard> {
     await NotRelevantRecoveryStore.ensureLoaded();
     if (!mounted) return;
     setState(() {
-      _selectedAction ??=
-          NotRelevantRecoveryStore.recordFor(widget.result.proofKey).actionType;
+      _selectedAction ??= NotRelevantRecoveryStore.recordFor(
+        widget.result.proofKey,
+      ).actionType;
     });
   }
 
@@ -116,10 +119,9 @@ class _NotRelevantRecoveryCardState extends State<NotRelevantRecoveryCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final answered = _selectedAction;
 
     if (answered != null) {
@@ -127,8 +129,9 @@ class _NotRelevantRecoveryCardState extends State<NotRelevantRecoveryCard> {
         key: const Key('not_relevant_recovery_answered_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration:
-            VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
+        ),
         child: Text(
           NotRelevantRecoveryCopy.followUpFor(answered),
           key: Key('not_relevant_recovery_follow_up_${answered.storageValue}'),
@@ -141,7 +144,9 @@ class _NotRelevantRecoveryCardState extends State<NotRelevantRecoveryCard> {
       key: const Key('not_relevant_recovery_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -36,21 +36,21 @@ JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String transcript = _placeholder,
 }) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
   late Directory tempDir;
@@ -58,9 +58,7 @@ void main() {
 
   setUp(() async {
     tempDir = Directory.systemTemp.createTempSync('vm_pending_recovery_');
-    await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
-    );
+    await AppServices.resetForTest(journalPath: '${tempDir.path}/journal.json');
     ActivationFunnelAnalytics.resetForTest();
     ActivationFunnelAnalytics.captureForTest((event, props) {
       analyticsEvents.add((event: event, props: props));
@@ -95,11 +93,11 @@ void main() {
     test('clears after typed correction', () async {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
-      final result =
-          await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: _typedCorrection,
-      );
+      final result = await AppServices.instance.pipeline
+          .attachTypedTextToVoiceEntry(
+            entry: degraded,
+            transcript: _typedCorrection,
+          );
       expect(
         PendingTranscriptRecoveryGate.entryNeedsRecovery(result.entry),
         isFalse,
@@ -129,17 +127,21 @@ void main() {
         find.byKey(const Key('post_save_degraded_transcription_card')),
         findsOneWidget,
       );
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveBody), findsOneWidget);
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.postSaveBody),
+        findsOneWidget,
+      );
       expect(
         find.text(PendingTranscriptRecoveryCopy.primaryAction),
         findsOneWidget,
       );
     });
 
-    testWidgets('recovery sheet shows text input when opened', (
-      tester,
-    ) async {
+    testWidgets('recovery sheet shows text input when opened', (tester) async {
       final entry = _degradedVoiceEntry();
 
       await tester.pumpWidget(
@@ -189,11 +191,11 @@ void main() {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
 
-      final result =
-          await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: _typedCorrection,
-      );
+      final result = await AppServices.instance.pipeline
+          .attachTypedTextToVoiceEntry(
+            entry: degraded,
+            transcript: _typedCorrection,
+          );
 
       expect(result.entry.id, 'v1');
       expect(result.entry.transcript, _typedCorrection);
@@ -201,33 +203,36 @@ void main() {
       expect(result.attachedTypedTextToVoiceEntry, isTrue);
     });
 
-    test('typed correction makes entry comparable when quality gate allows', () async {
-      final degraded = _degradedVoiceEntry();
-      await AppServices.instance.journalStore.save(degraded);
+    test(
+      'typed correction makes entry comparable when quality gate allows',
+      () async {
+        final degraded = _degradedVoiceEntry();
+        await AppServices.instance.journalStore.save(degraded);
 
-      final result =
-          await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: _typedCorrection,
-      );
+        final result = await AppServices.instance.pipeline
+            .attachTypedTextToVoiceEntry(
+              entry: degraded,
+              transcript: _typedCorrection,
+            );
 
-      final verdict = ArchiveEvidenceQuality.assess(result.entry);
-      expect(verdict.allowsInsights, isTrue);
-      expect(
-        ArchiveEvidenceQualityGate.usableCount([result.entry]),
-        1,
-      );
-    });
+        final verdict = ArchiveEvidenceQuality.assess(result.entry);
+        expect(verdict.allowsInsights, isTrue);
+        expect(ArchiveEvidenceQualityGate.usableCount([result.entry]), 1);
+      },
+    );
 
-    test('placeholder draft alone stays blocked; corrected entry is usable', () {
-      expect(
-        ArchiveEvidenceQuality.assess(_degradedVoiceEntry()).allowsInsights,
-        isFalse,
-      );
-      final corrected = _degradedVoiceEntry(transcript: _typedCorrection);
-      expect(ArchiveEvidenceQuality.assess(corrected).allowsInsights, isTrue);
-      expect(corrected.transcript, isNot(contains('[draft]')));
-    });
+    test(
+      'placeholder draft alone stays blocked; corrected entry is usable',
+      () {
+        expect(
+          ArchiveEvidenceQuality.assess(_degradedVoiceEntry()).allowsInsights,
+          isFalse,
+        );
+        final corrected = _degradedVoiceEntry(transcript: _typedCorrection);
+        expect(ArchiveEvidenceQuality.assess(corrected).allowsInsights, isTrue);
+        expect(corrected.transcript, isNot(contains('[draft]')));
+      },
+    );
 
     test('repeated save does not create duplicate entry', () async {
       final degraded = _degradedVoiceEntry();
@@ -248,18 +253,21 @@ void main() {
       expect(all.single.id, 'v1');
     });
 
-    test('real typed correction enables early signal when gate allows', () async {
-      final degraded = _degradedVoiceEntry();
-      await AppServices.instance.journalStore.save(degraded);
-      final result =
-          await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: _typedCorrection,
-      );
+    test(
+      'real typed correction enables early signal when gate allows',
+      () async {
+        final degraded = _degradedVoiceEntry();
+        await AppServices.instance.journalStore.save(degraded);
+        final result = await AppServices.instance.pipeline
+            .attachTypedTextToVoiceEntry(
+              entry: degraded,
+              transcript: _typedCorrection,
+            );
 
-      final signal = EarlyFirstSignalEngine.build(entries: [result.entry]);
-      expect(signal, isNotNull);
-    });
+        final signal = EarlyFirstSignalEngine.build(entries: [result.entry]);
+        expect(signal, isNotNull);
+      },
+    );
   });
 
   group('Patterns fallback recovery', () {
@@ -333,7 +341,10 @@ void main() {
       expect(content.moments, hasLength(1));
       expect(content.moments.single.isPendingTranscript, isTrue);
       expect(content.moments.single.entryId, 'v1');
-      expect(content.moments.single.previewText, PendingTranscriptRecoveryCopy.body);
+      expect(
+        content.moments.single.previewText,
+        PendingTranscriptRecoveryCopy.body,
+      );
     });
   });
 
@@ -392,13 +403,10 @@ void main() {
         expect(captured.props['entry_count'], 1);
         expect(captured.props['has_parent_entry'], 1);
       }
-      expect(
-        recoveryEvents.map((e) => e.event),
-        [
-          PendingTranscriptRecoveryAnalytics.openedEvent,
-          PendingTranscriptRecoveryAnalytics.savedEvent,
-        ],
-      );
+      expect(recoveryEvents.map((e) => e.event), [
+        PendingTranscriptRecoveryAnalytics.openedEvent,
+        PendingTranscriptRecoveryAnalytics.savedEvent,
+      ]);
     });
   });
 }

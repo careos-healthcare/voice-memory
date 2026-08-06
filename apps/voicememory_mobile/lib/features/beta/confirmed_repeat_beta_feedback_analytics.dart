@@ -11,7 +11,7 @@ abstract final class ConfirmedRepeatBetaFeedbackAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void recordAnswer({
     required String surface,
@@ -32,11 +32,7 @@ abstract final class ConfirmedRepeatBetaFeedbackAnalytics {
     required String surface,
     required int entryCount,
   }) {
-    _emit(
-      dismissedEvent,
-      surface: surface,
-      entryCount: entryCount,
-    );
+    _emit(dismissedEvent, surface: surface, entryCount: entryCount);
   }
 
   static void _emit(
@@ -49,8 +45,8 @@ abstract final class ConfirmedRepeatBetaFeedbackAnalytics {
     final props = <String, Object>{
       'surface': surface,
       'entry_count': entryCount,
-      if (answer != null) 'answer': answer,
-      if (reason != null) 'reason': reason,
+      'answer': ?answer,
+      'reason': ?reason,
     };
     captureForTest?.call(event, props);
     if (kDebugMode) {

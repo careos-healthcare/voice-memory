@@ -18,6 +18,8 @@ abstract final class DelayedPaywallProofStore {
   static bool _hasOpenedEvidenceTrail = false;
 
   /// Widget tests bypass the gate unless a file opts out explicitly.
+  static bool get isGateBypassedForTesting => bypassGateForTest;
+
   @visibleForTesting
   static bool bypassGateForTest = false;
 

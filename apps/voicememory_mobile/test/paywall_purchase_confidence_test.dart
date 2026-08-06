@@ -23,14 +23,8 @@ const _bannedTerms = [
 void main() {
   group('ArchivePaywallCopy purchase confidence strings', () {
     test('defines loading, purchase, and restore clarity copy', () {
-      expect(
-        ArchivePaywallCopy.checkingProAccess,
-        'Checking your Pro access…',
-      );
-      expect(
-        ArchivePaywallCopy.purchaseStarting,
-        'Starting secure purchase…',
-      );
+      expect(ArchivePaywallCopy.checkingProAccess, 'Checking your Pro access…');
+      expect(ArchivePaywallCopy.purchaseStarting, 'Starting secure purchase…');
       expect(
         ArchivePaywallCopy.purchaseSuccess,
         'Pro is active. ArchiveMe keeps the longer proof trail over time.',
@@ -50,23 +44,31 @@ void main() {
       expect(ArchivePaywallCopy.primaryCta, 'Keep the longer trail');
     });
 
-    test('restore copy constants stay aligned with paywall confidence copy', () {
-      expect(
-        RestorePurchasesCopy.purchaseRestored,
-        ArchivePaywallCopy.restoreSuccess,
-      );
-      expect(
-        RestorePurchasesCopy.noActivePurchase,
-        ArchivePaywallCopy.restoreEmpty,
-      );
-    });
+    test(
+      'restore copy constants stay aligned with paywall confidence copy',
+      () {
+        expect(
+          RestorePurchasesCopy.purchaseRestored,
+          ArchivePaywallCopy.restoreSuccess,
+        );
+        expect(
+          RestorePurchasesCopy.noActivePurchase,
+          ArchivePaywallCopy.restoreEmpty,
+        );
+      },
+    );
 
     test('purchase confidence copy guard blocks banned terms', () {
-      final blob =
-          ArchivePaywallCopy.purchaseConfidenceCopy.join(' ').toLowerCase();
+      final blob = ArchivePaywallCopy.purchaseConfidenceCopy
+          .join(' ')
+          .toLowerCase();
       for (final banned in _bannedTerms) {
         if (banned == 'therapy') continue;
-        expect(blob, isNot(contains(banned)), reason: 'must not contain $banned');
+        expect(
+          blob,
+          isNot(contains(banned)),
+          reason: 'must not contain $banned',
+        );
       }
       expect(blob, contains('not therapy'));
       expect(blob, isNot(contains('diagnosis')));

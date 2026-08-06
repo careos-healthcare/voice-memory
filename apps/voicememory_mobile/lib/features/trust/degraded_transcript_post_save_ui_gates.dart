@@ -9,12 +9,10 @@ abstract final class DegradedTranscriptPostSaveUiGates {
   /// Hide evidence, thought map, add-more-moment, and done-for-today essay cards.
   static bool suppressCompetingPostSaveCards({
     required bool showFocusedRecoverySurface,
-  }) =>
-      showFocusedRecoverySurface;
+  }) => showFocusedRecoverySurface;
 
   /// Card owns primary/secondary actions; bottom bar stays minimal.
   static bool suppressBottomPolicyCtas({
     required bool showFocusedRecoverySurface,
-  }) =>
-      showFocusedRecoverySurface;
+  }) => showFocusedRecoverySurface;
 }

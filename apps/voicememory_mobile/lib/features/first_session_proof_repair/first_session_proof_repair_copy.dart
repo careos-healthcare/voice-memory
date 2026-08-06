@@ -66,11 +66,11 @@ abstract final class FirstSessionProofRepairCopy {
       'Got it. ArchiveMe will not treat this as a useful pattern.';
 
   static String proofNextStepFor(BetaProofFeedbackType type) => switch (type) {
-        BetaProofFeedbackType.useful => proofNextStepUseful,
-        BetaProofFeedbackType.tooVague => proofNextStepTooVague,
-        BetaProofFeedbackType.alreadyKnew => proofNextStepAlreadyKnew,
-        BetaProofFeedbackType.notRelevant => proofNextStepNotRelevant,
-      };
+    BetaProofFeedbackType.useful => proofNextStepUseful,
+    BetaProofFeedbackType.tooVague => proofNextStepTooVague,
+    BetaProofFeedbackType.alreadyKnew => proofNextStepAlreadyKnew,
+    BetaProofFeedbackType.notRelevant => proofNextStepNotRelevant,
+  };
 
   // Dashboard / testing focus
   static const focusUsefulProofQuality = 'Fix useful proof quality';
@@ -118,8 +118,8 @@ enum FirstSessionProofRepairActionType {
   chipTapped;
 
   String get analyticsValue => switch (this) {
-        FirstSessionProofRepairActionType.typeOneSentence => 'type_one_sentence',
-        FirstSessionProofRepairActionType.useVoice => 'use_voice',
-        FirstSessionProofRepairActionType.chipTapped => 'chip_tapped',
-      };
+    FirstSessionProofRepairActionType.typeOneSentence => 'type_one_sentence',
+    FirstSessionProofRepairActionType.useVoice => 'use_voice',
+    FirstSessionProofRepairActionType.chipTapped => 'chip_tapped',
+  };
 }

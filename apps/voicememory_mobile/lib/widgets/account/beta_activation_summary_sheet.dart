@@ -32,7 +32,8 @@ class BetaActivationSummarySheet extends StatefulWidget {
       _BetaActivationSummarySheetState();
 }
 
-class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet> {
+class _BetaActivationSummarySheetState
+    extends State<BetaActivationSummarySheet> {
   BetaActivationSummary? _summary;
   bool _loading = true;
 
@@ -84,9 +85,9 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
     }
 
     final summary = _summary!;
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return SafeArea(
       child: Padding(
@@ -107,10 +108,7 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
                 style: ArchiveMobileTypography.responsiveSectionTitle(context),
               ),
               const SizedBox(height: AppSpacing.xs),
-              Text(
-                BetaActivationSummaryCopy.sheetIntro,
-                style: bodyStyle,
-              ),
+              Text(BetaActivationSummaryCopy.sheetIntro, style: bodyStyle),
               const SizedBox(height: AppSpacing.md),
               Text(
                 BetaActivationSummaryCopy.statusHeading,
@@ -227,7 +225,8 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
               _row(
                 context,
                 key: 'first_proof_action_view_pattern_details',
-                label: BetaActivationSummaryCopy.firstProofActionViewPatternDetails,
+                label: BetaActivationSummaryCopy
+                    .firstProofActionViewPatternDetails,
                 value: summary.firstProofActionViewPatternDetails,
               ),
               _row(
@@ -245,13 +244,15 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
               _row(
                 context,
                 key: 'first_proof_action_correct_transcript',
-                label: BetaActivationSummaryCopy.firstProofActionCorrectTranscript,
+                label:
+                    BetaActivationSummaryCopy.firstProofActionCorrectTranscript,
                 value: summary.firstProofActionCorrectTranscript,
               ),
               _row(
                 context,
                 key: 'first_proof_action_remove_from_pattern',
-                label: BetaActivationSummaryCopy.firstProofActionRemoveFromPattern,
+                label:
+                    BetaActivationSummaryCopy.firstProofActionRemoveFromPattern,
                 value: summary.firstProofActionRemoveFromPattern,
               ),
               _row(
@@ -293,9 +294,9 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
             child: Text(
               label,
               key: Key('beta_activation_summary_label_$key'),
-              style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ),
           Text(

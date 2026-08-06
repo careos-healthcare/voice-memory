@@ -26,43 +26,42 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -87,10 +86,7 @@ void main() {
       );
       expect(FirstUseWordingCopy.useOpeningCta, 'Use this opening');
       expect(FirstUseWordingCatalog.prompts, hasLength(5));
-      expect(
-        FirstUseWordingCatalog.prompts.first.opening,
-        'Today I noticed…',
-      );
+      expect(FirstUseWordingCatalog.prompts.first.opening, 'Today I noticed…');
     });
 
     test('no therapy advice or coaching language', () {
@@ -169,9 +165,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: FirstUseWordingHelperCard(onUseOpening: (_) {}),
-          ),
+          home: Scaffold(body: FirstUseWordingHelperCard(onUseOpening: (_) {})),
         ),
       );
 
@@ -289,10 +283,7 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(420, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: child,
-        ),
+        MaterialApp(theme: AppTheme.light(), home: child),
       );
       await tester.pump();
       await tester.runAsync(() async {
@@ -325,7 +316,9 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('first_use_wording_capture_prompt_today_i_noticed')),
+        find.byKey(
+          const Key('first_use_wording_capture_prompt_today_i_noticed'),
+        ),
         findsOneWidget,
       );
       expect(
@@ -336,27 +329,30 @@ void main() {
       );
     });
 
-    testWidgets('use-opening updates placeholder without prefilling transcript', (
-      tester,
-    ) async {
-      await pumpCapture(
-        tester,
-        const QuickTextCaptureScreen(showFirstUseWordingHelper: true),
-      );
+    testWidgets(
+      'use-opening updates placeholder without prefilling transcript',
+      (tester) async {
+        await pumpCapture(
+          tester,
+          const QuickTextCaptureScreen(showFirstUseWordingHelper: true),
+        );
 
-      await tester.tap(
-        find.byKey(
-          const Key('first_use_wording_capture_use_opening_kept_thinking_about'),
-        ),
-      );
-      await tester.pump();
+        await tester.tap(
+          find.byKey(
+            const Key(
+              'first_use_wording_capture_use_opening_kept_thinking_about',
+            ),
+          ),
+        );
+        await tester.pump();
 
-      final field = tester.widget<TextField>(
-        find.byKey(const Key('quick_text_capture_field')),
-      );
-      expect(field.decoration?.hintText, 'I kept thinking about…');
-      expect(field.controller!.text, isEmpty);
-    });
+        final field = tester.widget<TextField>(
+          find.byKey(const Key('quick_text_capture_field')),
+        );
+        expect(field.decoration?.hintText, 'I kept thinking about…');
+        expect(field.controller!.text, isEmpty);
+      },
+    );
 
     test('save stores user words only, not opening prompt text', () async {
       const userText = 'I said yes too fast this morning.';
@@ -390,7 +386,10 @@ void main() {
       expect(payload['prompt_type'], 'today_i_noticed');
       expect(payload.containsKey('prompt_text'), isFalse);
       expect(payload.containsKey('transcript'), isFalse);
-      expect(payload.values.whereType<String>(), isNot(contains('Today I noticed…')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('Today I noticed…')),
+      );
     });
   });
 
@@ -433,10 +432,15 @@ void main() {
       }
     }
 
-    testWidgets('helper hides on simplified first-run Record screen', (tester) async {
+    testWidgets('helper hides on simplified first-run Record screen', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
-      expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_use_wording_helper_card')),
+        findsNothing,
+      );
       expect(find.text(FirstUseWordingCopy.title), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     });
@@ -453,8 +457,14 @@ void main() {
     testWidgets('helper hides after real usage', (tester) async {
       await pumpRecord(tester, entryCount: 2);
 
-      expect(find.byKey(const Key('first_use_wording_helper_card')), findsNothing);
-      expect(find.byKey(const Key('record_capture_modes_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_use_wording_helper_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_capture_modes_card')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('capture modes hidden on simplified first-run Record screen', (
@@ -490,7 +500,10 @@ void main() {
         find.byKey(const Key('first_use_wording_helper_card')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('record_capture_modes_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('record_capture_modes_card')),
+        findsOneWidget,
+      );
       expect(find.text(RecordCaptureModeCopy.cardTitle), findsOneWidget);
     });
   });

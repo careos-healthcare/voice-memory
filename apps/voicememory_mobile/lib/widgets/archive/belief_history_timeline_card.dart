@@ -8,24 +8,19 @@ import '../../theme/voicememory_cards.dart';
 
 /// Belief change over time — earlier vs current, not a generic journal list.
 class BeliefHistoryTimelineCard extends StatelessWidget {
-  const BeliefHistoryTimelineCard({
-    super.key,
-    required this.timeline,
-  });
+  const BeliefHistoryTimelineCard({super.key, required this.timeline});
 
   final BeliefHistoryTimeline timeline;
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('belief_history_timeline_card'),

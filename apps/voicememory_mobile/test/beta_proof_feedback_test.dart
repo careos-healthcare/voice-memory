@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/widgets/beta/beta_proof_feedback_row.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/beta_proof_feedback/unused.json'));
+    : super(file: File('test/tmp/beta_proof_feedback/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -295,12 +295,15 @@ void main() {
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == BetaProofFeedbackAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'surface',
-        'entry_count',
-        'has_confirmed_repeat',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll([
+          'source',
+          'surface',
+          'entry_count',
+          'has_confirmed_repeat',
+        ]),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('entry_id')));
       expect(seen.props.keys, isNot(contains('body')));
@@ -350,8 +353,9 @@ void main() {
 
   group('Beta proof feedback placement', () {
     test('appears under TimelineProofMomentCard on patterns', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final cardIndex = source.indexOf('TimelineProofMomentCard(');
       final rowIndex = source.indexOf(
         'surface: BetaProofFeedbackSurface.timelineProofMoment',
@@ -361,8 +365,9 @@ void main() {
     });
 
     test('appears under ArchiveTimelineSpineCard on patterns', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final cardIndex = source.indexOf('ArchiveTimelineSpineCard(');
       final rowIndex = source.indexOf(
         'surface: BetaProofFeedbackSurface.archiveTimelineSpine',

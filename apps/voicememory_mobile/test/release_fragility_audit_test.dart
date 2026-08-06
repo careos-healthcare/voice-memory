@@ -11,8 +11,7 @@ const _docsPath = 'docs/RELEASE_FRAGILITY_AUDIT.md';
 ReleaseFragilityRisk _risk(
   ReleaseFragilityAuditResult result,
   ReleaseFragilityRiskId id,
-) =>
-    result.risks.firstWhere((risk) => risk.id == id);
+) => result.risks.firstWhere((risk) => risk.id == id);
 
 SecretsRotationLaunchGateInput _secretsInput({
   bool? stripeSecretKeyRotated = true,
@@ -23,18 +22,16 @@ SecretsRotationLaunchGateInput _secretsInput({
   bool noSecretValuesCommitted = true,
   bool noSecretValuesPrintedInLogs = true,
   bool? vercelEnvProductionVerified = true,
-}) =>
-    SecretsRotationLaunchGateInput(
-      stripeSecretKeyRotated: stripeSecretKeyRotated,
-      stripeWebhookSecretRotated: stripeWebhookSecretRotated,
-      productionEnvUpdated: productionEnvUpdated,
-      oldWebhookDisabled: oldWebhookDisabled,
-      revenueCatApiKeySeparatedFromDocsLogs:
-          revenueCatApiKeySeparatedFromDocsLogs,
-      noSecretValuesCommitted: noSecretValuesCommitted,
-      noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
-      vercelEnvProductionVerified: vercelEnvProductionVerified,
-    );
+}) => SecretsRotationLaunchGateInput(
+  stripeSecretKeyRotated: stripeSecretKeyRotated,
+  stripeWebhookSecretRotated: stripeWebhookSecretRotated,
+  productionEnvUpdated: productionEnvUpdated,
+  oldWebhookDisabled: oldWebhookDisabled,
+  revenueCatApiKeySeparatedFromDocsLogs: revenueCatApiKeySeparatedFromDocsLogs,
+  noSecretValuesCommitted: noSecretValuesCommitted,
+  noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
+  vercelEnvProductionVerified: vercelEnvProductionVerified,
+);
 
 ReleaseFragilityAuditInput _input({
   bool? signingConfigured,
@@ -56,28 +53,27 @@ ReleaseFragilityAuditInput _input({
   bool? testFlightUploaded = true,
   bool staleProductCopyRisk = false,
   bool signingRepoSignal = true,
-}) =>
-    ReleaseFragilityAuditInput(
-      signingConfigured: signingConfigured,
-      bundleIdCanonical: bundleIdCanonical,
-      displayNameCanonical: displayNameCanonical,
-      iosDeploymentTargetAligned: iosDeploymentTargetAligned,
-      revenueCatKeySeparated: revenueCatKeySeparated,
-      appStoreProductsConfigured: appStoreProductsConfigured,
-      entitlementIdConfigured: entitlementIdConfigured,
-      restorePathPresent: restorePathPresent,
-      supportUrlConfigured: supportUrlConfigured,
-      privacyUrlConfigured: privacyUrlConfigured,
-      termsRouteConfigured: termsRouteConfigured,
-      widgetExtensionSafe: widgetExtensionSafe,
-      widgetExtensionNeedsReview: widgetExtensionNeedsReview,
-      productionApiConfigured: productionApiConfigured,
-      secretsRotationInput: secretsRotationInput ?? _secretsInput(),
-      screenshotsReady: screenshotsReady,
-      testFlightUploaded: testFlightUploaded,
-      staleProductCopyRisk: staleProductCopyRisk,
-      signingRepoSignal: signingRepoSignal,
-    );
+}) => ReleaseFragilityAuditInput(
+  signingConfigured: signingConfigured,
+  bundleIdCanonical: bundleIdCanonical,
+  displayNameCanonical: displayNameCanonical,
+  iosDeploymentTargetAligned: iosDeploymentTargetAligned,
+  revenueCatKeySeparated: revenueCatKeySeparated,
+  appStoreProductsConfigured: appStoreProductsConfigured,
+  entitlementIdConfigured: entitlementIdConfigured,
+  restorePathPresent: restorePathPresent,
+  supportUrlConfigured: supportUrlConfigured,
+  privacyUrlConfigured: privacyUrlConfigured,
+  termsRouteConfigured: termsRouteConfigured,
+  widgetExtensionSafe: widgetExtensionSafe,
+  widgetExtensionNeedsReview: widgetExtensionNeedsReview,
+  productionApiConfigured: productionApiConfigured,
+  secretsRotationInput: secretsRotationInput ?? _secretsInput(),
+  screenshotsReady: screenshotsReady,
+  testFlightUploaded: testFlightUploaded,
+  staleProductCopyRisk: staleProductCopyRisk,
+  signingRepoSignal: signingRepoSignal,
+);
 
 String _readIfExists(String path) {
   final file = File(path);
@@ -130,10 +126,7 @@ void main() {
         _input(bundleIdCanonical: false),
       );
       expect(result.decision, ReleaseFragilityDecision.releaseBlocked);
-      expect(
-        result.earliestBlocker,
-        ReleaseFragilityRiskId.bundleId,
-      );
+      expect(result.earliestBlocker, ReleaseFragilityRiskId.bundleId);
       expect(
         _risk(result, ReleaseFragilityRiskId.bundleId).level,
         ReleaseFragilityRiskLevel.releaseBlocked,
@@ -178,10 +171,7 @@ void main() {
         _input(widgetExtensionSafe: false),
       );
       expect(result.decision, ReleaseFragilityDecision.releaseBlocked);
-      expect(
-        result.earliestBlocker,
-        ReleaseFragilityRiskId.widgetExtension,
-      );
+      expect(result.earliestBlocker, ReleaseFragilityRiskId.widgetExtension);
     });
 
     test('widget needs review without TF block -> manualCheckNeeded', () {
@@ -244,8 +234,7 @@ void main() {
       expect(
         ReleaseFragilityAudit.detectCanonicalBundleId(
           appConfigSource: "bundleId = 'com.voicememory.mobile'",
-          pbxprojSource:
-              'PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.app;',
+          pbxprojSource: 'PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.app;',
         ),
         isFalse,
       );
@@ -293,51 +282,59 @@ void main() {
 
     setUpAll(() {
       appConfigSource = File('lib/config/app_config.dart').readAsStringSync();
-      pbxprojSource =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+      pbxprojSource = File(
+        'ios/Runner.xcodeproj/project.pbxproj',
+      ).readAsStringSync();
       infoPlistSource = File('ios/Runner/Info.plist').readAsStringSync();
       appRouterSource = File('lib/router/app_router.dart').readAsStringSync();
       securitySettingsSource = File(
         'lib/screens/security_settings_screen.dart',
       ).readAsStringSync();
-      revenueCatServiceSource =
-          File('lib/billing/revenuecat_service.dart').readAsStringSync();
-      revenueCatReleaseChecklistSource =
-          File('docs/REVENUECAT_RELEASE_CHECKLIST.md').readAsStringSync();
-      revenueCatArchiveLoopLogsSource =
-          File('lib/billing/revenuecat_archive_loop_logs.dart')
-              .readAsStringSync();
+      revenueCatServiceSource = File(
+        'lib/billing/revenuecat_service.dart',
+      ).readAsStringSync();
+      revenueCatReleaseChecklistSource = File(
+        'docs/REVENUECAT_RELEASE_CHECKLIST.md',
+      ).readAsStringSync();
+      revenueCatArchiveLoopLogsSource = File(
+        'lib/billing/revenuecat_archive_loop_logs.dart',
+      ).readAsStringSync();
       revenueCatLiveProofRunnerSource = File(
         'lib/features/revenuecat_live_proof/revenuecat_live_proof_runner.dart',
       ).readAsStringSync();
-      archiveLoopEntitlementIdsSource =
-          File('lib/billing/archive_loop_entitlement_ids.dart')
-              .readAsStringSync();
+      archiveLoopEntitlementIdsSource = File(
+        'lib/billing/archive_loop_entitlement_ids.dart',
+      ).readAsStringSync();
       proSinglePromiseCopySource = File(
         'lib/features/pro_single_promise/pro_single_promise_copy.dart',
       ).readAsStringSync();
       mobileLibAndDocsScanSource = _aggregateMobileLibAndDocs();
-      revenueCatOfferingsDebugLogSource =
-          File('lib/billing/revenuecat_offerings_debug_log.dart')
-              .readAsStringSync();
+      revenueCatOfferingsDebugLogSource = File(
+        'lib/billing/revenuecat_offerings_debug_log.dart',
+      ).readAsStringSync();
       deploySecretsCheckSource = _readIfExists(
         '../../lib/server/deploy-secrets-check.ts',
       );
       envExampleSource = _readIfExists('../../.env.example');
       widgetPbxprojSource = pbxprojSource;
-      runnerEntitlementsSource =
-          File('ios/Runner/Runner.entitlements').readAsStringSync();
+      runnerEntitlementsSource = File(
+        'ios/Runner/Runner.entitlements',
+      ).readAsStringSync();
       extensionEntitlementsSource = File(
         'ios/TodayCheckWidget/TodayCheckWidgetExtension.entitlements',
       ).readAsStringSync();
-      objectiveWidgetStorageSwiftSource =
-          File('ios/Runner/ObjectiveWidgetStorage.swift').readAsStringSync();
-      todayCheckWidgetSwiftSource =
-          File('ios/TodayCheckWidget/TodayCheckWidget.swift').readAsStringSync();
+      objectiveWidgetStorageSwiftSource = File(
+        'ios/Runner/ObjectiveWidgetStorage.swift',
+      ).readAsStringSync();
+      todayCheckWidgetSwiftSource = File(
+        'ios/TodayCheckWidget/TodayCheckWidget.swift',
+      ).readAsStringSync();
       widgetExporterDartSource = File(
         'lib/features/objective/current_objective_widget_exporter.dart',
       ).readAsStringSync();
-      widgetPrepDocSource = File('docs/WIDGET_SHORTCUT_PREP.md').readAsStringSync();
+      widgetPrepDocSource = File(
+        'docs/WIDGET_SHORTCUT_PREP.md',
+      ).readAsStringSync();
     });
 
     test('repo signals detect canonical bundle id and deployment target', () {
@@ -356,103 +353,113 @@ void main() {
       );
     });
 
-    test('fromRepoSignals -> manualCheckNeeded with pending manual evidence', () {
-      final result = ReleaseFragilityAudit.build(
-        ReleaseFragilityAudit.fromRepoSignals(
-          appConfigSource: appConfigSource,
-          pbxprojSource: pbxprojSource,
-          infoPlistSource: infoPlistSource,
-          appRouterSource: appRouterSource,
-          securitySettingsSource: securitySettingsSource,
-          revenueCatServiceSource: revenueCatServiceSource,
-          revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
-          revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
-          revenueCatLiveProofRunnerSource: revenueCatLiveProofRunnerSource,
-          archiveLoopEntitlementIdsSource: archiveLoopEntitlementIdsSource,
-          proSinglePromiseCopySource: proSinglePromiseCopySource,
-          mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
-          revenueCatOfferingsDebugLogSource: revenueCatOfferingsDebugLogSource,
-          deploySecretsCheckSource: deploySecretsCheckSource,
-          envExampleSource: envExampleSource,
-          widgetPbxprojSource: widgetPbxprojSource,
-          runnerEntitlementsSource: runnerEntitlementsSource,
-          extensionEntitlementsSource: extensionEntitlementsSource,
-          objectiveWidgetStorageSwiftSource: objectiveWidgetStorageSwiftSource,
-          todayCheckWidgetSwiftSource: todayCheckWidgetSwiftSource,
-          widgetExporterDartSource: widgetExporterDartSource,
-          widgetPrepDocSource: widgetPrepDocSource,
-        ),
-      );
-      expect(result.decision, ReleaseFragilityDecision.manualCheckNeeded);
-      expect(
-        _risk(result, ReleaseFragilityRiskId.secrets).level,
-        ReleaseFragilityRiskLevel.manualCheckNeeded,
-      );
-      expect(
-        _risk(result, ReleaseFragilityRiskId.signing).level,
-        ReleaseFragilityRiskLevel.manualCheckNeeded,
-      );
-      expect(
-        _risk(result, ReleaseFragilityRiskId.screenshots).level,
-        ReleaseFragilityRiskLevel.manualCheckNeeded,
-      );
-      expect(
-        _risk(result, ReleaseFragilityRiskId.testFlightUpload).level,
-        ReleaseFragilityRiskLevel.manualCheckNeeded,
-      );
-      expect(result.blockedCount, 0);
-    });
+    test(
+      'fromRepoSignals -> manualCheckNeeded with pending manual evidence',
+      () {
+        final result = ReleaseFragilityAudit.build(
+          ReleaseFragilityAudit.fromRepoSignals(
+            appConfigSource: appConfigSource,
+            pbxprojSource: pbxprojSource,
+            infoPlistSource: infoPlistSource,
+            appRouterSource: appRouterSource,
+            securitySettingsSource: securitySettingsSource,
+            revenueCatServiceSource: revenueCatServiceSource,
+            revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
+            revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
+            revenueCatLiveProofRunnerSource: revenueCatLiveProofRunnerSource,
+            archiveLoopEntitlementIdsSource: archiveLoopEntitlementIdsSource,
+            proSinglePromiseCopySource: proSinglePromiseCopySource,
+            mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
+            revenueCatOfferingsDebugLogSource:
+                revenueCatOfferingsDebugLogSource,
+            deploySecretsCheckSource: deploySecretsCheckSource,
+            envExampleSource: envExampleSource,
+            widgetPbxprojSource: widgetPbxprojSource,
+            runnerEntitlementsSource: runnerEntitlementsSource,
+            extensionEntitlementsSource: extensionEntitlementsSource,
+            objectiveWidgetStorageSwiftSource:
+                objectiveWidgetStorageSwiftSource,
+            todayCheckWidgetSwiftSource: todayCheckWidgetSwiftSource,
+            widgetExporterDartSource: widgetExporterDartSource,
+            widgetPrepDocSource: widgetPrepDocSource,
+          ),
+        );
+        expect(result.decision, ReleaseFragilityDecision.manualCheckNeeded);
+        expect(
+          _risk(result, ReleaseFragilityRiskId.secrets).level,
+          ReleaseFragilityRiskLevel.manualCheckNeeded,
+        );
+        expect(
+          _risk(result, ReleaseFragilityRiskId.signing).level,
+          ReleaseFragilityRiskLevel.manualCheckNeeded,
+        );
+        expect(
+          _risk(result, ReleaseFragilityRiskId.screenshots).level,
+          ReleaseFragilityRiskLevel.manualCheckNeeded,
+        );
+        expect(
+          _risk(result, ReleaseFragilityRiskId.testFlightUpload).level,
+          ReleaseFragilityRiskLevel.manualCheckNeeded,
+        );
+        expect(result.blockedCount, 0);
+      },
+    );
 
-    test('fromRepoSignals with manual evidence confirmed has no blocked risks', () {
-      final result = ReleaseFragilityAudit.build(
-        ReleaseFragilityAudit.fromRepoSignals(
-          appConfigSource: appConfigSource,
-          pbxprojSource: pbxprojSource,
-          infoPlistSource: infoPlistSource,
-          appRouterSource: appRouterSource,
-          securitySettingsSource: securitySettingsSource,
-          revenueCatServiceSource: revenueCatServiceSource,
-          revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
-          revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
-          revenueCatLiveProofRunnerSource: revenueCatLiveProofRunnerSource,
-          archiveLoopEntitlementIdsSource: archiveLoopEntitlementIdsSource,
-          proSinglePromiseCopySource: proSinglePromiseCopySource,
-          mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
-          revenueCatOfferingsDebugLogSource: revenueCatOfferingsDebugLogSource,
-          deploySecretsCheckSource: deploySecretsCheckSource,
-          envExampleSource: envExampleSource,
-          widgetPbxprojSource: widgetPbxprojSource,
-          runnerEntitlementsSource: runnerEntitlementsSource,
-          extensionEntitlementsSource: extensionEntitlementsSource,
-          objectiveWidgetStorageSwiftSource: objectiveWidgetStorageSwiftSource,
-          todayCheckWidgetSwiftSource: todayCheckWidgetSwiftSource,
-          widgetExporterDartSource: widgetExporterDartSource,
-          widgetPrepDocSource: widgetPrepDocSource,
-          signingVerified: true,
-          screenshotsReady: true,
-          testFlightUploaded: true,
-          stripeSecretKeyRotated: true,
-          stripeWebhookSecretRotated: true,
-          productionEnvUpdated: true,
-          oldWebhookDisabled: true,
-          vercelEnvProductionVerified: true,
-        ),
-      );
-      expect(result.blockedCount, 0);
-      expect(
-        _risk(result, ReleaseFragilityRiskId.secrets).level,
-        ReleaseFragilityRiskLevel.lowRisk,
-      );
-      expect(
-        _risk(result, ReleaseFragilityRiskId.signing).level,
-        ReleaseFragilityRiskLevel.lowRisk,
-      );
-      expect(
-        _risk(result, ReleaseFragilityRiskId.widgetExtension).level,
-        ReleaseFragilityRiskLevel.manualCheckNeeded,
-      );
-      expect(result.decision, ReleaseFragilityDecision.manualCheckNeeded);
-    });
+    test(
+      'fromRepoSignals with manual evidence confirmed has no blocked risks',
+      () {
+        final result = ReleaseFragilityAudit.build(
+          ReleaseFragilityAudit.fromRepoSignals(
+            appConfigSource: appConfigSource,
+            pbxprojSource: pbxprojSource,
+            infoPlistSource: infoPlistSource,
+            appRouterSource: appRouterSource,
+            securitySettingsSource: securitySettingsSource,
+            revenueCatServiceSource: revenueCatServiceSource,
+            revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
+            revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
+            revenueCatLiveProofRunnerSource: revenueCatLiveProofRunnerSource,
+            archiveLoopEntitlementIdsSource: archiveLoopEntitlementIdsSource,
+            proSinglePromiseCopySource: proSinglePromiseCopySource,
+            mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
+            revenueCatOfferingsDebugLogSource:
+                revenueCatOfferingsDebugLogSource,
+            deploySecretsCheckSource: deploySecretsCheckSource,
+            envExampleSource: envExampleSource,
+            widgetPbxprojSource: widgetPbxprojSource,
+            runnerEntitlementsSource: runnerEntitlementsSource,
+            extensionEntitlementsSource: extensionEntitlementsSource,
+            objectiveWidgetStorageSwiftSource:
+                objectiveWidgetStorageSwiftSource,
+            todayCheckWidgetSwiftSource: todayCheckWidgetSwiftSource,
+            widgetExporterDartSource: widgetExporterDartSource,
+            widgetPrepDocSource: widgetPrepDocSource,
+            signingVerified: true,
+            screenshotsReady: true,
+            testFlightUploaded: true,
+            stripeSecretKeyRotated: true,
+            stripeWebhookSecretRotated: true,
+            productionEnvUpdated: true,
+            oldWebhookDisabled: true,
+            vercelEnvProductionVerified: true,
+          ),
+        );
+        expect(result.blockedCount, 0);
+        expect(
+          _risk(result, ReleaseFragilityRiskId.secrets).level,
+          ReleaseFragilityRiskLevel.lowRisk,
+        );
+        expect(
+          _risk(result, ReleaseFragilityRiskId.signing).level,
+          ReleaseFragilityRiskLevel.lowRisk,
+        );
+        expect(
+          _risk(result, ReleaseFragilityRiskId.widgetExtension).level,
+          ReleaseFragilityRiskLevel.manualCheckNeeded,
+        );
+        expect(result.decision, ReleaseFragilityDecision.manualCheckNeeded);
+      },
+    );
   });
 
   group('protected regression', () {
@@ -494,10 +501,7 @@ void main() {
       final guardSource = File(
         'lib/features/archive_proof/proof_surface_advice_guard.dart',
       ).readAsStringSync();
-      expect(
-        guardSource,
-        contains('ReleaseFragilityCopy.allVisibleStrings()'),
-      );
+      expect(guardSource, contains('ReleaseFragilityCopy.allVisibleStrings()'));
     });
   });
 }

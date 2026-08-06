@@ -4,10 +4,7 @@ import 'yesterdays_snapshot_copy.dart';
 abstract final class YesterdaysSnapshotRoutes {
   YesterdaysSnapshotRoutes._();
 
-  static String recordHandoff({
-    required String prompt,
-    bool autostart = true,
-  }) {
+  static String recordHandoff({required String prompt, bool autostart = true}) {
     final encoded = Uri.encodeComponent(prompt);
     return '${YesterdaysSnapshotCopy.recordRoute}?prompt=$encoded'
         '${autostart ? '&autostart=1' : ''}';

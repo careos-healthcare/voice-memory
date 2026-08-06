@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/features/retention/return_reason_capture_stor
 import 'package:voicememory_mobile/features/post_save_insight/post_save_insight_models.dart';
 import 'package:voicememory_mobile/features/first_session/first_session_pattern_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/onboarding_intent_screen.dart';
+import 'package:archiveme_research/screens/onboarding_intent_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/read_micro_feedback_row.dart';
 

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/account_screen.dart';
-import 'package:voicememory_mobile/screens/archive_export_screen.dart';
+import 'package:archiveme_research/screens/archive_export_screen.dart';
 import 'package:voicememory_mobile/screens/privacy_screen.dart';
 import 'package:voicememory_mobile/screens/support_feedback_screen.dart';
 import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
@@ -16,19 +16,19 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 
 JournalEntry _entry({required String id}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12),
-      transcript: 'A long enough transcript to count as a saved reflection.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'You mentioned pressure in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12),
+  transcript: 'A long enough transcript to count as a saved reflection.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'You mentioned pressure in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   late Directory tempDir;
@@ -50,10 +50,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     final routes = <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const AccountScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const AccountScreen()),
       GoRoute(
         path: '/archive-export',
         builder: (context, state) => const ArchiveExportScreen(),
@@ -95,10 +92,19 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(AccountPrivacyControlsCopy.deleteEntry), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.correctEntry), findsOneWidget);
+      expect(
+        find.text(AccountPrivacyControlsCopy.correctEntry),
+        findsOneWidget,
+      );
       expect(find.text(AccountPrivacyControlsCopy.export), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.clearArchive), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.privacyPolicy), findsOneWidget);
+      expect(
+        find.text(AccountPrivacyControlsCopy.clearArchive),
+        findsOneWidget,
+      );
+      expect(
+        find.text(AccountPrivacyControlsCopy.privacyPolicy),
+        findsOneWidget,
+      );
       expect(find.text(AccountPrivacyControlsCopy.support), findsOneWidget);
     });
 

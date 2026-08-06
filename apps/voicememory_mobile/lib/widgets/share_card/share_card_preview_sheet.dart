@@ -33,10 +33,7 @@ class ShareCardPreviewSheet extends StatefulWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
         ),
-        child: ShareCardPreviewSheet(
-          model: model,
-          source: source,
-        ),
+        child: ShareCardPreviewSheet(model: model, source: source),
       ),
     );
   }
@@ -102,10 +99,9 @@ class _ShareCardPreviewSheetState extends State<ShareCardPreviewSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final showEdit = widget.model.labelNeedsReview;
 
     return SafeArea(

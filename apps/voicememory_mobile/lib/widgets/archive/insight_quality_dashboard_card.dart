@@ -9,32 +9,28 @@ import '../../theme/voicememory_cards.dart';
 
 /// Summary counts for the insight quality dashboard.
 class InsightQualitySummaryCard extends StatelessWidget {
-  const InsightQualitySummaryCard({
-    super.key,
-    required this.summary,
-  });
+  const InsightQualitySummaryCard({super.key, required this.summary});
 
   final InsightQualitySummary summary;
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final valueStyle = ArchiveMobileTypography.responsiveBody(context).copyWith(
-      color: AppColors.textPrimary,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final valueStyle = ArchiveMobileTypography.responsiveBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary);
 
     Widget row(String label, int count, Key key) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-          child: Row(
-            children: [
-              Expanded(child: Text(label, style: labelStyle)),
-              Text('$count', key: key, style: valueStyle),
-            ],
-          ),
-        );
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: labelStyle)),
+          Text('$count', key: key, style: valueStyle),
+        ],
+      ),
+    );
 
     return Container(
       key: const Key('insight_quality_summary_card'),

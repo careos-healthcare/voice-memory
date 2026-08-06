@@ -30,8 +30,14 @@ abstract final class ArchiveBetaMissionGate {
     return false;
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void disableForHarness() {
+    enabledOverride = false;
+  }
+
+  static void resetPersistedState() {
     enabledOverride = null;
   }
+
+  @visibleForTesting
+  static void resetForTest() => resetPersistedState();
 }

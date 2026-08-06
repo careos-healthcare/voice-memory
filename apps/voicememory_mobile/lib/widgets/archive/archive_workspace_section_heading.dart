@@ -22,9 +22,9 @@ class ArchiveWorkspaceSectionHeading extends StatelessWidget {
       child: Text(
         title,
         key: Key('archive_workspace_section_$sectionId'),
-        style: ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
-          color: AppColors.textSecondary,
-        ),
+        style: ArchiveMobileTypography.responsiveSectionTitle(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
     );
   }

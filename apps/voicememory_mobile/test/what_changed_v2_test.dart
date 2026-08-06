@@ -28,70 +28,69 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeSaidYesEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourSaidYesEntries() => [
-      ..._threeSaidYesEntries(),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeSaidYesEntries(),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 WhatChangedV2Prompt _requirePrompt(List<JournalEntry> entries) {
   final prompt = WhatChangedV2Engine.buildPrompt(
@@ -158,37 +157,51 @@ void main() {
       );
     });
 
-    test('post-save display keeps answered payoff after softer answer', () async {
-      final entries = _fourSaidYesEntries();
-      await WhatChangedV2Store.instance().saveSelection(
-        entryId: 'e4',
-        option: WhatChangedV2Option.softer,
-        entryCountAtCapture: 4,
-      );
+    test(
+      'post-save display keeps answered payoff after softer answer',
+      () async {
+        final entries = _fourSaidYesEntries();
+        await WhatChangedV2Store.instance().saveSelection(
+          entryId: 'e4',
+          option: WhatChangedV2Option.softer,
+          entryCountAtCapture: 4,
+        );
 
-      expect(WhatChangedV2Engine.buildPrompt(entries: entries), isNull);
-      final display = WhatChangedV2Engine.buildPostSaveDisplay(entries: entries);
-      expect(display, isNotNull);
-      expect(display!.hasComparison, isTrue);
-      expect(
-        WhatChangedV2Engine.shouldShowPostSaveDisplay(
-          isPostSaveDone: true,
-          isDegradedPostSave: false,
-          showFirstProofMoment: false,
-          display: display,
-        ),
-        isTrue,
-      );
-    });
+        expect(WhatChangedV2Engine.buildPrompt(entries: entries), isNull);
+        final display = WhatChangedV2Engine.buildPostSaveDisplay(
+          entries: entries,
+        );
+        expect(display, isNotNull);
+        expect(display!.hasComparison, isTrue);
+        expect(
+          WhatChangedV2Engine.shouldShowPostSaveDisplay(
+            isPostSaveDone: true,
+            isDegradedPostSave: false,
+            showFirstProofMoment: false,
+            display: display,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('hides for generic weak pending and quiet entries', () {
       expect(
         WhatChangedV2Engine.buildPrompt(
           entries: [
-            _voiceEntry(id: 'g1', transcript: 'This is a test to check function'),
-            _voiceEntry(id: 'g2', transcript: 'This is a second test for pressure'),
+            _voiceEntry(
+              id: 'g1',
+              transcript: 'This is a test to check function',
+            ),
+            _voiceEntry(
+              id: 'g2',
+              transcript: 'This is a second test for pressure',
+            ),
             _voiceEntry(id: 'g3', transcript: 'Another test for the app today'),
-            _voiceEntry(id: 'g4', transcript: 'One more test for the app today'),
+            _voiceEntry(
+              id: 'g4',
+              transcript: 'One more test for the app today',
+            ),
           ],
         ),
         isNull,
@@ -232,41 +245,45 @@ void main() {
   });
 
   group('WhatChangedV2Store', () {
-    test('selecting stronger softer same different stores marker and syncs return check', () async {
-      final store = WhatChangedV2Store.instance();
-      final returnCheckStore = RepeatReturnCheckStore.instance();
+    test(
+      'selecting stronger softer same different stores marker and syncs return check',
+      () async {
+        final store = WhatChangedV2Store.instance();
+        final returnCheckStore = RepeatReturnCheckStore.instance();
 
-      for (final option in [
-        WhatChangedV2Option.stronger,
-        WhatChangedV2Option.softer,
-        WhatChangedV2Option.same,
-        WhatChangedV2Option.differentResponse,
-      ]) {
-        await store.saveSelection(
-          entryId: 'entry_${option.name}',
-          option: option,
-          entryCountAtCapture: 4,
-          returnCheckStore: returnCheckStore,
+        for (final option in [
+          WhatChangedV2Option.stronger,
+          WhatChangedV2Option.softer,
+          WhatChangedV2Option.same,
+          WhatChangedV2Option.differentResponse,
+        ]) {
+          await store.saveSelection(
+            entryId: 'entry_${option.name}',
+            option: option,
+            entryCountAtCapture: 4,
+            returnCheckStore: returnCheckStore,
+          );
+        }
+
+        expect(WhatChangedV2Store.cached.length, 4);
+        for (final option in [
+          WhatChangedV2Option.stronger,
+          WhatChangedV2Option.softer,
+          WhatChangedV2Option.same,
+          WhatChangedV2Option.differentResponse,
+        ]) {
+          final record = store.recordForEntry('entry_${option.name}');
+          expect(record?.option, option);
+        }
+
+        final softerReturn = returnCheckStore.recordForEntry('entry_softer');
+        expect(softerReturn?.choice, RepeatReturnCheckChoice.softer);
+        final differentReturn = returnCheckStore.recordForEntry(
+          'entry_differentResponse',
         );
-      }
-
-      expect(WhatChangedV2Store.cached.length, 4);
-      for (final option in [
-        WhatChangedV2Option.stronger,
-        WhatChangedV2Option.softer,
-        WhatChangedV2Option.same,
-        WhatChangedV2Option.differentResponse,
-      ]) {
-        final record = store.recordForEntry('entry_${option.name}');
-        expect(record?.option, option);
-      }
-
-      final softerReturn = returnCheckStore.recordForEntry('entry_softer');
-      expect(softerReturn?.choice, RepeatReturnCheckChoice.softer);
-      final differentReturn =
-          returnCheckStore.recordForEntry('entry_differentResponse');
-      expect(differentReturn?.choice, RepeatReturnCheckChoice.changed);
-    });
+        expect(differentReturn?.choice, RepeatReturnCheckChoice.changed);
+      },
+    );
 
     test('something helped stores marker without return check sync', () async {
       final store = WhatChangedV2Store.instance();
@@ -277,7 +294,10 @@ void main() {
         entryCountAtCapture: 4,
         returnCheckStore: returnCheckStore,
       );
-      expect(store.recordForEntry('e4')?.option, WhatChangedV2Option.somethingHelped);
+      expect(
+        store.recordForEntry('e4')?.option,
+        WhatChangedV2Option.somethingHelped,
+      );
       expect(returnCheckStore.recordForEntry('e4'), isNull);
     });
 
@@ -305,12 +325,18 @@ void main() {
     test('softer answer payoff includes then/now comparison data', () {
       final prompt = _requirePrompt(_fourSaidYesEntries());
       expect(prompt.comparison, isNotNull);
-      expect(WhatChangedV2Copy.payoffMessage(WhatChangedV2Option.softer),
-          WhatChangedV2Copy.payoffSofter);
-      expect(WhatChangedV2Copy.formatSnippet(prompt.comparison!.thenSnippet),
-          isNotEmpty);
-      expect(WhatChangedV2Copy.formatSnippet(prompt.comparison!.nowSnippet),
-          isNotEmpty);
+      expect(
+        WhatChangedV2Copy.payoffMessage(WhatChangedV2Option.softer),
+        WhatChangedV2Copy.payoffSofter,
+      );
+      expect(
+        WhatChangedV2Copy.formatSnippet(prompt.comparison!.thenSnippet),
+        isNotEmpty,
+      );
+      expect(
+        WhatChangedV2Copy.formatSnippet(prompt.comparison!.nowSnippet),
+        isNotEmpty,
+      );
     });
 
     test('all payoff variants avoid advice language', () {
@@ -336,31 +362,34 @@ void main() {
       expect(routed, isTrue);
     });
 
-    test('something helped saves marker and allows helped tracking prompt', () async {
-      final entries = _fourSaidYesEntries();
-      final store = WhatChangedV2Store.instance();
+    test(
+      'something helped saves marker and allows helped tracking prompt',
+      () async {
+        final entries = _fourSaidYesEntries();
+        final store = WhatChangedV2Store.instance();
 
-      await store.saveSelection(
-        entryId: 'e4',
-        option: WhatChangedV2Option.somethingHelped,
-        entryCountAtCapture: 4,
-      );
+        await store.saveSelection(
+          entryId: 'e4',
+          option: WhatChangedV2Option.somethingHelped,
+          entryCountAtCapture: 4,
+        );
 
-      expect(store.recordForEntry('e4')?.option, WhatChangedV2Option.somethingHelped);
-      expect(
-        WhatChangedV2Engine.buildPrompt(entries: entries),
-        isNull,
-      );
-      expect(
-        HelpedTrackingEngine.buildPrompt(
-          entries: entries,
-          isPostSaveDone: true,
-          isDegradedPostSave: false,
-          showWhatChangedV2: false,
-        ),
-        isNotNull,
-      );
-    });
+        expect(
+          store.recordForEntry('e4')?.option,
+          WhatChangedV2Option.somethingHelped,
+        );
+        expect(WhatChangedV2Engine.buildPrompt(entries: entries), isNull);
+        expect(
+          HelpedTrackingEngine.buildPrompt(
+            entries: entries,
+            isPostSaveDone: true,
+            isDegradedPostSave: false,
+            showWhatChangedV2: false,
+          ),
+          isNotNull,
+        );
+      },
+    );
   });
 
   group('weekly review integration', () {
@@ -405,10 +434,13 @@ void main() {
         hasConfirmedRepeat: true,
       );
 
-      expect(events.keys, containsAll([
-        WhatChangedV2Analytics.seenEvent,
-        WhatChangedV2Analytics.answeredEvent,
-      ]));
+      expect(
+        events.keys,
+        containsAll([
+          WhatChangedV2Analytics.seenEvent,
+          WhatChangedV2Analytics.answeredEvent,
+        ]),
+      );
       expect(
         events[WhatChangedV2Analytics.answeredEvent]!.keys,
         containsAll([
@@ -458,7 +490,9 @@ void main() {
     });
 
     test('first proof flow still works', () {
-      final signal = EarlyFirstSignalEngine.build(entries: _threeSaidYesEntries());
+      final signal = EarlyFirstSignalEngine.build(
+        entries: _threeSaidYesEntries(),
+      );
       expect(signal?.showsConfirmedRepeat, isTrue);
     });
 

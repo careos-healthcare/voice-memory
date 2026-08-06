@@ -36,32 +36,33 @@ abstract final class B2bWorkplacePressureFutureCopy {
       'Future landing positioning documented only';
 
   static String labelFor(B2bWorkplacePressureAudienceId id) => switch (id) {
-        B2bWorkplacePressureAudienceId.founders => 'Founders',
-        B2bWorkplacePressureAudienceId.managers => 'Managers',
-        B2bWorkplacePressureAudienceId.carers => 'Carers',
-        B2bWorkplacePressureAudienceId.highResponsibilityWorkers =>
-          'High-responsibility workers',
-        B2bWorkplacePressureAudienceId.peopleWhoOvercommit =>
-          'People who overcommit',
-        B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity =>
-          'People who say yes with no capacity',
-      };
+    B2bWorkplacePressureAudienceId.founders => 'Founders',
+    B2bWorkplacePressureAudienceId.managers => 'Managers',
+    B2bWorkplacePressureAudienceId.carers => 'Carers',
+    B2bWorkplacePressureAudienceId.highResponsibilityWorkers =>
+      'High-responsibility workers',
+    B2bWorkplacePressureAudienceId.peopleWhoOvercommit =>
+      'People who overcommit',
+    B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity =>
+      'People who say yes with no capacity',
+  };
 
-  static String positioningFor(B2bWorkplacePressureAudienceId id) =>
-      switch (id) {
-        B2bWorkplacePressureAudienceId.founders =>
-          'For founders carrying work pressure without a private proof trail.',
-        B2bWorkplacePressureAudienceId.managers =>
-          'For managers noticing overcommit patterns in high-responsibility roles.',
-        B2bWorkplacePressureAudienceId.carers =>
-          'For carers juggling responsibility pressure outside a clinical frame.',
-        B2bWorkplacePressureAudienceId.highResponsibilityWorkers =>
-          'For high-responsibility workers who keep absorbing more than they can hold.',
-        B2bWorkplacePressureAudienceId.peopleWhoOvercommit =>
-          'For people who overcommit when work pressure spikes.',
-        B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity =>
-          'For people who say yes with no capacity left.',
-      };
+  static String positioningFor(
+    B2bWorkplacePressureAudienceId id,
+  ) => switch (id) {
+    B2bWorkplacePressureAudienceId.founders =>
+      'For founders carrying work pressure without a private proof trail.',
+    B2bWorkplacePressureAudienceId.managers =>
+      'For managers noticing overcommit patterns in high-responsibility roles.',
+    B2bWorkplacePressureAudienceId.carers =>
+      'For carers juggling responsibility pressure outside a clinical frame.',
+    B2bWorkplacePressureAudienceId.highResponsibilityWorkers =>
+      'For high-responsibility workers who keep absorbing more than they can hold.',
+    B2bWorkplacePressureAudienceId.peopleWhoOvercommit =>
+      'For people who overcommit when work pressure spikes.',
+    B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity =>
+      'For people who say yes with no capacity left.',
+  };
 
   static String prereqLabelFor(B2bWorkplacePressureFuturePrereqId id) =>
       switch (id) {
@@ -84,22 +85,22 @@ abstract final class B2bWorkplacePressureFutureCopy {
           'Future landing-page positioning only',
       };
 
-  static String messageFor(B2bWorkplacePressureFutureGateDecision decision) =>
-      switch (decision) {
-        B2bWorkplacePressureFutureGateDecision.b2bFrozen => b2bFrozenLine,
-        B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented =>
-          futureLandingPositioningDocumentedLine,
-      };
+  static String messageFor(
+    B2bWorkplacePressureFutureGateDecision decision,
+  ) => switch (decision) {
+    B2bWorkplacePressureFutureGateDecision.b2bFrozen => b2bFrozenLine,
+    B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented =>
+      futureLandingPositioningDocumentedLine,
+  };
 
   static String recommendationFor(
     B2bWorkplacePressureFutureGateDecision decision,
-  ) =>
-      switch (decision) {
-        B2bWorkplacePressureFutureGateDecision.b2bFrozen =>
-          'Finish TestFlight upload and paid-intent beta before using B2B-lite workplace pressure in landing-page planning.',
-        B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented =>
-          'Use B2B-lite workplace pressure in future landing-page docs only. Do not add employer dashboards, surveillance, or live B2B UI.',
-      };
+  ) => switch (decision) {
+    B2bWorkplacePressureFutureGateDecision.b2bFrozen =>
+      'Finish TestFlight upload and paid-intent beta before using B2B-lite workplace pressure in landing-page planning.',
+    B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented =>
+      'Use B2B-lite workplace pressure in future landing-page docs only. Do not add employer dashboards, surveillance, or live B2B UI.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -146,11 +147,7 @@ enum B2bWorkplacePressureFuturePrereqId {
   paidIntentBetaComplete,
 }
 
-enum B2bWorkplacePressureFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum B2bWorkplacePressureFuturePrereqStatus { pass, pending, fail }
 
 enum B2bWorkplacePressureAudienceStatus {
   blockedBeforeBetaProof,
@@ -165,10 +162,7 @@ enum B2bWorkplacePressureFutureRuleId {
   futureLandingPositioningOnly,
 }
 
-enum B2bWorkplacePressureFutureRuleStatus {
-  pass,
-  fail,
-}
+enum B2bWorkplacePressureFutureRuleStatus { pass, fail }
 
 enum B2bWorkplacePressureFutureGateDecision {
   b2bFrozen,

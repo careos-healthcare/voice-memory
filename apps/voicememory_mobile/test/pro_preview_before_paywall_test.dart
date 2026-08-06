@@ -31,24 +31,23 @@ ProPreviewContext _context({
   bool firstProofTruthQuestionActive = false,
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
-}) =>
-    ProPreviewContext(
-      surface: surface,
-      source: 'test',
-      entryCount: entryCount,
-      isPro: isPro,
-      dismissed: dismissed,
-      hasFirstProof: hasFirstProof,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      firstProofPayoffSeen: firstProofPayoffSeen,
-      isZeroEntryState: isZeroEntryState,
-      isFirstRecordingState: isFirstRecordingState,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      firstProofTruthQuestionActive: firstProofTruthQuestionActive,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-    );
+}) => ProPreviewContext(
+  surface: surface,
+  source: 'test',
+  entryCount: entryCount,
+  isPro: isPro,
+  dismissed: dismissed,
+  hasFirstProof: hasFirstProof,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  firstProofPayoffSeen: firstProofPayoffSeen,
+  isZeroEntryState: isZeroEntryState,
+  isFirstRecordingState: isFirstRecordingState,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  firstProofTruthQuestionActive: firstProofTruthQuestionActive,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+);
 
 ProPreviewResult _visibleResult({ProPreviewContext? context}) =>
     ProPreviewEngine.build(context: context ?? _context());
@@ -135,10 +134,7 @@ void main() {
     });
 
     test('hidden for Pro subscriber', () {
-      expect(
-        ProPreviewEngine.shouldShowCard(_context(isPro: true)),
-        isFalse,
-      );
+      expect(ProPreviewEngine.shouldShowCard(_context(isPro: true)), isFalse);
     });
 
     test('hidden when dismissed for session', () async {
@@ -200,7 +196,9 @@ void main() {
     });
 
     test('no fake evidence or private text', () {
-      final displayed = ProPreviewCopy.allDisplayedStrings().join(' ').toLowerCase();
+      final displayed = ProPreviewCopy.allDisplayedStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in ProPreviewCopy.bannedFakeClaims) {
         expect(displayed, isNot(contains(banned)));
       }
@@ -249,13 +247,16 @@ void main() {
         ProPreviewAnalytics.dismissedEvent,
       ]);
       for (final props in properties) {
-        expect(props.keys, containsAll([
-          'entry_count',
-          'source',
-          'surface',
-          'has_timeline_proof',
-          'has_first_proof',
-        ]));
+        expect(
+          props.keys,
+          containsAll([
+            'entry_count',
+            'source',
+            'surface',
+            'has_timeline_proof',
+            'has_first_proof',
+          ]),
+        );
         expect(props.containsKey('product_id'), isFalse);
         expect(props.containsKey('price'), isFalse);
         expect(props.containsKey('transcript'), isFalse);
@@ -296,7 +297,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonProCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonProCap),
+      );
     });
 
     test('pro preview wins single Pro slot on patterns', () {
@@ -350,23 +354,28 @@ void main() {
     });
 
     test('record screen routes preview CTA through valueMoment paywall', () {
-      final recordSource =
-          File('lib/screens/record_screen.dart').readAsStringSync();
+      final recordSource = File(
+        'lib/screens/record_screen.dart',
+      ).readAsStringSync();
       expect(recordSource, contains('ProPreviewCard'));
       expect(recordSource, contains('_openProEvidenceValueSubscription'));
       expect(recordSource, contains('PaywallSource.valueMoment'));
     });
 
-    test('patterns screen routes preview CTA through existing paywall handler', () {
-      final patternsSource =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
-      expect(patternsSource, contains('ProPreviewCard'));
-      expect(patternsSource, contains('_openProEvidenceValueSubscription'));
-      expect(
-        patternsSource,
-        contains("analyticsSource: 'patterns_post_proof_pro_preview'"),
-      );
-    });
+    test(
+      'patterns screen routes preview CTA through existing paywall handler',
+      () {
+        final patternsSource = File(
+          'lib/screens/archive_belief_screen.dart',
+        ).readAsStringSync();
+        expect(patternsSource, contains('ProPreviewCard'));
+        expect(patternsSource, contains('_openProEvidenceValueSubscription'));
+        expect(
+          patternsSource,
+          contains("analyticsSource: 'patterns_post_proof_pro_preview'"),
+        );
+      },
+    );
 
     test('paywall source valueMoment unchanged', () {
       expect(PaywallSource.valueMoment.id, 'value_moment');

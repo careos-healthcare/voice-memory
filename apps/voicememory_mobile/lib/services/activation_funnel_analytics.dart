@@ -1075,15 +1075,13 @@ abstract class ActivationFunnelAnalytics {
     }
 
     final properties = <String, Object>{
-      if (entryCount != null) 'entry_count': entryCount,
+      'entry_count': ?entryCount,
       if (hasConnectedThread != null)
         'has_connected_thread': hasConnectedThread ? 1 : 0,
       if (hasParentEntry != null) 'has_parent_entry': hasParentEntry ? 1 : 0,
-      if (hasRealTimeline != null)
-        'has_real_timeline': hasRealTimeline ? 1 : 0,
+      if (hasRealTimeline != null) 'has_real_timeline': hasRealTimeline ? 1 : 0,
       if (hasPhrase != null) 'has_phrase': hasPhrase ? 1 : 0,
-      if (hasActionPhrase != null)
-        'has_action_phrase': hasActionPhrase ? 1 : 0,
+      if (hasActionPhrase != null) 'has_action_phrase': hasActionPhrase ? 1 : 0,
       if (hasConfirmedRepeat != null)
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
       if (hasCustomName != null) 'has_custom_name': hasCustomName ? 1 : 0,
@@ -1094,7 +1092,7 @@ abstract class ActivationFunnelAnalytics {
       if (hasFirstProof != null) 'has_first_proof': hasFirstProof ? 1 : 0,
       if (comparisonState != null && _safeValue.hasMatch(comparisonState))
         'comparison_state': comparisonState,
-      if (phraseCount != null) 'phrase_count': phraseCount,
+      'phrase_count': ?phraseCount,
       if (hasStrongEvidence != null)
         'has_strong_evidence': hasStrongEvidence ? 1 : 0,
       if (wasEvidence != null) 'was_evidence': wasEvidence ? 1 : 0,
@@ -1104,7 +1102,7 @@ abstract class ActivationFunnelAnalytics {
       if (hasChange != null) 'has_change': hasChange ? 1 : 0,
       if (hasHelped != null) 'has_helped': hasHelped ? 1 : 0,
       if (hasWatchTarget != null) 'has_watch_target': hasWatchTarget ? 1 : 0,
-      if (milestoneCount != null) 'milestone_count': milestoneCount,
+      'milestone_count': ?milestoneCount,
       if (relationState != null &&
           allowedRelationStateValues.contains(relationState))
         'relation_state': relationState,
@@ -1134,7 +1132,7 @@ abstract class ActivationFunnelAnalytics {
         'thread_scope': threadScope,
       if (scoreBand != null && allowedScoreBandValues.contains(scoreBand))
         'score_band': scoreBand,
-      if (recordCount != null) 'record_count': recordCount,
+      'record_count': ?recordCount,
       if (authorityState != null &&
           allowedAuthorityStateValues.contains(authorityState))
         'authority_state': authorityState,
@@ -1205,8 +1203,8 @@ abstract class ActivationFunnelAnalytics {
         'share_type': shareType,
       if (promptType != null && _safeValue.hasMatch(promptType))
         'prompt_type': promptType,
-      if (daysSinceSet != null) 'days_since_set': daysSinceSet,
-      if (daysSinceSeen != null) 'days_since_seen': daysSinceSeen,
+      'days_since_set': ?daysSinceSet,
+      'days_since_seen': ?daysSinceSeen,
       if (step != null && _safeValue.hasMatch(step)) 'step': step,
       if (answerType != null && _safeValue.hasMatch(answerType))
         'answer_type': answerType,

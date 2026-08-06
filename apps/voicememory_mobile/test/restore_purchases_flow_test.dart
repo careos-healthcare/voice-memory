@@ -21,9 +21,9 @@ class _FakeStoreBilling implements StoreBillingPort {
     this.restoreError,
     PremiumEntitlements? refreshResult,
     this.restoreDelay = Duration.zero,
-  })  : _restoreResult = restoreResult ?? PremiumEntitlements.free(),
-        _refreshResult =
-            refreshResult ?? restoreResult ?? PremiumEntitlements.free();
+  }) : _restoreResult = restoreResult ?? PremiumEntitlements.free(),
+       _refreshResult =
+           refreshResult ?? restoreResult ?? PremiumEntitlements.free();
 
   final bool configured;
   final PremiumEntitlements _restoreResult;
@@ -60,14 +60,14 @@ class _FakeStoreBilling implements StoreBillingPort {
 }
 
 PremiumEntitlements _proEntitlements() => const PremiumEntitlements(
-      tier: BillingTier.pro,
-      entitlementIds: ['pro'],
-      billingConnected: true,
-      source: 'revenuecat',
-    );
+  tier: BillingTier.pro,
+  entitlementIds: ['pro'],
+  billingConnected: true,
+  source: 'revenuecat',
+);
 
 Future<({BillingService billing, EntitlementCache cache, Directory dir})>
-    _openBillingHarness(_FakeStoreBilling store) async {
+_openBillingHarness(_FakeStoreBilling store) async {
   final dir = await Directory.systemTemp.createTemp('restore_flow_test');
   final cache = await EntitlementCache.open('${dir.path}/entitlements.json');
   final billing = BillingService(
@@ -82,7 +82,10 @@ void main() {
   group('RestorePurchasesCopy', () {
     test('uses App Store-safe restore messaging', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-      expect(RestorePurchasesCopy.purchaseRestored, 'Purchase restored. Pro is active.');
+      expect(
+        RestorePurchasesCopy.purchaseRestored,
+        'Purchase restored. Pro is active.',
+      );
       expect(
         RestorePurchasesCopy.noActivePurchase,
         'No previous Pro purchase was found on this Apple ID.',
@@ -194,19 +197,22 @@ void main() {
       );
     });
 
-    test('missing RevenueCat API key shows unavailable without crashing', () async {
-      store = _FakeStoreBilling(configured: false);
-      flow = RestorePurchasesFlow(
-        billing: billing,
-        isBillingConfigured: () => store.configured,
-      );
+    test(
+      'missing RevenueCat API key shows unavailable without crashing',
+      () async {
+        store = _FakeStoreBilling(configured: false);
+        flow = RestorePurchasesFlow(
+          billing: billing,
+          isBillingConfigured: () => store.configured,
+        );
 
-      final result = await flow.restore();
+        final result = await flow.restore();
 
-      expect(result.outcome, RestorePurchasesOutcome.unavailable);
-      expect(store.restoreCalls, 0);
-      expect(result.userMessage, RestorePurchasesCopy.restoreError);
-    });
+        expect(result.outcome, RestorePurchasesOutcome.unavailable);
+        expect(store.restoreCalls, 0);
+        expect(result.userMessage, RestorePurchasesCopy.restoreError);
+      },
+    );
 
     test('restore button cannot be double tapped while loading', () async {
       store = _FakeStoreBilling(

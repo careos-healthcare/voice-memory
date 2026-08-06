@@ -78,32 +78,31 @@ abstract final class RevenueCatLiveProofRunner {
     bool? calmFallbackOnFailure,
     bool? noCrash,
     List<String> activeEntitlementIds = const [],
-  }) =>
-      RevenueCatLiveProofInput(
-        iosApiKeyPresent:
-            diagnostics.revenueCatConfigured && !diagnostics.apiKeyMissing,
-        offeringLoads: diagnostics.offeringsLoaded,
-        productIdentifierMatches: productIdentifierMatches ??
-            (diagnostics.productIdentifiers.isNotEmpty
-                ? productIdentifiersMatchStoreConfig(
-                    diagnostics.productIdentifiers,
-                  )
-                : null),
-        priceVisible: priceVisible,
-        paywallRouteOpens: paywallRouteOpens,
-        purchaseButtonEnabled: purchaseButtonEnabled,
-        storeKitSheetAppears: storeKitSheetAppears,
-        sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
-        entitlementActiveAfterPurchase: entitlementActiveAfterPurchase ??
-            (recognizesProEntitlement(activeEntitlementIds) ? true : null),
-        proGateUnlocks: proGateUnlocks,
-        appRestartKeepsEntitlement: appRestartKeepsEntitlement,
-        restorePurchasesSucceeds: restorePurchasesSucceeds,
-        restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
-        calmFallbackOnFailure: calmFallbackOnFailure,
-        noCrash: noCrash,
-        activeEntitlementIds: activeEntitlementIds,
-      );
+  }) => RevenueCatLiveProofInput(
+    iosApiKeyPresent:
+        diagnostics.revenueCatConfigured && !diagnostics.apiKeyMissing,
+    offeringLoads: diagnostics.offeringsLoaded,
+    productIdentifierMatches:
+        productIdentifierMatches ??
+        (diagnostics.productIdentifiers.isNotEmpty
+            ? productIdentifiersMatchStoreConfig(diagnostics.productIdentifiers)
+            : null),
+    priceVisible: priceVisible,
+    paywallRouteOpens: paywallRouteOpens,
+    purchaseButtonEnabled: purchaseButtonEnabled,
+    storeKitSheetAppears: storeKitSheetAppears,
+    sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+    entitlementActiveAfterPurchase:
+        entitlementActiveAfterPurchase ??
+        (recognizesProEntitlement(activeEntitlementIds) ? true : null),
+    proGateUnlocks: proGateUnlocks,
+    appRestartKeepsEntitlement: appRestartKeepsEntitlement,
+    restorePurchasesSucceeds: restorePurchasesSucceeds,
+    restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
+    calmFallbackOnFailure: calmFallbackOnFailure,
+    noCrash: noCrash,
+    activeEntitlementIds: activeEntitlementIds,
+  );
 
   static RevenueCatLiveProofInput fromPurchaseJourney(
     RevenueCatPurchaseJourney journey, {
@@ -119,34 +118,32 @@ abstract final class RevenueCatLiveProofRunner {
     bool? restoreAfterReinstallSucceeds,
     bool? calmFallbackOnFailure,
     bool? noCrash,
-  }) =>
-      RevenueCatLiveProofInput(
-        iosApiKeyPresent: iosApiKeyPresent && !diagnostics.apiKeyMissing,
-        offeringLoads: journey.offeringLoaded || diagnostics.offeringsLoaded,
-        productIdentifierMatches: productIdentifierMatches ??
-            (journey.productIds.isNotEmpty
-                ? productIdentifiersMatchStoreConfig(journey.productIds)
-                : null),
-        priceVisible: priceVisible,
-        paywallRouteOpens: paywallRouteOpens,
-        purchaseButtonEnabled: purchaseButtonEnabled,
-        storeKitSheetAppears: storeKitSheetAppears,
-        sandboxPurchaseSucceeds:
-            journey.purchaseCompleted ? true : null,
-        entitlementActiveAfterPurchase: journey.entitlementReceived
-            ? true
-            : recognizesProEntitlement(journey.entitlementIds)
-                ? true
-                : null,
-        proGateUnlocks: proGateUnlocks,
-        appRestartKeepsEntitlement: appRestartKeepsEntitlement,
-        restorePurchasesSucceeds:
-            journey.restoreCompleted ? true : null,
-        restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
-        calmFallbackOnFailure: calmFallbackOnFailure,
-        noCrash: noCrash,
-        activeEntitlementIds: journey.entitlementIds,
-      );
+  }) => RevenueCatLiveProofInput(
+    iosApiKeyPresent: iosApiKeyPresent && !diagnostics.apiKeyMissing,
+    offeringLoads: journey.offeringLoaded || diagnostics.offeringsLoaded,
+    productIdentifierMatches:
+        productIdentifierMatches ??
+        (journey.productIds.isNotEmpty
+            ? productIdentifiersMatchStoreConfig(journey.productIds)
+            : null),
+    priceVisible: priceVisible,
+    paywallRouteOpens: paywallRouteOpens,
+    purchaseButtonEnabled: purchaseButtonEnabled,
+    storeKitSheetAppears: storeKitSheetAppears,
+    sandboxPurchaseSucceeds: journey.purchaseCompleted ? true : null,
+    entitlementActiveAfterPurchase: journey.entitlementReceived
+        ? true
+        : recognizesProEntitlement(journey.entitlementIds)
+        ? true
+        : null,
+    proGateUnlocks: proGateUnlocks,
+    appRestartKeepsEntitlement: appRestartKeepsEntitlement,
+    restorePurchasesSucceeds: journey.restoreCompleted ? true : null,
+    restoreAfterReinstallSucceeds: restoreAfterReinstallSucceeds,
+    calmFallbackOnFailure: calmFallbackOnFailure,
+    noCrash: noCrash,
+    activeEntitlementIds: journey.entitlementIds,
+  );
 
   static List<RevenueCatLiveProofCheck> _buildChecks(
     RevenueCatLiveProofInput input,
@@ -178,8 +175,6 @@ abstract final class RevenueCatLiveProofRunner {
     final gateOk = entitlementOk && input.proGateUnlocks == true;
     final restartOk = gateOk && input.appRestartKeepsEntitlement == true;
     final restoreOk = restartOk && input.restorePurchasesSucceeds == true;
-    final reinstallRestoreOk =
-        restoreOk && input.restoreAfterReinstallSucceeds == true;
 
     return [
       RevenueCatLiveProofCheck(
@@ -193,15 +188,12 @@ abstract final class RevenueCatLiveProofRunner {
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.offeringLoads,
         label: RevenueCatLiveProofCopy.checkOfferingLoads,
-        status: gatedStatus(
-          prerequisite: keyOk,
-          value: input.offeringLoads,
-        ),
+        status: gatedStatus(prerequisite: keyOk, value: input.offeringLoads),
         detailLabel: !keyOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.offeringLoads
-                ? RevenueCatLiveProofCopy.detailOfferingLoaded
-                : RevenueCatLiveProofCopy.detailOfferingMissing,
+            ? RevenueCatLiveProofCopy.detailOfferingLoaded
+            : RevenueCatLiveProofCopy.detailOfferingMissing,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.productIdentifierMatches,
@@ -213,25 +205,22 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !offeringOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.productIdentifierMatches == true
-                ? RevenueCatLiveProofCopy.detailProductMatch
-                : input.productIdentifierMatches == false
-                    ? RevenueCatLiveProofCopy.detailProductMismatch
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailProductMatch
+            : input.productIdentifierMatches == false
+            ? RevenueCatLiveProofCopy.detailProductMismatch
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.priceVisible,
         label: RevenueCatLiveProofCopy.checkPriceVisible,
-        status: gatedStatus(
-          prerequisite: productOk,
-          value: input.priceVisible,
-        ),
+        status: gatedStatus(prerequisite: productOk, value: input.priceVisible),
         detailLabel: !productOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.priceVisible == true
-                ? RevenueCatLiveProofCopy.detailPriceVisible
-                : input.priceVisible == false
-                    ? RevenueCatLiveProofCopy.detailPriceMissing
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailPriceVisible
+            : input.priceVisible == false
+            ? RevenueCatLiveProofCopy.detailPriceMissing
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.paywallRouteOpens,
@@ -243,10 +232,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !priceOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.paywallRouteOpens == true
-                ? RevenueCatLiveProofCopy.detailPaywallOpens
-                : input.paywallRouteOpens == false
-                    ? RevenueCatLiveProofCopy.detailPaywallBlocked
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailPaywallOpens
+            : input.paywallRouteOpens == false
+            ? RevenueCatLiveProofCopy.detailPaywallBlocked
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.purchaseButtonEnabled,
@@ -258,10 +247,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !paywallOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.purchaseButtonEnabled == true
-                ? RevenueCatLiveProofCopy.detailButtonEnabled
-                : input.purchaseButtonEnabled == false
-                    ? RevenueCatLiveProofCopy.detailButtonDisabled
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailButtonEnabled
+            : input.purchaseButtonEnabled == false
+            ? RevenueCatLiveProofCopy.detailButtonDisabled
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.storeKitSheetAppears,
@@ -273,10 +262,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !buttonOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.storeKitSheetAppears == true
-                ? RevenueCatLiveProofCopy.detailSheetSeen
-                : input.storeKitSheetAppears == false
-                    ? RevenueCatLiveProofCopy.detailSheetNotSeen
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailSheetSeen
+            : input.storeKitSheetAppears == false
+            ? RevenueCatLiveProofCopy.detailSheetNotSeen
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.sandboxPurchaseSucceeds,
@@ -288,10 +277,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !buttonOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.sandboxPurchaseSucceeds == true
-                ? RevenueCatLiveProofCopy.detailPurchaseOk
-                : input.sandboxPurchaseSucceeds == false
-                    ? RevenueCatLiveProofCopy.detailPurchaseFailed
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailPurchaseOk
+            : input.sandboxPurchaseSucceeds == false
+            ? RevenueCatLiveProofCopy.detailPurchaseFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.entitlementActiveAfterPurchase,
@@ -303,10 +292,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !purchaseOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.entitlementActiveAfterPurchase == true
-                ? RevenueCatLiveProofCopy.detailEntitlementOk
-                : input.entitlementActiveAfterPurchase == false
-                    ? RevenueCatLiveProofCopy.detailEntitlementMissing
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailEntitlementOk
+            : input.entitlementActiveAfterPurchase == false
+            ? RevenueCatLiveProofCopy.detailEntitlementMissing
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.proGateUnlocks,
@@ -318,10 +307,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !entitlementOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.proGateUnlocks == true
-                ? RevenueCatLiveProofCopy.detailGateUnlocked
-                : input.proGateUnlocks == false
-                    ? RevenueCatLiveProofCopy.detailGateLocked
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailGateUnlocked
+            : input.proGateUnlocks == false
+            ? RevenueCatLiveProofCopy.detailGateLocked
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.appRestartKeepsEntitlement,
@@ -333,10 +322,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !gateOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.appRestartKeepsEntitlement == true
-                ? RevenueCatLiveProofCopy.detailRestartOk
-                : input.appRestartKeepsEntitlement == false
-                    ? RevenueCatLiveProofCopy.detailRestartFailed
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailRestartOk
+            : input.appRestartKeepsEntitlement == false
+            ? RevenueCatLiveProofCopy.detailRestartFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.restorePurchasesSucceeds,
@@ -348,10 +337,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !restartOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.restorePurchasesSucceeds == true
-                ? RevenueCatLiveProofCopy.detailRestoreOk
-                : input.restorePurchasesSucceeds == false
-                    ? RevenueCatLiveProofCopy.detailRestoreFailed
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailRestoreOk
+            : input.restorePurchasesSucceeds == false
+            ? RevenueCatLiveProofCopy.detailRestoreFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.restoreAfterReinstallSucceeds,
@@ -363,10 +352,10 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: !restoreOk
             ? RevenueCatLiveProofCopy.detailBlocked
             : input.restoreAfterReinstallSucceeds == true
-                ? RevenueCatLiveProofCopy.detailReinstallRestoreOk
-                : input.restoreAfterReinstallSucceeds == false
-                    ? RevenueCatLiveProofCopy.detailReinstallRestoreFailed
-                    : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailReinstallRestoreOk
+            : input.restoreAfterReinstallSucceeds == false
+            ? RevenueCatLiveProofCopy.detailReinstallRestoreFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.calmFallbackOnFailure,
@@ -375,8 +364,8 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: input.calmFallbackOnFailure == true
             ? RevenueCatLiveProofCopy.detailFallbackOk
             : input.calmFallbackOnFailure == false
-                ? RevenueCatLiveProofCopy.detailFallbackFailed
-                : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailFallbackFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
       RevenueCatLiveProofCheck(
         id: RevenueCatLiveProofCheckId.noCrash,
@@ -385,8 +374,8 @@ abstract final class RevenueCatLiveProofRunner {
         detailLabel: input.noCrash == true
             ? RevenueCatLiveProofCopy.detailNoCrashOk
             : input.noCrash == false
-                ? RevenueCatLiveProofCopy.detailNoCrashFailed
-                : RevenueCatLiveProofCopy.detailPending,
+            ? RevenueCatLiveProofCopy.detailNoCrashFailed
+            : RevenueCatLiveProofCopy.detailPending,
       ),
     ];
   }
@@ -412,9 +401,7 @@ abstract final class RevenueCatLiveProofRunner {
       return RevenueCatLiveProofDecision.safeInternalState;
     }
 
-    if (checks.any(
-      (check) => check.status == RevenueCatLiveProofStatus.fail,
-    )) {
+    if (checks.any((check) => check.status == RevenueCatLiveProofStatus.fail)) {
       return RevenueCatLiveProofDecision.blocked;
     }
 
@@ -457,16 +444,16 @@ abstract final class RevenueCatLiveProofRunner {
         .every((check) => check.status == RevenueCatLiveProofStatus.pass);
   }
 
-  static String _messageFor(RevenueCatLiveProofDecision decision) =>
-      switch (decision) {
-        RevenueCatLiveProofDecision.proved => RevenueCatLiveProofCopy.provedLine,
-        RevenueCatLiveProofDecision.manualRequired =>
-          RevenueCatLiveProofCopy.manualRequiredLine,
-        RevenueCatLiveProofDecision.safeInternalState =>
-          RevenueCatLiveProofCopy.safeInternalStateLine,
-        RevenueCatLiveProofDecision.blocked =>
-          RevenueCatLiveProofCopy.blockedLine,
-      };
+  static String _messageFor(
+    RevenueCatLiveProofDecision decision,
+  ) => switch (decision) {
+    RevenueCatLiveProofDecision.proved => RevenueCatLiveProofCopy.provedLine,
+    RevenueCatLiveProofDecision.manualRequired =>
+      RevenueCatLiveProofCopy.manualRequiredLine,
+    RevenueCatLiveProofDecision.safeInternalState =>
+      RevenueCatLiveProofCopy.safeInternalStateLine,
+    RevenueCatLiveProofDecision.blocked => RevenueCatLiveProofCopy.blockedLine,
+  };
 }
 
 class RevenueCatLiveProofInput {
@@ -555,16 +542,16 @@ class RevenueCatLiveProofReport {
   final RevenueCatLiveProofResult result;
 
   List<String> get allDisplayedText => [
-        headline,
-        body,
-        manualNote,
-        guardrail,
-        scopeLine,
-        for (final check in result.checks) ...[
-          check.label,
-          check.detailLabel,
-          check.status.label,
-        ],
-        result.message,
-      ];
+    headline,
+    body,
+    manualNote,
+    guardrail,
+    scopeLine,
+    for (final check in result.checks) ...[
+      check.label,
+      check.detailLabel,
+      check.status.label,
+    ],
+    result.message,
+  ];
 }

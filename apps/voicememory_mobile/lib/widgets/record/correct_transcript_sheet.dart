@@ -149,9 +149,9 @@ class _CorrectTranscriptSheetState extends State<CorrectTranscriptSheet> {
   @override
   Widget build(BuildContext context) {
     final canSave = !_saving && _controller.text.trim().isNotEmpty;
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return SafeArea(
       child: Padding(
@@ -176,9 +176,9 @@ class _CorrectTranscriptSheetState extends State<CorrectTranscriptSheet> {
               Text(
                 TranscriptCorrectionCopy.sheetHelper,
                 key: const Key('correct_transcript_sheet_helper'),
-                style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
@@ -194,9 +194,7 @@ class _CorrectTranscriptSheetState extends State<CorrectTranscriptSheet> {
                 maxLines: 4,
                 minLines: 3,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
                 onChanged: (_) => setState(() {}),
               ),
               if (_error != null) ...[
@@ -204,9 +202,9 @@ class _CorrectTranscriptSheetState extends State<CorrectTranscriptSheet> {
                 Text(
                   _error!,
                   key: const Key('correct_transcript_error'),
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
               const SizedBox(height: AppSpacing.md),

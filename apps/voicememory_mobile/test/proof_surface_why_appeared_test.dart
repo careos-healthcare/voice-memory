@@ -147,7 +147,9 @@ void main() {
       );
 
       expect(
-        find.byKey(const Key('proof_surface_why_appeared_link_first_proof_moment')),
+        find.byKey(
+          const Key('proof_surface_why_appeared_link_first_proof_moment'),
+        ),
         findsOneWidget,
       );
       expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
@@ -178,7 +180,9 @@ void main() {
 
       expect(
         find.byKey(
-          const Key('proof_surface_why_appeared_link_what_changed_since_last_time'),
+          const Key(
+            'proof_surface_why_appeared_link_what_changed_since_last_time',
+          ),
         ),
         findsOneWidget,
       );

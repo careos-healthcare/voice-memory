@@ -1,4 +1,5 @@
 /// Archive-aware conversation starters — no LLM, no coaching tone.
+library;
 
 class ArchivePrompt {
   ArchivePrompt({

@@ -37,7 +37,8 @@ abstract final class PositiveArchiveReinforcement {
     if (input.isRelatedToPreviousRepeat && input.hasSafeRepeat) {
       return PositiveArchiveReinforcementResult(
         shouldShow: true,
-        message: PositiveArchiveReinforcementCopy.repeatRelatedMomentSavedMessage,
+        message:
+            PositiveArchiveReinforcementCopy.repeatRelatedMomentSavedMessage,
         reason: PositiveArchiveReinforcementReason.repeatRelatedMomentSaved,
       );
     }
@@ -98,12 +99,11 @@ class PositiveArchiveReinforcementResult {
 
   factory PositiveArchiveReinforcementResult.hidden({
     required PositiveArchiveReinforcementReason reason,
-  }) =>
-      PositiveArchiveReinforcementResult(
-        shouldShow: false,
-        message: '',
-        reason: reason,
-      );
+  }) => PositiveArchiveReinforcementResult(
+    shouldShow: false,
+    message: '',
+    reason: reason,
+  );
 
   final bool shouldShow;
   final String message;

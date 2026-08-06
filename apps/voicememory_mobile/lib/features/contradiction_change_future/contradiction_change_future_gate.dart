@@ -104,17 +104,16 @@ abstract final class ContradictionChangeFutureGate {
 
   static ContradictionChangeFutureGateReport report(
     ContradictionChangeFutureGateResult result,
-  ) =>
-      ContradictionChangeFutureGateReport(
-        headline: ContradictionChangeFutureCopy.headline,
-        body: ContradictionChangeFutureCopy.body,
-        positioning: ContradictionChangeFutureCopy.positioning,
-        futureValueLine: ContradictionChangeFutureCopy.futureValueLine,
-        orderLine: ContradictionChangeFutureCopy.orderLine,
-        prereqOrderLine: ContradictionChangeFutureCopy.prereqOrderLine,
-        guardrail: ContradictionChangeFutureCopy.guardrail,
-        result: result,
-      );
+  ) => ContradictionChangeFutureGateReport(
+    headline: ContradictionChangeFutureCopy.headline,
+    body: ContradictionChangeFutureCopy.body,
+    positioning: ContradictionChangeFutureCopy.positioning,
+    futureValueLine: ContradictionChangeFutureCopy.futureValueLine,
+    orderLine: ContradictionChangeFutureCopy.orderLine,
+    prereqOrderLine: ContradictionChangeFutureCopy.prereqOrderLine,
+    guardrail: ContradictionChangeFutureCopy.guardrail,
+    result: result,
+  );
 
   static ContradictionChangeFutureGateInput composeInput({
     bool? strongProofTrailComplete,
@@ -122,15 +121,16 @@ abstract final class ContradictionChangeFutureGate {
     bool? v1ChangeDetectionUiRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      ContradictionChangeFutureGateInput(
-        strongProofTrailComplete: strongProofTrailComplete ??
-            _strongProofTrailCompleteFrom(paidIntentBeta),
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
-      );
+  }) => ContradictionChangeFutureGateInput(
+    strongProofTrailComplete:
+        strongProofTrailComplete ??
+        _strongProofTrailCompleteFrom(paidIntentBeta),
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
+  );
 
   static ContradictionChangeFutureGateInput fromRepoSignals({
     required String contradictionChangeFutureDocSource,
@@ -138,16 +138,14 @@ abstract final class ContradictionChangeFutureGate {
     bool? strongProofTrailComplete,
     bool? paidIntentBetaComplete,
     bool? v1ChangeDetectionUiRequested,
-  }) =>
-      ContradictionChangeFutureGateInput(
-        strongProofTrailComplete: strongProofTrailComplete,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
-        docListsRules: detectDocListsRules(contradictionChangeFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        futureValuePresentInCopy:
-            detectFutureValuePresentInCopy(gateCopySource),
-      );
+  }) => ContradictionChangeFutureGateInput(
+    strongProofTrailComplete: strongProofTrailComplete,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
+    docListsRules: detectDocListsRules(contradictionChangeFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    futureValuePresentInCopy: detectFutureValuePresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -192,16 +190,19 @@ abstract final class ContradictionChangeFutureGate {
     return result.paidIntentSignalPromising;
   }
 
-  static bool? _strongProofTrailCompleteFrom(PaidIntentBetaProofResult? result) {
+  static bool? _strongProofTrailCompleteFrom(
+    PaidIntentBetaProofResult? result,
+  ) {
     if (result == null) return null;
     return result.signals.any(
-      (signal) =>
-          signal.id == PaidIntentBetaProofSignalId.firstUsefulProofSeen &&
-          signal.status == PaidIntentBetaProofSignalStatus.pass,
-    ) &&
+          (signal) =>
+              signal.id == PaidIntentBetaProofSignalId.firstUsefulProofSeen &&
+              signal.status == PaidIntentBetaProofSignalStatus.pass,
+        ) &&
         result.signals.any(
           (signal) =>
-              signal.id == PaidIntentBetaProofSignalId.proofAcceptedOrCorrected &&
+              signal.id ==
+                  PaidIntentBetaProofSignalId.proofAcceptedOrCorrected &&
               signal.status == PaidIntentBetaProofSignalStatus.pass,
         );
   }
@@ -215,17 +216,20 @@ abstract final class ContradictionChangeFutureGate {
       ContradictionChangeFutureCopy.guardrail,
       ContradictionChangeFutureCopy.body,
     ].join(' ');
-    final guardrailLower = ContradictionChangeFutureCopy.guardrail.toLowerCase();
+    final guardrailLower = ContradictionChangeFutureCopy.guardrail
+        .toLowerCase();
     final proofTrailComplete = input.strongProofTrailComplete ?? false;
     return [
       _rule(
         id: ContradictionChangeFutureRuleId.futureValueLanguageDocumented,
-        passes: canonicalFutureValueLanguage
-            .every(copyBundle.toLowerCase().contains),
+        passes: canonicalFutureValueLanguage.every(
+          copyBundle.toLowerCase().contains,
+        ),
       ),
       _rule(
         id: ContradictionChangeFutureRuleId.strongProofTrailRequired,
-        passes: guardrailLower.contains('requires strong proof trail') &&
+        passes:
+            guardrailLower.contains('requires strong proof trail') &&
             (!(input.v1ChangeDetectionUiRequested ?? false) ||
                 proofTrailComplete),
       ),
@@ -235,22 +239,26 @@ abstract final class ContradictionChangeFutureGate {
       ),
       _rule(
         id: ContradictionChangeFutureRuleId.noClinicalLabelFraming,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('clinical-label'),
       ),
       _rule(
         id: ContradictionChangeFutureRuleId.noCoachingLanguage,
-        passes: !_violatesCoaching(copyBundle) &&
+        passes:
+            !_violatesCoaching(copyBundle) &&
             guardrailLower.contains('directive'),
       ),
       _rule(
         id: ContradictionChangeFutureRuleId.noForecastLanguage,
-        passes: !_violatesForecast(copyBundle) &&
+        passes:
+            !_violatesForecast(copyBundle) &&
             guardrailLower.contains('forecast'),
       ),
       _rule(
         id: ContradictionChangeFutureRuleId.noNewLiveV1Ui,
-        passes: guardrailLower.contains('no new live v1 ui') &&
+        passes:
+            guardrailLower.contains('no new live v1 ui') &&
             (!(input.v1ChangeDetectionUiRequested ?? false) ||
                 proofTrailComplete),
       ),
@@ -259,17 +267,16 @@ abstract final class ContradictionChangeFutureGate {
 
   static List<ContradictionChangeFuturePrereq> _buildPrereqs(
     ContradictionChangeFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: ContradictionChangeFuturePrereqId.strongProofTrailComplete,
-          value: input.strongProofTrailComplete,
-        ),
-        _prereq(
-          id: ContradictionChangeFuturePrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: ContradictionChangeFuturePrereqId.strongProofTrailComplete,
+      value: input.strongProofTrailComplete,
+    ),
+    _prereq(
+      id: ContradictionChangeFuturePrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+  ];
 
   static bool _violatesClinicalLabel(String copy) {
     final lower = copy.toLowerCase();
@@ -355,17 +362,16 @@ abstract final class ContradictionChangeFutureGate {
   static ContradictionChangeFutureRule _rule({
     required ContradictionChangeFutureRuleId id,
     required bool passes,
-  }) =>
-      ContradictionChangeFutureRule(
-        id: id,
-        label: ContradictionChangeFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? ContradictionChangeFutureRuleStatus.pass
-            : ContradictionChangeFutureRuleStatus.fail,
-        detailLabel: passes
-            ? ContradictionChangeFutureCopy.detailPass
-            : ContradictionChangeFutureCopy.detailFail,
-      );
+  }) => ContradictionChangeFutureRule(
+    id: id,
+    label: ContradictionChangeFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? ContradictionChangeFutureRuleStatus.pass
+        : ContradictionChangeFutureRuleStatus.fail,
+    detailLabel: passes
+        ? ContradictionChangeFutureCopy.detailPass
+        : ContradictionChangeFutureCopy.detailFail,
+  );
 }
 
 class ContradictionChangeFutureGateInput {

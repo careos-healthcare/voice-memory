@@ -21,9 +21,9 @@ class ArchivePaidValueProofCard extends StatelessWidget {
       ),
       child: Text(
         ArchivePaidValueProofCopy.body,
-        style: ArchiveMobileTypography.body(context).copyWith(
-          color: AppColors.textSecondary,
-        ),
+        style: ArchiveMobileTypography.body(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
     );
   }

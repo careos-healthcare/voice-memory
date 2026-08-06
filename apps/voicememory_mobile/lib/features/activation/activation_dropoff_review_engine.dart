@@ -108,8 +108,8 @@ abstract final class ActivationDropoffReviewEngine {
     final rows = <ActivationDropoffRow>[];
     for (var index = 0; index < specs.length; index++) {
       final (id, label, count) = specs[index];
-      final priorReached = index > 0 &&
-          specs.sublist(0, index).every((spec) => spec.$3 > 0);
+      final priorReached =
+          index > 0 && specs.sublist(0, index).every((spec) => spec.$3 > 0);
       rows.add(
         ActivationDropoffRow(
           id: id,

@@ -23,18 +23,18 @@ class DailyArchiveExerciseCard extends StatefulWidget {
     this.watchlistStore,
     this.engine = const DailyArchiveExerciseEngine(),
     this.sampleMode = false,
-    DailyArchiveExerciseResult? initialResult,
-  }) : _initialResult = initialResult;
+    this._initialResult,
+  });
 
   const DailyArchiveExerciseCard.test({
     super.key,
     required this.entries,
-    required DailyArchiveExerciseResult initialResult,
+    required DailyArchiveExerciseResult this._initialResult,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const DailyArchiveExerciseEngine(),
     this.sampleMode = false,
-  }) : _initialResult = initialResult;
+  });
 
   final List<JournalEntry> entries;
   final VoidCallback? onPrimaryAction;
@@ -81,7 +81,8 @@ class _DailyArchiveExerciseCardState extends State<DailyArchiveExerciseCard> {
     }
 
     final watchlist =
-        widget.watchlistStore ?? ArchiveWatchlistStore(AppServices.instance.prefs);
+        widget.watchlistStore ??
+        ArchiveWatchlistStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
     final watchItems = await watchlist.loadItems();
     if (!mounted) return;
@@ -146,7 +147,8 @@ class _DailyArchiveExerciseCardState extends State<DailyArchiveExerciseCard> {
             children: [
               FilledButton(
                 key: const Key('daily_archive_exercise_primary_button'),
-                onPressed: widget.onPrimaryAction ??
+                onPressed:
+                    widget.onPrimaryAction ??
                     () => context.push(result.primaryRoute),
                 child: Text(result.primaryCtaLabel),
               ),

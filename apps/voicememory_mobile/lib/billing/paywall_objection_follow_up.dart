@@ -89,9 +89,8 @@ abstract class PaywallObjectionFollowUp {
 /// timestamp, and optional paywall source id only. No user content, no
 /// notes, no snippets; the payload is fixed-shape by construction.
 class PaywallObjectionStore {
-  PaywallObjectionStore({MobilePrefsStore? prefs, DateTime Function()? now})
-    : _prefs = prefs,
-      _now = now ?? DateTime.now;
+  PaywallObjectionStore({this._prefs, DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final MobilePrefsStore? _prefs;
   final DateTime Function() _now;
@@ -115,7 +114,7 @@ class PaywallObjectionStore {
       await prefs.writeMap(prefsKey, {
         'reason_id': reason.id,
         'created_at': _now().toIso8601String(),
-        if (source != null) 'source': source,
+        'source': ?source,
       });
     } catch (_) {
       // Persistence failures never surface — worst case the next paywall

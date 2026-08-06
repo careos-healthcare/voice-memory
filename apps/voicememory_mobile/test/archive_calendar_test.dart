@@ -44,31 +44,30 @@ const _bannedWords = [
   'pro is active',
 ];
 
-Reflection _reflection({List<String> themes = const ['work']}) =>
-    Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 2,
-      recurringThemes: themes,
-      exactLanguagePattern: '',
-      concreteObservation: 'Work pressure showed up in this moment.',
-      repeatedSignal: '',
-    );
+Reflection _reflection({List<String> themes = const ['work']}) => Reflection(
+  mood: 'neutral',
+  emotionalIntensity: 2,
+  recurringThemes: themes,
+  exactLanguagePattern: '',
+  concreteObservation: 'Work pressure showed up in this moment.',
+  repeatedSignal: '',
+);
 
 JournalEntry _entry(
   String id, {
   required DateTime createdAt,
   List<String> themes = const ['work'],
   String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt,
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: _reflection(themes: themes),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt,
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: _reflection(themes: themes),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -98,9 +97,7 @@ void main() {
 
     test('1 entry creates one calendar day', () {
       final result = engine.buildFromJournal(
-        entries: [
-          _entry('one', createdAt: DateTime(2026, 6, 10)),
-        ],
+        entries: [_entry('one', createdAt: DateTime(2026, 6, 10))],
         now: now,
       );
       expect(result.isEmpty, isFalse);
@@ -137,9 +134,7 @@ void main() {
 
     test('today marker works with injected date', () {
       final result = engine.buildFromJournal(
-        entries: [
-          _entry('today', createdAt: DateTime(2026, 6, 15, 8)),
-        ],
+        entries: [_entry('today', createdAt: DateTime(2026, 6, 15, 8))],
         now: now,
       );
       expect(result.days.single.isToday, isTrue);
@@ -197,7 +192,9 @@ void main() {
     });
 
     test('copy uses ArchiveMe and avoids banned language', () {
-      final copy = ArchiveCalendarCopy.allVisibleStrings.join(' ').toLowerCase();
+      final copy = ArchiveCalendarCopy.allVisibleStrings
+          .join(' ')
+          .toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(ArchiveCalendarCopy.allVisibleStrings);
     });
@@ -211,51 +208,57 @@ void main() {
       );
       expect(withEntries.showOnArchiveHome, isTrue);
 
-      final withoutEntries = engine.buildFromJournal(entries: const [], now: now);
+      final withoutEntries = engine.buildFromJournal(
+        entries: const [],
+        now: now,
+      );
       expect(withoutEntries.showOnArchiveHome, isFalse);
     });
 
-    test('does not displace First Week Path / Daily Exercise / Archive Clarity / Then vs Now', () {
-      final plan = const ArchiveHomePriorityEngine().build(
-        ArchiveHomePriorityInput(
-          savedEntryCount: 8,
-          usableEvidenceCount: 8,
-          depthLevel: ArchiveDepthLevel.weeklyReviewReady,
-          returnChangesAvailable: true,
-          weeklyReviewAvailable: true,
-          sampleMode: false,
-          proPreviewPromoVisible: false,
-          showEmptySample: false,
-          firstWeekPathVisible: true,
-          dailyArchiveExerciseVisible: true,
-          archiveClarityProgressVisible: true,
-          capacityLoopVisible: false,
-          capacityThreeMomentActivationVisible: false,
-          capacityPullReasonVisible: false,
-          capacityDecisionOutcomeVisible: false,
-          capacityCostLaterCheckinVisible: false,
-          capacityActivationFitVisible: false,
-          beforeYouSayYesPauseVisible: false,
-          capacityWeeklyReviewVisible: false,
-          capacityBoundaryResponseVisible: false,
-          thenVsNowVisible: true,
-          archiveCalendarVisible: true,
-          reviewRitualVisible: false,
-          milestoneShareVisible: false,
-        ),
-      );
+    test(
+      'does not displace First Week Path / Daily Exercise / Archive Clarity / Then vs Now',
+      () {
+        final plan = const ArchiveHomePriorityEngine().build(
+          ArchiveHomePriorityInput(
+            savedEntryCount: 8,
+            usableEvidenceCount: 8,
+            depthLevel: ArchiveDepthLevel.weeklyReviewReady,
+            returnChangesAvailable: true,
+            weeklyReviewAvailable: true,
+            sampleMode: false,
+            proPreviewPromoVisible: false,
+            showEmptySample: false,
+            firstWeekPathVisible: true,
+            dailyArchiveExerciseVisible: true,
+            archiveClarityProgressVisible: true,
+            capacityLoopVisible: false,
+            capacityThreeMomentActivationVisible: false,
+            capacityPullReasonVisible: false,
+            capacityDecisionOutcomeVisible: false,
+            capacityCostLaterCheckinVisible: false,
+            capacityActivationFitVisible: false,
+            beforeYouSayYesPauseVisible: false,
+            capacityWeeklyReviewVisible: false,
+            capacityBoundaryResponseVisible: false,
+            thenVsNowVisible: true,
+            archiveCalendarVisible: true,
+            reviewRitualVisible: false,
+            milestoneShareVisible: false,
+          ),
+        );
 
-      expect(
-        plan.secondarySections,
-        contains(ArchiveHomeSectionId.archiveCalendar),
-      );
-      expect(
-        plan.secondarySections.indexOf(ArchiveHomeSectionId.archiveCalendar),
-        greaterThan(
-          plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
-        ),
-      );
-    });
+        expect(
+          plan.secondarySections,
+          contains(ArchiveHomeSectionId.archiveCalendar),
+        );
+        expect(
+          plan.secondarySections.indexOf(ArchiveHomeSectionId.archiveCalendar),
+          greaterThan(
+            plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
+          ),
+        );
+      },
+    );
   });
 
   group('ArchiveCalendarCard', () {
@@ -290,8 +293,9 @@ void main() {
 
   group('Support & Feedback', () {
     test('support screen links to archive calendar route', () {
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(support, contains('ArchiveCalendarCopy.route'));
       expect(support, contains('support_feedback_open_archive_calendar'));
     });

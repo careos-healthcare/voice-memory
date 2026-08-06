@@ -45,17 +45,15 @@ class ProEvidenceValueSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final display = ProEvidenceValueEngine.buildDisplay();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-    final sectionStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 16,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    final sectionStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 16);
 
     return SafeArea(
       child: Padding(
@@ -152,11 +150,7 @@ class ProEvidenceValueSheet extends StatelessWidget {
 }
 
 class _Bullet extends StatelessWidget {
-  const _Bullet({
-    required this.text,
-    required this.style,
-    this.bulletKey,
-  });
+  const _Bullet({required this.text, required this.style, this.bulletKey});
 
   final String text;
   final TextStyle style;

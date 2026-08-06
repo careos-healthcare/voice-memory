@@ -5,7 +5,9 @@ import 'proof_repair_playbooks_copy.dart';
 abstract final class ProofRepairPlaybooks {
   ProofRepairPlaybooks._();
 
-  static ProofRepairPlaybookPlan fromOutcome(ProofRepairOutcomeDecision decision) {
+  static ProofRepairPlaybookPlan fromOutcome(
+    ProofRepairOutcomeDecision decision,
+  ) {
     final playbook = _playbookFor(decision);
     return ProofRepairPlaybookPlan(
       playbook: playbook,
@@ -18,19 +20,20 @@ abstract final class ProofRepairPlaybooks {
     );
   }
 
-  static ProofRepairPlaybook _playbookFor(ProofRepairOutcomeDecision decision) =>
-      switch (decision) {
-        ProofRepairOutcomeDecision.insufficientData =>
-          ProofRepairPlaybook.waitForMoreData,
-        ProofRepairOutcomeDecision.repairProofAgain =>
-          ProofRepairPlaybook.repairProofAgain,
-        ProofRepairOutcomeDecision.tightenAnchorsAgain =>
-          ProofRepairPlaybook.tightenAnchorsAgain,
-        ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
-          ProofRepairPlaybook.returnToEvidenceTrail,
-        ProofRepairOutcomeDecision.productionCandidate =>
-          ProofRepairPlaybook.productionReadiness,
-      };
+  static ProofRepairPlaybook _playbookFor(
+    ProofRepairOutcomeDecision decision,
+  ) => switch (decision) {
+    ProofRepairOutcomeDecision.insufficientData =>
+      ProofRepairPlaybook.waitForMoreData,
+    ProofRepairOutcomeDecision.repairProofAgain =>
+      ProofRepairPlaybook.repairProofAgain,
+    ProofRepairOutcomeDecision.tightenAnchorsAgain =>
+      ProofRepairPlaybook.tightenAnchorsAgain,
+    ProofRepairOutcomeDecision.proofStableReturnToEvidenceTrail =>
+      ProofRepairPlaybook.returnToEvidenceTrail,
+    ProofRepairOutcomeDecision.productionCandidate =>
+      ProofRepairPlaybook.productionReadiness,
+  };
 }
 
 enum ProofRepairPlaybook {

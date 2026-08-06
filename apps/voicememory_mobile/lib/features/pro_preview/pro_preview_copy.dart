@@ -35,20 +35,32 @@ abstract final class ProPreviewCopy {
   ];
 
   static List<ProPreviewRow> previewRows() => const [
-        ProPreviewRow(id: ProPreviewRowId.fullPatternTimeline, label: fullPatternTimeline),
-        ProPreviewRow(id: ProPreviewRowId.whatReturned, label: whatReturned),
-        ProPreviewRow(id: ProPreviewRowId.whatChanged, label: whatChanged),
-        ProPreviewRow(id: ProPreviewRowId.whatYouCorrected, label: whatYouCorrected),
-        ProPreviewRow(id: ProPreviewRowId.currentVsFading, label: currentVsFading),
-        ProPreviewRow(id: ProPreviewRowId.monthlyPrivateReport, label: monthlyPrivateReport),
-        ProPreviewRow(id: ProPreviewRowId.backupContinuity, label: backupContinuity),
-      ];
+    ProPreviewRow(
+      id: ProPreviewRowId.fullPatternTimeline,
+      label: fullPatternTimeline,
+    ),
+    ProPreviewRow(id: ProPreviewRowId.whatReturned, label: whatReturned),
+    ProPreviewRow(id: ProPreviewRowId.whatChanged, label: whatChanged),
+    ProPreviewRow(
+      id: ProPreviewRowId.whatYouCorrected,
+      label: whatYouCorrected,
+    ),
+    ProPreviewRow(id: ProPreviewRowId.currentVsFading, label: currentVsFading),
+    ProPreviewRow(
+      id: ProPreviewRowId.monthlyPrivateReport,
+      label: monthlyPrivateReport,
+    ),
+    ProPreviewRow(
+      id: ProPreviewRowId.backupContinuity,
+      label: backupContinuity,
+    ),
+  ];
 
   static List<String> allDisplayedStrings() => [
-        title,
-        body,
-        cta,
-        secondary,
-        for (final row in previewRows()) row.label,
-      ];
+    title,
+    body,
+    cta,
+    secondary,
+    for (final row in previewRows()) row.label,
+  ];
 }

@@ -102,9 +102,7 @@ class CalibrationReport {
   /// is too small to report.
   double? rateFor(ArchiveCorrectionChoice choice) {
     if (!isReportable || correctedCount == 0) return null;
-    final matching = _samples
-        .where((sample) => sample.choice == choice)
-        .length;
+    final matching = _samples.where((sample) => sample.choice == choice).length;
     return matching / correctedCount;
   }
 
@@ -147,8 +145,7 @@ class CalibrationReport {
       grouped.putIfAbsent(sample.sourceCountBand, () => []).add(sample);
     }
     return {
-      for (final entry in grouped.entries)
-        entry.key: _acceptance(entry.value),
+      for (final entry in grouped.entries) entry.key: _acceptance(entry.value),
     };
   }
 
@@ -160,8 +157,7 @@ class CalibrationReport {
       grouped.putIfAbsent(kind, () => []).add(sample);
     }
     return {
-      for (final entry in grouped.entries)
-        entry.key: _acceptance(entry.value),
+      for (final entry in grouped.entries) entry.key: _acceptance(entry.value),
     };
   }
 
@@ -184,8 +180,7 @@ class CalibrationReport {
     'invalidEvidenceRate': invalidEvidenceRate,
     'contradictionRate': contradictionRate,
     'acceptanceByBand': {
-      for (final entry in acceptanceByBand.entries)
-        entry.key.name: entry.value,
+      for (final entry in acceptanceByBand.entries) entry.key.name: entry.value,
     },
     'acceptanceBySourceCount': acceptanceBySourceCount,
     'acceptanceByClaimKind': {

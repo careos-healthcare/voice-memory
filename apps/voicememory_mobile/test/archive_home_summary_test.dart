@@ -17,49 +17,48 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -140,33 +139,43 @@ void main() {
       expect(summary.suppressDuplicatePayoffCards, isTrue);
     });
 
-    test('3 entries shows belief-starting copy with not-conclusion framing', () {
-      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
-      expect(summary.stage, ArchiveHomeStage.three);
-      expect(summary.title, 'ArchiveMe is starting to form a belief.');
-      expect(summary.body, contains('saved words suggest so far'));
-      expect(
-        summary.currentBeliefLine,
-        VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
-      );
-      expect(summary.secondaryCta, 'View archive');
-      expect(summary.secondaryAction, ArchiveHomeAction.viewArchive);
-      expect(summary.suppressDuplicatePayoffCards, isTrue);
-      _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
-    });
+    test(
+      '3 entries shows belief-starting copy with not-conclusion framing',
+      () {
+        final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
+        expect(summary.stage, ArchiveHomeStage.three);
+        expect(summary.title, 'ArchiveMe is starting to form a belief.');
+        expect(summary.body, contains('saved words suggest so far'));
+        expect(
+          summary.currentBeliefLine,
+          VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
+        );
+        expect(summary.secondaryCta, 'View archive');
+        expect(summary.secondaryAction, ArchiveHomeAction.viewArchive);
+        expect(summary.suppressDuplicatePayoffCards, isTrue);
+        _expectNoBannedCopy([
+          summary.title,
+          summary.body,
+          summary.footnoteLine!,
+        ]);
+      },
+    );
 
-    test('4 entries shows belief-updated copy and add moment primary action', () {
-      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
-      expect(summary.stage, ArchiveHomeStage.four);
-      expect(summary.title, VisibleArchiveProofCopy.beliefUpdateTitle);
-      expect(summary.primaryCta, VisibleArchiveProofCopy.firstSavePrimaryCta);
-      expect(summary.primaryAction, ArchiveHomeAction.addMoment);
-      expect(summary.secondaryCta, 'View evidence');
-      expect(summary.secondaryAction, ArchiveHomeAction.viewEvidence);
-      expect(summary.currentBeliefLine, isNotEmpty);
-      expect(summary.evidenceRows.length, greaterThanOrEqualTo(2));
-      expect(summary.suppressDuplicatePayoffCards, isTrue);
-    });
+    test(
+      '4 entries shows belief-updated copy and add moment primary action',
+      () {
+        final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
+        expect(summary.stage, ArchiveHomeStage.four);
+        expect(summary.title, VisibleArchiveProofCopy.beliefUpdateTitle);
+        expect(summary.primaryCta, VisibleArchiveProofCopy.firstSavePrimaryCta);
+        expect(summary.primaryAction, ArchiveHomeAction.addMoment);
+        expect(summary.secondaryCta, 'View evidence');
+        expect(summary.secondaryAction, ArchiveHomeAction.viewEvidence);
+        expect(summary.currentBeliefLine, isNotEmpty);
+        expect(summary.evidenceRows.length, greaterThanOrEqualTo(2));
+        expect(summary.suppressDuplicatePayoffCards, isTrue);
+      },
+    );
 
     test('5+ entries shows weekly review copy and view review action', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(5));
@@ -195,21 +204,21 @@ void main() {
           entries: count == 0
               ? const []
               : count == 2
-                  ? [
-                      _voiceEntry(
-                        id: 'e1',
-                        transcript:
-                            'I felt pressure at work before saying yes again even when I was tired.',
-                        createdAt: DateTime(2026, 6, 9, 12),
-                      ),
-                      _voiceEntry(
-                        id: 'e2',
-                        transcript:
-                            'I spent the afternoon organizing photos from last summer at the beach.',
-                        createdAt: DateTime(2026, 6, 10, 12),
-                      ),
-                    ]
-                  : _entries(count),
+              ? [
+                  _voiceEntry(
+                    id: 'e1',
+                    transcript:
+                        'I felt pressure at work before saying yes again even when I was tired.',
+                    createdAt: DateTime(2026, 6, 9, 12),
+                  ),
+                  _voiceEntry(
+                    id: 'e2',
+                    transcript:
+                        'I spent the afternoon organizing photos from last summer at the beach.',
+                    createdAt: DateTime(2026, 6, 10, 12),
+                  ),
+                ]
+              : _entries(count),
         );
         final visible = [
           summary.title,
@@ -265,12 +274,21 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_home_summary_card')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.archiveHomeBeliefLabel), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_home_summary_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.archiveHomeBeliefLabel),
+        findsOneWidget,
+      );
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence from your archive'), findsOneWidget);
       expect(find.text('What to add next'), findsOneWidget);
-      expect(find.byKey(const Key('archive_home_summary_primary_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_home_summary_primary_cta')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('five entries can embed share-safe proof', (tester) async {
@@ -296,11 +314,16 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsOneWidget,
+      );
       expect(find.text('No private entries shared.'), findsOneWidget);
     });
 
-    testWidgets('first save card exposes view archive callback', (tester) async {
+    testWidgets('first save card exposes view archive callback', (
+      tester,
+    ) async {
       var viewedArchive = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -337,75 +360,83 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('post_save_view_archive_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_view_archive_cta')),
+        findsOneWidget,
+      );
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text(summary.body), findsOneWidget);
     });
 
-    testWidgets('four-entry summary Record if it happens again routes to record', (
-      tester,
-    ) async {
-      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
-      var recordOpened = false;
-      var evidenceOpened = false;
+    testWidgets(
+      'four-entry summary Record if it happens again routes to record',
+      (tester) async {
+        final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
+        var recordOpened = false;
+        var evidenceOpened = false;
 
-      final router = GoRouter(
-        initialLocation: '/patterns',
-        routes: [
-          GoRoute(
-            path: '/patterns',
-            builder: (context, state) => Scaffold(
-              body: SingleChildScrollView(
-                child: ArchiveHomeSummaryCard(
-                  summary: summary,
-                  onPrimary: () {
-                    recordOpened = true;
-                    context.go('/record');
-                  },
-                  onSecondary: () {
-                    evidenceOpened = true;
-                    context.push('/belief-evidence');
-                  },
+        final router = GoRouter(
+          initialLocation: '/patterns',
+          routes: [
+            GoRoute(
+              path: '/patterns',
+              builder: (context, state) => Scaffold(
+                body: SingleChildScrollView(
+                  child: ArchiveHomeSummaryCard(
+                    summary: summary,
+                    onPrimary: () {
+                      recordOpened = true;
+                      context.go('/record');
+                    },
+                    onSecondary: () {
+                      evidenceOpened = true;
+                      context.push('/belief-evidence');
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-          GoRoute(
-            path: '/record',
-            builder: (context, state) =>
-                const Scaffold(body: Text('RECORD_SCREEN')),
-          ),
-          GoRoute(
-            path: '/belief-evidence',
-            builder: (context, state) =>
-                const Scaffold(body: Text('EVIDENCE_SCREEN')),
-          ),
-        ],
-      );
+            GoRoute(
+              path: '/record',
+              builder: (context, state) =>
+                  const Scaffold(body: Text('RECORD_SCREEN')),
+            ),
+            GoRoute(
+              path: '/belief-evidence',
+              builder: (context, state) =>
+                  const Scaffold(body: Text('EVIDENCE_SCREEN')),
+            ),
+          ],
+        );
 
-      await tester.binding.setSurfaceSize(const Size(390, 1600));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
-      );
-      await tester.pumpAndSettle();
+        await tester.binding.setSurfaceSize(const Size(390, 1600));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        );
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('archive_home_summary_primary_cta')));
-      await tester.pumpAndSettle();
-      expect(recordOpened, isTrue);
-      expect(evidenceOpened, isFalse);
-      expect(find.text('RECORD_SCREEN'), findsOneWidget);
+        await tester.tap(
+          find.byKey(const Key('archive_home_summary_primary_cta')),
+        );
+        await tester.pumpAndSettle();
+        expect(recordOpened, isTrue);
+        expect(evidenceOpened, isFalse);
+        expect(find.text('RECORD_SCREEN'), findsOneWidget);
 
-      recordOpened = false;
-      router.go('/patterns');
-      await tester.pumpAndSettle();
+        recordOpened = false;
+        router.go('/patterns');
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('archive_home_summary_secondary_cta')));
-      await tester.pumpAndSettle();
-      expect(evidenceOpened, isTrue);
-      expect(recordOpened, isFalse);
-      expect(find.text('EVIDENCE_SCREEN'), findsOneWidget);
-    });
+        await tester.tap(
+          find.byKey(const Key('archive_home_summary_secondary_cta')),
+        );
+        await tester.pumpAndSettle();
+        expect(evidenceOpened, isTrue);
+        expect(recordOpened, isFalse);
+        expect(find.text('EVIDENCE_SCREEN'), findsOneWidget);
+      },
+    );
 
     testWidgets('four-entry post-save nudge always labels add moment CTA', (
       tester,
@@ -425,7 +456,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePrimaryCta),
+        findsOneWidget,
+      );
       expect(find.text('View evidence'), findsNothing);
     });
   });

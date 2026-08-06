@@ -45,36 +45,36 @@ JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        'e1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        'e2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        'e3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    'e1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    'e2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    'e3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveRelatedEntries() => [
-      ..._threeRelatedEntries(),
-      _entry(
-        'e4',
-        'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        'e5',
-        'Same yes pattern came back but it felt less urgent and easier to stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._threeRelatedEntries(),
+  _entry(
+    'e4',
+    'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _entry(
+    'e5',
+    'Same yes pattern came back but it felt less urgent and easier to stop.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 WeeklyArchiveReviewResult _fullWeeklyReview() =>
     const WeeklyArchiveReviewResult(
@@ -164,10 +164,7 @@ void main() {
 
   group('ProMemoryBoundaryCopy', () {
     test('defines upgrade bridge and fallback copy', () {
-      expect(
-        ProMemoryBoundaryCopy.upgradeBridgeTitle,
-        'ArchiveMe Pro',
-      );
+      expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'ArchiveMe Pro');
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeBody,
         contains('longer proof trail'),
@@ -208,7 +205,10 @@ void main() {
         moments: moments,
         isPro: false,
       );
-      expect(visible, hasLength(ProMemoryBoundaryEngine.freePatternDetailMomentLimit));
+      expect(
+        visible,
+        hasLength(ProMemoryBoundaryEngine.freePatternDetailMomentLimit),
+      );
       expect(visible, moments.take(3).toList());
     });
 
@@ -276,10 +276,7 @@ void main() {
         ProMemoryBoundaryEngine.showPrivateReportPreviewNote(isPro: false),
         isTrue,
       );
-      expect(
-        PrivateArchiveReportGates.showFullExport(isPro: false),
-        isFalse,
-      );
+      expect(PrivateArchiveReportGates.showFullExport(isPro: false), isFalse);
     });
 
     test('Pro user can export full private report', () {
@@ -327,7 +324,10 @@ void main() {
         showPlanPrices: true,
       );
       expect(display.showPlanPrices, isFalse);
-      expect(display.unavailableBody, ProPackagingCopy.offeringsUnavailableBody);
+      expect(
+        display.unavailableBody,
+        ProPackagingCopy.offeringsUnavailableBody,
+      );
     });
   });
 
@@ -337,10 +337,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ProMemoryUpgradeBridge(
-              onSeePro: () {},
-              onNotNow: () {},
-            ),
+            body: ProMemoryUpgradeBridge(onSeePro: () {}, onNotNow: () {}),
           ),
         ),
       );
@@ -434,54 +431,66 @@ void main() {
   });
 
   group('PatternDetailSheet pro boundary', () {
-    testWidgets('free user sees first-proof moments and older evidence bridge',
-        (tester) async {
-      final detail = _detailWithMoments(5);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PatternDetailSheet(
-              detail: detail,
-              isPro: false,
-              onSeePro: () {},
+    testWidgets(
+      'free user sees first-proof moments and older evidence bridge',
+      (tester) async {
+        final detail = _detailWithMoments(5);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: PatternDetailSheet(
+                detail: detail,
+                isPro: false,
+                onSeePro: () {},
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('pattern_detail_moment_row_0')), findsOneWidget);
-      expect(find.byKey(const Key('pattern_detail_moment_row_1')), findsOneWidget);
-      expect(find.byKey(const Key('pattern_detail_moment_row_2')), findsOneWidget);
-      expect(find.byKey(const Key('pattern_detail_moment_row_3')), findsNothing);
-      expect(
-        find.text(ProMemoryBoundaryCopy.olderEvidenceTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('pro_memory_upgrade_bridge_compact')),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.byKey(const Key('pattern_detail_moment_row_0')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('pattern_detail_moment_row_1')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('pattern_detail_moment_row_2')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('pattern_detail_moment_row_3')),
+          findsNothing,
+        );
+        expect(
+          find.text(ProMemoryBoundaryCopy.olderEvidenceTitle),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('pro_memory_upgrade_bridge_compact')),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('Pro user sees all evidence moments', (tester) async {
       final detail = _detailWithMoments(5);
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: PatternDetailSheet(detail: detail, isPro: true),
-          ),
+          home: Scaffold(body: PatternDetailSheet(detail: detail, isPro: true)),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('pattern_detail_moment_row_4')), findsOneWidget);
       expect(
-        find.text(ProMemoryBoundaryCopy.olderEvidenceTitle),
-        findsNothing,
+        find.byKey(const Key('pattern_detail_moment_row_4')),
+        findsOneWidget,
       );
+      expect(find.text(ProMemoryBoundaryCopy.olderEvidenceTitle), findsNothing);
     });
   });
 
@@ -499,14 +508,13 @@ void main() {
   });
 
   group('Paywall offerings empty fallback', () {
-    testWidgets('restore purchases visible when offerings empty', (tester) async {
+    testWidgets('restore purchases visible when offerings empty', (
+      tester,
+    ) async {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      expect(
-        find.byKey(const Key('paywall_unavailable_body')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       final unavailableBody = tester.widget<Text>(
         find.byKey(const Key('paywall_unavailable_body')),
       );

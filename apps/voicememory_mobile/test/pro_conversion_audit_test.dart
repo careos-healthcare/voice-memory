@@ -17,10 +17,19 @@ void main() {
     test('banned live claims block more ai storage and dashboard', () {
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('more ai'));
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('better ai'));
-      expect(ProConversionAuditCopy.bannedLiveClaims, contains('unlimited answers'));
+      expect(
+        ProConversionAuditCopy.bannedLiveClaims,
+        contains('unlimited answers'),
+      );
       expect(ProConversionAuditCopy.bannedLiveClaims, contains('ai coach'));
-      expect(ProConversionAuditCopy.bannedLiveClaims, contains('unlimited storage'));
-      expect(ProConversionAuditCopy.bannedLiveClaims, contains('life dashboard'));
+      expect(
+        ProConversionAuditCopy.bannedLiveClaims,
+        contains('unlimited storage'),
+      );
+      expect(
+        ProConversionAuditCopy.bannedLiveClaims,
+        contains('life dashboard'),
+      );
       expect(
         ProConversionAuditCopy.hasNoBannedLiveClaims(
           ProConversionAuditCopy.bannedLiveClaims,
@@ -51,7 +60,9 @@ void main() {
 
   group('Future revenue scope docs', () {
     test('docs list blocked future directions', () {
-      final doc = File('docs/FUTURE_REVENUE_SCOPE.md').readAsStringSync().toLowerCase();
+      final doc = File(
+        'docs/FUTURE_REVENUE_SCOPE.md',
+      ).readAsStringSync().toLowerCase();
       for (final direction in FutureRevenueScopeCopy.futureDirections) {
         expect(doc, contains(direction), reason: direction);
       }

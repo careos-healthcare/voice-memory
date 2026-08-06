@@ -1,31 +1,5 @@
 part of '../../screens/record_screen.dart';
 
-/// Owns recording-duration state and its stream lifecycle independently from
-/// the screen's presentation state.
-class RecordingStateController {
-  int _seconds = 0;
-  StreamSubscription<int>? _durationSubscription;
-
-  int get seconds => _seconds;
-
-  void bindDuration(Stream<int> duration, {required ValueChanged<int> onTick}) {
-    unawaited(_durationSubscription?.cancel());
-    _durationSubscription = duration.listen((value) {
-      _seconds = value;
-      onTick(value);
-    });
-  }
-
-  void resetTimer() {
-    _seconds = 0;
-  }
-
-  Future<void> dispose() async {
-    await _durationSubscription?.cancel();
-    _durationSubscription = null;
-  }
-}
-
 class _RecordScreenState extends State<RecordScreen>
     with WidgetsBindingObserver {
   RecordNavigationActivityController get _navigationActivity =>
@@ -49,19 +23,57 @@ class _RecordScreenState extends State<RecordScreen>
   }
 
   RecordUiState _ui = RecordUiState.idle;
-  RecordingPhase _mic = RecordingPhase.idle;
-  MicrophonePermissionState _micPermissionState =
-      MicrophonePermissionState.unknown;
-  bool _micPermissionUserDenied = false;
-  bool _micSessionRequiresOpenSettings = false;
   bool _showMicPermissionSimulatorHelper = false;
   bool _ignoreStaleMicRefreshAfterGrant = false;
   final GlobalKey _permissionPanelKey = GlobalKey();
-  final RecordingStateController _recordingState = RecordingStateController();
+  final RecordingSessionController _recordingState = RecordingSessionController();
+  final MicrophonePermissionController _micPermission =
+      MicrophonePermissionController();
+  final CaptureProcessingController _captureProcessing =
+      CaptureProcessingController();
+  final PostSaveResultController _postSaveResult = PostSaveResultController();
+
+  RecordingPhase get _mic => _micPermission.phase;
+  set _mic(RecordingPhase value) => _micPermission.phase = value;
+
+  MicrophonePermissionState get _micPermissionState =>
+      _micPermission.permissionState;
+  set _micPermissionState(MicrophonePermissionState value) =>
+      _micPermission.permissionState = value;
+
+  bool get _micPermissionUserDenied => _micPermission.userDeniedThisSession;
+  set _micPermissionUserDenied(bool value) =>
+      _micPermission.userDeniedThisSession = value;
+
+  bool get _micSessionRequiresOpenSettings =>
+      _micPermission.sessionRequiresOpenSettings;
+  set _micSessionRequiresOpenSettings(bool value) =>
+      _micPermission.sessionRequiresOpenSettings = value;
+
   int get _seconds => _recordingState.seconds;
+  String? get _localSaveTitle => _postSaveResult.localSaveTitle;
+  set _localSaveTitle(String? value) => _postSaveResult.localSaveTitle = value;
+  String? get _syncNote => _captureProcessing.syncNote;
+  set _syncNote(String? value) => _captureProcessing.syncNote = value;
+  bool get _showPostSaveLoop => _postSaveResult.showPostSave;
+  set _showPostSaveLoop(bool value) => _postSaveResult.showPostSave = value;
+  bool get _stopAndProcessInFlight => _captureProcessing.processing;
+  set _stopAndProcessInFlight(bool value) =>
+      _captureProcessing.processing = value;
+  String get _stageLabel => _captureProcessing.stageLabel ?? '';
+  set _stageLabel(String value) =>
+      _captureProcessing.stageLabel = value.isEmpty ? null : value;
+
+  RecordViewState get _recordViewState => RecordViewStateMapper.fromUi(
+        ui: _ui,
+        recordingDuration: Duration(seconds: _seconds),
+        statusMessage: _stageLabel.isEmpty ? null : _stageLabel,
+        errorMessage: _error,
+        savedEntryId: _postSaveResult.savedEntryId,
+        hasVerifiedProof: _postSaveResult.hasVerifiedProof,
+      );
+
   String? _error;
-  String? _localSaveTitle;
-  String? _syncNote;
   int _journalEntryCount = 0;
   bool _journalEntryCountLoaded = false;
   ArchiveReturnChangesResult? _archiveReturnChangesResult;
@@ -76,13 +88,11 @@ class _RecordScreenState extends State<RecordScreen>
   List<DateTime> _entryDates = const [];
   bool _autostartWithPromptAttempted = false;
   bool _yesterdaysSnapshotPresentAttempted = false;
-  String _stageLabel = '';
   String? _selectedPromptLine;
   AudienceWedge? _audienceWedge;
   LoopMode? _activeLoop;
   String? _defaultBoundaryPauseLabel;
   String? _postSaveFollowUp;
-  bool _showPostSaveLoop = false;
   bool _savedFromConfirmedRepeatTrigger = false;
   bool _savedFromHelpfulAction = false;
   bool _earlyEvidenceTriggerCaptured = false;
@@ -161,7 +171,6 @@ class _RecordScreenState extends State<RecordScreen>
   String _detectedLanguageCode = ScreenshotMode.languageCode;
 
   late final RecordingService _recording;
-  bool _stopAndProcessInFlight = false;
   LiveVoiceCaptureService? _liveVoice;
   late final MicrophonePermissionGateway _microphonePermissionGateway;
   late final OnboardingMicStateStore _onboardingMicStateStore;
@@ -7111,7 +7120,7 @@ class _RecordScreenState extends State<RecordScreen>
         );
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
-      color: AppColors.backgroundPrimary,
+      color: recordScreenBackground,
       child: SafeArea(
         top: true,
         bottom: false,

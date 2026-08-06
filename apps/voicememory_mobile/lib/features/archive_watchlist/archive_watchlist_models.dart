@@ -1,9 +1,6 @@
 /// Preset watch theme for the archive watchlist.
 class ArchiveWatchlistPreset {
-  const ArchiveWatchlistPreset({
-    required this.id,
-    required this.label,
-  });
+  const ArchiveWatchlistPreset({required this.id, required this.label});
 
   final String id;
   final String label;
@@ -44,12 +41,12 @@ class ArchiveWatchlistItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'presetId': presetId,
-        if (customLabel != null && customLabel!.trim().isNotEmpty)
-          'customLabel': customLabel!.trim(),
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'presetId': presetId,
+    if (customLabel != null && customLabel!.trim().isNotEmpty)
+      'customLabel': customLabel!.trim(),
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory ArchiveWatchlistItem.fromJson(Map<String, dynamic> json) {
     final createdRaw = json['createdAt'] as String?;

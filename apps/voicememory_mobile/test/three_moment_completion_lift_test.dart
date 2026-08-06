@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/widgets/record/three_moment_completion_card.d
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/three_moment_completion/unused.json'));
+    : super(file: File('test/tmp/three_moment_completion/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -42,68 +42,65 @@ Map<String, Object> _baseVisibility({
   bool isPermissionBlocked = false,
   int entryCount = 0,
   bool dismissedForToday = false,
-}) =>
-    {
-      'isReady': isReady,
-      'isRecording': isRecording,
-      'isPostSave': isPostSave,
-      'isDegradedTranscriptState': isDegradedTranscriptState,
-      'whatChangedQuestionActive': whatChangedQuestionActive,
-      'patternReviewInboxHasActiveItems': patternReviewInboxHasActiveItems,
-      'isPermissionBlocked': isPermissionBlocked,
-      'entryCount': entryCount,
-      'dismissedForToday': dismissedForToday,
-    };
+}) => {
+  'isReady': isReady,
+  'isRecording': isRecording,
+  'isPostSave': isPostSave,
+  'isDegradedTranscriptState': isDegradedTranscriptState,
+  'whatChangedQuestionActive': whatChangedQuestionActive,
+  'patternReviewInboxHasActiveItems': patternReviewInboxHasActiveItems,
+  'isPermissionBlocked': isPermissionBlocked,
+  'entryCount': entryCount,
+  'dismissedForToday': dismissedForToday,
+};
 
 bool _shouldShow({
   required ThreeMomentCompletionResult result,
   required Map<String, Object> args,
-}) =>
-    ThreeMomentCompletionEngine.shouldShow(
-      result: result,
-      isReady: args['isReady']! as bool,
-      isRecording: args['isRecording']! as bool,
-      isPostSave: args['isPostSave']! as bool,
-      isDegradedTranscriptState: args['isDegradedTranscriptState']! as bool,
-      whatChangedQuestionActive: args['whatChangedQuestionActive']! as bool,
-      patternReviewInboxHasActiveItems:
-          args['patternReviewInboxHasActiveItems']! as bool,
-      isPermissionBlocked: args['isPermissionBlocked']! as bool,
-      entryCount: args['entryCount']! as int,
-      dismissedForToday: args['dismissedForToday']! as bool,
-    );
+}) => ThreeMomentCompletionEngine.shouldShow(
+  result: result,
+  isReady: args['isReady']! as bool,
+  isRecording: args['isRecording']! as bool,
+  isPostSave: args['isPostSave']! as bool,
+  isDegradedTranscriptState: args['isDegradedTranscriptState']! as bool,
+  whatChangedQuestionActive: args['whatChangedQuestionActive']! as bool,
+  patternReviewInboxHasActiveItems:
+      args['patternReviewInboxHasActiveItems']! as bool,
+  isPermissionBlocked: args['isPermissionBlocked']! as bool,
+  entryCount: args['entryCount']! as int,
+  dismissedForToday: args['dismissedForToday']! as bool,
+);
 
 SurfacePriorityCandidates _earlyGuidanceCandidates({
   required bool threeMomentCompletion,
   bool firstMomentCapture = true,
   bool secondMomentReturn = true,
   bool lowFrictionReturn = true,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      threeMomentCompletion: threeMomentCompletion,
-      firstMomentCapture: firstMomentCapture,
-      secondMomentReturn: secondMomentReturn,
-      lowFrictionReturn: lowFrictionReturn,
-      whatToNoticeNext: true,
-      betaTodaySummary: true,
-      openCapturePromptChips: true,
-      captureFreedomLine: true,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  threeMomentCompletion: threeMomentCompletion,
+  firstMomentCapture: firstMomentCapture,
+  secondMomentReturn: secondMomentReturn,
+  lowFrictionReturn: lowFrictionReturn,
+  whatToNoticeNext: true,
+  betaTodaySummary: true,
+  openCapturePromptChips: true,
+  captureFreedomLine: true,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -200,10 +197,7 @@ void main() {
       expect(
         _shouldShow(
           result: _buildResult(entryCount: 1),
-          args: _baseVisibility(
-            entryCount: 1,
-            whatChangedQuestionActive: true,
-          ),
+          args: _baseVisibility(entryCount: 1, whatChangedQuestionActive: true),
         ),
         isFalse,
       );
@@ -303,7 +297,9 @@ void main() {
         result: _buildResult(),
         onPrimaryCta: () => tapped = true,
       );
-      await tester.tap(find.byKey(const Key('three_moment_completion_primary_cta')));
+      await tester.tap(
+        find.byKey(const Key('three_moment_completion_primary_cta')),
+      );
       await tester.pump();
       expect(tapped, isTrue);
     });
@@ -317,9 +313,14 @@ void main() {
         onPrimaryCta: () {},
         store: store,
       );
-      await tester.tap(find.byKey(const Key('three_moment_completion_not_today')));
+      await tester.tap(
+        find.byKey(const Key('three_moment_completion_not_today')),
+      );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('three_moment_completion_card')), findsNothing);
+      expect(
+        find.byKey(const Key('three_moment_completion_card')),
+        findsNothing,
+      );
       expect(ThreeMomentCompletionStore.isDismissedToday, isTrue);
     });
 
@@ -329,7 +330,9 @@ void main() {
         result: _buildResult(entryCount: 2),
         onPrimaryCta: () {},
       );
-      await tester.tap(find.byKey(const Key('three_moment_completion_primary_cta')));
+      await tester.tap(
+        find.byKey(const Key('three_moment_completion_primary_cta')),
+      );
       await tester.pump();
 
       expect(analyticsEvents, isNotEmpty);
@@ -362,7 +365,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonGuidanceCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonGuidanceCap),
+      );
     });
 
     test('suppresses SecondMomentReturnCard when active', () {

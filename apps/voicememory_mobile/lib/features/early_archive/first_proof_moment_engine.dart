@@ -10,9 +10,7 @@ import 'first_proof_moment_model.dart';
 abstract final class FirstProofMomentEngine {
   FirstProofMomentEngine._();
 
-  static FirstProofMoment? build({
-    required List<JournalEntry> entries,
-  }) {
+  static FirstProofMoment? build({required List<JournalEntry> entries}) {
     if (!ArchiveEvidenceQualityGate.allowsFirstProof(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);

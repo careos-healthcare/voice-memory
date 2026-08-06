@@ -2,7 +2,6 @@ import '../../models/journal_entry.dart';
 import '../activation/weekly_archive_review.dart';
 import '../archive_calendar/archive_calendar_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
-import '../beta_feedback/beta_feedback_engine.dart';
 import '../demo/sample_archive_mode.dart';
 import '../first_week_path/first_week_path_engine.dart';
 import '../then_now/then_now_engine.dart';
@@ -182,7 +181,7 @@ class MilestoneShareEngine {
   static bool _hasRepeatingTheme(List<JournalEntry> entries) {
     final counts = <String, int>{};
     for (final entry in entries) {
-      for (final raw in entry.reflection?.recurringThemes ?? const []) {
+      for (final raw in entry.reflection.recurringThemes) {
         final theme = raw.trim().toLowerCase();
         if (theme.isEmpty) continue;
         counts[theme] = (counts[theme] ?? 0) + 1;

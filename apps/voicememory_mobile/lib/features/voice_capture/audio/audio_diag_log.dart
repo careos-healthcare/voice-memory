@@ -31,9 +31,7 @@ abstract class AudioDiagLog {
     debugPrint('ARCHIVEME_AUDIO_DIAG exists=$exists');
     debugPrint('ARCHIVEME_AUDIO_DIAG bytes=$bytes');
     debugPrint('ARCHIVEME_AUDIO_DIAG extension=$extension');
-    debugPrint(
-      'ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}',
-    );
+    debugPrint('ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}');
     debugPrint('ARCHIVEME_AUDIO_DIAG mimeGuess=$mimeGuess');
     debugPrint('ARCHIVEME_AUDIO_DIAG firstBytes=$firstBytesHex');
   }
@@ -76,22 +74,15 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void iosAudioRoute({
-    required String inputs,
-    required String outputs,
-  }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs',
-    );
+  static void iosAudioRoute({required String inputs, required String outputs}) {
+    debugPrint('ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs');
   }
 
   static void iosAudioInput({
     required String portName,
     required String portType,
   }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType',
-    );
+    debugPrint('ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType');
   }
 
   static void iosAudioAvailableInputs({
@@ -128,10 +119,7 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void silenceRetry({
-    required String reason,
-    required double oldMaxDb,
-  }) {
+  static void silenceRetry({required String reason, required double oldMaxDb}) {
     debugPrint(
       'ARCHIVEME_AUDIO_SILENCE_RETRY reason=$reason oldMaxDb=$oldMaxDb',
     );

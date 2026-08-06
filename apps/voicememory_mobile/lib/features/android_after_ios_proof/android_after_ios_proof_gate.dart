@@ -68,16 +68,15 @@ abstract final class AndroidAfterIosProofGate {
 
   static AndroidAfterIosProofGateReport report(
     AndroidAfterIosProofGateResult result,
-  ) =>
-      AndroidAfterIosProofGateReport(
-        headline: AndroidAfterIosProofCopy.headline,
-        body: AndroidAfterIosProofCopy.body,
-        positioning: AndroidAfterIosProofCopy.positioning,
-        orderLine: AndroidAfterIosProofCopy.orderLine,
-        prereqOrderLine: AndroidAfterIosProofCopy.prereqOrderLine,
-        guardrail: AndroidAfterIosProofCopy.guardrail,
-        result: result,
-      );
+  ) => AndroidAfterIosProofGateReport(
+    headline: AndroidAfterIosProofCopy.headline,
+    body: AndroidAfterIosProofCopy.body,
+    positioning: AndroidAfterIosProofCopy.positioning,
+    orderLine: AndroidAfterIosProofCopy.orderLine,
+    prereqOrderLine: AndroidAfterIosProofCopy.prereqOrderLine,
+    guardrail: AndroidAfterIosProofCopy.guardrail,
+    result: result,
+  );
 
   static AndroidAfterIosProofGateInput composeInput({
     bool? iosTestFlightUploaded,
@@ -92,27 +91,27 @@ abstract final class AndroidAfterIosProofGate {
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
     SecretsRotationLaunchGateResult? secretsRotation,
-  }) =>
-      AndroidAfterIosProofGateInput(
-        iosTestFlightUploaded: iosTestFlightUploaded ??
-            launchChecklist?.testFlightUploaded,
-        iosRevenueCatProductsLoad: iosRevenueCatProductsLoad ??
-            launchChecklist?.revenueCatProductsLoad,
-        iosSandboxPurchaseWorks: iosSandboxPurchaseWorks ??
-            launchChecklist?.sandboxPurchaseWorks,
-        iosRestoreWorks:
-            iosRestoreWorks ?? launchChecklist?.restoreWorks,
-        iosEntitlementPersists: iosEntitlementPersists ??
-            launchChecklist?.entitlementPersists,
-        paidIntentBetaPromising: paidIntentBetaPromising ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaPromisingFrom(paidIntentBeta),
-        noProductionSecretsBlocker: noProductionSecretsBlocker ??
-            _noProductionSecretsBlockerFrom(secretsRotation) ??
-            launchChecklist?.secretsRotatedBeforeProduction,
-        androidWorkRequested: androidWorkRequested,
-        androidPrioritisationRequested: androidPrioritisationRequested,
-      );
+  }) => AndroidAfterIosProofGateInput(
+    iosTestFlightUploaded:
+        iosTestFlightUploaded ?? launchChecklist?.testFlightUploaded,
+    iosRevenueCatProductsLoad:
+        iosRevenueCatProductsLoad ?? launchChecklist?.revenueCatProductsLoad,
+    iosSandboxPurchaseWorks:
+        iosSandboxPurchaseWorks ?? launchChecklist?.sandboxPurchaseWorks,
+    iosRestoreWorks: iosRestoreWorks ?? launchChecklist?.restoreWorks,
+    iosEntitlementPersists:
+        iosEntitlementPersists ?? launchChecklist?.entitlementPersists,
+    paidIntentBetaPromising:
+        paidIntentBetaPromising ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaPromisingFrom(paidIntentBeta),
+    noProductionSecretsBlocker:
+        noProductionSecretsBlocker ??
+        _noProductionSecretsBlockerFrom(secretsRotation) ??
+        launchChecklist?.secretsRotatedBeforeProduction,
+    androidWorkRequested: androidWorkRequested,
+    androidPrioritisationRequested: androidPrioritisationRequested,
+  );
 
   static AndroidAfterIosProofGateInput fromRepoSignals({
     required String androidAfterIosProofDocSource,
@@ -126,20 +125,19 @@ abstract final class AndroidAfterIosProofGate {
     bool? noProductionSecretsBlocker,
     bool? androidWorkRequested,
     bool? androidPrioritisationRequested,
-  }) =>
-      AndroidAfterIosProofGateInput(
-        iosTestFlightUploaded: iosTestFlightUploaded,
-        iosRevenueCatProductsLoad: iosRevenueCatProductsLoad,
-        iosSandboxPurchaseWorks: iosSandboxPurchaseWorks,
-        iosRestoreWorks: iosRestoreWorks,
-        iosEntitlementPersists: iosEntitlementPersists,
-        paidIntentBetaPromising: paidIntentBetaPromising,
-        noProductionSecretsBlocker: noProductionSecretsBlocker,
-        androidWorkRequested: androidWorkRequested,
-        androidPrioritisationRequested: androidPrioritisationRequested,
-        docListsRules: detectDocListsRules(androidAfterIosProofDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => AndroidAfterIosProofGateInput(
+    iosTestFlightUploaded: iosTestFlightUploaded,
+    iosRevenueCatProductsLoad: iosRevenueCatProductsLoad,
+    iosSandboxPurchaseWorks: iosSandboxPurchaseWorks,
+    iosRestoreWorks: iosRestoreWorks,
+    iosEntitlementPersists: iosEntitlementPersists,
+    paidIntentBetaPromising: paidIntentBetaPromising,
+    noProductionSecretsBlocker: noProductionSecretsBlocker,
+    androidWorkRequested: androidWorkRequested,
+    androidPrioritisationRequested: androidPrioritisationRequested,
+    docListsRules: detectDocListsRules(androidAfterIosProofDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -190,12 +188,16 @@ abstract final class AndroidAfterIosProofGate {
     return [
       _rule(
         id: AndroidAfterIosProofRuleId.androidWorkBlockedUntilPrereqsPass,
-        passes: guardrailLower.contains('android work blocked until prerequisites pass') &&
+        passes:
+            guardrailLower.contains(
+              'android work blocked until prerequisites pass',
+            ) &&
             (!androidWorkRequested || iosProofComplete),
       ),
       _rule(
         id: AndroidAfterIosProofRuleId.androidSetupDocumentedNotPrioritised,
-        passes: guardrailLower.contains('documented but not prioritised') &&
+        passes:
+            guardrailLower.contains('documented but not prioritised') &&
             (!androidPrioritisationRequested || iosProofComplete),
       ),
     ];
@@ -203,37 +205,36 @@ abstract final class AndroidAfterIosProofGate {
 
   static List<AndroidAfterIosProofPrereq> _buildPrereqs(
     AndroidAfterIosProofGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.iosTestFlightUploaded,
-          value: input.iosTestFlightUploaded,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.iosRevenueCatProductsLoad,
-          value: input.iosRevenueCatProductsLoad,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks,
-          value: input.iosSandboxPurchaseWorks,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.iosRestoreWorks,
-          value: input.iosRestoreWorks,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.iosEntitlementPersists,
-          value: input.iosEntitlementPersists,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.paidIntentBetaPromising,
-          value: input.paidIntentBetaPromising,
-        ),
-        _prereq(
-          id: AndroidAfterIosProofPrereqId.noProductionSecretsBlocker,
-          value: input.noProductionSecretsBlocker,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.iosTestFlightUploaded,
+      value: input.iosTestFlightUploaded,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.iosRevenueCatProductsLoad,
+      value: input.iosRevenueCatProductsLoad,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks,
+      value: input.iosSandboxPurchaseWorks,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.iosRestoreWorks,
+      value: input.iosRestoreWorks,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.iosEntitlementPersists,
+      value: input.iosEntitlementPersists,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.paidIntentBetaPromising,
+      value: input.paidIntentBetaPromising,
+    ),
+    _prereq(
+      id: AndroidAfterIosProofPrereqId.noProductionSecretsBlocker,
+      value: input.noProductionSecretsBlocker,
+    ),
+  ];
 
   static bool _iosProofCompleteFrom(AndroidAfterIosProofGateInput input) =>
       (input.iosTestFlightUploaded ?? false) &&
@@ -261,10 +262,12 @@ abstract final class AndroidAfterIosProofGate {
       label: AndroidAfterIosProofCopy.prereqLabelFor(id),
       status: status,
       detailLabel: switch (status) {
-        AndroidAfterIosProofPrereqStatus.pass => AndroidAfterIosProofCopy.detailPass,
+        AndroidAfterIosProofPrereqStatus.pass =>
+          AndroidAfterIosProofCopy.detailPass,
         AndroidAfterIosProofPrereqStatus.pending =>
           AndroidAfterIosProofCopy.detailPending,
-        AndroidAfterIosProofPrereqStatus.fail => AndroidAfterIosProofCopy.detailFail,
+        AndroidAfterIosProofPrereqStatus.fail =>
+          AndroidAfterIosProofCopy.detailFail,
       },
     );
   }
@@ -272,17 +275,16 @@ abstract final class AndroidAfterIosProofGate {
   static AndroidAfterIosProofRule _rule({
     required AndroidAfterIosProofRuleId id,
     required bool passes,
-  }) =>
-      AndroidAfterIosProofRule(
-        id: id,
-        label: AndroidAfterIosProofCopy.ruleLabelFor(id),
-        status: passes
-            ? AndroidAfterIosProofRuleStatus.pass
-            : AndroidAfterIosProofRuleStatus.fail,
-        detailLabel: passes
-            ? AndroidAfterIosProofCopy.detailPass
-            : AndroidAfterIosProofCopy.detailFail,
-      );
+  }) => AndroidAfterIosProofRule(
+    id: id,
+    label: AndroidAfterIosProofCopy.ruleLabelFor(id),
+    status: passes
+        ? AndroidAfterIosProofRuleStatus.pass
+        : AndroidAfterIosProofRuleStatus.fail,
+    detailLabel: passes
+        ? AndroidAfterIosProofCopy.detailPass
+        : AndroidAfterIosProofCopy.detailFail,
+  );
 }
 
 class AndroidAfterIosProofGateInput {

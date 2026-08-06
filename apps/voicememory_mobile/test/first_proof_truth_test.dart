@@ -26,43 +26,42 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -138,9 +137,21 @@ void main() {
         _entry(id: 'q3', transcript: 'Nothing much today.'),
       ];
       final pending = [
-        _entry(id: 'v1', transcript: _placeholder, localAudioPath: '/tmp/v1.m4a'),
-        _entry(id: 'v2', transcript: _placeholder, localAudioPath: '/tmp/v2.m4a'),
-        _entry(id: 'v3', transcript: _placeholder, localAudioPath: '/tmp/v3.m4a'),
+        _entry(
+          id: 'v1',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v1.m4a',
+        ),
+        _entry(
+          id: 'v2',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v2.m4a',
+        ),
+        _entry(
+          id: 'v3',
+          transcript: _placeholder,
+          localAudioPath: '/tmp/v3.m4a',
+        ),
       ];
 
       for (final entries in [generic, quiet, pending]) {
@@ -213,12 +224,13 @@ void main() {
 
       expect(find.text(FirstProofTruthCopy.question), findsNothing);
       expect(find.text(FirstProofTruthCopy.afterYes), findsNothing);
-      expect(find.byKey(const Key('first_proof_truth_answered')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_proof_truth_answered')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('already answered proof hides card content', (
-      tester,
-    ) async {
+    testWidgets('already answered proof hides card content', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -234,7 +246,10 @@ void main() {
 
       expect(find.text(FirstProofTruthCopy.question), findsNothing);
       expect(find.text(FirstProofTruthCopy.afterNo), findsNothing);
-      expect(find.byKey(const Key('first_proof_truth_answered')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_proof_truth_answered')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -310,7 +325,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

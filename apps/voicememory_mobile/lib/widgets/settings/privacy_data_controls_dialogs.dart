@@ -30,10 +30,9 @@ Future<void> showLocalDataStaysSheet(BuildContext context) {
           Text(
             PrivacyDataControlsCopy.dataStaysOnDeviceBody,
             key: const Key('privacy_data_stays_body'),
-            style: ArchiveMobileTypography.responsiveHelper(sheetContext).copyWith(
-              color: AppColors.textPrimary,
-              height: 1.45,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              sheetContext,
+            ).copyWith(color: AppColors.textPrimary, height: 1.45),
           ),
           const SizedBox(height: AppSpacing.md),
           Align(
@@ -80,7 +79,9 @@ Future<bool> showResetDismissedTipsDialog(BuildContext context) async {
     context: context,
     builder: (dialogContext) => AlertDialog(
       title: const Text(PrivacyDataControlsCopy.resetDismissedTipsConfirmTitle),
-      content: const Text(PrivacyDataControlsCopy.resetDismissedTipsConfirmBody),
+      content: const Text(
+        PrivacyDataControlsCopy.resetDismissedTipsConfirmBody,
+      ),
       actions: [
         TextButton(
           key: const Key('reset_dismissed_tips_cancel'),

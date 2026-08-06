@@ -337,7 +337,9 @@ void main() {
       await _pumpCard(tester, BeliefDistanceCard(belief: belief));
       await tester.tap(
         find.descendant(
-          of: find.byKey(const Key('memory_connection_actions_belief_distance')),
+          of: find.byKey(
+            const Key('memory_connection_actions_belief_distance'),
+          ),
           matching: find.text(MemoryControlCopy.notRelatedLabel),
         ),
       );
@@ -550,7 +552,9 @@ void main() {
       await tester.pumpAndSettle();
       // Close the sheet so the not-related action is reachable.
       Navigator.of(
-        tester.element(find.byKey(const Key('memory_priority_explanation_sheet'))),
+        tester.element(
+          find.byKey(const Key('memory_priority_explanation_sheet')),
+        ),
       ).pop();
       await tester.pumpAndSettle();
       await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));

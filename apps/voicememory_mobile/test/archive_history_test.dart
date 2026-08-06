@@ -26,44 +26,42 @@ JournalEntry _textEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String transcript = _placeholder,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
   setUp(() async {
@@ -104,9 +102,7 @@ void main() {
 
     test('first real entry shows saved only', () {
       final content = ArchiveHistoryEngine.build(
-        entries: [
-          _textEntry(id: 'one', transcript: _realMoment),
-        ],
+        entries: [_textEntry(id: 'one', transcript: _realMoment)],
       );
 
       expect(content.items.single.status, ArchiveHistoryStatus.savedOnly);
@@ -302,7 +298,10 @@ void main() {
         find.byKey(const Key('archive_history_chip_ignored_for_patterns')),
         findsOneWidget,
       );
-      expect(find.text(ArchiveHistoryCopy.noteIgnoredForPatterns), findsOneWidget);
+      expect(
+        find.text(ArchiveHistoryCopy.noteIgnoredForPatterns),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });
 
@@ -338,7 +337,10 @@ void main() {
         find.byKey(const Key('archive_history_chip_used_as_evidence')),
         findsNWidgets(2),
       );
-      expect(find.text(ArchiveHistoryCopy.noteUsedAsEvidence), findsNWidgets(2));
+      expect(
+        find.text(ArchiveHistoryCopy.noteUsedAsEvidence),
+        findsNWidgets(2),
+      );
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });
   });

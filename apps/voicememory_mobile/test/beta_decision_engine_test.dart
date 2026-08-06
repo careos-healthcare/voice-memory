@@ -10,10 +10,7 @@ import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.da
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_next_build_decision_card.dart';
 
-BetaTesterOutcome _outcome(
-  String id,
-  Set<BetaDecisionSignal> signals,
-) =>
+BetaTesterOutcome _outcome(String id, Set<BetaDecisionSignal> signals) =>
     BetaTesterOutcome(testerId: id, signals: signals);
 
 Future<void> _pumpCard(
@@ -42,9 +39,7 @@ void main() {
     test('misunderstanding recommends Record/onboarding copy', () {
       final result = BetaDecisionEngine.build(
         outcomes: [
-          _outcome('t1', {
-            BetaDecisionSignal.misunderstoodAsGenericJournal,
-          }),
+          _outcome('t1', {BetaDecisionSignal.misunderstoodAsGenericJournal}),
         ],
       );
       expect(
@@ -87,24 +82,27 @@ void main() {
       expect(result.nextActionCopy, BetaDecisionCopy.nextAddReturnReason);
     });
 
-    test('reaches proof but does not care recommends proof emotional clarity', () {
-      final result = BetaDecisionEngine.build(
-        outcomes: [
-          _outcome('t1', {
-            BetaDecisionSignal.understoodPromise,
-            BetaDecisionSignal.savedFirstMoment,
-            BetaDecisionSignal.returnedDay2,
-            BetaDecisionSignal.reachedThreeMoments,
-            BetaDecisionSignal.sawFirstProof,
-          }),
-        ],
-      );
-      expect(
-        result.primaryRecommendation,
-        BetaNextBuildRecommendation.improveProofEmotionalClarity,
-      );
-      expect(result.nextActionCopy, BetaDecisionCopy.nextImproveProofClarity);
-    });
+    test(
+      'reaches proof but does not care recommends proof emotional clarity',
+      () {
+        final result = BetaDecisionEngine.build(
+          outcomes: [
+            _outcome('t1', {
+              BetaDecisionSignal.understoodPromise,
+              BetaDecisionSignal.savedFirstMoment,
+              BetaDecisionSignal.returnedDay2,
+              BetaDecisionSignal.reachedThreeMoments,
+              BetaDecisionSignal.sawFirstProof,
+            }),
+          ],
+        );
+        expect(
+          result.primaryRecommendation,
+          BetaNextBuildRecommendation.improveProofEmotionalClarity,
+        );
+        expect(result.nextActionCopy, BetaDecisionCopy.nextImproveProofClarity);
+      },
+    );
 
     test('cares but will not pay recommends Pro packaging', () {
       final result = BetaDecisionEngine.build(
@@ -199,17 +197,21 @@ void main() {
   });
 
   group('BetaDecisionCopy safety', () {
-    test('copy contains no therapy/diagnosis/treatment/chatbot positioning', () {
-      final blob =
-          BetaDecisionCopy.allVisibleStrings().join(' ').toLowerCase();
-      expect(blob, isNot(contains('therapy')));
-      expect(blob, isNot(contains('diagnosis')));
-      expect(blob, isNot(contains('treatment')));
-      expect(blob, isNot(contains('chatbot')));
-      for (final line in BetaDecisionCopy.allVisibleStrings()) {
-        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
-      }
-    });
+    test(
+      'copy contains no therapy/diagnosis/treatment/chatbot positioning',
+      () {
+        final blob = BetaDecisionCopy.allVisibleStrings()
+            .join(' ')
+            .toLowerCase();
+        expect(blob, isNot(contains('therapy')));
+        expect(blob, isNot(contains('diagnosis')));
+        expect(blob, isNot(contains('treatment')));
+        expect(blob, isNot(contains('chatbot')));
+        for (final line in BetaDecisionCopy.allVisibleStrings()) {
+          expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+        }
+      },
+    );
   });
 
   group('BETA_DECISION_SYSTEM doc', () {
@@ -227,11 +229,20 @@ void main() {
       expect(doc, contains('Fix Record/onboarding copy only'));
       expect(doc, contains('Fix capture friction'));
       expect(doc, contains('Expand Pro utility'));
-      expect(doc, contains('Build only the **highest-priority failing branch**'));
+      expect(
+        doc,
+        contains('Build only the **highest-priority failing branch**'),
+      );
       expect(doc, contains('Do not build Ask Archive'));
       expect(doc.toLowerCase(), contains('20-person beta threshold'));
-      expect(doc, contains(BetaTesterOutcomeChecklist.fivePersonRound.toString()));
-      expect(doc, contains(BetaTesterOutcomeChecklist.twentyPersonThreshold.toString()));
+      expect(
+        doc,
+        contains(BetaTesterOutcomeChecklist.fivePersonRound.toString()),
+      );
+      expect(
+        doc,
+        contains(BetaTesterOutcomeChecklist.twentyPersonThreshold.toString()),
+      );
     });
   });
 
@@ -243,9 +254,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const Scaffold(
-            body: BetaNextBuildDecisionCard(),
-          ),
+          home: const Scaffold(body: BetaNextBuildDecisionCard()),
         ),
       );
       await tester.pump();
@@ -264,13 +273,20 @@ void main() {
         ],
       );
       await _pumpCard(tester, result: result);
-      expect(find.byKey(const Key('beta_next_build_decision_card')), findsOneWidget);
-      expect(find.text(BetaDecisionCopy.nextFixRecordOnboarding), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_next_build_decision_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(BetaDecisionCopy.nextFixRecordOnboarding),
+        findsOneWidget,
+      );
     });
 
     test('testing screen includes beta outcome log and decision cards', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('BetaNextBuildDecisionCard'));
       expect(source, contains('BetaTesterOutcomeLogCard'));
       expect(source, contains('BetaTesterOutcomeStore'));
@@ -279,11 +295,11 @@ void main() {
 }
 
 Set<BetaDecisionSignal> _caringWithUtilityAsk() => {
-      BetaDecisionSignal.understoodPromise,
-      BetaDecisionSignal.savedFirstMoment,
-      BetaDecisionSignal.returnedDay2,
-      BetaDecisionSignal.reachedThreeMoments,
-      BetaDecisionSignal.proofFeltMeaningful,
-      BetaDecisionSignal.willingToPayForLongerTrail,
-      BetaDecisionSignal.askedForExport,
-    };
+  BetaDecisionSignal.understoodPromise,
+  BetaDecisionSignal.savedFirstMoment,
+  BetaDecisionSignal.returnedDay2,
+  BetaDecisionSignal.reachedThreeMoments,
+  BetaDecisionSignal.proofFeltMeaningful,
+  BetaDecisionSignal.willingToPayForLongerTrail,
+  BetaDecisionSignal.askedForExport,
+};

@@ -27,70 +27,69 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeSaidYesEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourSaidYesEntries() => [
-      ..._threeSaidYesEntries(),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeSaidYesEntries(),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 HelpedTrackingPrompt _promptFor(List<JournalEntry> entries) {
   final prompt = HelpedTrackingEngine.buildPrompt(
@@ -132,8 +131,14 @@ void main() {
       expect(
         HelpedTrackingEngine.buildPrompt(
           entries: [
-            _voiceEntry(id: 'g1', transcript: 'This is a test to check function'),
-            _voiceEntry(id: 'g2', transcript: 'This is a second test for pressure'),
+            _voiceEntry(
+              id: 'g1',
+              transcript: 'This is a test to check function',
+            ),
+            _voiceEntry(
+              id: 'g2',
+              transcript: 'This is a second test for pressure',
+            ),
           ],
           isPostSaveDone: true,
           isDegradedPostSave: false,
@@ -155,7 +160,10 @@ void main() {
       );
       expect(
         HelpedTrackingEngine.buildPrompt(
-          entries: [_degradedVoiceEntry(), _degradedVoiceEntry(id: 'v2')],
+          entries: [
+            _degradedVoiceEntry(),
+            _degradedVoiceEntry(id: 'v2'),
+          ],
           isPostSaveDone: true,
           isDegradedPostSave: false,
           showWhatChangedV2: false,
@@ -193,7 +201,10 @@ void main() {
           entryCountAtCapture: 3,
         );
       }
-      expect(HelpedTrackingStore.cached.length, HelpedTrackingOption.values.length);
+      expect(
+        HelpedTrackingStore.cached.length,
+        HelpedTrackingOption.values.length,
+      );
       for (final option in HelpedTrackingOption.values) {
         final record = store.recordForEntry('entry_${option.name}');
         expect(record?.option, option);
@@ -312,7 +323,9 @@ void main() {
   });
 
   group('HelpedTrackingCard', () {
-    testWidgets('tapping Rename opens sheet for something else', (tester) async {
+    testWidgets('tapping Rename opens sheet for something else', (
+      tester,
+    ) async {
       final entries = _threeSaidYesEntries();
       final prompt = _promptFor(entries);
 
@@ -334,7 +347,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('helped_tracking_sheet_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('helped_tracking_sheet_title')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -354,7 +370,9 @@ void main() {
 
   group('integration untouched', () {
     test('first proof flow still works', () {
-      final signal = EarlyFirstSignalEngine.build(entries: _threeSaidYesEntries());
+      final signal = EarlyFirstSignalEngine.build(
+        entries: _threeSaidYesEntries(),
+      );
       expect(signal?.showsConfirmedRepeat, isTrue);
     });
 

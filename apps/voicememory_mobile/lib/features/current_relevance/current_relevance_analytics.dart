@@ -12,7 +12,7 @@ abstract final class CurrentRelevanceAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -54,7 +54,7 @@ abstract final class CurrentRelevanceAnalytics {
       'source': source,
       'entry_count': entryCount,
       'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
-      if (answerType != null) 'answer_type': answerType,
+      'answer_type': ?answerType,
     };
     captureForTest?.call(event, props);
     ActivationFunnelAnalytics.track(

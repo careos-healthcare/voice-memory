@@ -34,8 +34,7 @@ abstract final class ArchiveChangeTimelineCopy {
 
   static const aboutTheSameBody = 'This looked about the same.';
 
-  static const changedThisTimeBody =
-      'Something looked different this time.';
+  static const changedThisTimeBody = 'Something looked different this time.';
 
   static const helpfulActionAppearedBody = 'A helpful action appeared.';
 

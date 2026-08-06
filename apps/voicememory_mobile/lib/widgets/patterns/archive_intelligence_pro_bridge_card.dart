@@ -53,23 +53,24 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
             ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (final bullet in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) ...[
+          for (final bullet
+              in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) ...[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '• ',
-                  style: ArchiveMobileTypography.body(context).copyWith(
-                    color: AppColors.textPrimary,
-                  ),
+                  style: ArchiveMobileTypography.body(
+                    context,
+                  ).copyWith(color: AppColors.textPrimary),
                 ),
                 Expanded(
                   child: Text(
                     bullet,
                     key: Key('full_archive_history_pro_bullet_$bullet'),
-                    style: ArchiveMobileTypography.body(context).copyWith(
-                      color: AppColors.textPrimary,
-                    ),
+                    style: ArchiveMobileTypography.body(
+                      context,
+                    ).copyWith(color: AppColors.textPrimary),
                   ),
                 ),
               ],
@@ -80,9 +81,9 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
           Text(
             ArchiveBeliefThreadCopy.whyPro,
             key: const Key('full_archive_history_pro_why'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           Row(

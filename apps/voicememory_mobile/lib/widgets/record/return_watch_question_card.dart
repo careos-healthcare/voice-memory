@@ -35,9 +35,8 @@ class ReturnWatchQuestionCard extends StatefulWidget {
     this.onAnswered,
     this.onCameBack,
     this.onDifferent,
-    ComeBackTomorrowAnswerType? initialAnswer,
-  })  : skipPrefsLoad = true,
-        initialAnswer = initialAnswer;
+    this.initialAnswer,
+  }) : skipPrefsLoad = true;
 
   final ComeBackTomorrowReturnQuestion question;
   final int entryCount;
@@ -50,7 +49,8 @@ class ReturnWatchQuestionCard extends StatefulWidget {
   final VoidCallback? onDifferent;
 
   @override
-  State<ReturnWatchQuestionCard> createState() => _ReturnWatchQuestionCardState();
+  State<ReturnWatchQuestionCard> createState() =>
+      _ReturnWatchQuestionCardState();
 }
 
 class _ReturnWatchQuestionCardState extends State<ReturnWatchQuestionCard> {
@@ -137,13 +137,13 @@ class _ReturnWatchQuestionCardState extends State<ReturnWatchQuestionCard> {
   }
 
   String? _helperFor(ComeBackTomorrowAnswerType answer) => switch (answer) {
-        ComeBackTomorrowAnswerType.cameBack =>
-          ComeBackTomorrowV2Copy.helperCameBack,
-        ComeBackTomorrowAnswerType.notToday =>
-          ComeBackTomorrowV2Copy.helperNotToday,
-        ComeBackTomorrowAnswerType.different =>
-          ComeBackTomorrowV2Copy.helperDifferent,
-      };
+    ComeBackTomorrowAnswerType.cameBack =>
+      ComeBackTomorrowV2Copy.helperCameBack,
+    ComeBackTomorrowAnswerType.notToday =>
+      ComeBackTomorrowV2Copy.helperNotToday,
+    ComeBackTomorrowAnswerType.different =>
+      ComeBackTomorrowV2Copy.helperDifferent,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -156,9 +156,9 @@ class _ReturnWatchQuestionCardState extends State<ReturnWatchQuestionCard> {
     final helper = _answer != null ? _helperFor(_answer!) : null;
     final showChoices = _answer == null;
     final notTodayAck = _answer == ComeBackTomorrowAnswerType.notToday;
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     final phraseStyle = bodyStyle.copyWith(
       color: AppColors.textPrimary,
       fontWeight: FontWeight.w600,
@@ -188,7 +188,9 @@ class _ReturnWatchQuestionCardState extends State<ReturnWatchQuestionCard> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              ComeBackTomorrowV2Copy.quotedPhrase(widget.question.groundedPhrase),
+              ComeBackTomorrowV2Copy.quotedPhrase(
+                widget.question.groundedPhrase,
+              ),
               key: const Key('return_watch_question_phrase'),
               style: phraseStyle,
             ),
@@ -216,9 +218,9 @@ class _ReturnWatchQuestionCardState extends State<ReturnWatchQuestionCard> {
             Text(
               helper,
               key: Key('return_watch_question_helper_${_answer!.name}'),
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ],
         ],

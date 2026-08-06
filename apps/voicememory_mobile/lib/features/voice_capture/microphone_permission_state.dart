@@ -8,6 +8,7 @@ import 'audio/ios_native_recorder.dart';
 enum MicrophonePermissionState {
   unknown,
   granted,
+
   /// iOS physical device: Settings/recorder say mic is available but
   /// permission_handler disagrees — record with audio-level validation.
   grantedWithPermissionHandlerMismatch,
@@ -88,7 +89,8 @@ abstract class MicrophonePermissionResolver {
       state == MicrophonePermissionState.grantedWithPermissionHandlerMismatch;
 
   static String resolvedLogName(MicrophonePermissionState state) {
-    if (state == MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
+    if (state ==
+        MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
       return 'grantedWithMismatch';
     }
     return state.name;
@@ -100,14 +102,10 @@ abstract class MicrophonePermissionResolver {
     required bool preferRecorderOnIosSimulator,
     required bool allowPhysicalRecorderMismatch,
   }) {
-    if (preferRecorderOnIosSimulator &&
-        hasRecorder &&
-        !status.isGranted) {
+    if (preferRecorderOnIosSimulator && hasRecorder && !status.isGranted) {
       return 'record_simulator_override';
     }
-    if (allowPhysicalRecorderMismatch &&
-        hasRecorder &&
-        !status.isGranted) {
+    if (allowPhysicalRecorderMismatch && hasRecorder && !status.isGranted) {
       return 'record_physical_mismatch';
     }
     return 'permission_handler';

@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence.dart';
+import '../archive_evidence/evidence_entry_ids.dart';
 import '../archive_state_object/archive_state_object.dart';
 import '../contradiction_detection/contradiction_detection_service.dart';
 import '../contradiction_detection/contradiction_report.dart';
@@ -768,7 +769,7 @@ class ArchiveExplanationEngine {
               'You mention relationships ${rel}x in eligible reflections, '
               'while work stress language appears in $workConcern recordings — '
               'even when work is often stated as a primary concern.',
-          evidenceEntryIds: [...relIds, ...workIds].toSet().take(4).toList(),
+          evidenceEntryIds: EvidenceEntryIds.merge([relIds, workIds]),
           confidence: 68,
         ),
       );

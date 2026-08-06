@@ -10,21 +10,20 @@ enum PostSaveReturnCheckAnswerChoice {
   String get analyticsValue => name;
 
   RepeatReturnCheckChoice get storageChoice => switch (this) {
-        PostSaveReturnCheckAnswerChoice.softer =>
-          RepeatReturnCheckChoice.softer,
-        PostSaveReturnCheckAnswerChoice.stronger =>
-          RepeatReturnCheckChoice.stronger,
-        PostSaveReturnCheckAnswerChoice.same => RepeatReturnCheckChoice.same,
-        PostSaveReturnCheckAnswerChoice.different =>
-          RepeatReturnCheckChoice.changed,
-      };
+    PostSaveReturnCheckAnswerChoice.softer => RepeatReturnCheckChoice.softer,
+    PostSaveReturnCheckAnswerChoice.stronger =>
+      RepeatReturnCheckChoice.stronger,
+    PostSaveReturnCheckAnswerChoice.same => RepeatReturnCheckChoice.same,
+    PostSaveReturnCheckAnswerChoice.different =>
+      RepeatReturnCheckChoice.changed,
+  };
 
   String get label => switch (this) {
-        PostSaveReturnCheckAnswerChoice.softer => 'Softer',
-        PostSaveReturnCheckAnswerChoice.stronger => 'Stronger',
-        PostSaveReturnCheckAnswerChoice.same => 'About the same',
-        PostSaveReturnCheckAnswerChoice.different => 'Different',
-      };
+    PostSaveReturnCheckAnswerChoice.softer => 'Softer',
+    PostSaveReturnCheckAnswerChoice.stronger => 'Stronger',
+    PostSaveReturnCheckAnswerChoice.same => 'About the same',
+    PostSaveReturnCheckAnswerChoice.different => 'Different',
+  };
 }
 
 /// Post-save return check question shown before the payoff at entry four+.

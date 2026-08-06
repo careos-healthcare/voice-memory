@@ -7,7 +7,8 @@ abstract final class ArchiveHistoryCopy {
       'Your archive is built from what you record. Private by default.';
 
   static const emptyTitle = 'No saved moments yet';
-  static const emptyBody = 'Record a few real moments. ArchiveMe will look for what repeats across them.';
+  static const emptyBody =
+      'Record a few real moments. ArchiveMe will look for what repeats across them.';
 
   static const chipUsedAsEvidence = 'Used as evidence';
   static const chipSavedOnly = 'Saved only';

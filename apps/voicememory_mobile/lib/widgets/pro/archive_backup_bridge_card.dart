@@ -25,7 +25,8 @@ class ArchiveBackupBridgeCard extends StatefulWidget {
   final bool compact;
 
   @override
-  State<ArchiveBackupBridgeCard> createState() => _ArchiveBackupBridgeCardState();
+  State<ArchiveBackupBridgeCard> createState() =>
+      _ArchiveBackupBridgeCardState();
 }
 
 class _ArchiveBackupBridgeCardState extends State<ArchiveBackupBridgeCard> {
@@ -73,10 +74,9 @@ class _ArchiveBackupBridgeCardState extends State<ArchiveBackupBridgeCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
     final display = ArchiveBackupBridgeEngine.buildDisplay();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final showProCta = ArchiveBackupBridgeEngine.showProCta(_context);
 
     return Container(

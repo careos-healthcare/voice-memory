@@ -97,7 +97,9 @@ class AppConfig {
       _resolvedApiBase = defaultDevBaseUrl;
       _backendConfigured = true;
       _apiResolutionInitialized = true;
-      debugPrint('AppConfig: debug API base → $_resolvedApiBase (iOS simulator)');
+      debugPrint(
+        'AppConfig: debug API base → $_resolvedApiBase (iOS simulator)',
+      );
       return;
     }
 

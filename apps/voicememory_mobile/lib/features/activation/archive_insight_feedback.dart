@@ -13,10 +13,7 @@ enum ArchiveInsightTarget {
 }
 
 /// Local feedback choice — never synced to a backend.
-enum ArchiveInsightFeedbackChoice {
-  feelsRight,
-  notQuite,
-}
+enum ArchiveInsightFeedbackChoice { feelsRight, notQuite }
 
 /// User-facing copy for insight feedback controls.
 abstract final class ArchiveInsightFeedbackCopy {
@@ -96,7 +93,8 @@ abstract final class ArchiveInsightFeedbackStore {
 
   static int notQuiteCount(String insightId) => _notQuite[insightId] ?? 0;
 
-  static String? correctionNote(String insightId) => _correctionNotes[insightId];
+  static String? correctionNote(String insightId) =>
+      _correctionNotes[insightId];
 
   static bool hasCorrectionNote(String insightId) =>
       (_correctionNotes[insightId]?.trim().isNotEmpty ?? false);
@@ -117,10 +115,7 @@ abstract final class ArchiveInsightFeedbackStore {
     return true;
   }
 
-  static void record(
-    String insightId,
-    ArchiveInsightFeedbackChoice choice,
-  ) {
+  static void record(String insightId, ArchiveInsightFeedbackChoice choice) {
     switch (choice) {
       case ArchiveInsightFeedbackChoice.feelsRight:
         _feelsRight[insightId] = feelsRightCount(insightId) + 1;
@@ -179,11 +174,12 @@ abstract final class ArchiveInsightFeedbackStore {
   }
 
   static List<String> notQuiteInsightIds() {
-    final ids = _notQuite.entries
-        .where((entry) => entry.value > 0)
-        .map((entry) => entry.key)
-        .toList()
-      ..sort();
+    final ids =
+        _notQuite.entries
+            .where((entry) => entry.value > 0)
+            .map((entry) => entry.key)
+            .toList()
+          ..sort();
     return ids;
   }
 
@@ -203,9 +199,7 @@ abstract final class ArchiveInsightFeedbackStore {
     if (raw == null) return;
     _hidden
       ..clear()
-      ..addAll(
-        (raw['hidden'] as List<dynamic>? ?? []).whereType<String>(),
-      );
+      ..addAll((raw['hidden'] as List<dynamic>? ?? []).whereType<String>());
     _feelsRight.clear();
     final feelsRightRaw = raw['feelsRight'];
     if (feelsRightRaw is Map) {

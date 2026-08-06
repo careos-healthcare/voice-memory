@@ -32,8 +32,7 @@ abstract final class DemoSharePackEngine {
   }
 
   static DemoSharePack _buildFromSampleEntries(List<JournalEntry> entries) {
-    final realEntries =
-        entries.where(SampleArchiveMode.isSampleEntry).toList();
+    final realEntries = entries.where(SampleArchiveMode.isSampleEntry).toList();
     final map = ArchiveEvidenceMapEngine.build(entries: realEntries);
 
     var workCount = 0;

@@ -7,6 +7,9 @@ import 'testflight_feedback_copy.dart';
 abstract final class TestFlightFeedbackLauncher {
   TestFlightFeedbackLauncher._();
 
+  static Future<bool> Function(Uri uri)? resolveUrlLauncher() =>
+      launchUrlForTest;
+
   @visibleForTesting
   static Future<bool> Function(Uri uri)? launchUrlForTest;
 
@@ -18,16 +21,14 @@ abstract final class TestFlightFeedbackLauncher {
     return Uri(
       scheme: 'mailto',
       path: to,
-      query: _encodeQuery({
-        'subject': subject,
-        'body': body,
-      }),
+      query: _encodeQuery({'subject': subject, 'body': body}),
     );
   }
 
   static Future<bool> openFeedbackEmail() async {
     final uri = mailtoUri();
-    final launch = launchUrlForTest ??
+    final launch =
+        launchUrlForTest ??
         ((target) => launchUrl(target, mode: LaunchMode.externalApplication));
     return launch(uri);
   }

@@ -13,31 +13,31 @@ ContradictionChangeFutureGateInput _input({
   bool? strongProofTrailComplete,
   bool? paidIntentBetaComplete,
   bool? v1ChangeDetectionUiRequested,
-}) =>
-    ContradictionChangeFutureGateInput(
-      strongProofTrailComplete: strongProofTrailComplete,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
-    );
+}) => ContradictionChangeFutureGateInput(
+  strongProofTrailComplete: strongProofTrailComplete,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  v1ChangeDetectionUiRequested: v1ChangeDetectionUiRequested,
+);
 
 ContradictionChangeFutureRule _rule(
   ContradictionChangeFutureGateResult result,
   ContradictionChangeFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 ContradictionChangeFuturePrereq _prereq(
   ContradictionChangeFutureGateResult result,
   ContradictionChangeFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 void main() {
   group('ContradictionChangeFutureGate.build', () {
     test('gate tracks seven canonical rules in order', () {
       final result = ContradictionChangeFutureGate.build(_input());
       expect(result.rules.length, ContradictionChangeFutureGate.ruleCount);
-      expect(result.ruleOrder, ContradictionChangeFutureGate.canonicalRuleOrder);
+      expect(
+        result.ruleOrder,
+        ContradictionChangeFutureGate.canonicalRuleOrder,
+      );
       expect(
         result.rules.map((rule) => rule.id).toList(),
         ContradictionChangeFutureGate.canonicalRuleOrder,
@@ -70,39 +70,43 @@ void main() {
       );
     });
 
-    test('proof trail and beta complete -> futureChangeDetectionDocumented', () {
-      final result = ContradictionChangeFutureGate.build(
-        _input(
-          strongProofTrailComplete: true,
-          paidIntentBetaComplete: true,
-        ),
-      );
-      expect(
-        result.decision,
-        ContradictionChangeFutureGateDecision.futureChangeDetectionDocumented,
-      );
-      expect(result.proofTrailComplete, isTrue);
-      expect(result.v1LiveUiBlocked, isTrue);
-    });
+    test(
+      'proof trail and beta complete -> futureChangeDetectionDocumented',
+      () {
+        final result = ContradictionChangeFutureGate.build(
+          _input(strongProofTrailComplete: true, paidIntentBetaComplete: true),
+        );
+        expect(
+          result.decision,
+          ContradictionChangeFutureGateDecision.futureChangeDetectionDocumented,
+        );
+        expect(result.proofTrailComplete, isTrue);
+        expect(result.v1LiveUiBlocked, isTrue);
+      },
+    );
 
-    test('v1 change UI requested without proof trail fails strongProofTrailRequired',
-        () {
-      final result = ContradictionChangeFutureGate.build(
-        _input(
-          strongProofTrailComplete: false,
-          v1ChangeDetectionUiRequested: true,
-        ),
-      );
-      expect(
-        _rule(result, ContradictionChangeFutureRuleId.strongProofTrailRequired)
-            .status,
-        ContradictionChangeFutureRuleStatus.fail,
-      );
-      expect(
-        _rule(result, ContradictionChangeFutureRuleId.noNewLiveV1Ui).status,
-        ContradictionChangeFutureRuleStatus.fail,
-      );
-    });
+    test(
+      'v1 change UI requested without proof trail fails strongProofTrailRequired',
+      () {
+        final result = ContradictionChangeFutureGate.build(
+          _input(
+            strongProofTrailComplete: false,
+            v1ChangeDetectionUiRequested: true,
+          ),
+        );
+        expect(
+          _rule(
+            result,
+            ContradictionChangeFutureRuleId.strongProofTrailRequired,
+          ).status,
+          ContradictionChangeFutureRuleStatus.fail,
+        );
+        expect(
+          _rule(result, ContradictionChangeFutureRuleId.noNewLiveV1Ui).status,
+          ContradictionChangeFutureRuleStatus.fail,
+        );
+      },
+    );
 
     test('canonical rules pass for gate copy', () {
       final result = ContradictionChangeFutureGate.build(_input());
@@ -147,7 +151,10 @@ void main() {
         ContradictionChangeFutureGate.build(_input()),
       );
       expect(report.headline, ContradictionChangeFutureCopy.headline);
-      expect(report.futureValueLine, ContradictionChangeFutureCopy.futureValueLine);
+      expect(
+        report.futureValueLine,
+        ContradictionChangeFutureCopy.futureValueLine,
+      );
       expect(report.guardrail, ContradictionChangeFutureCopy.guardrail);
     });
   });
@@ -229,8 +236,10 @@ void main() {
         ContradictionChangeFutureGateDecision.changeFrozen,
       );
       expect(
-        _prereq(result, ContradictionChangeFuturePrereqId.strongProofTrailComplete)
-            .status,
+        _prereq(
+          result,
+          ContradictionChangeFuturePrereqId.strongProofTrailComplete,
+        ).status,
         ContradictionChangeFuturePrereqStatus.pending,
       );
     });

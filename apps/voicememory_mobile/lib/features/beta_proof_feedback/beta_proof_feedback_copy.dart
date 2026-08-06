@@ -23,12 +23,12 @@ abstract final class BetaProofFeedbackCopy {
       ProofRelevanceRepairCopy.responseFor(type);
 
   static List<String> allVisibleStrings() => [
-        question,
-        answerUseful,
-        answerTooVague,
-        answerAlreadyKnew,
-        answerNotRelevant,
-        thanksMessage,
-        ...ProofRelevanceRepairCopy.allVisibleStrings(),
-      ];
+    question,
+    answerUseful,
+    answerTooVague,
+    answerAlreadyKnew,
+    answerNotRelevant,
+    thanksMessage,
+    ...ProofRelevanceRepairCopy.allVisibleStrings(),
+  ];
 }

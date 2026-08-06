@@ -43,10 +43,7 @@ abstract class TranscriptionLog {
     debugPrint('ARCHIVEME_TRANSCRIPTION_REQUEST url=$url');
   }
 
-  static void response({
-    required int status,
-    required String contentType,
-  }) {
+  static void response({required int status, required String contentType}) {
     debugPrint(
       'ARCHIVEME_TRANSCRIPTION_RESPONSE status=$status contentType=$contentType',
     );

@@ -83,10 +83,9 @@ class _MonthlyPrivateReportPreviewCardState
   Widget build(BuildContext context) {
     _trackSeenOnce();
     final display = MonthlyPrivateReportEngine.buildDisplay();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('monthly_private_report_preview_card'),

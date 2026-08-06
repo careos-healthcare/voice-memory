@@ -31,10 +31,7 @@ void main() {
     repeatedSignal: '',
   );
 
-  JournalEntry entry({
-    required String id,
-    required String transcript,
-  }) {
+  JournalEntry entry({required String id, required String transcript}) {
     return JournalEntry(
       id: id,
       createdAt: DateTime.utc(2026, 6, 12, 12),

@@ -13,16 +13,16 @@ enum OpenCaptureChipType {
   randomMoment;
 
   String get analyticsValue => switch (this) {
-        OpenCaptureChipType.thought => 'thought',
-        OpenCaptureChipType.decision => 'decision',
-        OpenCaptureChipType.worry => 'worry',
-        OpenCaptureChipType.win => 'win',
-        OpenCaptureChipType.memory => 'memory',
-        OpenCaptureChipType.conversation => 'conversation',
-        OpenCaptureChipType.pressure => 'pressure',
-        OpenCaptureChipType.reaction => 'reaction',
-        OpenCaptureChipType.randomMoment => 'random_moment',
-      };
+    OpenCaptureChipType.thought => 'thought',
+    OpenCaptureChipType.decision => 'decision',
+    OpenCaptureChipType.worry => 'worry',
+    OpenCaptureChipType.win => 'win',
+    OpenCaptureChipType.memory => 'memory',
+    OpenCaptureChipType.conversation => 'conversation',
+    OpenCaptureChipType.pressure => 'pressure',
+    OpenCaptureChipType.reaction => 'reaction',
+    OpenCaptureChipType.randomMoment => 'random_moment',
+  };
 }
 
 class OpenCaptureChip {

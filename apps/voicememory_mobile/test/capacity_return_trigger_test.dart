@@ -44,21 +44,22 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -90,16 +91,19 @@ void main() {
       expect(result.showCard, isTrue);
       expect(result.title, CapacityReturnTriggerCopy.completionTitle);
       expect(result.body, CapacityReturnTriggerCopy.completionBody);
-      expect(result.primaryCtaLabel, CapacityReturnTriggerCopy.completionPrimaryCta);
-      expect(result.secondaryCtaLabel, CapacityReturnTriggerCopy.completionSecondaryCta);
+      expect(
+        result.primaryCtaLabel,
+        CapacityReturnTriggerCopy.completionPrimaryCta,
+      );
+      expect(
+        result.secondaryCtaLabel,
+        CapacityReturnTriggerCopy.completionSecondaryCta,
+      );
     });
 
     test('hides completion after second moment', () {
       final result = engine.buildFromJournal(
-        entries: [
-          _capacityEntry('real_0'),
-          _capacityEntry('real_1'),
-        ],
+        entries: [_capacityEntry('real_0'), _capacityEntry('real_1')],
         capacityLoopActive: true,
         capacityCohortActive: false,
         surface: CapacityReturnTriggerSurface.completion,
@@ -115,24 +119,15 @@ void main() {
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
       expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle(1));
-      expect(
-        one.body,
-        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
-      );
+      expect(one.body, CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3));
 
       final two = engine.buildFromJournal(
-        entries: [
-          _capacityEntry('real_0'),
-          _capacityEntry('real_1'),
-        ],
+        entries: [_capacityEntry('real_0'), _capacityEntry('real_1')],
         capacityLoopActive: true,
         capacityCohortActive: false,
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
-      expect(
-        two.body,
-        CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3),
-      );
+      expect(two.body, CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3));
     });
 
     test('hides archive home return trigger at 3/3', () {
@@ -258,7 +253,10 @@ void main() {
       );
       expect(one.progressLabel, isEmpty);
       expect(one.showReviewSecondary, isTrue);
-      expect(one.reviewSecondaryLabel, CapacityReturnTriggerCopy.archiveHomeSecondaryCta(1));
+      expect(
+        one.reviewSecondaryLabel,
+        CapacityReturnTriggerCopy.archiveHomeSecondaryCta(1),
+      );
       expect(one.showQuickSaveSecondary, isFalse);
     });
 
@@ -318,7 +316,9 @@ void main() {
       );
     });
 
-    testWidgets('routes secondary to record on completion card', (tester) async {
+    testWidgets('routes secondary to record on completion card', (
+      tester,
+    ) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -424,14 +424,12 @@ void main() {
         ),
       );
 
-      final capacityCards = [
-        ...plan.primarySections,
-        ...plan.secondarySections,
-      ].where(
-        (section) =>
-            section == ArchiveHomeSectionId.capacityThreeMomentActivation ||
-            section == ArchiveHomeSectionId.capacityLoop,
-      );
+      final capacityCards = [...plan.primarySections, ...plan.secondarySections]
+          .where(
+            (section) =>
+                section == ArchiveHomeSectionId.capacityThreeMomentActivation ||
+                section == ArchiveHomeSectionId.capacityLoop,
+          );
       expect(capacityCards.length, lessThanOrEqualTo(2));
     });
   });

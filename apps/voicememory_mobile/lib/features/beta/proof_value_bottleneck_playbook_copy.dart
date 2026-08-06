@@ -4,8 +4,7 @@ abstract final class ProofValueBottleneckPlaybookCopy {
 
   static const cardTitle = 'Bottleneck playbook';
 
-  static const cardSubtitle =
-      'Fix only the current Proof of Value bottleneck.';
+  static const cardSubtitle = 'Fix only the current Proof of Value bottleneck.';
 
   static const sectionMeaning = 'Meaning';
 
@@ -45,8 +44,7 @@ abstract final class ProofValueBottleneckPlaybookCopy {
   static const runMoreTestersTestProofOfValue = 'proof_of_value_test.dart';
 
   // B — Fix first-use clarity
-  static const fixFirstUseMeaning =
-      'Testers are not saving the first moment.';
+  static const fixFirstUseMeaning = 'Testers are not saving the first moment.';
 
   static const fixFirstUseFixArea = 'First-use / capture copy';
 
@@ -92,8 +90,7 @@ abstract final class ProofValueBottleneckPlaybookCopy {
   static const fixReturnLoopGuardrail =
       'No notifications yet. Strengthen in-app return guidance only.';
 
-  static const fixReturnLoopTestEarlyRepeat =
-      'early_repeat_progress_test.dart';
+  static const fixReturnLoopTestEarlyRepeat = 'early_repeat_progress_test.dart';
 
   static const fixReturnLoopTestTesterMission = 'tester_mission_test.dart';
 
@@ -246,8 +243,7 @@ abstract final class ProofValueBottleneckPlaybookCopy {
   static const widenBetaTestReleaseCandidateSmoke =
       'release_candidate_smoke_test.dart';
 
-  static const widenBetaTestBetaReportExport =
-      'beta_report_export_test.dart';
+  static const widenBetaTestBetaReportExport = 'beta_report_export_test.dart';
 
   static const widenBetaTestProofOfValue = 'proof_of_value_test.dart';
 }

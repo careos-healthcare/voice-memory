@@ -54,10 +54,7 @@ void main() {
 
   testWidgets('tapping cloud row opens data-flow sheet', (tester) async {
     var sheetOpened = false;
-    await pumpCard(
-      tester,
-      onCloudTap: () => sheetOpened = true,
-    );
+    await pumpCard(tester, onCloudTap: () => sheetOpened = true);
 
     await tester.tap(find.byKey(const Key('archive_privacy_cloud_row')));
     await tester.pumpAndSettle();
@@ -65,7 +62,9 @@ void main() {
     expect(sheetOpened, isTrue);
   });
 
-  testWidgets('data-flow sheet shows expected sections and Done', (tester) async {
+  testWidgets('data-flow sheet shows expected sections and Done', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -96,10 +95,7 @@ void main() {
       find.textContaining('Nothing is sent unless you choose'),
       findsNothing,
     );
-    expect(
-      find.textContaining('private content to analyse'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('private content to analyse'), findsOneWidget);
     expect(find.byKey(const Key('archive_data_flow_done')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('archive_data_flow_done')));

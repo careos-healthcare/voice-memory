@@ -27,75 +27,73 @@ JournalEntry _textEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'pending',
   String transcript = _placeholder,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 List<JournalEntry> _mixedEntries() => [
-      _textEntry(
-        id: 'saved',
-        transcript: 'A quiet moment about lunch with a friend today.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-      _textEntry(
-        id: 'e1',
-        transcript:
-            'I said yes again even though I was already tired from work today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _textEntry(
-        id: 'e2',
-        transcript:
-            'I took responsibility again before asking anyone for help today.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-      _textEntry(
-        id: 'quiet',
-        transcript: RecordCaptureModeCopy.quietDayDefaultSaveText,
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _textEntry(
-        id: 'ignored',
-        transcript: 'hello checking mic test',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _degradedVoiceEntry(id: 'needs_words', createdAt: DateTime(2026, 6, 9, 12)),
-    ];
+  _textEntry(
+    id: 'saved',
+    transcript: 'A quiet moment about lunch with a friend today.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+  _textEntry(
+    id: 'e1',
+    transcript:
+        'I said yes again even though I was already tired from work today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _textEntry(
+    id: 'e2',
+    transcript:
+        'I took responsibility again before asking anyone for help today.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+  _textEntry(
+    id: 'quiet',
+    transcript: RecordCaptureModeCopy.quietDayDefaultSaveText,
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _textEntry(
+    id: 'ignored',
+    transcript: 'hello checking mic test',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _degradedVoiceEntry(id: 'needs_words', createdAt: DateTime(2026, 6, 9, 12)),
+];
 
 ArchiveHistoryContent _mixedContent() =>
     ArchiveHistoryEngine.build(entries: _mixedEntries());
@@ -178,15 +176,10 @@ void main() {
 
       expect(filtered, isNotEmpty);
       expect(
-        filtered.every(
-          (item) => item.status == ArchiveHistoryStatus.savedOnly,
-        ),
+        filtered.every((item) => item.status == ArchiveHistoryStatus.savedOnly),
         isTrue,
       );
-      expect(
-        filtered.any((item) => item.entryId == 'saved'),
-        isTrue,
-      );
+      expect(filtered.any((item) => item.entryId == 'saved'), isTrue);
     });
 
     test('needs your words filter only repairable pending rows', () {
@@ -228,10 +221,7 @@ void main() {
         ),
         isTrue,
       );
-      expect(
-        filtered.any((item) => item.entryId == 'ignored'),
-        isTrue,
-      );
+      expect(filtered.any((item) => item.entryId == 'ignored'), isTrue);
     });
 
     test('helped filter only helped-marked rows', () async {
@@ -259,7 +249,10 @@ void main() {
     ) async {
       await _pumpSheet(tester, _mixedContent());
 
-      expect(find.byKey(const Key('archive_history_filter_chips')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_filter_chips')),
+        findsOneWidget,
+      );
       for (final filter in ArchiveHistoryFilterEngine.orderedFilters) {
         expect(
           find.byKey(
@@ -281,7 +274,10 @@ void main() {
         entryCount: 0,
       );
 
-      expect(find.byKey(const Key('archive_history_filter_chips')), findsNothing);
+      expect(
+        find.byKey(const Key('archive_history_filter_chips')),
+        findsNothing,
+      );
       expect(find.text(ArchiveHistoryCopy.emptyTitle), findsOneWidget);
     });
 
@@ -312,19 +308,18 @@ void main() {
       expect(find.byKey(const Key('archive_history_row_quiet')), findsNothing);
     });
 
-    testWidgets('saved only filter shows only saved-only rows', (
-      tester,
-    ) async {
+    testWidgets('saved only filter shows only saved-only rows', (tester) async {
       await _pumpSheet(tester, _mixedContent());
       await _selectFilter(tester, ArchiveHistoryFilter.savedOnly);
 
-      expect(find.byKey(const Key('archive_history_row_saved')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_row_saved')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('archive_history_row_e1')), findsNothing);
     });
 
-    testWidgets('needs your words filter shows add words CTA', (
-      tester,
-    ) async {
+    testWidgets('needs your words filter shows add words CTA', (tester) async {
       await _pumpSheet(tester, _mixedContent());
       await _selectFilter(tester, ArchiveHistoryFilter.needsYourWords);
 
@@ -339,13 +334,14 @@ void main() {
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsOneWidget);
     });
 
-    testWidgets('quiet days filter shows only quiet-day rows', (
-      tester,
-    ) async {
+    testWidgets('quiet days filter shows only quiet-day rows', (tester) async {
       await _pumpSheet(tester, _mixedContent());
       await _selectFilter(tester, ArchiveHistoryFilter.quietDays);
 
-      expect(find.byKey(const Key('archive_history_row_quiet')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_row_quiet')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('archive_history_row_saved')), findsNothing);
     });
 
@@ -373,8 +369,14 @@ void main() {
       await _pumpSheet(tester, content);
       await _selectFilter(tester, ArchiveHistoryFilter.helped);
 
-      expect(find.byKey(const Key('archive_history_row_saved')), findsOneWidget);
-      expect(find.byKey(const Key('archive_history_helped_saved')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_row_saved')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_history_helped_saved')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('archive_history_row_e1')), findsNothing);
     });
 

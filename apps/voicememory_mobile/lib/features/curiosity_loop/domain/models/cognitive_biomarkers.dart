@@ -23,10 +23,10 @@ class CognitiveBiomarkers {
   }
 
   Map<String, dynamic> toJson() => {
-        'lexicalDiversity': lexicalDiversity,
-        'cohesionDrift': cohesionDrift,
-        'emotionalVolatility': emotionalVolatility,
-      };
+    'lexicalDiversity': lexicalDiversity,
+    'cohesionDrift': cohesionDrift,
+    'emotionalVolatility': emotionalVolatility,
+  };
 
   static CognitiveBiomarkers? fromJson(dynamic json) {
     if (json is! Map) return null;
@@ -63,9 +63,6 @@ class CognitiveBiomarkers {
   }
 
   @override
-  int get hashCode => Object.hash(
-        lexicalDiversity,
-        cohesionDrift,
-        emotionalVolatility,
-      );
+  int get hashCode =>
+      Object.hash(lexicalDiversity, cohesionDrift, emotionalVolatility);
 }

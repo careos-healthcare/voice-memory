@@ -1,0 +1,20 @@
+name: archiveme_research
+description: >-
+  Non-shipping ArchiveMe research and lab surfaces (capacity loop, beta labs,
+  legacy archive experiments). Not imported by the V1 production app graph.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  voicememory_mobile:
+    path: ../../apps/voicememory_mobile
+  go_router: ^14.8.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

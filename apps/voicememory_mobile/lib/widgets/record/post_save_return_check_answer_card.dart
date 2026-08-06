@@ -25,7 +25,7 @@ class PostSaveReturnCheckAnswerCard extends StatefulWidget {
     required this.answer,
     this.store,
     this.onChanged,
-  })  : skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final PostSaveReturnCheckAnswer answer;
   final RepeatReturnCheckStore? store;
@@ -94,24 +94,26 @@ class _PostSaveReturnCheckAnswerCardState
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('post_save_return_check_answer_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             widget.answer.label,
             key: const Key('post_save_return_check_answer_label'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

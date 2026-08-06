@@ -106,9 +106,9 @@ class _BetaRepairLabCardState extends State<BetaRepairLabCard> {
             Text(
               BetaRepairLabCopy.cardTitle,
               key: const Key('beta_repair_lab_heading'),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             Text(
@@ -225,9 +225,9 @@ class BetaRepairLabProofCard extends StatefulWidget {
     this.store,
     bool answered = false,
     BetaProofFeedbackType? answerType,
-  })  : skipPrefsLoad = true,
-        initialAnswered = answered,
-        initialAnswerType = answerType;
+  }) : skipPrefsLoad = true,
+       initialAnswered = answered,
+       initialAnswerType = answerType;
 
   final BetaRepairLabProofResult result;
   final VoidCallback? onChanged;
@@ -287,13 +287,14 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
   @override
   Widget build(BuildContext context) {
     if (!widget.result.shouldShow) {
-      return const SizedBox.shrink(key: Key('beta_repair_lab_proof_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('beta_repair_lab_proof_card_hidden'),
+      );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: Key('beta_repair_lab_proof_card_${widget.result.variant.name}'),
@@ -347,14 +348,18 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
                       textStyle: const TextStyle(fontSize: 13),
                     ),
                     onPressed: () => unawaited(_selectAnswer(type)),
-                    child: Text(BetaRepairLabProofFeedbackCopy.feedbackLabel(type)),
+                    child: Text(
+                      BetaRepairLabProofFeedbackCopy.feedbackLabel(type),
+                    ),
                   ),
               ],
             ),
           ] else if (_selectedFeedback != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
-              BetaRepairLabProofFeedbackCopy.feedbackResponse(_selectedFeedback!) ??
+              BetaRepairLabProofFeedbackCopy.feedbackResponse(
+                    _selectedFeedback!,
+                  ) ??
                   BetaProofFeedbackCopy.thanksMessage,
               key: Key(
                 'beta_repair_lab_proof_feedback_response_${_selectedFeedback!.storageValue}',
@@ -404,10 +409,9 @@ class _BetaRepairLabProPlacementCardState
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('beta_repair_lab_pro_placement_card'),

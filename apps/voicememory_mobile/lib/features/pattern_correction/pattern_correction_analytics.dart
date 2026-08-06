@@ -13,16 +13,10 @@ abstract final class PatternCorrectionAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void opened({
-    required String source,
-    required int entryCount,
-  }) {
-    final props = <String, Object>{
-      'source': source,
-      'entry_count': entryCount,
-    };
+  static void opened({required String source, required int entryCount}) {
+    final props = <String, Object>{'source': source, 'entry_count': entryCount};
     captureForTest?.call(openedEvent, props);
     ActivationFunnelAnalytics.track(
       openedEvent,
@@ -89,25 +83,23 @@ abstract final class PatternCorrectionAnalytics {
     }
   }
 
-  static String _reasonKey(PatternCorrectionReason reason) =>
-      switch (reason) {
-        PatternCorrectionReason.wrongPattern => 'wrong_pattern',
-        PatternCorrectionReason.wrongWording => 'wrong_wording',
-        PatternCorrectionReason.tooPersonal => 'too_personal',
-        PatternCorrectionReason.doesNotBelong => 'does_not_belong',
-        PatternCorrectionReason.notUseful => 'not_useful',
-      };
+  static String _reasonKey(PatternCorrectionReason reason) => switch (reason) {
+    PatternCorrectionReason.wrongPattern => 'wrong_pattern',
+    PatternCorrectionReason.wrongWording => 'wrong_wording',
+    PatternCorrectionReason.tooPersonal => 'too_personal',
+    PatternCorrectionReason.doesNotBelong => 'does_not_belong',
+    PatternCorrectionReason.notUseful => 'not_useful',
+  };
 
-  static String _actionKey(PatternCorrectionAction action) =>
-      switch (action) {
-        PatternCorrectionAction.renamePattern => 'rename_pattern',
-        PatternCorrectionAction.removeFromPattern => 'remove_from_pattern',
-        PatternCorrectionAction.correctTranscript => 'correct_transcript',
-        PatternCorrectionAction.deleteMoment => 'delete_moment',
-        PatternCorrectionAction.privacyCentre => 'privacy_centre',
-        PatternCorrectionAction.betaFeedback => 'beta_feedback',
-        PatternCorrectionAction.keepRecording => 'keep_recording',
-      };
+  static String _actionKey(PatternCorrectionAction action) => switch (action) {
+    PatternCorrectionAction.renamePattern => 'rename_pattern',
+    PatternCorrectionAction.removeFromPattern => 'remove_from_pattern',
+    PatternCorrectionAction.correctTranscript => 'correct_transcript',
+    PatternCorrectionAction.deleteMoment => 'delete_moment',
+    PatternCorrectionAction.privacyCentre => 'privacy_centre',
+    PatternCorrectionAction.betaFeedback => 'beta_feedback',
+    PatternCorrectionAction.keepRecording => 'keep_recording',
+  };
 
   static String reasonKey(PatternCorrectionReason reason) => _reasonKey(reason);
 

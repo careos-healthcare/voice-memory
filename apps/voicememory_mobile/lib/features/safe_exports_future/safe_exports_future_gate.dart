@@ -53,7 +53,8 @@ abstract final class SafeExportsFutureGate {
     final rulesPass = rules.every(
       (rule) => rule.status == SafeExportsFutureRuleStatus.pass,
     );
-    final exportProofComplete = rulesPass &&
+    final exportProofComplete =
+        rulesPass &&
         prereqs.every(
           (prereq) => prereq.status == SafeExportFuturePrereqStatus.pass,
         );
@@ -95,48 +96,49 @@ abstract final class SafeExportsFutureGate {
       blockedExportCount: exports
           .where(
             (export) =>
-                export.status == SafeExportFutureStatus.blockedBeforeExportProof,
+                export.status ==
+                SafeExportFutureStatus.blockedBeforeExportProof,
           )
           .length,
     );
   }
 
-  static SafeExportsFutureGateReport report(SafeExportsFutureGateResult result) =>
-      SafeExportsFutureGateReport(
-        headline: SafeExportsFutureCopy.headline,
-        body: SafeExportsFutureCopy.body,
-        positioning: SafeExportsFutureCopy.positioning,
-        orderLine: SafeExportsFutureCopy.orderLine,
-        prereqOrderLine: SafeExportsFutureCopy.prereqOrderLine,
-        guardrail: SafeExportsFutureCopy.guardrail,
-        result: result,
-      );
+  static SafeExportsFutureGateReport report(
+    SafeExportsFutureGateResult result,
+  ) => SafeExportsFutureGateReport(
+    headline: SafeExportsFutureCopy.headline,
+    body: SafeExportsFutureCopy.body,
+    positioning: SafeExportsFutureCopy.positioning,
+    orderLine: SafeExportsFutureCopy.orderLine,
+    prereqOrderLine: SafeExportsFutureCopy.prereqOrderLine,
+    guardrail: SafeExportsFutureCopy.guardrail,
+    result: result,
+  );
 
   static SafeExportsFutureGateInput composeInput({
     bool? exportTestsPass,
     bool? paidIntentBetaComplete,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      SafeExportsFutureGateInput(
-        exportTestsPass: exportTestsPass,
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-      );
+  }) => SafeExportsFutureGateInput(
+    exportTestsPass: exportTestsPass,
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+  );
 
   static SafeExportsFutureGateInput fromRepoSignals({
     required String safeExportsFutureDocSource,
     required String gateCopySource,
     bool? exportTestsPass,
     bool? paidIntentBetaComplete,
-  }) =>
-      SafeExportsFutureGateInput(
-        exportTestsPass: exportTestsPass,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        docListsRules: detectDocListsRules(safeExportsFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => SafeExportsFutureGateInput(
+    exportTestsPass: exportTestsPass,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    docListsRules: detectDocListsRules(safeExportsFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -180,18 +182,21 @@ abstract final class SafeExportsFutureGate {
     return [
       _rule(
         id: SafeExportsFutureRuleId.notPrimaryProPromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('not the primary pro promise'),
       ),
       _rule(
         id: SafeExportsFutureRuleId.noPrivateRawTextLeak,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('explicit user export action') &&
             guardrailLower.contains('never leak private raw text'),
       ),
       _rule(
         id: SafeExportsFutureRuleId.testedBeforeMarketing,
-        passes: guardrailLower.contains('tested before marketing') &&
+        passes:
+            guardrailLower.contains('tested before marketing') &&
             (!(input.marketingExportsPlanned ?? false) ||
                 (input.exportTestsPass ?? false)),
       ),
@@ -204,36 +209,34 @@ abstract final class SafeExportsFutureGate {
 
   static List<SafeExportFuturePrereq> _buildPrereqs(
     SafeExportsFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: SafeExportFuturePrereqId.exportTestsPass,
-          value: input.exportTestsPass,
-        ),
-        _prereq(
-          id: SafeExportFuturePrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: SafeExportFuturePrereqId.exportTestsPass,
+      value: input.exportTestsPass,
+    ),
+    _prereq(
+      id: SafeExportFuturePrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+  ];
 
   static List<SafeExportFuture> _buildExports({
     required bool exportProofComplete,
-  }) =>
-      canonicalExportOrder
-          .map(
-            (id) => SafeExportFuture(
-              id: id,
-              label: SafeExportsFutureCopy.labelFor(id),
-              positioning: SafeExportsFutureCopy.positioningFor(id),
-              status: exportProofComplete
-                  ? SafeExportFutureStatus.futurePaidExpansionDocumented
-                  : SafeExportFutureStatus.blockedBeforeExportProof,
-              detailLabel: exportProofComplete
-                  ? SafeExportsFutureCopy.detailFuturePaidExpansionDocumented
-                  : SafeExportsFutureCopy.detailBlockedBeforeExportProof,
-            ),
-          )
-          .toList();
+  }) => canonicalExportOrder
+      .map(
+        (id) => SafeExportFuture(
+          id: id,
+          label: SafeExportsFutureCopy.labelFor(id),
+          positioning: SafeExportsFutureCopy.positioningFor(id),
+          status: exportProofComplete
+              ? SafeExportFutureStatus.futurePaidExpansionDocumented
+              : SafeExportFutureStatus.blockedBeforeExportProof,
+          detailLabel: exportProofComplete
+              ? SafeExportsFutureCopy.detailFuturePaidExpansionDocumented
+              : SafeExportsFutureCopy.detailBlockedBeforeExportProof,
+        ),
+      )
+      .toList();
 
   static bool _violatesPrimaryProPromise(String copy) =>
       primaryProPromiseViolationMarkers.any(copy.toLowerCase().contains);
@@ -241,7 +244,8 @@ abstract final class SafeExportsFutureGate {
   static bool _violatesPrivateRawTextLeak(String copy) =>
       privateRawTextLeakViolationMarkers.any(copy.toLowerCase().contains);
 
-  static SafeExportFuturePrereqStatus _statusFor(bool? value) => switch (value) {
+  static SafeExportFuturePrereqStatus _statusFor(bool? value) =>
+      switch (value) {
         true => SafeExportFuturePrereqStatus.pass,
         false => SafeExportFuturePrereqStatus.fail,
         null => SafeExportFuturePrereqStatus.pending,
@@ -268,17 +272,16 @@ abstract final class SafeExportsFutureGate {
   static SafeExportsFutureRule _rule({
     required SafeExportsFutureRuleId id,
     required bool passes,
-  }) =>
-      SafeExportsFutureRule(
-        id: id,
-        label: SafeExportsFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? SafeExportsFutureRuleStatus.pass
-            : SafeExportsFutureRuleStatus.fail,
-        detailLabel: passes
-            ? SafeExportsFutureCopy.detailPass
-            : SafeExportsFutureCopy.detailFail,
-      );
+  }) => SafeExportsFutureRule(
+    id: id,
+    label: SafeExportsFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? SafeExportsFutureRuleStatus.pass
+        : SafeExportsFutureRuleStatus.fail,
+    detailLabel: passes
+        ? SafeExportsFutureCopy.detailPass
+        : SafeExportsFutureCopy.detailFail,
+  );
 }
 
 class SafeExportsFutureGateInput {

@@ -21,8 +21,7 @@ abstract final class RecordCaptureModeEngine {
     required bool loaded,
     required bool isReady,
     required bool isPostSave,
-  }) =>
-      loaded && isReady && !isPostSave;
+  }) => loaded && isReady && !isPostSave;
 
   static RecordCaptureMode? modeById(RecordCaptureModeId id) {
     for (final mode in RecordCaptureMode.all) {
@@ -40,5 +39,6 @@ abstract final class RecordCaptureModeEngine {
   static bool entryIsQuietDay(JournalEntry entry) =>
       isQuietDayText(ComparableEvidenceText.userText(entry));
 
-  static String quietDaySaveText() => RecordCaptureModeCopy.quietDayDefaultSaveText;
+  static String quietDaySaveText() =>
+      RecordCaptureModeCopy.quietDayDefaultSaveText;
 }

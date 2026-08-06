@@ -22,10 +22,7 @@ import '../record/correct_transcript_sheet.dart';
 
 /// Bottom sheet for correcting a grounded pattern without losing trust.
 class PatternCorrectionSheet extends StatefulWidget {
-  const PatternCorrectionSheet({
-    super.key,
-    required this.contextData,
-  });
+  const PatternCorrectionSheet({super.key, required this.contextData});
 
   final PatternCorrectionContext contextData;
 
@@ -221,7 +218,9 @@ class _PatternCorrectionSheetState extends State<PatternCorrectionSheet> {
     return [
       for (final reason in PatternCorrectionEngine.reasons)
         ListTile(
-          key: Key('pattern_correction_reason_${PatternCorrectionAnalytics.reasonKey(reason)}'),
+          key: Key(
+            'pattern_correction_reason_${PatternCorrectionAnalytics.reasonKey(reason)}',
+          ),
           contentPadding: EdgeInsets.zero,
           title: Text(
             PatternCorrectionCopy.reasonLabel(reason),
@@ -252,9 +251,9 @@ class _PatternCorrectionSheetState extends State<PatternCorrectionSheet> {
       Text(
         PatternCorrectionCopy.actionsHeading,
         key: const Key('pattern_correction_actions_heading'),
-        style: ArchiveMobileTypography.cardLabel(context).copyWith(
-          color: AppColors.textSecondary,
-        ),
+        style: ArchiveMobileTypography.cardLabel(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
       const SizedBox(height: AppSpacing.xs),
       for (final action in actions)

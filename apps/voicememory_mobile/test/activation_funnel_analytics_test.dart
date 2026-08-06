@@ -18,7 +18,7 @@ import 'package:voicememory_mobile/features/pressure_retention/thread_return_evi
 import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/widgets/billing/value_moment_pro_bridge.dart';
@@ -515,13 +515,10 @@ void main() {
       );
       MemoryConnectionRules.resetForTest();
       MemoryConnectionRules.keepConnected(MemoryCardType.beliefDistance);
-      final belief = const BeliefDistanceEngine().build(
-        [
-          _record(id: 'b0', daysAgo: 4, fear: 'I have to keep checking messages'),
-          _record(id: 'b1', daysAgo: 0, fear: 'Checking messages again tonight'),
-        ],
-        entryCount: 2,
-      );
+      final belief = const BeliefDistanceEngine().build([
+        _record(id: 'b0', daysAgo: 4, fear: 'I have to keep checking messages'),
+        _record(id: 'b1', daysAgo: 0, fear: 'Checking messages again tonight'),
+      ], entryCount: 2);
       await pumpCard(
         tester,
         Column(

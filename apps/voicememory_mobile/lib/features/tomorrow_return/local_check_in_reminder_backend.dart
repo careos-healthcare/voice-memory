@@ -17,8 +17,7 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
   final FlutterLocalNotificationsPlugin _plugin;
 
   static FlutterLocalNotificationsPlugin? sharedPlugin;
-  static final List<void Function(NotificationResponse)> _responseHandlers =
-      [];
+  static final List<void Function(NotificationResponse)> _responseHandlers = [];
 
   bool _initialized = false;
   bool _available = false;

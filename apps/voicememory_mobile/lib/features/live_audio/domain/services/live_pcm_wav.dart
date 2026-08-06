@@ -32,8 +32,8 @@ Uint8List wrapPcm16LeMonoInWav(
 List<int> _le16(int value) => [value & 0xff, (value >> 8) & 0xff];
 
 List<int> _le32(int value) => [
-      value & 0xff,
-      (value >> 8) & 0xff,
-      (value >> 16) & 0xff,
-      (value >> 24) & 0xff,
-    ];
+  value & 0xff,
+  (value >> 8) & 0xff,
+  (value >> 16) & 0xff,
+  (value >> 24) & 0xff,
+];

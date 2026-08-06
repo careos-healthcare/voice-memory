@@ -65,11 +65,7 @@ abstract class PatternDisplayCacheCleanup {
 
   static bool _threadHasBadCopy(ActivePatternThread thread) {
     if (!PatternDisplayCopyGate.threadCopyIsDisplayable(thread)) return true;
-    final fields = [
-      thread.title,
-      thread.nextPrompt,
-      thread.watchForText,
-    ];
+    final fields = [thread.title, thread.nextPrompt, thread.watchForText];
     return fields.any(LegacyPatternCopyGuard.containsLegacyCopy);
   }
 }

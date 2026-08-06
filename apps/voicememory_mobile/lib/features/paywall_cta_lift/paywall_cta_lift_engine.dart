@@ -11,10 +11,7 @@ abstract final class PaywallCtaLiftEngine {
     required String analyticsSource,
     required bool isPro,
   }) {
-    final shouldShow = shouldShowBlock(
-      source: source,
-      isPro: isPro,
-    );
+    final shouldShow = shouldShowBlock(source: source, isPro: isPro);
     if (!shouldShow) {
       return PaywallCtaLiftResult.hidden;
     }

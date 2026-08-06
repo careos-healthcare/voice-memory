@@ -26,13 +26,12 @@ abstract final class ProPackagingBranchEngine {
     required bool hasMeaningfulProof,
     List<BetaTesterOutcome>? outcomesOverride,
     bool proofClarityRenderable = false,
-  }) =>
-      ProofToProPathEngine.shouldShowProPackagingBridge(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        proofClarityRenderable: proofClarityRenderable,
-        outcomesOverride: outcomesOverride,
-      );
+  }) => ProofToProPathEngine.shouldShowProPackagingBridge(
+    entryCount: entryCount,
+    hasMeaningfulProof: hasMeaningfulProof,
+    proofClarityRenderable: proofClarityRenderable,
+    outcomesOverride: outcomesOverride,
+  );
 
   static String? bridgeTitle({
     required int entryCount,

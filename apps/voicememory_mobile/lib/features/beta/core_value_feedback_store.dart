@@ -98,8 +98,7 @@ class CoreValueFeedbackStore {
         '${now.day.toString().padLeft(2, '0')}';
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     _cached = CoreValueFeedbackRecord.empty;
     _answerLoaded = false;
     _sessionDismissed = false;
@@ -110,4 +109,7 @@ class CoreValueFeedbackStore {
     await prefs.writeMap(prefsKey, {});
     await prefs.writeMap(dismissPrefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

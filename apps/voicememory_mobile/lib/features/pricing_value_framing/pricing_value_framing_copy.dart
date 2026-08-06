@@ -19,8 +19,7 @@ abstract final class PricingValueFramingCopy {
       'would be useful to you.';
   static const primaryCta = 'See the Pro timeline';
   static const secondaryCta = 'Keep using free';
-  static const feedbackPrompt =
-      'Would you pay to keep this longer trail?';
+  static const feedbackPrompt = 'Would you pay to keep this longer trail?';
   static const feedbackYes = 'Yes';
   static const feedbackMaybe = 'Maybe';
   static const feedbackNo = 'No';

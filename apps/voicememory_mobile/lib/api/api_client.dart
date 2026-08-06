@@ -26,10 +26,9 @@ import 'api_errors.dart';
 import 'api_exceptions.dart';
 
 class ApiClient {
-  ApiClient({http.Client? httpClient, String? baseUrl, String? sessionCookie})
+  ApiClient({http.Client? httpClient, String? baseUrl, this._sessionCookie})
     : _http = httpClient ?? http.Client(),
-      _baseUrl = baseUrl ?? AppConfig.apiBaseUrl,
-      _sessionCookie = sessionCookie;
+      _baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   final http.Client _http;
   final String _baseUrl;
@@ -676,8 +675,7 @@ class ApiClient {
         'monthKey': monthKey,
         'userId': userId,
         'pack': pack,
-        if (milestoneThreshold != null)
-          'milestoneThreshold': milestoneThreshold,
+        'milestoneThreshold': ?milestoneThreshold,
       }),
     );
 

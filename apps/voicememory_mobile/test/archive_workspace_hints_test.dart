@@ -24,23 +24,22 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctWorkEntries(int count) {
   final transcripts = [
@@ -66,8 +65,9 @@ List<JournalEntry> _distinctWorkEntries(int count) {
 ArchiveWorkspaceLayout _layoutForEntries(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
   final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
 
   return ArchiveWorkspaceLayoutEngine.build(
     entries: entries,
@@ -160,10 +160,7 @@ void main() {
         layout: _layoutForEntries(_distinctWorkEntries(5)),
       );
       expect(hints.introHint?.compact, isFalse);
-      expect(
-        hints.sectionHints.every((hint) => hint.compact),
-        isTrue,
-      );
+      expect(hints.sectionHints.every((hint) => hint.compact), isTrue);
     });
 
     test('dismissed hint does not reappear after reload', () async {
@@ -235,8 +232,13 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_workspace_hint_intro')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('archive_workspace_hint_dismiss_intro')));
+      expect(
+        find.byKey(const Key('archive_workspace_hint_intro')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const Key('archive_workspace_hint_dismiss_intro')),
+      );
       await tester.pump();
       expect(dismissed, isTrue);
     });

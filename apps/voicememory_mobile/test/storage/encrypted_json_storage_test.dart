@@ -25,15 +25,18 @@ void main() {
       expect(encrypted.contains('0.55'), isFalse);
     });
 
-    test('returns null when ciphertext is decrypted with the wrong key', () async {
-      final writer = EncryptedJsonStorage(masterKeyBytes: _testKey);
-      final reader = EncryptedJsonStorage(
-        masterKeyBytes: List<int>.filled(32, 9),
-      );
+    test(
+      'returns null when ciphertext is decrypted with the wrong key',
+      () async {
+        final writer = EncryptedJsonStorage(masterKeyBytes: _testKey);
+        final reader = EncryptedJsonStorage(
+          masterKeyBytes: List<int>.filled(32, 9),
+        );
 
-      final encrypted = await writer.encryptData({'entryId': 'entry_1'});
-      expect(await reader.decryptData(encrypted), isNull);
-    });
+        final encrypted = await writer.encryptData({'entryId': 'entry_1'});
+        expect(await reader.decryptData(encrypted), isNull);
+      },
+    );
 
     test('returns null when authentication tag is tampered', () async {
       final storage = EncryptedJsonStorage(masterKeyBytes: _testKey);

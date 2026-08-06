@@ -32,18 +32,18 @@ abstract final class ArchiveControlCopy {
   static const excludedFromPatternChip = 'Excluded from pattern';
 
   static List<String> allVisibleStrings() => [
-        deleteMomentButton,
-        deleteDialogTitle,
-        deleteDialogBody,
-        deleteDialogConfirm,
-        deleteDialogCancel,
-        deleteSuccess,
-        patternNeedsMoreEvidenceFallback,
-        excludeFromPatternButton,
-        excludeDialogTitle,
-        excludeDialogBody,
-        excludeDialogConfirm,
-        excludeSuccess,
-        excludedFromPatternChip,
-      ];
+    deleteMomentButton,
+    deleteDialogTitle,
+    deleteDialogBody,
+    deleteDialogConfirm,
+    deleteDialogCancel,
+    deleteSuccess,
+    patternNeedsMoreEvidenceFallback,
+    excludeFromPatternButton,
+    excludeDialogTitle,
+    excludeDialogBody,
+    excludeDialogConfirm,
+    excludeSuccess,
+    excludedFromPatternChip,
+  ];
 }

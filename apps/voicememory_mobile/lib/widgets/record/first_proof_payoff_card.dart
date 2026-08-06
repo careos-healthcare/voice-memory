@@ -76,14 +76,12 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
     _trackSeenOnce();
     final payoff = widget.payoff;
     final emotional = payoff.emotionalClarity;
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final snippetStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final snippetStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
 
     if (emotional != null) {
       return _buildEmotionalClarityCard(
@@ -99,7 +97,9 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
       key: const Key('first_proof_payoff_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -117,9 +117,9 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
             Text(
               payoff.evidenceLabel,
               key: const Key('first_proof_payoff_your_words_label'),
-              style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.xs),
             for (final snippet in payoff.snippets) ...[
@@ -148,7 +148,9 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  key: const Key('first_proof_payoff_chat_differentiation_link'),
+                  key: const Key(
+                    'first_proof_payoff_chat_differentiation_link',
+                  ),
                   onPressed: () => ChatDifferentiationSheet.show(
                     context,
                     timelineRows: payoff.timelineRows,
@@ -161,10 +163,11 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
                   ),
                   child: Text(
                     ChatDifferentiationCopy.expandLinkLabel,
-                    style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline,
-                    ),
+                    style: ArchiveMobileTypography.responsiveHelper(context)
+                        .copyWith(
+                          color: AppColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                        ),
                   ),
                 ),
               ),
@@ -199,7 +202,8 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
                 entryCount: widget.entryCount,
                 hasMeaningfulProof: widget.entryCount >= 3,
                 proofClarityRenderable: payoff.emotionalClarity != null,
-              )) ..._buildProPackagingBridge(),
+              ))
+            ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           ContextualPrivacyReassurance(
             source: 'first_proof_payoff',
@@ -217,16 +221,17 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
     required TextStyle bodyStyle,
     required TextStyle snippetStyle,
   }) {
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('first_proof_payoff_emotional_clarity_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -315,8 +320,9 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               ProofToProPathEngine.shouldShowProPackagingBridge(
                 entryCount: widget.entryCount,
                 hasMeaningfulProof: widget.entryCount >= 3,
-                proofClarityRenderable: emotional != null,
-              )) ..._buildProPackagingBridge(),
+                proofClarityRenderable: true,
+              ))
+            ..._buildProPackagingBridge(),
           const SizedBox(height: AppSpacing.sm),
           Text(
             ProofEmotionalClarityCopyFix.cautionFooter,

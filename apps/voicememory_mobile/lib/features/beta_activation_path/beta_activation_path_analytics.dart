@@ -13,7 +13,7 @@ abstract final class BetaActivationPathAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required BetaActivationPathResult result}) {
     _emit(seenEvent, result: result);
@@ -23,11 +23,7 @@ abstract final class BetaActivationPathAnalytics {
     required BetaActivationPathResult result,
     required BetaActivationPathActionType actionType,
   }) {
-    _emit(
-      ctaTappedEvent,
-      result: result,
-      actionType: actionType,
-    );
+    _emit(ctaTappedEvent, result: result, actionType: actionType);
   }
 
   static void dismissed({required BetaActivationPathResult result}) {

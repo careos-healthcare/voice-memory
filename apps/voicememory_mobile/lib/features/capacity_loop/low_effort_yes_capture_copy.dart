@@ -3,7 +3,6 @@ import 'capacity_decision_outcome_copy.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_pull_reason_copy.dart';
 import 'capacity_pull_reason_models.dart';
-import 'low_effort_yes_capture_models.dart';
 import 'yes_capture_timing.dart';
 
 /// Copy for low-effort yes capture — quick check-in, no journaling pressure.
@@ -52,22 +51,22 @@ abstract final class LowEffortYesCaptureCopy {
   static List<String> timingIds() => List<String>.from(YesCaptureTimingIds.all);
 
   static List<String> allVisibleStrings() => [
-        corePromise,
-        title,
-        body,
-        timingSectionTitle,
-        pullSectionTitle,
-        decisionSectionTitle,
-        quickSaveCta,
-        recordInsteadCta,
-        optionalVoiceNoteCta,
-        compactCardTitle,
-        compactCardBody,
-        entryObservation,
-        dashboardSignalAvailable,
-        dashboardSignalUnavailable,
-        ...timingIds().map(labelForTiming),
-        ...pullReasonIds().map(labelForPullReason),
-        ...decisionOutcomeIds().map(labelForOutcome),
-      ];
+    corePromise,
+    title,
+    body,
+    timingSectionTitle,
+    pullSectionTitle,
+    decisionSectionTitle,
+    quickSaveCta,
+    recordInsteadCta,
+    optionalVoiceNoteCta,
+    compactCardTitle,
+    compactCardBody,
+    entryObservation,
+    dashboardSignalAvailable,
+    dashboardSignalUnavailable,
+    ...timingIds().map(labelForTiming),
+    ...pullReasonIds().map(labelForPullReason),
+    ...decisionOutcomeIds().map(labelForOutcome),
+  ];
 }

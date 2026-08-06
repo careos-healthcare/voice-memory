@@ -53,9 +53,12 @@ class BetaOutcomesEngine {
   }) {
     final realEntries = _realEntries(entries);
     final depth = const ArchiveDepthEngine().build(entries: realEntries);
-    final usableCount = ArchiveEvidenceGuard.eligibleReflectionCount(realEntries);
-    final shareProofReady =
-        proofEngine.buildFromJournal(entries: realEntries).hasProof;
+    final usableCount = ArchiveEvidenceGuard.eligibleReflectionCount(
+      realEntries,
+    );
+    final shareProofReady = proofEngine
+        .buildFromJournal(entries: realEntries)
+        .hasProof;
     final firstWeekPath = firstWeekPathEngine.build(
       FirstWeekPathInput(
         realSavedMomentCount: realEntries.length,
@@ -74,8 +77,9 @@ class BetaOutcomesEngine {
       ),
     );
     final thenNow = thenNowEngine.buildFromJournal(entries: realEntries);
-    final archiveCalendar =
-        archiveCalendarEngine.buildFromJournal(entries: realEntries);
+    final archiveCalendar = archiveCalendarEngine.buildFromJournal(
+      entries: realEntries,
+    );
     final milestoneShare = const MilestoneShareEngine().buildFromJournal(
       entries: realEntries,
       hasWatchTheme: hasWatchTheme,
@@ -109,12 +113,15 @@ class BetaOutcomesEngine {
   }
 
   BetaOutcomesSnapshot build(BetaOutcomesInput input) {
-    final feedbackStatus = BetaOutcomesCopy.feedbackStatusFor(input.feedbackState);
+    final feedbackStatus = BetaOutcomesCopy.feedbackStatusFor(
+      input.feedbackState,
+    );
     final proInterest = input.proInterestState;
-    final proInterestInterpretations =
-        const ProInterestEngine().interpretations(proInterest);
-    final inviteSummary =
-        const BetaInviteEngine().outcomesSummary(input.betaInviteCopyStats);
+    final proInterestInterpretations = const ProInterestEngine()
+        .interpretations(proInterest);
+    final inviteSummary = const BetaInviteEngine().outcomesSummary(
+      input.betaInviteCopyStats,
+    );
     return BetaOutcomesSnapshot(
       savedMomentCount: input.savedMomentCount,
       usableEvidenceCount: input.usableEvidenceCount,
@@ -132,8 +139,9 @@ class BetaOutcomesEngine {
       feedbackState: input.feedbackState,
       proInterestCaptured: proInterest.hasCapture,
       selectedProValueCount: proInterest.selectedValueIds.length,
-      proInterestPricingLabel:
-          ProInterestCopy.labelForPricing(proInterest.pricingIntentId),
+      proInterestPricingLabel: ProInterestCopy.labelForPricing(
+        proInterest.pricingIntentId,
+      ),
       proInterestNotePresent: proInterest.optionalNotePresent,
       proInterestInterpretations: proInterestInterpretations,
       proInterestState: proInterest,

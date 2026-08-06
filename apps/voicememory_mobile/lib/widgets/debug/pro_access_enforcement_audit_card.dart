@@ -43,9 +43,9 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
           Text(
             dashboard.headline,
             key: const Key('pro_access_enforcement_audit_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -74,10 +74,7 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
             if (storeReadinessBridge!.misalignedTagCount > 0)
               Text(
                 '${storeReadinessBridge!.misalignedTagCount} billing step tags misaligned',
-                style: const TextStyle(
-                  color: AppTheme.muted,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: AppTheme.muted, fontSize: 12),
               ),
             const SizedBox(height: 8),
           ],
@@ -87,7 +84,8 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 13,
-              color: dashboard.decision ==
+              color:
+                  dashboard.decision ==
                       ProAccessEnforcementAuditDecision.productionBlocked
                   ? AppColors.warning
                   : AppColors.textPrimary,
@@ -107,10 +105,7 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
             '${dashboard.productionBlockerCount} ${ProAccessEnforcementAuditV2Copy.blockerSummary} · '
             '${dashboard.documentedGapCount} ${ProAccessEnforcementAuditV2Copy.gapSummary}',
             key: const Key('pro_access_enforcement_audit_summary'),
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
           ),
           const SizedBox(height: 4),
           Text(
@@ -118,18 +113,15 @@ class ProAccessEnforcementAuditCard extends StatelessWidget {
             'Pro active: ${dashboard.proEntitlementActive ? 'yes' : 'no'} · '
             'App lock: ${dashboard.appLockEnabled ? 'on' : 'off'}',
             key: const Key('pro_access_enforcement_audit_runtime'),
-            style: const TextStyle(
-              color: AppTheme.muted,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: AppTheme.muted, fontSize: 12),
           ),
           const SizedBox(height: 12),
           Text(
             ProAccessEnforcementAuditV2Copy.sectionTitle,
             key: const Key('pro_access_enforcement_audit_section_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (final row in dashboard.rows) ...[
@@ -173,10 +165,7 @@ class _EnforcementTile extends StatelessWidget {
               ),
               Text(
                 row.detailLabel,
-                style: const TextStyle(
-                  color: AppTheme.muted,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: AppTheme.muted, fontSize: 12),
               ),
             ],
           ),

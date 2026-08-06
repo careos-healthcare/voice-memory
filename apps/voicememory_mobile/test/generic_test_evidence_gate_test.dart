@@ -9,20 +9,20 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 
 JournalEntry _textEntry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   const testOne = 'This is a test to check function';
@@ -39,25 +39,28 @@ void main() {
     });
 
     test('two generic harness entries show forming fallback only', () {
-      final entries = [
-        _textEntry('1', testOne),
-        _textEntry('2', testTwo),
-      ];
+      final entries = [_textEntry('1', testOne), _textEntry('2', testTwo)];
       expect(ArchiveEvidenceQualityGate.usableCount(entries), 0);
-      expect(ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries), isTrue);
+      expect(
+        ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries),
+        isTrue,
+      );
       expect(
         ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries),
         isTrue,
       );
-      expect(ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries), isFalse);
-      expect(ArchiveEvidenceQualityGate.allowsEarlyComparisons(entries), isFalse);
+      expect(
+        ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries),
+        isFalse,
+      );
+      expect(
+        ArchiveEvidenceQualityGate.allowsEarlyComparisons(entries),
+        isFalse,
+      );
     });
 
     test('pattern engines return insufficient for generic harness', () async {
-      final entries = [
-        _textEntry('1', testOne),
-        _textEntry('2', testTwo),
-      ];
+      final entries = [_textEntry('1', testOne), _textEntry('2', testTwo)];
       const patternEngine = FirstSessionPatternEngine();
       for (final entry in entries) {
         final pattern = patternEngine.build(entry);
@@ -85,23 +88,28 @@ void main() {
       expect(pattern.title, isNot('Something worth watching'));
       expect(
         pattern.chips,
-        isNot(containsAll(['same feeling', 'same situation', 'same time of day'])),
+        isNot(
+          containsAll(['same feeling', 'same situation', 'same time of day']),
+        ),
       );
     });
 
-    test('capacity watch-next copy blocked without grounded evidence', () async {
-      final entries = [
-        _textEntry('1', testOne),
-        _textEntry('2', testTwo),
-      ];
-      final hypothesis = await const PatternHypothesisEngine().build(entries);
-      expect(hypothesis.watchNext.toLowerCase(), isNot(contains('capacity')));
-      expect(hypothesis.watchNext.toLowerCase(), isNot(contains('saying yes')));
-      expect(
-        hypothesis.evidenceSoFar.any((e) => e.contains('same feeling')),
-        isFalse,
-      );
-    });
+    test(
+      'capacity watch-next copy blocked without grounded evidence',
+      () async {
+        final entries = [_textEntry('1', testOne), _textEntry('2', testTwo)];
+        final hypothesis = await const PatternHypothesisEngine().build(entries);
+        expect(hypothesis.watchNext.toLowerCase(), isNot(contains('capacity')));
+        expect(
+          hypothesis.watchNext.toLowerCase(),
+          isNot(contains('saying yes')),
+        );
+        expect(
+          hypothesis.evidenceSoFar.any((e) => e.contains('same feeling')),
+          isFalse,
+        );
+      },
+    );
   });
 
   test('mixed real + generic uses only real for hypothesis', () async {
@@ -112,7 +120,10 @@ void main() {
         'I felt pressure to say yes again before checking my capacity today.',
       ),
     ];
-    expect(ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries), isFalse);
+    expect(
+      ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries),
+      isFalse,
+    );
     final hypothesis = await const PatternHypothesisEngine().build(entries);
     expect(hypothesis.hasEnoughData, isFalse);
   });

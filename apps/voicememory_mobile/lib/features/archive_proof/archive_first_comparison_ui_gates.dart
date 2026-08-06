@@ -3,8 +3,6 @@ abstract class ArchiveFirstComparisonUiGates {
   ArchiveFirstComparisonUiGates._();
 
   /// One calm proof card instead of competing early-signal stacks.
-  static bool showCalmFirstComparisonCard({
-    required int eligibleEntryCount,
-  }) =>
+  static bool showCalmFirstComparisonCard({required int eligibleEntryCount}) =>
       eligibleEntryCount == 2;
 }

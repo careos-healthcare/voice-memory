@@ -29,80 +29,78 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedEntries() => [
-      ..._threeRelatedEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 5,
-      createdAt: DateTime(2026, 6, 14),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 5,
+  createdAt: DateTime(2026, 6, 14),
+);
 
 void _seedWatch({required String createdDateKey}) {
   ComeBackTomorrowV2Store.seedForTest(
@@ -215,8 +213,9 @@ void main() {
     });
 
     test('copy says private report and evidence over time', () {
-      final blob =
-          MonthlyPrivateReportCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = MonthlyPrivateReportCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('private'));
       expect(blob, contains('report'));
       expect(blob, contains('evidence'));
@@ -339,10 +338,7 @@ void main() {
     test('hidden for one entry without repeat evidence', () {
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: [_threeRelatedEntries().first],
-            entryCount: 1,
-          ),
+          _context(entries: [_threeRelatedEntries().first], entryCount: 1),
         ),
         isFalse,
       );
@@ -361,11 +357,7 @@ void main() {
       final entries = _threeRelatedEntries();
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: entries,
-            entryCount: entries.length,
-            isPro: true,
-          ),
+          _context(entries: entries, entryCount: entries.length, isPro: true),
         ),
         isFalse,
       );
@@ -451,10 +443,7 @@ void main() {
       final entries = _threeRelatedEntries();
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: entries,
-            entryCount: entries.length,
-          ),
+          _context(entries: entries, entryCount: entries.length),
         ),
         isFalse,
       );
@@ -525,13 +514,15 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('monthly_private_report_preview_card')), findsOneWidget);
       expect(
-        find.text(MonthlyPrivateReportCopy.cardTitle),
+        find.byKey(const Key('monthly_private_report_preview_card')),
         findsOneWidget,
       );
+      expect(find.text(MonthlyPrivateReportCopy.cardTitle), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('monthly_private_report_preview_cta')));
+      await tester.tap(
+        find.byKey(const Key('monthly_private_report_preview_cta')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -542,8 +533,7 @@ void main() {
       expect(
         analyticsEvents.any(
           (event) =>
-              event.event ==
-              MonthlyPrivateReportAnalytics.ctaTappedEvent,
+              event.event == MonthlyPrivateReportAnalytics.ctaTappedEvent,
         ),
         isTrue,
       );
@@ -611,10 +601,7 @@ void main() {
         find.text(MonthlyPrivateReportCopy.chatDifferentiation),
         findsOneWidget,
       );
-      expect(
-        find.text(MonthlyPrivateReportCopy.proReason),
-        findsOneWidget,
-      );
+      expect(find.text(MonthlyPrivateReportCopy.proReason), findsOneWidget);
     });
   });
 }

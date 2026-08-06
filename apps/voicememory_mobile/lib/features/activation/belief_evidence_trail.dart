@@ -12,7 +12,8 @@ abstract final class BeliefEvidenceNavigation {
 abstract final class BeliefEvidenceTrailCopy {
   static const title = VisibleArchiveProofCopy.beliefEvidenceTrailTitle;
 
-  static const notConclusion = VisibleArchiveProofCopy.beliefEvidenceNotConclusion;
+  static const notConclusion =
+      VisibleArchiveProofCopy.beliefEvidenceNotConclusion;
 
   static const sourceLine = VisibleArchiveProofCopy.beliefEvidenceSourceLine;
 
@@ -34,9 +35,11 @@ abstract final class BeliefEvidenceTrailCopy {
   static const evidenceStillThin =
       VisibleArchiveProofCopy.beliefEvidenceStillThin;
 
-  static const addNextLabel = VisibleArchiveProofCopy.beliefEvidenceAddNextLabel;
+  static const addNextLabel =
+      VisibleArchiveProofCopy.beliefEvidenceAddNextLabel;
 
-  static const nextWhenThin = VisibleArchiveProofCopy.beliefEvidenceNextWhenThin;
+  static const nextWhenThin =
+      VisibleArchiveProofCopy.beliefEvidenceNextWhenThin;
 
   static const nextDefault = VisibleArchiveProofCopy.beliefEvidenceNextDefault;
 
@@ -110,8 +113,9 @@ abstract final class BeliefEvidenceTrailEngine {
       currentBelief: payoff.currentBelief,
       whatChangedLine: payoff.whatChangedLine,
       evidenceRows: payoff.evidenceRows,
-      uncertaintyLine:
-          payoff.evidenceWeak ? BeliefEvidenceTrailCopy.evidenceStillThin : null,
+      uncertaintyLine: payoff.evidenceWeak
+          ? BeliefEvidenceTrailCopy.evidenceStillThin
+          : null,
       nextActionLine: payoff.evidenceWeak
           ? BeliefEvidenceTrailCopy.nextWhenThin
           : BeliefEvidenceTrailCopy.nextDefault,

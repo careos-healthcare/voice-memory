@@ -57,20 +57,20 @@ List<PressureCheckInRecord> _richRecords() => [
 ];
 
 JournalEntry _journalEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12).add(Duration(days: id.hashCode % 3)),
-      transcript:
-          'A long enough transcript to count as a saved reflection for $id.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: 'pattern',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: 'signal',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12).add(Duration(days: id.hashCode % 3)),
+  transcript:
+      'A long enough transcript to count as a saved reflection for $id.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: 'pattern',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: 'signal',
+  ),
+);
 
 Future<void> _seedJournalForSuggestions(int count) async {
   for (var i = 0; i < count; i++) {
@@ -656,7 +656,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('capture-first record suppresses suggestion attribution', (tester) async {
+    testWidgets('capture-first record suppresses suggestion attribution', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await _seedJournalForSuggestions(3);
       });

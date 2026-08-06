@@ -14,7 +14,7 @@ import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_rev
 import 'package:voicememory_mobile/features/referral/referral_invite_after_value.dart';
 import 'package:voicememory_mobile/features/review/review_prompt_after_value.dart';
 import 'package:voicememory_mobile/features/share/archive_belief_share_card.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/product_analytics.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';

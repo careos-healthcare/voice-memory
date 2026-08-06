@@ -11,18 +11,18 @@ abstract final class PostSaveMomentDetailCopy {
       'That detail was not saved. Please try again.';
 
   static String promptTitle(PostSaveMomentDetailType type) => switch (type) {
-        PostSaveMomentDetailType.situation => 'What was the situation?',
-        PostSaveMomentDetailType.changed => 'What changed?',
-        PostSaveMomentDetailType.stoodOut => 'What made this stand out?',
-      };
+    PostSaveMomentDetailType.situation => 'What was the situation?',
+    PostSaveMomentDetailType.changed => 'What changed?',
+    PostSaveMomentDetailType.stoodOut => 'What made this stand out?',
+  };
 
   static String promptHelper(PostSaveMomentDetailType type) => switch (type) {
-        PostSaveMomentDetailType.situation => 'One short detail is enough.',
-        PostSaveMomentDetailType.changed =>
-          'Keep it short. ArchiveMe will use this as evidence later.',
-        PostSaveMomentDetailType.stoodOut =>
-          'Add the detail that made this moment noticeable.',
-      };
+    PostSaveMomentDetailType.situation => 'One short detail is enough.',
+    PostSaveMomentDetailType.changed =>
+      'Keep it short. ArchiveMe will use this as evidence later.',
+    PostSaveMomentDetailType.stoodOut =>
+      'Add the detail that made this moment noticeable.',
+  };
 
   static const detailFieldHint = 'Type your detail here…';
 }

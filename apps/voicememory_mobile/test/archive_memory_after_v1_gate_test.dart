@@ -14,19 +14,17 @@ ArchiveMemoryAfterV1GateInput _input({
   bool? withinFirstFiveMinutes,
   bool? memorySurfacingRequested,
   bool? v1ArchiveMemoryUiRequested,
-}) =>
-    ArchiveMemoryAfterV1GateInput(
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      withinFirstFiveMinutes: withinFirstFiveMinutes,
-      memorySurfacingRequested: memorySurfacingRequested,
-      v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
-    );
+}) => ArchiveMemoryAfterV1GateInput(
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  withinFirstFiveMinutes: withinFirstFiveMinutes,
+  memorySurfacingRequested: memorySurfacingRequested,
+  v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
+);
 
 ArchiveMemoryAfterV1Rule _rule(
   ArchiveMemoryAfterV1GateResult result,
   ArchiveMemoryAfterV1RuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('ArchiveMemoryAfterV1Gate.build', () {
@@ -74,8 +72,10 @@ void main() {
         ),
       );
       expect(
-        _rule(result, ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes)
-            .status,
+        _rule(
+          result,
+          ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes,
+        ).status,
         ArchiveMemoryAfterV1RuleStatus.fail,
       );
       expect(
@@ -86,10 +86,7 @@ void main() {
 
     test('v1 archive memory UI without beta proof fails noNewLiveV1Ui', () {
       final result = ArchiveMemoryAfterV1Gate.build(
-        _input(
-          paidIntentBetaComplete: false,
-          v1ArchiveMemoryUiRequested: true,
-        ),
+        _input(paidIntentBetaComplete: false, v1ArchiveMemoryUiRequested: true),
       );
       expect(
         _rule(result, ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui).status,
@@ -100,7 +97,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = ArchiveMemoryAfterV1Gate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, ArchiveMemoryAfterV1RuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          ArchiveMemoryAfterV1RuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

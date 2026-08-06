@@ -28,8 +28,7 @@ abstract final class ReturningRecordWatchTargetUiGates {
 
   /// Beta Record surfaces only for explicit beta builds — never App Review.
   static bool showBetaRecordSurfaces() =>
-      ArchiveBetaMissionGate.isEnabled &&
-      !ArchiveAppReviewAccessGate.isEnabled;
+      ArchiveBetaMissionGate.isEnabled && !ArchiveAppReviewAccessGate.isEnabled;
 
   /// @deprecated Use [showBetaRecordSurfaces].
   static bool showBetaFeedbackSurfaces() => showBetaRecordSurfaces();
@@ -37,14 +36,12 @@ abstract final class ReturningRecordWatchTargetUiGates {
   /// Hide map prompt, reassurance helper, next-action line, and entry options.
   static bool suppressCompetingReadyGuidance({
     required bool showFocusedSurface,
-  }) =>
-      showFocusedSurface;
+  }) => showFocusedSurface;
 
   /// Hide the full archive education / proof stack below the watch card.
   static bool suppressArchiveEducationStack({
     required bool showFocusedSurface,
-  }) =>
-      showFocusedSurface;
+  }) => showFocusedSurface;
 
   /// Show the Pro bridge on return day to retain structural history.
   static bool showProUpgradePromptOnReturn({required int entryCount}) {

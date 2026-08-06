@@ -34,29 +34,28 @@ SingleLaunchChecklistInput _input({
   bool? testFlightUploaded = true,
   bool? paidIntentBetaComplete = true,
   bool? secretsRotatedBeforeProduction = true,
-}) =>
-    SingleLaunchChecklistInput(
-      cleanGit: cleanGit,
-      versionBuildSet: versionBuildSet,
-      physicalIphoneSmoke: physicalIphoneSmoke,
-      physicalIpadSmoke: physicalIpadSmoke,
-      productionApiWorks: productionApiWorks,
-      voiceSaveWorks: voiceSaveWorks,
-      typedSaveWorks: typedSaveWorks,
-      firstProofWorks: firstProofWorks,
-      proPromiseVisible: proPromiseVisible,
-      revenueCatProductsLoad: revenueCatProductsLoad,
-      paywallPriceVisible: paywallPriceVisible,
-      sandboxPurchaseWorks: sandboxPurchaseWorks,
-      entitlementUnlocks: entitlementUnlocks,
-      restoreWorks: restoreWorks,
-      entitlementPersists: entitlementPersists,
-      supportPrivacyTermsWork: supportPrivacyTermsWork,
-      screenshotsReady: screenshotsReady,
-      testFlightUploaded: testFlightUploaded,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      secretsRotatedBeforeProduction: secretsRotatedBeforeProduction,
-    );
+}) => SingleLaunchChecklistInput(
+  cleanGit: cleanGit,
+  versionBuildSet: versionBuildSet,
+  physicalIphoneSmoke: physicalIphoneSmoke,
+  physicalIpadSmoke: physicalIpadSmoke,
+  productionApiWorks: productionApiWorks,
+  voiceSaveWorks: voiceSaveWorks,
+  typedSaveWorks: typedSaveWorks,
+  firstProofWorks: firstProofWorks,
+  proPromiseVisible: proPromiseVisible,
+  revenueCatProductsLoad: revenueCatProductsLoad,
+  paywallPriceVisible: paywallPriceVisible,
+  sandboxPurchaseWorks: sandboxPurchaseWorks,
+  entitlementUnlocks: entitlementUnlocks,
+  restoreWorks: restoreWorks,
+  entitlementPersists: entitlementPersists,
+  supportPrivacyTermsWork: supportPrivacyTermsWork,
+  screenshotsReady: screenshotsReady,
+  testFlightUploaded: testFlightUploaded,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  secretsRotatedBeforeProduction: secretsRotatedBeforeProduction,
+);
 
 ReleaseEvidencePackInput _releaseEvidence({
   bool cleanGitStatus = true,
@@ -78,69 +77,89 @@ ReleaseEvidencePackInput _releaseEvidence({
   bool screenshots = true,
   bool testFlightUploaded = true,
   bool secretsRotated = true,
-}) =>
-    ReleaseEvidencePackInput(
-      cleanGitStatus: cleanGitStatus,
-      versionBuildCaptured: versionBuildCaptured,
-      physicalIphoneSmokeTest: physicalIphoneSmokeTest,
-      physicalIpadSmokeTest: physicalIpadSmokeTest,
-      productionApiSmokeTest: productionApiSmokeTest,
-      voiceSavePath: voiceSavePath,
-      typedSavePath: typedSavePath,
-      firstProofPath: firstProofPath,
-      proPaywallRoute: proPaywallRoute,
-      revenueCatProductLoad: revenueCatProductLoad,
-      sandboxPurchase: sandboxPurchase,
-      restorePurchases: restorePurchases,
-      entitlementPersistence: entitlementPersistence,
-      supportUrl: supportUrl,
-      privacyUrl: privacyUrl,
-      termsUrl: termsUrl,
-      screenshots: screenshots,
-      testFlightUploaded: testFlightUploaded,
-      secretsRotated: secretsRotated,
-    );
+}) => ReleaseEvidencePackInput(
+  cleanGitStatus: cleanGitStatus,
+  versionBuildCaptured: versionBuildCaptured,
+  physicalIphoneSmokeTest: physicalIphoneSmokeTest,
+  physicalIpadSmokeTest: physicalIpadSmokeTest,
+  productionApiSmokeTest: productionApiSmokeTest,
+  voiceSavePath: voiceSavePath,
+  typedSavePath: typedSavePath,
+  firstProofPath: firstProofPath,
+  proPaywallRoute: proPaywallRoute,
+  revenueCatProductLoad: revenueCatProductLoad,
+  sandboxPurchase: sandboxPurchase,
+  restorePurchases: restorePurchases,
+  entitlementPersistence: entitlementPersistence,
+  supportUrl: supportUrl,
+  privacyUrl: privacyUrl,
+  termsUrl: termsUrl,
+  screenshots: screenshots,
+  testFlightUploaded: testFlightUploaded,
+  secretsRotated: secretsRotated,
+);
 
 SingleLaunchChecklistInput _withMissing(SingleLaunchChecklistItemId item) {
   return _input(
     cleanGit: item == SingleLaunchChecklistItemId.cleanGit ? false : true,
-    versionBuildSet:
-        item == SingleLaunchChecklistItemId.versionBuildSet ? false : true,
-    physicalIphoneSmoke:
-        item == SingleLaunchChecklistItemId.physicalIphoneSmoke ? false : true,
-    physicalIpadSmoke:
-        item == SingleLaunchChecklistItemId.physicalIpadSmoke ? false : true,
-    productionApiWorks:
-        item == SingleLaunchChecklistItemId.productionApiWorks ? false : true,
-    voiceSaveWorks:
-        item == SingleLaunchChecklistItemId.voiceSaveWorks ? false : true,
-    typedSaveWorks:
-        item == SingleLaunchChecklistItemId.typedSaveWorks ? false : true,
-    firstProofWorks:
-        item == SingleLaunchChecklistItemId.firstProofWorks ? false : true,
-    proPromiseVisible:
-        item == SingleLaunchChecklistItemId.proPromiseVisible ? false : true,
+    versionBuildSet: item == SingleLaunchChecklistItemId.versionBuildSet
+        ? false
+        : true,
+    physicalIphoneSmoke: item == SingleLaunchChecklistItemId.physicalIphoneSmoke
+        ? false
+        : true,
+    physicalIpadSmoke: item == SingleLaunchChecklistItemId.physicalIpadSmoke
+        ? false
+        : true,
+    productionApiWorks: item == SingleLaunchChecklistItemId.productionApiWorks
+        ? false
+        : true,
+    voiceSaveWorks: item == SingleLaunchChecklistItemId.voiceSaveWorks
+        ? false
+        : true,
+    typedSaveWorks: item == SingleLaunchChecklistItemId.typedSaveWorks
+        ? false
+        : true,
+    firstProofWorks: item == SingleLaunchChecklistItemId.firstProofWorks
+        ? false
+        : true,
+    proPromiseVisible: item == SingleLaunchChecklistItemId.proPromiseVisible
+        ? false
+        : true,
     revenueCatProductsLoad:
-        item == SingleLaunchChecklistItemId.revenueCatProductsLoad ? false : true,
-    paywallPriceVisible:
-        item == SingleLaunchChecklistItemId.paywallPriceVisible ? false : true,
+        item == SingleLaunchChecklistItemId.revenueCatProductsLoad
+        ? false
+        : true,
+    paywallPriceVisible: item == SingleLaunchChecklistItemId.paywallPriceVisible
+        ? false
+        : true,
     sandboxPurchaseWorks:
         item == SingleLaunchChecklistItemId.sandboxPurchaseWorks ? false : true,
-    entitlementUnlocks:
-        item == SingleLaunchChecklistItemId.entitlementUnlocks ? false : true,
-    restoreWorks: item == SingleLaunchChecklistItemId.restoreWorks ? false : true,
-    entitlementPersists:
-        item == SingleLaunchChecklistItemId.entitlementPersists ? false : true,
+    entitlementUnlocks: item == SingleLaunchChecklistItemId.entitlementUnlocks
+        ? false
+        : true,
+    restoreWorks: item == SingleLaunchChecklistItemId.restoreWorks
+        ? false
+        : true,
+    entitlementPersists: item == SingleLaunchChecklistItemId.entitlementPersists
+        ? false
+        : true,
     supportPrivacyTermsWork:
-        item == SingleLaunchChecklistItemId.supportPrivacyTermsWork ? false : true,
-    screenshotsReady:
-        item == SingleLaunchChecklistItemId.screenshotsReady ? false : true,
-    testFlightUploaded:
-        item == SingleLaunchChecklistItemId.testFlightUploaded ? false : true,
+        item == SingleLaunchChecklistItemId.supportPrivacyTermsWork
+        ? false
+        : true,
+    screenshotsReady: item == SingleLaunchChecklistItemId.screenshotsReady
+        ? false
+        : true,
+    testFlightUploaded: item == SingleLaunchChecklistItemId.testFlightUploaded
+        ? false
+        : true,
     paidIntentBetaComplete:
-        item == SingleLaunchChecklistItemId.paidIntentBetaComplete ? false : true,
-    secretsRotatedBeforeProduction: item ==
-            SingleLaunchChecklistItemId.secretsRotatedBeforeProduction
+        item == SingleLaunchChecklistItemId.paidIntentBetaComplete
+        ? false
+        : true,
+    secretsRotatedBeforeProduction:
+        item == SingleLaunchChecklistItemId.secretsRotatedBeforeProduction
         ? false
         : true,
   );
@@ -149,8 +168,7 @@ SingleLaunchChecklistInput _withMissing(SingleLaunchChecklistItemId item) {
 SingleLaunchChecklistCheck _check(
   SingleLaunchChecklistResult result,
   SingleLaunchChecklistItemId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('SingleLaunchChecklist.build', () {

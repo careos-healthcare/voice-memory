@@ -47,10 +47,13 @@ abstract class PatternDisplayCopyGate {
   PatternDisplayCopyGate._();
 
   static const heroFallback = PatternHumanCopy.fallbackEvidenceFirstHeroBody;
-  static const currentBeliefFallback = PatternHumanCopy.fallbackMainObservationEvidence;
+  static const currentBeliefFallback =
+      PatternHumanCopy.fallbackMainObservationEvidence;
   static const evidenceFallback = PatternHumanCopy.fallbackEvidenceBody;
-  static const whatChangedFallback = PatternHumanCopy.evidenceFirstConfidenceCautious;
-  static const whatToTestFallback = PatternHumanCopy.fallbackWhatToNoticeEvidence;
+  static const whatChangedFallback =
+      PatternHumanCopy.evidenceFirstConfidenceCautious;
+  static const whatToTestFallback =
+      PatternHumanCopy.fallbackWhatToNoticeEvidence;
 
   static const _blockedSubstrings = LegacyPatternCopyGuard.blockedSubstrings;
 
@@ -66,7 +69,14 @@ abstract class PatternDisplayCopyGate {
     'to',
     'should',
   };
-  static const _badPhraseEnds = {'if', 'when', 'because', 'and', 'to', 'should'};
+  static const _badPhraseEnds = {
+    'if',
+    'when',
+    'because',
+    'and',
+    'to',
+    'should',
+  };
 
   static PatternDisplayCopyCheckResult check(
     PatternDisplayField field,
@@ -128,7 +138,9 @@ abstract class PatternDisplayCopyGate {
       checks.add(check(PatternDisplayField.hero, ohWow.body));
     }
     if (belief.hasEnoughData) {
-      checks.add(check(PatternDisplayField.currentBelief, belief.currentBelief));
+      checks.add(
+        check(PatternDisplayField.currentBelief, belief.currentBelief),
+      );
       checks.add(check(PatternDisplayField.evidence, belief.evidenceLine));
       checks.add(check(PatternDisplayField.whatChanged, belief.whatChanged));
       checks.add(check(PatternDisplayField.whatToTest, belief.whatToTest));
@@ -145,7 +157,10 @@ abstract class PatternDisplayCopyGate {
     }
     if (weekly.hasReview) {
       checks.add(
-        check(PatternDisplayField.weeklyKeptReturning, weekly.whatKeptReturning),
+        check(
+          PatternDisplayField.weeklyKeptReturning,
+          weekly.whatKeptReturning,
+        ),
       );
       checks.add(check(PatternDisplayField.weeklyChanged, weekly.whatChanged));
       checks.add(check(PatternDisplayField.weeklyNext, weekly.whatToTestNext));
@@ -174,17 +189,24 @@ abstract class PatternDisplayCopyGate {
     );
   }
 
-  static ActivePatternThread? sanitizeActiveThread(ActivePatternThread? thread) {
+  static ActivePatternThread? sanitizeActiveThread(
+    ActivePatternThread? thread,
+  ) {
     if (thread == null) return null;
-    final titleOk =
-        check(PatternDisplayField.cachedThreadTitle, thread.title).approved;
+    final titleOk = check(
+      PatternDisplayField.cachedThreadTitle,
+      thread.title,
+    ).approved;
     final promptOk = check(
       PatternDisplayField.cachedThreadPrompt,
       thread.nextPrompt,
     ).approved;
-    final watchOk = thread.watchForText.trim().isEmpty ||
-        check(PatternDisplayField.cachedThreadPrompt, thread.watchForText)
-            .approved;
+    final watchOk =
+        thread.watchForText.trim().isEmpty ||
+        check(
+          PatternDisplayField.cachedThreadPrompt,
+          thread.watchForText,
+        ).approved;
     if (titleOk && promptOk && watchOk) return thread;
     return null;
   }
@@ -206,8 +228,14 @@ abstract class PatternDisplayCopyGate {
       hasEnoughData: true,
       title: comparison.title,
       body: comparison.body,
-      whatRepeated: gated(comparison.whatRepeated, PatternDisplayField.evidence),
-      whatChanged: gated(comparison.whatChanged, PatternDisplayField.whatChanged),
+      whatRepeated: gated(
+        comparison.whatRepeated,
+        PatternDisplayField.evidence,
+      ),
+      whatChanged: gated(
+        comparison.whatChanged,
+        PatternDisplayField.whatChanged,
+      ),
       whatToTestNext: gated(
         comparison.whatToTestNext,
         PatternDisplayField.whatToTest,
@@ -248,7 +276,9 @@ abstract class PatternDisplayCopyGate {
     );
   }
 
-  static WeeklyWhatChangedReview _fallbackWeekly(WeeklyWhatChangedReview original) {
+  static WeeklyWhatChangedReview _fallbackWeekly(
+    WeeklyWhatChangedReview original,
+  ) {
     return WeeklyWhatChangedReview(
       hasReview: true,
       whatKeptReturning: evidenceFallback,
@@ -299,10 +329,7 @@ abstract class PatternDisplayCopyGate {
         r'\bnotice whether\s+(.+?)\s+shows up again',
         caseSensitive: false,
       ),
-      RegExp(
-        r'\bwhether\s+(.+?)\s+shows up again',
-        caseSensitive: false,
-      ),
+      RegExp(r'\bwhether\s+(.+?)\s+shows up again', caseSensitive: false),
       RegExp(r'\bmay be\s+(.+?)(?:[.?!]|$)', caseSensitive: false),
       RegExp(r'\bmay echo [“"](.+?)[”"]', caseSensitive: false),
     ];
@@ -382,7 +409,9 @@ abstract class PatternDisplayCopyGate {
     String reason,
   ) {
     final phrase = ArchiveLogHygiene.normalizedLogPhrase(text);
-    final clipped = phrase.length <= 96 ? phrase : '${phrase.substring(0, 93)}…';
+    final clipped = phrase.length <= 96
+        ? phrase
+        : '${phrase.substring(0, 93)}…';
     debugPrint(
       'ARCHIVEME_PATTERN_DISPLAY_COPY_CHECK field=${field.name} textHash=${_textHash(phrase)} decision=${decision.name} reason=$reason phrase="$clipped"',
     );

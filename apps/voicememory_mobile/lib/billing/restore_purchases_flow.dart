@@ -26,24 +26,23 @@ class RestorePurchasesResult {
   bool get isPro => entitlements?.isPro ?? false;
 
   String get userMessage => switch (outcome) {
-        RestorePurchasesOutcome.restored => RestorePurchasesCopy.purchaseRestored,
-        RestorePurchasesOutcome.noPurchase =>
-          RestorePurchasesCopy.noActivePurchase,
-        RestorePurchasesOutcome.unavailable =>
-          RestorePurchasesCopy.billingUnavailable,
-        RestorePurchasesOutcome.error => RestorePurchasesCopy.restoreError,
-        RestorePurchasesOutcome.skippedBusy => '',
-      };
+    RestorePurchasesOutcome.restored => RestorePurchasesCopy.purchaseRestored,
+    RestorePurchasesOutcome.noPurchase => RestorePurchasesCopy.noActivePurchase,
+    RestorePurchasesOutcome.unavailable =>
+      RestorePurchasesCopy.billingUnavailable,
+    RestorePurchasesOutcome.error => RestorePurchasesCopy.restoreError,
+    RestorePurchasesOutcome.skippedBusy => '',
+  };
 }
 
 /// Shared restore flow — loading guard, entitlement refresh, calm outcomes.
 class RestorePurchasesFlow {
   RestorePurchasesFlow({
-    required BillingService billing,
+    required this._billing,
     bool Function()? isBillingConfigured,
-  })  : _billing = billing,
-        _isBillingConfigured = isBillingConfigured ??
-            (() => RevenueCatService.instance.isConfigured);
+  }) : _isBillingConfigured =
+           isBillingConfigured ??
+           (() => RevenueCatService.instance.isConfigured);
 
   final BillingService _billing;
   final bool Function() _isBillingConfigured;

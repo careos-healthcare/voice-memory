@@ -20,99 +20,93 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _blankVoiceEntry({
   required String id,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: '   ',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: '   ',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _mixedEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment one.',
-        captureContextTag: CaptureContextTagIds.work,
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day moment two.',
-        createdAt: DateTime(2026, 6, 11),
-        captureContextTag: CaptureContextTagIds.work,
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'Home felt loud before I could settle into the evening moment three.',
-        createdAt: DateTime(2026, 6, 10),
-        captureContextTag: CaptureContextTagIds.home,
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'Another untagged moment before I could leave for the day moment four.',
-        createdAt: DateTime(2026, 6, 9),
-      ),
-      _degradedVoiceEntry(
-        id: 'd1',
-        captureContextTag: CaptureContextTagIds.work,
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment one.',
+    captureContextTag: CaptureContextTagIds.work,
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day moment two.',
+    createdAt: DateTime(2026, 6, 11),
+    captureContextTag: CaptureContextTagIds.work,
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'Home felt loud before I could settle into the evening moment three.',
+    createdAt: DateTime(2026, 6, 10),
+    captureContextTag: CaptureContextTagIds.home,
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'Another untagged moment before I could leave for the day moment four.',
+    createdAt: DateTime(2026, 6, 9),
+  ),
+  _degradedVoiceEntry(id: 'd1', captureContextTag: CaptureContextTagIds.work),
+];
 
 const _bannedWords = [
   'diagnosis',
@@ -149,7 +143,12 @@ void main() {
         contextTagId: CaptureContextTagIds.work,
       );
       expect(work.map((entry) => entry.id), ['e1', 'e2']);
-      expect(work.every((entry) => entry.captureContextTag == CaptureContextTagIds.work), isTrue);
+      expect(
+        work.every(
+          (entry) => entry.captureContextTag == CaptureContextTagIds.work,
+        ),
+        isTrue,
+      );
     });
 
     test('Untagged drilldown shows only eligible untagged entries', () {
@@ -161,7 +160,8 @@ void main() {
       expect(
         untagged.every(
           (entry) =>
-              entry.captureContextTag == null || entry.captureContextTag!.isEmpty,
+              entry.captureContextTag == null ||
+              entry.captureContextTag!.isEmpty,
         ),
         isTrue,
       );
@@ -211,11 +211,16 @@ void main() {
         drilldown.title,
         VisibleArchiveProofCopy.archiveEvidenceContextUntaggedTitle,
       );
-      expect(drilldown.subtitle, VisibleArchiveProofCopy.archiveEvidenceContextSubtitle);
+      expect(
+        drilldown.subtitle,
+        VisibleArchiveProofCopy.archiveEvidenceContextSubtitle,
+      );
     });
 
     test('manual tag edit changes which drilldown an entry belongs to', () async {
-      final tmp = await Directory.systemTemp.createTemp('evidence_drilldown_tag_');
+      final tmp = await Directory.systemTemp.createTemp(
+        'evidence_drilldown_tag_',
+      );
       final store = await JournalStore.open('${tmp.path}/entries.json');
       final entry = _voiceEntry(
         id: 'e1',
@@ -234,7 +239,10 @@ void main() {
         ['e1'],
       );
 
-      await store.updateCaptureContextTag('e1', tagId: CaptureContextTagIds.home);
+      await store.updateCaptureContextTag(
+        'e1',
+        tagId: CaptureContextTagIds.home,
+      );
       final updated = await store.getById('e1');
       entries = [updated!];
 
@@ -261,7 +269,10 @@ void main() {
       final shareText = proof.lines.join('\n').toLowerCase();
       expect(shareText, isNot(contains('evidence in work')));
       expect(shareText, isNot(contains('untagged evidence')));
-      expect(shareText, isNot(contains('saved moments counted in your evidence map')));
+      expect(
+        shareText,
+        isNot(contains('saved moments counted in your evidence map')),
+      );
     });
 
     test('copy avoids banned language', () {
@@ -285,7 +296,9 @@ void main() {
         '/archive-evidence-map/context/work',
       );
       expect(
-        ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+        ArchiveEvidenceMapNavigation.contextPath(
+          ArchiveEvidenceMapRowIds.untagged,
+        ),
         '/archive-evidence-map/context/untagged',
       );
     });
@@ -299,7 +312,9 @@ void main() {
       );
       expect(
         SensitiveRoutes.isSensitiveRoute(
-          ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+          ArchiveEvidenceMapNavigation.contextPath(
+            ArchiveEvidenceMapRowIds.untagged,
+          ),
         ),
         isTrue,
       );
@@ -324,11 +339,15 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('archive_evidence_map_row_tap_work')));
+      await tester.tap(
+        find.byKey(const Key('archive_evidence_map_row_tap_work')),
+      );
       await tester.pump();
       expect(tappedId, CaptureContextTagIds.work);
 
-      await tester.tap(find.byKey(const Key('archive_evidence_map_row_tap_untagged')));
+      await tester.tap(
+        find.byKey(const Key('archive_evidence_map_row_tap_untagged')),
+      );
       await tester.pump();
       expect(tappedId, ArchiveEvidenceMapRowIds.untagged);
     });
@@ -383,11 +402,16 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      await tester.tap(find.byKey(const Key('archive_evidence_map_row_tap_work')));
+      await tester.tap(
+        find.byKey(const Key('archive_evidence_map_row_tap_work')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byKey(const Key('archive_evidence_context_screen_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_evidence_context_screen_title')),
+        findsOneWidget,
+      );
       expect(find.text('Evidence in Work'), findsOneWidget);
     });
   });

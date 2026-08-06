@@ -33,22 +33,22 @@ const _bannedWords = [
 const _unsetChoice = ReturnRitualChoice(presetId: '');
 
 JournalEntry _entry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          'I felt pressure at work before saying yes again even when I was tired.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      'I felt pressure at work before saying yes again even when I was tired.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -175,15 +175,15 @@ void main() {
       );
       await store.save(choice);
       final loaded = await store.load();
-      expect(loaded?.resolvePhrase(ReturnRitualCopy.presets),
-          'When Sunday planning feels heavy');
+      expect(
+        loaded?.resolvePhrase(ReturnRitualCopy.presets),
+        'When Sunday planning feels heavy',
+      );
     });
 
     test('clear removes saved ritual', () async {
       await store.save(
-        ReturnRitualChoice(
-          presetId: ReturnRitualCopy.presetSameThought.id,
-        ),
+        ReturnRitualChoice(presetId: ReturnRitualCopy.presetSameThought.id),
       );
       await store.clear();
       expect(await store.load(), isNull);
@@ -194,9 +194,7 @@ void main() {
       final before = await journal.file.readAsString();
 
       await store.save(
-        ReturnRitualChoice(
-          presetId: ReturnRitualCopy.presetUnclearDecision.id,
-        ),
+        ReturnRitualChoice(presetId: ReturnRitualCopy.presetUnclearDecision.id),
       );
 
       final after = await journal.file.readAsString();
@@ -259,15 +257,23 @@ void main() {
 
     testWidgets('hidden at zero entries', (tester) async {
       await pumpCard(tester, entryCount: 0);
-      expect(find.byKey(const Key('return_ritual_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('return_ritual_card_hidden')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('return_ritual_card')), findsNothing);
     });
 
-    testWidgets('shown at one or more entries with choose state', (tester) async {
+    testWidgets('shown at one or more entries with choose state', (
+      tester,
+    ) async {
       await pumpCard(tester, entryCount: 1, initialChoice: _unsetChoice);
       expect(find.byKey(const Key('return_ritual_card')), findsOneWidget);
       expect(find.text(ReturnRitualCopy.chooseTitle), findsOneWidget);
-      expect(find.text(ReturnRitualCopy.presetEndWorkday.phrase), findsOneWidget);
+      expect(
+        find.text(ReturnRitualCopy.presetEndWorkday.phrase),
+        findsOneWidget,
+      );
     });
 
     testWidgets('select preset shows saved phrase', (tester) async {

@@ -9,7 +9,7 @@ void main() {
     String transcript, {
     DateTime? createdAt,
     bool archived = false,
-  }  ) => JournalEntry(
+  }) => JournalEntry(
     id: id,
     transcript: transcript,
     createdAt: createdAt ?? DateTime(2026, 1, 1),
@@ -77,11 +77,7 @@ void main() {
   test('an archived moment never becomes a source', () {
     final subject = entry('new', 'checking my phone at dinner again tonight');
     final archive = [
-      entry(
-        'old',
-        'checking my phone at dinner again tonight',
-        archived: true,
-      ),
+      entry('old', 'checking my phone at dinner again tonight', archived: true),
       subject,
     ];
 

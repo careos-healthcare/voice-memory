@@ -298,7 +298,6 @@ class AppServices {
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
       vault: LocalAudioVault(),
-      apiClient: s.api,
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
@@ -425,7 +424,6 @@ class AppServices {
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
       vault: LocalAudioVault(),
-      apiClient: s.api,
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
@@ -644,22 +642,8 @@ class AppServices {
   }
 
   static Future<String> _resolveDocumentsBasePath() async {
-    try {
-      final dir = await AppStoragePaths.applicationDocumentsDirectory();
-      return dir.path;
-    } catch (e, st) {
-      if (kDebugMode && Platform.isIOS) {
-        debugPrint(
-          'ARCHIVEME_SIMULATOR_NATIVE_ASSETS: documents path failed, '
-          'using debug temp fallback: $e',
-        );
-        debugPrint('$st');
-        return AppStoragePaths.debugSimulatorDocumentsDirectorySync(
-          reason: e,
-        ).path;
-      }
-      rethrow;
-    }
+    final dir = await AppStoragePaths.applicationDocumentsDirectory();
+    return dir.path;
   }
 
   /// Where a relative store path handed to [resetForTest] actually lands.
@@ -818,34 +802,33 @@ class AppServices {
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
       vault: LocalAudioVault(),
-      apiClient: s.api,
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
     );
     await BetaFeedbackStore.resetForTest();
-    await ConfirmedRepeatBetaFeedbackStore.resetForTest();
-    await CoreValueFeedbackStore.resetForTest();
-    ArchiveBetaMissionGate.enabledOverride = false;
-    await ArchiveBetaMissionStore.resetForTest();
-    await BetaTestScriptStore.resetForTest(AppServices.instance.prefs);
-    await TesterMissionStore.resetForTest();
-    await ConfirmedRepeatWhyMattersStore.resetForTest();
-    await ConfirmedRepeatThoughtMapStore.resetForTest();
-    ArchiveMeDemoState.resetForTest();
-    await RepeatReturnCheckStore.resetForTest();
-    await ComeBackTomorrowV2Store.resetForTest(s.prefs);
-    await FirstProofTruthStore.resetForTest(s.prefs);
-    await WhatChangedV2Store.resetForTest();
-    await HelpedTrackingStore.resetForTest();
-    PatternNameStore.resetForTest();
-    MicrophonePermissionEnvironment.resetForTest();
-    QuietSignalAnalytics.resetForTest();
-    await ProEvidenceValueDismissStore.resetForTest();
-    await ProLockMomentDismissStore.resetForTest();
-    await MonthlyPrivateReportDismissStore.resetForTest();
-    await ArchiveBackupBridgeDismissStore.resetForTest();
-    await BetaFeedbackIntelligenceStore.resetForTest();
+    await ConfirmedRepeatBetaFeedbackStore.resetPersistedState();
+    await CoreValueFeedbackStore.resetPersistedState();
+    ArchiveBetaMissionGate.disableForHarness();
+    await ArchiveBetaMissionStore.resetPersistedState();
+    await BetaTestScriptStore.resetPersistedState(AppServices.instance.prefs);
+    await TesterMissionStore.resetPersistedState();
+    await ConfirmedRepeatWhyMattersStore.resetPersistedState();
+    await ConfirmedRepeatThoughtMapStore.resetPersistedState();
+    ArchiveMeDemoState.resetPersistedState();
+    await RepeatReturnCheckStore.resetPersistedState();
+    await ComeBackTomorrowV2Store.resetPersistedState(s.prefs);
+    await FirstProofTruthStore.resetPersistedState(s.prefs);
+    await WhatChangedV2Store.resetPersistedState();
+    await HelpedTrackingStore.resetPersistedState();
+    PatternNameStore.resetPersistedState();
+    MicrophonePermissionEnvironment.resetPersistedState();
+    QuietSignalAnalytics.resetPersistedState();
+    await ProEvidenceValueDismissStore.resetPersistedState();
+    await ProLockMomentDismissStore.resetPersistedState();
+    await MonthlyPrivateReportDismissStore.resetPersistedState();
+    await ArchiveBackupBridgeDismissStore.resetPersistedState();
+    await BetaFeedbackIntelligenceStore.resetPersistedState();
   }
 
   static void _configureJournalSaveInterceptors(AppServices services) {

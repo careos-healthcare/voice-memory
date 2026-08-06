@@ -28,8 +28,8 @@ class ProInterestLinkCard extends StatefulWidget {
     required this.entries,
     this.initialWatchlistCount = 0,
     this.sampleMode = false,
-  })  : watchlistStore = null,
-        skipPrefsLoad = true;
+  }) : watchlistStore = null,
+       skipPrefsLoad = true;
 
   final List<JournalEntry> entries;
   final ArchiveWatchlistStore? watchlistStore;
@@ -57,7 +57,8 @@ class _ProInterestLinkCardState extends State<ProInterestLinkCard> {
   }
 
   Future<void> _load() async {
-    final store = widget.watchlistStore ??
+    final store =
+        widget.watchlistStore ??
         ArchiveWatchlistStore(AppServices.instance.prefs);
     final items = await store.loadItems();
     if (!mounted) return;
@@ -73,8 +74,9 @@ class _ProInterestLinkCardState extends State<ProInterestLinkCard> {
       return const SizedBox.shrink(key: Key('pro_interest_link_card_loading'));
     }
 
-    final entryCount =
-        const BetaFeedbackEngine().realEntryCount(widget.entries);
+    final entryCount = const BetaFeedbackEngine().realEntryCount(
+      widget.entries,
+    );
     if (!ProInterestGates.showArchiveLink(
       entryCount: entryCount,
       watchlistCount: _watchlistCount,

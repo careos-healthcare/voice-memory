@@ -40,8 +40,9 @@ class _ProofEmotionalClarityCorrectionRowState
   Future<void> _loadExisting() async {
     await EarlyArchiveInsightFeedbackStore.ensureLoaded();
     if (!mounted) return;
-    final existing =
-        EarlyArchiveInsightFeedbackStore.latestForKey(_storageKey)?.value;
+    final existing = EarlyArchiveInsightFeedbackStore.latestForKey(
+      _storageKey,
+    )?.value;
     if (existing != null) {
       setState(() => _savedValue = existing);
     }
@@ -73,11 +74,9 @@ class _ProofEmotionalClarityCorrectionRowState
 
   @override
   Widget build(BuildContext context) {
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
     final buttonStyle = TextButton.styleFrom(
       foregroundColor: AppColors.textSecondary,
       visualDensity: VisualDensity.compact,
@@ -91,7 +90,9 @@ class _ProofEmotionalClarityCorrectionRowState
         padding: const EdgeInsets.only(top: AppSpacing.sm),
         child: Text(
           'Thanks — saved locally.',
-          key: Key('proof_emotional_clarity_correction_ack_${_savedValue!.name}'),
+          key: Key(
+            'proof_emotional_clarity_correction_ack_${_savedValue!.name}',
+          ),
           style: helperStyle,
         ),
       );
@@ -117,7 +118,9 @@ class _ProofEmotionalClarityCorrectionRowState
             runSpacing: 2,
             children: [
               TextButton(
-                key: const Key('proof_emotional_clarity_correction_feels_right'),
+                key: const Key(
+                  'proof_emotional_clarity_correction_feels_right',
+                ),
                 onPressed: () =>
                     _save(EarlyArchiveInsightFeedbackValue.feelsRight),
                 style: buttonStyle,

@@ -12,18 +12,21 @@ void main() {
       emotionalVolatility: 0.40,
     );
 
-    test('triggers grounding when drift rises significantly above baseline', () {
-      const current = CognitiveBiomarkers(
-        lexicalDiversity: 0.54,
-        cohesionDrift: 0.52,
-        emotionalVolatility: 0.41,
-      );
+    test(
+      'triggers grounding when drift rises significantly above baseline',
+      () {
+        const current = CognitiveBiomarkers(
+          lexicalDiversity: 0.54,
+          cohesionDrift: 0.52,
+          emotionalVolatility: 0.41,
+        );
 
-      expect(
-        detector.determineOverloadState(current: current, baseline: baseline),
-        isTrue,
-      );
-    });
+        expect(
+          detector.determineOverloadState(current: current, baseline: baseline),
+          isTrue,
+        );
+      },
+    );
 
     test('triggers grounding when lexical diversity drops below baseline', () {
       const current = CognitiveBiomarkers(

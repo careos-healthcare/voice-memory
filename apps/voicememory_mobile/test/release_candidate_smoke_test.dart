@@ -86,8 +86,9 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
       ReleaseCandidateSmokeEngine.developerDiagnosticsLockedOverride = true;
 
-      final joined =
-          ReleaseCandidateSmokeEngine.build().visibleCopyBlocks.join('\n');
+      final joined = ReleaseCandidateSmokeEngine.build().visibleCopyBlocks.join(
+        '\n',
+      );
       expect(joined, isNot(contains('REVENUECAT_')));
       expect(joined, isNot(contains('http://')));
       expect(joined, isNot(contains('https://')));
@@ -96,8 +97,7 @@ void main() {
     });
 
     test('visible copy avoids transcript phrase and user content', () {
-      final joined = ReleaseCandidateSmokeEngine.build()
-          .visibleCopyBlocks
+      final joined = ReleaseCandidateSmokeEngine.build().visibleCopyBlocks
           .join('\n')
           .toLowerCase();
       expect(joined, isNot(contains('transcript')));
@@ -153,14 +153,8 @@ void main() {
         find.byKey(const Key('release_candidate_smoke_card')),
         findsOneWidget,
       );
-      expect(
-        find.text(ReleaseCandidateSmokeCopy.sectionTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ReleaseCandidateSmokeCopy.summaryReady),
-        findsOneWidget,
-      );
+      expect(find.text(ReleaseCandidateSmokeCopy.sectionTitle), findsOneWidget);
+      expect(find.text(ReleaseCandidateSmokeCopy.summaryReady), findsOneWidget);
     });
 
     testWidgets('manual checklist renders in card', (tester) async {
@@ -184,9 +178,11 @@ void main() {
         find.text(ReleaseCandidateSmokeCopy.manualChecklistTitle),
         findsOneWidget,
       );
-      for (var i = 0;
-          i < ReleaseCandidateSmokeCopy.manualChecklistSteps.length;
-          i++) {
+      for (
+        var i = 0;
+        i < ReleaseCandidateSmokeCopy.manualChecklistSteps.length;
+        i++
+      ) {
         expect(
           find.text(
             '${i + 1}. ${ReleaseCandidateSmokeCopy.manualChecklistSteps[i]}',

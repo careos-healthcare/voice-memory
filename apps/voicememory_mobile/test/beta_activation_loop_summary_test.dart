@@ -137,12 +137,14 @@ void main() {
       );
       BetaActivationLoopCounts counts =
           await BetaActivationLoopTracker.readCounts();
-      for (var i = 0;
-          i < 50 &&
-              (counts.oneEntryReturnScreenSeen == 0 ||
-                  counts.twoEntryRelatedSeen == 0 ||
-                  counts.confirmedRepeatSeen == 0);
-          i++) {
+      for (
+        var i = 0;
+        i < 50 &&
+            (counts.oneEntryReturnScreenSeen == 0 ||
+                counts.twoEntryRelatedSeen == 0 ||
+                counts.confirmedRepeatSeen == 0);
+        i++
+      ) {
         await Future<void>.delayed(const Duration(milliseconds: 10));
         counts = await BetaActivationLoopTracker.readCounts();
       }

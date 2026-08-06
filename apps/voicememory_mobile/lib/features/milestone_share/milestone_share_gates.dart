@@ -6,6 +6,5 @@ abstract final class MilestoneShareGates {
     required int realSavedMomentCount,
     required int milestoneCount,
     required bool sampleMode,
-  }) =>
-      !sampleMode && realSavedMomentCount >= 1 && milestoneCount >= 1;
+  }) => !sampleMode && realSavedMomentCount >= 1 && milestoneCount >= 1;
 }

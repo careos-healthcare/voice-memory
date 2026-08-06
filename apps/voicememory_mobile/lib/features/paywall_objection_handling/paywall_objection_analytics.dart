@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../billing/paywall_source.dart';
 import '../../services/activation_funnel_analytics.dart';
-import 'paywall_objection_copy.dart';
 import 'paywall_objection_model.dart';
 
 /// Metadata-only analytics for paywall objection handling.
@@ -14,16 +12,10 @@ abstract final class PaywallObjectionAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void sectionSeen({
-    required String source,
-    required String surface,
-  }) {
-    final props = <String, Object>{
-      'source': source,
-      'surface': surface,
-    };
+  static void sectionSeen({required String source, required String surface}) {
+    final props = <String, Object>{'source': source, 'surface': surface};
     captureForTest?.call(seenEvent, props);
     ActivationFunnelAnalytics.track(
       seenEvent,

@@ -16,18 +16,17 @@ class StoreReadinessAudit {
 
   factory StoreReadinessAudit.fromProductionCandidateChecklist(
     ProductionCandidateChecklist checklist,
-  ) =>
-      StoreReadinessAudit(
-        testFlightBuildUploaded: checklist.testFlightBuildUploaded,
-        appStoreSupportUrlReady: checklist.appStoreSupportUrlReady,
-        privacyPolicyReady: checklist.privacyPolicyReady,
-        appStoreScreenshotsReady: checklist.appStoreScreenshotsReady,
-        appStoreMetadataReady: checklist.appStoreMetadataReady,
-        revenueCatProductsVerified: checklist.revenueCatProductsVerified,
-        restorePurchasesVerified: checklist.restorePurchasesVerified,
-        physicalDeviceSmokeTestPassed: checklist.physicalDeviceSmokeTestPassed,
-        productionSecretsRotated: checklist.productionSecretsRotated,
-      );
+  ) => StoreReadinessAudit(
+    testFlightBuildUploaded: checklist.testFlightBuildUploaded,
+    appStoreSupportUrlReady: checklist.appStoreSupportUrlReady,
+    privacyPolicyReady: checklist.privacyPolicyReady,
+    appStoreScreenshotsReady: checklist.appStoreScreenshotsReady,
+    appStoreMetadataReady: checklist.appStoreMetadataReady,
+    revenueCatProductsVerified: checklist.revenueCatProductsVerified,
+    restorePurchasesVerified: checklist.restorePurchasesVerified,
+    physicalDeviceSmokeTestPassed: checklist.physicalDeviceSmokeTestPassed,
+    productionSecretsRotated: checklist.productionSecretsRotated,
+  );
 
   final bool testFlightBuildUploaded;
   final bool appStoreSupportUrlReady;
@@ -71,16 +70,16 @@ class StoreReadinessAudit {
       revenueCatProductsVerified && restorePurchasesVerified;
 
   bool _valueFor(_AuditItem item) => switch (item) {
-        _AuditItem.testFlightBuildUploaded => testFlightBuildUploaded,
-        _AuditItem.appStoreSupportUrlReady => appStoreSupportUrlReady,
-        _AuditItem.privacyPolicyReady => privacyPolicyReady,
-        _AuditItem.appStoreScreenshotsReady => appStoreScreenshotsReady,
-        _AuditItem.appStoreMetadataReady => appStoreMetadataReady,
-        _AuditItem.revenueCatProductsVerified => revenueCatProductsVerified,
-        _AuditItem.restorePurchasesVerified => restorePurchasesVerified,
-        _AuditItem.physicalDeviceSmokeTestPassed => physicalDeviceSmokeTestPassed,
-        _AuditItem.productionSecretsRotated => productionSecretsRotated,
-      };
+    _AuditItem.testFlightBuildUploaded => testFlightBuildUploaded,
+    _AuditItem.appStoreSupportUrlReady => appStoreSupportUrlReady,
+    _AuditItem.privacyPolicyReady => privacyPolicyReady,
+    _AuditItem.appStoreScreenshotsReady => appStoreScreenshotsReady,
+    _AuditItem.appStoreMetadataReady => appStoreMetadataReady,
+    _AuditItem.revenueCatProductsVerified => revenueCatProductsVerified,
+    _AuditItem.restorePurchasesVerified => restorePurchasesVerified,
+    _AuditItem.physicalDeviceSmokeTestPassed => physicalDeviceSmokeTestPassed,
+    _AuditItem.productionSecretsRotated => productionSecretsRotated,
+  };
 }
 
 enum StoreReadinessStatus {

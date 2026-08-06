@@ -29,8 +29,9 @@ class TestFlightMetricRow {
   final bool seen;
   final int count;
 
-  String get statusLabel =>
-      seen ? TestFlightMetricsCopy.statusSeen : TestFlightMetricsCopy.statusMissing;
+  String get statusLabel => seen
+      ? TestFlightMetricsCopy.statusSeen
+      : TestFlightMetricsCopy.statusMissing;
 
   String get countLabel => count > 0 ? count.toString() : statusLabel;
 }

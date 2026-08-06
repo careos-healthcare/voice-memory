@@ -9,6 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 class PostSaveClearerMomentBanner extends StatelessWidget {
   const PostSaveClearerMomentBanner({
+    super.key,
     required this.prompt,
     required this.onRecordNext,
     this.title,

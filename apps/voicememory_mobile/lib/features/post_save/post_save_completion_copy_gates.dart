@@ -7,8 +7,5 @@ abstract final class PostSaveCompletionCopyGates {
     required bool counterHasProof,
     required bool doneReceiptVisible,
     required bool suppressNoisyFirstSaveCards,
-  }) =>
-      counterHasProof &&
-      !suppressNoisyFirstSaveCards &&
-      !doneReceiptVisible;
+  }) => counterHasProof && !suppressNoisyFirstSaveCards && !doneReceiptVisible;
 }

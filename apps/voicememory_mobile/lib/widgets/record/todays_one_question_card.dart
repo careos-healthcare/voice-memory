@@ -23,9 +23,7 @@ class TodaysOneQuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!question.showOnRecord) {
-      return const SizedBox.shrink(
-        key: Key('todays_one_question_card_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('todays_one_question_card_hidden'));
     }
 
     return Container(
@@ -60,10 +58,9 @@ class TodaysOneQuestionCard extends StatelessWidget {
           Text(
             question.helperText,
             key: const Key('todays_one_question_card_helper'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.sm),
           OutlinedButton(
@@ -80,7 +77,8 @@ class TodaysOneQuestionCard extends StatelessWidget {
               key: const Key('todays_one_question_card_view_button'),
               onPressed: onViewFull,
               child: Text(
-                question.secondaryCtaLabel ?? TodaysQuestionCopy.viewQuestionCta,
+                question.secondaryCtaLabel ??
+                    TodaysQuestionCopy.viewQuestionCta,
               ),
             ),
           ],

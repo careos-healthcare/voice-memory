@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 
 /// Debug-first telemetry for the curiosity retention funnel.
 class CuriosityTelemetryTracker {
-  const CuriosityTelemetryTracker({void Function(String event, Map<String, Object> meta)? sink})
-      : _sink = sink;
+  const CuriosityTelemetryTracker({this._sink});
 
   static const logPrefix = '[TELEMETRY][CURIOSITY_LOOP]';
 
@@ -19,53 +18,23 @@ class CuriosityTelemetryTracker {
     required String hookType,
     required Duration scheduleAfter,
   }) {
-    _emit(
-      hookScheduledEvent,
-      {
-        'hook_id': hookId,
-        'hook_type': hookType,
-        'schedule_after_minutes': scheduleAfter.inMinutes,
-      },
-    );
+    _emit(hookScheduledEvent, {
+      'hook_id': hookId,
+      'hook_type': hookType,
+      'schedule_after_minutes': scheduleAfter.inMinutes,
+    });
   }
 
-  void trackSnapshotViewed({
-    required String hookId,
-    required String hookType,
-  }) {
-    _emit(
-      snapshotViewedEvent,
-      {
-        'hook_id': hookId,
-        'hook_type': hookType,
-      },
-    );
+  void trackSnapshotViewed({required String hookId, required String hookType}) {
+    _emit(snapshotViewedEvent, {'hook_id': hookId, 'hook_type': hookType});
   }
 
-  void trackReactionTapped({
-    required String hookId,
-    required String reaction,
-  }) {
-    _emit(
-      reactionTappedEvent,
-      {
-        'hook_id': hookId,
-        'reaction': reaction,
-      },
-    );
+  void trackReactionTapped({required String hookId, required String reaction}) {
+    _emit(reactionTappedEvent, {'hook_id': hookId, 'reaction': reaction});
   }
 
-  void trackMicAutostarted({
-    required String hookId,
-    required String source,
-  }) {
-    _emit(
-      micAutostartedEvent,
-      {
-        'hook_id': hookId,
-        'source': source,
-      },
-    );
+  void trackMicAutostarted({required String hookId, required String source}) {
+    _emit(micAutostartedEvent, {'hook_id': hookId, 'source': source});
   }
 
   void _emit(String event, Map<String, Object> meta) {

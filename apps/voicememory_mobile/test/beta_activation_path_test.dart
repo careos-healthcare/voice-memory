@@ -20,7 +20,7 @@ import 'package:voicememory_mobile/widgets/beta/beta_activation_path_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/beta_activation_path/unused.json'));
+    : super(file: File('test/tmp/beta_activation_path/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -50,30 +50,27 @@ BetaActivationPathContext _context({
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
   bool isPermissionBlocked = false,
-}) =>
-    BetaActivationPathContext(
-      source: 'test',
-      entryCount: entryCount,
-      betaMissionEnabled: betaMissionEnabled,
-      dismissedForToday: dismissedForToday,
-      hasUsefulProof: hasUsefulProof,
-      hasTimelineProof: hasTimelineProof,
-      hasPaywallSeen: hasPaywallSeen,
-      hasPurchaseCtaTapped: hasPurchaseCtaTapped,
-      strongerProCardVisible: strongerProCardVisible,
-      isReady: isReady,
-      isRecording: isRecording,
-      isPostSave: isPostSave,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      isPermissionBlocked: isPermissionBlocked,
-    );
+}) => BetaActivationPathContext(
+  source: 'test',
+  entryCount: entryCount,
+  betaMissionEnabled: betaMissionEnabled,
+  dismissedForToday: dismissedForToday,
+  hasUsefulProof: hasUsefulProof,
+  hasTimelineProof: hasTimelineProof,
+  hasPaywallSeen: hasPaywallSeen,
+  hasPurchaseCtaTapped: hasPurchaseCtaTapped,
+  strongerProCardVisible: strongerProCardVisible,
+  isReady: isReady,
+  isRecording: isRecording,
+  isPostSave: isPostSave,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  isPermissionBlocked: isPermissionBlocked,
+);
 
-BetaActivationPathResult _buildResult({
-  BetaActivationPathContext? context,
-}) =>
+BetaActivationPathResult _buildResult({BetaActivationPathContext? context}) =>
     BetaActivationPathEngine.build(context: context ?? _context());
 
 Future<void> _pumpCard(
@@ -100,35 +97,34 @@ SurfacePriorityCandidates _recordCandidates({
   bool threeMomentCompletion = false,
   bool proBridgeVisibility = false,
   bool proEvidenceValue = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      betaActivationPath: betaActivationPath,
-      betaActivationPathRevenue: betaActivationPathRevenue,
-      threeMomentCompletion: threeMomentCompletion,
-      firstMomentCapture: false,
-      secondMomentReturn: false,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proBridgeVisibility: proBridgeVisibility,
-      proEvidenceValue: proEvidenceValue,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  betaActivationPath: betaActivationPath,
+  betaActivationPathRevenue: betaActivationPathRevenue,
+  threeMomentCompletion: threeMomentCompletion,
+  firstMomentCapture: false,
+  secondMomentReturn: false,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proBridgeVisibility: proBridgeVisibility,
+  proEvidenceValue: proEvidenceValue,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 void main() {
   setUp(() async {
@@ -197,9 +193,7 @@ void main() {
     });
 
     test('hidden when beta flag off', () {
-      final result = _buildResult(
-        context: _context(betaMissionEnabled: false),
-      );
+      final result = _buildResult(context: _context(betaMissionEnabled: false));
       expect(result.shouldShow, isFalse);
     });
 
@@ -268,7 +262,9 @@ void main() {
         onPrimaryCta: () => tapped = true,
       );
 
-      await tester.tap(find.byKey(const Key('beta_activation_path_primary_cta')));
+      await tester.tap(
+        find.byKey(const Key('beta_activation_path_primary_cta')),
+      );
       await tester.pump();
 
       expect(tapped, isTrue);
@@ -283,16 +279,22 @@ void main() {
         onPrimaryCta: () {},
       );
 
-      await tester.tap(find.byKey(const Key('beta_activation_path_secondary_cta')));
+      await tester.tap(
+        find.byKey(const Key('beta_activation_path_secondary_cta')),
+      );
       await tester.pump();
 
       expect(BetaActivationPathStore.isDismissedToday, isTrue);
-      expect(find.byKey(const Key('beta_activation_path_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_activation_path_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     test('no private text or user-specific evidence', () {
-      final displayed =
-          BetaActivationPathCopy.allVisibleStrings().join(' ').toLowerCase();
+      final displayed = BetaActivationPathCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in BetaActivationPathCopy.bannedPrivateTerms) {
         expect(displayed, isNot(contains(banned)));
       }
@@ -332,14 +334,17 @@ void main() {
         BetaActivationPathAnalytics.dismissedEvent,
       ]);
       for (final props in properties) {
-        expect(props.keys, containsAll([
-          'source',
-          'stage',
-          'entry_count',
-          'has_useful_proof',
-          'has_timeline_proof',
-          'has_paywall_seen',
-        ]));
+        expect(
+          props.keys,
+          containsAll([
+            'source',
+            'stage',
+            'entry_count',
+            'has_useful_proof',
+            'has_timeline_proof',
+            'has_paywall_seen',
+          ]),
+        );
         expect(props.containsKey('product_id'), isFalse);
         expect(props.containsKey('transcript'), isFalse);
       }
@@ -365,7 +370,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonGuidanceCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonGuidanceCap),
+      );
     });
 
     test('revenue slot yields to stronger Pro cards', () {
@@ -407,8 +415,9 @@ void main() {
     });
 
     test('testing screen includes compact preview', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('BetaActivationPathCard.test'));
       expect(source, contains('showDiagnosis: true'));
     });

@@ -1,5 +1,4 @@
 import '../features/archive_beliefs/archive_belief_models.dart';
-import 'consumer_ui_copy.dart';
 
 /// User-facing pattern explanations for cards and detail screens.
 abstract class BeliefClarity {

@@ -14,7 +14,7 @@ abstract final class SecondMomentReturnAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required SecondMomentReturnResult result}) {
     _emit(

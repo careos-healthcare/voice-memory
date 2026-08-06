@@ -16,11 +16,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -60,27 +56,27 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
+  _entry(
+    '4',
+    'Same capacity pressure came back but it felt easier to stop this time.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+];
 
 PresentDayRelevanceResult _resultFor(
   List<JournalEntry> entries, {
@@ -241,10 +237,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PresentDayRelevanceCard.test(
-              result: result,
-              source: 'test',
-            ),
+            body: PresentDayRelevanceCard.test(result: result, source: 'test'),
           ),
         ),
       );
@@ -254,7 +247,10 @@ void main() {
     testWidgets('renders title "Why this may matter now"', (tester) async {
       await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
-      expect(find.byKey(const Key('present_day_relevance_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('present_day_relevance_card')),
+        findsOneWidget,
+      );
       expect(find.text(PresentDayRelevanceCopy.title), findsOneWidget);
     });
 
@@ -312,13 +308,16 @@ void main() {
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, 'present_day_relevance_seen');
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_belief_surface',
-        'relevance_state',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_belief_surface',
+          'relevance_state',
+        ]),
+      );
       for (final value in record.props.values) {
         final text = value.toString().toLowerCase();
         expect(text, isNot(contains('transcript')));
@@ -329,8 +328,9 @@ void main() {
 
   group('Present day relevance placement', () {
     test('patterns screen renders card before post-proof Pro bridge', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final cardIndex = source.indexOf('PresentDayRelevanceCard(');
       final proBridgeIndex = source.indexOf(
         "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
@@ -342,14 +342,17 @@ void main() {
     test('record screen renders card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('showPresentDayRelevanceOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(cardIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(cardIndex));
     });
 
     test('patterns card sits after proof specificity card', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final specificityIndex = source.indexOf('ProofSpecificityCard(');
       final relevanceIndex = source.indexOf('PresentDayRelevanceCard(');
       expect(specificityIndex, greaterThan(0));

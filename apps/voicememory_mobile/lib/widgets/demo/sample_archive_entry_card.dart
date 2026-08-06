@@ -7,10 +7,7 @@ import '../../theme/app_spacing.dart';
 
 /// Zero-entry Archive/Patterns link into the optional sample archive.
 class SampleArchiveEntryCard extends StatelessWidget {
-  const SampleArchiveEntryCard({
-    super.key,
-    required this.onViewSample,
-  });
+  const SampleArchiveEntryCard({super.key, required this.onViewSample});
 
   final VoidCallback onViewSample;
 

@@ -19,66 +19,63 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _blankVoiceEntry({
   required String id,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: '   ',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: '   ',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -168,10 +165,14 @@ void main() {
       );
       expect(_kinds(filters), contains(EvidenceAttentionFilterKind.untagged));
       expect(
-        filters.filters.firstWhere(
-          (filter) => filter.kind == EvidenceAttentionFilterKind.untagged,
-        ).resolveRoute(),
-        ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+        filters.filters
+            .firstWhere(
+              (filter) => filter.kind == EvidenceAttentionFilterKind.untagged,
+            )
+            .resolveRoute(),
+        ArchiveEvidenceMapNavigation.contextPath(
+          ArchiveEvidenceMapRowIds.untagged,
+        ),
       );
     });
 
@@ -193,7 +194,10 @@ void main() {
           ),
         ],
       );
-      expect(_kinds(filters), contains(EvidenceAttentionFilterKind.sameContext));
+      expect(
+        _kinds(filters),
+        contains(EvidenceAttentionFilterKind.sameContext),
+      );
     });
 
     test('contexts with one moment show Thin contexts chip', () {
@@ -253,11 +257,15 @@ void main() {
           ),
         ],
       );
-      expect(_kinds(filters), contains(EvidenceAttentionFilterKind.corrections));
+      expect(
+        _kinds(filters),
+        contains(EvidenceAttentionFilterKind.corrections),
+      );
       expect(
         filters.filters
             .firstWhere(
-              (filter) => filter.kind == EvidenceAttentionFilterKind.corrections,
+              (filter) =>
+                  filter.kind == EvidenceAttentionFilterKind.corrections,
             )
             .resolveRoute(),
         InsightQualityNavigation.route,
@@ -286,7 +294,10 @@ void main() {
           ),
         ],
       );
-      expect(_kinds(filters), contains(EvidenceAttentionFilterKind.corrections));
+      expect(
+        _kinds(filters),
+        contains(EvidenceAttentionFilterKind.corrections),
+      );
     });
 
     test('hidden targets show Hidden chip', () {
@@ -311,7 +322,9 @@ void main() {
       expect(_kinds(filters), contains(EvidenceAttentionFilterKind.hidden));
       expect(
         filters.filters
-            .firstWhere((filter) => filter.kind == EvidenceAttentionFilterKind.hidden)
+            .firstWhere(
+              (filter) => filter.kind == EvidenceAttentionFilterKind.hidden,
+            )
             .resolveRoute(),
         InsightQualityNavigation.route,
       );
@@ -378,7 +391,9 @@ void main() {
   });
 
   group('EvidenceAttentionFiltersCard navigation', () {
-    testWidgets('tapping Untagged routes to untagged drilldown', (tester) async {
+    testWidgets('tapping Untagged routes to untagged drilldown', (
+      tester,
+    ) async {
       final filters = EvidenceAttentionFiltersEngine.build(
         entries: [
           _voiceEntry(
@@ -420,14 +435,18 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('evidence_attention_filter_untagged')));
+      await tester.tap(
+        find.byKey(const Key('evidence_attention_filter_untagged')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(location, '/archive-evidence-map/context/untagged');
     });
 
-    testWidgets('tapping Corrections routes to Insight Quality', (tester) async {
+    testWidgets('tapping Corrections routes to Insight Quality', (
+      tester,
+    ) async {
       ArchiveInsightFeedbackStore.record(
         'weeklyReview',
         ArchiveInsightFeedbackChoice.notQuite,
@@ -481,7 +500,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('evidence_attention_filter_corrections')));
+      await tester.tap(
+        find.byKey(const Key('evidence_attention_filter_corrections')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -539,7 +560,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('evidence_attention_filter_hidden')));
+      await tester.tap(
+        find.byKey(const Key('evidence_attention_filter_hidden')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 

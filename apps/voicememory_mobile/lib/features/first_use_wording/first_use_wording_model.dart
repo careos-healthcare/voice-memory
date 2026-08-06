@@ -3,14 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../services/capture_pipeline_service.dart';
 import 'first_use_wording_analytics.dart';
-import 'first_use_wording_copy.dart';
 
 /// One opening prompt — display only until the user writes their own words.
 class FirstUseWordingPrompt {
-  const FirstUseWordingPrompt({
-    required this.id,
-    required this.opening,
-  });
+  const FirstUseWordingPrompt({required this.id, required this.opening});
 
   final String id;
   final String opening;
@@ -71,10 +67,7 @@ Future<CapturePipelineResult?> navigateToFirstUseWordingOpening(
   required String source,
   Future<void> Function(CapturePipelineResult result)? onSaved,
 }) async {
-  FirstUseWordingAnalytics.selected(
-    source: source,
-    promptType: prompt.id,
-  );
+  FirstUseWordingAnalytics.selected(source: source, promptType: prompt.id);
   final result = await context.push<CapturePipelineResult>(
     '/quick-capture',
     extra: <String, Object?>{

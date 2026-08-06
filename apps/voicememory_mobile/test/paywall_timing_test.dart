@@ -34,41 +34,35 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 List<JournalEntry> get _unrelatedTwoEntries => [
-      _entry(
-        '1',
-        'A quiet moment about lunch with a friend today.',
-      ),
-      _entry(
-        '2',
-        'Another unrelated note about errands this afternoon.',
-      ),
-    ];
+  _entry('1', 'A quiet moment about lunch with a friend today.'),
+  _entry('2', 'Another unrelated note about errands this afternoon.'),
+];
 
 List<JournalEntry> get _groundedTwoEntries => [
-      _entry(
-        '1',
-        'I said yes again even though I was already tired from work today.',
-      ),
-      _entry(
-        '2',
-        'I took responsibility again before asking anyone for help today.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I said yes again even though I was already tired from work today.',
+  ),
+  _entry(
+    '2',
+    'I took responsibility again before asking anyone for help today.',
+  ),
+];
 
 List<JournalEntry> get _confirmedThreeEntries => [
-      _entry(
-        '1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 void main() {
   group('PaywallTimingGates.hasArchiveProofFromEntries', () {
@@ -118,7 +112,9 @@ void main() {
         isTrue,
       );
       expect(
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_confirmedThreeEntries),
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+          _confirmedThreeEntries,
+        ),
         isTrue,
       );
     });
@@ -196,7 +192,9 @@ void main() {
     });
 
     test('shows at three-entry confirmed repeat with evidence phrases', () {
-      final signal = EarlyFirstSignalEngine.build(entries: _confirmedThreeEntries);
+      final signal = EarlyFirstSignalEngine.build(
+        entries: _confirmedThreeEntries,
+      );
       final proof = PaywallTimingGates.hasArchiveProofFromEntries(
         entries: _confirmedThreeEntries,
       );
@@ -216,20 +214,22 @@ void main() {
       );
     });
 
-    test('shows after change-over-time proof when confirmed repeat is visible',
-        () {
-      expect(
-        PaywallTimingGates.showPostProofProBridge(
-          entryCount: 4,
-          resolved: false,
-          isPro: false,
-          hasArchiveProof: true,
-          viewingConfirmedRepeatOrTimeline: true,
-          hasChangeOverTimeProof: true,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'shows after change-over-time proof when confirmed repeat is visible',
+      () {
+        expect(
+          PaywallTimingGates.showPostProofProBridge(
+            entryCount: 4,
+            resolved: false,
+            isPro: false,
+            hasArchiveProof: true,
+            viewingConfirmedRepeatOrTimeline: true,
+            hasChangeOverTimeProof: true,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('shows after private report preview when no other surfaces', () {
       expect(
@@ -301,19 +301,22 @@ void main() {
       );
     });
 
-    test('change-over-time proof alone does not show without value surfaces', () {
-      expect(
-        PaywallTimingGates.showPostProofProBridge(
-          entryCount: 4,
-          resolved: false,
-          isPro: false,
-          hasArchiveProof: true,
-          viewingConfirmedRepeatOrTimeline: false,
-          hasChangeOverTimeProof: true,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'change-over-time proof alone does not show without value surfaces',
+      () {
+        expect(
+          PaywallTimingGates.showPostProofProBridge(
+            entryCount: 4,
+            resolved: false,
+            isPro: false,
+            hasArchiveProof: true,
+            viewingConfirmedRepeatOrTimeline: false,
+            hasChangeOverTimeProof: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('change-over-time proof alone does not bypass entry count gate', () {
       expect(
@@ -461,39 +464,45 @@ void main() {
       expect(haystack, isNot(contains('diagnosis')));
     });
 
-    testWidgets('full archive history boundary renders on Record-style surface',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ArchiveIntelligenceProBridgeCard(
-              onSeePro: () {},
-              onNotNow: () {},
+    testWidgets(
+      'full archive history boundary renders on Record-style surface',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: ArchiveIntelligenceProBridgeCard(
+                onSeePro: () {},
+                onNotNow: () {},
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(
-        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
-        findsOneWidget,
-      );
-      for (final bullet in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) {
-        expect(find.text(bullet), findsOneWidget);
-      }
-      expect(find.text(ArchiveBeliefThreadCopy.whyPro), findsOneWidget);
-      expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
-      expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
-      expect(
-        find.byKey(const Key('full_archive_history_pro_boundary_card')),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
+          findsOneWidget,
+        );
+        for (final bullet
+            in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) {
+          expect(find.text(bullet), findsOneWidget);
+        }
+        expect(find.text(ArchiveBeliefThreadCopy.whyPro), findsOneWidget);
+        expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
+        expect(
+          find.text(ArchiveBeliefThreadCopy.proBridgeSecondary),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('full_archive_history_pro_boundary_card')),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('compact flag still renders full archive history copy', (
       tester,

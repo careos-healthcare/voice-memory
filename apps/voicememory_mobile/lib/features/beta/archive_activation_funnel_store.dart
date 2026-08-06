@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 import '../../services/app_services.dart';
@@ -6,15 +5,13 @@ import '../../storage/mobile_prefs_store.dart';
 import 'archive_activation_funnel_tracker.dart';
 
 class ArchiveActivationFunnelStoreState {
-  const ArchiveActivationFunnelStoreState({
-    this.events = const [],
-  });
+  const ArchiveActivationFunnelStoreState({this.events = const []});
 
   final List<ArchiveActivationFunnelEvent> events;
 
   Map<String, dynamic> toJson() => {
-        'events': events.map((event) => event.toJson()).toList(),
-      };
+    'events': events.map((event) => event.toJson()).toList(),
+  };
 
   static ArchiveActivationFunnelStoreState fromJson(
     Map<String, dynamic>? json,
@@ -82,7 +79,15 @@ class ArchiveActivationFunnelStore {
   Future<List<List<String>>> exportCsvRows() async {
     final events = await all();
     final rows = <List<String>>[
-      ['createdAt', 'type', 'entryId', 'mapId', 'proofId', 'source', 'metadata'],
+      [
+        'createdAt',
+        'type',
+        'entryId',
+        'mapId',
+        'proofId',
+        'source',
+        'metadata',
+      ],
     ];
     for (final event in events) {
       rows.add([
@@ -108,7 +113,9 @@ class ArchiveActivationFunnelStore {
 
   static String _csvCell(String value) {
     final escaped = value.replaceAll('"', '""');
-    if (escaped.contains(',') || escaped.contains('\n') || escaped.contains('"')) {
+    if (escaped.contains(',') ||
+        escaped.contains('\n') ||
+        escaped.contains('"')) {
       return '"$escaped"';
     }
     return escaped;
@@ -187,7 +194,10 @@ abstract class ArchiveActivationFunnelTracking {
       type = ArchiveActivationFunnelEventType.firstRecordingStarted;
     }
     if (type != null) {
-      await record(type: type, source: source ?? (onboardingActive ? 'onboarding' : 'record'));
+      await record(
+        type: type,
+        source: source ?? (onboardingActive ? 'onboarding' : 'record'),
+      );
     }
   }
 

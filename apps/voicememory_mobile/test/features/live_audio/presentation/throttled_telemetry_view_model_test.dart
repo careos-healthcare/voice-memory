@@ -52,34 +52,40 @@ void main() {
       expect(viewModel.snapshot?.pcmChunksSent, 1);
     });
 
-    test('throttles rapid diagnostics to at most ten UI updates per second', () async {
-      var notifyCount = 0;
-      viewModel.addListener(() => notifyCount++);
+    test(
+      'throttles rapid diagnostics to at most ten UI updates per second',
+      () async {
+        var notifyCount = 0;
+        viewModel.addListener(() => notifyCount++);
 
-      for (var i = 0; i < 50; i++) {
-        diagnosticsController.add(snapshot(i));
-      }
+        for (var i = 0; i < 50; i++) {
+          diagnosticsController.add(snapshot(i));
+        }
 
-      await Future<void>.delayed(const Duration(milliseconds: 20));
-      final immediateCount = notifyCount;
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final immediateCount = notifyCount;
 
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-      final afterWindowCount = notifyCount;
+        await Future<void>.delayed(const Duration(milliseconds: 120));
+        final afterWindowCount = notifyCount;
 
-      expect(immediateCount, lessThanOrEqualTo(2));
-      expect(afterWindowCount, lessThan(15));
-      expect(viewModel.snapshot?.pcmChunksSent, 49);
-    });
+        expect(immediateCount, lessThanOrEqualTo(2));
+        expect(afterWindowCount, lessThan(15));
+        expect(viewModel.snapshot?.pcmChunksSent, 49);
+      },
+    );
 
-    test('notifies when capture engine state changes through service listener', () {
-      var notifyCount = 0;
-      viewModel.addListener(() => notifyCount++);
+    test(
+      'notifies when capture engine state changes through service listener',
+      () {
+        var notifyCount = 0;
+        viewModel.addListener(() => notifyCount++);
 
-      telemetrySource.emitCaptureStateChange(LiveVoiceCaptureState.paused);
+        telemetrySource.emitCaptureStateChange(LiveVoiceCaptureState.paused);
 
-      expect(viewModel.engineState, LiveVoiceCaptureState.paused);
-      expect(notifyCount, greaterThanOrEqualTo(1));
-    });
+        expect(viewModel.engineState, LiveVoiceCaptureState.paused);
+        expect(notifyCount, greaterThanOrEqualTo(1));
+      },
+    );
   });
 }
 
@@ -100,14 +106,14 @@ class _FakeTelemetrySource implements LiveVoiceTelemetrySource {
 
   @override
   LiveVoiceDiagnosticsSnapshot get diagnostics => LiveVoiceDiagnosticsSnapshot(
-        pcmChunksSent: 0,
-        audioChunksReceived: 0,
-        audioBytesReceived: 0,
-        reconnectAttempts: 0,
-        sessionFaults: 0,
-        firstAudioLatencyMs: null,
-        playbackQueueDepth: 0,
-      );
+    pcmChunksSent: 0,
+    audioChunksReceived: 0,
+    audioBytesReceived: 0,
+    reconnectAttempts: 0,
+    sessionFaults: 0,
+    firstAudioLatencyMs: null,
+    playbackQueueDepth: 0,
+  );
 
   void emitCaptureStateChange(LiveVoiceCaptureState next) {
     _captureState = next;

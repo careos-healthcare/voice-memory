@@ -188,10 +188,9 @@ abstract class TempRecordingCleanup {
 class PrivateDataService {
   PrivateDataService({
     required JournalStore journalStore,
-    MobilePrefsStore? prefs,
+    this._prefs,
     Future<Directory> Function()? tempDirProvider,
   }) : _journal = journalStore,
-       _prefs = prefs,
        _tempDirProvider = tempDirProvider ?? AppStoragePaths.temporaryDirectory;
 
   final JournalStore _journal;

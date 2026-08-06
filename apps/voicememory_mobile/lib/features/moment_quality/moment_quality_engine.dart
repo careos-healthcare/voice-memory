@@ -53,7 +53,8 @@ class MomentQualityEngine {
     final hasChangeOrNotice = _changeOrNoticePattern.hasMatch(text);
     final hasEvent = _eventPattern.hasMatch(text);
 
-    final richDetail = wordCount >= 14 &&
+    final richDetail =
+        wordCount >= 14 &&
         (hasContext || hasChangeOrNotice) &&
         (hasEvent || hasChangeOrNotice);
     final veryRich = wordCount >= 20 && (hasContext || hasChangeOrNotice);

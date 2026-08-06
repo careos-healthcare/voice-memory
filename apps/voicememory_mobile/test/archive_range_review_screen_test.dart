@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/archive_review/archive_range_review_engine.dart';
 import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
-import 'package:voicememory_mobile/screens/archive_range_review_screen.dart';
+import 'package:archiveme_research/screens/archive_range_review_screen.dart';
 
 KeyMoment _moment(String id, DateTime date, {String? resultHint}) => KeyMoment(
   id: id,

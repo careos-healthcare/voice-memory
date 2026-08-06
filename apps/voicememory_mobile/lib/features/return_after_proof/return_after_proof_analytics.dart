@@ -19,11 +19,9 @@ abstract final class ReturnAfterProofAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required ReturnAfterProofResult result,
-  }) {
+  static void seen({required ReturnAfterProofResult result}) {
     _emit(
       seenEvent,
       source: result.source,
@@ -66,9 +64,7 @@ abstract final class ReturnAfterProofAnalytics {
     _emitStrengthened(strengthenedDismissedEvent, result: result);
   }
 
-  static void dismissedToday({
-    required ReturnAfterProofResult result,
-  }) {
+  static void dismissedToday({required ReturnAfterProofResult result}) {
     _emit(
       dismissedTodayEvent,
       source: result.source,

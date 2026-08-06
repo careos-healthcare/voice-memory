@@ -22,8 +22,7 @@ abstract final class BetaActivationPathStore {
     if (_loaded) return;
     final raw = await AppServices.instance.prefs.readMap(dismissPrefsKey);
     final day = raw?['dismissedUntilDay'];
-    _dismissedUntilDay =
-        day is String && day.isNotEmpty ? day : null;
+    _dismissedUntilDay = day is String && day.isNotEmpty ? day : null;
     _loaded = true;
   }
 

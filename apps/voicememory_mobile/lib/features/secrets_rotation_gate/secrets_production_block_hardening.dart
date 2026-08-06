@@ -59,13 +59,12 @@ abstract final class SecretsProductionBlockHardening {
 
   static SecretsProductionBlockHardeningReport report(
     SecretsProductionBlockHardeningResult result,
-  ) =>
-      SecretsProductionBlockHardeningReport(
-        headline: headline,
-        body: body,
-        guardrail: guardrail,
-        result: result,
-      );
+  ) => SecretsProductionBlockHardeningReport(
+    headline: headline,
+    body: body,
+    guardrail: guardrail,
+    result: result,
+  );
 
   static SecretsCommercialReadinessBridgeResult commercialReadinessBridge({
     required CommercialReadinessGateInput base,
@@ -88,14 +87,14 @@ abstract final class SecretsProductionBlockHardening {
   static bool blocksCommercialProduction({
     required CommercialReadinessGateInput base,
     required SecretsRotationLaunchGateInput secrets,
-  }) =>
-      commercialReadinessBridge(base: base, secrets: secrets)
-          .productionSubmissionBlocked;
+  }) => commercialReadinessBridge(
+    base: base,
+    secrets: secrets,
+  ).productionSubmissionBlocked;
 
   static SecretsProductionBlockHardeningInput fromLaunchGateInput(
     SecretsRotationLaunchGateInput input,
-  ) =>
-      SecretsProductionBlockHardeningInput(launchGate: input);
+  ) => SecretsProductionBlockHardeningInput(launchGate: input);
 
   static bool detectNoRealSecretsInSource(String source) {
     const forbiddenPatterns = [
@@ -165,7 +164,8 @@ abstract final class SecretsProductionBlockHardening {
     SecretsRotationLaunchGateInput input,
     SecretsRotationLaunchGateResult gateResult,
   ) {
-    final repoSafe = input.revenueCatApiKeySeparatedFromDocsLogs &&
+    final repoSafe =
+        input.revenueCatApiKeySeparatedFromDocsLogs &&
         input.noSecretValuesCommitted &&
         input.noSecretValuesPrintedInLogs;
 
@@ -213,17 +213,20 @@ abstract final class SecretsProductionBlockHardening {
         pending: input.vercelEnvProductionVerified == null && repoSafe,
       ),
       _requirement(
-        id: SecretsProductionBlockRequirementId.launchBlockedUntilRotationConfirmed,
-        passes: gateResult.checks
-            .firstWhere(
-              (check) =>
-                  check.id ==
-                  SecretsRotationLaunchGateCheckId
-                      .launchBlockedUntilRotationConfirmed,
-            )
-            .status ==
+        id: SecretsProductionBlockRequirementId
+            .launchBlockedUntilRotationConfirmed,
+        passes:
+            gateResult.checks
+                .firstWhere(
+                  (check) =>
+                      check.id ==
+                      SecretsRotationLaunchGateCheckId
+                          .launchBlockedUntilRotationConfirmed,
+                )
+                .status ==
             SecretsRotationLaunchGateCheckStatus.pass,
-        pending: gateResult.status ==
+        pending:
+            gateResult.status ==
             SecretsRotationLaunchGateStatus.safeForInternalTestFlight,
       ),
     ];
@@ -233,40 +236,40 @@ abstract final class SecretsProductionBlockHardening {
     required SecretsProductionBlockRequirementId id,
     required bool passes,
     bool pending = false,
-  }) =>
-      SecretsProductionBlockRequirement(
-        id: id,
-        label: _labelFor(id),
-        passes: passes,
-        pending: pending,
-        detailLabel: pending
-            ? SecretsRotationLaunchGateCopy.detailPending
-            : passes
-                ? SecretsRotationLaunchGateCopy.detailPass
-                : SecretsRotationLaunchGateCopy.detailFail,
-      );
+  }) => SecretsProductionBlockRequirement(
+    id: id,
+    label: _labelFor(id),
+    passes: passes,
+    pending: pending,
+    detailLabel: pending
+        ? SecretsRotationLaunchGateCopy.detailPending
+        : passes
+        ? SecretsRotationLaunchGateCopy.detailPass
+        : SecretsRotationLaunchGateCopy.detailFail,
+  );
 
-  static String _labelFor(SecretsProductionBlockRequirementId id) =>
-      switch (id) {
-        SecretsProductionBlockRequirementId.stripeSecretKeyRotated =>
-          canonicalRequirements[0],
-        SecretsProductionBlockRequirementId.stripeWebhookSecretRotated =>
-          canonicalRequirements[1],
-        SecretsProductionBlockRequirementId.oldWebhookDisabled =>
-          canonicalRequirements[2],
-        SecretsProductionBlockRequirementId.productionEnvUpdated =>
-          canonicalRequirements[3],
-        SecretsProductionBlockRequirementId.noSecretValuesCommitted =>
-          canonicalRequirements[4],
-        SecretsProductionBlockRequirementId.noSecretValuesPrintedInLogs =>
-          canonicalRequirements[5],
-        SecretsProductionBlockRequirementId.revenueCatKeyNotExposed =>
-          canonicalRequirements[6],
-        SecretsProductionBlockRequirementId.productionEnvVerified =>
-          canonicalRequirements[7],
-        SecretsProductionBlockRequirementId.launchBlockedUntilRotationConfirmed =>
-          'Launch blocked until rotation confirmed',
-      };
+  static String _labelFor(
+    SecretsProductionBlockRequirementId id,
+  ) => switch (id) {
+    SecretsProductionBlockRequirementId.stripeSecretKeyRotated =>
+      canonicalRequirements[0],
+    SecretsProductionBlockRequirementId.stripeWebhookSecretRotated =>
+      canonicalRequirements[1],
+    SecretsProductionBlockRequirementId.oldWebhookDisabled =>
+      canonicalRequirements[2],
+    SecretsProductionBlockRequirementId.productionEnvUpdated =>
+      canonicalRequirements[3],
+    SecretsProductionBlockRequirementId.noSecretValuesCommitted =>
+      canonicalRequirements[4],
+    SecretsProductionBlockRequirementId.noSecretValuesPrintedInLogs =>
+      canonicalRequirements[5],
+    SecretsProductionBlockRequirementId.revenueCatKeyNotExposed =>
+      canonicalRequirements[6],
+    SecretsProductionBlockRequirementId.productionEnvVerified =>
+      canonicalRequirements[7],
+    SecretsProductionBlockRequirementId.launchBlockedUntilRotationConfirmed =>
+      'Launch blocked until rotation confirmed',
+  };
 
   static String _messageFor(SecretsProductionBlockHardeningDecision decision) =>
       switch (decision) {
@@ -280,15 +283,14 @@ abstract final class SecretsProductionBlockHardening {
 
   static String _recommendationFor(
     SecretsProductionBlockHardeningDecision decision,
-  ) =>
-      switch (decision) {
-        SecretsProductionBlockHardeningDecision.productionBlocked =>
-          'Fix repo safety failures before TestFlight or production submission.',
-        SecretsProductionBlockHardeningDecision.testFlightSafeOnly =>
-          'Finish Stripe rotation and production env verification before App Store submission.',
-        SecretsProductionBlockHardeningDecision.productionReady =>
-          'Proceed with production submission.',
-      };
+  ) => switch (decision) {
+    SecretsProductionBlockHardeningDecision.productionBlocked =>
+      'Fix repo safety failures before TestFlight or production submission.',
+    SecretsProductionBlockHardeningDecision.testFlightSafeOnly =>
+      'Finish Stripe rotation and production env verification before App Store submission.',
+    SecretsProductionBlockHardeningDecision.productionReady =>
+      'Proceed with production submission.',
+  };
 }
 
 enum SecretsProductionBlockHardeningDecision {
@@ -310,9 +312,7 @@ enum SecretsProductionBlockRequirementId {
 }
 
 class SecretsProductionBlockHardeningInput {
-  const SecretsProductionBlockHardeningInput({
-    required this.launchGate,
-  });
+  const SecretsProductionBlockHardeningInput({required this.launchGate});
 
   final SecretsRotationLaunchGateInput launchGate;
 }

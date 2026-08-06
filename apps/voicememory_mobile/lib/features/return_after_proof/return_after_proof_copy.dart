@@ -29,14 +29,12 @@ abstract final class ReturnAfterProofCopy {
   static const strengtheningWatchBody =
       'Next time it feels stronger, save what made it sharper.';
 
-  static const helpedWatchBody =
-      'Next time something helps, save the detail.';
+  static const helpedWatchBody = 'Next time something helps, save the detail.';
 
   static const correctedWatchBody =
       'If this becomes relevant again, save the return.';
 
-  static const fallbackWatchBody =
-      'Come back when this returns or changes.';
+  static const fallbackWatchBody = 'Come back when this returns or changes.';
 
   static const promptReturnedAgain =
       'This came back, and what was different was:';
@@ -69,16 +67,14 @@ abstract final class ReturnAfterProofCopy {
   static const selectedSomethingHelped = 'Something helped:';
   static const selectedHandledDifferently = 'I handled this differently:';
 
-  static String chipLabelFor(ReturnAfterProofPromptType type) =>
-      switch (type) {
-        ReturnAfterProofPromptType.itCameBack => promptItCameBack,
-        ReturnAfterProofPromptType.feltLighter => promptFeltLighter,
-        ReturnAfterProofPromptType.feltHeavier => promptFeltHeavier,
-        ReturnAfterProofPromptType.somethingHelped => promptSomethingHelped,
-        ReturnAfterProofPromptType.handledDifferently =>
-          promptHandledDifferently,
-        ReturnAfterProofPromptType.notToday => promptNotToday,
-      };
+  static String chipLabelFor(ReturnAfterProofPromptType type) => switch (type) {
+    ReturnAfterProofPromptType.itCameBack => promptItCameBack,
+    ReturnAfterProofPromptType.feltLighter => promptFeltLighter,
+    ReturnAfterProofPromptType.feltHeavier => promptFeltHeavier,
+    ReturnAfterProofPromptType.somethingHelped => promptSomethingHelped,
+    ReturnAfterProofPromptType.handledDifferently => promptHandledDifferently,
+    ReturnAfterProofPromptType.notToday => promptNotToday,
+  };
 
   static String selectedPromptLineFor(ReturnAfterProofPromptType type) =>
       switch (type) {
@@ -102,44 +98,45 @@ abstract final class ReturnAfterProofCopy {
         ReturnAfterProofWatchTargetType.notCurrent => correctedWatchBody,
       };
 
-  static String promptLineForWatchTarget(ReturnAfterProofWatchTargetType type) =>
-      switch (type) {
-        ReturnAfterProofWatchTargetType.returnedAgain => promptReturnedAgain,
-        ReturnAfterProofWatchTargetType.feltLighter => promptFeltLighterBecause,
-        ReturnAfterProofWatchTargetType.feltHeavier => promptFeltHeavierBecause,
-        ReturnAfterProofWatchTargetType.helpedAgain => promptHelpedAgain,
-        ReturnAfterProofWatchTargetType.handledDifferently =>
-          promptHandledDifferentlyBy,
-        ReturnAfterProofWatchTargetType.avoidedAgain => promptAvoidedAgain,
-        ReturnAfterProofWatchTargetType.notCurrent => promptNotCurrentBecause,
-      };
+  static String promptLineForWatchTarget(
+    ReturnAfterProofWatchTargetType type,
+  ) => switch (type) {
+    ReturnAfterProofWatchTargetType.returnedAgain => promptReturnedAgain,
+    ReturnAfterProofWatchTargetType.feltLighter => promptFeltLighterBecause,
+    ReturnAfterProofWatchTargetType.feltHeavier => promptFeltHeavierBecause,
+    ReturnAfterProofWatchTargetType.helpedAgain => promptHelpedAgain,
+    ReturnAfterProofWatchTargetType.handledDifferently =>
+      promptHandledDifferentlyBy,
+    ReturnAfterProofWatchTargetType.avoidedAgain => promptAvoidedAgain,
+    ReturnAfterProofWatchTargetType.notCurrent => promptNotCurrentBecause,
+  };
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        strongBody,
-        closingLine,
-        strengthenedTitle,
-        strengthenedPrimaryCta,
-        strengthenedSecondaryCta,
-        repeatWatchBody,
-        softeningWatchBody,
-        strengtheningWatchBody,
-        helpedWatchBody,
-        correctedWatchBody,
-        fallbackWatchBody,
-        promptReturnedAgain,
-        promptFeltLighterBecause,
-        promptFeltHeavierBecause,
-        promptHelpedAgain,
-        promptHandledDifferentlyBy,
-        promptAvoidedAgain,
-        promptNotCurrentBecause,
-        afterNotTodayDismiss,
-        for (final type in ReturnAfterProofPromptTypeLists.capturePrompts)
-          chipLabelFor(type),
-        for (final type in ReturnAfterProofPromptTypeLists.capturePrompts)
-          selectedPromptLineFor(type),
-        promptNotToday,
-      ];
+    title,
+    body,
+    strongBody,
+    closingLine,
+    strengthenedTitle,
+    strengthenedPrimaryCta,
+    strengthenedSecondaryCta,
+    repeatWatchBody,
+    softeningWatchBody,
+    strengtheningWatchBody,
+    helpedWatchBody,
+    correctedWatchBody,
+    fallbackWatchBody,
+    promptReturnedAgain,
+    promptFeltLighterBecause,
+    promptFeltHeavierBecause,
+    promptHelpedAgain,
+    promptHandledDifferentlyBy,
+    promptAvoidedAgain,
+    promptNotCurrentBecause,
+    afterNotTodayDismiss,
+    for (final type in ReturnAfterProofPromptTypeLists.capturePrompts)
+      chipLabelFor(type),
+    for (final type in ReturnAfterProofPromptTypeLists.capturePrompts)
+      selectedPromptLineFor(type),
+    promptNotToday,
+  ];
 }

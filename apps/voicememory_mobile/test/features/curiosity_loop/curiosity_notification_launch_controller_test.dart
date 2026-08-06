@@ -57,7 +57,8 @@ class _FakeScheduler extends CuriosityNotificationScheduler {
   }
 }
 
-CuriosityHook _hook({required String id, bool consumed = false}) => CuriosityHook(
+CuriosityHook _hook({required String id, bool consumed = false}) =>
+    CuriosityHook(
       id: id,
       entryId: 'entry_$id',
       createdAt: DateTime.utc(2026, 6, 11, 12),
@@ -85,8 +86,8 @@ void main() {
 
   group('CuriosityNotificationLaunchController', () {
     setUp(() {
-      CuriosityNotificationLaunchController.navigateOverrideForTest =
-          (_) => false;
+      CuriosityNotificationLaunchController.navigateOverrideForTest = (_) =>
+          false;
     });
 
     test('queues valid unconsumed hook from tap payload id', () async {

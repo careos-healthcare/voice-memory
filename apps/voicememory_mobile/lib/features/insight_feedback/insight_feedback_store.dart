@@ -33,9 +33,10 @@ class InsightFeedbackStore {
     if (recordsRaw is! List) return const [];
     return recordsRaw
         .whereType<Map>()
-        .map((entry) => InsightFeedbackRecord.fromJson(
-              Map<String, dynamic>.from(entry),
-            ))
+        .map(
+          (entry) =>
+              InsightFeedbackRecord.fromJson(Map<String, dynamic>.from(entry)),
+        )
         .where((record) => record.insightId.isNotEmpty)
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

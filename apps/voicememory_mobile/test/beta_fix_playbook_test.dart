@@ -21,9 +21,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: BetaFixPlaybookCard(
-            resultOverride: result,
-          ),
+          child: BetaFixPlaybookCard(resultOverride: result),
         ),
       ),
     ),
@@ -136,10 +134,7 @@ void main() {
         tester,
         outcome: BetaValidationDecisionOutcome.protectProof,
       );
-      expect(
-        find.text(BetaFixPlaybookCopy.guidanceOnlyNote),
-        findsOneWidget,
-      );
+      expect(find.text(BetaFixPlaybookCopy.guidanceOnlyNote), findsOneWidget);
     });
 
     testWidgets('protectProof playbook renders diagnosis and do-not-do', (
@@ -149,25 +144,31 @@ void main() {
         tester,
         outcome: BetaValidationDecisionOutcome.protectProof,
       );
-      expect(find.text(BetaFixPlaybookCopy.protectProofDiagnosis), findsOneWidget);
-      expect(find.textContaining(BetaFixPlaybookCopy.protectProofDont1),
-          findsOneWidget);
+      expect(
+        find.text(BetaFixPlaybookCopy.protectProofDiagnosis),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(BetaFixPlaybookCopy.protectProofDont1),
+        findsOneWidget,
+      );
     });
   });
 
   group('Integration wiring', () {
     test('no product behavior changes in engine', () {
-      final source =
-          File('lib/features/beta_fix_playbooks/beta_fix_playbook_engine.dart')
-              .readAsStringSync();
+      final source = File(
+        'lib/features/beta_fix_playbooks/beta_fix_playbook_engine.dart',
+      ).readAsStringSync();
       expect(source.contains('PaywallSource'), isFalse);
       expect(source.contains('RevenueCat'), isFalse);
       expect(source.contains('shouldShowCard'), isFalse);
     });
 
     test('testing screen renders playbook card', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('BetaFixPlaybookCard'));
     });
 

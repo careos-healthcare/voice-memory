@@ -11,17 +11,17 @@ abstract final class EvidenceTrailOutcomeDecisionCopy {
   static EvidenceTrailOutcomeDecisionReport report(
     EvidenceTrailOutcomeSummary summary,
     EvidenceTrailOutcomeDecision decision,
-  ) =>
-      EvidenceTrailOutcomeDecisionReport(
-        title: titleFor(decision),
-        body: bodyFor(decision),
-        nextAction: nextActionFor(decision),
-        guardrail: guardrail,
-      );
+  ) => EvidenceTrailOutcomeDecisionReport(
+    title: titleFor(decision),
+    body: bodyFor(decision),
+    nextAction: nextActionFor(decision),
+    guardrail: guardrail,
+  );
 
   static String titleFor(EvidenceTrailOutcomeDecision decision) =>
       switch (decision) {
-        EvidenceTrailOutcomeDecision.insufficientData => 'Not enough signal yet',
+        EvidenceTrailOutcomeDecision.insufficientData =>
+          'Not enough signal yet',
         EvidenceTrailOutcomeDecision.protectProof => 'Protect proof first',
         EvidenceTrailOutcomeDecision.improveTimelineExplanation =>
           'Timeline is still unclear',
@@ -32,37 +32,39 @@ abstract final class EvidenceTrailOutcomeDecisionCopy {
           'Evidence trail is working',
       };
 
-  static String bodyFor(EvidenceTrailOutcomeDecision decision) =>
-      switch (decision) {
-        EvidenceTrailOutcomeDecision.insufficientData =>
-          'Build 61 does not yet have enough testers to choose the next move.',
-        EvidenceTrailOutcomeDecision.protectProof =>
-          'Useful proof or negative feedback is still too weak to test Pro or pricing.',
-        EvidenceTrailOutcomeDecision.improveTimelineExplanation =>
-          'Testers are not saying the longer evidence trail is clear enough yet.',
-        EvidenceTrailOutcomeDecision.proTooHidden =>
-          'Enough proof exists, but too few testers are seeing the Pro evidence trail.',
-        EvidenceTrailOutcomeDecision.pricingValidation =>
-          'The evidence trail reads clearly, but would-pay intent is still weak.',
-        EvidenceTrailOutcomeDecision.productionCandidate =>
-          'Proof, timeline clarity, Pro visibility, and would-pay intent are all holding.',
-      };
+  static String bodyFor(
+    EvidenceTrailOutcomeDecision decision,
+  ) => switch (decision) {
+    EvidenceTrailOutcomeDecision.insufficientData =>
+      'Build 61 does not yet have enough testers to choose the next move.',
+    EvidenceTrailOutcomeDecision.protectProof =>
+      'Useful proof or negative feedback is still too weak to test Pro or pricing.',
+    EvidenceTrailOutcomeDecision.improveTimelineExplanation =>
+      'Testers are not saying the longer evidence trail is clear enough yet.',
+    EvidenceTrailOutcomeDecision.proTooHidden =>
+      'Enough proof exists, but too few testers are seeing the Pro evidence trail.',
+    EvidenceTrailOutcomeDecision.pricingValidation =>
+      'The evidence trail reads clearly, but would-pay intent is still weak.',
+    EvidenceTrailOutcomeDecision.productionCandidate =>
+      'Proof, timeline clarity, Pro visibility, and would-pay intent are all holding.',
+  };
 
-  static String nextActionFor(EvidenceTrailOutcomeDecision decision) =>
-      switch (decision) {
-        EvidenceTrailOutcomeDecision.insufficientData =>
-          'Keep testing Build 61 until at least 20 testers complete the flow.',
-        EvidenceTrailOutcomeDecision.protectProof =>
-          'Stop Pro testing and return to proof protection.',
-        EvidenceTrailOutcomeDecision.improveTimelineExplanation =>
-          'Improve the evidence trail wording and timeline explanation. Do not change price.',
-        EvidenceTrailOutcomeDecision.proTooHidden =>
-          'Move the Pro/evidence trail moment closer to strong proof. Do not change pricing.',
-        EvidenceTrailOutcomeDecision.pricingValidation =>
-          'Return to pricing validation. Do not add new product features.',
-        EvidenceTrailOutcomeDecision.productionCandidate =>
-          'Keep the evidence trail clarity path and prepare the production version.',
-      };
+  static String nextActionFor(
+    EvidenceTrailOutcomeDecision decision,
+  ) => switch (decision) {
+    EvidenceTrailOutcomeDecision.insufficientData =>
+      'Keep testing Build 61 until at least 20 testers complete the flow.',
+    EvidenceTrailOutcomeDecision.protectProof =>
+      'Stop Pro testing and return to proof protection.',
+    EvidenceTrailOutcomeDecision.improveTimelineExplanation =>
+      'Improve the evidence trail wording and timeline explanation. Do not change price.',
+    EvidenceTrailOutcomeDecision.proTooHidden =>
+      'Move the Pro/evidence trail moment closer to strong proof. Do not change pricing.',
+    EvidenceTrailOutcomeDecision.pricingValidation =>
+      'Return to pricing validation. Do not add new product features.',
+    EvidenceTrailOutcomeDecision.productionCandidate =>
+      'Keep the evidence trail clarity path and prepare the production version.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield guardrail;

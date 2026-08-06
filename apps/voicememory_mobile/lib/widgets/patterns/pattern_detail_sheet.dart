@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 import '../../features/belief_change/belief_change_moment_engine.dart';
-import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pattern_correction/pattern_correction_copy.dart';
 import '../../features/pattern_correction/pattern_correction_gates.dart';
 import '../../features/pattern_confidence/pattern_confidence_engine.dart';
@@ -152,7 +151,8 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
 
   Future<void> _openPrivateReport(BuildContext context) async {
     final input = widget.buildInput;
-    final entries = input?.entries ?? await AppServices.instance.journal.loadAll();
+    final entries =
+        input?.entries ?? await AppServices.instance.journal.loadAll();
     if (!mounted) return;
 
     await PrivateReportEngine.showSheet(
@@ -195,10 +195,9 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
     final detail = _detail!;
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
     final fallbackStyle = secondaryStyle.copyWith(fontStyle: FontStyle.italic);
     final visibleMoments = ProMemoryBoundaryEngine.visibleRecentMoments(
@@ -330,9 +329,9 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                       PatternCorrectionCopy.controlLabel,
                       style: ArchiveMobileTypography.responsiveHelper(context)
                           .copyWith(
-                        color: AppColors.textSecondary,
-                        decoration: TextDecoration.underline,
-                      ),
+                            color: AppColors.textSecondary,
+                            decoration: TextDecoration.underline,
+                          ),
                     ),
                   ),
                 ),
@@ -398,46 +397,46 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 style: labelStyle,
               ),
               const SizedBox(height: AppSpacing.xs),
-            Text(
-              detail.whatChangedBody,
-              key: const Key('pattern_detail_what_changed_body'),
-              style: detail.whatChangedSupported ? bodyStyle : fallbackStyle,
-            ),
-            if (whatChangedPayoff != null) ...[
-              const SizedBox(height: AppSpacing.sm),
               Text(
-                whatChangedPayoff.payoffLine,
-                key: const Key('pattern_detail_what_changed_payoff'),
-                style: secondaryStyle,
+                detail.whatChangedBody,
+                key: const Key('pattern_detail_what_changed_body'),
+                style: detail.whatChangedSupported ? bodyStyle : fallbackStyle,
               ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                WhatChangedV2Copy.thenLabel,
-                key: const Key('pattern_detail_what_changed_then_label'),
-                style: labelStyle,
-              ),
-              Text(
-                WhatChangedV2Copy.formatSnippet(
-                  whatChangedPayoff.comparison.thenSnippet,
+              if (whatChangedPayoff != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  whatChangedPayoff.payoffLine,
+                  key: const Key('pattern_detail_what_changed_payoff'),
+                  style: secondaryStyle,
                 ),
-                key: const Key('pattern_detail_what_changed_then_snippet'),
-                style: bodyStyle,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                WhatChangedV2Copy.nowLabel,
-                key: const Key('pattern_detail_what_changed_now_label'),
-                style: labelStyle,
-              ),
-              Text(
-                WhatChangedV2Copy.formatSnippet(
-                  whatChangedPayoff.comparison.nowSnippet,
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  WhatChangedV2Copy.thenLabel,
+                  key: const Key('pattern_detail_what_changed_then_label'),
+                  style: labelStyle,
                 ),
-                key: const Key('pattern_detail_what_changed_now_snippet'),
-                style: bodyStyle,
-              ),
-            ],
-            const SizedBox(height: AppSpacing.md),
+                Text(
+                  WhatChangedV2Copy.formatSnippet(
+                    whatChangedPayoff.comparison.thenSnippet,
+                  ),
+                  key: const Key('pattern_detail_what_changed_then_snippet'),
+                  style: bodyStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  WhatChangedV2Copy.nowLabel,
+                  key: const Key('pattern_detail_what_changed_now_label'),
+                  style: labelStyle,
+                ),
+                Text(
+                  WhatChangedV2Copy.formatSnippet(
+                    whatChangedPayoff.comparison.nowSnippet,
+                  ),
+                  key: const Key('pattern_detail_what_changed_now_snippet'),
+                  style: bodyStyle,
+                ),
+              ],
+              const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.whatHelpedHeading,
                 key: const Key('pattern_detail_what_helped_heading'),
@@ -523,9 +522,9 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                     PrivateReportCopy.openReportCta,
                     style: ArchiveMobileTypography.responsiveHelper(context)
                         .copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline,
-                    ),
+                          color: AppColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                        ),
                   ),
                 ),
               ),
@@ -561,8 +560,9 @@ class _MomentRowState extends State<_MomentRow> {
   int get index => widget.index;
 
   Future<void> _openCorrection(BuildContext context) async {
-    final entry =
-        await AppServices.instance.journalStore.getById(moment.entryId);
+    final entry = await AppServices.instance.journalStore.getById(
+      moment.entryId,
+    );
     if (entry == null || !context.mounted) return;
     final updated = await TranscriptCorrection.open(
       context,
@@ -602,19 +602,18 @@ class _MomentRowState extends State<_MomentRow> {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-    );
-    final previewStyle =
-        ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-    final chipStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontSize: 11,
-      fontWeight: FontWeight.w600,
-    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary);
+    final previewStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    final chipStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.accentPrimary,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -642,10 +641,7 @@ class _MomentRowState extends State<_MomentRow> {
                   color: AppColors.accentPrimary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Text(
-                  moment.statusChipLabel,
-                  style: chipStyle,
-                ),
+                child: Text(moment.statusChipLabel, style: chipStyle),
               ),
             ],
           ),
@@ -707,12 +703,12 @@ class _QuietSignalDetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

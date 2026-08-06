@@ -14,7 +14,8 @@ abstract final class ComparableEvidenceText {
   static String userText(JournalEntry entry) {
     final transcript = entrySanitizedTranscript(entry);
     final transcriptIsPlaceholder =
-        transcript.isNotEmpty && isDraftOrSystemTranscriptPlaceholder(transcript);
+        transcript.isNotEmpty &&
+        isDraftOrSystemTranscriptPlaceholder(transcript);
 
     if (transcript.isNotEmpty && !transcriptIsPlaceholder) {
       return transcript;

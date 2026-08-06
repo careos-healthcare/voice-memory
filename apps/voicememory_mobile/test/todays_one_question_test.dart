@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/todays_question/todays_question_engi
 import 'package:voicememory_mobile/features/todays_question/todays_question_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/todays_one_question_screen.dart';
+import 'package:archiveme_research/screens/todays_one_question_screen.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/todays_one_question_card.dart';
@@ -49,34 +49,34 @@ TodaysQuestionInput _input({
   bool weeklyReviewAvailable = false,
   bool sampleMode = false,
   int dayKey = 1,
-}) =>
-    TodaysQuestionInput(
-      realSavedMomentCount: realSavedMomentCount,
-      usableEvidenceCount: usableEvidenceCount,
-      hasWatchTheme: hasWatchTheme,
-      betaFeedbackCaptured: betaFeedbackCaptured,
-      archiveClarityStage: archiveClarityStage,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      sampleMode: sampleMode,
-      dayKey: dayKey,
-    );
+}) => TodaysQuestionInput(
+  realSavedMomentCount: realSavedMomentCount,
+  usableEvidenceCount: usableEvidenceCount,
+  hasWatchTheme: hasWatchTheme,
+  betaFeedbackCaptured: betaFeedbackCaptured,
+  archiveClarityStage: archiveClarityStage,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  sampleMode: sampleMode,
+  dayKey: dayKey,
+);
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _realEntries(int count) =>
     List.generate(count, (i) => _entry('real_$i'));
@@ -107,10 +107,7 @@ void main() {
       );
 
       expect(result.questionId, TodaysQuestionId.adaptive);
-      expect(
-        result.questionText,
-        'What is one real moment from today?',
-      );
+      expect(result.questionText, 'What is one real moment from today?');
       expect(result.primaryCtaLabel, TodaysQuestionCopy.saveMomentCta);
       expect(result.isEmptyState, isTrue);
     });
@@ -123,10 +120,7 @@ void main() {
       );
 
       expect(result.questionId, TodaysQuestionId.adaptive);
-      expect(
-        result.questionText,
-        'Did anything similar happen again?',
-      );
+      expect(result.questionText, 'Did anything similar happen again?');
     });
 
     test('2 entries returns adaptive comparison question via journal', () {
@@ -140,15 +134,18 @@ void main() {
       expect(result.questionText, isNot(TodaysQuestionCopy.comparisonQuestion));
     });
 
-    test('3+ entries with beta feedback missing returns beta feedback prompt', () {
-      final result = engine.build(
-        _input(realSavedMomentCount: 3, betaFeedbackCaptured: false),
-      );
+    test(
+      '3+ entries with beta feedback missing returns beta feedback prompt',
+      () {
+        final result = engine.build(
+          _input(realSavedMomentCount: 3, betaFeedbackCaptured: false),
+        );
 
-      expect(result.questionId, TodaysQuestionId.betaFeedback);
-      expect(result.isBetaFeedbackPrompt, isTrue);
-      expect(result.primaryRoute, '/beta-feedback');
-    });
+        expect(result.questionId, TodaysQuestionId.betaFeedback);
+        expect(result.isBetaFeedbackPrompt, isTrue);
+        expect(result.primaryRoute, '/beta-feedback');
+      },
+    );
 
     test('watch theme present returns watch-theme question', () {
       final result = engine.build(
@@ -174,10 +171,7 @@ void main() {
     });
 
     test('sample entries are excluded from real counts', () {
-      final entries = [
-        ..._realEntries(2),
-        ...SampleArchiveEntries.build(),
-      ];
+      final entries = [..._realEntries(2), ...SampleArchiveEntries.build()];
       final result = engine.buildFromJournal(
         entries: entries,
         hasWatchTheme: false,
@@ -207,8 +201,7 @@ void main() {
     });
 
     test('copy uses ArchiveMe and avoids banned language', () {
-      final copy =
-          TodaysQuestionCopy.allVisibleStrings.join(' ').toLowerCase();
+      final copy = TodaysQuestionCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(TodaysQuestionCopy.allVisibleStrings);
     });
@@ -225,10 +218,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: TodaysOneQuestionCard(
-            question: question,
-            onPrimary: () {},
-          ),
+          home: TodaysOneQuestionCard(question: question, onPrimary: () {}),
         ),
       );
 
@@ -236,7 +226,9 @@ void main() {
       expect(find.text('Did anything similar happen again?'), findsOneWidget);
     });
 
-    testWidgets('Record screen still shows primary record button', (tester) async {
+    testWidgets('Record screen still shows primary record button', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -299,7 +291,10 @@ void main() {
         find.byKey(const Key('todays_one_question_screen_helper')),
         findsOneWidget,
       );
-      expect(find.text('ArchiveMe needs a second moment to compare.'), findsOneWidget);
+      expect(
+        find.text('ArchiveMe needs a second moment to compare.'),
+        findsOneWidget,
+      );
     });
   });
 
@@ -310,17 +305,18 @@ void main() {
     });
 
     test('sensitive route guard includes today\'s one question', () {
-      expect(
-        SensitiveRoutes.isSensitiveRoute('/todays-one-question'),
-        isTrue,
-      );
+      expect(SensitiveRoutes.isSensitiveRoute('/todays-one-question'), isTrue);
     });
 
-    test('support feedback links to today\'s one question when implemented', () {
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
-      expect(support, contains('support_feedback_open_todays_one_question'));
-      expect(support, contains('TodaysQuestionCopy.route'));
-    });
+    test(
+      'support feedback links to today\'s one question when implemented',
+      () {
+        final support = File(
+          'lib/screens/support_feedback_screen.dart',
+        ).readAsStringSync();
+        expect(support, contains('support_feedback_open_todays_one_question'));
+        expect(support, contains('TodaysQuestionCopy.route'));
+      },
+    );
   });
 }

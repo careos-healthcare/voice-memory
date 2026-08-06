@@ -46,13 +46,7 @@ abstract class ArchiveCopyNormalizer {
     'mapready',
   ];
 
-  static const _archiveMeGlueWords = [
-    'is',
-    'should',
-    'will',
-    'noticed',
-    'may',
-  ];
+  static const _archiveMeGlueWords = ['is', 'should', 'will', 'noticed', 'may'];
 
   static const _youGlueWords = [
     'really',
@@ -64,78 +58,37 @@ abstract class ArchiveCopyNormalizer {
     'could',
   ];
 
-  static const _mayGlueWords = [
-    'also',
-    'be',
-    'not',
-  ];
+  static const _mayGlueWords = ['also', 'be', 'not'];
 
-  static const _thisGlueWords = [
-    'tomorrow',
-    'entry',
-    'one',
-  ];
+  static const _thisGlueWords = ['tomorrow', 'entry', 'one'];
 
-  static const _ifGlueWords = [
-    'it',
-  ];
+  static const _ifGlueWords = ['it'];
 
-  static const _noticeGlueWords = [
-    'what',
-    'whether',
-  ];
+  static const _noticeGlueWords = ['what', 'whether'];
 
-  static const _watchGlueWords = [
-    'this',
-    'the',
-  ];
+  static const _watchGlueWords = ['this', 'the'];
 
-  static const _seeGlueWords = [
-    'whether',
-    'if',
-  ];
+  static const _seeGlueWords = ['whether', 'if'];
 
-  static const _returnGlueWords = [
-    'naturally',
-  ];
+  static const _returnGlueWords = ['naturally'];
 
-  static const _pressureGlueWords = [
-    'arrives',
-  ];
+  static const _pressureGlueWords = ['arrives'];
 
-  static const _anotherGlueWords = [
-    'sign',
-    'check',
-  ];
+  static const _anotherGlueWords = ['sign', 'check'];
 
-  static const _thoughtGlueWords = [
-    'turns',
-  ];
+  static const _thoughtGlueWords = ['turns'];
 
-  static const _isGlueWords = [
-    'trying',
-    'basing',
-  ];
+  static const _isGlueWords = ['trying', 'basing'];
 
-  static const _checkGlueWords = [
-    'was',
-  ];
+  static const _checkGlueWords = ['was'];
 
-  static const _trustGlueWords = [
-    'it',
-  ];
+  static const _trustGlueWords = ['it'];
 
-  static const _existingGlueWords = [
-    'thread',
-  ];
+  static const _existingGlueWords = ['thread'];
 
-  static const _reliefConnectorGlueWords = [
-    'connector',
-  ];
+  static const _reliefConnectorGlueWords = ['connector'];
 
-  static const _alternativeConnectorGlueWords = [
-    'connector',
-  ];
+  static const _alternativeConnectorGlueWords = ['connector'];
 
   static String normalize(String input) {
     var normalized = input.trim();
@@ -229,16 +182,17 @@ abstract class ArchiveCopyNormalizer {
     normalized = _applyGlueWords(normalized, 'check', _checkGlueWords);
     normalized = _applyGlueWords(normalized, 'trust', _trustGlueWords);
     normalized = _applyGlueWords(normalized, 'existing', _existingGlueWords);
-    normalized = _applyGlueWords(normalized, 'relief', _reliefConnectorGlueWords);
+    normalized = _applyGlueWords(
+      normalized,
+      'relief',
+      _reliefConnectorGlueWords,
+    );
     normalized = _applyGlueWords(
       normalized,
       'alternative',
       _alternativeConnectorGlueWords,
     );
-    normalized = normalized.replaceAll(
-      RegExp(r'\ba([Nn])eed\b'),
-      'a need',
-    );
+    normalized = normalized.replaceAll(RegExp(r'\ba([Nn])eed\b'), 'a need');
 
     for (final word in _archiveMeGlueWords) {
       normalized = normalized.replaceAll(
@@ -259,7 +213,10 @@ abstract class ArchiveCopyNormalizer {
     var normalized = text;
     for (final word in words) {
       normalized = normalized.replaceAll(
-        RegExp('${RegExp.escape(prefix)}${RegExp.escape(word)}', caseSensitive: false),
+        RegExp(
+          '${RegExp.escape(prefix)}${RegExp.escape(word)}',
+          caseSensitive: false,
+        ),
         '$prefix $word',
       );
     }

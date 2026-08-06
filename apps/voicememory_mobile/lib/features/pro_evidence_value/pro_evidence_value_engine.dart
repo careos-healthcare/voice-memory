@@ -21,7 +21,8 @@ abstract final class ProEvidenceValueEngine {
       body: ProEvidenceValueCopy.body,
       cta: ProEvidenceValueCopy.cta,
       secondary: ProEvidenceValueCopy.secondary,
-      chatGptDifferentiationLine: ProEvidenceValueCopy.chatGptDifferentiationLine,
+      chatGptDifferentiationLine:
+          ProEvidenceValueCopy.chatGptDifferentiationLine,
       evidenceLine: ProEvidenceValueCopy.evidenceLine,
       comparesMomentsLine: ProEvidenceValueCopy.comparesMomentsLine,
       sheetTitle: ProEvidenceValueCopy.sheetTitle,

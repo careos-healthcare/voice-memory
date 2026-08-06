@@ -9,11 +9,8 @@ import '../revenue_metrics/revenue_funnel_event.dart';
 import '../beta_decision_rules/beta_decision_rule_engine.dart';
 import '../beta_validation_decision_matrix/beta_validation_decision_matrix_engine.dart';
 import '../first_session_proof_repair/first_session_proof_repair_engine.dart';
-import '../first_session_lift/first_session_lift_engine.dart';
-import '../pro_understanding_lift/pro_understanding_lift_engine.dart';
 import '../proof_floor_rescue/proof_floor_rescue_engine.dart';
 import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_engine.dart';
-import '../revenue_lift_experiment_v2/revenue_lift_experiment_v2_model.dart';
 import 'revenue_readiness_dashboard_v2_copy.dart';
 import 'revenue_readiness_dashboard_v2_model.dart';
 
@@ -54,19 +51,26 @@ abstract final class RevenueReadinessDashboardV2Engine {
       final attribution = PaywallAttributionStore.instance();
       final events = await attribution.events();
       purchaseStarted = events
-          .where((event) => event.type == PaywallAttributionEventType.purchaseStarted)
+          .where(
+            (event) =>
+                event.type == PaywallAttributionEventType.purchaseStarted,
+          )
           .length;
       purchaseCompleted = events
           .where(
-            (event) => event.type == PaywallAttributionEventType.purchaseCompleted,
+            (event) =>
+                event.type == PaywallAttributionEventType.purchaseCompleted,
           )
           .length;
       restoreAttempted = events
-          .where((event) => event.type == PaywallAttributionEventType.restoreStarted)
+          .where(
+            (event) => event.type == PaywallAttributionEventType.restoreStarted,
+          )
           .length;
       restoreCompleted = events
           .where(
-            (event) => event.type == PaywallAttributionEventType.restoreCompleted,
+            (event) =>
+                event.type == PaywallAttributionEventType.restoreCompleted,
           )
           .length;
     }
@@ -114,12 +118,17 @@ abstract final class RevenueReadinessDashboardV2Engine {
       paywallCtaTapped: _max(loop.purchaseTapped, sessionPaywallCta),
       purchaseStarted: purchaseStarted,
       purchaseCompleted: purchaseCompleted,
-      restoreAttempted: _max(loop.restoreTapped, restoreAttempted + sessionRestoreTapped),
+      restoreAttempted: _max(
+        loop.restoreTapped,
+        restoreAttempted + sessionRestoreTapped,
+      ),
       restoreCompleted: restoreCompleted,
       firstSaveInFirstSession: loop.firstMomentSaved > 0 && loop.appOpened > 0
           ? loop.firstMomentSaved.clamp(0, 1)
           : 0,
-      firstSessionOpportunities: loop.appOpened > 0 ? loop.appOpened : loop.recordScreenSeen,
+      firstSessionOpportunities: loop.appOpened > 0
+          ? loop.appOpened
+          : loop.recordScreenSeen,
       understandsProYesMaybe: 0,
       understandsProSurveyResponses: 0,
       testerCount: loaded.extension.betaFeedbackSubmitted > 0
@@ -140,7 +149,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
   ) {
     final diagnoses = _buildDiagnoses(input);
     final diagnosisActions = {
-      for (final diagnosis in diagnoses) diagnosis.id: diagnosis.nextActionLabel,
+      for (final diagnosis in diagnoses)
+        diagnosis.id: diagnosis.nextActionLabel,
     };
 
     return RevenueReadinessDashboardV2Dashboard(
@@ -157,8 +167,9 @@ abstract final class RevenueReadinessDashboardV2Engine {
       ],
       diagnoses: diagnoses,
       decisionRule: BetaDecisionRuleEngine.fromRevenueInput(input),
-      validationDecision:
-          BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
+      validationDecision: BetaValidationDecisionMatrixEngine.fromRevenueInput(
+        input,
+      ),
     );
   }
 
@@ -166,12 +177,15 @@ abstract final class RevenueReadinessDashboardV2Engine {
     RevenueReadinessDashboardV2Input input,
     Map<RevenueReadinessDashboardV2DiagnosisId, String> diagnosisActions,
   ) {
-    final firstSaveRate =
-        _rate(input.firstMomentSaved, input.recordScreenSeen);
-    final secondSaveRate =
-        _rate(input.secondMomentSaved, input.firstMomentSaved);
-    final thirdSaveRate =
-        _rate(input.thirdMomentSaved, input.secondMomentSaved);
+    final firstSaveRate = _rate(input.firstMomentSaved, input.recordScreenSeen);
+    final secondSaveRate = _rate(
+      input.secondMomentSaved,
+      input.firstMomentSaved,
+    );
+    final thirdSaveRate = _rate(
+      input.thirdMomentSaved,
+      input.secondMomentSaved,
+    );
 
     return RevenueReadinessDashboardV2Section(
       id: RevenueReadinessDashboardV2SectionId.capture,
@@ -187,8 +201,9 @@ abstract final class RevenueReadinessDashboardV2Engine {
             hasDenominator: input.recordScreenSeen > 0,
             hasNumerator: input.firstMomentSaved > 0,
           ),
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowFirstSave],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowFirstSave],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.secondSave,
@@ -200,8 +215,9 @@ abstract final class RevenueReadinessDashboardV2Engine {
             hasDenominator: input.firstMomentSaved > 0,
             hasNumerator: input.secondMomentSaved > 0,
           ),
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowSecondSave],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowSecondSave],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.thirdSave,
@@ -213,8 +229,9 @@ abstract final class RevenueReadinessDashboardV2Engine {
             hasDenominator: input.secondMomentSaved > 0,
             hasNumerator: input.thirdMomentSaved > 0,
           ),
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowThirdSave],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowThirdSave],
         ),
       ],
     );
@@ -225,8 +242,10 @@ abstract final class RevenueReadinessDashboardV2Engine {
     Map<RevenueReadinessDashboardV2DiagnosisId, String> diagnosisActions,
   ) {
     final usefulRate = _rate(input.usefulCount, input.totalFeedbackCount);
-    final negativeRate =
-        _rate(input.negativeFeedbackCount, input.totalFeedbackCount);
+    final negativeRate = _rate(
+      input.negativeFeedbackCount,
+      input.totalFeedbackCount,
+    );
 
     return RevenueReadinessDashboardV2Section(
       id: RevenueReadinessDashboardV2SectionId.proof,
@@ -247,13 +266,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.totalFeedbackCount == 0
               ? RevenueReadinessDashboardV2Status.noData
               : usefulRate >= usefulFeedbackTarget
-                  ? RevenueReadinessDashboardV2Status.healthy
-                  : RevenueReadinessDashboardV2Status.failing,
+              ? RevenueReadinessDashboardV2Status.healthy
+              : RevenueReadinessDashboardV2Status.failing,
           valueOverride: input.totalFeedbackCount == 0
               ? null
               : '${input.usefulCount} (${_formatRate(usefulRate)})',
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowUsefulProof],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowUsefulProof],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.tooVague,
@@ -286,13 +306,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.totalFeedbackCount == 0
               ? RevenueReadinessDashboardV2Status.noData
               : input.negativeFeedbackCount > input.usefulCount
-                  ? RevenueReadinessDashboardV2Status.failing
-                  : RevenueReadinessDashboardV2Status.healthy,
+              ? RevenueReadinessDashboardV2Status.failing
+              : RevenueReadinessDashboardV2Status.healthy,
           valueOverride: input.totalFeedbackCount == 0
               ? null
               : '${input.negativeFeedbackCount} (${_formatRate(negativeRate)})',
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.negativeAboveUseful],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .negativeAboveUseful],
         ),
       ],
     );
@@ -302,8 +323,10 @@ abstract final class RevenueReadinessDashboardV2Engine {
     RevenueReadinessDashboardV2Input input,
     Map<RevenueReadinessDashboardV2DiagnosisId, String> diagnosisActions,
   ) {
-    final returnRate =
-        _rate(input.returnedAfterFirstProof, input.confirmedRepeatSeen);
+    final returnRate = _rate(
+      input.returnedAfterFirstProof,
+      input.confirmedRepeatSeen,
+    );
 
     return RevenueReadinessDashboardV2Section(
       id: RevenueReadinessDashboardV2SectionId.returnFunnel,
@@ -316,13 +339,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.confirmedRepeatSeen == 0
               ? RevenueReadinessDashboardV2Status.noData
               : returnRate >= returnAfterProofTarget
-                  ? RevenueReadinessDashboardV2Status.healthy
-                  : RevenueReadinessDashboardV2Status.failing,
+              ? RevenueReadinessDashboardV2Status.healthy
+              : RevenueReadinessDashboardV2Status.failing,
           valueOverride: input.confirmedRepeatSeen == 0
               ? null
               : '${input.returnedAfterFirstProof} (${_formatRate(returnRate)})',
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowReturnAfterProof],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowReturnAfterProof],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.returnPromptSeen,
@@ -348,8 +372,7 @@ abstract final class RevenueReadinessDashboardV2Engine {
     RevenueReadinessDashboardV2Input input,
     Map<RevenueReadinessDashboardV2DiagnosisId, String> diagnosisActions,
   ) {
-    final paywallSeenRate =
-        _rate(input.paywallSeen, input.confirmedRepeatSeen);
+    final paywallSeenRate = _rate(input.paywallSeen, input.confirmedRepeatSeen);
     final ctaRate = _rate(input.paywallCtaTapped, input.paywallSeen);
 
     return RevenueReadinessDashboardV2Section(
@@ -378,16 +401,17 @@ abstract final class RevenueReadinessDashboardV2Engine {
           count: input.paywallSeen,
           status: input.confirmedRepeatSeen == 0
               ? (input.paywallSeen > 0
-                  ? RevenueReadinessDashboardV2Status.watch
-                  : RevenueReadinessDashboardV2Status.noData)
+                    ? RevenueReadinessDashboardV2Status.watch
+                    : RevenueReadinessDashboardV2Status.noData)
               : paywallSeenRate >= paywallSeenAfterProofTarget
-                  ? RevenueReadinessDashboardV2Status.healthy
-                  : RevenueReadinessDashboardV2Status.failing,
+              ? RevenueReadinessDashboardV2Status.healthy
+              : RevenueReadinessDashboardV2Status.failing,
           valueOverride: input.confirmedRepeatSeen == 0
               ? null
               : '${input.paywallSeen} (${_formatRate(paywallSeenRate)})',
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.lowPaywallSeen],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .lowPaywallSeen],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.paywallCtaTapped,
@@ -396,13 +420,14 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.paywallSeen == 0
               ? RevenueReadinessDashboardV2Status.noData
               : ctaRate >= purchaseCtaTarget
-                  ? RevenueReadinessDashboardV2Status.healthy
-                  : RevenueReadinessDashboardV2Status.failing,
+              ? RevenueReadinessDashboardV2Status.healthy
+              : RevenueReadinessDashboardV2Status.failing,
           valueOverride: input.paywallSeen == 0
               ? null
               : '${input.paywallCtaTapped} (${_formatRate(ctaRate)})',
           nextActionLabel:
-              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId.weakCtaTap],
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .weakCtaTap],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.purchaseStarted,
@@ -411,8 +436,9 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.purchaseStarted > 0
               ? RevenueReadinessDashboardV2Status.watch
               : RevenueReadinessDashboardV2Status.noData,
-          nextActionLabel: diagnosisActions[
-            RevenueReadinessDashboardV2DiagnosisId.purchaseCompletionIssue],
+          nextActionLabel:
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .purchaseCompletionIssue],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.purchaseCompleted,
@@ -421,8 +447,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.purchaseCompleted > 0
               ? RevenueReadinessDashboardV2Status.healthy
               : input.purchaseStarted > 0
-                  ? RevenueReadinessDashboardV2Status.failing
-                  : RevenueReadinessDashboardV2Status.noData,
+              ? RevenueReadinessDashboardV2Status.failing
+              : RevenueReadinessDashboardV2Status.noData,
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.restoreAttempted,
@@ -432,7 +458,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
               ? RevenueReadinessDashboardV2Status.watch
               : RevenueReadinessDashboardV2Status.noData,
           nextActionLabel:
-              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId.restoreFailure],
+              diagnosisActions[RevenueReadinessDashboardV2DiagnosisId
+                  .restoreFailure],
         ),
         _countRow(
           id: RevenueReadinessDashboardV2MetricId.restoreCompleted,
@@ -441,8 +468,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
           status: input.restoreCompleted > 0
               ? RevenueReadinessDashboardV2Status.healthy
               : input.restoreAttempted > input.restoreCompleted
-                  ? RevenueReadinessDashboardV2Status.failing
-                  : RevenueReadinessDashboardV2Status.noData,
+              ? RevenueReadinessDashboardV2Status.failing
+              : RevenueReadinessDashboardV2Status.noData,
         ),
       ],
     );
@@ -453,17 +480,21 @@ abstract final class RevenueReadinessDashboardV2Engine {
   ) {
     final diagnoses = <RevenueReadinessDashboardV2Diagnosis>[];
 
-    final firstSaveRate =
-        _rate(input.firstMomentSaved, input.recordScreenSeen);
-    final secondSaveRate =
-        _rate(input.secondMomentSaved, input.firstMomentSaved);
-    final thirdSaveRate =
-        _rate(input.thirdMomentSaved, input.secondMomentSaved);
+    final firstSaveRate = _rate(input.firstMomentSaved, input.recordScreenSeen);
+    final secondSaveRate = _rate(
+      input.secondMomentSaved,
+      input.firstMomentSaved,
+    );
+    final thirdSaveRate = _rate(
+      input.thirdMomentSaved,
+      input.secondMomentSaved,
+    );
     final usefulRate = _rate(input.usefulCount, input.totalFeedbackCount);
-    final returnRate =
-        _rate(input.returnedAfterFirstProof, input.confirmedRepeatSeen);
-    final paywallSeenRate =
-        _rate(input.paywallSeen, input.confirmedRepeatSeen);
+    final returnRate = _rate(
+      input.returnedAfterFirstProof,
+      input.confirmedRepeatSeen,
+    );
+    final paywallSeenRate = _rate(input.paywallSeen, input.confirmedRepeatSeen);
     final ctaRate = _rate(input.paywallCtaTapped, input.paywallSeen);
     final firstSessionSaveRate = _rate(
       input.firstSaveInFirstSession,
@@ -479,8 +510,10 @@ abstract final class RevenueReadinessDashboardV2Engine {
       diagnoses.add(
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.firstSessionCaptureWeak,
-          title: RevenueReadinessDashboardV2Copy.diagnosisFirstSessionCaptureWeak,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFirstSessionLift,
+          title:
+              RevenueReadinessDashboardV2Copy.diagnosisFirstSessionCaptureWeak,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionFirstSessionLift,
           metricValueLabel: _formatRate(firstSessionSaveRate),
         ),
       );
@@ -504,7 +537,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.lowFirstSave,
           title: RevenueReadinessDashboardV2Copy.diagnosisLowFirstSave,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFixFirstCapture,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionFixFirstCapture,
           metricValueLabel: _formatRate(firstSaveRate),
         ),
       );
@@ -523,7 +557,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.lowSecondSave,
           title: RevenueReadinessDashboardV2Copy.diagnosisLowSecondSave,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFixReturnPrompt,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionFixReturnPrompt,
           metricValueLabel: _formatRate(secondSaveRate),
         ),
       );
@@ -534,7 +569,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.lowThirdSave,
           title: RevenueReadinessDashboardV2Copy.diagnosisLowThirdSave,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFixReasonToReturn,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionFixReasonToReturn,
           metricValueLabel: _formatRate(thirdSaveRate),
         ),
       );
@@ -565,8 +601,7 @@ abstract final class RevenueReadinessDashboardV2Engine {
       );
     }
 
-    if (input.confirmedRepeatSeen > 0 &&
-        returnRate < returnAfterProofTarget) {
+    if (input.confirmedRepeatSeen > 0 && returnRate < returnAfterProofTarget) {
       diagnoses.add(
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.lowReturnAfterProof,
@@ -578,8 +613,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
       diagnoses.add(
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.returnAfterProofLiftNeeded,
-          title:
-              RevenueReadinessDashboardV2Copy.diagnosisReturnAfterProofLiftNeeded,
+          title: RevenueReadinessDashboardV2Copy
+              .diagnosisReturnAfterProofLiftNeeded,
           nextActionLabel:
               RevenueReadinessDashboardV2Copy.actionReturnAfterProofLift,
           metricValueLabel: _formatRate(returnRate),
@@ -601,8 +636,10 @@ abstract final class RevenueReadinessDashboardV2Engine {
       diagnoses.add(
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.proVisibilityLiftNeeded,
-          title: RevenueReadinessDashboardV2Copy.diagnosisProVisibilityLiftNeeded,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionProVisibilityLift,
+          title:
+              RevenueReadinessDashboardV2Copy.diagnosisProVisibilityLiftNeeded,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionProVisibilityLift,
           metricValueLabel: _formatRate(paywallSeenRate),
         ),
       );
@@ -613,7 +650,8 @@ abstract final class RevenueReadinessDashboardV2Engine {
         _diagnosis(
           id: RevenueReadinessDashboardV2DiagnosisId.weakCtaTap,
           title: RevenueReadinessDashboardV2Copy.diagnosisWeakCtaTap,
-          nextActionLabel: RevenueReadinessDashboardV2Copy.actionFixPaywallValue,
+          nextActionLabel:
+              RevenueReadinessDashboardV2Copy.actionFixPaywallValue,
           metricValueLabel: _formatRate(ctaRate),
         ),
       );
@@ -741,35 +779,31 @@ abstract final class RevenueReadinessDashboardV2Engine {
   static int _countFunnelEvent(
     List<({RevenueFunnelEvent event, Map<String, Object> metadata})> events,
     RevenueFunnelEvent target,
-  ) =>
-      events.where((record) => record.event == target).length;
+  ) => events.where((record) => record.event == target).length;
 
   static int _countProBridgeSeen(
     List<({RevenueFunnelEvent event, Map<String, Object> metadata})> events,
-  ) =>
-      events
-          .where(
-            (record) =>
-                record.event == RevenueFunnelEvent.proLockSeen ||
-                record.event == RevenueFunnelEvent.monthlyReportPreviewSeen ||
-                record.event == RevenueFunnelEvent.backupBridgeSeen ||
-                record.event == RevenueFunnelEvent.proEvidenceValueSeen,
-          )
-          .length;
+  ) => events
+      .where(
+        (record) =>
+            record.event == RevenueFunnelEvent.proLockSeen ||
+            record.event == RevenueFunnelEvent.monthlyReportPreviewSeen ||
+            record.event == RevenueFunnelEvent.backupBridgeSeen ||
+            record.event == RevenueFunnelEvent.proEvidenceValueSeen,
+      )
+      .length;
 
   static int _countProBridgeCta(
     List<({RevenueFunnelEvent event, Map<String, Object> metadata})> events,
-  ) =>
-      events
-          .where(
-            (record) =>
-                record.event == RevenueFunnelEvent.proLockCtaTapped ||
-                record.event ==
-                    RevenueFunnelEvent.monthlyReportPreviewCtaTapped ||
-                record.event == RevenueFunnelEvent.backupBridgeCtaTapped ||
-                record.event == RevenueFunnelEvent.proEvidenceValueCtaTapped,
-          )
-          .length;
+  ) => events
+      .where(
+        (record) =>
+            record.event == RevenueFunnelEvent.proLockCtaTapped ||
+            record.event == RevenueFunnelEvent.monthlyReportPreviewCtaTapped ||
+            record.event == RevenueFunnelEvent.backupBridgeCtaTapped ||
+            record.event == RevenueFunnelEvent.proEvidenceValueCtaTapped,
+      )
+      .length;
 
   static double _rate(int numerator, int denominator) {
     if (denominator <= 0) return 0;

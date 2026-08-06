@@ -38,7 +38,8 @@ class ArchiveLoopPaywallProductState {
       phase == ArchiveLoopPaywallProductPhase.loaded &&
       (package != null || (productId?.isNotEmpty ?? false));
 
-  bool get canRestore => phase != ArchiveLoopPaywallProductPhase.purchasing &&
+  bool get canRestore =>
+      phase != ArchiveLoopPaywallProductPhase.purchasing &&
       phase != ArchiveLoopPaywallProductPhase.restoring;
 
   bool get showUnavailableFallback =>
@@ -67,11 +68,10 @@ class ArchiveLoopPaywallProductState {
 class RevenueCatArchiveLoopBilling {
   RevenueCatArchiveLoopBilling({
     RevenueCatService? revenueCat,
-    BillingService? billing,
+    this._billing,
     Future<ArchiveLoopEntitlementStore?> Function()? entitlementStore,
-  })  : _revenueCat = revenueCat ?? RevenueCatService.instance,
-        _billing = billing,
-        _entitlementStore = entitlementStore ?? _defaultEntitlementStore;
+  }) : _revenueCat = revenueCat ?? RevenueCatService.instance,
+       _entitlementStore = entitlementStore ?? _defaultEntitlementStore;
 
   final RevenueCatService _revenueCat;
   final BillingService? _billing;
@@ -113,7 +113,10 @@ class RevenueCatArchiveLoopBilling {
       final product = package.storeProduct;
       final price = product.priceString.trim();
       final productId = product.identifier.trim();
-      ArchiveLoopRevenueCatLog.productLoaded(productId: productId, price: price);
+      ArchiveLoopRevenueCatLog.productLoaded(
+        productId: productId,
+        price: price,
+      );
       final priceLine = price.isNotEmpty ? price : null;
       return ArchiveLoopPaywallProductState(
         phase: ArchiveLoopPaywallProductPhase.loaded,
@@ -261,10 +264,7 @@ class RevenueCatArchiveLoopBilling {
     ArchiveLoopRevenueCatLog.entitlementPersisted(active: true);
   }
 
-  Future<void> _syncProAccess({
-    required bool isPro,
-    required String source,
-  }) =>
+  Future<void> _syncProAccess({required bool isPro, required String source}) =>
       syncProAccess(isPro: isPro, source: source);
 }
 
@@ -277,11 +277,8 @@ class FakeRevenueCatArchiveLoopBilling extends RevenueCatArchiveLoopBilling {
     this.purchaseSucceeds = true,
     this.restoreHasPro = false,
     this.loadFails = false,
-    Future<ArchiveLoopEntitlementStore?> Function()? entitlementStore,
-  }) : super(
-          revenueCat: RevenueCatService.instance,
-          entitlementStore: entitlementStore,
-        );
+    super.entitlementStore,
+  }) : super(revenueCat: RevenueCatService.instance);
 
   final bool configured;
   final String productId;

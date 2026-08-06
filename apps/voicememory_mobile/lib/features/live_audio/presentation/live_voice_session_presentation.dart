@@ -1,12 +1,7 @@
 import '../domain/models/live_session_state.dart';
 import 'live_voice_session_copy.dart';
 
-enum LiveVoiceUiPhase {
-  starting,
-  active,
-  saving,
-  error,
-}
+enum LiveVoiceUiPhase { starting, active, saving, error }
 
 enum LiveVoiceVisualState {
   connecting,
@@ -60,8 +55,7 @@ abstract final class LiveVoiceSessionPresentation {
       LiveVoiceVisualState.speaking => LiveVoiceSessionCopy.helperSpeaking,
       LiveVoiceVisualState.listening => LiveVoiceSessionCopy.helperListening,
       LiveVoiceVisualState.connecting ||
-      LiveVoiceVisualState.reconnecting =>
-        LiveVoiceSessionCopy.settingUp,
+      LiveVoiceVisualState.reconnecting => LiveVoiceSessionCopy.settingUp,
       LiveVoiceVisualState.saving => LiveVoiceSessionCopy.savingBody,
       LiveVoiceVisualState.error => LiveVoiceSessionCopy.discardBody,
     };
@@ -69,7 +63,8 @@ abstract final class LiveVoiceSessionPresentation {
 
   static String connectionPillLabel(LiveVoiceVisualState state) {
     return switch (state) {
-      LiveVoiceVisualState.connecting => LiveVoiceSessionCopy.connectionConnecting,
+      LiveVoiceVisualState.connecting =>
+        LiveVoiceSessionCopy.connectionConnecting,
       LiveVoiceVisualState.reconnecting =>
         LiveVoiceSessionCopy.connectionReconnecting,
       LiveVoiceVisualState.error => LiveVoiceSessionCopy.connectionConnecting,

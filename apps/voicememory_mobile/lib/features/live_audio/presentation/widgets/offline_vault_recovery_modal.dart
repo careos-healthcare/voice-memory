@@ -40,7 +40,8 @@ class _OfflineVaultRecoveryDialog extends StatefulWidget {
       _OfflineVaultRecoveryDialogState();
 }
 
-class _OfflineVaultRecoveryDialogState extends State<_OfflineVaultRecoveryDialog> {
+class _OfflineVaultRecoveryDialogState
+    extends State<_OfflineVaultRecoveryDialog> {
   var _busy = false;
   String? _error;
 
@@ -91,9 +92,9 @@ class _OfflineVaultRecoveryDialogState extends State<_OfflineVaultRecoveryDialog
             const SizedBox(height: AppSpacing.sm),
             Text(
               _error!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.error,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.error),
             ),
           ],
         ],

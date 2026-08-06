@@ -25,8 +25,8 @@ abstract final class ProUnderstandingLiftEngine {
       source: input.source,
       surface: input.surface,
       entryCount: input.entryCount,
-      hasUsefulProof: input.hasUsefulProof ||
-          _hasEligibleConfidence(input.confidenceLevel),
+      hasUsefulProof:
+          input.hasUsefulProof || _hasEligibleConfidence(input.confidenceLevel),
       hasPaywallSeen: input.hasProEngagement,
     );
   }
@@ -39,7 +39,8 @@ abstract final class ProUnderstandingLiftEngine {
     if (input.isPro) return false;
     if (input.hasProEngagement) return false;
     if (input.entryCount < 3) return false;
-    if (!input.hasUsefulProof && !_hasEligibleConfidence(input.confidenceLevel)) {
+    if (!input.hasUsefulProof &&
+        !_hasEligibleConfidence(input.confidenceLevel)) {
       return false;
     }
     if (input.feedbackState == ProofQualityFeedbackState.tooVague ||

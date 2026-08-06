@@ -38,15 +38,17 @@ abstract final class ProLockMomentEngine {
     bool firstProofPayoffVisible = false,
     bool proEvidenceValueVisible = false,
   }) {
-    final hasFirstProof = firstProofPayoffVisible ||
+    final hasFirstProof =
+        firstProofPayoffVisible ||
         ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries);
     return ProLockMomentContext(
       entryCount: entryCount,
       isPro: isPro,
       dismissed: dismissed,
       hasFirstProof: hasFirstProof,
-      hasConfirmedRepeat:
-          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+      hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+        entries,
+      ),
       isZeroEntryState: isZeroEntryState,
       isFirstRecordingState: isFirstRecordingState,
       isDegradedTranscriptState: isDegradedTranscriptState,
@@ -55,9 +57,9 @@ abstract final class ProLockMomentEngine {
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems:
           ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      ),
+            entries: entries,
+            returnChecks: returnChecks,
+          ),
       proEvidenceValueVisible: proEvidenceValueVisible,
     );
   }

@@ -22,18 +22,18 @@ abstract final class FirstSaveLiftCopy {
   ];
 
   static String exampleTextFor(FirstSaveLiftExampleId id) => switch (id) {
-        FirstSaveLiftExampleId.keptCheckingAgain => exampleKeptCheckingAgain,
-        FirstSaveLiftExampleId.avoidedMessage => exampleAvoidedMessage,
-        FirstSaveLiftExampleId.feltFamiliar => exampleFeltFamiliar,
-        FirstSaveLiftExampleId.wantedControl => exampleWantedControl,
-      };
+    FirstSaveLiftExampleId.keptCheckingAgain => exampleKeptCheckingAgain,
+    FirstSaveLiftExampleId.avoidedMessage => exampleAvoidedMessage,
+    FirstSaveLiftExampleId.feltFamiliar => exampleFeltFamiliar,
+    FirstSaveLiftExampleId.wantedControl => exampleWantedControl,
+  };
 
   static String exampleAnalyticsId(FirstSaveLiftExampleId id) => switch (id) {
-        FirstSaveLiftExampleId.keptCheckingAgain => 'kept_checking_again',
-        FirstSaveLiftExampleId.avoidedMessage => 'avoided_message',
-        FirstSaveLiftExampleId.feltFamiliar => 'felt_familiar',
-        FirstSaveLiftExampleId.wantedControl => 'wanted_control',
-      };
+    FirstSaveLiftExampleId.keptCheckingAgain => 'kept_checking_again',
+    FirstSaveLiftExampleId.avoidedMessage => 'avoided_message',
+    FirstSaveLiftExampleId.feltFamiliar => 'felt_familiar',
+    FirstSaveLiftExampleId.wantedControl => 'wanted_control',
+  };
 }
 
 enum FirstSaveLiftExampleId {
@@ -43,16 +43,12 @@ enum FirstSaveLiftExampleId {
   wantedControl,
 }
 
-enum FirstSaveLiftActionType {
-  typeOneSentence,
-  recordInstead,
-  exampleTapped,
-}
+enum FirstSaveLiftActionType { typeOneSentence, recordInstead, exampleTapped }
 
 extension FirstSaveLiftActionTypeStorage on FirstSaveLiftActionType {
   String get analyticsValue => switch (this) {
-        FirstSaveLiftActionType.typeOneSentence => 'type_one_sentence',
-        FirstSaveLiftActionType.recordInstead => 'record_instead',
-        FirstSaveLiftActionType.exampleTapped => 'example_tapped',
-      };
+    FirstSaveLiftActionType.typeOneSentence => 'type_one_sentence',
+    FirstSaveLiftActionType.recordInstead => 'record_instead',
+    FirstSaveLiftActionType.exampleTapped => 'example_tapped',
+  };
 }

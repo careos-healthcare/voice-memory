@@ -53,9 +53,9 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
         children: [
           Text(
             'Active beta improvement branch',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -63,9 +63,9 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
                 ? 'Proof-to-Pro path (paired override)'
                 : BetaImprovementRecommendationGate.branchLabel(branch),
             key: const Key('beta_improvement_active_branch_label'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -150,9 +150,9 @@ class BetaImprovementActiveBranchCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               ProUtilityCopyFix.previewLabel,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             for (final preview in utilityPreviews)
               Text(

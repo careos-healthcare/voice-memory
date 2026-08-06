@@ -69,13 +69,15 @@ abstract final class EvidenceAnchorEngine {
     }
 
     final clock = now ?? DateTime.now();
-    final weighting = evidenceWeighting ??
+    final weighting =
+        evidenceWeighting ??
         EvidenceWeightingEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
           now: clock,
         );
-    final presentDayRelevance = presentDay ??
+    final presentDayRelevance =
+        presentDay ??
         PresentDayRelevanceEngine.build(
           entries: entries,
           beliefSurfaceVisible: beliefSurfaceVisible,
@@ -83,11 +85,9 @@ abstract final class EvidenceAnchorEngine {
           now: clock,
           evidenceWeighting: weighting,
         );
-    final correctionSnapshot = correction ??
-        CorrectionMemoryEngine.snapshotFor(
-          entries: entries,
-          now: clock,
-        );
+    final correctionSnapshot =
+        correction ??
+        CorrectionMemoryEngine.snapshotFor(entries: entries, now: clock);
 
     final candidates = _collectCandidates(
       entries: entries,
@@ -107,11 +107,7 @@ abstract final class EvidenceAnchorEngine {
 
     final hasSafeAnchor = safeSummaries.isNotEmpty;
     final usesFallback = !hasSafeAnchor;
-    final anchors = hasSafeAnchor
-        ? selected
-        : [
-            _fallbackAnchor(),
-          ];
+    final anchors = hasSafeAnchor ? selected : [_fallbackAnchor()];
 
     final result = EvidenceAnchorExtractionResult(
       shouldExtract: true,
@@ -149,19 +145,18 @@ abstract final class EvidenceAnchorEngine {
   static EvidenceAnchorExtractionResult fallbackResult({
     required String source,
     required int entryCount,
-  }) =>
-      EvidenceAnchorExtractionResult(
-        shouldExtract: true,
-        entryCount: entryCount,
-        source: source,
-        anchors: [_fallbackAnchor()],
-        safeSummaries: const [],
-        usesFallback: true,
-        hasSafeAnchor: false,
-        hasRecentAnchor: false,
-        hasCorrectionAnchor: false,
-        hasChangeAnchor: false,
-      );
+  }) => EvidenceAnchorExtractionResult(
+    shouldExtract: true,
+    entryCount: entryCount,
+    source: source,
+    anchors: [_fallbackAnchor()],
+    safeSummaries: const [],
+    usesFallback: true,
+    hasSafeAnchor: false,
+    hasRecentAnchor: false,
+    hasCorrectionAnchor: false,
+    hasChangeAnchor: false,
+  );
 
   static List<String> safeSummariesFor({
     required List<JournalEntry> entries,
@@ -169,14 +164,13 @@ abstract final class EvidenceAnchorEngine {
     required String source,
     List<String> beliefEvidencePhrases = const [],
     DateTime? now,
-  }) =>
-      build(
-        entries: entries,
-        beliefSurfaceVisible: beliefSurfaceVisible,
-        source: source,
-        beliefEvidencePhrases: beliefEvidencePhrases,
-        now: now,
-      ).safeSummaries;
+  }) => build(
+    entries: entries,
+    beliefSurfaceVisible: beliefSurfaceVisible,
+    source: source,
+    beliefEvidencePhrases: beliefEvidencePhrases,
+    now: now,
+  ).safeSummaries;
 
   static List<ArchiveTimelineSpineRowAnchorHint> spineHintsFor({
     required List<EvidenceAnchor> anchors,
@@ -204,30 +198,33 @@ abstract final class EvidenceAnchorEngine {
           detail: anchor.safeSummary,
         ),
       if (pickAny(const [
-        EvidenceAnchorType.current,
-        EvidenceAnchorType.strengthening,
-      ]) case final anchor?)
+            EvidenceAnchorType.current,
+            EvidenceAnchorType.strengthening,
+          ])
+          case final anchor?)
         ArchiveTimelineSpineRowAnchorHint(
           rowId: ArchiveTimelineSpineRowId.stillCurrent,
           anchorType: anchor.type,
           detail: anchor.safeSummary,
         ),
       if (pickAny(const [
-        EvidenceAnchorType.corrected,
-        EvidenceAnchorType.freshReturn,
-      ]) case final anchor?)
+            EvidenceAnchorType.corrected,
+            EvidenceAnchorType.freshReturn,
+          ])
+          case final anchor?)
         ArchiveTimelineSpineRowAnchorHint(
           rowId: ArchiveTimelineSpineRowId.correctedByYou,
           anchorType: anchor.type,
           detail: anchor.safeSummary,
         ),
       if (pickAny(const [
-        EvidenceAnchorType.change,
-        EvidenceAnchorType.softening,
-        EvidenceAnchorType.strengthening,
-        EvidenceAnchorType.helped,
-        EvidenceAnchorType.avoided,
-      ]) case final anchor?)
+            EvidenceAnchorType.change,
+            EvidenceAnchorType.softening,
+            EvidenceAnchorType.strengthening,
+            EvidenceAnchorType.helped,
+            EvidenceAnchorType.avoided,
+          ])
+          case final anchor?)
         ArchiveTimelineSpineRowAnchorHint(
           rowId: ArchiveTimelineSpineRowId.weightChanged,
           anchorType: anchor.type,
@@ -300,7 +297,9 @@ abstract final class EvidenceAnchorEngine {
       final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
       if (evidence.isStrong) {
         final behaviorSpecific =
-            AnchorSpecificityGuard.behaviorSpecificPhraseFromEntries(foundation);
+            AnchorSpecificityGuard.behaviorSpecificPhraseFromEntries(
+              foundation,
+            );
         if (behaviorSpecific != null) {
           add(
             type: _typeForPhrase(behaviorSpecific),
@@ -310,10 +309,11 @@ abstract final class EvidenceAnchorEngine {
             sourceCount: foundation.length,
           );
         }
-        for (final phrase in ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
-          evidence.phrases,
-          foundation,
-        )) {
+        for (final phrase
+            in ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+              evidence.phrases,
+              foundation,
+            )) {
           add(
             type: _typeForPhrase(phrase),
             summary: phrase,
@@ -326,7 +326,9 @@ abstract final class EvidenceAnchorEngine {
     }
 
     final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
-    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
+    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(
+      entries: entries,
+    );
     if (changeNotice != null) {
       for (final line in changeNotice.evidenceLines) {
         add(
@@ -447,13 +449,14 @@ abstract final class EvidenceAnchorEngine {
     return candidates;
   }
 
-  static List<EvidenceAnchor> _rankCandidates(List<_AnchorCandidate> candidates) {
+  static List<EvidenceAnchor> _rankCandidates(
+    List<_AnchorCandidate> candidates,
+  ) {
     final deduped = <String, _AnchorCandidate>{};
     for (final candidate in candidates) {
       final key = candidate.safeSummary.toLowerCase();
       final existing = deduped[key];
-      if (existing == null ||
-          _scoreFor(existing) < _scoreFor(candidate)) {
+      if (existing == null || _scoreFor(existing) < _scoreFor(candidate)) {
         deduped[key] = candidate;
       }
     }
@@ -473,8 +476,9 @@ abstract final class EvidenceAnchorEngine {
             sourceCount: candidate.sourceCount,
             isUserCorrected: candidate.isUserCorrected,
             isFreshReturn: candidate.isFreshReturn,
-            isSafeForDisplay:
-                AnchorSpecificityGuard.isProofLevelEligible(candidate.safeSummary),
+            isSafeForDisplay: AnchorSpecificityGuard.isProofLevelEligible(
+              candidate.safeSummary,
+            ),
           ),
         )
         .toList();
@@ -533,8 +537,7 @@ abstract final class EvidenceAnchorEngine {
     final cleaned = raw.replaceAll(RegExp(r'\s+'), ' ').trim();
     if (cleaned.isEmpty) return null;
     if (cleaned.length > maxAnchorLength) {
-      final truncated =
-          '${cleaned.substring(0, maxAnchorLength - 1).trim()}…';
+      final truncated = '${cleaned.substring(0, maxAnchorLength - 1).trim()}…';
       return _sanitizeAnchor(
         truncated,
         privateTexts: privateTexts,
@@ -559,17 +562,17 @@ abstract final class EvidenceAnchorEngine {
   }
 
   static EvidenceAnchor _fallbackAnchor() => EvidenceAnchor(
-        id: 'anchor_fallback',
-        type: EvidenceAnchorType.unknown,
-        label: EvidenceAnchorType.unknown.label,
-        safeSummary: EvidenceAnchorCopy.fallbackSummary,
-        strength: 0.2,
-        recencyWeight: 0,
-        sourceCount: 0,
-        isUserCorrected: false,
-        isFreshReturn: false,
-        isSafeForDisplay: false,
-      );
+    id: 'anchor_fallback',
+    type: EvidenceAnchorType.unknown,
+    label: EvidenceAnchorType.unknown.label,
+    safeSummary: EvidenceAnchorCopy.fallbackSummary,
+    strength: 0.2,
+    recencyWeight: 0,
+    sourceCount: 0,
+    isUserCorrected: false,
+    isFreshReturn: false,
+    isSafeForDisplay: false,
+  );
 
   static bool _passesEvidenceQuality(List<JournalEntry> entries) {
     if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {

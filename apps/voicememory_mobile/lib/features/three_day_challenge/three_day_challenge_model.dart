@@ -1,10 +1,5 @@
 /// Lightweight first-week challenge tracker — local journal evidence only.
-enum ThreeDayChallengeDay {
-  day1,
-  day2,
-  day3,
-  complete,
-}
+enum ThreeDayChallengeDay { day1, day2, day3, complete }
 
 class ThreeDayChallengeState {
   const ThreeDayChallengeState({

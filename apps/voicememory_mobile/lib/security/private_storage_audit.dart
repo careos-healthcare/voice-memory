@@ -81,7 +81,8 @@ abstract class PrivateStorageAudit {
       backend: 'encrypted_json_file',
       sensitive: true,
       encrypted: true,
-      notes: '[draft] entries in encrypted journal + localAudioPath (audio plaintext)',
+      notes:
+          '[draft] entries in encrypted journal + localAudioPath (audio plaintext)',
     ),
     PrivateStorageAuditReport(
       store: 'ArchiveFeatureStores',

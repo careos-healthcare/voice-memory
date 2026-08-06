@@ -1,4 +1,3 @@
-import '../beta/archive_beta_mission_gate.dart';
 import '../beta_proof_feedback/beta_proof_feedback_model.dart';
 import '../beta_repair_lab/beta_repair_lab_engine.dart';
 import '../beta_repair_lab/beta_repair_lab_model.dart';
@@ -61,7 +60,9 @@ abstract final class PaywallValueRepairEngine {
     required bool showPaywallValue,
   }) {
     if (!showPaywallValue) return false;
-    if (!BetaRepairLabEngine.shouldShowLab(betaMissionEnabled: betaMissionEnabled)) {
+    if (!BetaRepairLabEngine.shouldShowLab(
+      betaMissionEnabled: betaMissionEnabled,
+    )) {
       return false;
     }
     return BetaRepairLabStore.activeMode == BetaRepairLabMode.paywallValue;

@@ -5,8 +5,6 @@ import 'archive_home_priority_models.dart';
 class ArchiveHomePriorityEngine {
   const ArchiveHomePriorityEngine();
 
-  static const _defaultPrimaryCardLimit = 3;
-
   /// Sticky-loop surfaces in product order (#129–#136).
   static const stickyLoopSequence = [
     ArchiveHomeSectionId.firstWeekPath,
@@ -40,36 +38,34 @@ class ArchiveHomePriorityEngine {
   static bool _isStickyLoopVisible(
     ArchiveHomePriorityInput input,
     ArchiveHomeSectionId id,
-  ) =>
-      switch (id) {
-        ArchiveHomeSectionId.firstWeekPath => input.firstWeekPathVisible,
-        ArchiveHomeSectionId.dailyArchiveExercise =>
-          input.dailyArchiveExerciseVisible,
-        ArchiveHomeSectionId.archiveClarityProgress =>
-          input.archiveClarityProgressVisible,
-        ArchiveHomeSectionId.capacityThreeMomentActivation =>
-          input.capacityThreeMomentActivationVisible,
-        ArchiveHomeSectionId.capacityLoop => input.capacityLoopVisible,
-        ArchiveHomeSectionId.capacityPullReason =>
-          input.capacityPullReasonVisible,
-        ArchiveHomeSectionId.capacityDecisionOutcome =>
-          input.capacityDecisionOutcomeVisible,
-        ArchiveHomeSectionId.capacityCostLaterCheckin =>
-          input.capacityCostLaterCheckinVisible,
-        ArchiveHomeSectionId.capacityActivationFit =>
-          input.capacityActivationFitVisible,
-        ArchiveHomeSectionId.beforeYouSayYesPause =>
-          input.beforeYouSayYesPauseVisible,
-        ArchiveHomeSectionId.capacityWeeklyReview =>
-          input.capacityWeeklyReviewVisible,
-        ArchiveHomeSectionId.capacityBoundaryResponse =>
-          input.capacityBoundaryResponseVisible,
-        ArchiveHomeSectionId.thenVsNow => input.thenVsNowVisible,
-        ArchiveHomeSectionId.archiveCalendar => input.archiveCalendarVisible,
-        ArchiveHomeSectionId.reviewRitual => input.reviewRitualVisible,
-        ArchiveHomeSectionId.milestoneShare => input.milestoneShareVisible,
-        _ => false,
-      };
+  ) => switch (id) {
+    ArchiveHomeSectionId.firstWeekPath => input.firstWeekPathVisible,
+    ArchiveHomeSectionId.dailyArchiveExercise =>
+      input.dailyArchiveExerciseVisible,
+    ArchiveHomeSectionId.archiveClarityProgress =>
+      input.archiveClarityProgressVisible,
+    ArchiveHomeSectionId.capacityThreeMomentActivation =>
+      input.capacityThreeMomentActivationVisible,
+    ArchiveHomeSectionId.capacityLoop => input.capacityLoopVisible,
+    ArchiveHomeSectionId.capacityPullReason => input.capacityPullReasonVisible,
+    ArchiveHomeSectionId.capacityDecisionOutcome =>
+      input.capacityDecisionOutcomeVisible,
+    ArchiveHomeSectionId.capacityCostLaterCheckin =>
+      input.capacityCostLaterCheckinVisible,
+    ArchiveHomeSectionId.capacityActivationFit =>
+      input.capacityActivationFitVisible,
+    ArchiveHomeSectionId.beforeYouSayYesPause =>
+      input.beforeYouSayYesPauseVisible,
+    ArchiveHomeSectionId.capacityWeeklyReview =>
+      input.capacityWeeklyReviewVisible,
+    ArchiveHomeSectionId.capacityBoundaryResponse =>
+      input.capacityBoundaryResponseVisible,
+    ArchiveHomeSectionId.thenVsNow => input.thenVsNowVisible,
+    ArchiveHomeSectionId.archiveCalendar => input.archiveCalendarVisible,
+    ArchiveHomeSectionId.reviewRitual => input.reviewRitualVisible,
+    ArchiveHomeSectionId.milestoneShare => input.milestoneShareVisible,
+    _ => false,
+  };
 
   ArchiveHomePriorityPlan build(ArchiveHomePriorityInput input) {
     if (input.sampleMode) {
@@ -117,7 +113,9 @@ class ArchiveHomePriorityEngine {
     }
 
     final hidden = _hiddenForStage(input);
-    final ranked = _rankedOrder(input).where((id) => !hidden.contains(id)).toList();
+    final ranked = _rankedOrder(
+      input,
+    ).where((id) => !hidden.contains(id)).toList();
 
     final primaryCardLimit = ArchiveHomeCardPriority.primaryCardLimit(
       calmCapacityActivationMode: input.calmCapacityActivationMode,
@@ -144,7 +142,9 @@ class ArchiveHomePriorityEngine {
     );
   }
 
-  static Set<ArchiveHomeSectionId> _hiddenForStage(ArchiveHomePriorityInput input) {
+  static Set<ArchiveHomeSectionId> _hiddenForStage(
+    ArchiveHomePriorityInput input,
+  ) {
     final hidden = <ArchiveHomeSectionId>{};
 
     for (final id in stickyLoopSequence) {
@@ -258,12 +258,14 @@ class ArchiveHomePriorityEngine {
     ];
   }
 
-  static List<ArchiveHomeSectionId> _rankedOrder(ArchiveHomePriorityInput input) {
+  static List<ArchiveHomeSectionId> _rankedOrder(
+    ArchiveHomePriorityInput input,
+  ) {
     if (input.savedEntryCount <= 0) {
       return [
         ArchiveHomeSectionId.archiveSummary,
         if (input.archiveDailyChangeVisible &&
-          !input.calmCapacityActivationMode)
+            !input.calmCapacityActivationMode)
           ArchiveHomeSectionId.archiveDailyChange,
         ...stickyLoopSections(input),
         ArchiveHomeSectionId.sampleArchive,
@@ -274,8 +276,7 @@ class ArchiveHomePriorityEngine {
 
     return [
       ArchiveHomeSectionId.archiveSummary,
-      if (input.archiveDailyChangeVisible &&
-          !input.calmCapacityActivationMode)
+      if (input.archiveDailyChangeVisible && !input.calmCapacityActivationMode)
         ArchiveHomeSectionId.archiveDailyChange,
       ...stickyLoopSections(input),
       ..._betaGrowthSections(input),

@@ -7,10 +7,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
 class LiveVoiceTranscriptPreview extends StatelessWidget {
-  const LiveVoiceTranscriptPreview({
-    super.key,
-    required this.transcript,
-  });
+  const LiveVoiceTranscriptPreview({super.key, required this.transcript});
 
   final String transcript;
 
@@ -20,7 +17,9 @@ class LiveVoiceTranscriptPreview extends StatelessWidget {
     final hasText = trimmed.isNotEmpty;
 
     return Semantics(
-      label: hasText ? 'Live transcript: $trimmed' : LiveVoiceSessionCopy.transcriptEmpty,
+      label: hasText
+          ? 'Live transcript: $trimmed'
+          : LiveVoiceSessionCopy.transcriptEmpty,
       child: Container(
         key: const Key('live_voice_transcript_preview'),
         width: double.infinity,

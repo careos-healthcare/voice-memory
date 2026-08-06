@@ -14,17 +14,13 @@ class StopCostPromptCard extends StatefulWidget {
     super.key,
     required this.entryId,
     this.onAnswered,
-    @visibleForTesting this.stopCostStore,
-    @visibleForTesting this.skipInitialLoad = false,
+    this.stopCostStore,
+    this.skipInitialLoad = false,
   });
 
   final String entryId;
   final VoidCallback? onAnswered;
-
-  @visibleForTesting
   final ProveEnoughStopCostStore? stopCostStore;
-
-  @visibleForTesting
   final bool skipInitialLoad;
 
   @override

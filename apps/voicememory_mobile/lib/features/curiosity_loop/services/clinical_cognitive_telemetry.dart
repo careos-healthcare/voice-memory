@@ -2,9 +2,7 @@ import 'package:flutter/foundation.dart';
 
 /// Clinical cognitive drift telemetry for passive biomarker side-effects.
 class ClinicalCognitiveTelemetry {
-  const ClinicalCognitiveTelemetry({
-    void Function(String event, Map<String, Object> meta)? sink,
-  }) : _sink = sink;
+  const ClinicalCognitiveTelemetry({this._sink});
 
   static const logPrefix = '[TELEMETRY][CLINICAL_COGNITIVE]';
   static const clinicalDriftDetectedEvent = 'clinical_drift_detected';
@@ -16,14 +14,11 @@ class ClinicalCognitiveTelemetry {
     required String driftType,
     required double score,
   }) {
-    _emit(
-      clinicalDriftDetectedEvent,
-      {
-        'entry_id': entryId,
-        'drift_type': driftType,
-        'score': score,
-      },
-    );
+    _emit(clinicalDriftDetectedEvent, {
+      'entry_id': entryId,
+      'drift_type': driftType,
+      'score': score,
+    });
   }
 
   void _emit(String event, Map<String, Object> meta) {

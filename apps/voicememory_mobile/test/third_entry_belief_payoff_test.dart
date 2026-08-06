@@ -21,60 +21,59 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRepeatCapacityEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 const _bannedOneEntryWords = [
   'loop',
@@ -85,10 +84,7 @@ const _bannedOneEntryWords = [
   'form a belief',
 ];
 
-const _bannedTwoEntryWords = [
-  'form a belief',
-  'pattern found',
-];
+const _bannedTwoEntryWords = ['form a belief', 'pattern found'];
 
 const _bannedCertaintyWords = [
   'this means',
@@ -164,10 +160,12 @@ void main() {
       expect(payoff.bodySource, contains('saved words'));
       expect(payoff.evidenceRows.length, 3);
       expect(payoff.evidenceThin, isFalse);
-      _expectNoBannedCopy(
-        [payoff.title, payoff.bodyIntro, payoff.bodySource, ...payoff.evidenceRows],
-        _bannedCertaintyWords,
-      );
+      _expectNoBannedCopy([
+        payoff.title,
+        payoff.bodyIntro,
+        payoff.bodySource,
+        ...payoff.evidenceRows,
+      ], _bannedCertaintyWords);
     });
 
     test('degraded entries do not count toward third-entry payoff', () {
@@ -214,8 +212,16 @@ void main() {
           'I had no capacity but I said yes again to the extra meeting today.';
       final payoff = ThirdEntryBeliefPayoffEngine.build(
         entries: [
-          _voiceEntry(id: 'e1', transcript: shared, createdAt: DateTime(2026, 6, 10)),
-          _voiceEntry(id: 'e2', transcript: shared, createdAt: DateTime(2026, 6, 11)),
+          _voiceEntry(
+            id: 'e1',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 10),
+          ),
+          _voiceEntry(
+            id: 'e2',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 11),
+          ),
           _voiceEntry(
             id: 'e3',
             transcript:
@@ -280,7 +286,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsOneWidget,
+      );
       expect(
         find.text('ArchiveMe is starting to form a belief.'),
         findsOneWidget,
@@ -289,7 +298,10 @@ void main() {
       expect(find.text(ThirdEntryBeliefPayoffCopy.bodySource), findsOneWidget);
       expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
-      expect(find.byKey(const Key('third_entry_belief_payoff_evidence_0')), findsOneWidget);
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_evidence_0')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
   });
@@ -356,7 +368,10 @@ void main() {
       );
 
       _expectNoBannedCopy(_visibleText(tester), _bannedOneEntryWords);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsNothing,
+      );
     });
 
     testWidgets('two entries stay focused without duplicate payoff cards', (
@@ -378,9 +393,18 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_archive_home_nudge_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsOneWidget,
+      );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester), _bannedTwoEntryWords);
     });
@@ -393,29 +417,57 @@ void main() {
         entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_archive_home_nudge_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsNothing,
+      );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('analysis_fallback_payoff_card')),
+        findsNothing,
+      );
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
 
-    testWidgets('analysis unavailable still keeps first-proof payoff at third entry', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: _threeRepeatCapacityEntries(),
-        lastCaptureAnalysisSucceeded: false,
-      );
+    testWidgets(
+      'analysis unavailable still keeps first-proof payoff at third entry',
+      (tester) async {
+        await pumpDoneState(
+          tester,
+          entriesAfterSave: _threeRepeatCapacityEntries(),
+          lastCaptureAnalysisSucceeded: false,
+        );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('post_save_archive_home_nudge_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('third_entry_belief_payoff_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('first_proof_payoff_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('post_save_focused_actions_bar')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('analysis_fallback_payoff_card')),
+          findsNothing,
+        );
+      },
+    );
   });
 }

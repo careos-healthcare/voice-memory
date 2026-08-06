@@ -328,8 +328,9 @@ class ThreadReturnEvidenceEngine {
       for (final text in [record.fear, record.stopCostNote]) {
         final snippet = text?.trim() ?? '';
         if (snippet.isEmpty) continue;
-        if (snippets.length >= ThreadReturnEvidence.maxSnippets)
+        if (snippets.length >= ThreadReturnEvidence.maxSnippets) {
           return snippets;
+        }
         if (seen.add(snippet.toLowerCase())) snippets.add(snippet);
       }
     }

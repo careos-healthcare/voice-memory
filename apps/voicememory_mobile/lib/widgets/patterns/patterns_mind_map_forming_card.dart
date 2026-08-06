@@ -54,7 +54,9 @@ class PatternsMindMapFormingCard extends StatelessWidget {
             child: FilledButton(
               key: const Key('patterns_mind_map_forming_primary_cta'),
               onPressed: () => context.go('/record'),
-              child: Text(VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta),
+              child: Text(
+                VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),

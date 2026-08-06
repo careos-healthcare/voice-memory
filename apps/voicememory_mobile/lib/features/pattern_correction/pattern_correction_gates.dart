@@ -63,10 +63,11 @@ abstract final class PatternCorrectionGates {
       patternLabel: detail.patternLabel,
       latestEntryId: latestEntryId,
       canRenamePattern: detail.patternLabel.trim().isNotEmpty,
-      canCorrectTranscript: latestEntry != null &&
+      canCorrectTranscript:
+          latestEntry != null &&
           TranscriptCorrectionGate.entryAllowsCorrection(latestEntry),
-      canRemoveFromPattern: detail.patternKey.isNotEmpty &&
-          (latestEntryId?.isNotEmpty ?? false),
+      canRemoveFromPattern:
+          detail.patternKey.isNotEmpty && (latestEntryId?.isNotEmpty ?? false),
       canDeleteMoment: latestEntryId?.isNotEmpty ?? false,
       onMomentChanged: onMomentChanged,
     );
@@ -77,7 +78,9 @@ abstract final class PatternCorrectionGates {
     required FirstProofPayoff payoff,
     required VoidCallback onKeepRecording,
   }) {
-    final patternKey = ArchiveExclusionEngine.activePatternKeyForEntries(entries);
+    final patternKey = ArchiveExclusionEngine.activePatternKeyForEntries(
+      entries,
+    );
     final latestEntry = entries.isNotEmpty ? entries.last : null;
 
     return PatternCorrectionContext(
@@ -87,10 +90,11 @@ abstract final class PatternCorrectionGates {
       patternLabel: payoff.groundedPhrase,
       latestEntryId: latestEntry?.id,
       canRenamePattern: payoff.groundedPhrase.trim().isNotEmpty,
-      canCorrectTranscript: latestEntry != null &&
+      canCorrectTranscript:
+          latestEntry != null &&
           TranscriptCorrectionGate.entryAllowsCorrection(latestEntry),
-      canRemoveFromPattern: patternKey != null &&
-          (latestEntry?.id.isNotEmpty ?? false),
+      canRemoveFromPattern:
+          patternKey != null && (latestEntry?.id.isNotEmpty ?? false),
       canDeleteMoment: latestEntry?.id.isNotEmpty ?? false,
       onKeepRecording: onKeepRecording,
     );

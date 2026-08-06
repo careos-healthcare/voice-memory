@@ -112,13 +112,11 @@ class CapacityDecisionOutcomeStore {
   static bool hasRecordFor(
     String entryId, [
     List<CapacityDecisionOutcomeRecord>? records,
-  ]) =>
-      (records ?? _cached).any((record) => record.sourceEntryId == entryId);
+  ]) => (records ?? _cached).any((record) => record.sourceEntryId == entryId);
 
   static bool hasAnyPatternChange([
     List<CapacityDecisionOutcomeRecord>? records,
-  ]) =>
-      (records ?? _cached).any((record) => record.showsPatternChange);
+  ]) => (records ?? _cached).any((record) => record.showsPatternChange);
 
   static Future<void> clearAll() async {
     _cached = const [];

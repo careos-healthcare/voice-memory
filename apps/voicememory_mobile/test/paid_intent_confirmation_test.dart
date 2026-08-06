@@ -40,21 +40,20 @@ const _bannedWords = [
 ];
 
 JournalEntry _capacityEntry(String id, {DateTime? createdAt}) => JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript:
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: 'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) =>
     List.generate(count, (i) => _capacityEntry('e$i'));
@@ -68,21 +67,20 @@ PaidIntentConfirmationInput _eligibleInput({
   bool weeklyReviewAvailable = true,
   bool returnedByDay7 = false,
   PaidIntentConfirmationRecord? record,
-}) =>
-    PaidIntentConfirmationInput(
-      sampleMode: sampleMode,
-      screenshotMode: screenshotMode,
-      capacityWedgeActive: true,
-      capacityMomentCount: capacityMomentCount,
-      realSavedMomentCount: capacityMomentCount,
-      fitIsPositive: fitIsPositive,
-      fitResponseLabel: 'partly',
-      dailyChangeShown: dailyChangeShown,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      returnedByDay7: returnedByDay7,
-      boundaryResponseSelected: false,
-      record: record,
-    );
+}) => PaidIntentConfirmationInput(
+  sampleMode: sampleMode,
+  screenshotMode: screenshotMode,
+  capacityWedgeActive: true,
+  capacityMomentCount: capacityMomentCount,
+  realSavedMomentCount: capacityMomentCount,
+  fitIsPositive: fitIsPositive,
+  fitResponseLabel: 'partly',
+  dailyChangeShown: dailyChangeShown,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  returnedByDay7: returnedByDay7,
+  boundaryResponseSelected: false,
+  record: record,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -133,8 +131,7 @@ void main() {
       expect(result.showCard, isFalse);
     });
 
-    test('appears after 3+ moments + fit positive + daily change + return',
-        () {
+    test('appears after 3+ moments + fit positive + daily change + return', () {
       final result = engine.build(_eligibleInput());
       expect(result.showCard, isTrue);
       expect(result.title, PaidIntentConfirmationCopy.title);
@@ -143,10 +140,7 @@ void main() {
 
     test('appears with day 7 return signal when weekly review unavailable', () {
       final result = engine.build(
-        _eligibleInput(
-          weeklyReviewAvailable: false,
-          returnedByDay7: true,
-        ),
+        _eligibleInput(weeklyReviewAvailable: false, returnedByDay7: true),
       );
       expect(result.showCard, isTrue);
     });
@@ -209,7 +203,10 @@ void main() {
       );
       final raw = await prefs.readJsonMap(PaidIntentConfirmationStore.prefsKey);
       expect(raw?['responseId'], PaidIntentConfirmationResponseIds.yes999);
-      expect(raw?['source'], PaidIntentConfirmationSource.capacityBetaValueSignal);
+      expect(
+        raw?['source'],
+        PaidIntentConfirmationSource.capacityBetaValueSignal,
+      );
       expect(raw?['status'], 'answered');
       expect(raw?['valueSignalsAtResponse'], isA<Map>());
       expect(raw.toString(), isNot(contains(_privateSnippet)));
@@ -293,8 +290,10 @@ void main() {
       );
       expect(snapshot.paidIntentAnswered, isTrue);
       expect(snapshot.paidIntentStrongWtp, isTrue);
-      expect(snapshot.paymentSignalLabel,
-          PaidIntentConfirmationCopy.paymentSignalStrong);
+      expect(
+        snapshot.paymentSignalLabel,
+        PaidIntentConfirmationCopy.paymentSignalStrong,
+      );
     });
 
     test('falls back to Pro interest when no paid intent', () {
@@ -349,17 +348,25 @@ void main() {
   group('BETA_FEEDBACK_RESPONSE_PLAYBOOK.md paid intent docs', () {
     test('docs say 1 paid user is promising but not enough', () {
       expect(playbook.toLowerCase(), contains('1 paid-intent user'));
-      expect(playbook.toLowerCase(), contains('not enough for full paid launch'));
+      expect(
+        playbook.toLowerCase(),
+        contains('not enough for full paid launch'),
+      );
     });
 
-    test('docs say 2-3 paid-intent users unlock RevenueCat readiness branch', () {
-      expect(playbook, contains('2–3 paid-intent users'));
-      expect(playbook.toLowerCase(), contains('revenuecat readiness branch'));
-    });
+    test(
+      'docs say 2-3 paid-intent users unlock RevenueCat readiness branch',
+      () {
+        expect(playbook, contains('2–3 paid-intent users'));
+        expect(playbook.toLowerCase(), contains('revenuecat readiness branch'));
+      },
+    );
 
     test('docs say no payment is taken in beta intent check', () {
-      expect(playbook.toLowerCase(),
-          contains('no payment is taken in beta intent check'));
+      expect(
+        playbook.toLowerCase(),
+        contains('no payment is taken in beta intent check'),
+      );
     });
   });
 

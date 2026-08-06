@@ -60,37 +60,33 @@ abstract final class PhysicalDeviceSmokeProofCopy {
       'features, capture flow, or paywall mechanics while running smoke proof.';
 
   static String labelFor(PhysicalDeviceSmokeProofCheckId id) => switch (id) {
-        PhysicalDeviceSmokeProofCheckId.freshInstallOpens =>
-          checkFreshInstallOpens,
-        PhysicalDeviceSmokeProofCheckId.appNameArchiveMe => checkAppNameArchiveMe,
-        PhysicalDeviceSmokeProofCheckId.launchScreenOk => checkLaunchScreenOk,
-        PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath =>
-          checkMicPermissionAcceptPath,
-        PhysicalDeviceSmokeProofCheckId.micPermissionDenyPath =>
-          checkMicPermissionDenyPath,
-        PhysicalDeviceSmokeProofCheckId.typedSave => checkTypedSave,
-        PhysicalDeviceSmokeProofCheckId.voiceSave => checkVoiceSave,
-        PhysicalDeviceSmokeProofCheckId.transcriptAppears =>
-          checkTranscriptAppears,
-        PhysicalDeviceSmokeProofCheckId.postSaveReinforcementAppears =>
-          checkPostSaveReinforcementAppears,
-        PhysicalDeviceSmokeProofCheckId.firstProofPath => checkFirstProofPath,
-        PhysicalDeviceSmokeProofCheckId.correctionPath => checkCorrectionPath,
-        PhysicalDeviceSmokeProofCheckId.proScreenOpens => checkProScreenOpens,
-        PhysicalDeviceSmokeProofCheckId.revenueCatProductLoad =>
-          checkRevenueCatProductLoad,
-        PhysicalDeviceSmokeProofCheckId.purchaseUnavailableCopySafe =>
-          checkPurchaseUnavailableCopySafe,
-        PhysicalDeviceSmokeProofCheckId.restorePathOpens =>
-          checkRestorePathOpens,
-        PhysicalDeviceSmokeProofCheckId.privacyTermsSupportRoutesOpen =>
-          checkPrivacyTermsSupportRoutesOpen,
-        PhysicalDeviceSmokeProofCheckId.offlineLaunchSafe =>
-          checkOfflineLaunchSafe,
-        PhysicalDeviceSmokeProofCheckId.noCrash => checkNoCrash,
-        PhysicalDeviceSmokeProofCheckId.noPrivateTextLeakedInLogs =>
-          checkNoPrivateTextLeakedInLogs,
-      };
+    PhysicalDeviceSmokeProofCheckId.freshInstallOpens => checkFreshInstallOpens,
+    PhysicalDeviceSmokeProofCheckId.appNameArchiveMe => checkAppNameArchiveMe,
+    PhysicalDeviceSmokeProofCheckId.launchScreenOk => checkLaunchScreenOk,
+    PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath =>
+      checkMicPermissionAcceptPath,
+    PhysicalDeviceSmokeProofCheckId.micPermissionDenyPath =>
+      checkMicPermissionDenyPath,
+    PhysicalDeviceSmokeProofCheckId.typedSave => checkTypedSave,
+    PhysicalDeviceSmokeProofCheckId.voiceSave => checkVoiceSave,
+    PhysicalDeviceSmokeProofCheckId.transcriptAppears => checkTranscriptAppears,
+    PhysicalDeviceSmokeProofCheckId.postSaveReinforcementAppears =>
+      checkPostSaveReinforcementAppears,
+    PhysicalDeviceSmokeProofCheckId.firstProofPath => checkFirstProofPath,
+    PhysicalDeviceSmokeProofCheckId.correctionPath => checkCorrectionPath,
+    PhysicalDeviceSmokeProofCheckId.proScreenOpens => checkProScreenOpens,
+    PhysicalDeviceSmokeProofCheckId.revenueCatProductLoad =>
+      checkRevenueCatProductLoad,
+    PhysicalDeviceSmokeProofCheckId.purchaseUnavailableCopySafe =>
+      checkPurchaseUnavailableCopySafe,
+    PhysicalDeviceSmokeProofCheckId.restorePathOpens => checkRestorePathOpens,
+    PhysicalDeviceSmokeProofCheckId.privacyTermsSupportRoutesOpen =>
+      checkPrivacyTermsSupportRoutesOpen,
+    PhysicalDeviceSmokeProofCheckId.offlineLaunchSafe => checkOfflineLaunchSafe,
+    PhysicalDeviceSmokeProofCheckId.noCrash => checkNoCrash,
+    PhysicalDeviceSmokeProofCheckId.noPrivateTextLeakedInLogs =>
+      checkNoPrivateTextLeakedInLogs,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -159,19 +155,15 @@ enum PhysicalDeviceSmokeProofStatus {
   blocked;
 
   String get label => switch (this) {
-        PhysicalDeviceSmokeProofStatus.pass =>
-          PhysicalDeviceSmokeProofCopy.statusPass,
-        PhysicalDeviceSmokeProofStatus.fail =>
-          PhysicalDeviceSmokeProofCopy.statusFail,
-        PhysicalDeviceSmokeProofStatus.pending =>
-          PhysicalDeviceSmokeProofCopy.statusPending,
-        PhysicalDeviceSmokeProofStatus.blocked =>
-          PhysicalDeviceSmokeProofCopy.statusBlocked,
-      };
+    PhysicalDeviceSmokeProofStatus.pass =>
+      PhysicalDeviceSmokeProofCopy.statusPass,
+    PhysicalDeviceSmokeProofStatus.fail =>
+      PhysicalDeviceSmokeProofCopy.statusFail,
+    PhysicalDeviceSmokeProofStatus.pending =>
+      PhysicalDeviceSmokeProofCopy.statusPending,
+    PhysicalDeviceSmokeProofStatus.blocked =>
+      PhysicalDeviceSmokeProofCopy.statusBlocked,
+  };
 }
 
-enum PhysicalDeviceSmokeProofDecision {
-  proved,
-  manualRequired,
-  blocked,
-}
+enum PhysicalDeviceSmokeProofDecision { proved, manualRequired, blocked }

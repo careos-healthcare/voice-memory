@@ -40,21 +40,22 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityCostCheckinResult _visibleResult({String pendingId = 'real_0'}) =>
     CapacityCostCheckinResult(
@@ -184,14 +185,8 @@ void main() {
     });
 
     test('generic users see card with enough capacity evidence', () {
-      final entries = [
-        _capacityEntry('real_0'),
-        _capacityEntry('real_1'),
-      ];
-      final outcomes = [
-        _outcomeForEntry('real_0'),
-        _outcomeForEntry('real_1'),
-      ];
+      final entries = [_capacityEntry('real_0'), _capacityEntry('real_1')];
+      final outcomes = [_outcomeForEntry('real_0'), _outcomeForEntry('real_1')];
       final result = costEngine.buildFromJournal(
         entries: entries,
         capacityLoopActive: false,
@@ -230,7 +225,10 @@ void main() {
 
       await CapacityCostStore.instance().saveAnswered(
         sourceEntryId: 'entry_a',
-        costTypeIds: const [CapacityCostTypeIds.time, CapacityCostTypeIds.energy],
+        costTypeIds: const [
+          CapacityCostTypeIds.time,
+          CapacityCostTypeIds.energy,
+        ],
       );
 
       final records = await CapacityCostStore.instance().loadAll();
@@ -249,7 +247,8 @@ void main() {
         costTypeIds: const [CapacityCostTypeIds.attention],
       );
 
-      final json = (await CapacityCostStore.instance().loadAll()).first.toJson();
+      final json = (await CapacityCostStore.instance().loadAll()).first
+          .toJson();
       final encoded = json.toString().toLowerCase();
       expect(encoded, isNot(contains(_privateSnippet)));
       expect(encoded, isNot(contains('transcript')));
@@ -260,7 +259,9 @@ void main() {
       await _resetStore(stamp);
 
       await CapacityCostStore.instance().saveSkipped(sourceEntryId: 'entry_c');
-      final record = await CapacityCostStore.instance().recordForEntry('entry_c');
+      final record = await CapacityCostStore.instance().recordForEntry(
+        'entry_c',
+      );
       expect(record!.status, CapacityCostRecordStatus.skipped);
       expect(record.hasLaterCost, isFalse);
     });
@@ -297,7 +298,10 @@ void main() {
       );
 
       expect(result.costLater, contains('Later cost recorded on 2 moments'));
-      expect(result.costEvidenceLabel, contains('2 saved moments had a later cost'));
+      expect(
+        result.costEvidenceLabel,
+        contains('2 saved moments had a later cost'),
+      );
     });
 
     test('strengthen prompt when pending check-in and no records', () {
@@ -393,8 +397,14 @@ void main() {
 
     test('share copy does not include cost details or private notes', () {
       expect(CapacityLoopCopy.shareCopy, contains('No private entries shared'));
-      expect(CapacityLoopCopy.shareCopy.toLowerCase(), isNot(contains('energy')));
-      expect(CapacityLoopCopy.shareCopy.toLowerCase(), isNot(contains('resentment')));
+      expect(
+        CapacityLoopCopy.shareCopy.toLowerCase(),
+        isNot(contains('energy')),
+      );
+      expect(
+        CapacityLoopCopy.shareCopy.toLowerCase(),
+        isNot(contains('resentment')),
+      );
       expect(CapacityCostCopy.shareSafeNote, isNot(contains(_privateSnippet)));
     });
   });

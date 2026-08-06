@@ -16,8 +16,10 @@ import 'package:voicememory_mobile/services/app_services.dart';
 
 Future<void> _resetServices() async {
   await AppServices.resetForTest(
-    journalPath: '${Directory.systemTemp.createTempSync('vm_account_').path}/journal.json',
-    prefsPath: '${Directory.systemTemp.createTempSync('vm_account_prefs_').path}/prefs.json',
+    journalPath:
+        '${Directory.systemTemp.createTempSync('vm_account_').path}/journal.json',
+    prefsPath:
+        '${Directory.systemTemp.createTempSync('vm_account_prefs_').path}/prefs.json',
   );
   await LocalCuriosityReactionRepository.resetForTest(
     AppServices.instance.prefs,
@@ -55,7 +57,9 @@ void main() {
     }
   });
 
-  testWidgets('weekly growth preview shows check-in count when profile loads', (tester) async {
+  testWidgets('weekly growth preview shows check-in count when profile loads', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(800, 1200));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -90,42 +94,48 @@ void main() {
     );
   });
 
-  testWidgets('weekly growth preview loads check-ins from repository on profile', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 1200));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets(
+    'weekly growth preview loads check-ins from repository on profile',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    final now = DateTime.now().toUtc();
-    final reactions = InMemoryCuriosityReactionRepository([
-      CuriosityReactionRecord(
-        id: 'reaction_1',
-        hookId: 'hook_1',
-        timestamp: now.subtract(const Duration(days: 1)),
-        reactionType: YesterdaysSnapshotReaction.progressed,
-        primaryAnchor: 'finished the draft',
-        hookType: CuriosityHookType.momentum,
-      ),
-      CuriosityReactionRecord(
-        id: 'reaction_2',
-        hookId: 'hook_2',
-        timestamp: now.subtract(const Duration(days: 2)),
-        reactionType: YesterdaysSnapshotReaction.stuck,
-        primaryAnchor: 'said yes again',
-        hookType: CuriosityHookType.blocker,
-      ),
-    ]);
+      final now = DateTime.now().toUtc();
+      final reactions = InMemoryCuriosityReactionRepository([
+        CuriosityReactionRecord(
+          id: 'reaction_1',
+          hookId: 'hook_1',
+          timestamp: now.subtract(const Duration(days: 1)),
+          reactionType: YesterdaysSnapshotReaction.progressed,
+          primaryAnchor: 'finished the draft',
+          hookType: CuriosityHookType.momentum,
+        ),
+        CuriosityReactionRecord(
+          id: 'reaction_2',
+          hookId: 'hook_2',
+          timestamp: now.subtract(const Duration(days: 2)),
+          reactionType: YesterdaysSnapshotReaction.stuck,
+          primaryAnchor: 'said yes again',
+          hookType: CuriosityHookType.blocker,
+        ),
+      ]);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: AccountScreen(
-          weeklyGrowthPreviewCard: WeeklyGrowthPreviewCard(
-            engine: ProductivityReportEngine(reactions),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AccountScreen(
+            weeklyGrowthPreviewCard: WeeklyGrowthPreviewCard(
+              engine: ProductivityReportEngine(reactions),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text(WeeklyProductivityReportCopy.previewMessage(2)), findsOneWidget);
-  });
+      expect(
+        find.text(WeeklyProductivityReportCopy.previewMessage(2)),
+        findsOneWidget,
+      );
+    },
+  );
 }

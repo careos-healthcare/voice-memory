@@ -17,11 +17,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -40,33 +36,28 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: _now.subtract(const Duration(days: 2)),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: _now,
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: _now.subtract(const Duration(days: 2))),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: _now,
+  ),
+];
 
 WhatToNoticeNextResult _buildResult(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = false,
-}) =>
-    WhatToNoticeNextEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: 'test',
-      now: _now,
-    );
+}) => WhatToNoticeNextEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: 'test',
+  now: _now,
+);
 
 bool _shouldShow({
   required WhatToNoticeNextResult? result,
@@ -81,21 +72,20 @@ bool _shouldShow({
   bool lowFrictionReturnVisible = false,
   bool betaTodaySummaryVisible = false,
   bool openCapturePromptChipsVisible = false,
-}) =>
-    WhatToNoticeNextEngine.shouldShow(
-      result: result,
-      isReady: isReady,
-      isRecording: isRecording,
-      isPostSave: isPostSave,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      firstProofPayoffVisible: firstProofPayoffVisible,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      entryCount: entryCount,
-      lowFrictionReturnVisible: lowFrictionReturnVisible,
-      betaTodaySummaryVisible: betaTodaySummaryVisible,
-      openCapturePromptChipsVisible: openCapturePromptChipsVisible,
-    );
+}) => WhatToNoticeNextEngine.shouldShow(
+  result: result,
+  isReady: isReady,
+  isRecording: isRecording,
+  isPostSave: isPostSave,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  firstProofPayoffVisible: firstProofPayoffVisible,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  entryCount: entryCount,
+  lowFrictionReturnVisible: lowFrictionReturnVisible,
+  betaTodaySummaryVisible: betaTodaySummaryVisible,
+  openCapturePromptChipsVisible: openCapturePromptChipsVisible,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -139,28 +129,19 @@ void main() {
     test('hidden when beta flag false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
       final result = _buildResult([_entry('1', _strongRepeat)]);
-      expect(
-        _shouldShow(result: result, entryCount: 1),
-        isFalse,
-      );
+      expect(_shouldShow(result: result, entryCount: 1), isFalse);
     });
 
     test('visible when beta flag true', () {
       ArchiveBetaMissionGate.enabledOverride = true;
       final result = _buildResult([_entry('1', _strongRepeat)]);
-      expect(
-        _shouldShow(result: result, entryCount: 1),
-        isTrue,
-      );
+      expect(_shouldShow(result: result, entryCount: 1), isTrue);
     });
 
     test('hidden with zero entries', () {
       ArchiveBetaMissionGate.enabledOverride = true;
       final result = _buildResult(const []);
-      expect(
-        _shouldShow(result: result, entryCount: 0),
-        isFalse,
-      );
+      expect(_shouldShow(result: result, entryCount: 0), isFalse);
     });
 
     test('hidden while recording', () {
@@ -303,7 +284,9 @@ void main() {
       }
     });
 
-    testWidgets('renders fallback prompts when little evidence', (tester) async {
+    testWidgets('renders fallback prompts when little evidence', (
+      tester,
+    ) async {
       await pumpCard(tester, _buildResult([_entry('1', _strongRepeat)]));
       for (final type in WhatToNoticeNextCopy.fallbackPromptTypes) {
         expect(
@@ -321,14 +304,18 @@ void main() {
     testWidgets('tapping prompt sets callback without routing', (tester) async {
       await pumpCard(tester, _buildResult([_entry('1', _strongRepeat)]));
       await tester.ensureVisible(
-        find.text(WhatToNoticeNextCopy.promptTextFor(
-          WhatToNoticeNextPromptType.whatHelped,
-        )),
+        find.text(
+          WhatToNoticeNextCopy.promptTextFor(
+            WhatToNoticeNextPromptType.whatHelped,
+          ),
+        ),
       );
       await tester.tap(
-        find.text(WhatToNoticeNextCopy.promptTextFor(
-          WhatToNoticeNextPromptType.whatHelped,
-        )),
+        find.text(
+          WhatToNoticeNextCopy.promptTextFor(
+            WhatToNoticeNextPromptType.whatHelped,
+          ),
+        ),
       );
       await tester.pump();
 
@@ -344,26 +331,33 @@ void main() {
     testWidgets('metadata-only analytics', (tester) async {
       await pumpCard(tester, _buildResult(_threeRelatedEntries()));
       await tester.ensureVisible(
-        find.text(WhatToNoticeNextCopy.promptTextFor(
-          WhatToNoticeNextPromptType.didAnythingHelp,
-        )),
+        find.text(
+          WhatToNoticeNextCopy.promptTextFor(
+            WhatToNoticeNextPromptType.didAnythingHelp,
+          ),
+        ),
       );
       await tester.tap(
-        find.text(WhatToNoticeNextCopy.promptTextFor(
-          WhatToNoticeNextPromptType.didAnythingHelp,
-        )),
+        find.text(
+          WhatToNoticeNextCopy.promptTextFor(
+            WhatToNoticeNextPromptType.didAnythingHelp,
+          ),
+        ),
       );
       await tester.pump();
 
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == WhatToNoticeNextAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_timeline',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_timeline',
+        ]),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('body')));
 
@@ -376,16 +370,18 @@ void main() {
 
   group('What to notice next copy guard', () {
     test('no daily pressure copy', () {
-      final blob =
-          WhatToNoticeNextCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = WhatToNoticeNextCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('must record every day')));
       expect(blob, isNot(contains('journal every day')));
       expect(blob, contains('do not need to force an entry'));
     });
 
     test('no streak copy', () {
-      final blob =
-          WhatToNoticeNextCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = WhatToNoticeNextCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('streak')));
       expect(blob, isNot(contains('day in a row')));
     });

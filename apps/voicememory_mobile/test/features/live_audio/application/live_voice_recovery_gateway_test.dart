@@ -29,8 +29,9 @@ void main() {
     late LiveVoiceRecoveryGateway gateway;
 
     setUp(() async {
-      vaultDirectory =
-          await Directory.systemTemp.createTemp('live_voice_gateway_');
+      vaultDirectory = await Directory.systemTemp.createTemp(
+        'live_voice_gateway_',
+      );
       manifestFile = File('${vaultDirectory.path}/manifests.json');
       store = OfflineVaultRecoveryStore(
         manifestFile: manifestFile,
@@ -66,7 +67,6 @@ void main() {
       connectivity = _TestConnectivity();
       gateway = LiveVoiceRecoveryGateway(
         vault: vault,
-        apiClient: api,
         connectivity: connectivity,
         recoveryStore: store,
         recoveryService: recoveryService,
@@ -80,16 +80,19 @@ void main() {
       }
     });
 
-    test('checkForPendingRecovery uploads and deletes vault after connectivity restore', () async {
-      await vault.initializeVault('session_gateway');
-      vault.appendPcm16LeBytes([1, 2, 3, 4]);
-      final closed = await vault.closeVault();
-      expect(closed, isNotNull);
+    test(
+      'checkForPendingRecovery uploads and deletes vault after connectivity restore',
+      () async {
+        await vault.initializeVault('session_gateway');
+        vault.appendPcm16LeBytes([1, 2, 3, 4]);
+        final closed = await vault.closeVault();
+        expect(closed, isNotNull);
 
-      await gateway.checkForPendingRecovery();
-      expect(await closed!.exists(), isFalse);
-      expect(await store.listPending(), isEmpty);
-    });
+        await gateway.checkForPendingRecovery();
+        expect(await closed!.exists(), isFalse);
+        expect(await store.listPending(), isEmpty);
+      },
+    );
 
     test('connectivity restored listener triggers directory sweep', () async {
       await vault.initializeVault('session_listener');
@@ -153,6 +156,5 @@ class _FakeApiClient extends ApiClient {
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }

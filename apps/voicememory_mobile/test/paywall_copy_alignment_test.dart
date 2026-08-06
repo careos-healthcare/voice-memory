@@ -54,45 +54,51 @@ void main() {
       );
     });
 
-    test('bullets cover evidence history, weekly reviews, and timeline views', () {
-      final bullets = ConsumerUiCopy.paywallBullets;
-      expect(bullets, PaywallAlignmentCopy.benefitBullets);
-      expect(bullets, contains('Longer evidence history'));
-      expect(bullets, contains('Weekly archive reviews'));
-      expect(bullets, contains('Timeline views over time'));
-      expect(PaywallSourceCopy.generalPro.bullets, bullets);
-    });
+    test(
+      'bullets cover evidence history, weekly reviews, and timeline views',
+      () {
+        final bullets = ConsumerUiCopy.paywallBullets;
+        expect(bullets, PaywallAlignmentCopy.benefitBullets);
+        expect(bullets, contains('Longer evidence history'));
+        expect(bullets, contains('Weekly archive reviews'));
+        expect(bullets, contains('Timeline views over time'));
+        expect(PaywallSourceCopy.generalPro.bullets, bullets);
+      },
+    );
 
-    test('differentiation focuses on trail continuity and trust avoids medical claims', () {
-      expect(
-        ConsumerUiCopy.paywallDifferentiation,
-        'Pro keeps longer evidence history, weekly archive reviews, and timeline views.',
-      );
-      expect(
-        ConsumerUiCopy.paywallTrust,
-        'Private by default. Based on moments you save. Not therapy or medical advice.',
-      );
+    test(
+      'differentiation focuses on trail continuity and trust avoids medical claims',
+      () {
+        expect(
+          ConsumerUiCopy.paywallDifferentiation,
+          'Pro keeps longer evidence history, weekly archive reviews, and timeline views.',
+        );
+        expect(
+          ConsumerUiCopy.paywallTrust,
+          'Private by default. Based on moments you save. Not therapy or medical advice.',
+        );
 
-      final blob = [
-        ConsumerUiCopy.paywallHeadline,
-        ConsumerUiCopy.paywallSubhead,
-        ConsumerUiCopy.paywallPrimaryValueBlock,
-        ...ConsumerUiCopy.paywallBullets,
-        ConsumerUiCopy.paywallDifferentiation,
-        ConsumerUiCopy.paywallTrust,
-        ConsumerUiCopy.paywallBackupLine,
-      ].join(' ').toLowerCase();
+        final blob = [
+          ConsumerUiCopy.paywallHeadline,
+          ConsumerUiCopy.paywallSubhead,
+          ConsumerUiCopy.paywallPrimaryValueBlock,
+          ...ConsumerUiCopy.paywallBullets,
+          ConsumerUiCopy.paywallDifferentiation,
+          ConsumerUiCopy.paywallTrust,
+          ConsumerUiCopy.paywallBackupLine,
+        ].join(' ').toLowerCase();
 
-      expect(blob, isNot(contains('more ai')));
-      expect(blob, isNot(contains('better chat')));
-      expect(blob, isNot(contains('sync is active')));
-      expect(blob, isNot(contains('cloud backup included')));
-      expect(blob, isNot(contains('your archive is backed up')));
-      expect(blob, contains('do not rely on this build as cloud backup'));
-      expect(blob, contains('not therapy'));
-      expect(blob, isNot(contains('diagnosis')));
-      expect(blob, isNot(contains('treatment')));
-    });
+        expect(blob, isNot(contains('more ai')));
+        expect(blob, isNot(contains('better chat')));
+        expect(blob, isNot(contains('sync is active')));
+        expect(blob, isNot(contains('cloud backup included')));
+        expect(blob, isNot(contains('your archive is backed up')));
+        expect(blob, contains('do not rely on this build as cloud backup'));
+        expect(blob, contains('not therapy'));
+        expect(blob, isNot(contains('diagnosis')));
+        expect(blob, isNot(contains('treatment')));
+      },
+    );
 
     testWidgets('general Pro paywall renders aligned copy with CTAs', (
       tester,
@@ -114,21 +120,25 @@ void main() {
       expect(find.text(ConsumerUiCopy.paywallPrimaryValueBlock), findsNothing);
       expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
       expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
-      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_subscription_details')),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     });
 
-    testWidgets('default paywall still renders restore and unavailable dismiss', (
-      tester,
-    ) async {
-      await _pumpPaywall(tester);
+    testWidgets(
+      'default paywall still renders restore and unavailable dismiss',
+      (tester) async {
+        await _pumpPaywall(tester);
 
-      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
-      expect(find.text('Continue without Pro'), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
-    });
+        expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.paywallSubhead), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
+        expect(find.text('Continue without Pro'), findsOneWidget);
+        expect(find.text(ConsumerUiCopy.paywallDifferentiation), findsNothing);
+        expect(find.text(PurchaseConfidenceCopy.cardTitle), findsOneWidget);
+      },
+    );
   });
 }

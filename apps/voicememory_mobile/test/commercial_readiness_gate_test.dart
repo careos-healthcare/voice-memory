@@ -25,27 +25,25 @@ CommercialReadinessGateInput _input({
   bool testFlightBuildUploaded = true,
   bool paidIntentBetaComplete = true,
   bool secretsRotationDone = true,
-}) =>
-    CommercialReadinessGateInput(
-      productPromiseClear: productPromiseClear,
-      firstJourneyStable: firstJourneyStable,
-      firstProofUsefulEnough: firstProofUsefulEnough,
-      proPromiseClear: proPromiseClear,
-      revenueCatProductLoads: revenueCatProductLoads,
-      paywallPriceVisible: paywallPriceVisible,
-      sandboxPurchaseWorks: sandboxPurchaseWorks,
-      restoreWorks: restoreWorks,
-      entitlementPersists: entitlementPersists,
-      testFlightBuildUploaded: testFlightBuildUploaded,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      secretsRotationDone: secretsRotationDone,
-    );
+}) => CommercialReadinessGateInput(
+  productPromiseClear: productPromiseClear,
+  firstJourneyStable: firstJourneyStable,
+  firstProofUsefulEnough: firstProofUsefulEnough,
+  proPromiseClear: proPromiseClear,
+  revenueCatProductLoads: revenueCatProductLoads,
+  paywallPriceVisible: paywallPriceVisible,
+  sandboxPurchaseWorks: sandboxPurchaseWorks,
+  restoreWorks: restoreWorks,
+  entitlementPersists: entitlementPersists,
+  testFlightBuildUploaded: testFlightBuildUploaded,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  secretsRotationDone: secretsRotationDone,
+);
 
 CommercialReadinessGateCheck _check(
   CommercialReadinessGateResult result,
   CommercialReadinessGateCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 StoreReadinessSingleSourceInput _storeInput({
   bool revenueCatProductLoads = true,
@@ -55,29 +53,28 @@ StoreReadinessSingleSourceInput _storeInput({
   bool testFlightBuildUploaded = true,
   bool paidIntentBetaComplete = true,
   bool secretsRotationDone = true,
-}) =>
-    StoreReadinessSingleSourceInput(
-      signingConfigured: true,
-      appStoreMetadataReady: true,
-      supportUrlSet: true,
-      privacyUrlSet: true,
-      termsUrlSet: true,
-      screenshotsReady: true,
-      revenueCatApiKeyProvided: revenueCatProductLoads,
-      revenueCatConfigured: revenueCatProductLoads,
-      productsLoaded: revenueCatProductLoads,
-      proEntitlementConfigured: entitlementPersists,
-      purchaseFlowReachable: purchaseFlowReachable,
-      restorePurchasesReachable: restoreWorks,
-      restoreNoCrashVerified: restoreWorks,
-      purchasesUnavailableFallbackVerified: true,
-      proStateCanBeRead: entitlementPersists,
-      entitlementPersistsAfterRestart: entitlementPersists,
-      physicalDeviceSmokePassed: true,
-      testFlightUploadReady: testFlightBuildUploaded,
-      paidIntentBetaReady: paidIntentBetaComplete,
-      secretsRotated: secretsRotationDone,
-    );
+}) => StoreReadinessSingleSourceInput(
+  signingConfigured: true,
+  appStoreMetadataReady: true,
+  supportUrlSet: true,
+  privacyUrlSet: true,
+  termsUrlSet: true,
+  screenshotsReady: true,
+  revenueCatApiKeyProvided: revenueCatProductLoads,
+  revenueCatConfigured: revenueCatProductLoads,
+  productsLoaded: revenueCatProductLoads,
+  proEntitlementConfigured: entitlementPersists,
+  purchaseFlowReachable: purchaseFlowReachable,
+  restorePurchasesReachable: restoreWorks,
+  restoreNoCrashVerified: restoreWorks,
+  purchasesUnavailableFallbackVerified: true,
+  proStateCanBeRead: entitlementPersists,
+  entitlementPersistsAfterRestart: entitlementPersists,
+  physicalDeviceSmokePassed: true,
+  testFlightUploadReady: testFlightBuildUploaded,
+  paidIntentBetaReady: paidIntentBetaComplete,
+  secretsRotated: secretsRotationDone,
+);
 
 SecretsRotationLaunchGateInput _secretsRotationInput({
   bool? stripeSecretKeyRotated = true,
@@ -88,41 +85,36 @@ SecretsRotationLaunchGateInput _secretsRotationInput({
   bool noSecretValuesCommitted = true,
   bool noSecretValuesPrintedInLogs = true,
   bool? vercelEnvProductionVerified = true,
-}) =>
-    SecretsRotationLaunchGateInput(
-      stripeSecretKeyRotated: stripeSecretKeyRotated,
-      stripeWebhookSecretRotated: stripeWebhookSecretRotated,
-      productionEnvUpdated: productionEnvUpdated,
-      oldWebhookDisabled: oldWebhookDisabled,
-      revenueCatApiKeySeparatedFromDocsLogs:
-          revenueCatApiKeySeparatedFromDocsLogs,
-      noSecretValuesCommitted: noSecretValuesCommitted,
-      noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
-      vercelEnvProductionVerified: vercelEnvProductionVerified,
-    );
+}) => SecretsRotationLaunchGateInput(
+  stripeSecretKeyRotated: stripeSecretKeyRotated,
+  stripeWebhookSecretRotated: stripeWebhookSecretRotated,
+  productionEnvUpdated: productionEnvUpdated,
+  oldWebhookDisabled: oldWebhookDisabled,
+  revenueCatApiKeySeparatedFromDocsLogs: revenueCatApiKeySeparatedFromDocsLogs,
+  noSecretValuesCommitted: noSecretValuesCommitted,
+  noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
+  vercelEnvProductionVerified: vercelEnvProductionVerified,
+);
 
 void main() {
   group('CommercialReadinessGate.build', () {
     test('gate has twelve canonical checks', () {
       final result = CommercialReadinessGate.build(_input());
       expect(result.checks.length, CommercialReadinessGate.checkCount);
-      expect(
-        result.checks.map((check) => check.id).toList(),
-        [
-          CommercialReadinessGateCheckId.productPromiseClear,
-          CommercialReadinessGateCheckId.firstJourneyStable,
-          CommercialReadinessGateCheckId.firstProofUsefulEnough,
-          CommercialReadinessGateCheckId.proPromiseClear,
-          CommercialReadinessGateCheckId.revenueCatProductLoads,
-          CommercialReadinessGateCheckId.paywallPriceVisible,
-          CommercialReadinessGateCheckId.sandboxPurchaseWorks,
-          CommercialReadinessGateCheckId.restoreWorks,
-          CommercialReadinessGateCheckId.entitlementPersists,
-          CommercialReadinessGateCheckId.testFlightBuildUploaded,
-          CommercialReadinessGateCheckId.paidIntentBetaComplete,
-          CommercialReadinessGateCheckId.secretsRotationDone,
-        ],
-      );
+      expect(result.checks.map((check) => check.id).toList(), [
+        CommercialReadinessGateCheckId.productPromiseClear,
+        CommercialReadinessGateCheckId.firstJourneyStable,
+        CommercialReadinessGateCheckId.firstProofUsefulEnough,
+        CommercialReadinessGateCheckId.proPromiseClear,
+        CommercialReadinessGateCheckId.revenueCatProductLoads,
+        CommercialReadinessGateCheckId.paywallPriceVisible,
+        CommercialReadinessGateCheckId.sandboxPurchaseWorks,
+        CommercialReadinessGateCheckId.restoreWorks,
+        CommercialReadinessGateCheckId.entitlementPersists,
+        CommercialReadinessGateCheckId.testFlightBuildUploaded,
+        CommercialReadinessGateCheckId.paidIntentBetaComplete,
+        CommercialReadinessGateCheckId.secretsRotationDone,
+      ]);
     });
 
     test('all checks pass -> commerciallyReady', () {
@@ -139,8 +131,10 @@ void main() {
       expect(result.status, CommercialReadinessGateStatus.productReadyOnly);
       expect(result.productReadyOnly, isTrue);
       expect(
-        _check(result, CommercialReadinessGateCheckId.revenueCatProductLoads)
-            .status,
+        _check(
+          result,
+          CommercialReadinessGateCheckId.revenueCatProductLoads,
+        ).status,
         CommercialReadinessGateCheckStatus.blocked,
       );
     });
@@ -199,9 +193,7 @@ void main() {
     });
 
     test('restore fails -> restoreBlocked', () {
-      final result = CommercialReadinessGate.build(
-        _input(restoreWorks: false),
-      );
+      final result = CommercialReadinessGate.build(_input(restoreWorks: false));
       expect(result.status, CommercialReadinessGateStatus.restoreBlocked);
     });
 
@@ -267,32 +259,30 @@ void main() {
       bool purchaseCompleted = true,
       bool purchaseMechanicsBlocked = false,
       PaidIntentBetaWouldPay? testerWouldPay = PaidIntentBetaWouldPay.yes,
-    }) =>
-        PaidIntentBetaProofInput(
-          firstSaveCompleted: true,
-          firstUsefulProofSeen: true,
-          proofAcceptedOrCorrected: true,
-          proPromiseSeen: true,
-          proTapped: true,
-          purchaseAttempted: true,
-          purchaseCompleted: purchaseCompleted,
-          purchaseMechanicsBlocked: purchaseMechanicsBlocked,
-          testerWouldPay: testerWouldPay,
-        );
+    }) => PaidIntentBetaProofInput(
+      firstSaveCompleted: true,
+      firstUsefulProofSeen: true,
+      proofAcceptedOrCorrected: true,
+      proPromiseSeen: true,
+      proTapped: true,
+      purchaseAttempted: true,
+      purchaseCompleted: purchaseCompleted,
+      purchaseMechanicsBlocked: purchaseMechanicsBlocked,
+      testerWouldPay: testerWouldPay,
+    );
 
     RevenueCatSandboxProofInput _sandboxInput({
       bool sandboxPurchaseSucceeds = true,
       bool restorePurchasesSucceeds = true,
       bool entitlementPersistsAfterRestart = true,
-    }) =>
-        RevenueCatSandboxProofInput(
-          iosApiKeyPresent: true,
-          offeringLoads: true,
-          productTitlePriceVisible: true,
-          sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
-          restorePurchasesSucceeds: restorePurchasesSucceeds,
-          entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        );
+    }) => RevenueCatSandboxProofInput(
+      iosApiKeyPresent: true,
+      offeringLoads: true,
+      productTitlePriceVisible: true,
+      sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+      restorePurchasesSucceeds: restorePurchasesSucceeds,
+      entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    );
 
     test('integrated sources -> commerciallyReady', () {
       final result = CommercialReadinessGate.buildFromSources(
@@ -322,9 +312,7 @@ void main() {
     test('paid intent purchase mechanics blocked -> purchaseBlocked', () {
       final result = CommercialReadinessGate.buildFromSources(
         CommercialReadinessGateSources(
-          store: _storeInput(
-            paidIntentBetaComplete: false,
-          ),
+          store: _storeInput(paidIntentBetaComplete: false),
           sandbox: _sandboxInput(),
           paidIntent: _paidIntentInput(
             purchaseCompleted: false,
@@ -376,32 +364,36 @@ void main() {
       expect(result.status, CommercialReadinessGateStatus.commerciallyReady);
     });
 
-    test('launch gate pending rotation overrides store secretsRotated flag',
-        () {
-      final result = CommercialReadinessGate.buildFromSources(
-        CommercialReadinessGateSources(
-          store: _storeInput(secretsRotationDone: true),
-          sandbox: _sandboxInput(),
-          paidIntent: _paidIntentInput(),
-          secretsRotation: _secretsRotationInput(
-            stripeSecretKeyRotated: null,
-            stripeWebhookSecretRotated: null,
-            productionEnvUpdated: null,
-            oldWebhookDisabled: null,
-            vercelEnvProductionVerified: null,
+    test(
+      'launch gate pending rotation overrides store secretsRotated flag',
+      () {
+        final result = CommercialReadinessGate.buildFromSources(
+          CommercialReadinessGateSources(
+            store: _storeInput(secretsRotationDone: true),
+            sandbox: _sandboxInput(),
+            paidIntent: _paidIntentInput(),
+            secretsRotation: _secretsRotationInput(
+              stripeSecretKeyRotated: null,
+              stripeWebhookSecretRotated: null,
+              productionEnvUpdated: null,
+              oldWebhookDisabled: null,
+              vercelEnvProductionVerified: null,
+            ),
           ),
-        ),
-      );
-      expect(
-        result.status,
-        CommercialReadinessGateStatus.productionBlockedBySecrets,
-      );
-      expect(
-        _check(result, CommercialReadinessGateCheckId.secretsRotationDone)
-            .status,
-        CommercialReadinessGateCheckStatus.fail,
-      );
-    });
+        );
+        expect(
+          result.status,
+          CommercialReadinessGateStatus.productionBlockedBySecrets,
+        );
+        expect(
+          _check(
+            result,
+            CommercialReadinessGateCheckId.secretsRotationDone,
+          ).status,
+          CommercialReadinessGateCheckStatus.fail,
+        );
+      },
+    );
 
     test('launch gate repo safety failure -> productionBlockedBySecrets', () {
       final result = CommercialReadinessGate.buildFromSources(
@@ -471,8 +463,9 @@ void main() {
       proSinglePromiseCopySource = File(
         'lib/features/pro_single_promise/pro_single_promise_copy.dart',
       ).readAsStringSync();
-      paywallScreenSource =
-          File('lib/screens/paywall_screen.dart').readAsStringSync();
+      paywallScreenSource = File(
+        'lib/screens/paywall_screen.dart',
+      ).readAsStringSync();
     });
 
     test('repo signals detect product and Pro promise copy', () {
@@ -501,7 +494,9 @@ void main() {
         isTrue,
       );
       expect(
-        CommercialReadinessGate.detectPaywallPriceKeyPresent(paywallScreenSource),
+        CommercialReadinessGate.detectPaywallPriceKeyPresent(
+          paywallScreenSource,
+        ),
         isTrue,
       );
     });

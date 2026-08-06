@@ -44,14 +44,13 @@ class BetaTestScriptStore {
   }
 
   Map<String, dynamic> _serialize(BetaTestScriptProgressRecord record) => {
-        'day1Seen': record.day1Seen,
-        'day2Seen': record.day2Seen,
-        'day3Seen': record.day3Seen,
-        'dismissed': record.dismissed,
-        if (record.startedDateKey != null)
-          'startedDateKey': record.startedDateKey,
-        'updatedAt': DateTime.now().toUtc().toIso8601String(),
-      };
+    'day1Seen': record.day1Seen,
+    'day2Seen': record.day2Seen,
+    'day3Seen': record.day3Seen,
+    'dismissed': record.dismissed,
+    if (record.startedDateKey != null) 'startedDateKey': record.startedDateKey,
+    'updatedAt': DateTime.now().toUtc().toIso8601String(),
+  };
 
   Future<void> save(BetaTestScriptProgressRecord record) async {
     _cached = record;
@@ -93,13 +92,16 @@ class BetaTestScriptStore {
     _loaded = true;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest(MobilePrefsStore? prefs) async {
+  static Future<void> resetPersistedState(MobilePrefsStore? prefs) async {
     _cached = BetaTestScriptProgressRecord.empty;
     _loaded = false;
     if (prefs == null) return;
     await prefs.writeMap(prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest(MobilePrefsStore? prefs) =>
+      resetPersistedState(prefs);
 }
 
 class BetaTestScriptProgressRecord {
@@ -125,12 +127,11 @@ class BetaTestScriptProgressRecord {
     bool? day3Seen,
     bool? dismissed,
     String? startedDateKey,
-  }) =>
-      BetaTestScriptProgressRecord(
-        day1Seen: day1Seen ?? this.day1Seen,
-        day2Seen: day2Seen ?? this.day2Seen,
-        day3Seen: day3Seen ?? this.day3Seen,
-        dismissed: dismissed ?? this.dismissed,
-        startedDateKey: startedDateKey ?? this.startedDateKey,
-      );
+  }) => BetaTestScriptProgressRecord(
+    day1Seen: day1Seen ?? this.day1Seen,
+    day2Seen: day2Seen ?? this.day2Seen,
+    day3Seen: day3Seen ?? this.day3Seen,
+    dismissed: dismissed ?? this.dismissed,
+    startedDateKey: startedDateKey ?? this.startedDateKey,
+  );
 }

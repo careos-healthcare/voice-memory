@@ -8,10 +8,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Compact reassurance when the archive is still collecting evidence.
 class LowEvidenceGuidanceCard extends StatelessWidget {
-  const LowEvidenceGuidanceCard({
-    super.key,
-    required this.guidance,
-  });
+  const LowEvidenceGuidanceCard({super.key, required this.guidance});
 
   final LowEvidenceGuidance guidance;
 
@@ -21,7 +18,9 @@ class LowEvidenceGuidanceCard extends StatelessWidget {
       key: Key('low_evidence_guidance_card_${guidance.kind.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -34,9 +33,9 @@ class LowEvidenceGuidanceCard extends StatelessWidget {
           Text(
             guidance.body,
             key: const Key('low_evidence_guidance_body'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

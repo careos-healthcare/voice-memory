@@ -75,12 +75,13 @@ class _SampleArchiveTourCardState extends State<SampleArchiveTourCard> {
             ),
           ] else ...[
             const SizedBox(height: AppSpacing.sm),
-            for (var index = 0; index < SampleArchiveTour.steps.length; index++) ...[
+            for (
+              var index = 0;
+              index < SampleArchiveTour.steps.length;
+              index++
+            ) ...[
               if (index > 0) const SizedBox(height: AppSpacing.sm),
-              _StepRow(
-                index: index + 1,
-                step: SampleArchiveTour.steps[index],
-              ),
+              _StepRow(index: index + 1, step: SampleArchiveTour.steps[index]),
             ],
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -107,10 +108,7 @@ class _SampleArchiveTourCardState extends State<SampleArchiveTourCard> {
 }
 
 class _StepRow extends StatelessWidget {
-  const _StepRow({
-    required this.index,
-    required this.step,
-  });
+  const _StepRow({required this.index, required this.step});
 
   final int index;
   final SampleArchiveTourStep step;
@@ -123,9 +121,9 @@ class _StepRow extends StatelessWidget {
       children: [
         Text(
           '$index.',
-          style: ArchiveMobileTypography.listTitle(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.listTitle(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(width: AppSpacing.xs),
         Expanded(

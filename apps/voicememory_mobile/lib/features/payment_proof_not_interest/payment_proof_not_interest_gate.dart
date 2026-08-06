@@ -15,27 +15,31 @@ abstract final class PaymentProofNotInterestGate {
     return PaymentProofNotInterestGateResult(
       decision: decision,
       message: PaymentProofNotInterestGateCopy.messageFor(decision),
-      recommendation: PaymentProofNotInterestGateCopy.recommendationFor(decision),
+      recommendation: PaymentProofNotInterestGateCopy.recommendationFor(
+        decision,
+      ),
       signals: signals,
       earliestGap: _earliestGap(input, decision),
       hasPaymentProof: countsAsPaymentProof(decision),
-      isInterestOnly: decision == PaymentProofNotInterestGateDecision.interestOnly,
+      isInterestOnly:
+          decision == PaymentProofNotInterestGateDecision.interestOnly,
       maybeCountedAsPaymentProof: false,
     );
   }
 
   static PaymentProofNotInterestGateReport report(
     PaymentProofNotInterestGateResult result,
-  ) =>
-      PaymentProofNotInterestGateReport(
-        headline: PaymentProofNotInterestGateCopy.headline,
-        body: PaymentProofNotInterestGateCopy.body,
-        orderLine: PaymentProofNotInterestGateCopy.orderLine,
-        guardrail: PaymentProofNotInterestGateCopy.guardrail,
-        result: result,
-      );
+  ) => PaymentProofNotInterestGateReport(
+    headline: PaymentProofNotInterestGateCopy.headline,
+    body: PaymentProofNotInterestGateCopy.body,
+    orderLine: PaymentProofNotInterestGateCopy.orderLine,
+    guardrail: PaymentProofNotInterestGateCopy.guardrail,
+    result: result,
+  );
 
-  static bool countsAsPaymentProof(PaymentProofNotInterestGateDecision decision) =>
+  static bool countsAsPaymentProof(
+    PaymentProofNotInterestGateDecision decision,
+  ) =>
       decision == PaymentProofNotInterestGateDecision.purchaseProof ||
       decision == PaymentProofNotInterestGateDecision.restoreProof;
 
@@ -46,21 +50,20 @@ abstract final class PaymentProofNotInterestGate {
     bool testerAsksForPriceDetails = false,
     bool testerContinuesUsingAfterProof = false,
     bool testerRestoresPurchase = false,
-  }) =>
-      PaymentProofNotInterestGateInput(
-        testerSaysIdeaInteresting: testerSaysIdeaInteresting,
-        testerSaysWouldPayMaybe: testerSaysWouldPayMaybe ||
-            input.testerWouldPay == PaidIntentBetaWouldPay.maybe,
-        testerSeesFirstUsefulProof: input.firstUsefulProofSeen,
-        testerSeesProPromise: input.proPromiseSeen,
-        testerTapsPro: input.proTapped,
-        testerStartsPurchase: input.purchaseAttempted,
-        testerCompletesSandboxPurchase: input.purchaseCompleted,
-        testerRestoresPurchase:
-            testerRestoresPurchase || input.restoreAttempted,
-        testerAsksForPriceDetails: testerAsksForPriceDetails,
-        testerContinuesUsingAfterProof: testerContinuesUsingAfterProof,
-      );
+  }) => PaymentProofNotInterestGateInput(
+    testerSaysIdeaInteresting: testerSaysIdeaInteresting,
+    testerSaysWouldPayMaybe:
+        testerSaysWouldPayMaybe ||
+        input.testerWouldPay == PaidIntentBetaWouldPay.maybe,
+    testerSeesFirstUsefulProof: input.firstUsefulProofSeen,
+    testerSeesProPromise: input.proPromiseSeen,
+    testerTapsPro: input.proTapped,
+    testerStartsPurchase: input.purchaseAttempted,
+    testerCompletesSandboxPurchase: input.purchaseCompleted,
+    testerRestoresPurchase: testerRestoresPurchase || input.restoreAttempted,
+    testerAsksForPriceDetails: testerAsksForPriceDetails,
+    testerContinuesUsingAfterProof: testerContinuesUsingAfterProof,
+  );
 
   static bool _hasAnySignal(PaymentProofNotInterestGateInput input) =>
       input.testerSaysIdeaInteresting ||
@@ -113,7 +116,8 @@ abstract final class PaymentProofNotInterestGate {
     PaymentProofNotInterestGateInput input,
     PaymentProofNotInterestGateDecision decision,
   ) {
-    if (decision == PaymentProofNotInterestGateDecision.notEnoughPaymentEvidence) {
+    if (decision ==
+        PaymentProofNotInterestGateDecision.notEnoughPaymentEvidence) {
       return PaymentProofNotInterestGateSignalId.testerSeesFirstUsefulProof;
     }
     if (decision == PaymentProofNotInterestGateDecision.interestOnly) {
@@ -171,8 +175,6 @@ abstract final class PaymentProofNotInterestGate {
     final proSeen = proofSeen && input.testerSeesProPromise;
     final proTapped = proSeen && input.testerTapsPro;
     final purchaseStarted = proTapped && input.testerStartsPurchase;
-    final purchaseCompleted =
-        purchaseStarted && input.testerCompletesSandboxPurchase;
 
     return [
       _signal(
@@ -225,10 +227,7 @@ abstract final class PaymentProofNotInterestGate {
           value: input.testerSeesProPromise,
         ),
         detailLabel: detailFor(
-          statusFor(
-            prerequisite: proofSeen,
-            value: input.testerSeesProPromise,
-          ),
+          statusFor(prerequisite: proofSeen, value: input.testerSeesProPromise),
         ),
       ),
       _signal(
@@ -245,10 +244,7 @@ abstract final class PaymentProofNotInterestGate {
           value: input.testerStartsPurchase,
         ),
         detailLabel: detailFor(
-          statusFor(
-            prerequisite: proTapped,
-            value: input.testerStartsPurchase,
-          ),
+          statusFor(prerequisite: proTapped, value: input.testerStartsPurchase),
         ),
       ),
       _signal(
@@ -310,13 +306,12 @@ abstract final class PaymentProofNotInterestGate {
     required PaymentProofNotInterestGateSignalId id,
     required PaymentProofNotInterestGateSignalStatus status,
     required String detailLabel,
-  }) =>
-      PaymentProofNotInterestGateSignal(
-        id: id,
-        label: PaymentProofNotInterestGateCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => PaymentProofNotInterestGateSignal(
+    id: id,
+    label: PaymentProofNotInterestGateCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 }
 
 class PaymentProofNotInterestGateInput {

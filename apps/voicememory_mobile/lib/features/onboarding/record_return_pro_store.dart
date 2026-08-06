@@ -4,11 +4,10 @@ import 'first_60_second_store.dart';
 import 'first_60_second_state.dart';
 import 'first_save_loop_state.dart';
 import 'first_save_loop_store.dart';
-import 'record_return_pro_state.dart';
 
 /// Prefs-backed persistence for the Record → Return → Pro loop.
 class RecordReturnProStore {
-  RecordReturnProStore({MobilePrefsStore? prefs}) : _prefs = prefs;
+  RecordReturnProStore({this._prefs});
 
   static RecordReturnProStore instance() => RecordReturnProStore();
 

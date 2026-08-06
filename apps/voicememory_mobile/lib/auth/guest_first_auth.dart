@@ -4,9 +4,7 @@ import '../storage/mobile_prefs_store.dart';
 
 /// Guest-first local mode — record via device attest without email at launch.
 class GuestFirstAuth {
-  GuestFirstAuth(this._prefs, {CaptureAttestService? attest, SyncService? sync})
-    : _attest = attest,
-      _sync = sync;
+  GuestFirstAuth(this._prefs, {this._attest, this._sync});
 
   final MobilePrefsStore _prefs;
   final CaptureAttestService? _attest;

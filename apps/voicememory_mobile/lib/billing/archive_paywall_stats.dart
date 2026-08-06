@@ -74,10 +74,7 @@ class ArchivePaywallStats {
         '${ArchivePaywallCopy.subheadlineA}';
   }
 
-  String subheadlineFor(ArchivePaywallVariant variant) => switch (variant) {
-    ArchivePaywallVariant.b => subheadlineVariantB(),
-    _ => subheadlineLegacy(),
-  };
+  String subheadlineFor(ArchivePaywallVariant variant) => subheadlineVariantB();
 
   /// Hero line: "127 recordings" / "6 months" (Variant B).
   String heroRecordingLine() {
@@ -123,10 +120,7 @@ class ArchivePaywallStats {
         'pattern${recurringThemeCount == 1 ? '' : 's'}.';
   }
 
-  String preCtaFor(ArchivePaywallVariant variant) => switch (variant) {
-    ArchivePaywallVariant.b => preCtaVariantB(),
-    _ => preCtaLegacy(),
-  };
+  String preCtaFor(ArchivePaywallVariant variant) => preCtaVariantB();
 
   static ArchivePaywallStats fromEntries({
     required List<JournalEntry> entries,

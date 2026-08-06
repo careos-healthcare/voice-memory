@@ -25,22 +25,21 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 20,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 20,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   setUp(() async {
@@ -56,16 +55,13 @@ void main() {
       expect(RecordCaptureModeCopy.cardTitle, 'Start with anything real');
       expect(RecordCaptureModeCopy.cardSubtitle, contains('big moment'));
       expect(RecordCaptureMode.all, hasLength(5));
-      expect(
-        RecordCaptureMode.all.map((m) => m.label).toList(),
-        [
-          RecordCaptureModeCopy.somethingHappenedLabel,
-          RecordCaptureModeCopy.keptThinkingLabel,
-          RecordCaptureModeCopy.smallWinLabel,
-          RecordCaptureModeCopy.pressureMomentLabel,
-          RecordCaptureModeCopy.nothingMuchTodayLabel,
-        ],
-      );
+      expect(RecordCaptureMode.all.map((m) => m.label).toList(), [
+        RecordCaptureModeCopy.somethingHappenedLabel,
+        RecordCaptureModeCopy.keptThinkingLabel,
+        RecordCaptureModeCopy.smallWinLabel,
+        RecordCaptureModeCopy.pressureMomentLabel,
+        RecordCaptureModeCopy.nothingMuchTodayLabel,
+      ]);
     });
   });
 
@@ -98,7 +94,10 @@ void main() {
       expect(RecordCaptureModeEngine.entryIsQuietDay(entry), isTrue);
       final verdict = ArchiveEvidenceQuality.assess(entry);
       expect(verdict.allowsInsights, isFalse);
-      expect(FirstProofMomentEngine.build(entries: [entry, entry, entry]), isNull);
+      expect(
+        FirstProofMomentEngine.build(entries: [entry, entry, entry]),
+        isNull,
+      );
     });
 
     test('generic test text remains ignored', () {
@@ -115,9 +114,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordCaptureModesCard(onModeTap: (_) {}),
-          ),
+          home: Scaffold(body: RecordCaptureModesCard(onModeTap: (_) {})),
         ),
       );
       await tester.pump();
@@ -135,10 +132,7 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(420, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: child,
-        ),
+        MaterialApp(theme: AppTheme.light(), home: child),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
@@ -177,14 +171,18 @@ void main() {
       );
       expect(
         tester
-            .widget<TextField>(find.byKey(const Key('quick_text_capture_field')))
+            .widget<TextField>(
+              find.byKey(const Key('quick_text_capture_field')),
+            )
             .controller!
             .text,
         isEmpty,
       );
     });
 
-    testWidgets('quiet-day mode shows save-as-quiet-day action', (tester) async {
+    testWidgets('quiet-day mode shows save-as-quiet-day action', (
+      tester,
+    ) async {
       await _pumpCaptureScreen(
         tester,
         const QuickTextCaptureScreen(
@@ -198,7 +196,10 @@ void main() {
         find.byKey(const Key('quick_text_capture_quiet_day_save')),
         findsOneWidget,
       );
-      expect(find.text(RecordCaptureModeCopy.quietDaySaveButton), findsOneWidget);
+      expect(
+        find.text(RecordCaptureModeCopy.quietDaySaveButton),
+        findsOneWidget,
+      );
     });
 
     test('quiet-day save stores default phrase only', () async {
@@ -208,7 +209,10 @@ void main() {
 
       final all = await AppServices.instance.journalStore.loadAll();
       expect(all, hasLength(1));
-      expect(all.single.transcript, RecordCaptureModeCopy.quietDayDefaultSaveText);
+      expect(
+        all.single.transcript,
+        RecordCaptureModeCopy.quietDayDefaultSaveText,
+      );
       expect(
         all.single.transcript,
         isNot(contains(RecordCaptureModeCopy.nothingMuchTodayHelper)),
@@ -269,7 +273,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 200));
 
         expect(find.text(mode.helper), findsOneWidget);
-        expect(find.byKey(const Key('quick_text_capture_mode_helper')), findsOneWidget);
+        expect(
+          find.byKey(const Key('quick_text_capture_mode_helper')),
+          findsOneWidget,
+        );
         expect(find.text(mode.prompt), findsOneWidget);
       }
     });

@@ -14,7 +14,7 @@ abstract final class ReturnAfterProofLiftV2Analytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required ReturnAfterProofLiftV2Result result}) {
     _emit(seenEvent, result: result);

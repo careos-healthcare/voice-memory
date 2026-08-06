@@ -45,7 +45,9 @@ class ArchiveWorkspaceQuickActionsCard extends StatelessWidget {
             children: [
               for (final action in quickActions.actions)
                 OutlinedButton(
-                  key: Key('archive_workspace_quick_action_${action.kind.name}'),
+                  key: Key(
+                    'archive_workspace_quick_action_${action.kind.name}',
+                  ),
                   onPressed: () => onActionTap(action),
                   child: Text(action.label),
                 ),

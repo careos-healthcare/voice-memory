@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
-
 import '../../config/developer_settings_gate.dart';
-import '../beta/archive_beta_mission_gate.dart';
 import '../first_run_positioning/first_run_positioning_engine.dart';
+import '../../core/config/v1_feature_flags.dart';
 import 'surface_priority_copy.dart';
 import 'surface_priority_model.dart';
 
@@ -210,10 +208,9 @@ abstract final class SurfacePriorityEngine {
       hiddenReasons: hiddenReasons,
       guidanceSlot: guidanceSlot,
       proofSlot: proofSlot,
-      correctionSlot:
-          correctionSlot != null && visible.contains(correctionSlot)
-              ? correctionSlot
-              : null,
+      correctionSlot: correctionSlot != null && visible.contains(correctionSlot)
+          ? correctionSlot
+          : null,
       reportSlot: reportSlot,
       proSlot: proSlot,
     );
@@ -224,6 +221,13 @@ abstract final class SurfacePriorityEngine {
     required String source,
     required SurfacePriorityCandidates candidates,
   }) {
+    if (V1FeatureFlags.enableV1Only) {
+      return _auditRecordPostSaveV1(
+        entryCount: entryCount,
+        source: source,
+        candidates: candidates,
+      );
+    }
     final visible = <SurfacePriorityCardKey>[];
     final hiddenReasons = <String>[];
 
@@ -233,21 +237,24 @@ abstract final class SurfacePriorityEngine {
       }
     }
 
-    final whatChangedActive =
-        candidates.candidate(SurfacePriorityCardKey.whatChanged);
-    final firstProofActive =
-        candidates.candidate(SurfacePriorityCardKey.firstProofPayoff);
-    final returnPayoffActive =
-        candidates.candidate(SurfacePriorityCardKey.returnPayoff);
+    final whatChangedActive = candidates.candidate(
+      SurfacePriorityCardKey.whatChanged,
+    );
+    final firstProofActive = candidates.candidate(
+      SurfacePriorityCardKey.firstProofPayoff,
+    );
+    final returnPayoffActive = candidates.candidate(
+      SurfacePriorityCardKey.returnPayoff,
+    );
 
     if (whatChangedActive) {
       visible.add(SurfacePriorityCardKey.whatChanged);
-      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins);
+      hiddenReasons.add(
+        SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins,
+      );
     } else if (firstProofActive) {
       visible.add(SurfacePriorityCardKey.firstProofPayoff);
-      hiddenReasons.add(
-        SurfacePriorityCopy.hiddenReasonPostSaveFirstProofWins,
-      );
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveFirstProofWins);
       if (candidates.candidate(
         SurfacePriorityCardKey.timelineProofMomentPostSave,
       )) {
@@ -273,7 +280,9 @@ abstract final class SurfacePriorityEngine {
         SurfacePriorityCardKey.returnAfterProofStrengthened,
       )) {
         visible.add(SurfacePriorityCardKey.returnAfterProofStrengthened);
-      } else if (candidates.candidate(SurfacePriorityCardKey.returnAfterProof)) {
+      } else if (candidates.candidate(
+        SurfacePriorityCardKey.returnAfterProof,
+      )) {
         visible.add(SurfacePriorityCardKey.returnAfterProof);
       }
     } else if (returnPayoffActive) {
@@ -310,11 +319,68 @@ abstract final class SurfacePriorityEngine {
       proofSlot: whatChangedActive
           ? SurfacePriorityCardKey.whatChanged
           : firstProofActive
-              ? SurfacePriorityCardKey.firstProofPayoff
-              : returnPayoffActive
-                  ? SurfacePriorityCardKey.returnPayoff
-                  : null,
+          ? SurfacePriorityCardKey.firstProofPayoff
+          : returnPayoffActive
+          ? SurfacePriorityCardKey.returnPayoff
+          : null,
       proSlot: proSlot,
+    );
+  }
+
+  /// V1 launch: one cautious verified result max; no beta/pro/retention cards.
+  static SurfacePriorityResult _auditRecordPostSaveV1({
+    required int entryCount,
+    required String source,
+    required SurfacePriorityCandidates candidates,
+  }) {
+    final visible = <SurfacePriorityCardKey>[];
+    final hiddenReasons = <String>['v1_post_save_lab_quarantined'];
+
+    for (final key in _guidanceOrder) {
+      if (candidates.candidate(key)) {
+        hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveGuidance);
+      }
+    }
+
+    SurfacePriorityCardKey? proofSlot;
+    if (candidates.candidate(SurfacePriorityCardKey.whatChanged)) {
+      visible.add(SurfacePriorityCardKey.whatChanged);
+      proofSlot = SurfacePriorityCardKey.whatChanged;
+      hiddenReasons.add(
+        SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins,
+      );
+    } else if (candidates.candidate(SurfacePriorityCardKey.firstProofPayoff)) {
+      visible.add(SurfacePriorityCardKey.firstProofPayoff);
+      proofSlot = SurfacePriorityCardKey.firstProofPayoff;
+      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveFirstProofWins);
+    }
+
+    for (final key in [
+      SurfacePriorityCardKey.timelineProofMomentPostSave,
+      SurfacePriorityCardKey.proofSpecificityPostSave,
+      SurfacePriorityCardKey.betaProofFeedback,
+      SurfacePriorityCardKey.betaProofLift,
+      SurfacePriorityCardKey.betaInviteLoop,
+      SurfacePriorityCardKey.returnAfterProofLiftV2,
+      SurfacePriorityCardKey.returnAfterProofStrengthened,
+      SurfacePriorityCardKey.returnAfterProof,
+      SurfacePriorityCardKey.returnPayoff,
+      ..._postSaveProOrder,
+      SurfacePriorityCardKey.betaFeedbackCapture,
+    ]) {
+      if (candidates.candidate(key)) {
+        hiddenReasons.add(SurfacePriorityCopy.hiddenReasonProCap);
+      }
+    }
+
+    return _result(
+      surface: SurfacePrioritySurface.recordPostSave,
+      entryCount: entryCount,
+      source: source,
+      candidates: candidates,
+      visible: visible,
+      hiddenReasons: hiddenReasons,
+      proofSlot: proofSlot,
     );
   }
 
@@ -338,12 +404,12 @@ abstract final class SurfacePriorityEngine {
 
     final detailCandidates = timelineProofVisible
         ? _patternsDetailOrder
-            .where(
-              (key) =>
-                  key != SurfacePriorityCardKey.patternConfidence &&
-                  key != SurfacePriorityCardKey.evidenceWeighting,
-            )
-            .toList()
+              .where(
+                (key) =>
+                    key != SurfacePriorityCardKey.patternConfidence &&
+                    key != SurfacePriorityCardKey.evidenceWeighting,
+              )
+              .toList()
         : _patternsDetailOrder;
 
     final detailSlot = _pickFirst(candidates, detailCandidates);
@@ -428,8 +494,8 @@ abstract final class SurfacePriorityEngine {
       proofSlot: visible.contains(SurfacePriorityCardKey.timelineProofMoment)
           ? SurfacePriorityCardKey.timelineProofMoment
           : visible.contains(SurfacePriorityCardKey.archiveTimelineSpine)
-              ? SurfacePriorityCardKey.archiveTimelineSpine
-              : null,
+          ? SurfacePriorityCardKey.archiveTimelineSpine
+          : null,
       correctionSlot: detailSlot,
       reportSlot: visible.contains(SurfacePriorityCardKey.betaTesterReport)
           ? SurfacePriorityCardKey.betaTesterReport
@@ -473,17 +539,15 @@ abstract final class SurfacePriorityEngine {
   static bool allowsBetaTesterReportOnRecord({
     required SurfacePriorityResult audit,
   }) =>
-      audit.isVisible(
-        SurfacePriorityCardKey.betaTesterReport,
-        candidate: true,
-      );
+      audit.isVisible(SurfacePriorityCardKey.betaTesterReport, candidate: true);
 
   static bool allowsWhatToNoticeNextOnRecord({
     required bool lowFrictionReturnVisible,
     required bool betaTodaySummaryVisible,
     required bool openCapturePromptChipsVisible,
   }) {
-    final guidanceCount = (lowFrictionReturnVisible ? 1 : 0) +
+    final guidanceCount =
+        (lowFrictionReturnVisible ? 1 : 0) +
         (betaTodaySummaryVisible ? 1 : 0) +
         (openCapturePromptChipsVisible ? 1 : 0);
     return guidanceCount <= 1;
@@ -547,7 +611,9 @@ abstract final class SurfacePriorityEngine {
       return;
     }
     if (candidates.candidate(SurfacePriorityCardKey.whatChanged)) {
-      hiddenReasons.add(SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins);
+      hiddenReasons.add(
+        SurfacePriorityCopy.hiddenReasonPostSaveWhatChangedWins,
+      );
       return;
     }
     visible.add(SurfacePriorityCardKey.betaFeedbackCapture);

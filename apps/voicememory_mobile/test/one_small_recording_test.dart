@@ -90,11 +90,7 @@ void main() {
       );
       expect(plan.hasPlan, isTrue);
 
-      final recording = engine.build(
-        _workThread3(),
-        now: _base,
-        entryCount: 3,
-      );
+      final recording = engine.build(_workThread3(), now: _base, entryCount: 3);
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, plan.nextPrompt);
       expect(recording.prompt, 'What happened with the work thread today?');
@@ -113,11 +109,7 @@ void main() {
       final suggestions = const DailyReturnSuggestionEngine().build(records);
       expect(suggestions.hasSuggestions, isTrue);
 
-      final recording = engine.build(
-        records,
-        now: _base,
-        entryCount: 1,
-      );
+      final recording = engine.build(records, now: _base, entryCount: 1);
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, suggestions.recommendedSuggestion!.prompt);
     });
@@ -362,19 +354,23 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('capture-first record keeps single record CTA without duplicate card CTA', (
-      tester,
-    ) async {
-      await seedArchiveEntries(tester);
-      await pumpRecordScreen(
-        tester,
-        store: MemoryPressureCheckInStore(_workThread3()),
-      );
+    testWidgets(
+      'capture-first record keeps single record CTA without duplicate card CTA',
+      (tester) async {
+        await seedArchiveEntries(tester);
+        await pumpRecordScreen(
+          tester,
+          store: MemoryPressureCheckInStore(_workThread3()),
+        );
 
-      expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
-      expect(find.byKey(const Key('one_small_recording_record_cta')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
+        expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+        expect(
+          find.byKey(const Key('one_small_recording_record_cta')),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('no card without plan or suggestion evidence', (tester) async {
       await pumpRecordScreen(tester);

@@ -28,16 +28,14 @@ abstract class FirstThreeSessionGates {
   static bool suppressNoisyPostSaveCards({
     required bool justSavedFirst,
     required int entryCount,
-  }) =>
-      justSavedFirst && entryCount == 1;
+  }) => justSavedFirst && entryCount == 1;
 
   /// Hide "possible repeat" / hypothesis cards after the second save unless
   /// the overlap is grounded in the user's own words.
   static bool suppressEarlyPatternClaimCards({
     required int entryCount,
     required bool hasGroundedRepeatMatch,
-  }) =>
-      entryCount == minEntriesForRepeatSurface && !hasGroundedRepeatMatch;
+  }) => entryCount == minEntriesForRepeatSurface && !hasGroundedRepeatMatch;
 
   static bool showSession2RepeatSurface(int entryCount) =>
       entryCount >= minEntriesForRepeatSurface;
@@ -51,11 +49,10 @@ abstract class FirstThreeSessionGates {
     required bool resolved,
     required bool isPro,
     required bool hasArchiveProof,
-  }) =>
-      PaywallTimingGates.showSoftProBridge(
-        entryCount: entryCount,
-        resolved: resolved,
-        isPro: isPro,
-        hasArchiveProof: hasArchiveProof,
-      );
+  }) => PaywallTimingGates.showSoftProBridge(
+    entryCount: entryCount,
+    resolved: resolved,
+    isPro: isPro,
+    hasArchiveProof: hasArchiveProof,
+  );
 }

@@ -25,16 +25,16 @@ void main() {
     };
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(nativeRecorderChannel, (call) async {
-      switch (call.method) {
-        case 'isNativeRecorderAvailable':
-          return true;
-        case 'nativeMicrophonePermission':
-        case 'requestNativeMicrophonePermission':
-          return nativeMicResponse;
-        default:
-          return null;
-      }
-    });
+          switch (call.method) {
+            case 'isNativeRecorderAvailable':
+              return true;
+            case 'nativeMicrophonePermission':
+            case 'requestNativeMicrophonePermission':
+              return nativeMicResponse;
+            default:
+              return null;
+          }
+        });
   });
 
   tearDown(() {
@@ -52,94 +52,112 @@ void main() {
     expect(RecordingPhase.values, contains(RecordingPhase.permissionDenied));
   });
 
-  test('simulator policy: permanentlyDenied + hasRecorder prefers recorder when flagged', () {
-    expect(
-      MicrophonePermissionResolver.resolve(
-        status: PermissionStatus.permanentlyDenied,
+  test(
+    'simulator policy: permanentlyDenied + hasRecorder prefers recorder when flagged',
+    () {
+      expect(
+        MicrophonePermissionResolver.resolve(
+          status: PermissionStatus.permanentlyDenied,
+          hasRecorder: true,
+          preferRecorderOnIosSimulator: true,
+        ),
+        MicrophonePermissionState.granted,
+      );
+    },
+  );
+
+  test(
+    'simulator policy: restricted + hasRecorder prefers recorder when flagged',
+    () {
+      expect(
+        MicrophonePermissionResolver.resolve(
+          status: PermissionStatus.restricted,
+          hasRecorder: true,
+          preferRecorderOnIosSimulator: true,
+        ),
+        MicrophonePermissionState.granted,
+      );
+    },
+  );
+
+  test(
+    'simulator policy: denied platform status stays not ready without prefer flag',
+    () {
+      final state = MicrophonePermissionResolver.resolve(
+        status: PermissionStatus.denied,
         hasRecorder: true,
-        preferRecorderOnIosSimulator: true,
-      ),
-      MicrophonePermissionState.granted,
-    );
-  });
+      );
+      expect(
+        MicrophonePermissionResolver.toRecordingPhase(state),
+        isNot(RecordingPhase.ready),
+      );
+    },
+  );
 
-  test('simulator policy: restricted + hasRecorder prefers recorder when flagged', () {
-    expect(
-      MicrophonePermissionResolver.resolve(
-        status: PermissionStatus.restricted,
-        hasRecorder: true,
-        preferRecorderOnIosSimulator: true,
-      ),
-      MicrophonePermissionState.granted,
-    );
-  });
+  test(
+    'simulator policy: permanentlyDenied + hasRecorder starts recording when flagged',
+    () async {
+      MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
+      final recording = RecordingService(
+        testMode: true,
+        permissionGateway: FakeMicrophonePermissionGateway(
+          statusValue: PermissionStatus.permanentlyDenied,
+          hasRecorder: true,
+        ),
+        hasRecorderOverride: true,
+      );
 
-  test('simulator policy: denied platform status stays not ready without prefer flag', () {
-    final state = MicrophonePermissionResolver.resolve(
-      status: PermissionStatus.denied,
-      hasRecorder: true,
-    );
-    expect(
-      MicrophonePermissionResolver.toRecordingPhase(state),
-      isNot(RecordingPhase.ready),
-    );
-  });
+      await recording.startRecording();
+      expect(recording.recorderStartCallCount, 1);
+    },
+  );
 
-  test('simulator policy: permanentlyDenied + hasRecorder starts recording when flagged', () async {
-    MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
-    final recording = RecordingService(
-      testMode: true,
-      permissionGateway: FakeMicrophonePermissionGateway(
-        statusValue: PermissionStatus.permanentlyDenied,
-        hasRecorder: true,
-      ),
-      hasRecorderOverride: true,
-    );
+  test(
+    'physical iOS native permission resolves to ready when recorder grants',
+    () async {
+      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      nativeMicResponse = <String, Object>{
+        'status': 'granted',
+        'granted': true,
+        'canRequest': false,
+      };
+      final recording = RecordingService(
+        testMode: true,
+        permissionGateway: FakeMicrophonePermissionGateway(
+          statusValue: PermissionStatus.permanentlyDenied,
+          hasRecorder: true,
+        ),
+        hasRecorderOverride: true,
+      );
 
-    await recording.startRecording();
-    expect(recording.recorderStartCallCount, 1);
-  });
+      final resolution = await recording.evaluateMicrophonePermission();
+      expect(resolution.state, MicrophonePermissionState.granted);
+      expect(resolution.phase, RecordingPhase.ready);
+    },
+  );
 
-  test('physical iOS native permission resolves to ready when recorder grants', () async {
-    MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-    nativeMicResponse = <String, Object>{
-      'status': 'granted',
-      'granted': true,
-      'canRequest': false,
-    };
-    final recording = RecordingService(
-      testMode: true,
-      permissionGateway: FakeMicrophonePermissionGateway(
-        statusValue: PermissionStatus.permanentlyDenied,
-        hasRecorder: true,
-      ),
-      hasRecorderOverride: true,
-    );
-
-    final resolution = await recording.evaluateMicrophonePermission();
-    expect(resolution.state, MicrophonePermissionState.granted);
-    expect(resolution.phase, RecordingPhase.ready);
-  });
-
-  test('RecordingService does not start when native microphone is denied', () async {
-    MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-    nativeMicResponse = <String, Object>{
-      'status': 'denied',
-      'granted': false,
-      'canRequest': false,
-    };
-    final recording = RecordingService(
-      testMode: true,
-      permissionGateway: FakeMicrophonePermissionGateway(
-        statusValue: PermissionStatus.denied,
-        hasRecorder: false,
-      ),
-      hasRecorderOverride: false,
-    );
-    await expectLater(
-      recording.startRecording(),
-      throwsA(isA<RecordingException>()),
-    );
-    expect(recording.recorderStartCallCount, 0);
-  });
+  test(
+    'RecordingService does not start when native microphone is denied',
+    () async {
+      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      nativeMicResponse = <String, Object>{
+        'status': 'denied',
+        'granted': false,
+        'canRequest': false,
+      };
+      final recording = RecordingService(
+        testMode: true,
+        permissionGateway: FakeMicrophonePermissionGateway(
+          statusValue: PermissionStatus.denied,
+          hasRecorder: false,
+        ),
+        hasRecorderOverride: false,
+      );
+      await expectLater(
+        recording.startRecording(),
+        throwsA(isA<RecordingException>()),
+      );
+      expect(recording.recorderStartCallCount, 0);
+    },
+  );
 }

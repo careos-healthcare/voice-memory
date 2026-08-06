@@ -18,7 +18,8 @@ abstract final class PriceObjectionFeedbackCopy {
 
   static const skipLabel = 'Skip';
 
-  static const thanksLine = 'Thanks — noted for paid-intent beta interpretation.';
+  static const thanksLine =
+      'Thanks — noted for paid-intent beta interpretation.';
 
   static const reasonOrderLine =
       'Reasons: need stronger proof, too expensive, not clear what Pro keeps, not ready yet, '
@@ -48,42 +49,41 @@ abstract final class PriceObjectionFeedbackCopy {
       'Objection feedback ready after Pro tap without purchase';
 
   static String labelFor(PriceObjectionReasonId id) => switch (id) {
-        PriceObjectionReasonId.needStrongerProof => 'Need stronger proof',
-        PriceObjectionReasonId.tooExpensive => 'Too expensive',
-        PriceObjectionReasonId.notClearWhatProKeeps =>
-          'Not clear what Pro keeps',
-        PriceObjectionReasonId.notReadyYet => 'Not ready yet',
-        PriceObjectionReasonId.wantedSyncBackup => 'Wanted sync/backup',
-        PriceObjectionReasonId.wantedReports => 'Wanted reports',
-        PriceObjectionReasonId.other => 'Other',
-      };
+    PriceObjectionReasonId.needStrongerProof => 'Need stronger proof',
+    PriceObjectionReasonId.tooExpensive => 'Too expensive',
+    PriceObjectionReasonId.notClearWhatProKeeps => 'Not clear what Pro keeps',
+    PriceObjectionReasonId.notReadyYet => 'Not ready yet',
+    PriceObjectionReasonId.wantedSyncBackup => 'Wanted sync/backup',
+    PriceObjectionReasonId.wantedReports => 'Wanted reports',
+    PriceObjectionReasonId.other => 'Other',
+  };
 
   static String positioningFor(PriceObjectionReasonId id) => switch (id) {
-        PriceObjectionReasonId.needStrongerProof =>
-          'Need stronger proof — value not landed yet.',
-        PriceObjectionReasonId.tooExpensive =>
-          'Too expensive — price objection without discount experiments.',
-        PriceObjectionReasonId.notClearWhatProKeeps =>
-          'Not clear what Pro keeps — promise clarity gap.',
-        PriceObjectionReasonId.notReadyYet =>
-          'Not ready yet — timing objection, not product scope.',
-        PriceObjectionReasonId.wantedSyncBackup =>
-          'Wanted sync/backup — future-scope signal only.',
-        PriceObjectionReasonId.wantedReports =>
-          'Wanted reports — future-scope signal only.',
-        PriceObjectionReasonId.other => 'Other — free-text bucket for beta notes.',
-      };
+    PriceObjectionReasonId.needStrongerProof =>
+      'Need stronger proof — value not landed yet.',
+    PriceObjectionReasonId.tooExpensive =>
+      'Too expensive — price objection without discount experiments.',
+    PriceObjectionReasonId.notClearWhatProKeeps =>
+      'Not clear what Pro keeps — promise clarity gap.',
+    PriceObjectionReasonId.notReadyYet =>
+      'Not ready yet — timing objection, not product scope.',
+    PriceObjectionReasonId.wantedSyncBackup =>
+      'Wanted sync/backup — future-scope signal only.',
+    PriceObjectionReasonId.wantedReports =>
+      'Wanted reports — future-scope signal only.',
+    PriceObjectionReasonId.other => 'Other — free-text bucket for beta notes.',
+  };
 
   static String ruleLabelFor(PriceObjectionFeedbackRuleId id) => switch (id) {
-        PriceObjectionFeedbackRuleId.showOnlyAfterProTapWithoutPurchase =>
-          'Show only after Pro tap without purchase',
-        PriceObjectionFeedbackRuleId.doNotChangePrice => 'Do not change price',
-        PriceObjectionFeedbackRuleId.doNotAddDiscounts => 'Do not add discounts',
-        PriceObjectionFeedbackRuleId.doNotAddNewFeatures =>
-          'Do not add new features',
-        PriceObjectionFeedbackRuleId.feedPaidIntentBetaInterpretationOnly =>
-          'Feed paid-intent beta interpretation only',
-      };
+    PriceObjectionFeedbackRuleId.showOnlyAfterProTapWithoutPurchase =>
+      'Show only after Pro tap without purchase',
+    PriceObjectionFeedbackRuleId.doNotChangePrice => 'Do not change price',
+    PriceObjectionFeedbackRuleId.doNotAddDiscounts => 'Do not add discounts',
+    PriceObjectionFeedbackRuleId.doNotAddNewFeatures =>
+      'Do not add new features',
+    PriceObjectionFeedbackRuleId.feedPaidIntentBetaInterpretationOnly =>
+      'Feed paid-intent beta interpretation only',
+  };
 
   static String messageFor(PriceObjectionFeedbackGateDecision decision) =>
       switch (decision) {
@@ -93,13 +93,14 @@ abstract final class PriceObjectionFeedbackCopy {
           objectionFeedbackDocumentedLine,
       };
 
-  static String recommendationFor(PriceObjectionFeedbackGateDecision decision) =>
-      switch (decision) {
-        PriceObjectionFeedbackGateDecision.objectionFeedbackFrozen =>
-          'Wait for Pro tap without purchase before surfacing objection feedback.',
-        PriceObjectionFeedbackGateDecision.objectionFeedbackDocumented =>
-          'Collect one-tap objection reasons for paid-intent beta interpretation only. Keep price, discounts, and features unchanged.',
-      };
+  static String recommendationFor(
+    PriceObjectionFeedbackGateDecision decision,
+  ) => switch (decision) {
+    PriceObjectionFeedbackGateDecision.objectionFeedbackFrozen =>
+      'Wait for Pro tap without purchase before surfacing objection feedback.',
+    PriceObjectionFeedbackGateDecision.objectionFeedbackDocumented =>
+      'Collect one-tap objection reasons for paid-intent beta interpretation only. Keep price, discounts, and features unchanged.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -150,10 +151,7 @@ enum PriceObjectionFeedbackRuleId {
   feedPaidIntentBetaInterpretationOnly,
 }
 
-enum PriceObjectionFeedbackRuleStatus {
-  pass,
-  fail,
-}
+enum PriceObjectionFeedbackRuleStatus { pass, fail }
 
 enum PriceObjectionFeedbackGateDecision {
   objectionFeedbackFrozen,

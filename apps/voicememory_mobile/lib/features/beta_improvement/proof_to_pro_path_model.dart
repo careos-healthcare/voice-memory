@@ -28,16 +28,15 @@ class ProofToProPathModel {
     bool? showProPackagingPaywallCopy,
     bool? suppressStandaloneProBridgeCard,
     String? reason,
-  }) =>
-      ProofToProPathModel(
-        showProofEmotionalClarity:
-            showProofEmotionalClarity ?? this.showProofEmotionalClarity,
-        showProPackagingBridge:
-            showProPackagingBridge ?? this.showProPackagingBridge,
-        showProPackagingPaywallCopy:
-            showProPackagingPaywallCopy ?? this.showProPackagingPaywallCopy,
-        suppressStandaloneProBridgeCard: suppressStandaloneProBridgeCard ??
-            this.suppressStandaloneProBridgeCard,
-        reason: reason ?? this.reason,
-      );
+  }) => ProofToProPathModel(
+    showProofEmotionalClarity:
+        showProofEmotionalClarity ?? this.showProofEmotionalClarity,
+    showProPackagingBridge:
+        showProPackagingBridge ?? this.showProPackagingBridge,
+    showProPackagingPaywallCopy:
+        showProPackagingPaywallCopy ?? this.showProPackagingPaywallCopy,
+    suppressStandaloneProBridgeCard:
+        suppressStandaloneProBridgeCard ?? this.suppressStandaloneProBridgeCard,
+    reason: reason ?? this.reason,
+  );
 }

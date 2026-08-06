@@ -36,8 +36,8 @@ class PatternChangedCard extends StatefulWidget {
     this.onDismissed,
     this.store,
     bool dismissed = false,
-  })  : skipPrefsLoad = true,
-        initialDismissed = dismissed;
+  }) : skipPrefsLoad = true,
+       initialDismissed = dismissed;
 
   final PatternChangedResult result;
   final int entryCount;
@@ -114,20 +114,21 @@ class _PatternChangedCardState extends State<PatternChangedCard> {
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     final phraseStyle = bodyStyle.copyWith(color: AppColors.textPrimary);
 
     return Container(
       key: const Key('pattern_changed_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF5FAF6)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF5FAF6),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -187,7 +188,10 @@ class _PatternChangedCardState extends State<PatternChangedCard> {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.accentPrimary,
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 2,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

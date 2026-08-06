@@ -7,26 +7,21 @@ import '../../theme/app_theme.dart';
 
 /// Internal proof-of-value summary — developer diagnostics only.
 class ProofOfValueCard extends StatelessWidget {
-  const ProofOfValueCard({
-    super.key,
-    required this.report,
-  });
+  const ProofOfValueCard({super.key, required this.report});
 
   final ProofOfValueReport report;
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('proof_of_value_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('proof_of_value_hidden'));
     }
 
     final summaryColor = report.summaryState == ProofOfValueSummaryState.strong
         ? AppColors.textPrimary
         : (report.summaryState == ProofOfValueSummaryState.emerging
-            ? AppColors.textPrimary
-            : AppColors.warning);
+              ? AppColors.textPrimary
+              : AppColors.warning);
 
     return Container(
       key: const Key('proof_of_value_card'),
@@ -42,9 +37,9 @@ class ProofOfValueCard extends StatelessWidget {
           Text(
             report.title,
             key: const Key('proof_of_value_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -70,10 +65,7 @@ class ProofOfValueCard extends StatelessWidget {
           Text(
             report.recommendation,
             key: const Key('proof_of_value_recommendation'),
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
           if (report.localCoreValueNote != null) ...[
             const SizedBox(height: 8),

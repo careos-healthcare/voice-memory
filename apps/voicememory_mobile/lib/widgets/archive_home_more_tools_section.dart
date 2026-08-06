@@ -86,8 +86,9 @@ class _ArchiveHomeMoreToolsSectionState
                             const SizedBox(height: AppSpacing.xs),
                             Text(
                               ArchiveHomePriorityCopy.moreArchiveToolsBody,
-                              style:
-                                  ArchiveMobileTypography.listSubtitle(context),
+                              style: ArchiveMobileTypography.listSubtitle(
+                                context,
+                              ),
                             ),
                           ],
                         ),

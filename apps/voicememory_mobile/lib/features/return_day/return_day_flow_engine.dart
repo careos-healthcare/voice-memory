@@ -31,8 +31,7 @@ abstract final class ReturnDayFlowGates {
   static bool returnedOnLaterDay({
     required List<JournalEntry> entries,
     DateTime? now,
-  }) =>
-      ReturnTomorrowCueGates.isNextDayReturn(entries: entries, now: now);
+  }) => ReturnTomorrowCueGates.isNextDayReturn(entries: entries, now: now);
 
   /// Requires a grounded watch target — no loose single-entry fallback.
   static bool hasGroundedWatchTarget(List<JournalEntry> eligible) {
@@ -58,11 +57,7 @@ abstract final class ReturnDayFlowGates {
     ReturnDayFlow? flow,
     required bool dismissedToday,
   }) =>
-      isReady &&
-      !isRecording &&
-      !isPostSave &&
-      flow != null &&
-      !dismissedToday;
+      isReady && !isRecording && !isPostSave && flow != null && !dismissedToday;
 
   static bool _onlyQuietDayEntries(List<JournalEntry> entries) {
     final withText = entries
@@ -93,7 +88,10 @@ abstract final class ReturnDayFlowEngine {
     );
     if (question == null) return null;
 
-    final days = CaptureRecoveryGates.daysSinceLastEntry(entries: entries, now: now);
+    final days = CaptureRecoveryGates.daysSinceLastEntry(
+      entries: entries,
+      now: now,
+    );
 
     return ReturnDayFlow(
       title: question.title,

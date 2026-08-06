@@ -28,24 +28,23 @@ BetaRepairLabVisibilityInput _input({
   BetaProofFeedbackType? feedbackType = BetaProofFeedbackType.useful,
   bool isNegativeFeedback = false,
   bool isPro = false,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: mode,
-      entryCount: entryCount,
-      source: 'test',
-      isPro: isPro,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: isNegativeFeedback,
-      betaMissionEnabled: betaMissionEnabled,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: mode,
+  entryCount: entryCount,
+  source: 'test',
+  isPro: isPro,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback: isNegativeFeedback,
+  betaMissionEnabled: betaMissionEnabled,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -56,10 +55,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: PricingValidationCard.test(
-            result: result,
-            onSeePro: () {},
-          ),
+          child: PricingValidationCard.test(result: result, onSeePro: () {}),
         ),
       ),
     ),
@@ -124,24 +120,26 @@ void main() {
   });
 
   group('PricingValidationEngine', () {
-    test('card appears only after strong useful proof with pro engagement',
-        () async {
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
-      expect(
-        PricingValidationEngine.shouldShow(
+    test(
+      'card appears only after strong useful proof with pro engagement',
+      () async {
+        BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+        expect(
+          PricingValidationEngine.shouldShow(
+            input: _input(),
+            hasProEngagement: true,
+          ),
+          isTrue,
+        );
+        final result = PricingValidationEngine.build(
           input: _input(),
           hasProEngagement: true,
-        ),
-        isTrue,
-      );
-      final result = PricingValidationEngine.build(
-        input: _input(),
-        hasProEngagement: true,
-      );
-      expect(result.shouldShow, isTrue);
-      expect(result.title, PricingValidationCopy.title);
-      expect(result.body, PricingValidationCopy.body);
-    });
+        );
+        expect(result.shouldShow, isTrue);
+        expect(result.title, PricingValidationCopy.title);
+        expect(result.body, PricingValidationCopy.body);
+      },
+    );
 
     test('blocked when repair mode is not pricingValidation', () async {
       BetaRepairLabStore.repairModeOverrideForTest = 'paywallValue';
@@ -189,10 +187,7 @@ void main() {
       ]) {
         expect(
           PricingValidationEngine.shouldShow(
-            input: _input(
-              feedbackType: null,
-              confidenceLevel: level,
-            ),
+            input: _input(feedbackType: null, confidenceLevel: level),
             hasProEngagement: true,
           ),
           isFalse,
@@ -226,10 +221,7 @@ void main() {
     test('CTA opens existing paywall source value moment', () {
       final source = File('lib/screens/record_screen.dart');
       final contents = source.readAsStringSync();
-      expect(
-        contents,
-        contains('record_beta_repair_lab_pricing_validation'),
-      );
+      expect(contents, contains('record_beta_repair_lab_pricing_validation'));
       expect(contents, contains('PaywallSource.valueMoment'));
     });
 
@@ -317,9 +309,7 @@ void main() {
       };
 
       await _pumpCard(tester, result: result);
-      await tester.tap(
-        find.byKey(const Key('pricing_validation_price_4.99')),
-      );
+      await tester.tap(find.byKey(const Key('pricing_validation_price_4.99')));
       await tester.pump();
 
       expect(

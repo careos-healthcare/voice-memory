@@ -43,7 +43,8 @@ abstract final class ProofOfValueCopy {
 
   static const recommendationFixEvidence = 'Fix evidence specificity.';
 
-  static const recommendationStrengthenRetention = 'Strengthen retention value.';
+  static const recommendationStrengthenRetention =
+      'Strengthen retention value.';
 
   static const recommendationStrengthenPro = 'Strengthen Pro value.';
 
@@ -71,8 +72,7 @@ abstract final class ProofOfValueCopy {
 
   static const questionFirstProof = 'Did testers reach the aha moment?';
 
-  static const questionCoreValueYes =
-      'Did it show something worth tracking?';
+  static const questionCoreValueYes = 'Did it show something worth tracking?';
 
   static const questionFeltGeneric = 'Did proof feel generic?';
 
@@ -90,5 +90,6 @@ abstract final class ProofOfValueCopy {
 
   static String targetLabel(int target, int total) => '$target / $total';
 
-  static String localAnswerLabel(String answer) => '$localAnswerPrefix: $answer';
+  static String localAnswerLabel(String answer) =>
+      '$localAnswerPrefix: $answer';
 }

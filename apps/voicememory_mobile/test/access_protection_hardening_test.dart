@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/models/session.dart';
-import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
+import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/screens/security_settings_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/app_lock_service.dart';
@@ -52,11 +52,7 @@ const _authServicePath = 'lib/services/auth_service.dart';
 const _appLockStorePath = 'lib/security/app_lock_store.dart';
 const _pinHashPath = 'lib/security/pin_hash.dart';
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 const _forbiddenClinicalTerms = [
   'therapy',
@@ -76,8 +72,7 @@ void main() {
 
   setUpAll(() {
     auditDoc = File(_auditDocPath).readAsStringSync();
-    accountAuthScreenSource =
-        File(_accountAuthScreenPath).readAsStringSync();
+    accountAuthScreenSource = File(_accountAuthScreenPath).readAsStringSync();
     authServiceSource = File(_authServicePath).readAsStringSync();
     appLockStoreSource = File(_appLockStorePath).readAsStringSync();
     pinHashSource = File(_pinHashPath).readAsStringSync();
@@ -92,15 +87,9 @@ void main() {
       expect(auditDoc.toLowerCase(), contains('purchases are unavailable'));
       expect(
         auditDoc.toLowerCase(),
-        anyOf(
-          contains('anti-sharing'),
-          contains('family sharing'),
-        ),
+        anyOf(contains('anti-sharing'), contains('family sharing')),
       );
-      expect(
-        auditDoc.toLowerCase(),
-        contains('server entitlement'),
-      );
+      expect(auditDoc.toLowerCase(), contains('server entitlement'));
     });
   });
 
@@ -112,10 +101,7 @@ void main() {
       expect(AccountAuthCopy.resendCode, 'Resend code');
       expect(AccountAuthCopy.continueWithoutAccount, isNotEmpty);
       expect(accountAuthScreenSource.toLowerCase(), contains('passwordless'));
-      expect(
-        accountAuthScreenSource,
-        isNot(contains("labelText: 'Password'")),
-      );
+      expect(accountAuthScreenSource, isNot(contains("labelText: 'Password'")));
       expect(
         accountAuthScreenSource,
         isNot(contains('TextInputType.visiblePassword')),
@@ -164,7 +150,10 @@ void main() {
       expect(appLockStoreSource, contains('pinSalt'));
       expect(appLockStoreSource, isNot(contains('savePin(')));
       expect(pinHashSource.toLowerCase(), contains('raw pin'));
-      expect(PinHash.hash(pin: '1234', salt: PinHash.generateSalt()), isNot('1234'));
+      expect(
+        PinHash.hash(pin: '1234', salt: PinHash.generateSalt()),
+        isNot('1234'),
+      );
     });
 
     test('biometric is optional with PIN fallback in copy', () {
@@ -265,10 +254,7 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SettingsScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
@@ -302,7 +288,10 @@ void main() {
 
       expect(find.text(SecuritySettingsCopy.appLockSection), findsWidgets);
       expect(find.byKey(const Key('security_app_lock_status')), findsOneWidget);
-      expect(find.byKey(const Key('security_restore_purchases')), findsOneWidget);
+      expect(
+        find.byKey(const Key('security_restore_purchases')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Pro Preview shows account restore note', (tester) async {
@@ -317,10 +306,7 @@ void main() {
         find.byKey(const Key('pro_value_preview_account_restore')),
         findsOneWidget,
       );
-      expect(
-        find.text(ProValuePreviewCopy.accountRestoreNote),
-        findsOneWidget,
-      );
+      expect(find.text(ProValuePreviewCopy.accountRestoreNote), findsOneWidget);
     });
   });
 }

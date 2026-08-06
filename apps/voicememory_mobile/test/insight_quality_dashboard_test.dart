@@ -85,8 +85,14 @@ void main() {
     });
 
     test('summary counts correction notes', () {
-      ArchiveInsightFeedbackStore.saveCorrectionNote('beliefEvidence', _privateNote);
-      expect(InsightQualityDashboardEngine.buildSummary().correctionNoteCount, 1);
+      ArchiveInsightFeedbackStore.saveCorrectionNote(
+        'beliefEvidence',
+        _privateNote,
+      );
+      expect(
+        InsightQualityDashboardEngine.buildSummary().correctionNoteCount,
+        1,
+      );
     });
 
     test('friendly labels map known targets', () {
@@ -114,8 +120,9 @@ void main() {
 
   group('InsightQualityScreen', () {
     test('correction note entries expose local preview text', () {
-      final beliefId =
-          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate);
+      final beliefId = ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.beliefUpdate,
+      );
       ArchiveInsightFeedbackStore.record(
         beliefId,
         ArchiveInsightFeedbackChoice.notQuite,
@@ -128,20 +135,28 @@ void main() {
     });
 
     test('delete correction note clears dashboard summary', () {
-      final id =
-          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.beliefUpdate);
+      final id = ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.beliefUpdate,
+      );
       ArchiveInsightFeedbackStore.saveCorrectionNote(id, _privateNote);
-      expect(InsightQualityDashboardEngine.buildSummary().correctionNoteCount, 1);
+      expect(
+        InsightQualityDashboardEngine.buildSummary().correctionNoteCount,
+        1,
+      );
 
       ArchiveInsightFeedbackStore.deleteCorrectionNote(id);
 
       expect(ArchiveInsightFeedbackStore.hasCorrectionNote(id), isFalse);
-      expect(InsightQualityDashboardEngine.buildSummary().correctionNoteCount, 0);
+      expect(
+        InsightQualityDashboardEngine.buildSummary().correctionNoteCount,
+        0,
+      );
     });
 
     test('unhide restores hidden target visibility state', () {
-      final id =
-          ArchiveInsightFeedbackStore.targetId(ArchiveInsightTarget.weeklyReview);
+      final id = ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.weeklyReview,
+      );
       ArchiveInsightFeedbackStore.hide(id);
       expect(
         ArchiveInsightFeedbackAdaptation.shouldSuppress(
@@ -163,16 +178,23 @@ void main() {
 
     test('clear feedback removes positive and negative counts', () {
       const id = 'archive_home_three';
-      ArchiveInsightFeedbackStore.record(id, ArchiveInsightFeedbackChoice.feelsRight);
-      ArchiveInsightFeedbackStore.record(id, ArchiveInsightFeedbackChoice.notQuite);
+      ArchiveInsightFeedbackStore.record(
+        id,
+        ArchiveInsightFeedbackChoice.feelsRight,
+      );
+      ArchiveInsightFeedbackStore.record(
+        id,
+        ArchiveInsightFeedbackChoice.notQuite,
+      );
 
       ArchiveInsightFeedbackStore.clearFeedback(id);
 
       expect(ArchiveInsightFeedbackStore.feelsRightCount(id), 0);
       expect(ArchiveInsightFeedbackStore.notQuiteCount(id), 0);
       expect(
-        InsightQualityDashboardEngine.notQuiteEntries()
-            .map((entry) => entry.insightId),
+        InsightQualityDashboardEngine.notQuiteEntries().map(
+          (entry) => entry.insightId,
+        ),
         isNot(contains(id)),
       );
     });
@@ -186,14 +208,20 @@ void main() {
         entries: const [],
       );
       final shareText = proof.lines.join('\n');
-      expect(shareText.toLowerCase(), isNot(contains(_privateNote.toLowerCase())));
+      expect(
+        shareText.toLowerCase(),
+        isNot(contains(_privateNote.toLowerCase())),
+      );
       expect(shareText.toLowerCase(), isNot(contains('your note:')));
     });
   });
 
   group('Routing and access', () {
     test('route exists and is reachable when developer routes locked', () {
-      expect(DeveloperRouteGuard.redirectFor(InsightQualityNavigation.route), isNull);
+      expect(
+        DeveloperRouteGuard.redirectFor(InsightQualityNavigation.route),
+        isNull,
+      );
     });
 
     test('route is guarded as sensitive', () {
@@ -205,10 +233,7 @@ void main() {
 
     testWidgets('Settings exposes insight quality link', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SettingsScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -220,8 +245,14 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('settings_insight_quality_tile')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.insightQualitySettingsTitle), findsOneWidget);
+      expect(
+        find.byKey(const Key('settings_insight_quality_tile')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.insightQualitySettingsTitle),
+        findsOneWidget,
+      );
     });
   });
 }

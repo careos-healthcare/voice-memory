@@ -89,19 +89,19 @@ class ProPlacementTriggerAuditResult {
 extension ProPlacementTriggerAuditOutcomeAnalytics
     on ProPlacementTriggerAuditOutcome {
   String get analyticsValue => switch (this) {
-        ProPlacementTriggerAuditOutcome.inactive => 'inactive',
-        ProPlacementTriggerAuditOutcome.eligibleAndShown => 'eligible_and_shown',
-        ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
-          'blocked_no_useful_proof',
-        ProPlacementTriggerAuditOutcome.blockedWeakProof => 'blocked_weak_proof',
-        ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
-          'blocked_negative_feedback',
-        ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
-          'blocked_no_strong_anchor',
-        ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
-          'blocked_already_shown',
-        ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
-          'blocked_not_beta_repair_mode',
-        ProPlacementTriggerAuditOutcome.unknown => 'unknown',
-      };
+    ProPlacementTriggerAuditOutcome.inactive => 'inactive',
+    ProPlacementTriggerAuditOutcome.eligibleAndShown => 'eligible_and_shown',
+    ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
+      'blocked_no_useful_proof',
+    ProPlacementTriggerAuditOutcome.blockedWeakProof => 'blocked_weak_proof',
+    ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
+      'blocked_negative_feedback',
+    ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
+      'blocked_no_strong_anchor',
+    ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
+      'blocked_already_shown',
+    ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
+      'blocked_not_beta_repair_mode',
+    ProPlacementTriggerAuditOutcome.unknown => 'unknown',
+  };
 }

@@ -12,7 +12,7 @@ abstract final class ProBridgeVisibilityAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -84,9 +84,9 @@ abstract final class ProBridgeVisibilityAnalytics {
       'entry_count': entryCount,
       'source': source,
       'surface': surface,
-      if (triggerReason != null) 'trigger_reason': triggerReason,
+      'trigger_reason': ?triggerReason,
       'has_timeline_proof': hasTimelineProof,
-      if (feedbackState != null) 'feedback_state': feedbackState,
+      'feedback_state': ?feedbackState,
     };
 
     captureForTest?.call(event, properties);
