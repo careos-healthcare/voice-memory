@@ -16,6 +16,7 @@ import '../features/referral/invited_user_welcome.dart';
 import '../models/journal_entry.dart';
 import '../models/sync_status.dart';
 import '../services/activation_funnel_analytics.dart';
+import 'journal_entry_decoder.dart';
 import 'encrypted_json_file_store.dart';
 import 'private_data_encryption_key_store.dart';
 import 'secure_storage.dart';
@@ -45,6 +46,11 @@ class JournalStore {
   JournalSaveInterceptorPipeline _saveInterceptorPipeline;
 
   List<JournalEntry>? _cache;
+  final List<JournalDecodeQuarantined> _lastLoadQuarantine = [];
+
+  /// Records quarantined during the most recent decode — diagnostics only.
+  List<JournalDecodeQuarantined> get lastLoadQuarantine =>
+      List<JournalDecodeQuarantined>.unmodifiable(_lastLoadQuarantine);
 
   /// Currently signed-in account id, used to stamp newly created entries.
   /// Null while signed out (guest) — see [JournalOwnershipGuard].
@@ -308,10 +314,19 @@ class JournalStore {
         .toList();
   }
 
-  Future<void> markSynced(String id) async {
-    final entry = await getByIdIncludingTombstones(id);
-    if (entry == null) return;
-    await save(entry.markSyncAcknowledged());
+  Future<void> markSynced(String id) async => markSyncedBatch({id});
+
+  Future<void> markSyncedBatch(Set<String> ids) async {
+    if (ids.isEmpty) return;
+    await _mutateBatch((entries) {
+      var changed = false;
+      for (var i = 0; i < entries.length; i++) {
+        if (!ids.contains(entries[i].id)) continue;
+        entries[i] = entries[i].markSyncAcknowledged();
+        changed = true;
+      }
+      return changed;
+    });
   }
 
   /// Merges entries pulled from the server, including tombstones, using
@@ -320,30 +335,54 @@ class JournalStore {
   /// overwrites a lower-priority local copy — it never resurrects a
   /// separately-deleted local entry, and a winning remote non-tombstone
   /// never un-deletes a higher-priority local tombstone.
-  Future<void> mergeRemote(List<JournalEntry> remote) async {
-    final local = await loadAllIncludingTombstones();
-    final byId = {for (final e in local) e.id: e};
-    for (final r in remote) {
-      final existing = byId[r.id];
-      if (existing == null || JournalSyncCompare.compare(r, existing) > 0) {
-        // The remote copy wins outright, but device-local-only bookkeeping
-        // (the local audio file path, and the owning-account stamp used by
-        // JournalOwnershipGuard) is never something the server's revision
-        // comparison should override, so both are preserved from the
-        // existing local copy when present.
-        byId[r.id] = r.copyWith(
-          localAudioPath: existing?.localAudioPath,
-          ownerKey: r.ownerKey ?? existing?.ownerKey,
-          syncStatus: SyncStatus.synced,
-        );
+  Future<void> mergeRemote(List<JournalEntry> remote) async =>
+      mergeRemoteBatch(remote);
+
+  Future<void> mergeRemoteBatch(List<JournalEntry> remote) async {
+    if (remote.isEmpty) return;
+    await _mutateBatch((entries) {
+      final byId = {for (final e in entries) e.id: e};
+      var changed = false;
+      for (final r in remote) {
+        final existing = byId[r.id];
+        if (existing == null || JournalSyncCompare.compare(r, existing) > 0) {
+          byId[r.id] = r.copyWith(
+            localAudioPath: existing?.localAudioPath,
+            ownerKey: r.ownerKey ?? existing?.ownerKey,
+            syncStatus: SyncStatus.synced,
+          );
+          changed = true;
+        }
       }
-    }
-    final merged =
-        byId.values
-            .map((e) => e.isDeleted ? e : _cognitiveAnalyzer.enrichEntry(e))
-            .toList()
-          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    await _writeAll(merged);
+      if (!changed) return false;
+      entries
+        ..clear()
+        ..addAll(byId.values);
+      entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return true;
+    }, enrichNonTombstones: true);
+  }
+
+  Future<void> applyConflictWinnersBatch(Map<String, JournalEntry> winners) async {
+    if (winners.isEmpty) return;
+    await _mutateBatch((entries) {
+      final byId = {for (final e in entries) e.id: e};
+      var changed = false;
+      for (final entry in winners.values) {
+        final existing = byId[entry.id];
+        if (existing == null ||
+            JournalSyncCompare.compare(entry, existing) >= 0) {
+          byId[entry.id] = entry;
+          changed = true;
+        }
+      }
+      if (!changed) return false;
+      entries
+        ..clear()
+        ..addAll(byId.values);
+      entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return true;
+    }, enrichNonTombstones: true);
   }
 
   /// Soft local delete: creates a tombstone rather than forgetting the
@@ -384,25 +423,34 @@ class JournalStore {
   Future<int> compactTombstones({
     Duration retention = const Duration(days: 30),
     DateTime Function() now = DateTime.now,
+  }) async => compactTombstonesBatch(retention: retention, now: now);
+
+  Future<int> compactTombstonesBatch({
+    Duration retention = const Duration(days: 30),
+    DateTime Function()? now,
   }) async {
-    final all = await loadAllIncludingTombstones();
-    final cutoff = now().toUtc().subtract(retention);
-    final kept = <JournalEntry>[];
+    final cutoff = (now ?? DateTime.now)().toUtc().subtract(retention);
     var purged = 0;
-    for (final e in all) {
-      final shouldPurge =
-          e.isDeleted &&
-          e.syncStatus == SyncStatus.synced &&
-          e.deletedAt!.isBefore(cutoff);
-      if (shouldPurge) {
-        purged++;
-      } else {
-        kept.add(e);
+    await _mutateBatch((entries) {
+      final kept = <JournalEntry>[];
+      for (final e in entries) {
+        final shouldPurge =
+            e.isDeleted &&
+            e.syncStatus == SyncStatus.synced &&
+            e.deletedAt != null &&
+            e.deletedAt!.isBefore(cutoff);
+        if (shouldPurge) {
+          purged++;
+        } else {
+          kept.add(e);
+        }
       }
-    }
-    if (purged > 0) {
-      await _writeAll(kept);
-    }
+      if (purged == 0) return false;
+      entries
+        ..clear()
+        ..addAll(kept);
+      return true;
+    });
     return purged;
   }
 
@@ -424,12 +472,33 @@ class JournalStore {
   Future<void> _writeAll(List<JournalEntry> entries) async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);
+    JournalStoreWriteInstrumentation.persistCount++;
     final encoded = entries.map((e) => e.toJson()).toList();
     if (_encrypted != null) {
       await _encrypted.writeJson(encoded);
       return;
     }
     await file.writeAsString(jsonEncode(encoded));
+  }
+
+  Future<void> _mutateBatch(
+    bool Function(List<JournalEntry> entries) mutate, {
+    bool enrichNonTombstones = false,
+  }) async {
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    final all = await loadAllIncludingTombstones();
+    final working = List<JournalEntry>.from(all);
+    final changed = mutate(working);
+    if (!changed) return;
+    if (enrichNonTombstones) {
+      for (var i = 0; i < working.length; i++) {
+        final e = working[i];
+        if (!e.isDeleted) {
+          working[i] = _cognitiveAnalyzer.enrichEntry(e);
+        }
+      }
+    }
+    await _writeAll(working);
   }
 
   Future<List<JournalEntry>> _loadEntriesFromEncrypted() async {
@@ -442,11 +511,11 @@ class JournalStore {
   List<JournalEntry> _decodeEntries(String raw) {
     if (raw.trim().isEmpty) return [];
     final list = jsonDecode(raw) as List<dynamic>;
-    final entries = list
-        .map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
-        .toList();
-    entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return entries;
+    _lastLoadQuarantine.clear();
+    return JournalEntryDecoder.decodeList(
+      list,
+      quarantineOut: _lastLoadQuarantine,
+    );
   }
 
   static PrivateDataEncryptionKeyStore _defaultKeyStore(
@@ -461,4 +530,11 @@ class JournalStore {
       keyAlias: keyAlias,
     );
   }
+}
+
+/// Test instrumentation — counts encrypted/plain journal persists.
+class JournalStoreWriteInstrumentation {
+  JournalStoreWriteInstrumentation._();
+  static var persistCount = 0;
+  static void reset() => persistCount = 0;
 }

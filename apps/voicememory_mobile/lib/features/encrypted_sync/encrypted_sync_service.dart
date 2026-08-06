@@ -110,16 +110,14 @@ class EncryptedSyncService {
         final payload = EncryptedPayload.fromJson(encJson);
         final decrypted = await crypto.decryptJson(payload);
         final remoteEntries = journalEntriesFromSnapshot(decrypted);
-        await _journal.mergeRemote(remoteEntries);
+        await _journal.mergeRemoteBatch(remoteEntries);
         pulled = remoteEntries.length;
       }
     }
 
-    await _journal.compactTombstones();
+    await _journal.compactTombstonesBatch();
     await _prefs.setLastSyncAt(DateTime.now());
-    for (final entry in partitioned.eligible) {
-      await _journal.markSynced(entry.id);
-    }
+    await _journal.markSyncedBatch(partitioned.eligible.map((e) => e.id).toSet());
 
     return (pushed: partitioned.eligible.length, pulled: pulled, blocked: partitioned.blocked);
   }
