@@ -26,7 +26,8 @@ class _RecordScreenState extends State<RecordScreen>
   bool _showMicPermissionSimulatorHelper = false;
   bool _ignoreStaleMicRefreshAfterGrant = false;
   final GlobalKey _permissionPanelKey = GlobalKey();
-  final RecordingSessionController _recordingState = RecordingSessionController();
+  final RecordingSessionController _recordingState =
+      RecordingSessionController();
   final MicrophonePermissionController _micPermission =
       MicrophonePermissionController();
   final CaptureProcessingController _captureProcessing =
@@ -63,15 +64,6 @@ class _RecordScreenState extends State<RecordScreen>
   String get _stageLabel => _captureProcessing.stageLabel ?? '';
   set _stageLabel(String value) =>
       _captureProcessing.stageLabel = value.isEmpty ? null : value;
-
-  RecordViewState get _recordViewState => RecordViewStateMapper.fromUi(
-        ui: _ui,
-        recordingDuration: Duration(seconds: _seconds),
-        statusMessage: _stageLabel.isEmpty ? null : _stageLabel,
-        errorMessage: _error,
-        savedEntryId: _postSaveResult.savedEntryId,
-        hasVerifiedProof: _postSaveResult.hasVerifiedProof,
-      );
 
   String? _error;
   int _journalEntryCount = 0;

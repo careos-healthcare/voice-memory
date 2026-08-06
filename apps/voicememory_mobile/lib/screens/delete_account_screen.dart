@@ -10,6 +10,11 @@ import '../widgets/security/wipe_local_archive_dialog.dart';
 class DeleteAccountScreen extends StatefulWidget {
   const DeleteAccountScreen({super.key});
 
+  /// Shown only after [ApiClient.deleteAccount] succeeds on the server.
+  static const String deletionCompletedMessage =
+      'Account deleted. Your server account and synced data have '
+      'been permanently removed.';
+
   @override
   State<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
 }
@@ -108,10 +113,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Account deleted. Your server account and synced data have '
-              'been permanently removed.',
-            ),
+            content: Text(DeleteAccountScreen.deletionCompletedMessage),
           ),
         );
         context.go('/record');

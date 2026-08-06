@@ -41,7 +41,6 @@ import '../features/objective/objective_widget_pending_route_store.dart';
 import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import '../features/curiosity_loop/yesterdays_snapshot_copy.dart';
 import '../config/screenshot_mode.dart';
-import '../config/screenshot_mode.dart';
 import '../config/trial_mode.dart';
 import '../config/production_navigation.dart';
 import '../core/config/v1_capability_registry.dart';
@@ -64,7 +63,11 @@ GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
 bool _widgetLaunchRouteConsumed = false;
 bool _curiosityNotificationLaunchConsumed = false;
 
-const instantCapturePaths = {'/quick-capture', '/quick-yes-capture', '/live-voice'};
+const instantCapturePaths = {
+  '/quick-capture',
+  '/quick-yes-capture',
+  '/live-voice',
+};
 
 /// Converts custom-scheme widget and wearable launches into internal routes.
 String? resolveInstantCaptureDeepLink(Uri uri) {
@@ -73,9 +76,8 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
       ? uri.host.toLowerCase()
       : uri.path.replaceFirst(RegExp(r'^/+'), '').toLowerCase();
   final path = switch (action) {
-    'quick-capture' => V1FeatureFlags.enableV1Only
-        ? '/quick-capture'
-        : '/quick-yes-capture',
+    'quick-capture' =>
+      V1FeatureFlags.enableV1Only ? '/quick-capture' : '/quick-yes-capture',
     'voice-session' =>
       V1CapabilityRegistry.liveVoice ? '/live-voice' : RouteCatalog.recordHome,
     _ => null,
