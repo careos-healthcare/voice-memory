@@ -6,6 +6,8 @@ import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/screens/delete_account_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
+import 'support/test_storage_sandbox.dart';
+
 /// Records calls; no HTTP, no real backend — mirrors the fake-API pattern
 /// used across the auth tests (see `account_auth_test.dart`).
 class _FakeApi extends ApiClient {
@@ -31,17 +33,22 @@ class _FakeApi extends ApiClient {
 /// already used elsewhere, e.g. `account_auth_test.dart`.
 void main() {
   late Directory tempDir;
+  late TestStorageSandbox sandbox;
   late _FakeApi fakeApi;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('delete_account_test_');
+    sandbox = TestStorageSandbox.create();
+    tempDir = Directory(sandbox.path('legacy'));
     fakeApi = _FakeApi();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
       api: fakeApi,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> pumpScreen(WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: DeleteAccountScreen()));
@@ -200,6 +207,52 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
       },
     );
+
+    testWidgets('remains usable at 300% text scale (no overflow)', (
+      tester,
+    ) async {
+      final flutterErrors = <FlutterErrorDetails>[];
+      final previousOnError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        flutterErrors.add(details);
+        previousOnError?.call(details);
+      };
+      addTearDown(() => FlutterError.onError = previousOnError);
+
+      await tester.binding.setSurfaceSize(const Size(390, 1600));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(3.0)),
+            child: child!,
+          ),
+          home: const DeleteAccountScreen(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(flutterErrors, isEmpty);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+    });
+
+    testWidgets('delete button stays reachable on a narrow small screen', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(320, 568));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await pumpScreen(tester);
+
+      await tester.ensureVisible(
+        find.byKey(const Key('delete_account_button')),
+      );
+      expect(find.byKey(const Key('delete_account_button')), findsOneWidget);
+    });
 
     testWidgets('remains usable at 200% text scale (no overflow)', (
       tester,

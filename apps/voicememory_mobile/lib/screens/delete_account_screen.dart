@@ -107,7 +107,12 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       await AppServices.instance.auth.signOut();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account deletion requested.')),
+          const SnackBar(
+            content: Text(
+              'Account deleted. Your server account and synced data have '
+              'been permanently removed.',
+            ),
+          ),
         );
         context.go('/record');
       }

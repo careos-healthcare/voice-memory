@@ -12,25 +12,28 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/beta_readiness_check_sheet.dart';
 
+import 'support/test_storage_sandbox.dart';
+
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     BetaReadinessAnalytics.resetForTest();
     BetaReadinessAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_readiness/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_readiness/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
   tearDown(() {
+    sandbox.dispose();
     BetaReadinessAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();
     analyticsEvents.clear();
@@ -225,7 +228,7 @@ void main() {
         'lib/features/beta_readiness/beta_readiness_engine.dart',
         'lib/features/beta_readiness/beta_readiness_analytics.dart',
         'lib/widgets/account/beta_readiness_check_sheet.dart',
-        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+        '../../packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
       ];
       for (final path in files) {
         final text = File(path).readAsStringSync();
