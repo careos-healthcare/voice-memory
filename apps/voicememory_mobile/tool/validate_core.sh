@@ -84,4 +84,8 @@ echo "==> Research package import guard"
 bash tool/validate_no_research_imports.sh
 
 echo ""
+echo "==> Repository cleanliness (git + stray artifacts)"
+bash tool/validate_repository_cleanliness.sh
+
+echo ""
 echo "Core validation passed."

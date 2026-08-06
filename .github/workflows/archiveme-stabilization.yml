@@ -1,0 +1,113 @@
+name: ArchiveMe stabilization
+
+on:
+  push:
+    branches: [main, 'cursor/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: archiveme-stabilization-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: npm ci integrity
+        run: npm ci --ignore-scripts
+      - name: TypeScript check
+        run: npx tsc --noEmit -p tsconfig.json
+      - name: ESLint
+        run: npm run lint
+      - name: Server build
+        run: npm run build:server
+      - name: Privacy log validation
+        run: npm run validate:privacy-logs || node scripts/validate-privacy-logs.mjs
+
+  flutter-gates:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: pub get
+        run: flutter pub get
+      - name: dart format check
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: analyzer baseline
+        run: bash tool/validate_analyzer_baseline.sh
+      - name: research import guard
+        run: bash tool/validate_no_research_imports.sh
+      - name: focused V1 and privacy tests
+        run: |
+          flutter test \
+            test/delete_account_confirmation_test.dart \
+            test/privacy_contract_test.dart \
+            test/privacy_copy_policy_test.dart \
+            test/v1_navigation_guard_test.dart \
+            test/v1_router_graph_reduction_test.dart \
+            test/v1_record_controllers_wiring_test.dart \
+            test/v1_record_view_state_mapper_test.dart \
+            test/v1_free_paid_capabilities_test.dart
+      - name: repository cleanliness
+        run: bash tool/validate_repository_cleanliness.sh
+      - name: validate core subset
+        run: bash tool/validate_core.sh
+
+  flutter-android:
+    runs-on: ubuntu-latest
+    needs: flutter-gates
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Android debug build
+        run: flutter build apk --debug
+
+  flutter-ios:
+    runs-on: macos-latest
+    needs: flutter-gates
+    defaults:
+      run:
+        working-directory: apps/voicememory_mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: pod install
+        run: |
+          cd ios
+          pod install
+      - name: iOS simulator build (no signing)
+        run: flutter build ios --simulator --no-codesign
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secret pattern scan
+        run: |
+          ! git grep -nE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk_live_|AKIA[0-9A-Z]{16})' \
+            -- ':!*.md' ':!package-lock.json' ':!pubspec.lock'
