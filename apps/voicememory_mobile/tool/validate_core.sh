@@ -84,6 +84,10 @@ echo "==> Research package import guard"
 bash tool/validate_no_research_imports.sh
 
 echo ""
+echo "==> V1 production graph + permission audit"
+bash tool/validate_v1_production_graph.sh
+
+echo ""
 echo "==> Repository cleanliness (git + stray artifacts)"
 bash tool/validate_repository_cleanliness.sh
 

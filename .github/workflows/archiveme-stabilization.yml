@@ -51,6 +51,8 @@ jobs:
         run: bash tool/validate_analyzer_baseline.sh
       - name: research import guard
         run: bash tool/validate_no_research_imports.sh
+      - name: V1 production graph and permissions
+        run: bash tool/validate_v1_production_graph.sh
       - name: release evidence regression
         run: flutter test test/release_evidence_pack_test.dart test/single_launch_checklist_test.dart
       - name: focused V1 privacy and delete-account tests
@@ -64,6 +66,9 @@ jobs:
             test/v1_router_graph_reduction_test.dart \
             test/v1_record_controllers_wiring_test.dart \
             test/v1_record_view_state_mapper_test.dart \
+            test/v1_production_allowlist_test.dart \
+            test/v1_dependency_scopes_test.dart \
+            test/v1_paywall_controller_test.dart \
             test/v1_free_paid_capabilities_test.dart
       - name: repository cleanliness
         run: bash tool/validate_repository_cleanliness.sh

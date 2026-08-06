@@ -66,7 +66,6 @@ bool _curiosityNotificationLaunchConsumed = false;
 const instantCapturePaths = {
   '/quick-capture',
   '/quick-yes-capture',
-  '/live-voice',
 };
 
 /// Converts custom-scheme widget and wearable launches into internal routes.
