@@ -11,6 +11,7 @@ import '../features/voice_capture/audio/audio_diag_log.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
 import '../features/voice_capture/transcription/transcription_log.dart';
 import '../models/entitlement.dart';
+import '../features/sync/journal_pull_paginator.dart';
 import '../models/journal_entry.dart';
 import '../models/reflection.dart';
 import '../features/proof_admission/proof_admission_models.dart';
@@ -424,6 +425,7 @@ class ApiClient {
   /// `/api/sync/*` via [EncryptedSyncService]; do not call this from
   /// normal sync paths.
   Future<List<JournalEntry>> listJournal() async {
+    final paginator = JournalPullPaginator();
     final all = <JournalEntry>[];
     String? cursor;
     do {
@@ -439,10 +441,22 @@ class ApiClient {
       }
       final body = _decodeJson(response);
       final entries = body['entries'] as List<dynamic>? ?? [];
-      all.addAll(
-        entries.map((e) => JournalEntry.fromJson(e as Map<String, dynamic>)),
+      final nextCursor = body['nextCursor'] as String?;
+      final result = paginator.ingestPage(
+        rawEntries: entries,
+        nextCursor: nextCursor,
+        currentCursor: cursor,
       );
-      cursor = body['nextCursor'] as String?;
+      if (result is JournalPullPageAborted) {
+        throw ApiException(
+          'Journal pull aborted: ${result.reason}',
+          statusCode: 400,
+          code: 'JOURNAL_PULL_ABORTED',
+        );
+      }
+      final accepted = result as JournalPullPageAccepted;
+      all.addAll(accepted.entries);
+      cursor = accepted.nextCursor;
     } while (cursor != null);
     return all;
   }
