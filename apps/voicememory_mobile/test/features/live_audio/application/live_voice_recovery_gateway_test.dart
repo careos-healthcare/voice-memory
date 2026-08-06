@@ -9,9 +9,11 @@ import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vau
 import 'package:voicememory_mobile/features/live_audio/infrastructure/local_audio_vault.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/network_connectivity_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/offline_vault_recovery_store.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
+import 'package:voicememory_mobile/security/remote_processing_consent_gate.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -28,6 +30,9 @@ void main() {
     late _TestConnectivity connectivity;
     late LiveVoiceRecoveryGateway gateway;
 
+    late MobilePrefsStore prefs;
+    late RemoteProcessingConsentGate consentGate;
+
     setUp(() async {
       vaultDirectory = await Directory.systemTemp.createTemp(
         'live_voice_gateway_',
@@ -38,6 +43,9 @@ void main() {
         resolveVaultDirectory: () async => vaultDirectory,
       );
       api = _FakeApiClient();
+      prefs = await MobilePrefsStore.open('${vaultDirectory.path}/prefs.json');
+      consentGate = RemoteProcessingConsentGate(prefs);
+      await RemoteProcessingConsentStore(prefs).grant();
       recoveryService = OfflineVaultRecoveryService(
         store: store,
         api: api,
@@ -59,6 +67,7 @@ void main() {
             file: File('${vaultDirectory.path}/journal.json'),
           ),
         ),
+        consentGate: consentGate,
       );
       vault = LocalAudioVault(
         keyStore: InMemoryPrivateDataEncryptionKeyStore(),
@@ -70,6 +79,7 @@ void main() {
         connectivity: connectivity,
         recoveryStore: store,
         recoveryService: recoveryService,
+        consentGate: consentGate,
       );
     });
 
@@ -104,6 +114,24 @@ void main() {
 
       expect(await store.listPending(), isEmpty);
     });
+
+    test('withheld consent keeps vault on disk until customer opts in', () async {
+      await RemoteProcessingConsentStore(prefs).withdraw();
+
+      await vault.initializeVault('session_no_consent');
+      vault.appendPcm16LeBytes([1, 2]);
+      final closed = await vault.closeVault();
+      expect(closed, isNotNull);
+
+      await gateway.checkForPendingRecovery();
+      expect(await closed!.exists(), isTrue);
+      expect(api.uploadCount, 0);
+
+      await RemoteProcessingConsentStore(prefs).grant();
+      await gateway.checkForPendingRecovery();
+      expect(await closed.exists(), isFalse);
+      expect(api.uploadCount, 1);
+    });
   });
 }
 
@@ -122,6 +150,8 @@ class _TestConnectivity implements NetworkConnectivitySource {
 class _FakeApiClient extends ApiClient {
   _FakeApiClient() : super(baseUrl: 'http://test.invalid');
 
+  var uploadCount = 0;
+
   @override
   Future<AttestResult> postCaptureAttest(String deviceId) async {
     return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
@@ -136,16 +166,17 @@ class _FakeApiClient extends ApiClient {
     required String idempotencyKey,
     List<int>? recoverySecretKeyBytes,
   }) async {
+    uploadCount++;
     return VaultRecoveryServerResult(
       recoveryAckId: 'ack_$sessionId',
-      transcript: 'gateway transcript',
+      transcript: 'recovered transcript',
       reflectionJson: const {
         'mood': 'neutral',
         'emotionalIntensity': 1,
         'recurringThemes': <String>[],
-        'exactLanguagePattern': 'test',
-        'concreteObservation': 'test',
-        'repeatedSignal': 'test',
+        'exactLanguagePattern': 'recovered',
+        'concreteObservation': 'transcript',
+        'repeatedSignal': 'recovered',
       },
       durationSeconds: durationSeconds,
       duplicate: false,

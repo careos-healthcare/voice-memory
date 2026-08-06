@@ -66,7 +66,7 @@ class ProofSourceEntry {
     this.deleted = false,
     this.archived = false,
     this.allowedByArchivePolicy = true,
-    this.remoteProcessingConsented = true,
+    this.remoteProcessingConsented = false,
   });
 
   final String entryId;

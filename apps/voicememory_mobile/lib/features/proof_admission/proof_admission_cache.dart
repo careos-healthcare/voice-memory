@@ -219,7 +219,7 @@ class ProofAdmissionCache {
     bool deleted = false,
     bool archived = false,
     bool allowedByArchivePolicy = true,
-    bool remoteProcessingConsented = true,
+    bool remoteProcessingConsented = false,
   }) {
     final key = revisionKey(
       archiveScope: archiveScope,

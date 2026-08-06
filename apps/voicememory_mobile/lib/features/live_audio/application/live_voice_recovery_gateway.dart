@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import '../../../security/remote_processing_consent_gate.dart';
 import '../domain/models/offline_vault_manifest.dart';
 import '../infrastructure/live_audio_pipeline_log.dart';
 import '../infrastructure/local_audio_vault.dart';
@@ -15,7 +16,8 @@ class LiveVoiceRecoveryGateway {
     required this._connectivity,
     required this._recoveryStore,
     required this._recoveryService,
-  }) {
+    required RemoteProcessingConsentGate consentGate,
+  }) : _consentGate = consentGate {
     _initRecoveryListener();
   }
 
@@ -23,6 +25,7 @@ class LiveVoiceRecoveryGateway {
   final NetworkConnectivitySource _connectivity;
   final OfflineVaultRecoveryStore _recoveryStore;
   final OfflineVaultRecoveryService _recoveryService;
+  final RemoteProcessingConsentGate _consentGate;
 
   StreamSubscription<void>? _connectivitySub;
   var _sweepInFlight = false;
@@ -44,6 +47,12 @@ class LiveVoiceRecoveryGateway {
     if (_sweepInFlight) return;
     _sweepInFlight = true;
     try {
+      final consent = await _consentGate.evaluate();
+      if (!consent.permitted) {
+        // Vault files stay on-device until the customer opts in again.
+        return;
+      }
+
       final pendingVaults = await _vault.discoverPendingVaults();
       if (pendingVaults.isEmpty) {
         await _recoveryStore.discoverOrphans();

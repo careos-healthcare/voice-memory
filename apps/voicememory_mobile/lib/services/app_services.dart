@@ -33,6 +33,8 @@ import '../features/proof_admission/proof_display_gate.dart';
 import '../features/proof_admission/proof_scope_provider.dart';
 import '../features/proof_admission/remote_processing_consent_store.dart';
 import '../features/offline_sync/offline_sync_journey_store.dart';
+import '../security/remote_processing_consent_gate.dart';
+import '../features/encrypted_sync/sync_master_key_store.dart';
 import '../features/memory_resurfacing/memory_resurfacing_service.dart';
 import '../features/belief_evolution/belief_evolution_service.dart';
 import '../features/archive_agreement/archive_agreement_service.dart';
@@ -105,6 +107,8 @@ class AppServices {
   late JournalService journal;
   late BillingService billing;
   late SyncService sync;
+  late RemoteProcessingConsentGate remoteProcessingConsentGate;
+  late SyncMasterKeyStore syncMasterKeyStore;
   late ValueMomentPaywallLogic paywall;
   late OfflineSyncJourneyStore offlineSyncJourney;
   late MemoryResurfacingService memoryResurfacing;
@@ -294,6 +298,7 @@ class AppServices {
       api: s.api,
       attest: s.attest,
       pipeline: s.pipeline,
+      consentGate: s.remoteProcessingConsentGate,
     );
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
@@ -301,6 +306,7 @@ class AppServices {
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
+      consentGate: s.remoteProcessingConsentGate,
     );
 
     s.nativePushStore = NativePushVerificationStore(s.prefs);
@@ -420,6 +426,7 @@ class AppServices {
       api: s.api,
       attest: s.attest,
       pipeline: s.pipeline,
+      consentGate: s.remoteProcessingConsentGate,
     );
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
@@ -427,6 +434,7 @@ class AppServices {
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
+      consentGate: s.remoteProcessingConsentGate,
     );
 
     s.nativePushStore = NativePushVerificationStore(s.prefs);
@@ -555,7 +563,17 @@ class AppServices {
     s.memoryResurfacing = MemoryResurfacingService.fromPrefs(s.prefs);
     s.beliefEvolution = BeliefEvolutionService.fromPrefs(s.prefs);
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
-    s.sync = SyncService(s.api, s.journalStore, s.prefs);
+    s.remoteProcessingConsentGate = RemoteProcessingConsentGate(s.prefs);
+    s.syncMasterKeyStore = SecureSyncMasterKeyStore(
+      accountNamespace: s._activeNamespace.key,
+    );
+    s.sync = SyncService(
+      s.api,
+      s.journalStore,
+      s.prefs,
+      deviceIds: s.deviceIds,
+      keyStore: s.syncMasterKeyStore,
+    );
     s.paywall = ValueMomentPaywallLogic(s.prefs);
     // Bound to the now-stale `pipeline`/`offlineVaultRecoveryStore` pair —
     // dropped so the next access lazily rebuilds against the current ones.
@@ -798,6 +816,7 @@ class AppServices {
       api: s.api,
       attest: s.attest,
       pipeline: s.pipeline,
+      consentGate: s.remoteProcessingConsentGate,
     );
     s.liveVoiceConnectivity = LifecycleNetworkConnectivitySource();
     s.liveVoiceRecoveryGateway = LiveVoiceRecoveryGateway(
@@ -805,6 +824,7 @@ class AppServices {
       connectivity: s.liveVoiceConnectivity,
       recoveryStore: s.offlineVaultRecoveryStore,
       recoveryService: s.offlineVaultRecovery,
+      consentGate: s.remoteProcessingConsentGate,
     );
     await BetaFeedbackStore.resetForTest();
     await ConfirmedRepeatBetaFeedbackStore.resetPersistedState();

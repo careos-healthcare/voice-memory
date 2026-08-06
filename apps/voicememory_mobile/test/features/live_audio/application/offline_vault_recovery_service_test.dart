@@ -5,12 +5,14 @@ import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/application/offline_vault_recovery_service.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/offline_vault_recovery_store.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
+import 'package:voicememory_mobile/security/remote_processing_consent_gate.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 void main() {
   group('OfflineVaultRecoveryService', () {
@@ -21,6 +23,8 @@ void main() {
     late _FakeApiClient api;
     late CaptureAttestService attest;
     late OfflineVaultRecoveryService service;
+
+    late RemoteProcessingConsentGate consentGate;
 
     setUp(() async {
       vaultDirectory = await Directory.systemTemp.createTemp(
@@ -45,11 +49,17 @@ void main() {
           file: File('${vaultDirectory.path}/journal.json'),
         ),
       );
+      final prefsFile = await MobilePrefsStore.open(
+        '${vaultDirectory.path}/prefs.json',
+      );
+      consentGate = RemoteProcessingConsentGate(prefsFile);
+      await RemoteProcessingConsentStore(prefsFile).grant();
       service = OfflineVaultRecoveryService(
         store: store,
         api: api,
         attest: attest,
         pipeline: pipeline,
+        consentGate: consentGate,
       );
     });
 
@@ -82,6 +92,37 @@ void main() {
         expect(api.uploadCount, 1);
       },
     );
+
+    test('recoverVault without consent retains vault and does not upload', () async {
+      final noConsentPrefs = await MobilePrefsStore.open(
+        '${vaultDirectory.path}/no_consent_prefs.json',
+      );
+      final noConsentService = OfflineVaultRecoveryService(
+        store: store,
+        api: api,
+        attest: attest,
+        pipeline: pipeline,
+        consentGate: RemoteProcessingConsentGate(noConsentPrefs),
+      );
+
+      final vaultFile = File(
+        '${vaultDirectory.path}/audio_vault_no_consent.vault.enc',
+      );
+      await vaultFile.writeAsBytes([1, 2, 3]);
+      final manifest = await store.registerVault(
+        sessionId: 'session_no_consent',
+        vaultFile: vaultFile,
+        frameCount: 3,
+        durationSeconds: 2,
+      );
+
+      await expectLater(
+        noConsentService.recoverVault(manifest),
+        throwsA(isA<RemoteProcessingConsentRequired>()),
+      );
+      expect(api.uploadCount, 0);
+      expect(await File(manifest.vaultPath).exists(), isTrue);
+    });
 
     test('recoverVault sends recovery_secret for offline_* sessions', () async {
       final recoverySecret = List<int>.generate(32, (index) => index + 1);
@@ -159,9 +200,9 @@ class _FakeApiClient extends ApiClient {
         'mood': 'neutral',
         'emotionalIntensity': 1,
         'recurringThemes': <String>[],
-        'exactLanguagePattern': 'test',
-        'concreteObservation': 'test',
-        'repeatedSignal': 'test',
+        'exactLanguagePattern': 'recovered',
+        'concreteObservation': 'transcript',
+        'repeatedSignal': 'recovered',
       },
       durationSeconds: durationSeconds,
       duplicate: false,

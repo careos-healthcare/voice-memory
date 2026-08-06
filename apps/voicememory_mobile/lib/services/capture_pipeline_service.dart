@@ -1006,6 +1006,7 @@ class CapturePipelineService {
     required String transcript,
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
+    required bool remoteProcessingConsented,
     void Function(PipelineStage stage)? onStage,
   }) async {
     final trimmed = transcript.trim();
@@ -1031,16 +1032,7 @@ class CapturePipelineService {
           transcriptRevision: revision,
           createdAt: raw.receivedAt,
           sourceType: ProofSourceType.userVoiceTranscript,
-          // This entry's remote analysis already happened — a completed
-          // offline-vault recovery round trip (`postVaultRecovery`) is what
-          // produced `reflectionJson` before this method was ever called —
-          // so there is no "new remote call" left to gate here. A live
-          // consent gate for *this* mechanism belongs at the point the
-          // recovery upload itself is attempted
-          // (`OfflineVaultRecoveryService`/`LiveVoiceRecoveryGateway`), which
-          // is out of scope for this pass; tracked as a known gap rather than
-          // silently defaulting.
-          remoteProcessingConsented: true,
+          remoteProcessingConsented: remoteProcessingConsented,
         ),
       ],
       activeArchiveScope: _archiveScope,

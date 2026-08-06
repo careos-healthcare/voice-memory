@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../../../security/remote_processing_consent_gate.dart';
 import '../../../services/capture_attest_service.dart';
 import '../../../services/capture_pipeline_service.dart';
 import '../../../api/api_client.dart';
@@ -11,16 +12,22 @@ import '../infrastructure/offline_vault_recovery_store.dart';
 /// Orchestrates pending offline vault queue jobs: scan → upload → server ack → delete.
 class OfflineVaultRecoveryService {
   OfflineVaultRecoveryService({
-    required this._store,
-    required this._api,
-    required this._attest,
-    required this._pipeline,
-  });
+    required OfflineVaultRecoveryStore store,
+    required ApiClient api,
+    required CaptureAttestService attest,
+    required CapturePipelineService pipeline,
+    required RemoteProcessingConsentGate consentGate,
+  }) : _store = store,
+       _api = api,
+       _attest = attest,
+       _pipeline = pipeline,
+       _consentGate = consentGate;
 
   final OfflineVaultRecoveryStore _store;
   final ApiClient _api;
   final CaptureAttestService _attest;
   final CapturePipelineService _pipeline;
+  final RemoteProcessingConsentGate _consentGate;
 
   /// Scans disk for orphan vault files and returns pending queue jobs.
   Future<List<OfflineVaultManifest>> scanPendingVaults() async {
@@ -56,6 +63,11 @@ class OfflineVaultRecoveryService {
       throw StateError('Vault file is missing.');
     }
 
+    final consent = await _consentGate.evaluate();
+    if (!consent.permitted) {
+      throw const RemoteProcessingConsentRequired();
+    }
+
     LiveAudioPipelineLog.offlineVaultRecoveryStarted(
       sessionId: manifest.sessionId,
     );
@@ -76,6 +88,7 @@ class OfflineVaultRecoveryService {
         transcript: serverResult.transcript,
         reflectionJson: serverResult.reflectionJson,
         durationSeconds: serverResult.durationSeconds,
+        remoteProcessingConsented: consent.consentAtProcessingTime,
         onStage: onStage,
       );
 
