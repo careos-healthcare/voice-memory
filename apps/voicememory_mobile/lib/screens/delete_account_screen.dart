@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api/api_error_message.dart';
-import '../services/app_services.dart';
+import '../core/di/v1_account_dependencies.dart';
 import '../theme/app_colors.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/security/wipe_local_archive_dialog.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
-  const DeleteAccountScreen({super.key});
+  const DeleteAccountScreen({super.key, this.accountDependencies});
+
+  final V1AccountDependencies? accountDependencies;
 
   /// Shown only after [ApiClient.deleteAccount] succeeds on the server.
   static const String deletionCompletedMessage =
@@ -21,6 +23,9 @@ class DeleteAccountScreen extends StatefulWidget {
 
 class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   bool _busy = false;
+
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   static const String _confirmTitle = 'Delete account permanently?';
   static const String _confirmBody =
@@ -100,7 +105,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   Future<void> _delete() async {
     setState(() => _busy = true);
     try {
-      await AppServices.instance.api.deleteAccount();
+      await _accountDeps.api.deleteAccount();
       // Server deletion and local-device deletion are two separate steps —
       // offer the second one explicitly, and do it *before* signOut()
       // below switches the active namespace to guest, so the wipe dialog
@@ -109,7 +114,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       if (mounted) {
         await _offerLocalDataWipe();
       }
-      await AppServices.instance.auth.signOut();
+      await _accountDeps.auth.signOut();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

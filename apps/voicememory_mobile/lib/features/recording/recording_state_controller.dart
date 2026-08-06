@@ -45,6 +45,8 @@ class _RecordScreenState extends State<RecordScreen>
     postSave: _postSaveResult,
     recovery: _recoveryController,
   );
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   RecordingPhase get _mic => _micPermission.phase;
   set _mic(RecordingPhase value) => _micPermission.phase = value;
@@ -184,7 +186,7 @@ class _RecordScreenState extends State<RecordScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     CleanSlatePromptStore.noteSessionStart();
-    final s = AppServices.instance;
+    final s = _accountDeps;
     _microphonePermissionGateway =
         widget.microphonePermissionGateway ??
         PermissionHandlerMicrophoneGateway();
@@ -280,12 +282,14 @@ class _RecordScreenState extends State<RecordScreen>
         if (mounted) setState(() {});
       }),
     );
-    unawaited(
-      CurrentRelevanceStore.ensureLoaded().then((_) async {
-        await CorrectionMemoryStore.ensureLoaded();
-        if (mounted) setState(() {});
-      }),
-    );
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(
+        CurrentRelevanceStore.ensureLoaded().then((_) async {
+          await CorrectionMemoryStore.ensureLoaded();
+          if (mounted) setState(() {});
+        }),
+      );
+    }
     unawaited(
       HelpedTrackingStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
@@ -1004,17 +1008,17 @@ class _RecordScreenState extends State<RecordScreen>
       // Widget tests do not run initState file I/O unless wrapped in runAsync.
       // Use the journal cache so empty-gate UI can render deterministically.
       _applyLoadedJournalEntryCount(
-        AppServices.instance.journalStore.loadAllSync(),
+        _accountDeps.journalStore.loadAllSync(),
         hasWatchTheme: false,
         betaFeedbackCaptured: BetaFeedbackStore.cached.hasResponse,
       );
       return;
     }
 
-    final all = await AppServices.instance.journal.loadAll();
+    final all = await _accountDeps.journal.loadAll();
     await BetaFeedbackStore.ensureLoaded();
     final watchItems = await ArchiveWatchlistStore(
-      AppServices.instance.prefs,
+      _accountDeps.prefs,
     ).loadItems();
     if (!mounted) return;
     _applyLoadedJournalEntryCount(
@@ -1068,7 +1072,7 @@ class _RecordScreenState extends State<RecordScreen>
 
   Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
     final store = ArchiveReturnChangesStore.fromAppPrefs(
-      AppServices.instance.prefs,
+      _accountDeps.prefs,
     );
     final resolved = await resolveArchiveReturnChanges(
       entries: entries,
@@ -1085,7 +1089,7 @@ class _RecordScreenState extends State<RecordScreen>
     final snapshot = _archiveReturnCurrentSnapshot;
     if (snapshot == null) return;
     await ArchiveReturnChangesStore.fromAppPrefs(
-      AppServices.instance.prefs,
+      _accountDeps.prefs,
     ).markSeen(snapshot);
     if (!mounted) return;
     setState(() => _archiveReturnChangesResult = null);
@@ -1788,7 +1792,7 @@ class _RecordScreenState extends State<RecordScreen>
     if (entry == null) return;
     if (!AppServices.isInitialized) return;
     final tagged = CaptureContextTags.applyTag(entry, tagId);
-    await AppServices.instance.journalStore.save(
+    await _accountDeps.journalStore.save(
       tagged,
       first25Source: 'capture_context_tag',
     );
@@ -1828,7 +1832,7 @@ class _RecordScreenState extends State<RecordScreen>
       wasGrounded: wasGrounded,
     );
 
-    await AppServices.instance.journalStore.save(
+    await _accountDeps.journalStore.save(
       entry,
       first25Source: 'curiosity_hook_response',
     );

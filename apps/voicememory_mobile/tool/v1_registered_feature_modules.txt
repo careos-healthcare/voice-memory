@@ -9,6 +9,7 @@ anchor_calibration
 android_after_ios_proof
 annual_plan_future
 app_review
+archive
 archive_agreement
 archive_analyst
 archive_backup_bridge

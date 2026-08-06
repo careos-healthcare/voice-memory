@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/user_facing_date.dart';
+import '../core/di/v1_account_dependencies.dart';
 import '../features/collections/archive_collection.dart';
 import '../features/collections/archive_collection_store.dart';
 import '../features/entry_detail/entry_detail_copy.dart';
@@ -12,7 +13,6 @@ import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/pins/pinned_evidence_store.dart';
 import '../models/journal_entry.dart';
-import '../services/app_services.dart';
 import '../security/private_data_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/collections/add_to_collection_sheet.dart';
@@ -30,9 +30,15 @@ import '../features/memory/sensitive_surfacing_policy.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class EntryDetailScreen extends StatefulWidget {
-  const EntryDetailScreen({super.key, required this.entryId});
+  const EntryDetailScreen({
+    super.key,
+    required this.entryId,
+    this.accountDependencies,
+  });
 
   final String entryId;
+
+  final V1AccountDependencies? accountDependencies;
 
   @override
   State<EntryDetailScreen> createState() => _EntryDetailScreenState();
@@ -41,6 +47,9 @@ class EntryDetailScreen extends StatefulWidget {
 class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
   bool _advancedExpanded = false;
+
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   @override
   void initState() {
@@ -54,7 +63,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   Future<void> _load() async {
     if (_isFlutterWidgetTest) {
       JournalEntry? loaded;
-      for (final entry in AppServices.instance.journalStore.loadAllSync()) {
+      for (final entry in _accountDeps.journalStore.loadAllSync()) {
         if (entry.id == widget.entryId) {
           loaded = entry;
           break;
@@ -64,7 +73,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
       return;
     }
 
-    final e = await AppServices.instance.journalStore.getById(widget.entryId);
+    final e = await _accountDeps.journalStore.getById(widget.entryId);
     if (e != null) {
       final mode = MemorySurfacingMode.fromEntry(e);
       if (mode.limitsProactiveIntensity) {
@@ -99,7 +108,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     );
     if (confirmed != true || !mounted) return;
     await PrivateDataService(
-      journalStore: AppServices.instance.journalStore,
+      journalStore: _accountDeps.journalStore,
     ).deleteEntrySecurely(entry.id);
     if (!mounted) return;
     if (context.canPop()) {
@@ -166,7 +175,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                 const SizedBox(height: 16),
                 EntryContextTagEditor(
                   entry: e,
-                  journalStore: AppServices.instance.journalStore,
+                  journalStore: _accountDeps.journalStore,
                   onChanged: _load,
                 ),
                 const SizedBox(height: 16),

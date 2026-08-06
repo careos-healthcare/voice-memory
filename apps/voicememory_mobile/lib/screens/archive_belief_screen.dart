@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../features/archive/v1/archive_belief_load_state.dart';
 import '../features/archive/v1/archive_belief_repository.dart';
 import '../features/archive/v1/archive_belief_view_model.dart';
-import '../services/app_services.dart';
+import '../core/di/v1_account_dependencies.dart';
 import '../storage/journal_store.dart';
 import '../theme/app_colors.dart';
 import '../widgets/archive/archive_empty_state.dart';
@@ -18,18 +18,29 @@ import '../widgets/archive/archive_verified_changes_section.dart';
 /// Archive: the user's original saved moments, plus verified changes when the
 /// canonical proof pipeline admits one. See `docs/ARCHIVE_SCREEN_SPEC_V1.md`.
 class ArchiveBeliefScreen extends StatefulWidget {
-  const ArchiveBeliefScreen({super.key, this.journalStore});
+  const ArchiveBeliefScreen({
+    super.key,
+    this.journalStore,
+    this.accountDependencies,
+  });
 
   final JournalStore? journalStore;
+
+  /// When set, journal (and future archive deps) resolve from this bundle.
+  final V1AccountDependencies? accountDependencies;
 
   @override
   State<ArchiveBeliefScreen> createState() => _ArchiveBeliefScreenState();
 }
 
 class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
+
   late final ArchiveBeliefViewModel _viewModel = ArchiveBeliefViewModel(
     repository: ArchiveBeliefRepository(
-      journalStore: widget.journalStore ?? AppServices.instance.journalStore,
+      journalStore:
+          widget.journalStore ?? _accountDeps.journalStore,
     ),
   );
 

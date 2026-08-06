@@ -1,4 +1,6 @@
+import '../core/config/v1_feature_flags.dart';
 import '../features/recording/recording_dependencies.dart';
+import '../core/di/v1_account_dependencies.dart';
 import '../features/recording/v1/recording_session_controller.dart';
 import '../features/recording/v1/microphone_permission_controller.dart';
 import '../features/recording/v1/capture_processing_controller.dart';
@@ -49,6 +51,7 @@ class RecordScreen extends StatefulWidget {
     this.onboardingMicStateStore,
     this.openAppSettings,
     this.navigationActivityController,
+    this.accountDependencies,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -89,6 +92,9 @@ class RecordScreen extends StatefulWidget {
 
   /// Shared with the primary shell to prevent hidden active capture.
   final RecordNavigationActivityController? navigationActivityController;
+
+  /// Account-scoped services for capture/save; defaults from [AppServices].
+  final V1AccountDependencies? accountDependencies;
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();

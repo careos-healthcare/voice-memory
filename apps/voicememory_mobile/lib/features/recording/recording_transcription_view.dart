@@ -88,7 +88,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
   }
 
   Future<void> _refreshAfterTranscriptCorrection(JournalEntry corrected) async {
-    final all = await AppServices.instance.journalStore.loadAll();
+    final all = await _accountDeps.journalStore.loadAll();
     if (!mounted) return;
     _setRecordingState(() {
       _journalEntries = all;
@@ -147,7 +147,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
         }
         throw CapturePipelineFailure(VoiceCaptureCopy.notEnoughAudio);
       }
-      final pipelineResult = await AppServices.instance.pipeline.run(
+      final pipelineResult = await _accountDeps.pipeline.run(
         audioFile: result.file,
         durationSeconds: result.durationSeconds,
         onStage: (stage) {
@@ -213,7 +213,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
           );
     final cloudOk = pipelineResult.syncSucceeded;
     final savedEntry = pipelineResult.entry;
-    final all = await AppServices.instance.journal.loadAll();
+    final all = await _accountDeps.journal.loadAll();
     final hasSavedTranscript = VoiceCaptureQuality.hasUsableSpokenText(
       savedEntry,
     );
@@ -226,7 +226,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       priorEntries: priorEntries,
     );
 
-    final prefs = AppServices.instance.prefs;
+    final prefs = _accountDeps.prefs;
     final discoveryFuture = const DailyDiscoveryEngine()
         .detectImmediateDiscovery(
           store: DailyDiscoveryStore(prefs),
@@ -274,13 +274,13 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     final languageCode = detected.uiLanguageCode;
     unawaited(
       ReflectionLanguageStore(
-        AppServices.instance.prefs,
+        _accountDeps.prefs,
       ).recordDetection(detected, originalText: latestReflectionText),
     );
     final inputQuality = assessReflectionQuality(latestReflectionText);
     unawaited(
       InputQualityStore(
-        AppServices.instance.prefs,
+        _accountDeps.prefs,
       ).recordAssessment(inputQuality),
     );
 
@@ -575,7 +575,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
   void _onInputQualityUseAnyway() {
     _setRecordingState(() => _inputQualityResolved = true);
     unawaited(
-      InputQualityStore(AppServices.instance.prefs).recordAcceptedWeak(),
+      InputQualityStore(_accountDeps.prefs).recordAcceptedWeak(),
     );
   }
 
@@ -585,7 +585,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     if (AppServices.isInitialized) {
       unawaited(
         ReflectionLanguageStore(
-          AppServices.instance.prefs,
+          _accountDeps.prefs,
         ).recordOverride(code),
       );
     }
@@ -593,7 +593,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
 
   Future<void> _onInputQualityAddSentence(String combinedText) async {
     final quality = assessReflectionQuality(combinedText);
-    final store = InputQualityStore(AppServices.instance.prefs);
+    final store = InputQualityStore(_accountDeps.prefs);
     await store.recordSharpened();
     await store.recordAssessment(quality);
     if (!mounted) return;

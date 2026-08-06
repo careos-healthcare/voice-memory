@@ -27,7 +27,6 @@ import '../security/api_usage_guard.dart';
 import '../security/private_data_service.dart';
 import '../security/user_content_safety.dart';
 import '../storage/journal_store.dart';
-import 'app_services.dart';
 import 'capture_attest_service.dart';
 import 'capture_save_messages.dart';
 import '../api/api_client.dart';
@@ -74,9 +73,9 @@ class CapturePipelineService {
     required this._journalStore,
     ApiUsageGuard? usageGuard,
     this._scopeProvider = const AppServicesProofScopeProvider(),
-    RemoteProcessingConsentStore? consentStore,
+    required RemoteProcessingConsentStore consentStore,
   }) : _usageGuard = usageGuard ?? ApiUsageGuard.shared,
-       _consentStoreOverride = consentStore;
+       _consentStore = consentStore;
 
   final ApiClient _api;
   final CaptureAttestService _attest;
@@ -94,13 +93,9 @@ class CapturePipelineService {
   String get _archiveScope => _scopeProvider.activeArchiveScope;
   String get _ownerScope => _scopeProvider.activeOwnerScope;
 
-  /// Injected for tests; production resolves this lazily against whichever
-  /// account/guest namespace's prefs are currently active, so a decision
-  /// made as one account is never read back for a different one.
-  final RemoteProcessingConsentStore? _consentStoreOverride;
-  RemoteProcessingConsentStore get _consentStore =>
-      _consentStoreOverride ??
-      RemoteProcessingConsentStore(AppServices.instance.prefs);
+  /// Account-scoped consent for remote transcript processing — injected at
+  /// composition root so pipeline runs stay off the service locator.
+  final RemoteProcessingConsentStore _consentStore;
 
   /// The live gate on a *new* remote-processing attempt: whether the account
   /// or guest namespace active right now has said yes to sending a

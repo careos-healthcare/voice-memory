@@ -44,7 +44,7 @@ void main() {
       );
       api = _FakeApiClient();
       prefs = await MobilePrefsStore.open('${vaultDirectory.path}/prefs.json');
-      consentGate = RemoteProcessingConsentGate(prefs);
+      consentGate = RemoteProcessingConsentGate.fromPrefs(prefs);
       await RemoteProcessingConsentStore(prefs).grant();
       recoveryService = OfflineVaultRecoveryService(
         store: store,
@@ -66,6 +66,7 @@ void main() {
           journalStore: JournalStore(
             file: File('${vaultDirectory.path}/journal.json'),
           ),
+          consentStore: RemoteProcessingConsentStore(prefs),
         ),
         consentGate: consentGate,
       );

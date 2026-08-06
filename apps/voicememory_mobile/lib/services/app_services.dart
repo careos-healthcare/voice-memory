@@ -65,6 +65,7 @@ import '../push/fcm_service.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/trial_mode.dart';
+import '../core/config/v1_capability_registry.dart';
 import '../features/live_audio/application/live_audio_session_coordinator.dart';
 import '../features/live_audio/application/live_voice_capture_service.dart';
 import '../features/live_audio/application/offline_vault_recovery_service.dart';
@@ -89,6 +90,7 @@ class AppServices {
 
   static AppServices? _instance;
   static bool _initialized = false;
+  static bool _optionalServicesInitialized = false;
 
   late final ApiClient api;
   late final DeviceIdStore deviceIds;
@@ -108,6 +110,7 @@ class AppServices {
   late JournalService journal;
   late BillingService billing;
   late SyncService sync;
+  late RemoteProcessingConsentStore remoteProcessingConsentStore;
   late RemoteProcessingConsentGate remoteProcessingConsentGate;
   late SyncMasterKeyStore syncMasterKeyStore;
   late ValueMomentPaywallLogic paywall;
@@ -205,6 +208,12 @@ class AppServices {
   }
 
   static Future<void> initialize() async {
+    await initializeEssential();
+    await initializeOptionalServices();
+  }
+
+  /// Phase 2 — journal, prefs, pipeline, auth. Safe before V1 navigation.
+  static Future<void> initializeEssential() async {
     if (_initialized) return;
     if (TrialMode.enabled) {
       await _initializeForTrial();
@@ -231,10 +240,6 @@ class AppServices {
     s.recording = RecordingService();
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
 
-    // Load any persisted session *before* deciding which on-disk namespace
-    // to open — a resuming identity must open its own account namespace on
-    // this very first read, never the guest namespace followed by a
-    // second, redundant switch.
     await s.auth.loadPersistedSession();
     final resumedSession = s.auth.currentSession;
     final initialNamespace = resumedSession != null
@@ -249,21 +254,10 @@ class AppServices {
     );
     s._activeNamespace = initialNamespace;
 
-    // Constructed before the first `_wireAccountScopedServices` call below,
-    // since that call configures the journal save-interceptor pipeline,
-    // which in turn resolves `AppServices.instance.clinicalTelemetryEncryptedStorage`
-    // (device-global, not account-scoped — see field-group comment above).
     s.clinicalTelemetryEncryptedStorage =
         await ClinicalTelemetryEncryptedStorage.forSecureStorage(
           s.secureStorage,
         );
-    // Registering the (still mid-construction) instance here — rather than
-    // at the very end, as before namespacing existed — is required so that
-    // `_wireAccountScopedServices` below, and every subsequent namespace
-    // switch's rewiring, can resolve `AppServices.instance` for the few
-    // curiosity-loop repositories that read it directly. Every field they
-    // touch (`prefs`, `clinicalTelemetryEncryptedStorage`) is already set
-    // by this point.
     _instance = s;
     _initialized = true;
 
@@ -278,21 +272,33 @@ class AppServices {
     await GuestFirstAuth(
       s.prefs,
     ).markGuestModeStartedIfNeeded(isSignedIn: s.auth.currentSession != null);
+
+    _wireAccountScopedServices(s);
+    _registerAuthLifecycleCallbacks(s);
+  }
+
+  /// Phase 4 — billing, push, analytics, vault recovery. Must not block tabs.
+  static Future<void> initializeOptionalServices() async {
+    if (!_initialized) {
+      throw StateError('Call AppServices.initializeEssential() first');
+    }
+    if (_optionalServicesInitialized) return;
+    if (TrialMode.enabled) {
+      _optionalServicesInitialized = true;
+      return;
+    }
+    final s = instance;
+    _optionalServicesInitialized = true;
+
+    final resumedSession = s.auth.currentSession;
     await RevenueCatService.instance.initialize();
     if (resumedSession != null) {
-      // P0 fix — RevenueCat was never told which account is active, so a
-      // returning signed-in user's entitlements were evaluated against
-      // whatever anonymous RevenueCat app-user-id the SDK generated locally,
-      // not their real account. Align the two on every cold start.
       await RevenueCatService.instance.logIn(resumedSession.userId);
     }
 
-    _wireAccountScopedServices(s);
     s._billingListeningEnabled = true;
     s.billing.startListening();
 
-    // Device-global (see field-group comment above) — constructed once,
-    // after the first account-scoped wiring so `pipeline` already exists.
     s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
     s.offlineVaultRecovery = OfflineVaultRecoveryService(
       store: s.offlineVaultRecoveryStore,
@@ -329,44 +335,34 @@ class AppServices {
           ),
     );
     s.nativePush = NativePushService(s.fcm);
-    // FirebaseMessaging is only used inside FcmService.initialize() after Firebase.initializeApp.
-    await s.fcm.initialize();
+    if (V1CapabilityRegistry.notifications) {
+      await s.fcm.initialize();
+    }
     await ProductAnalytics.initialize();
+  }
 
+  static void _registerAuthLifecycleCallbacks(AppServices s) {
     Future<void> resetEntitlementsForAuthChange() async {
       await s.billing.resetCachedEntitlementsForAuthChange();
     }
 
     s.auth.onSignedOut = () async {
-      // Physical separation (see `_switchToNamespace`) is now primary;
-      // `JournalOwnershipGuard`'s ownerKey stamp below stays in place as
-      // defence-in-depth only.
       await s._switchToNamespace(AccountNamespace.guest);
-      // Local reflections stay on-device after sign-out by design, but stop
-      // stamping any newly-created (guest) entries with the outgoing
-      // account's id so they aren't mistakenly claimed by it later.
       s.journalStore.setActiveOwnerKey(null);
-      // P0 fix — RevenueCat login/logout was never connected to account
-      // lifecycle. Without this, entitlements for the outgoing account keep
-      // being reported to the RevenueCat SDK (and could leak to whichever
-      // account signs in next) instead of reverting to an anonymous user.
-      await RevenueCatService.instance.logOut();
+      if (_optionalServicesInitialized) {
+        await RevenueCatService.instance.logOut();
+      }
       await resetEntitlementsForAuthChange();
     };
     s.auth.onSignedIn = () async {
+      await initializeOptionalServices();
       final userId = s.auth.currentSession?.userId;
       if (userId != null) {
-        // Order matters: physically switch storage *before* the
-        // entitlement reset below, so that reset operates on the
-        // newly-active `entitlementCache`, not the outgoing one.
         await s._switchToNamespace(
           AccountNamespace.forUserId(userId),
           ownerUserId: userId,
         );
         await _reconcileJournalOwnership(s, userId);
-        // P0 fix — see onSignedOut: identify RevenueCat as this account
-        // *before* refreshing entitlements below, so the refresh reflects
-        // this user's real purchase history rather than an anonymous id.
         await RevenueCatService.instance.logIn(userId);
       }
       await resetEntitlementsForAuthChange();
@@ -455,6 +451,7 @@ class AppServices {
     // by the same fiat rather than leaving trial participants stuck with a
     // pipeline that can never analyze anything.
     await RemoteProcessingConsentStore(s.prefs).grant();
+    _optionalServicesInitialized = true;
   }
 
   /// P0 fix — cross-account archive leakage. See [JournalOwnershipGuard].
@@ -549,10 +546,15 @@ class AppServices {
   /// `entitlementCache` — called once at startup and again, on the freshly
   /// reopened stores, by [_switchToNamespace] on every account switch.
   static void _wireAccountScopedServices(AppServices s) {
+    s.remoteProcessingConsentStore = RemoteProcessingConsentStore(s.prefs);
+    s.remoteProcessingConsentGate = RemoteProcessingConsentGate(
+      s.remoteProcessingConsentStore,
+    );
     s.pipeline = CapturePipelineService(
       api: s.api,
       attest: s.attest,
       journalStore: s.journalStore,
+      consentStore: s.remoteProcessingConsentStore,
     );
     s.journal = JournalService(s.journalStore);
     s.billing = BillingService(
@@ -564,7 +566,6 @@ class AppServices {
     s.memoryResurfacing = MemoryResurfacingService.fromPrefs(s.prefs);
     s.beliefEvolution = BeliefEvolutionService.fromPrefs(s.prefs);
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
-    s.remoteProcessingConsentGate = RemoteProcessingConsentGate(s.prefs);
     s.syncMasterKeyStore = SecureSyncMasterKeyStore(
       accountNamespace: s._activeNamespace.key,
     );
@@ -649,6 +650,7 @@ class AppServices {
     if (newArchiveScope != oldArchiveScope) {
       await ArchiveCorrectionStore.instance.switchArchive(newArchiveScope);
     }
+    await ArchiveCorrectionStore.instance.ensureLoaded();
     ProofDisplayGate.invalidateForAccountSwitch();
   }
 
@@ -723,6 +725,7 @@ class AppServices {
     bool grantRemoteProcessingConsentByDefault = true,
   }) async {
     _initialized = false;
+    _optionalServicesInitialized = false;
     final resolvedJournalPath = _sandboxedTestPath(journalPath);
     final s = AppServices._();
     final activeNamespace = namespace ?? AccountNamespace.guest;
@@ -854,6 +857,7 @@ class AppServices {
     await MonthlyPrivateReportDismissStore.resetPersistedState();
     await ArchiveBackupBridgeDismissStore.resetPersistedState();
     await BetaFeedbackIntelligenceStore.resetPersistedState();
+    _optionalServicesInitialized = !skipRevenueCat;
   }
 
   static void _configureJournalSaveInterceptors(AppServices services) {

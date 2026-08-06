@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
+import '../core/di/v1_account_dependencies.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../product/consumer_ui_copy.dart';
-import '../services/app_services.dart';
 import '../services/capture_pipeline_service.dart';
 import '../services/product_analytics.dart';
 import '../features/first_use_wording/first_use_wording_analytics.dart';
@@ -34,6 +34,7 @@ class QuickTextCaptureScreen extends StatefulWidget {
     this.allowQuietDaySave = false,
     this.showFirstUseWordingHelper = false,
     this.focusedRecordTypeEntry = false,
+    this.accountDependencies,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -59,6 +60,8 @@ class QuickTextCaptureScreen extends StatefulWidget {
   /// Calm Record → Type instead layout: one field, examples behind toggle.
   final bool focusedRecordTypeEntry;
 
+  final V1AccountDependencies? accountDependencies;
+
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
 }
@@ -79,13 +82,16 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
 
   late final CapturePipelineService _pipeline;
 
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
+
   bool get _useFocusedTypeEntry =>
       widget.focusedRecordTypeEntry && !_isVoiceFallback;
 
   @override
   void initState() {
     super.initState();
-    _pipeline = AppServices.instance.pipeline;
+    _pipeline = _accountDeps.pipeline;
     final focusedEntry =
         widget.focusedRecordTypeEntry &&
         widget.entryId?.trim().isNotEmpty != true;
@@ -108,7 +114,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   }
 
   Future<void> _loadJournalState() async {
-    final all = await AppServices.instance.journal.loadAll();
+    final all = await _accountDeps.journal.loadAll();
     if (!mounted) return;
     setState(() {
       _recordingCount = all.length;
@@ -210,7 +216,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
     CapturePipelineResult? result;
     try {
       if (_isVoiceFallback) {
-        final existing = await AppServices.instance.journalStore.getById(
+        final existing = await _accountDeps.journalStore.getById(
           widget.entryId!,
         );
         if (existing == null) {
