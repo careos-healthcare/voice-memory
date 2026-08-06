@@ -15,10 +15,10 @@
 
 - **minSdk:** 24 (see `android/app/build.gradle.kts`)
 - **Release signing:** `android/app/build.gradle.kts` loads a real upload
-  keystore from `android/key.properties` when present, and signs `release`
-  builds with it. Without that file it falls back to the debug key **and
-  prints a loud warning in the Gradle build log** — that fallback build
-  cannot be uploaded to the Play Store.
+  keystore from `android/key.properties` **or** from the
+  `ARCHIVEME_ANDROID_*` environment variables documented in
+  `android/key.properties.example`. Release builds **fail fast** when
+  credentials are absent. They **never** fall back to the debug keystore.
 
 To configure real signing:
 
@@ -28,10 +28,15 @@ To configure real signing:
 2. Copy `android/key.properties.example` to `android/key.properties` (this
    file is gitignored — never commit it) and fill in the real
    `storePassword`, `keyPassword`, `keyAlias`, and `storeFile` path.
-3. Build with `flutter build appbundle --release` and confirm the Gradle
-   output does **not** print the debug-signing warning above.
-4. Verify with `jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.aab`
-   that the signer is your upload key, not the Flutter debug key.
+   **Or** export the four `ARCHIVEME_ANDROID_*` variables instead.
+3. Run the credential-free gate:
+   `bash tool/validate_android_release_signing.sh`
+4. Build with `flutter build appbundle --release`. Without credentials this
+   command must fail with a clear “Release signing is not configured” error.
+5. With credentials configured, verify the artifact with
+   `jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.aab`
+   or `apksigner verify --print-certs build/app/outputs/apk/release/app-release.apk`
+   and confirm the signer is your upload key, not the Flutter debug key.
 
 ## Play Console
 

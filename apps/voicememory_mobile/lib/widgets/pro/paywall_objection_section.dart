@@ -9,15 +9,13 @@ import '../../theme/voicememory_cards.dart';
 
 /// Expandable objection answers on the paywall — no purchase logic.
 class PaywallObjectionSection extends StatefulWidget {
-  const PaywallObjectionSection({
-    super.key,
-    required this.result,
-  });
+  const PaywallObjectionSection({super.key, required this.result});
 
   final PaywallObjectionSectionResult result;
 
   @override
-  State<PaywallObjectionSection> createState() => _PaywallObjectionSectionState();
+  State<PaywallObjectionSection> createState() =>
+      _PaywallObjectionSectionState();
 }
 
 class _PaywallObjectionSectionState extends State<PaywallObjectionSection> {
@@ -46,18 +44,19 @@ class _PaywallObjectionSectionState extends State<PaywallObjectionSection> {
   @override
   Widget build(BuildContext context) {
     if (!widget.result.shouldShow || widget.result.rows.isEmpty) {
-      return const SizedBox.shrink(key: Key('paywall_objection_section_hidden'));
+      return const SizedBox.shrink(
+        key: Key('paywall_objection_section_hidden'),
+      );
     }
 
     _trackSeenOnce();
 
-    final questionStyle = ArchiveMobileTypography.listTitle(context).copyWith(
-      fontSize: 15,
-    );
-    final answerStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final questionStyle = ArchiveMobileTypography.listTitle(
+      context,
+    ).copyWith(fontSize: 15);
+    final answerStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('paywall_objection_section'),
@@ -76,32 +75,40 @@ class _PaywallObjectionSectionState extends State<PaywallObjectionSection> {
           for (final row in widget.result.rows)
             Theme(
               data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+                dividerColor: AppColors.transparent,
+                splashColor: AppColors.transparent,
+                highlightColor: AppColors.transparent,
               ),
-              child: ExpansionTile(
-                key: Key('paywall_objection_row_${row.id.name}'),
-                tilePadding: EdgeInsets.zero,
-                childrenPadding: const EdgeInsets.only(bottom: 8),
-                title: Text(
-                  row.question,
-                  key: Key('paywall_objection_question_${row.id.name}'),
-                  style: questionStyle,
-                ),
-                onExpansionChanged: (expanded) {
-                  if (expanded) _trackExpanded(row.id);
-                },
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      row.answer,
-                      key: Key('paywall_objection_answer_${row.id.name}'),
-                      style: answerStyle,
-                    ),
+              // ExpansionTile paints its ListTile's background/ink on the
+              // nearest Material ancestor. Without this, the surrounding
+              // Container's BoxDecoration (opaque background) hides that
+              // painting — a real bug the framework flags as an assertion
+              // in debug/test builds, not just a cosmetic warning.
+              child: Material(
+                type: MaterialType.transparency,
+                child: ExpansionTile(
+                  key: Key('paywall_objection_row_${row.id.name}'),
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: const EdgeInsets.only(bottom: 8),
+                  title: Text(
+                    row.question,
+                    key: Key('paywall_objection_question_${row.id.name}'),
+                    style: questionStyle,
                   ),
-                ],
+                  onExpansionChanged: (expanded) {
+                    if (expanded) _trackExpanded(row.id);
+                  },
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        row.answer,
+                        key: Key('paywall_objection_answer_${row.id.name}'),
+                        style: answerStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],

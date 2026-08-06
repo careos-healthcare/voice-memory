@@ -47,7 +47,7 @@ class KeyMomentsScreen extends StatefulWidget {
 
 class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   final TextEditingController _searchController = TextEditingController();
 

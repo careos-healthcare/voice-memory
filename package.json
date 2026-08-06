@@ -110,6 +110,7 @@
     "validate:play-proof": "node --import tsx scripts/validate-play-proof.mjs",
     "validate:ios-signing": "node --import tsx scripts/validate-ios-signing.mjs",
     "validate:android-signing": "node --import tsx scripts/validate-android-signing.mjs",
+    "validate:android-release-signing-config": "bash apps/voicememory_mobile/tool/validate_android_release_signing.sh",
     "validate:archive-emotional-elegance": "node --import tsx scripts/validate-archive-emotional-elegance.mjs",
     "validate:premium-polish": "node --import tsx scripts/validate-premium-polish.mjs",
     "validate:archive-onboarding": "node --import tsx scripts/validate-archive-onboarding.mjs",

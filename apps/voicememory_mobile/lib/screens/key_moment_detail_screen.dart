@@ -31,7 +31,7 @@ class KeyMomentDetailScreen extends StatefulWidget {
 
 class _KeyMomentDetailScreenState extends State<KeyMomentDetailScreen> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   bool _busy = false;
   bool _done = false;

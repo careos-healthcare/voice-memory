@@ -55,7 +55,7 @@ class KinderAngleCard extends StatefulWidget {
 
 class _KinderAngleCardState extends State<KinderAngleCard> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   bool _broaderAngle = false;
   bool _busy = false;

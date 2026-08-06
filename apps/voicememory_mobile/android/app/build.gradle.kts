@@ -1,3 +1,4 @@
+import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -8,17 +9,86 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// P0 fix — Android production signing was not configured: release builds were
-// silently signed with the debug key, so a real Play Store upload was never
-// possible. Load a real upload keystore from android/key.properties when
-// present (see key.properties.example + docs/ANDROID_RELEASE_CHECKLIST.md);
-// this file is gitignored and must never be committed.
-val keystorePropertiesFile = rootProject.file("key.properties")
-val hasReleaseKeystore = keystorePropertiesFile.exists()
-val keystoreProperties = Properties()
-if (hasReleaseKeystore) {
-    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
+/**
+ * Release signing for Play Store uploads.
+ *
+ * Credentials come from ONE of:
+ * 1. `android/key.properties` (gitignored — see key.properties.example), or
+ * 2. Environment variables:
+ *    - ARCHIVEME_ANDROID_KEYSTORE_FILE
+ *    - ARCHIVEME_ANDROID_KEYSTORE_PASSWORD
+ *    - ARCHIVEME_ANDROID_KEY_PASSWORD
+ *    - ARCHIVEME_ANDROID_KEY_ALIAS
+ *
+ * Release and release-like tasks fail fast when credentials are absent.
+ * They must never fall back to the debug keystore.
+ */
+data class ReleaseSigningCredentials(
+    val storeFile: File,
+    val storePassword: String,
+    val keyAlias: String,
+    val keyPassword: String,
+)
+
+fun loadReleaseSigningCredentials(androidRoot: File): ReleaseSigningCredentials? {
+    val propertiesFile = androidRoot.resolve("key.properties")
+    if (propertiesFile.isFile) {
+        val props = Properties()
+        FileInputStream(propertiesFile).use { props.load(it) }
+        val storeFilePath = props.getProperty("storeFile")?.trim().orEmpty()
+        val storePassword = props.getProperty("storePassword")?.trim().orEmpty()
+        val keyAlias = props.getProperty("keyAlias")?.trim().orEmpty()
+        val keyPassword = props.getProperty("keyPassword")?.trim().orEmpty()
+        if (storeFilePath.isEmpty() || storePassword.isEmpty() || keyAlias.isEmpty() || keyPassword.isEmpty()) {
+            throw GradleException(
+                "android/key.properties exists but is incomplete. " +
+                    "All of storeFile, storePassword, keyAlias and keyPassword are required. " +
+                    "See android/key.properties.example and docs/ANDROID_RELEASE_CHECKLIST.md.",
+            )
+        }
+        val storeFile = androidRoot.resolve(storeFilePath)
+        if (!storeFile.isFile) {
+            throw GradleException(
+                "android/key.properties storeFile does not exist: ${storeFile.absolutePath}",
+            )
+        }
+        return ReleaseSigningCredentials(
+            storeFile = storeFile,
+            storePassword = storePassword,
+            keyAlias = keyAlias,
+            keyPassword = keyPassword,
+        )
+    }
+
+    val envStoreFile = System.getenv("ARCHIVEME_ANDROID_KEYSTORE_FILE")?.trim().orEmpty()
+    if (envStoreFile.isEmpty()) {
+        return null
+    }
+    val envStorePassword = System.getenv("ARCHIVEME_ANDROID_KEYSTORE_PASSWORD")?.trim().orEmpty()
+    val envKeyAlias = System.getenv("ARCHIVEME_ANDROID_KEY_ALIAS")?.trim().orEmpty()
+    val envKeyPassword = System.getenv("ARCHIVEME_ANDROID_KEY_PASSWORD")?.trim().orEmpty()
+    if (envStorePassword.isEmpty() || envKeyAlias.isEmpty() || envKeyPassword.isEmpty()) {
+        throw GradleException(
+            "ARCHIVEME_ANDROID_KEYSTORE_FILE is set but one or more of " +
+                "ARCHIVEME_ANDROID_KEYSTORE_PASSWORD, ARCHIVEME_ANDROID_KEY_ALIAS, " +
+                "ARCHIVEME_ANDROID_KEY_PASSWORD is missing.",
+        )
+    }
+    val storeFile = File(envStoreFile)
+    if (!storeFile.isFile) {
+        throw GradleException(
+            "ARCHIVEME_ANDROID_KEYSTORE_FILE does not exist: ${storeFile.absolutePath}",
+        )
+    }
+    return ReleaseSigningCredentials(
+        storeFile = storeFile,
+        storePassword = envStorePassword,
+        keyAlias = envKeyAlias,
+        keyPassword = envKeyPassword,
+    )
 }
+
+val releaseSigningCredentials = loadReleaseSigningCredentials(rootProject.projectDir)
 
 android {
     namespace = "com.voicememory.mobile"
@@ -45,35 +115,23 @@ android {
     }
 
     signingConfigs {
-        if (hasReleaseKeystore) {
+        releaseSigningCredentials?.let { creds ->
             create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storePassword = keystoreProperties["storePassword"] as String
-                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+                keyAlias = creds.keyAlias
+                keyPassword = creds.keyPassword
+                storePassword = creds.storePassword
+                storeFile = creds.storeFile
             }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = if (hasReleaseKeystore) {
-                signingConfigs.getByName("release")
-            } else {
-                // No android/key.properties on this machine: fall back to the
-                // debug key so `flutter run --release` still works locally,
-                // but make this impossible to miss in build output — this
-                // build CANNOT be uploaded to the Play Store.
-                logger.warn(
-                    "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
-                        "! android/key.properties not found — release build is signed  !\n" +
-                        "! with the DEBUG key and CANNOT be uploaded to the Play Store. !\n" +
-                        "! See android/key.properties.example and                      !\n" +
-                        "! docs/ANDROID_RELEASE_CHECKLIST.md to configure real signing. !\n" +
-                        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-                )
-                signingConfigs.getByName("debug")
+            if (releaseSigningCredentials != null) {
+                signingConfig = signingConfigs.getByName("release")
             }
+            // When credentials are absent, do not assign any signingConfig here.
+            // taskGraph.whenReady below fails release tasks before packaging.
         }
     }
 }
@@ -84,4 +142,40 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
+fun Task.isReleaseArtifactTask(): Boolean {
+    if (!name.contains("Release", ignoreCase = true)) {
+        return false
+    }
+    return name == "assembleRelease" ||
+        name == "bundleRelease" ||
+        name == "packageRelease" ||
+        name.startsWith("assembleRelease") ||
+        name.startsWith("bundleRelease") ||
+        name.startsWith("packageRelease") ||
+        name.startsWith("signRelease") ||
+        name.endsWith("ReleaseBundle") ||
+        name.contains("ReleaseApk", ignoreCase = true)
+}
+
+gradle.taskGraph.whenReady {
+    if (releaseSigningCredentials != null) {
+        return@whenReady
+    }
+    val blocked = allTasks.filter { it.isReleaseArtifactTask() }
+    if (blocked.isNotEmpty()) {
+        throw GradleException(
+            "\n" +
+                "Release signing is not configured — this build cannot produce a Play Store artifact.\n" +
+                "\n" +
+                "Configure ONE of:\n" +
+                "  • android/key.properties (copy from android/key.properties.example), or\n" +
+                "  • ARCHIVEME_ANDROID_KEYSTORE_FILE + ARCHIVEME_ANDROID_KEYSTORE_PASSWORD +\n" +
+                "    ARCHIVEME_ANDROID_KEY_ALIAS + ARCHIVEME_ANDROID_KEY_PASSWORD\n" +
+                "\n" +
+                "Debug builds are unaffected. See docs/ANDROID_RELEASE_CHECKLIST.md.\n" +
+                "Blocked release task(s): ${blocked.joinToString { it.path }}\n",
+        )
+    }
 }

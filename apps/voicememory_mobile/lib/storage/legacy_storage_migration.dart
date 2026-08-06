@@ -115,6 +115,12 @@ abstract class LegacyStorageMigration {
     required String base,
     required AccountNamespace namespace,
     SecureStorageService? secureStorage,
+    // The signed-in account this [namespace] belongs to, when known — used
+    // *only* in-memory to filter which legacy entries are safe to relocate
+    // into this namespace (see `_migrateJournal`); never persisted or
+    // logged. Omit for the guest namespace (there is no account to filter
+    // by) or when the caller genuinely does not know it yet.
+    String? ownerUserId,
     // Test-only escape hatch: production always resolves the legacy key
     // via [SecureStorageService], which persists the same key across
     // however many times `JournalStore.open` is called for the legacy
@@ -171,6 +177,7 @@ abstract class LegacyStorageMigration {
         base: base,
         destJournalPath: destJournalPath,
         namespace: namespace,
+        ownerUserId: ownerUserId,
         secureStorage: secureStorage,
         legacyKeyStoreForTest: legacyKeyStoreForTest,
         destKeyStoreForTest: destKeyStoreForTest,
@@ -209,6 +216,7 @@ abstract class LegacyStorageMigration {
     required String base,
     required String destJournalPath,
     required AccountNamespace namespace,
+    String? ownerUserId,
     SecureStorageService? secureStorage,
     PrivateDataEncryptionKeyStore? legacyKeyStoreForTest,
     PrivateDataEncryptionKeyStore? destKeyStoreForTest,
@@ -220,27 +228,45 @@ abstract class LegacyStorageMigration {
     );
     final legacyEntries = await legacyStore.loadAllIncludingTombstones();
 
+    // The pre-namespacing journal was a single file shared by every account
+    // that ever signed in on this device (`JournalOwnershipGuard`'s ownerKey
+    // stamp was, until now, only ever enforced at *sync* time — never at
+    // local-storage time). Relocating the file verbatim into every namespace
+    // that happens to migrate would hand each account's private entries to
+    // every other account that later signs in on the same device: a direct
+    // violation of the isolation this namespacing work exists to provide.
+    // An entry is only ever relocated into [namespace] when it plausibly
+    // belongs there: it is unowned (predates ownership stamping, or was
+    // created while signed out — the same "no conflict recorded yet, so
+    // trust it" rule `JournalOwnershipGuard.reconcile` already applied), or
+    // its `ownerKey` matches [ownerUserId] exactly. An entry stamped with a
+    // *different* account's id is left behind in the legacy file, untouched,
+    // exactly as before.
+    final migratable = legacyEntries
+        .where((e) => e.ownerKey == null || e.ownerKey == ownerUserId)
+        .toList();
+
     final destStore = await JournalStore.open(
       destJournalPath,
       secureStorage: secureStorage,
       keyAlias: namespace.key,
       keyStore: destKeyStoreForTest,
     );
-    await destStore.replaceAll(legacyEntries);
+    await destStore.replaceAll(migratable);
 
     final verify = await destStore.loadAllIncludingTombstones();
-    final legacyIds = legacyEntries.map((e) => e.id).toSet();
+    final migratableIds = migratable.map((e) => e.id).toSet();
     final verifyIds = verify.map((e) => e.id).toSet();
-    if (verify.length != legacyEntries.length ||
-        legacyIds.length != verifyIds.length ||
-        !legacyIds.containsAll(verifyIds)) {
+    if (verify.length != migratable.length ||
+        migratableIds.length != verifyIds.length ||
+        !migratableIds.containsAll(verifyIds)) {
       throw StateError(
         'LegacyStorageMigration: journal verification failed for namespace '
-        '${namespace.key} — expected ${legacyEntries.length} entries, '
+        '${namespace.key} — expected ${migratable.length} entries, '
         'found ${verify.length} after write-back.',
       );
     }
-    return legacyEntries.length;
+    return migratable.length;
   }
 
   static Future<void> _mergeLegacyPrefsIntoDestination({

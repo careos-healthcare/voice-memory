@@ -120,7 +120,7 @@ class _CheckInResultRatingPromptState extends State<CheckInResultRatingPrompt> {
       label: Text(label),
       onPressed: () => _onRating(rating),
       backgroundColor: Colors.white,
-      side: const BorderSide(color: Color(0xFFF5E6D3)),
+      side: const BorderSide(color: AppColors.warmBorder),
       labelStyle: VoiceMemoryTypography.bodyStyle(
         color: AppColors.textSecondary,
       ).copyWith(fontSize: 13),
@@ -132,7 +132,7 @@ class _CheckInResultRatingPromptState extends State<CheckInResultRatingPrompt> {
       label: Text(label),
       onPressed: () => _onNotUsefulReason(reason),
       backgroundColor: Colors.white,
-      side: const BorderSide(color: Color(0xFFF5E6D3)),
+      side: const BorderSide(color: AppColors.warmBorder),
       labelStyle: VoiceMemoryTypography.bodyStyle(
         color: AppColors.textSecondary,
       ).copyWith(fontSize: 13),

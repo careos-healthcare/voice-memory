@@ -31,7 +31,7 @@ class CompellingCheckPreview extends StatefulWidget {
 }
 
 class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
   bool _tracked = false;
 
   @override

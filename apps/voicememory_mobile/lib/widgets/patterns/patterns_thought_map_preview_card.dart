@@ -11,10 +11,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Lightweight thought map preview on the Patterns tab — local evidence only.
 class PatternsThoughtMapPreviewCard extends StatefulWidget {
-  const PatternsThoughtMapPreviewCard({
-    super.key,
-    required this.preview,
-  });
+  const PatternsThoughtMapPreviewCard({super.key, required this.preview});
 
   final ArchiveThoughtMapPreview preview;
 
@@ -295,7 +292,7 @@ class _PatternsThoughtMapPreviewCardState
         Material(
           color: selected
               ? AppColors.accentPrimary.withValues(alpha: 0.08)
-              : Colors.transparent,
+              : AppColors.transparent,
           borderRadius: BorderRadius.circular(8),
           child: InkWell(
             key: Key('patterns_thought_map_node_tap_${node.kind.name}'),
@@ -313,14 +310,18 @@ class _PatternsThoughtMapPreviewCardState
                     width: 112,
                     child: Text(
                       node.label,
-                      key: Key('patterns_thought_map_node_label_${node.kind.name}'),
+                      key: Key(
+                        'patterns_thought_map_node_label_${node.kind.name}',
+                      ),
                       style: ArchiveMobileTypography.cardLabel(context),
                     ),
                   ),
                   Expanded(
                     child: Text(
                       node.value,
-                      key: Key('patterns_thought_map_node_value_${node.kind.name}'),
+                      key: Key(
+                        'patterns_thought_map_node_value_${node.kind.name}',
+                      ),
                       style: ArchiveMobileTypography.body(context),
                     ),
                   ),
@@ -372,7 +373,9 @@ class _EvidencePanel extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             node.label,
-            key: Key('patterns_thought_map_evidence_node_label_${node.kind.name}'),
+            key: Key(
+              'patterns_thought_map_evidence_node_label_${node.kind.name}',
+            ),
             style: ArchiveMobileTypography.cardLabel(context),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -404,8 +407,9 @@ class _EvidencePanel extends StatelessWidget {
                     ),
                     Text(
                       ArchiveThoughtMapCopy.savedAtLabel(snippet.savedAt),
-                      style: ArchiveMobileTypography.responsiveHelper(context)
-                          .copyWith(color: AppColors.textSecondary),
+                      style: ArchiveMobileTypography.responsiveHelper(
+                        context,
+                      ).copyWith(color: AppColors.textSecondary),
                     ),
                   ],
                 ),

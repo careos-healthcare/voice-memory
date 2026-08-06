@@ -4,10 +4,14 @@ import '../../billing/paywall_source.dart';
 abstract final class PaywallValueSharpeningCopy {
   PaywallValueSharpeningCopy._();
 
-  static const proofConnectedHeadline =
-      'You saw the first useful repeat.';
+  static const proofConnectedHeadline = 'You saw the first useful repeat.';
 
   static const genericHeadline = proofConnectedHeadline;
+
+  /// Anchor positioning line — evidence-based framing shown directly under
+  /// the headline on every paywall variant. Longer history and verified
+  /// change over time, never "more chat" or a promised transformation.
+  static const anchorPositioningLine = 'Keep your verified timeline growing.';
 
   static const body =
       'Free shows the first useful proof. Pro keeps the longer trail.';
@@ -40,9 +44,7 @@ abstract final class PaywallValueSharpeningCopy {
       source == PaywallSource.valueMoment;
 
   static String headlineFor(PaywallSource? source) =>
-      isProofConnectedSource(source)
-          ? proofConnectedHeadline
-          : genericHeadline;
+      isProofConnectedSource(source) ? proofConnectedHeadline : genericHeadline;
 
   static PaywallSourceCopy sourceCopyFor(PaywallSource source) {
     if (isProofConnectedSource(source)) {
@@ -59,12 +61,13 @@ abstract final class PaywallValueSharpeningCopy {
   );
 
   static List<String> allPaywallStrings() => [
-        proofConnectedHeadline,
-        genericHeadline,
-        body,
-        proofConnectedLine,
-        cta,
-        secondaryReassurance,
-        ...benefitBullets,
-      ];
+    proofConnectedHeadline,
+    genericHeadline,
+    anchorPositioningLine,
+    body,
+    proofConnectedLine,
+    cta,
+    secondaryReassurance,
+    ...benefitBullets,
+  ];
 }

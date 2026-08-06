@@ -19,7 +19,7 @@ class ArchiveCleanViewCard extends StatefulWidget {
   final void Function(ArchiveCleanSection section) onSectionTap;
 
   static const Color warmSurface = Color(0xFFFFFBF5);
-  static const Color warmBorder = Color(0xFFF5E6D3);
+  static const Color warmBorder = AppColors.warmBorder;
 
   @override
   State<ArchiveCleanViewCard> createState() => _ArchiveCleanViewCardState();

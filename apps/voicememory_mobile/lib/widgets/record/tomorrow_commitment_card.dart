@@ -21,7 +21,7 @@ class TomorrowCommitmentCard extends StatefulWidget {
   final Future<void> Function(TomorrowReturnLoop loop)? onRemindTomorrow;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   State<TomorrowCommitmentCard> createState() => _TomorrowCommitmentCardState();

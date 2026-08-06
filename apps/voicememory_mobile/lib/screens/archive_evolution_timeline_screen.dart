@@ -236,7 +236,7 @@ class _ArchiveEvolutionTimelineScreenState
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(width: 2, color: const Color(0xFFF5E6D3)),
+                  child: Container(width: 2, color: AppColors.warmBorder),
                 ),
             ],
           ),

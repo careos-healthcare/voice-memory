@@ -28,7 +28,10 @@ void main() {
 
         if (!sawConfirmedBody) {
           return http.Response(
-            jsonEncode({'error': 'Confirmation required.', 'code': 'CONFIRM_REQUIRED'}),
+            jsonEncode({
+              'error': 'Confirmation required.',
+              'code': 'CONFIRM_REQUIRED',
+            }),
             400,
             headers: {'content-type': 'application/json'},
           );
@@ -48,21 +51,24 @@ void main() {
     expect(sawConfirmedBody, isTrue);
   });
 
-  test('deleteAccount surfaces CONFIRM_REQUIRED as a mapped API error, not a silent success', () async {
-    final client = ApiClient(
-      httpClient: MockClient((request) async {
-        return http.Response(
-          jsonEncode({'error': 'Confirmation required.', 'code': 'CONFIRM_REQUIRED'}),
-          400,
-          headers: {'content-type': 'application/json'},
-        );
-      }),
-      baseUrl: 'https://voice-memory-iota.vercel.app',
-    );
+  test(
+    'deleteAccount surfaces CONFIRM_REQUIRED as a mapped API error, not a silent success',
+    () async {
+      final client = ApiClient(
+        httpClient: MockClient((request) async {
+          return http.Response(
+            jsonEncode({
+              'error': 'Confirmation required.',
+              'code': 'CONFIRM_REQUIRED',
+            }),
+            400,
+            headers: {'content-type': 'application/json'},
+          );
+        }),
+        baseUrl: 'https://voice-memory-iota.vercel.app',
+      );
 
-    await expectLater(
-      client.deleteAccount(),
-      throwsA(isA<ApiException>()),
-    );
-  });
+      await expectLater(client.deleteAccount(), throwsA(isA<ApiException>()));
+    },
+  );
 }

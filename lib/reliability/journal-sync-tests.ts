@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import {
   getServerJournalEntry,
   listServerJournalEntries,
+  listServerJournalEntriesPage,
   upsertServerJournalEntriesConditional,
 } from "@/lib/server/journal-store";
 import type { Reflection } from "@/types/journal";
@@ -372,6 +373,68 @@ export async function runJournalSyncTests(): Promise<{ failures: string[] }> {
     const storedForOther = await getServerJournalEntry(otherUserId, "entry-spoof");
     assert.equal(storedForOther, null, "spoofed userId must never redirect storage to another account");
   });
+
+  await check(
+    "deterministic pull pagination: pages never skip or duplicate a row across a large journal",
+    async () => {
+      const userId = `journal-sync-${randomUUID()}`;
+      const total = 23;
+      for (let i = 0; i < total; i += 1) {
+        await upsertServerJournalEntriesConditional(userId, [
+          rawEntry({
+            id: `page-entry-${i}`,
+            revision: 1,
+            // Several entries deliberately share the same updatedAt so the
+            // entryId tie-break is actually exercised, not just the common case.
+            updatedAt: `2026-01-0${1 + (i % 3)}T00:00:00.000Z`,
+          }),
+        ]);
+      }
+
+      const seenIds: string[] = [];
+      let cursor = null as Awaited<ReturnType<typeof listServerJournalEntriesPage>>["nextCursor"];
+      let iterations = 0;
+      do {
+        const page = await listServerJournalEntriesPage(userId, { limit: 5, cursor });
+        assert.ok(
+          page.rows.length <= 5,
+          "a page must never exceed the requested limit",
+        );
+        seenIds.push(...page.rows.map((r) => r.entryId));
+        cursor = page.nextCursor;
+        iterations += 1;
+        assert.ok(iterations <= total, "pagination must terminate");
+      } while (cursor !== null);
+
+      assert.equal(seenIds.length, total, "every entry must be returned exactly once across pages");
+      assert.equal(
+        new Set(seenIds).size,
+        total,
+        "no entry may be duplicated across pages",
+      );
+
+      const fullPull = await listServerJournalEntries(userId);
+      assert.deepEqual(
+        seenIds.sort(),
+        fullPull.map((r) => r.entryId).sort(),
+        "paginated pull must return the same overall set as the unbounded pull",
+      );
+    },
+  );
+
+  await check(
+    "pull pagination: a limit larger than the journal returns everything in one page",
+    async () => {
+      const userId = `journal-sync-${randomUUID()}`;
+      await upsertServerJournalEntriesConditional(userId, [
+        rawEntry({ id: "solo-1", revision: 1, updatedAt: "2026-01-01T00:00:00.000Z" }),
+        rawEntry({ id: "solo-2", revision: 1, updatedAt: "2026-01-02T00:00:00.000Z" }),
+      ]);
+      const page = await listServerJournalEntriesPage(userId, { limit: 500 });
+      assert.equal(page.rows.length, 2);
+      assert.equal(page.nextCursor, null);
+    },
+  );
 
   await check("legacy entry without sync fields defaults to schema v1 and is never rejected", async () => {
     const userId = `journal-sync-${randomUUID()}`;

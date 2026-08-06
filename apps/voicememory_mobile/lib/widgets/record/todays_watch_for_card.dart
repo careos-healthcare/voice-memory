@@ -51,7 +51,7 @@ class TodaysWatchForCard extends StatefulWidget {
 
 class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   final _captureEngine = const ReturnCaptureEngine();
   String? _selectedQuickAnswerId;

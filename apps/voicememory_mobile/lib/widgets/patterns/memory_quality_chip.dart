@@ -20,7 +20,7 @@ class MemoryQualityChip extends StatefulWidget {
 class _MemoryQualityChipState extends State<MemoryQualityChip> {
   bool _expanded = false;
 
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   void initState() {

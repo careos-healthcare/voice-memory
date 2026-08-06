@@ -22,6 +22,7 @@ import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/widgets/memory/clean_slate_prompt_card.dart';
 import 'package:voicememory_mobile/features/trust/aha_proof_share_eligibility.dart';
 import 'package:voicememory_mobile/features/trust/pro_trust_copy.dart';
+import 'package:voicememory_mobile/l10n/generated/app_localizations.dart';
 import 'package:voicememory_mobile/widgets/record/evidence_context_tag_card.dart';
 import 'package:voicememory_mobile/widgets/share/aha_proof_share_card.dart';
 
@@ -61,7 +62,11 @@ const _bannedWords = [
   'VoiceMemory',
 ];
 
-JournalEntry _entry({required String id, DateTime? createdAt, bool isPinned = false}) => JournalEntry(
+JournalEntry _entry({
+  required String id,
+  DateTime? createdAt,
+  bool isPinned = false,
+}) => JournalEntry(
   id: id,
   createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
   transcript: 'A long enough transcript for record overflow tests here.',
@@ -173,16 +178,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('renders with 1 entry without second-entry nudge on small height', (
-      tester,
-    ) async {
-      await tester.runAsync(() => saveEntries(1));
-      await pumpRecordScreen(tester);
-      // Second-entry nudge lives behind comparison-seed gates (>=2 entries).
-      expect(find.byKey(const Key('second_entry_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('record_screen_scroll')), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'renders with 1 entry without second-entry nudge on small height',
+      (tester) async {
+        await tester.runAsync(() => saveEntries(1));
+        await pumpRecordScreen(tester);
+        // Second-entry nudge lives behind comparison-seed gates (>=2 entries).
+        expect(find.byKey(const Key('second_entry_nudge_card')), findsNothing);
+        expect(find.byKey(const Key('record_screen_scroll')), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets(
       'renders with 6 entries and advanced save options collapsed by default',
@@ -342,7 +348,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('post-save done state scrolls without overflow', (tester) async {
+    testWidgets('post-save done state scrolls without overflow', (
+      tester,
+    ) async {
       await tester.runAsync(() => saveEntries(3));
       await pumpRecordScreen(tester, ui: RecordUiState.done);
       await tester.pump(const Duration(milliseconds: 400));
@@ -429,5 +437,82 @@ void main() {
         expect(copy, isNot(contains(word.toLowerCase())));
       }
     });
+  });
+
+  group('Record screen accessibility', () {
+    Future<void> pumpAtTextScale(
+      WidgetTester tester, {
+      required double scale,
+      RecordUiState ui = RecordUiState.ready,
+    }) async {
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(ui: ui),
+      );
+      await tester.binding.setSurfaceSize(_smallScreen);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(scale)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
+    testWidgets(
+      'ready state remains usable at 200% text scale with no overflow',
+      (tester) async {
+        await tester.runAsync(() => saveEntries(3));
+        await pumpAtTextScale(tester, scale: 2.0);
+        expect(tester.takeException(), isNull);
+
+        await scrollRecordScreen(tester);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'recording state remains usable at 200% text scale with no overflow',
+      (tester) async {
+        await pumpAtTextScale(tester, scale: 2.0, ui: RecordUiState.recording);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'record button exposes an accessible label from its visible text, '
+      'not a bare icon-only control',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        await pumpRecordScreen(tester);
+        final button = find.byKey(const Key('capture_entry_record_cta'));
+        expect(button, findsOneWidget);
+        expect(
+          find.descendant(
+            of: button,
+            matching: find.bySemanticsLabel(RegExp('.+')),
+          ),
+          findsWidgets,
+          reason:
+              'the mic-icon record CTA must carry a real accessible label, '
+              'not just a decorative icon',
+        );
+        handle.dispose();
+      },
+    );
   });
 }

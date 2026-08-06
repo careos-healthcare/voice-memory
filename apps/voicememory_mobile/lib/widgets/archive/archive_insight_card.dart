@@ -77,7 +77,7 @@ class ArchiveInsightCard extends StatelessWidget {
     if (onTap == null) return box;
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(VoiceMemoryCards.radius),

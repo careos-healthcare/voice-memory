@@ -78,7 +78,7 @@ class FirstSessionPatternCard extends StatefulWidget {
   onAccept;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   State<FirstSessionPatternCard> createState() =>
@@ -374,7 +374,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                 side: BorderSide(
                   color: variant.id == effectiveId
                       ? AppColors.accentPrimary
-                      : const Color(0xFFF5E6D3),
+                      : AppColors.warmBorder,
                 ),
                 labelStyle:
                     VoiceMemoryTypography.bodyStyle(

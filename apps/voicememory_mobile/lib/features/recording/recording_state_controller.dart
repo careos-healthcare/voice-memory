@@ -131,9 +131,6 @@ class _RecordScreenState extends State<RecordScreen>
   bool _retentionNextCheckJustChosen = false;
   bool _retentionDismissed = false;
   SecondSessionComparison? _secondSessionComparison;
-  PostSaveComparisonController? _postSaveComparisonController;
-  final _logger = const _RecordScreenLogger();
-  late final RevenueCatPaywallPresenter _paywallPresenter;
   PatternHypothesis? _patternHypothesis;
   bool _patternHypothesisDismissed = false;
   String? _nextEvidencePrompt;
@@ -173,8 +170,6 @@ class _RecordScreenState extends State<RecordScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _paywallPresenter =
-        widget.paywallPresenter ?? const RevenueCatPaywallPresenter();
     CleanSlatePromptStore.noteSessionStart();
     final s = AppServices.instance;
     _microphonePermissionGateway =
@@ -550,89 +545,8 @@ class _RecordScreenState extends State<RecordScreen>
     unawaited(
       ReturnDayFrictionCoordinator.trackAbandonedAfterAnswerIfPending(),
     );
-    _disposePostSaveComparisonController();
     unawaited(_recordingState.dispose());
     super.dispose();
-  }
-
-  void _onPostSaveComparisonChanged() {
-    if (mounted) setState(() {});
-  }
-
-  void _disposePostSaveComparisonController() {
-    _postSaveComparisonController?.removeListener(_onPostSaveComparisonChanged);
-    _postSaveComparisonController?.dispose();
-    _postSaveComparisonController = null;
-  }
-
-  /// Text-first post-save comparison — no clinical SignalEngine or health gates.
-  /// Only requires at least one prior saved moment; parser assigns evidence state.
-  Future<void> _handlePostSavePatternComparison(List<JournalEntry> all) async {
-    final moments = ArchiveMomentRecordMapper.fromJournalEntries(all);
-    if (moments.length < 2) {
-      RecordPipelineLog.postSaveComparisonSkipped(
-        reason: 'no historical text context exists yet',
-      );
-      return;
-    }
-
-    final currentMoment = moments.last;
-    final historicalMoments = moments.sublist(0, moments.length - 1);
-    if (historicalMoments.isEmpty) {
-      RecordPipelineLog.postSaveComparisonSkipped(
-        reason: 'no historical text context exists yet',
-      );
-      return;
-    }
-
-    _disposePostSaveComparisonController();
-
-    final prefs = ComparisonPreferenceStore(AppServices.instance.prefs);
-    await prefs.ensureLoaded();
-    if (!mounted) return;
-
-    final reader =
-        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
-    final isPro = await reader.isPro;
-    if (!mounted) return;
-
-    final controller = PostSaveComparisonController(
-      apiClient: JournalComparisonModelApiClient(entries: all),
-      prefs: prefs,
-    );
-    controller.addListener(_onPostSaveComparisonChanged);
-    setState(() => _postSaveComparisonController = controller);
-
-    await controller.processMomentComparison(
-      currentMoment: currentMoment,
-      historicalMoments: historicalMoments,
-      isProUser: isPro,
-    );
-  }
-
-  Widget _buildPostSaveSection() {
-    final controller = _postSaveComparisonController;
-    if (controller == null) {
-      return const SizedBox.shrink();
-    }
-
-    final uiState = controller.uiState;
-    if (uiState is! ComparisonLoading && uiState is! ComparisonSuccess) {
-      return const SizedBox.shrink();
-    }
-
-    return PostSaveComparisonSection(
-      key: const Key('post_save_pattern_comparison_section'),
-      controller: controller,
-      onProUpgradeTapped: () async {
-        _logger.info(
-          'User tapped paywall CTA within the value moment evidence card.',
-        );
-        await _paywallPresenter.triggerNativePaywallSheet(
-          requiredEntitlementId: SubscriptionEntitlements.pro,
-        );
-      },
-    );
   }
 
   Future<void> _loadActivePatternThread() async {
@@ -2921,7 +2835,6 @@ class _RecordScreenState extends State<RecordScreen>
       _postSavePattern = null;
       _postSaveCuriosityHook = null;
       _secondSessionComparison = null;
-      _disposePostSaveComparisonController();
       _patternHypothesis = null;
       _patternHypothesisDismissed = false;
       _firstSessionAlternativeIndex = 0;
@@ -9052,7 +8965,7 @@ class _RecordScreenState extends State<RecordScreen>
                               width: double.infinity,
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFFBF5),
+                                color: AppColors.warmSurface,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: AppColors.borderSubtle,
@@ -10489,9 +10402,7 @@ class _RecordScreenState extends State<RecordScreen>
                                 !showWhatChangedV2) ...[
                               if (_secondSessionComparison?.hasEnoughData ==
                                       true &&
-                                  secondSessionPayoff == null &&
-                                  _postSaveComparisonController?.uiState
-                                      is! ComparisonSuccess) ...[
+                                  secondSessionPayoff == null) ...[
                                 const SizedBox(height: 12),
                                 SecondSessionComparisonCard(
                                   comparison: _secondSessionComparison!,
@@ -10830,15 +10741,6 @@ class _RecordScreenState extends State<RecordScreen>
                                   wasGrounded: wasGrounded,
                                 ),
                           ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (!stack.showInputQualityCoach &&
-                            _postSaveComparisonController != null &&
-                            (_postSaveComparisonController!.uiState
-                                    is ComparisonLoading ||
-                                _postSaveComparisonController!.uiState
-                                    is ComparisonSuccess)) ...[
-                          _buildPostSaveSection(),
                           const SizedBox(height: 16),
                         ],
                         if (showComeBackTomorrowV2PostSave &&

@@ -414,22 +414,40 @@ class ApiClient {
 
   Future<List<JournalEntry>> getJournal() async => listJournal();
 
+  /// Server-enforced upper bound on a single pull page — mirrors
+  /// `JOURNAL_PULL_PAGE_MAX` in lib/server/journal-store.ts. Chosen well
+  /// above the sync push batch size so a normal-sized journal still pulls
+  /// in one round trip; only an account with a very large journal pages.
+  static const int _journalPullPageSize = 500;
+
+  /// Pulls the full remote journal (including tombstones), following the
+  /// server's deterministic keyset pagination (`?limit=`/`nextCursor`) so a
+  /// single account with a very large journal never requires one unbounded
+  /// HTTP response. Callers see the same flattened list as before — paging
+  /// is an internal transport detail, not a change to [SyncService]'s
+  /// merge contract.
   Future<List<JournalEntry>> listJournal() async {
-    final response = await _http.get(
-      _uri('/api/journal'),
-      headers: _jsonHeaders,
-    );
-    if (response.statusCode == 401) {
-      throw AuthRequiredException();
-    }
-    if (!response.statusCode.toString().startsWith('2')) {
-      throw ApiErrorMapper.fromResponse(response);
-    }
-    final body = _decodeJson(response);
-    final entries = body['entries'] as List<dynamic>? ?? [];
-    return entries
-        .map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final all = <JournalEntry>[];
+    String? cursor;
+    do {
+      final query = <String, String>{'limit': '$_journalPullPageSize'};
+      if (cursor != null) query['cursor'] = cursor;
+      final uri = _uri('/api/journal').replace(queryParameters: query);
+      final response = await _http.get(uri, headers: _jsonHeaders);
+      if (response.statusCode == 401) {
+        throw AuthRequiredException();
+      }
+      if (!response.statusCode.toString().startsWith('2')) {
+        throw ApiErrorMapper.fromResponse(response);
+      }
+      final body = _decodeJson(response);
+      final entries = body['entries'] as List<dynamic>? ?? [];
+      all.addAll(
+        entries.map((e) => JournalEntry.fromJson(e as Map<String, dynamic>)),
+      );
+      cursor = body['nextCursor'] as String?;
+    } while (cursor != null);
+    return all;
   }
 
   /// Pushes a batch (≤200 — server enforces `BATCH_TOO_LARGE` above that) of

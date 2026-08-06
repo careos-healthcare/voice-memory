@@ -63,6 +63,7 @@ import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
 import '../widgets/billing/paywall_subscription_details_section.dart';
 import '../features/paywall/archive_loop_entitlements.dart';
 import '../features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
+import '../widgets/account/archive_me_pro_value_section.dart';
 
 /// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
@@ -176,6 +177,34 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
+  /// Anchor positioning line, directly under the headline on every variant —
+  /// "longer verified timeline", never "more chat" or a promised outcome.
+  Widget _paywallPositioningLine() {
+    return Builder(
+      builder: (context) => Text(
+        PaywallValueSharpeningCopy.anchorPositioningLine,
+        key: const Key('paywall_positioning_line'),
+        style: ArchiveMobileTypography.responsiveSectionTitle(context),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  /// Concise Free-vs-Pro comparison — replaces a plain repeated benefit list
+  /// so the paywall states the actual split once instead of restating Pro
+  /// benefits in multiple separate blocks.
+  Widget _freeVsProComparisonSection() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: ArchiveMeProValueSection(
+        key: const Key('paywall_free_vs_pro_comparison'),
+        packaging: _packaging,
+        showTitle: false,
+        compact: true,
+      ),
+    );
+  }
+
   Widget _paywallBackupLine() {
     return Builder(
       builder: (context) => Text(
@@ -191,10 +220,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _paywallPositioningLine(),
+        const SizedBox(height: 8),
         _paywallPrimaryValueBlock(),
         if (includeBullets) ...[
           const SizedBox(height: 14),
-          ..._benefits.map(_benefitRow),
+          _freeVsProComparisonSection(),
         ],
         const SizedBox(height: 14),
         _paywallDifferentiationAndTrustSection(
@@ -283,9 +314,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   ProPackagingDisplay get _packaging => ProPackagingEngine.build(
-        offeringsAvailable: _purchasePlansAvailable,
-        showPlanPrices: _purchasePlansAvailable,
-      );
+    offeringsAvailable: _purchasePlansAvailable,
+    showPlanPrices: _purchasePlansAvailable,
+  );
 
   String get _unavailableBodyText {
     if (!_billingReady) {
@@ -328,11 +359,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
     if (!AppServices.isInitialized || entitlements.isPro) return entitlements;
     try {
       final loopState =
-          await ArchiveLoopEntitlementStore(AppServices.instance.prefs)
-              .load()
-              .timeout(const Duration(seconds: 2), onTimeout: () {
-        return ArchiveLoopEntitlementState.empty;
-      });
+          await ArchiveLoopEntitlementStore(
+            AppServices.instance.prefs,
+          ).load().timeout(
+            const Duration(seconds: 2),
+            onTimeout: () {
+              return ArchiveLoopEntitlementState.empty;
+            },
+          );
       if (!loopState.isPro) return entitlements;
       return PremiumEntitlements(
         tier: BillingTier.pro,
@@ -399,19 +433,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
   BetaFeedbackCaptureResult _betaFeedbackCapturePaywallResult({
     required bool paywallNoCtaRequested,
     required bool paywallPurchaseAttempted,
-  }) =>
-      BetaFeedbackCaptureEngine.build(
-        context: BetaFeedbackCaptureEngine.buildContext(
-          surface: BetaFeedbackCaptureSurface.paywall,
-          source: _attributionSource.id,
-          entryCount: 0,
-          hasPaywallSeen: _paywallSeenTracked,
-          hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
-          isPro: _entitlements?.isPro == true,
-          paywallNoCtaRequested: paywallNoCtaRequested,
-          paywallPurchaseAttempted: paywallPurchaseAttempted,
-        ),
-      );
+  }) => BetaFeedbackCaptureEngine.build(
+    context: BetaFeedbackCaptureEngine.buildContext(
+      surface: BetaFeedbackCaptureSurface.paywall,
+      source: _attributionSource.id,
+      entryCount: 0,
+      hasPaywallSeen: _paywallSeenTracked,
+      hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
+      isPro: _entitlements?.isPro == true,
+      paywallNoCtaRequested: paywallNoCtaRequested,
+      paywallPurchaseAttempted: paywallPurchaseAttempted,
+    ),
+  );
 
   void _handleBetaFeedbackCapturePaywallChanged({required bool dismissAfter}) {
     setState(() {
@@ -498,9 +531,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (!billingConfigured && !ScreenshotMode.enabled) {
         if (AppServices.isInitialized) {
           try {
-            await RevenueCatService.instance
-                .initialize()
-                .timeout(_loadTimeout);
+            await RevenueCatService.instance.initialize().timeout(_loadTimeout);
           } on TimeoutException {
             loadReason = 'configure_timeout';
             RevenueCatDiagnosticsLog.paywallFallback(
@@ -512,9 +543,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         }
         if (!billingConfigured) {
           loadReason = 'billing_not_configured';
-          RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(
-            reason: loadReason,
-          );
+          RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
           _trackPaywallSeen(PremiumEntitlements.free());
           entitlements = PremiumEntitlements.free();
           error = ConsumerUiCopy.paywallBillingNotConfigured;
@@ -537,12 +566,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
           onTimeout: () {
             RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
               offerings: null,
-              error: 'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
+              error:
+                  'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
             );
             RevenueCatDiagnosticsLog.fetchOfferingsFinished(
               success: false,
               offerings: null,
-              error: 'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
+              error:
+                  'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
             );
             return null;
           },
@@ -891,14 +922,30 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
   }
 
+  /// Header restore action so "Restore purchases" is reachable without
+  /// scrolling past the rest of the page. Icon-only (tooltip carries the
+  /// visible label) so it never duplicates the bottom text button's label
+  /// for `find.text` uniqueness in existing tests.
+  Widget? _headerRestoreAction() {
+    if (_loading || _entitlements?.isPro == true) return null;
+    return IconButton(
+      key: const Key('paywall_header_restore_action'),
+      icon: const Icon(Icons.restore),
+      tooltip: ConsumerUiCopy.restorePurchases,
+      onPressed: _busy ? null : _restore,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_delayedPaywallGateResolved) {
       return const SizedBox.shrink();
     }
+    final restoreAction = _headerRestoreAction();
     return PushedScreenShell(
       title: _entitlementLabel,
       onBack: () => unawaited(_dismissWithCapture()),
+      actions: restoreAction == null ? null : [restoreAction],
       body: ListView(
         padding: ArchiveResponsiveLayout.pagePadding(context),
         children: [
@@ -1350,15 +1397,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ? triggerArgs!.previewBody!
             : packaging.subtitle);
     final showPackagingSection = sourceCopy == null && valuePreview == null;
-    final benefitRows = sourceCopy != null
-        ? sourceCopy.bullets
-              .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
-              .toList()
-        : valuePreview != null
-        ? valuePreview.previewBullets
-              .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
-              .toList()
-        : const <_PaywallBenefit>[];
     final paywallCtaLiftResult = PaywallCtaLiftEngine.build(
       source: widget.triggerArgs?.source,
       analyticsSource: _attributionSource.id,
@@ -1398,7 +1436,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
             if (_usesGeneralConversionClarity)
               _generalConversionClaritySection(includeBullets: true)
             else
-              _aboveFoldClaritySection(),
+              // Source-specific paywalls (pressure, ask-archive, thread
+              // continuity, etc.) get the same concise Free-vs-Pro
+              // comparison as the general paywall instead of a second,
+              // separately-styled benefit checklist plus a differentiation
+              // block repeating largely the same claims underneath it.
+              _freeVsProComparisonSection(),
           ],
           // Objection follow-up: below the clarity block, above plan cards.
           if (_objectionFollowUpReason != null) ...[
@@ -1406,18 +1449,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
             _objectionFollowUpSection(),
           ],
           SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
-          if (!showPackagingSection &&
-              !_usesGeneralConversionClarity &&
-              benefitRows.isNotEmpty)
-            ...benefitRows.map(_benefitRow),
-          if (!showPackagingSection &&
-              !_usesGeneralConversionClarity &&
-              benefitRows.isNotEmpty) ...[
-            const SizedBox(height: 14),
-            _paywallDifferentiationAndTrustSection(
-              includeTrustLine: !_showsPurchaseConfidenceCard,
-            ),
-          ],
           if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 14),
             _longTermArchiveLine(),
@@ -1463,13 +1494,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ? (useCompactPlanLabels
                           ? ArchiveLoopPaywallCopy.subscriptionYearlyDuration
                           : suggestionFraming
-                                ? PaywallAnnualValueCopy.yearlyHelper
-                                : ArchivePaywallPlanCopy.annualHelper)
+                          ? PaywallAnnualValueCopy.yearlyHelper
+                          : ArchivePaywallPlanCopy.annualHelper)
                     : (useCompactPlanLabels
                           ? ArchiveLoopPaywallCopy.subscriptionMonthlyDuration
                           : suggestionFraming
-                                ? PaywallAnnualValueCopy.monthlyHelper
-                                : ArchivePaywallPlanCopy.monthlyHelper),
+                          ? PaywallAnnualValueCopy.monthlyHelper
+                          : ArchivePaywallPlanCopy.monthlyHelper),
                 price: package.storeProduct.priceString,
               ),
             );
@@ -1488,16 +1519,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ],
           if (_error != null) ...[
             const SizedBox(height: 14),
-            Text(
-              _error!,
-              style: ArchiveMobileTypography.responsiveHelper(
-                context,
-                color: VoiceMemoryColors.error,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _error!,
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                  color: VoiceMemoryColors.error,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
-          if (!showPackagingSection && PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
+          if (!showPackagingSection &&
+              PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 18),
             _proofPreviewSection(),
           ],
@@ -1559,9 +1594,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 paywallNoCtaRequested: false,
                 paywallPurchaseAttempted: true,
               ),
-              onChanged: () => _handleBetaFeedbackCapturePaywallChanged(
-                dismissAfter: false,
-              ),
+              onChanged: () =>
+                  _handleBetaFeedbackCapturePaywallChanged(dismissAfter: false),
             ),
           ] else if (_showBetaFeedbackCaptureNoCta) ...[
             const SizedBox(height: 12),
@@ -1570,9 +1604,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 paywallNoCtaRequested: true,
                 paywallPurchaseAttempted: _purchaseAttemptedThisSession,
               ),
-              onChanged: () => _handleBetaFeedbackCapturePaywallChanged(
-                dismissAfter: true,
-              ),
+              onChanged: () =>
+                  _handleBetaFeedbackCapturePaywallChanged(dismissAfter: true),
             ),
           ],
           const SizedBox(height: 10),
@@ -1664,68 +1697,79 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 );
               },
         borderRadius: BorderRadius.circular(16),
-        child: Ink(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: selected
-                ? VoiceMemoryColors.surface
-                : VoiceMemoryColors.surfaceSecondary,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
+        child: Semantics(
+          button: true,
+          selected: selected,
+          hint: selected ? null : 'Selects this plan',
+          child: Ink(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
               color: selected
-                  ? VoiceMemoryColors.primaryIndigo
-                  : VoiceMemoryColors.border,
-              width: selected ? 2 : 1,
-            ),
-            boxShadow: isYearly && selected
-                ? [
-                    BoxShadow(
-                      color: VoiceMemoryColors.primaryIndigo.withValues(
-                        alpha: 0.12,
-                      ),
-                      blurRadius: 14,
-                      offset: const Offset(0, 5),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            children: [
-              Icon(
-                selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                  ? VoiceMemoryColors.surface
+                  : VoiceMemoryColors.surfaceSecondary,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
                 color: selected
                     ? VoiceMemoryColors.primaryIndigo
-                    : VoiceMemoryColors.textTertiary,
-                size: 22,
+                    : VoiceMemoryColors.border,
+                width: selected ? 2 : 1,
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: ArchiveMobileTypography.listTitle(context),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      price,
-                      style: ArchiveMobileTypography.explanationBody(
-                        context,
-                        color: selected
-                            ? VoiceMemoryColors.primaryIndigo
-                            : VoiceMemoryColors.textSecondary,
+              boxShadow: isYearly && selected
+                  ? [
+                      BoxShadow(
+                        color: VoiceMemoryColors.primaryIndigo.withValues(
+                          alpha: 0.12,
+                        ),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      helper,
-                      style: ArchiveMobileTypography.responsiveHelper(context),
-                    ),
-                  ],
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                ExcludeSemantics(
+                  child: Icon(
+                    selected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
+                    color: selected
+                        ? VoiceMemoryColors.primaryIndigo
+                        : VoiceMemoryColors.textTertiary,
+                    size: 22,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: ArchiveMobileTypography.listTitle(context),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        price,
+                        style: ArchiveMobileTypography.explanationBody(
+                          context,
+                          color: selected
+                              ? VoiceMemoryColors.primaryIndigo
+                              : VoiceMemoryColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        helper,
+                        style: ArchiveMobileTypography.responsiveHelper(
+                          context,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

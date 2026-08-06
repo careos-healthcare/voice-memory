@@ -27,7 +27,7 @@ Future<void> showQuickHelpSheet(
   ActivationTracker.trackQuickHelpOpened();
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.transparent,
+    backgroundColor: AppColors.transparent,
     isScrollControlled: true,
     builder: (_) => QuickHelpSheet(
       languageCode: languageCode,

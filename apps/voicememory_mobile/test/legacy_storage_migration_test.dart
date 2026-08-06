@@ -181,6 +181,139 @@ void main() {
     },
   );
 
+  test(
+    'cross-account isolation: a second account signing in on the same device never inherits the first account\'s stamped entries',
+    () async {
+      final base = tempDir.path;
+      final namespaceA = AccountNamespace.forUserId('real-user-a');
+      final namespaceB = AccountNamespace.forUserId('real-user-b');
+
+      // The pre-namespacing shared journal, as it would exist on a device
+      // used by two different accounts before this feature shipped:
+      // entries stamped for each account, plus one predating ownership
+      // stamping entirely (ownerKey null).
+      final legacyKeyStore = await seedLegacyJournal(base, [
+        JournalEntry(
+          id: 'owned-by-a',
+          createdAt: DateTime.utc(2026, 1, 1),
+          transcript: 'account A private moment',
+          durationSeconds: 10,
+          reflection: sampleReflection(),
+          ownerKey: 'real-user-a',
+        ),
+        JournalEntry(
+          id: 'owned-by-b',
+          createdAt: DateTime.utc(2026, 1, 2),
+          transcript: 'account B private moment',
+          durationSeconds: 10,
+          reflection: sampleReflection(),
+          ownerKey: 'real-user-b',
+        ),
+        JournalEntry(
+          id: 'unowned-legacy',
+          createdAt: DateTime.utc(2025, 12, 1),
+          transcript: 'predates ownership stamping',
+          durationSeconds: 10,
+          reflection: sampleReflection(),
+        ),
+      ]);
+
+      // Account A signs in first and migrates.
+      final destKeyStoreA = InMemoryPrivateDataEncryptionKeyStore();
+      final reportA = await LegacyStorageMigration.migrateIfNeeded(
+        base: base,
+        namespace: namespaceA,
+        ownerUserId: 'real-user-a',
+        legacyKeyStoreForTest: legacyKeyStore,
+        destKeyStoreForTest: destKeyStoreA,
+      );
+      expect(reportA.ran, isTrue);
+      final storeA = await JournalStore.open(
+        '$base/accounts/${namespaceA.key}/journal_entries.json',
+        keyAlias: namespaceA.key,
+        keyStore: destKeyStoreA,
+      );
+      final entriesA = await storeA.loadAllIncludingTombstones();
+      expect(
+        entriesA.map((e) => e.id).toSet(),
+        {'owned-by-a', 'unowned-legacy'},
+        reason:
+            "account A must receive its own stamped entries and unowned "
+            "legacy entries, but never account B's",
+      );
+
+      // Account B signs in later, on the exact same device, and migrates
+      // from the same untouched legacy file.
+      final destKeyStoreB = InMemoryPrivateDataEncryptionKeyStore();
+      final reportB = await LegacyStorageMigration.migrateIfNeeded(
+        base: base,
+        namespace: namespaceB,
+        ownerUserId: 'real-user-b',
+        legacyKeyStoreForTest: legacyKeyStore,
+        destKeyStoreForTest: destKeyStoreB,
+      );
+      expect(reportB.ran, isTrue);
+      final storeB = await JournalStore.open(
+        '$base/accounts/${namespaceB.key}/journal_entries.json',
+        keyAlias: namespaceB.key,
+        keyStore: destKeyStoreB,
+      );
+      final entriesB = await storeB.loadAllIncludingTombstones();
+      expect(
+        entriesB.map((e) => e.id).toSet(),
+        {'owned-by-b', 'unowned-legacy'},
+        reason:
+            "account B must receive its own stamped entries and unowned "
+            "legacy entries, but never account A's",
+      );
+
+      // Account A's namespace must never have picked up B's entry either.
+      expect(entriesA.map((e) => e.id), isNot(contains('owned-by-b')));
+      expect(entriesB.map((e) => e.id), isNot(contains('owned-by-a')));
+    },
+  );
+
+  test(
+    'guest namespace migration only ever claims unowned legacy entries, never a real account\'s',
+    () async {
+      final base = tempDir.path;
+      final legacyKeyStore = await seedLegacyJournal(base, [
+        JournalEntry(
+          id: 'owned',
+          createdAt: DateTime.utc(2026, 1, 1),
+          transcript: 'belongs to a real account',
+          durationSeconds: 10,
+          reflection: sampleReflection(),
+          ownerKey: 'real-user-a',
+        ),
+        JournalEntry(
+          id: 'unowned',
+          createdAt: DateTime.utc(2025, 12, 1),
+          transcript: 'guest-created',
+          durationSeconds: 10,
+          reflection: sampleReflection(),
+        ),
+      ]);
+
+      final destKeyStore = InMemoryPrivateDataEncryptionKeyStore();
+      final report = await LegacyStorageMigration.migrateIfNeeded(
+        base: base,
+        namespace: AccountNamespace.guest,
+        legacyKeyStoreForTest: legacyKeyStore,
+        destKeyStoreForTest: destKeyStore,
+      );
+      expect(report.ran, isTrue);
+
+      final guestStore = await JournalStore.open(
+        '$base/accounts/${AccountNamespace.guest.key}/journal_entries.json',
+        keyAlias: AccountNamespace.guest.key,
+        keyStore: destKeyStore,
+      );
+      final guestEntries = await guestStore.loadAllIncludingTombstones();
+      expect(guestEntries.map((e) => e.id).toSet(), {'unowned'});
+    },
+  );
+
   test('no-ops when there is no legacy data to relocate', () async {
     final base = tempDir.path;
     final namespace = AccountNamespace.guest;

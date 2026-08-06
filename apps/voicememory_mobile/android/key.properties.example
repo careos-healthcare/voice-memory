@@ -2,6 +2,15 @@
 # real upload keystore details. android/key.properties is gitignored and must
 # never be committed.
 #
+# Alternatively, set these environment variables instead of creating key.properties:
+#   ARCHIVEME_ANDROID_KEYSTORE_FILE
+#   ARCHIVEME_ANDROID_KEYSTORE_PASSWORD
+#   ARCHIVEME_ANDROID_KEY_ALIAS
+#   ARCHIVEME_ANDROID_KEY_PASSWORD
+#
+# Release builds fail fast when neither key.properties nor the env vars above
+# are configured. They never fall back to the debug keystore.
+#
 # See https://flutter.dev/to/reference-keystore for how to generate a
 # keystore, and docs/ANDROID_RELEASE_CHECKLIST.md for the full release flow.
 storePassword=REPLACE_WITH_KEYSTORE_PASSWORD

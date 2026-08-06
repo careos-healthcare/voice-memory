@@ -39,7 +39,7 @@ class TrialUsefulnessPrompt extends StatelessWidget {
       label: Text(label),
       onPressed: () => onTap(),
       backgroundColor: Colors.white,
-      side: const BorderSide(color: Color(0xFFF5E6D3)),
+      side: const BorderSide(color: AppColors.warmBorder),
       labelStyle: VoiceMemoryTypography.bodyStyle(
         color: AppColors.textSecondary,
       ).copyWith(fontSize: 13),

@@ -236,7 +236,12 @@ class AppServices {
         ? AccountNamespace.forUserId(resumedSession.userId)
         : AccountNamespace.guest;
 
-    await _openNamespacedStores(s, base, initialNamespace);
+    await _openNamespacedStores(
+      s,
+      base,
+      initialNamespace,
+      ownerUserId: resumedSession?.userId,
+    );
     s._activeNamespace = initialNamespace;
 
     // Constructed before the first `_wireAccountScopedServices` call below,
@@ -348,7 +353,10 @@ class AppServices {
         // Order matters: physically switch storage *before* the
         // entitlement reset below, so that reset operates on the
         // newly-active `entitlementCache`, not the outgoing one.
-        await s._switchToNamespace(AccountNamespace.forUserId(userId));
+        await s._switchToNamespace(
+          AccountNamespace.forUserId(userId),
+          ownerUserId: userId,
+        );
         await _reconcileJournalOwnership(s, userId);
         // P0 fix — see onSignedOut: identify RevenueCat as this account
         // *before* refreshing entitlements below, so the refresh reflects
@@ -493,14 +501,21 @@ class AppServices {
   /// Runs the one-time legacy relocation (see [LegacyStorageMigration]) and
   /// then opens `journalStore`/`prefs`/`entitlementCache` at [namespace]'s
   /// own directory and encryption-key alias.
+  ///
+  /// [ownerUserId] is the signed-in account [namespace] belongs to, when
+  /// known — passed straight through to [LegacyStorageMigration] so it never
+  /// relocates a *different* account's legacy-stamped entries into this
+  /// namespace. Omit for the guest namespace.
   static Future<void> _openNamespacedStores(
     AppServices s,
     String base,
-    AccountNamespace namespace,
-  ) async {
+    AccountNamespace namespace, {
+    String? ownerUserId,
+  }) async {
     await LegacyStorageMigration.migrateIfNeeded(
       base: base,
       namespace: namespace,
+      ownerUserId: ownerUserId,
       secureStorage: s.secureStorage,
     );
     s.journalStore = await JournalStore.open(
@@ -560,14 +575,22 @@ class AppServices {
   /// open file handle or stream across calls (confirmed by reading all
   /// three classes), so the outgoing instances need no explicit close
   /// before being dropped here.
-  Future<void> _switchToNamespace(AccountNamespace target) async {
+  Future<void> _switchToNamespace(
+    AccountNamespace target, {
+    String? ownerUserId,
+  }) async {
     if (target == _activeNamespace) return;
     final oldBilling = billing;
     final oldArchiveScope =
         AppServicesProofScopeProvider.archiveScopeForNamespace(
           _activeNamespace,
         );
-    await _openNamespacedStores(this, _documentsBasePath, target);
+    await _openNamespacedStores(
+      this,
+      _documentsBasePath,
+      target,
+      ownerUserId: ownerUserId,
+    );
     AppServices._wireAccountScopedServices(this);
     oldBilling.dispose();
     if (_billingListeningEnabled) {
@@ -613,8 +636,11 @@ class AppServices {
   /// within a single test run, without tearing down and reconstructing the
   /// whole [AppServices] singleton the way a real sign-in/out would.
   @visibleForTesting
-  static Future<void> switchNamespaceForTest(AccountNamespace target) {
-    return instance._switchToNamespace(target);
+  static Future<void> switchNamespaceForTest(
+    AccountNamespace target, {
+    String? ownerUserId,
+  }) {
+    return instance._switchToNamespace(target, ownerUserId: ownerUserId);
   }
 
   static Future<String> _resolveDocumentsBasePath() async {

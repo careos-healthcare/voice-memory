@@ -18,6 +18,9 @@ export interface ServerJournalRow {
 /** Maximum number of entries accepted per bulk sync request (`POST /api/journal`). */
 export const JOURNAL_SYNC_BATCH_LIMIT = 200;
 
+/** Upper bound on a single `GET /api/journal?limit=` page, regardless of what the client asks for. */
+export const JOURNAL_PULL_PAGE_MAX = 500;
+
 /** Sane cap on a single serialized journal entry — guards against pathological payloads. */
 export const JOURNAL_ENTRY_MAX_BYTES = 200 * 1024;
 
@@ -109,6 +112,93 @@ export async function listServerJournalEntries(userId: string): Promise<ServerJo
   return [...userMap(userId).values()].sort(
     (a, b) => b.clientUpdatedAt.localeCompare(a.clientUpdatedAt),
   );
+}
+
+/** Opaque keyset-pagination position for {@link listServerJournalEntriesPage}. */
+export interface JournalPageCursor {
+  clientUpdatedAt: string;
+  entryId: string;
+}
+
+export interface JournalPageResult {
+  rows: ServerJournalRow[];
+  /** Present when more rows remain beyond this page; pass back verbatim to fetch the next page. */
+  nextCursor: JournalPageCursor | null;
+}
+
+function isBeforeCursor(row: ServerJournalRow, cursor: JournalPageCursor): boolean {
+  if (row.clientUpdatedAt !== cursor.clientUpdatedAt) {
+    return row.clientUpdatedAt < cursor.clientUpdatedAt;
+  }
+  return row.entryId < cursor.entryId;
+}
+
+/**
+ * Deterministic, keyset-paginated pull for accounts with a very large
+ * journal — an unbounded `GET /api/journal` response is otherwise the only
+ * option (see `listServerJournalEntries`). Ordering is total (client's
+ * `updatedAt` DESC, then `entryId` DESC as a tie-break) so pages never skip
+ * or duplicate a row even when many entries share the same `updatedAt`.
+ *
+ * Callers that don't need pagination (account export, deletion, tests)
+ * should keep using `listServerJournalEntries`; this is purely additive and
+ * does not change that function's behavior or callers.
+ */
+export async function listServerJournalEntriesPage(
+  userId: string,
+  options: { limit: number; cursor?: JournalPageCursor | null },
+): Promise<JournalPageResult> {
+  const limit = Math.max(1, Math.min(Math.trunc(options.limit) || 1, JOURNAL_PULL_PAGE_MAX));
+  const cursor = options.cursor ?? null;
+
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery<{
+      entry_id: string;
+      payload: JournalEntry;
+      sync_status: JournalSyncStatus;
+      client_updated_at: Date;
+      updated_at: Date;
+    }>(
+      `SELECT entry_id, payload, sync_status, client_updated_at, updated_at
+       FROM journal_entries
+       WHERE user_id = $1
+         AND ($2::timestamptz IS NULL OR (client_updated_at, entry_id) < ($2::timestamptz, $3))
+       ORDER BY client_updated_at DESC, entry_id DESC
+       LIMIT $4`,
+      [userId, cursor?.clientUpdatedAt ?? null, cursor?.entryId ?? "", limit + 1],
+    );
+    const rows = result.rows.map((row) => ({
+      entryId: row.entry_id,
+      payload: row.payload,
+      syncStatus: row.sync_status,
+      clientUpdatedAt: row.client_updated_at.toISOString(),
+      updatedAt: row.updated_at.toISOString(),
+    }));
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    const last = page[page.length - 1];
+    return {
+      rows: page,
+      nextCursor:
+        hasMore && last ? { clientUpdatedAt: last.clientUpdatedAt, entryId: last.entryId } : null,
+    };
+  }
+
+  const all = [...userMap(userId).values()].sort((a, b) => {
+    if (a.clientUpdatedAt !== b.clientUpdatedAt) {
+      return b.clientUpdatedAt.localeCompare(a.clientUpdatedAt);
+    }
+    return b.entryId.localeCompare(a.entryId);
+  });
+  const filtered = cursor ? all.filter((row) => isBeforeCursor(row, cursor)) : all;
+  const hasMore = filtered.length > limit;
+  const page = filtered.slice(0, limit);
+  const last = page[page.length - 1];
+  return {
+    rows: page,
+    nextCursor:
+      hasMore && last ? { clientUpdatedAt: last.clientUpdatedAt, entryId: last.entryId } : null,
+  };
 }
 
 /** Single-row lookup used by the conditional-upsert conflict check. */

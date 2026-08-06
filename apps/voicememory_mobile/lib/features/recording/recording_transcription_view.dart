@@ -553,7 +553,6 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     });
     await _loadFirstThreeJourney();
     unawaited(_loadSignalArchive());
-    unawaited(_handlePostSavePatternComparison(all));
   }
 
   void _trackInstantReflectionSurfaced(InstantReflectionResponse? response) {

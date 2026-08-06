@@ -81,9 +81,9 @@ class CaptureEntryActions extends StatelessWidget {
       await onTextThoughtSaved!(result);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)));
   }
 
   @override
@@ -95,8 +95,8 @@ class CaptureEntryActions extends StatelessWidget {
           TextButton(
             onPressed: onRecord,
             style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.white.withValues(alpha: 0.16),
+              foregroundColor: AppColors.onAccent,
+              backgroundColor: AppColors.onAccent.withValues(alpha: 0.16),
               minimumSize: const Size(48, 48),
             ),
             child: Text(recordButtonLabel ?? ConsumerUiCopy.startRecording),
@@ -105,7 +105,7 @@ class CaptureEntryActions extends StatelessWidget {
           TextButton(
             onPressed: () => unawaited(_typeInstead(context)),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.white.withValues(alpha: 0.92),
+              foregroundColor: AppColors.onAccent.withValues(alpha: 0.92),
               minimumSize: const Size(48, 44),
             ),
             child: const Text(EmptyArchiveCopy.typeInsteadCta),
@@ -116,7 +116,7 @@ class CaptureEntryActions extends StatelessWidget {
             TextButton(
               onPressed: onLogPressureMoment,
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white.withValues(alpha: 0.92),
+                foregroundColor: AppColors.onAccent.withValues(alpha: 0.92),
                 minimumSize: const Size(48, 44),
               ),
               child: const Text(logPressureMomentLabel),
@@ -145,7 +145,8 @@ class CaptureEntryActions extends StatelessWidget {
               key: recordButtonKey,
               onPressed: onRecord,
               child: Text(
-                recordButtonLabel ?? MicrophonePermissionCopy.requestMicrophoneCta,
+                recordButtonLabel ??
+                    MicrophonePermissionCopy.requestMicrophoneCta,
               ),
             ),
           ),

@@ -12,10 +12,7 @@ abstract final class V1NavigationGuard {
   static const Set<String> _exactAllowed = {
     '/',
     ...RouteCatalog.primaryRoutes,
-    '/weekly-report',
-    '/capacity-loop',
     '/details',
-    '/archive-analyst',
     '/settings',
     '/subscription',
     '/pricing',
@@ -31,7 +28,6 @@ abstract final class V1NavigationGuard {
     '/help-reviewer-guide',
     '/testing-archiveme',
     '/belief-evidence',
-    '/archive-evidence-trail',
     '/belief-detail',
     '/quick-capture',
     '/quick-yes-capture',

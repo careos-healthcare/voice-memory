@@ -30,7 +30,7 @@ class WatchForTomorrowCard extends StatefulWidget {
   final Future<void> Function(WatchForItem item)? onAccept;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   State<WatchForTomorrowCard> createState() => _WatchForTomorrowCardState();

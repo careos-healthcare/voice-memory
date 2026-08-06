@@ -40,7 +40,7 @@ class PatternProfileScreen extends StatefulWidget {
 
 class _PatternProfileScreenState extends State<PatternProfileScreen> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   PatternProfile? _profile;
   MemoryQuality? _quality;

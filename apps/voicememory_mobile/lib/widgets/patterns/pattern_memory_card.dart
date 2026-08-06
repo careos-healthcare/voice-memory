@@ -15,7 +15,7 @@ class PatternMemoryCard extends StatelessWidget {
   static const String recordNextCta = 'Record next check-in';
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   static String statusLine(PatternMemoryStatus status) {
     switch (status) {
