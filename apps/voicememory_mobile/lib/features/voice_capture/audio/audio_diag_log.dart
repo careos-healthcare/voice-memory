@@ -27,6 +27,12 @@ abstract class AudioDiagLog {
     required String mimeGuess,
     required String firstBytesHex,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_AUDIO_DIAG exists=$exists bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint('ARCHIVEME_AUDIO_DIAG path=$path');
     debugPrint('ARCHIVEME_AUDIO_DIAG exists=$exists');
     debugPrint('ARCHIVEME_AUDIO_DIAG bytes=$bytes');
@@ -41,6 +47,12 @@ abstract class AudioDiagLog {
     required String contentType,
     required int bytes,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_TRANSCRIPTION_UPLOAD bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint(
       'ARCHIVEME_TRANSCRIPTION_UPLOAD fileName=$fileName '
       'contentType=$contentType bytes=$bytes',
@@ -134,6 +146,12 @@ abstract class AudioDiagLog {
     required bool exists,
     required int bytes,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_AUDIO_SHARE exists=$exists bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint('ARCHIVEME_AUDIO_SHARE path=$path exists=$exists bytes=$bytes');
   }
 
@@ -146,5 +164,12 @@ abstract class AudioDiagLog {
       'ARCHIVEME_NATIVE_RECORDER_FAILED step=$step reason=$reason'
       '${format == null ? '' : ' format=$format'}',
     );
+  }
+
+  static String _bytesBucket(int bytes) {
+    if (bytes < 1024) return 'lt_1kb';
+    if (bytes < 64 * 1024) return 'lt_64kb';
+    if (bytes < 1024 * 1024) return 'lt_1mb';
+    return 'gte_1mb';
   }
 }
