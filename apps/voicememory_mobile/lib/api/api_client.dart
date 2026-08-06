@@ -570,6 +570,18 @@ class ApiClient {
     return _decodeJson(response);
   }
 
+  Future<Map<String, dynamic>> syncChanges({required int since}) async {
+    final response = await _http.get(
+      _uri('/api/sync/changes').replace(queryParameters: {'since': '$since'}),
+      headers: _jsonHeaders,
+    );
+    if (response.statusCode == 401) throw AuthRequiredException();
+    if (!response.statusCode.toString().startsWith('2')) {
+      throw ApiErrorMapper.fromResponse(response);
+    }
+    return _decodeJson(response);
+  }
+
   Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
     final response = await _http.post(
       _uri('/api/sync/push'),

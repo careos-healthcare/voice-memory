@@ -1,6 +1,6 @@
 import '../../api/api_client.dart';
-import '../../api/api_exceptions.dart';
 import '../../models/journal_entry.dart';
+import '../../security/account_session_guard.dart';
 import '../../services/journal_ownership_guard.dart';
 import '../../storage/device_id.dart';
 import '../../storage/journal_store.dart';
@@ -58,8 +58,10 @@ class EncryptedSyncService {
   }
 
   Future<({int pushed, int pulled, int blocked})> syncEncryptedJournal() async {
+    final session = AccountSessionGuard.capture();
     final accountNamespace =
-        await _prefs.readString(JournalOwnershipGuard.ownerKeyPrefsKey) ?? 'guest';
+        await _prefs.readString(JournalOwnershipGuard.ownerKeyPrefsKey) ??
+        'guest';
     final keyBytes = await _keyStore.ensureKey();
     final crypto = SyncCrypto(keyBytes);
     final deviceId = await _deviceIds.getOrCreate();
@@ -70,6 +72,7 @@ class EncryptedSyncService {
       schemaVersion: EncryptedSyncSchema.version,
     );
 
+    session.assertActive();
     final localAll = await _journal.loadAllIncludingTombstones();
     final partitioned = await _partitionByOwnership(localAll);
     final snapshot = buildEncryptedJournalSnapshot(
@@ -84,7 +87,8 @@ class EncryptedSyncService {
     final byteLength = encrypted.ciphertext.length + encrypted.iv.length;
     final updatedAt = DateTime.now().toUtc().toIso8601String();
 
-    await _api.syncPush({
+    session.assertActive();
+    final pushBody = await _api.syncPush({
       'blobs': [
         {
           'id': EncryptedSyncSchema.coreBlobId,
@@ -97,29 +101,92 @@ class EncryptedSyncService {
       ],
     });
 
-    final pullBody = await _api.syncPull();
-    final blobs = pullBody['blobs'];
+    session.assertActive();
+    final pullResult = await _pullRemoteBlobs(session);
+    final remoteBlobs = pullResult.blobs;
     var pulled = 0;
-    if (blobs is List) {
-      for (final raw in blobs) {
-        if (raw is! Map<String, dynamic>) continue;
-        if (raw['id'] != EncryptedSyncSchema.coreBlobId) continue;
-        if (raw['type'] != EncryptedSyncSchema.coreBlobType) continue;
-        final encJson = raw['encrypted'];
-        if (encJson is! Map<String, dynamic>) continue;
-        final payload = EncryptedPayload.fromJson(encJson);
-        final decrypted = await crypto.decryptJson(payload);
-        final remoteEntries = journalEntriesFromSnapshot(decrypted);
-        await _journal.mergeRemoteBatch(remoteEntries);
-        pulled = remoteEntries.length;
-      }
+    var latestSequence =
+        pullResult.latestSequence ?? _readLatestSequence(pushBody);
+    for (final raw in remoteBlobs) {
+      if (raw['id'] != EncryptedSyncSchema.coreBlobId) continue;
+      if (raw['type'] != EncryptedSyncSchema.coreBlobType) continue;
+      final encJson = raw['encrypted'];
+      if (encJson is! Map<String, dynamic>) continue;
+      session.assertActive();
+      final payload = EncryptedPayload.fromJson(encJson);
+      final decrypted = await crypto.decryptJson(payload);
+      final remoteEntries = journalEntriesFromSnapshot(decrypted);
+      await _journal.mergeRemoteBatch(remoteEntries);
+      pulled = remoteEntries.length;
     }
 
+    session.assertActive();
     await _journal.compactTombstonesBatch();
     await _prefs.setLastSyncAt(DateTime.now());
-    await _journal.markSyncedBatch(partitioned.eligible.map((e) => e.id).toSet());
+    if (latestSequence != null) {
+      await _prefs.setLastSyncSequence(latestSequence);
+    }
+    await _journal.markSyncedBatch(
+      partitioned.eligible.map((e) => e.id).toSet(),
+    );
 
-    return (pushed: partitioned.eligible.length, pulled: pulled, blocked: partitioned.blocked);
+    return (
+      pushed: partitioned.eligible.length,
+      pulled: pulled,
+      blocked: partitioned.blocked,
+    );
+  }
+
+  Future<({List<Map<String, dynamic>> blobs, int? latestSequence})>
+  _pullRemoteBlobs(AccountSessionGuard session) async {
+    final since = await _prefs.lastSyncSequence ?? 0;
+    if (since > 0) {
+      session.assertActive();
+      final changesBody = await _api.syncChanges(since: since);
+      final latestSequence = latestSequenceFromChanges(changesBody);
+      final blobs = changesBody['blobs'];
+      if (blobs is List) {
+        return (
+          blobs: blobs
+              .whereType<Map>()
+              .map((blob) => Map<String, dynamic>.from(blob))
+              .toList(),
+          latestSequence: latestSequence,
+        );
+      }
+      return (blobs: <Map<String, dynamic>>[], latestSequence: latestSequence);
+    }
+
+    session.assertActive();
+    final pullBody = await _api.syncPull();
+    final blobs = pullBody['blobs'];
+    if (blobs is! List) {
+      return (blobs: <Map<String, dynamic>>[], latestSequence: null);
+    }
+    return (
+      blobs: blobs
+          .whereType<Map>()
+          .map((blob) => Map<String, dynamic>.from(blob))
+          .toList(),
+      latestSequence: null,
+    );
+  }
+
+  int? _readLatestSequence(Map<String, dynamic> pushBody) {
+    final manifest = pushBody['manifest'];
+    if (manifest is Map<String, dynamic>) {
+      final raw = manifest['latestSequence'];
+      if (raw is int) return raw;
+      if (raw is num) return raw.toInt();
+    }
+    return null;
+  }
+
+  int? latestSequenceFromChanges(Map<String, dynamic> changesBody) {
+    final raw = changesBody['latestSequence'];
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return null;
   }
 
   DateTime? _parseLastSync(String? raw) {
