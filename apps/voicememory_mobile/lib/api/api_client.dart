@@ -419,12 +419,10 @@ class ApiClient {
   /// in one round trip; only an account with a very large journal pages.
   static const int _journalPullPageSize = 500;
 
-  /// Pulls the full remote journal (including tombstones), following the
-  /// server's deterministic keyset pagination (`?limit=`/`nextCursor`) so a
-  /// single account with a very large journal never requires one unbounded
-  /// HTTP response. Callers see the same flattened list as before — paging
-  /// is an internal transport detail, not a change to [SyncService]'s
-  /// merge contract.
+  /// **Migration-only.** Reads legacy plaintext journal rows from
+  /// `GET /api/journal`. Production mobile sync uses encrypted
+  /// `/api/sync/*` via [EncryptedSyncService]; do not call this from
+  /// normal sync paths.
   Future<List<JournalEntry>> listJournal() async {
     final all = <JournalEntry>[];
     String? cursor;
@@ -449,12 +447,8 @@ class ApiClient {
     return all;
   }
 
-  /// Pushes a batch (≤200 — server enforces `BATCH_TOO_LARGE` above that) of
-  /// journal entries — edits and/or tombstones alike — through the server's
-  /// conditional (conflict-aware) upsert. Returns which ids were actually
-  /// accepted vs rejected, so the caller can decide what to mark synced and
-  /// what to reconcile from a rejection's `winning` payload. Callers must
-  /// chunk larger outgoing sets themselves; see [SyncService].
+  /// **Migration-only.** Pushes plaintext journal batches to `POST /api/journal`.
+  /// Production mobile sync uses encrypted `/api/sync/push` instead.
   Future<JournalSyncPushResult> createJournalEntry(
     List<JournalEntry> entries,
   ) async {

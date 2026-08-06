@@ -3,8 +3,11 @@ import '../api/api_exceptions.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/creator_demo_mode.dart';
+import '../features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
+import '../features/encrypted_sync/sync_master_key_store.dart';
 import '../models/journal_entry.dart';
 import '../product/consumer_ui_copy.dart';
+import '../storage/device_id.dart';
 import '../storage/journal_store.dart';
 import '../storage/mobile_prefs_store.dart';
 import 'capture_save_messages.dart';
@@ -42,12 +45,26 @@ class SyncService {
     this._journal,
     this._prefs, {
     this._ownershipGuard = const JournalOwnershipGuard(),
-  });
+    EncryptedJournalSyncCoordinator? encryptedCoordinator,
+    DeviceIdStore? deviceIds,
+    SyncMasterKeyStore? keyStore,
+  }) : _encryptedCoordinator =
+           encryptedCoordinator ??
+           EncryptedJournalSyncCoordinator(
+             api: _api,
+             journal: _journal,
+             prefs: _prefs,
+             deviceIds: deviceIds ?? DeviceIdStore(),
+             keyStore:
+                 keyStore ??
+                 SecureSyncMasterKeyStore(accountNamespace: 'guest'),
+           );
 
   final ApiClient _api;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
   final JournalOwnershipGuard _ownershipGuard;
+  final EncryptedJournalSyncCoordinator _encryptedCoordinator;
 
   /// Mirrors the server's `JOURNAL_SYNC_BATCH_LIMIT` (`POST /api/journal`
   /// rejects a larger `entries` array with `400 BATCH_TOO_LARGE`) — defined
@@ -120,59 +137,21 @@ class SyncService {
     var pushed = 0;
     var rejected = 0;
     try {
-      // Edits/new entries and not-yet-acknowledged local deletes both go
-      // through the exact same conditional-upsert path server-side — a
-      // tombstone is just another revision, so it rides in the same
-      // outgoing batch as everything else.
-      final pendingEdits = await _journal.pendingSyncQueue();
-      final pendingDeletes = await _journal.pendingTombstones();
-      final outgoing = <JournalEntry>[...pendingEdits, ...pendingDeletes];
-      final partitioned = await _partitionByOwnership(outgoing);
-      final eligible = partitioned.eligible;
-      final blocked = partitioned.blocked;
-
-      for (final batch in _chunk(eligible, _batchLimit)) {
-        final pushResult = await _api.createJournalEntry(batch);
-        // Marked synced immediately per-batch (not after the whole loop)
-        // so that if a later batch throws, everything already accepted
-        // stays marked synced and is never re-pushed on the next
-        // syncNow() call.
-        for (final id in pushResult.accepted) {
-          await _journal.markSynced(id);
-          pushed++;
-        }
-        for (final rejection in pushResult.rejected) {
-          rejected++;
-          final winning = rejection.winning;
-          if (winning != null) {
-            // The server's revision beat (or tied) ours — reconcile the
-            // local copy right away via the same conflict-resolution path
-            // a normal pull uses, rather than leaving it wrong until the
-            // next full pull happens to also carry this id.
-            await _journal.mergeRemote([winning]);
-          }
-          // No `winning` means a shape/validation error, not a conflict —
-          // leave the local entry's sync status untouched (still pending)
-          // so it is retried on the next sync rather than silently dropped.
-        }
-      }
-
-      final remote = await _api.listJournal();
-      await _journal.mergeRemote(remote);
-      await _journal.compactTombstones();
-
-      await _prefs.setLastSyncAt(DateTime.now());
+      final encrypted = await _encryptedCoordinator.syncNow();
+      pushed = encrypted.pushed;
       return SyncResult(
         cloudSyncSucceeded: true,
         message:
             'Sync complete. If anything looks duplicated, newer copies were kept.',
-        syncNote: blocked > 0
-            ? '$blocked entr${blocked == 1 ? 'y' : 'ies'} from a different '
+        syncNote: encrypted.blocked > 0
+            ? '${encrypted.blocked} entr${encrypted.blocked == 1 ? 'y' : 'ies'} from a different '
                   'account stayed private on this device and were not '
                   'uploaded.'
+            : encrypted.migratedLegacy
+            ? 'Legacy plaintext archive was encrypted on this device. Server plaintext rows remain until audited deletion.'
             : null,
         pushed: pushed,
-        pulled: remote.length,
+        pulled: encrypted.pulled,
         rejected: rejected,
       );
     } on AuthRequiredException {
