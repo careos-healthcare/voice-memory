@@ -22,6 +22,7 @@ import '../features/voice_capture/voice_capture_quality.dart';
 import '../models/journal_entry.dart';
 import '../models/reflection.dart';
 import '../models/sync_status.dart';
+import '../security/account_session_guard.dart';
 import '../security/api_usage_guard.dart';
 import '../security/private_data_service.dart';
 import '../security/user_content_safety.dart';
@@ -127,6 +128,7 @@ class CapturePipelineService {
     required int durationSeconds,
     void Function(PipelineStage stage)? onStage,
   }) async {
+    final session = AccountSessionGuard.capture();
     final exists = audioFile.existsSync();
     final byteLength = exists ? audioFile.lengthSync() : 0;
     RecordPipelineLog.audioFile(
@@ -296,6 +298,7 @@ class CapturePipelineService {
       );
 
       onStage?.call(PipelineStage.saving);
+      session.assertActive();
       final finalTranscript =
           resolveFinalCaptureTranscript(
             transcript: trimmedTranscript,
@@ -322,6 +325,7 @@ class CapturePipelineService {
       final entry = await _saveVoiceEntryAndLog(
         prepared,
         first25Source: 'voice_capture',
+        session: session,
       );
       _attest.clearToken();
 
@@ -600,7 +604,9 @@ class CapturePipelineService {
   Future<JournalEntry> _saveVoiceEntryAndLog(
     JournalEntry entry, {
     required String first25Source,
+    AccountSessionGuard? session,
   }) async {
+    session?.assertActive();
     await _journalStore.save(entry, first25Source: first25Source);
     await TempRecordingCleanup.purgeRetryRecordings();
     final saved = await TempRecordingCleanup.releaseTempAudioIfSafe(
@@ -739,6 +745,7 @@ class CapturePipelineService {
     required String transcript,
     void Function(PipelineStage stage)? onStage,
   }) async {
+    final session = AccountSessionGuard.capture();
     final trimmed = transcript.trim();
     if (trimmed.isEmpty) {
       throw CapturePipelineFailure('Enter a thought before saving.');
@@ -823,6 +830,7 @@ class CapturePipelineService {
         verifiedProof: verifiedProof,
         syncStatus: SyncStatus.pendingUpload,
       );
+      session.assertActive();
       await _journalStore.save(entry, first25Source: 'text_capture');
       _attest.clearToken();
 
@@ -869,6 +877,7 @@ class CapturePipelineService {
     required int durationSeconds,
     void Function(PipelineStage stage)? onStage,
   }) async {
+    final session = AccountSessionGuard.capture();
     final trimmed = transcript.trim();
     if (trimmed.isEmpty) {
       throw CapturePipelineFailure('No live transcript was captured.');
@@ -956,6 +965,7 @@ class CapturePipelineService {
         syncStatus: SyncStatus.pendingUpload,
         captureContextTag: 'live_voice_capture',
       );
+      session.assertActive();
       await _journalStore.save(entry, first25Source: 'live_voice_capture');
       _attest.clearToken();
 
@@ -1009,6 +1019,7 @@ class CapturePipelineService {
     required bool remoteProcessingConsented,
     void Function(PipelineStage stage)? onStage,
   }) async {
+    final session = AccountSessionGuard.capture();
     final trimmed = transcript.trim();
     if (trimmed.isEmpty) {
       throw CapturePipelineFailure('Recovered vault transcript was empty.');
@@ -1057,6 +1068,7 @@ class CapturePipelineService {
       syncStatus: SyncStatus.pendingUpload,
       captureContextTag: 'live_voice_vault_recovery',
     );
+    session.assertActive();
     await _journalStore.save(entry, first25Source: 'live_voice_vault_recovery');
     _attest.clearToken();
     onStage?.call(PipelineStage.done);

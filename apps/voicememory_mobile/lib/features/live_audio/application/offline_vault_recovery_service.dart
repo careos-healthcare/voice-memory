@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../../security/account_session_guard.dart';
+import '../../../security/account_session_scope.dart';
 import '../../../security/remote_processing_consent_gate.dart';
 import '../../../services/capture_attest_service.dart';
 import '../../../services/capture_pipeline_service.dart';
@@ -44,6 +46,7 @@ class OfflineVaultRecoveryService {
     OfflineVaultManifest manifest, {
     void Function(PipelineStage stage)? onStage,
   }) async {
+    final session = AccountSessionGuard.capture();
     if (!manifest.serverRecoverable) {
       throw StateError(
         'Vault session ${manifest.sessionId} cannot be recovered via server upload.',
@@ -84,6 +87,7 @@ class OfflineVaultRecoveryService {
         recoverySecretKeyBytes: manifest.recoverySecretKeyBytes,
       );
 
+      session.assertActive();
       final pipelineResult = await _pipeline.saveRecoveredVaultEntry(
         transcript: serverResult.transcript,
         reflectionJson: serverResult.reflectionJson,
@@ -92,6 +96,7 @@ class OfflineVaultRecoveryService {
         onStage: onStage,
       );
 
+      session.assertActive();
       await _store.markCompleted(
         manifest,
         recoveryAckId: serverResult.recoveryAckId,
@@ -104,6 +109,9 @@ class OfflineVaultRecoveryService {
       );
       return pipelineResult;
     } catch (error) {
+      if (error is StaleAccountSessionException) {
+        rethrow;
+      }
       LiveAudioPipelineLog.offlineVaultRecoveryFailed(
         sessionId: manifest.sessionId,
         reason: error is Exception ? error.toString() : '$error',

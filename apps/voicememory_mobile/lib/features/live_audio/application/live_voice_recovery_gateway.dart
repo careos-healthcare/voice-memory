@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import '../../../security/account_session_guard.dart';
 import '../../../security/remote_processing_consent_gate.dart';
 import '../domain/models/offline_vault_manifest.dart';
 import '../infrastructure/live_audio_pipeline_log.dart';
@@ -46,6 +47,7 @@ class LiveVoiceRecoveryGateway {
   Future<void> checkForPendingRecovery() async {
     if (_sweepInFlight) return;
     _sweepInFlight = true;
+    final session = AccountSessionGuard.capture();
     try {
       final consent = await _consentGate.evaluate();
       if (!consent.permitted) {
@@ -64,6 +66,7 @@ class LiveVoiceRecoveryGateway {
 
       final pending = await _recoveryStore.listPending();
       for (final manifest in pending) {
+        session.assertActive();
         await _recoverManifest(manifest);
       }
     } finally {
