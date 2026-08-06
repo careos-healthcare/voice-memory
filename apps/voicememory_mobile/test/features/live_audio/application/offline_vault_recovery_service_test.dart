@@ -42,15 +42,16 @@ void main() {
         tokenCache: CaptureTokenCache()
           ..setToken('capture-token', expiresInSeconds: 3600),
       );
+      final prefsFile = await MobilePrefsStore.open(
+        '${vaultDirectory.path}/prefs.json',
+      );
       pipeline = _RecordingPipeline(
         api: api,
         attest: attest,
         journalStore: JournalStore(
           file: File('${vaultDirectory.path}/journal.json'),
         ),
-      );
-      final prefsFile = await MobilePrefsStore.open(
-        '${vaultDirectory.path}/prefs.json',
+        consentStore: RemoteProcessingConsentStore(prefsFile),
       );
       consentGate = RemoteProcessingConsentGate.fromPrefs(prefsFile);
       await RemoteProcessingConsentStore(prefsFile).grant();
@@ -216,6 +217,7 @@ class _RecordingPipeline extends CapturePipelineService {
     required super.api,
     required super.attest,
     required super.journalStore,
+    required super.consentStore,
   });
 }
 

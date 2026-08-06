@@ -17,11 +17,13 @@ import 'package:voicememory_mobile/features/live_audio/infrastructure/native_aud
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -184,6 +186,7 @@ class _NoopPipeline extends CapturePipelineService {
           tokenCache: CaptureTokenCache(),
         ),
         journalStore: JournalStore(file: journalFile),
+        consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
       );
 }
 
@@ -199,4 +202,12 @@ class _FakeApi extends ApiClient {
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
   Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
+}
+
+MobilePrefsStore _prefsFor(File journalFile) {
+  final prefsFile = File('${journalFile.path}.prefs.json');
+  if (!prefsFile.existsSync()) {
+    prefsFile.writeAsStringSync('{}');
+  }
+  return MobilePrefsStore(file: prefsFile);
 }

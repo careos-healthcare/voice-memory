@@ -24,9 +24,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/storage/private_data_encryption_key_store.dart';
 
 IsolateAudioPipeline _inlineIsolatePipeline(PipelineConfig config) {
@@ -67,6 +69,7 @@ void main() {
             ..setToken('capture-token', expiresInSeconds: 3600),
         ),
         journalStore: JournalStore(file: journalFile),
+        consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
       );
 
       captureService = _buildBridgeCaptureService(
@@ -284,6 +287,7 @@ void main() {
             ..setToken('capture-token', expiresInSeconds: 3600),
         ),
         journalStore: JournalStore(file: journalFile),
+        consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
       );
 
       final vaultKeyStore = InMemoryPrivateDataEncryptionKeyStore();
@@ -564,6 +568,7 @@ class _RecordingPipeline extends CapturePipelineService {
     required super.api,
     required super.attest,
     required super.journalStore,
+    required super.consentStore,
   });
 
   int saveCalls = 0;
@@ -686,4 +691,12 @@ class _FakeApiClientWithAttest extends ApiClient {
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
   Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
+}
+
+MobilePrefsStore _prefsFor(File journalFile) {
+  final prefsFile = File('${journalFile.path}.prefs.json');
+  if (!prefsFile.existsSync()) {
+    prefsFile.writeAsStringSync('{}');
+  }
+  return MobilePrefsStore(file: prefsFile);
 }
