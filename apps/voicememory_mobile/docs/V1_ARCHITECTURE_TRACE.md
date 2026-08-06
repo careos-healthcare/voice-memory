@@ -19,7 +19,7 @@ capture → save → verify → display → correct → sync → delete → purc
 | **Correct** | Correction + suppression flows on entry detail | `JournalStore` mutations | Account guard on writes | User-initiated only | Atomic local update + sync log | Optimistic UI with rollback | privacy + delete-account tests |
 | **Sync** | `EncryptedSyncService` | `MobilePrefsStore.lastSyncSequence`, server change log | Per-account cursor | Encrypted payload only | Incremental pull/push | Best-effort background; no blocking startup | incremental sync tests (Phase 3) |
 | **Delete** | `DeleteAccountScreen`, export flows | `JournalStore`, secure storage wipe | Full account teardown | Confirmation copy + export offer | Local wipe then server | Completed message; no stale session | `delete_account_confirmation_test.dart` |
-| **Purchase** | `PaywallController` (V1 boundary) | RevenueCat / `BillingService` | Entitlement per store account | No analytics during build | Cached entitlement | Unavailable store UI; restore path | `v1_paywall_controller_test.dart`, commercial gates |
+| **Purchase** | `PaywallController`, `PaywallOfferingsLoader` | RevenueCat / `BillingService` | Entitlement per store account | No analytics during build | Cached entitlement | Unavailable store UI; restore path | `v1_paywall_controller_test.dart`, `paywall_restore_test.dart` |
 
 ## Dependency scopes
 

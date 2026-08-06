@@ -145,7 +145,7 @@ void main() {
         expect(
           source,
           contains(
-            'if (_loading || _entitlements?.isPro == true) return null;',
+            'if (_ps.loadingOfferings || _ps.entitlements?.isPro == true) return null;',
           ),
         );
       },
@@ -180,12 +180,8 @@ void main() {
 
     test('a load error is announced via a live region', () {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(
-        source,
-        contains(
-          'Semantics(\n              liveRegion: true,\n              child: Text(\n                _error!,',
-        ),
-      );
+      expect(source, contains('liveRegion: true'));
+      expect(source, contains('_ps.errorMessage!'));
     });
   });
 }

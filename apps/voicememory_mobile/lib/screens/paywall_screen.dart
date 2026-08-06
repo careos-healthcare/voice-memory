@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
+import '../billing/v1/app_services_paywall_dependencies.dart';
+import '../billing/v1/paywall_controller.dart';
+import '../billing/v1/paywall_plan.dart' show PaywallPlan;
 import '../features/app_review/archive_app_review_session.dart';
 import '../billing/archive_paywall_copy.dart';
 import '../billing/archive_paywall_plans.dart';
@@ -25,9 +27,7 @@ import '../features/activation/activation_tracker.dart';
 import '../billing/restore_purchases_copy.dart';
 import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
-import '../billing/revenuecat_diagnostics_log.dart';
 import '../billing/revenuecat_service.dart';
-import '../billing/revenuecat_offerings_debug_log.dart';
 import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
@@ -111,10 +111,6 @@ class PaywallScreen extends StatefulWidget {
   State<PaywallScreen> createState() => _PaywallScreenState();
 }
 
-enum _PaywallPlan { monthly, yearly }
-
-enum _PaywallBusyKind { none, purchase, restore }
-
 class _PaywallScreenState extends State<PaywallScreen> {
   static const Duration _loadTimeout = Duration(seconds: 12);
   static const String _entitlementLabel = ProPackagingCopy.title;
@@ -123,19 +119,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
       .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
       .toList();
 
-  Offerings? _offerings;
-  PremiumEntitlements? _entitlements;
-  bool _loading = true;
-  bool _offeringsReloading = false;
-  bool _busy = false;
-  _PaywallBusyKind _busyKind = _PaywallBusyKind.none;
+  late final PaywallController _paywallController = PaywallController(
+    dependencies: AppServicesPaywallDependencies(
+      billingReady: widget.billingReadyOverride,
+      loadTimeout: _loadTimeout,
+    ),
+  );
+
+  PaywallState get _ps => _paywallController.state;
+
   RestorePurchasesFlow? _restoreFlow;
   bool _paywallSeenTracked = false;
-  String? _error;
-  _PaywallPlan _selected = _PaywallPlan.yearly;
-
-  /// Last captured rejection reason — loaded once at init, so the same flow
-  /// that captures a reason can never render its own follow-up.
   PaywallRejectionReason? _objectionFollowUpReason;
   bool _showBetaFeedbackCaptureNoCta = false;
   bool _showBetaFeedbackCapturePurchaseFail = false;
@@ -244,7 +238,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   bool get _restoreBillingReady =>
       widget.billingConfiguredForRestore?.call() ?? _billingReady;
 
-  bool get _purchasePlansAvailable => _billingReady && _hasPackages;
+  bool get _purchasePlansAvailable => _ps.purchasePlansAvailable;
 
   /// Source-aware copy variant, when the opener passed a [PaywallSource].
   PaywallSourceCopy? get _sourceCopy {
@@ -323,7 +317,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       return '${ConsumerUiCopy.paywallSetupUnavailableBody}\n\n'
           '${ConsumerUiCopy.paywallUnavailablePlansLoading}';
     }
-    final err = _error;
+    final err = _ps.errorMessage;
     if (err == SubscriptionCopy.paywallNoOfferings ||
         err == SubscriptionCopy.temporarilyUnavailable) {
       return '${ConsumerUiCopy.paywallSetupUnavailableBody}\n\n'
@@ -334,16 +328,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
         '${ProPackagingCopy.offeringsUnavailableBody}';
   }
 
-  bool get _hasPackages {
-    final packages = _offerings?.current?.availablePackages;
-    return packages != null && packages.isNotEmpty;
-  }
-
   String? get _monthlyPriceString =>
-      _packageFor(_PaywallPlan.monthly)?.storeProduct.priceString;
+      _ps.priceStringFor(PaywallPlan.monthly);
 
-  String? get _yearlyPriceString =>
-      _packageFor(_PaywallPlan.yearly)?.storeProduct.priceString;
+  String? get _yearlyPriceString => _ps.priceStringFor(PaywallPlan.yearly);
 
   Widget _subscriptionDetailsSection({required bool plansAvailable}) {
     return PaywallSubscriptionDetailsSection(
@@ -353,30 +341,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  Future<PremiumEntitlements> _mergeReviewProEntitlements(
-    PremiumEntitlements entitlements,
-  ) async {
-    if (!AppServices.isInitialized || entitlements.isPro) return entitlements;
-    try {
-      final loopState =
-          await ArchiveLoopEntitlementStore(
-            AppServices.instance.prefs,
-          ).load().timeout(
-            const Duration(seconds: 2),
-            onTimeout: () {
-              return ArchiveLoopEntitlementState.empty;
-            },
-          );
-      if (!loopState.isPro) return entitlements;
-      return PremiumEntitlements(
-        tier: BillingTier.pro,
-        entitlementIds: const [],
-        billingConnected: false,
-        source: 'app_review',
-      );
-    } catch (_) {
-      return entitlements;
+  Future<void> _load({bool isRetry = false}) async {
+    if (!mounted) return;
+    setState(() {});
+    await _paywallController.loadOfferings(isRetry: isRetry);
+    if (!mounted) return;
+    final entitlements = _ps.entitlements ?? PremiumEntitlements.free();
+    _trackPaywallSeen(entitlements);
+    if (_ps.purchasePlansAvailable && !entitlements.isPro) {
+      _trackPlansShown();
     }
+    if (mounted) setState(() {});
   }
 
   bool _passesDelayedPaywallProofGate() {
@@ -440,7 +415,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       entryCount: 0,
       hasPaywallSeen: _paywallSeenTracked,
       hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
       paywallNoCtaRequested: paywallNoCtaRequested,
       paywallPurchaseAttempted: paywallPurchaseAttempted,
     ),
@@ -469,215 +444,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final reason = await _objectionStore.lastReason();
     if (!mounted) return;
     if (!PaywallObjectionFollowUp.shouldShow(
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
       reason: reason,
     )) {
       return;
     }
     PaywallObjectionFollowUp.shownThisSession = true;
     setState(() => _objectionFollowUpReason = reason);
-  }
-
-  Package? _packageFor(_PaywallPlan plan, [Offerings? offerings]) {
-    final current = (offerings ?? _offerings)?.current;
-    if (current == null) return null;
-    for (final p in current.availablePackages) {
-      if (plan == _PaywallPlan.monthly &&
-          p.packageType == PackageType.monthly) {
-        return p;
-      }
-      if (plan == _PaywallPlan.yearly && p.packageType == PackageType.annual) {
-        return p;
-      }
-    }
-    return null;
-  }
-
-  bool _hasPackagesIn(Offerings? offerings) {
-    final packages = offerings?.current?.availablePackages;
-    return packages != null && packages.isNotEmpty;
-  }
-
-  Future<void> _load({bool isRetry = false}) async {
-    if (!mounted) return;
-
-    RevenueCatOfferingsDebugLog.paywallLoadStarted(
-      billingConfigured: _billingReady,
-      appServicesInitialized: AppServices.isInitialized,
-      screenshotMode: ScreenshotMode.enabled,
-    );
-
-    setState(() {
-      if (isRetry) {
-        _offeringsReloading = true;
-      } else {
-        _loading = true;
-      }
-      if (!isRetry) {
-        _error = null;
-      }
-    });
-
-    Offerings? offerings;
-    PremiumEntitlements entitlements = PremiumEntitlements.free();
-    String? error;
-    String loadReason = 'completed';
-    var billingConfigured = _billingReady;
-    var monthly = null as Package?;
-    var yearly = null as Package?;
-    var selected = _selected;
-
-    try {
-      if (!billingConfigured && !ScreenshotMode.enabled) {
-        if (AppServices.isInitialized) {
-          try {
-            await RevenueCatService.instance.initialize().timeout(_loadTimeout);
-          } on TimeoutException {
-            loadReason = 'configure_timeout';
-            RevenueCatDiagnosticsLog.paywallFallback(
-              reason: loadReason,
-              isRetry: isRetry,
-            );
-          }
-          billingConfigured = RevenueCatService.instance.isConfigured;
-        }
-        if (!billingConfigured) {
-          loadReason = 'billing_not_configured';
-          RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
-          _trackPaywallSeen(PremiumEntitlements.free());
-          entitlements = PremiumEntitlements.free();
-          error = ConsumerUiCopy.paywallBillingNotConfigured;
-          return;
-        }
-      }
-
-      if (ScreenshotMode.enabled) {
-        loadReason = 'screenshot_mode';
-        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
-        entitlements = PremiumEntitlements.free();
-        return;
-      }
-
-      final rc = RevenueCatService.instance;
-
-      try {
-        offerings = await rc.fetchOfferings().timeout(
-          _loadTimeout,
-          onTimeout: () {
-            RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
-              offerings: null,
-              error:
-                  'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
-            );
-            RevenueCatDiagnosticsLog.fetchOfferingsFinished(
-              success: false,
-              offerings: null,
-              error:
-                  'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
-            );
-            return null;
-          },
-        );
-        entitlements = await AppServices.instance.billing
-            .loadEntitlements(forceRefresh: true)
-            .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
-        entitlements = await _mergeReviewProEntitlements(entitlements);
-      } on TimeoutException {
-        loadReason = 'load_timeout';
-        error = SubscriptionCopy.paywallNoOfferings;
-        entitlements = rc.latestEntitlements;
-        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
-        RevenueCatDiagnosticsLog.paywallFallback(
-          reason: loadReason,
-          error: error,
-          isRetry: isRetry,
-        );
-      } catch (e) {
-        loadReason = 'load_error';
-        error = SubscriptionCopy.paywallNoOfferings;
-        entitlements = rc.latestEntitlements;
-        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
-        RevenueCatDiagnosticsLog.paywallFallback(
-          reason: loadReason,
-          error: error,
-          isRetry: isRetry,
-        );
-      }
-
-      if (!mounted) {
-        loadReason = 'widget_unmounted_before_render';
-        return;
-      }
-
-      _trackPaywallSeen(entitlements);
-
-      monthly = _packageFor(_PaywallPlan.monthly, offerings);
-      yearly = _packageFor(_PaywallPlan.yearly, offerings);
-      if (yearly == null && monthly != null) {
-        selected = _PaywallPlan.monthly;
-      } else if (yearly != null) {
-        selected = _PaywallPlan.yearly;
-      }
-
-      if (!_hasPackagesIn(offerings) && error == null) {
-        loadReason = 'no_packages_in_current_offering';
-        error = SubscriptionCopy.paywallNoOfferings;
-        RevenueCatDiagnosticsLog.paywallFallback(
-          reason: loadReason,
-          error: error,
-          isRetry: isRetry,
-        );
-      } else if (_hasPackagesIn(offerings)) {
-        loadReason = 'plans_available';
-      }
-
-      if (_hasPackagesIn(offerings) && entitlements.isPro == false) {
-        _trackPlansShown();
-      }
-    } catch (e) {
-      loadReason = 'load_unhandled_error';
-      error = SubscriptionCopy.paywallNoOfferings;
-      RevenueCatDiagnosticsLog.paywallFallback(
-        reason: loadReason,
-        error: error,
-        isRetry: isRetry,
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _offerings = offerings;
-          _entitlements = entitlements;
-          _loading = false;
-          _offeringsReloading = false;
-          _selected = selected;
-          _error = error;
-        });
-      }
-
-      final purchasePlansAvailable =
-          billingConfigured && _hasPackagesIn(offerings);
-      RevenueCatOfferingsDebugLog.paywallLoadResult(
-        billingConfigured: billingConfigured,
-        offeringsLoaded: offerings != null,
-        offeringCount: offerings?.all.length ?? 0,
-        currentOfferingId: offerings?.current?.identifier,
-        packageCount: offerings?.current?.availablePackages.length ?? 0,
-        monthlyPackageFound: monthly != null,
-        annualPackageFound: yearly != null,
-        purchasePlansAvailable: purchasePlansAvailable,
-        showingUnavailable:
-            !purchasePlansAvailable && entitlements.isPro != true,
-        reason: loadReason,
-        error: error,
-      );
-      if (!purchasePlansAvailable && entitlements.isPro != true) {
-        RevenueCatDiagnosticsLog.paywallFallback(
-          reason: loadReason,
-          error: error,
-          isRetry: isRetry,
-        );
-      }
-    }
   }
 
   void _trackPaywallSeen(PremiumEntitlements entitlements) {
@@ -715,14 +488,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   void _trackPlansShown() {
-    final monthly = _packageFor(_PaywallPlan.monthly);
-    final yearly = _packageFor(_PaywallPlan.yearly);
+    final monthly = _ps.packageFor(PaywallPlan.monthly);
+    final yearly = _ps.packageFor(PaywallPlan.yearly);
     if (yearly != null) ActivationTracker.trackAnnualPlanShown();
     if (monthly != null) ActivationTracker.trackMonthlyPlanShown();
   }
 
-  void _trackPlanSelected(_PaywallPlan plan) {
-    if (plan == _PaywallPlan.yearly) {
+  void _trackPlanSelected(PaywallPlan plan) {
+    if (plan == PaywallPlan.yearly) {
       ActivationTracker.trackAnnualPlanSelected();
     } else {
       ActivationTracker.trackMonthlyPlanSelected();
@@ -730,7 +503,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   /// Stable plan id for analytics — never user text.
-  String _planIdFor(_PaywallPlan plan) => plan == _PaywallPlan.yearly
+  String _planIdFor(PaywallPlan plan) => plan == PaywallPlan.yearly
       ? PaywallPlanSelectionConfidence.yearlyPlanId
       : PaywallPlanSelectionConfidence.monthlyPlanId;
 
@@ -741,7 +514,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       suggestionStage:
           SuggestionAttributionEventType.suggestionToPurchaseStarted,
     );
-    final package = _packageFor(_selected);
+    final package = _ps.packageFor(_ps.selectedPlan);
     if (package == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(SubscriptionCopy.paywallNoOfferings)),
@@ -749,13 +522,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
       return;
     }
 
-    setState(() {
-      _busy = true;
-      _busyKind = _PaywallBusyKind.purchase;
-    });
+    setState(() {});
+
     RevenueFunnelAnalytics.paywallPurchaseCtaTapped(
       source: _attributionSource.id,
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
     );
     ActivationTracker.trackPaywallContinueTapped();
     // Purchase intent: remember the start (stable ids only) and suppress
@@ -765,17 +536,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
     unawaited(
       _purchaseIntentStore.recordPurchaseStarted(
         source: _attributionSource.id,
-        plan: _planIdFor(_selected),
+        plan: _planIdFor(_ps.selectedPlan),
       ),
     );
-    final period = _selected == _PaywallPlan.monthly ? 'monthly' : 'yearly';
+    final period = _ps.selectedPlan == PaywallPlan.monthly ? 'monthly' : 'yearly';
     First25UserMetrics.trackPaywallStarted(
       surface: 'paywall_screen',
       period: period,
     );
 
     try {
-      final ent = await AppServices.instance.billing.purchaseNative(package);
+      final ent = await _paywallController.purchaseSelectedPackage();
+      if (ent == null) return;
       if (ent.isPro) {
         unawaited(_purchaseIntentStore.recordPurchaseCompleted());
         _recordAttribution(
@@ -815,12 +587,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
       );
     } finally {
-      if (mounted) {
-        setState(() {
-          _busy = false;
-          _busyKind = _PaywallBusyKind.none;
-        });
-      }
+      if (mounted) setState(() {});
     }
   }
 
@@ -844,15 +611,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
 
     final flow = _effectiveRestoreFlow;
-    if (flow.isBusy || _busy) return;
+    if (flow.isBusy || _ps.isBusy) return;
 
-    setState(() {
-      _busy = true;
-      _busyKind = _PaywallBusyKind.restore;
-    });
+    await _paywallController.beginRestore();
+    if (mounted) setState(() {});
     RevenueFunnelAnalytics.paywallRestoreTapped(
       source: _attributionSource.id,
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
     );
     ActivationTracker.trackRestoreTapped();
     try {
@@ -866,12 +631,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
       RestorePurchasesFeedback.showSnackBar(context, result);
     } finally {
-      if (mounted) {
-        setState(() {
-          _busy = false;
-          _busyKind = _PaywallBusyKind.none;
-        });
-      }
+      await _paywallController.endRestore();
+      if (mounted) setState(() {});
     }
   }
 
@@ -890,7 +651,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Future<void> _maybeCaptureRejection() async {
     if (!PaywallRejectionCapture.shouldPrompt(
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
     )) {
       return;
     }
@@ -927,12 +688,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// visible label) so it never duplicates the bottom text button's label
   /// for `find.text` uniqueness in existing tests.
   Widget? _headerRestoreAction() {
-    if (_loading || _entitlements?.isPro == true) return null;
+    if (_ps.loadingOfferings || _ps.entitlements?.isPro == true) return null;
     return IconButton(
       key: const Key('paywall_header_restore_action'),
       icon: const Icon(Icons.restore),
       tooltip: ConsumerUiCopy.restorePurchases,
-      onPressed: _busy ? null : _restore,
+      onPressed: _ps.isBusy ? null : _restore,
     );
   }
 
@@ -949,7 +710,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       body: ListView(
         padding: ArchiveResponsiveLayout.pagePadding(context),
         children: [
-          if (_loading)
+          if (_ps.loadingOfferings)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 32),
               child: Column(
@@ -964,7 +725,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ],
               ),
             )
-          else if (_entitlements?.isPro == true)
+          else if (_ps.entitlements?.isPro == true)
             _proActiveBody()
           else if (ScreenshotMode.enabled)
             _screenshotPaywallBody()
@@ -1020,8 +781,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
           headline: sourceCopy?.headline ?? ConsumerUiCopy.paywallHeadline,
           subhead: sourceCopy?.subheadline ?? ConsumerUiCopy.paywallSubhead,
           body: _unavailableBodyText,
-          busy: _busy,
-          retrying: _offeringsReloading,
+          busy: _ps.isBusy,
+          retrying: _ps.offeringsReloading,
           showRetry: _billingReady,
           onRetry: () => unawaited(_load(isRetry: true)),
           onRestore: _restore,
@@ -1107,8 +868,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// zero-price introductory offer. No offerings (or paid intro pricing)
   /// means no trial copy — the line is never a generic promise.
   bool get _hasFreeTrialOffer {
-    for (final plan in _PaywallPlan.values) {
-      final intro = _packageFor(plan)?.storeProduct.introductoryPrice;
+    for (final plan in PaywallPlan.values) {
+      final intro = _ps.packageFor(plan)?.storeProduct.introductoryPrice;
       if (intro != null && intro.price == 0) return true;
     }
     return false;
@@ -1380,8 +1141,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _paywallBody() {
-    final monthly = _packageFor(_PaywallPlan.monthly);
-    final yearly = _packageFor(_PaywallPlan.yearly);
+    final monthly = _ps.packageFor(PaywallPlan.monthly);
+    final yearly = _ps.packageFor(PaywallPlan.yearly);
     final triggerArgs = widget.triggerArgs;
     final valuePreview = triggerArgs?.valuePreview;
     final sourceCopy = _sourceCopy;
@@ -1400,7 +1161,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final paywallCtaLiftResult = PaywallCtaLiftEngine.build(
       source: widget.triggerArgs?.source,
       analyticsSource: _attributionSource.id,
-      isPro: _entitlements?.isPro == true,
+      isPro: _ps.entitlements?.isPro == true,
     );
 
     return ArchiveResponsiveLayout.constrainContent(
@@ -1467,8 +1228,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             hasMonthly: monthly != null,
           ).map((kind) {
             final plan = kind == PaywallPlanKind.annual
-                ? _PaywallPlan.yearly
-                : _PaywallPlan.monthly;
+                ? PaywallPlan.yearly
+                : PaywallPlan.monthly;
             final package = kind == PaywallPlanKind.annual ? yearly! : monthly!;
             final suggestionFraming = PaywallAnnualValueCopy.showFor(
               widget.triggerArgs?.source,
@@ -1510,19 +1271,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
             // purchase CTA.
             const SizedBox(height: 14),
             PlanSelectionConfidenceBlock(
-              selectedPlanId: _planIdFor(_selected),
+              selectedPlanId: _planIdFor(_ps.selectedPlan),
               source: widget.triggerArgs?.source?.id,
             ),
             // Price confidence directly below the plan cards.
             const SizedBox(height: 10),
             _priceConfidenceLines(),
           ],
-          if (_error != null) ...[
+          if (_ps.errorMessage != null) ...[
             const SizedBox(height: 14),
             Semantics(
               liveRegion: true,
               child: Text(
-                _error!,
+                _ps.errorMessage!,
                 style: ArchiveMobileTypography.responsiveHelper(
                   context,
                   color: VoiceMemoryColors.error,
@@ -1562,7 +1323,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           _subscriptionDetailsSection(plansAvailable: _purchasePlansAvailable),
           const SizedBox(height: 14),
           FilledButton(
-            onPressed: _busy ? null : _continue,
+            onPressed: _ps.isBusy ? null : _continue,
             style: FilledButton.styleFrom(
               backgroundColor: VoiceMemoryColors.primaryIndigo,
               foregroundColor: VoiceMemoryColors.onPrimary,
@@ -1571,7 +1332,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: _busy && _busyKind == _PaywallBusyKind.purchase
+            child: _ps.purchaseInFlight
                 ? Text(
                     ArchivePaywallCopy.purchaseStarting,
                     style: const TextStyle(
@@ -1610,12 +1371,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ],
           const SizedBox(height: 10),
           TextButton(
-            onPressed: _busy
+            onPressed: _ps.isBusy
                 ? null
                 : () {
                     RevenueFunnelAnalytics.paywallDismissed(
                       source: _attributionSource.id,
-                      isPro: _entitlements?.isPro == true,
+                      isPro: _ps.entitlements?.isPro == true,
                     );
                     ActivationTracker.trackPaywallDismissed();
                     First25UserMetrics.trackPaywallDismissed(
@@ -1634,9 +1395,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
             child: const Text(ConsumerUiCopy.paywallSecondaryCta),
           ),
           TextButton(
-            onPressed: _busy ? null : _restore,
+            onPressed: _ps.isBusy ? null : _restore,
             child: Text(
-              _busy && _busyKind == _PaywallBusyKind.restore
+              _ps.restoreInFlight
                   ? ArchivePaywallCopy.restoreChecking
                   : ConsumerUiCopy.restorePurchases,
             ),
@@ -1672,21 +1433,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _planCard({
     required BuildContext context,
-    required _PaywallPlan plan,
+    required PaywallPlan plan,
     required String title,
     required String price,
     required String helper,
   }) {
-    final selected = _selected == plan;
-    final isYearly = plan == _PaywallPlan.yearly;
+    final selected = _ps.selectedPlan == plan;
+    final isYearly = plan == PaywallPlan.yearly;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: _busy
+        onTap: _ps.isBusy
             ? null
             : () {
-                setState(() => _selected = plan);
+                setState(() => _paywallController.selectPlan(plan));
                 _trackPlanSelected(plan);
                 // Funnel event with the stable plan id only — fired on the
                 // explicit tap, never during purchase.

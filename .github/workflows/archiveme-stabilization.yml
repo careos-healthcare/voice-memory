@@ -69,6 +69,7 @@ jobs:
             test/v1_production_allowlist_test.dart \
             test/v1_dependency_scopes_test.dart \
             test/v1_paywall_controller_test.dart \
+            test/v1_paywall_wiring_test.dart \
             test/v1_archive_belief_split_test.dart \
             test/v1_archive_belief_lazy_list_test.dart \
             test/v1_free_paid_capabilities_test.dart
