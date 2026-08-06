@@ -67,4 +67,7 @@ bash "$ROOT/tool/audit_v1_permissions.sh"
 echo "==> service locator audit (V1 critical paths)"
 bash "$ROOT/tool/audit_v1_service_locator.sh"
 
+echo "==> launch product audit"
+bash "$ROOT/tool/audit_v1_launch_product.sh"
+
 echo "OK — V1 production graph checks passed"
