@@ -17,6 +17,14 @@ void main() {
       V1DependencyScope.accountScoped,
     );
     expect(
+      V1DependencyScopeRegistry.scopeFor('ArchiveCorrectionStore'),
+      V1DependencyScope.accountScoped,
+    );
+    expect(
+      V1DependencyScopeRegistry.scopeFor('RemoteProcessingConsentStore'),
+      V1DependencyScope.accountScoped,
+    );
+    expect(
       V1DependencyScopeRegistry.scopeFor('EncryptedSyncService'),
       V1DependencyScope.accountScoped,
     );

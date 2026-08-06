@@ -14,7 +14,7 @@ void main() {
     setUp(() async {
       tempDir = await Directory.systemTemp.createTemp('consent_gate_');
       prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
-      gate = RemoteProcessingConsentGate(prefs);
+      gate = RemoteProcessingConsentGate.fromPrefs(prefs);
     });
 
     tearDown(() async {

@@ -1,74 +1,14 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app.dart';
-import '../config/developer_settings_gate.dart';
-import '../config/trial_mode.dart';
-import '../core/config/v1_feature_flags.dart';
-import '../features/activation/activation_tracker.dart';
-import '../features/beta/beta_activation_loop_tracker.dart';
-import '../features/objective/current_objective_widget_refresh_service.dart';
-import '../features/proof_admission/archive_correction_store.dart';
-import '../features/proof_admission/proof_scope_provider.dart';
-import '../features/tomorrow_return/check_in_reminder_service.dart';
-import '../features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
-import '../features/live_audio/presentation/offline_vault_recovery_launch_controller.dart';
-import '../router/onboarding_gate.dart';
-import '../security/private_storage_audit.dart';
-import '../services/app_services.dart';
-import '../storage/app_storage_paths.dart';
+import '../product/consumer_ui_copy.dart';
 import '../theme/app_colors.dart';
+import 'v1_startup_coordinator.dart';
 
-/// Completes startup work that touches local storage and platform services.
-Future<void> completeArchiveMeStartup() async {
-  await AppStoragePaths.configureFromDeviceInfo();
-  await AppServices.initialize();
-  ArchiveCorrectionStore.instance.configure(AppServices.instance.prefs);
-  // A resumed signed-in session (see `AppServices.initialize`, which opens
-  // that account's own namespace before this line ever runs) must load its
-  // own corrections under its own archive scope, not silently under the
-  // guest default `switchArchive`'s constructor seed leaves it at — this is
-  // the same reconciliation `AppServices._switchToNamespace` performs on a
-  // live account switch, just also needed once here for the namespace that
-  // was already active before the very first `ensureLoaded` call.
-  await ArchiveCorrectionStore.instance.switchArchive(
-    const AppServicesProofScopeProvider().activeArchiveScope,
-  );
-  await ArchiveCorrectionStore.instance.ensureLoaded();
-  await ArchiveCorrectionStore.instance.migrateLegacyArchiveFeedback();
-  await OfflineVaultRecoveryLaunchController.prepareScan();
-  unawaited(
-    AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery(),
-  );
-  PrivateStorageAudit.logAuditReport();
-  if (!V1FeatureFlags.enableV1Only) {
-    await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
-    await CheckInReminderService.ensureInitialized();
-    await CuriosityNotificationLaunchController.ensureInitialized();
-    unawaited(BetaActivationLoopTracker.trackAppOpened());
-  }
-  if (TrialMode.enabled) {
-    onboardingGate.markComplete();
-    await ActivationTracker.trackTrialAppOpened();
-  } else {
-    await _loadDeveloperSettingsGate();
-    await onboardingGate.refresh();
-  }
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-}
-
-Future<void> _loadDeveloperSettingsGate() async {
-  final unlocked = await AppServices.instance.prefs.readBool(
-    DeveloperSettingsGate.prefsUnlockKey,
-  );
-  DeveloperSettingsGate.loadFromPrefs(unlocked);
-}
-
-/// Shows the first frame immediately, then runs [completeArchiveMeStartup].
+/// Shows the first frame immediately, then runs staged V1 startup.
 class ArchiveMeBootstrapApp extends StatefulWidget {
   const ArchiveMeBootstrapApp({super.key});
 
@@ -78,7 +18,7 @@ class ArchiveMeBootstrapApp extends StatefulWidget {
 
 class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
   bool _ready = false;
-  Object? _startupError;
+  bool _startupFailed = false;
 
   @override
   void initState() {
@@ -88,23 +28,29 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
 
   Future<void> _initAfterFirstFrame() async {
     try {
-      await completeArchiveMeStartup();
+      await V1StartupCoordinator.runEssentialPhases();
+      if (mounted) {
+        setState(() => _ready = true);
+      }
+      unawaited(V1StartupCoordinator.runOptionalPhases());
     } catch (e, st) {
-      debugPrint('ARCHIVEME_SIMULATOR_NATIVE_ASSETS: startup failed: $e');
+      debugPrint('ARCHIVEME_STARTUP: essential phase failed: $e');
       debugPrint('$st');
-      _startupError = e;
-    }
-    if (mounted) {
-      setState(() => _ready = true);
+      if (mounted) {
+        setState(() {
+          _ready = true;
+          _startupFailed = true;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_ready && _startupError == null) {
+    if (_ready && !_startupFailed) {
       return const ArchiveMeApp();
     }
-    if (_ready && _startupError != null) {
+    if (_ready && _startupFailed) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -113,8 +59,7 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'ArchiveMe could not start local storage on this simulator.\n'
-                '$_startupError',
+                ConsumerUiCopy.startupLocalStorageFailedBody,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -129,5 +74,15 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
         body: SizedBox.shrink(),
       ),
     );
+  }
+}
+
+/// Completes startup for hosts that defer local storage until after first frame.
+Future<void> completeArchiveMeStartup({bool awaitOptionalServices = false}) async {
+  await V1StartupCoordinator.runEssentialPhases();
+  if (awaitOptionalServices) {
+    await V1StartupCoordinator.runOptionalPhases();
+  } else {
+    unawaited(V1StartupCoordinator.runOptionalPhases());
   }
 }

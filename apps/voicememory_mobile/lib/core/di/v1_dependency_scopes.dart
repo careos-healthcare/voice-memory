@@ -30,6 +30,8 @@ abstract final class V1DependencyScopeRegistry {
     'AuthService',
     'BillingService',
     'CapturePipelineService',
+    'ArchiveCorrectionStore',
+    'RemoteProcessingConsentStore',
   };
 
   static const flowScopedServices = {

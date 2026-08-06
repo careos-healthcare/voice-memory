@@ -24,7 +24,9 @@ class RemoteProcessingConsentDecision {
 /// Recheck immediately before every remote upload and after queue resume or
 /// account/session changes.
 class RemoteProcessingConsentGate {
-  RemoteProcessingConsentGate(MobilePrefsStore prefs)
+  RemoteProcessingConsentGate(this._store);
+
+  RemoteProcessingConsentGate.fromPrefs(MobilePrefsStore prefs)
       : _store = RemoteProcessingConsentStore(prefs);
 
   final RemoteProcessingConsentStore _store;

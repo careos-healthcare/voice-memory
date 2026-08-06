@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/proof_admission/archive_correction_bootstrap.dart';
 import 'package:voicememory_mobile/features/proof_admission/archive_correction.dart';
 import 'package:voicememory_mobile/features/proof_admission/archive_correction_store.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
@@ -41,9 +42,8 @@ Future<AccountNamespace> _resetForFreshAccount(String label) async {
 /// (see its doc comment) so this fixture does it explicitly, matching
 /// production startup.
 Future<void> _seedArchiveCorrectionStoreForActiveNamespace() async {
-  ArchiveCorrectionStore.instance.configure(AppServices.instance.prefs);
-  await ArchiveCorrectionStore.instance.switchArchive(
-    const AppServicesProofScopeProvider().activeArchiveScope,
+  await reconcileArchiveCorrectionStoreForActiveNamespace(
+    AppServices.instance.prefs,
   );
 }
 

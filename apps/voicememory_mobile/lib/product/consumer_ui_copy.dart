@@ -7,6 +7,10 @@ import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart'
 abstract class ConsumerUiCopy {
   ConsumerUiCopy._();
 
+  static const String startupLocalStorageFailedBody =
+      'ArchiveMe could not open your private archive on this device. '
+      'Try restarting the app. If this keeps happening, reinstall from the App Store.';
+
   // ——— ArchiveMe competitive positioning ———
   static const String archivePositioningHeadline =
       'Catch the loop where doing more never feels like enough.';

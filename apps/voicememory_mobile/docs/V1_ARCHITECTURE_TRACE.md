@@ -43,10 +43,16 @@ See `lib/core/di/v1_dependency_scopes.dart` and `test/v1_dependency_scopes_test.
 
 ## Staged startup
 
-1. **Privacy-safe shell** — theme, router, consent gates (`OnboardingGate`)
-2. **Essential local archive** — journal store, prefs, device id
-3. **V1 navigation** — Record / Archive / Changes / Account tabs (`MainShell`)
-4. **Optional async services** — billing, sync, vault recovery (must not block tabs)
+Implemented in `lib/startup/v1_startup_coordinator.dart`:
+
+1. **Privacy-safe shell** — `ArchiveMeBootstrapApp` first frame; fixed copy on failure (`ConsumerUiCopy.startupLocalStorageFailedBody`), never raw exceptions
+2. **Essential local archive** — `AppServices.initializeEssential()`, correction bootstrap, onboarding gate
+3. **V1 navigation** — `ArchiveMeApp` / `MainShell` after essential phases complete
+4. **Optional async services** — `AppServices.initializeOptionalServices()` + vault recovery (when enabled), billing, analytics — `unawaited` after tabs render
+
+Canonical correction persistence: `ArchiveCorrectionStore` via `reconcileArchiveCorrectionStoreForActiveNamespace`. Legacy `CorrectionMemoryStore` / `CurrentRelevanceStore` are not loaded on V1 Record when `enableV1Only` is true.
+
+Remote processing consent: one `RemoteProcessingConsentStore` per account namespace, shared by `CapturePipelineService` and `RemoteProcessingConsentGate`.
 
 ## Exit gates (Phase 4)
 

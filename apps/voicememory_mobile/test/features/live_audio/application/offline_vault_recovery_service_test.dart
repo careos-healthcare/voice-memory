@@ -52,7 +52,7 @@ void main() {
       final prefsFile = await MobilePrefsStore.open(
         '${vaultDirectory.path}/prefs.json',
       );
-      consentGate = RemoteProcessingConsentGate(prefsFile);
+      consentGate = RemoteProcessingConsentGate.fromPrefs(prefsFile);
       await RemoteProcessingConsentStore(prefsFile).grant();
       service = OfflineVaultRecoveryService(
         store: store,
@@ -102,7 +102,7 @@ void main() {
         api: api,
         attest: attest,
         pipeline: pipeline,
-        consentGate: RemoteProcessingConsentGate(noConsentPrefs),
+        consentGate: RemoteProcessingConsentGate.fromPrefs(noConsentPrefs),
       );
 
       final vaultFile = File(
