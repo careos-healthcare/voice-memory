@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="database" path="." />
+    <exclude domain="file" path="journal_entries.json" />
+    <exclude domain="file" path="journal_entries.encrypted.json" />
+    <exclude domain="file" path="mobile_prefs.json" />
+    <exclude domain="file" path="accounts/" />
+    <exclude domain="file" path="recovery/" />
+    <exclude domain="file" path="live_audio_vault/" />
+</full-backup-content>
