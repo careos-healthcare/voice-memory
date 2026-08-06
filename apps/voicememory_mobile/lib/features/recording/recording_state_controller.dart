@@ -1066,8 +1066,10 @@ class _RecordScreenState extends State<RecordScreen>
     });
     unawaited(_refreshArchiveReturnChanges(all));
     _logRecordEmptyGate('journal_loaded');
-    unawaited(BetaActivationLoopTracker.trackRecordScreenSeen());
-    unawaited(_maybePresentYesterdaysSnapshot());
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(BetaActivationLoopTracker.trackRecordScreenSeen());
+      unawaited(_maybePresentYesterdaysSnapshot());
+    }
   }
 
   Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
@@ -2125,10 +2127,13 @@ class _RecordScreenState extends State<RecordScreen>
     });
     _recordLog('state ui=$_ui mic=$cap (refresh)');
     _maybeAutostartWithPrompt();
-    unawaited(_maybePresentYesterdaysSnapshot());
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(_maybePresentYesterdaysSnapshot());
+    }
   }
 
   Future<void> _maybePresentYesterdaysSnapshot() async {
+    if (V1FeatureFlags.enableV1Only) return;
     if (_yesterdaysSnapshotPresentAttempted) return;
     if (!mounted) return;
     if (ScreenshotMode.enabled) return;
@@ -3676,8 +3681,9 @@ class _RecordScreenState extends State<RecordScreen>
         recordProofStack.showArchiveCurrentBelief;
     final showEarlyEvidenceTimelineOnRecord =
         recordProofStack.showEarlyEvidenceTimeline;
-    final showWeeklyArchiveReviewOnRecord =
-        recordProofStack.showWeeklyArchiveWeekReview;
+    final showWeeklyArchiveReviewOnRecord = V1FeatureFlags.enableV1Only
+        ? false
+        : recordProofStack.showWeeklyArchiveWeekReview;
     final showPrivateArchiveReportOnRecord =
         recordProofStack.showPrivateArchiveReport;
     final showDailyReturnReasonOnRecord =
@@ -6241,20 +6247,22 @@ class _RecordScreenState extends State<RecordScreen>
         : null;
     final firstProofLoopActive =
         showFirstProofPayoff || showFirstProofTruth || showFirstProofActionLoop;
-    final showDailyArchiveMemory = DailyArchiveMemoryGates.shouldShow(
-      loaded: _journalEntryCountReady,
-      entryCount: _journalEntryCount,
-      isReady: ui == RecordUiState.ready,
-      isRecording: ui == RecordUiState.recording,
-      isPostSave: _isPostSaveSurface,
-      memory: dailyArchiveMemoryCandidate,
-      showReturnDayFlow: showReturnDayFlow,
-      showReturnTomorrowCueReady: showReturnTomorrowCueReady,
-      showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
-      showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
-      firstProofLoopActive: firstProofLoopActive,
-      showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
-    );
+    final showDailyArchiveMemory = V1FeatureFlags.enableV1Only
+        ? false
+        : DailyArchiveMemoryGates.shouldShow(
+            loaded: _journalEntryCountReady,
+            entryCount: _journalEntryCount,
+            isReady: ui == RecordUiState.ready,
+            isRecording: ui == RecordUiState.recording,
+            isPostSave: _isPostSaveSurface,
+            memory: dailyArchiveMemoryCandidate,
+            showReturnDayFlow: showReturnDayFlow,
+            showReturnTomorrowCueReady: showReturnTomorrowCueReady,
+            showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
+            showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
+            firstProofLoopActive: firstProofLoopActive,
+            showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
+          );
     final showReturningWatchTargetFocusedUi =
         ReturningRecordWatchTargetUiGates.showFocusedSurface(
           showDailyArchiveMemory: showDailyArchiveMemory,

@@ -8,6 +8,7 @@ import '../design/user_facing_date.dart';
 import '../core/di/v1_account_dependencies.dart';
 import '../features/collections/archive_collection.dart';
 import '../features/collections/archive_collection_store.dart';
+import '../core/config/v1_feature_flags.dart';
 import '../features/entry_detail/entry_detail_copy.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
@@ -141,12 +142,13 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                         ),
                       ),
                     ),
-                    PinEntryButton(
-                      entryId: e.id,
-                      isPinned: e.isPinned,
-                      store: PinnedEvidenceStore.instance(),
-                      onChanged: (_) => _load(),
-                    ),
+                    if (!V1FeatureFlags.enableV1Only)
+                      PinEntryButton(
+                        entryId: e.id,
+                        isPinned: e.isPinned,
+                        store: PinnedEvidenceStore.instance(),
+                        onChanged: (_) => _load(),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -179,12 +181,14 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                   onChanged: _load,
                 ),
                 const SizedBox(height: 16),
-                RememberThisButton(
-                  entry: e,
-                  store: ActionItemStore.instance(),
-                  source: 'entry_detail',
-                ),
-                const SizedBox(height: 12),
+                if (!V1FeatureFlags.enableV1Only) ...[
+                  RememberThisButton(
+                    entry: e,
+                    store: ActionItemStore.instance(),
+                    source: 'entry_detail',
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 SizedBox(
                   width: double.infinity,
                   height: 44,
@@ -219,29 +223,31 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                             MemorySurfacingEditor(entry: e, onChanged: _load),
                             const SizedBox(height: 16),
                             PreserveOriginalEditor(entry: e, onChanged: _load),
-                            const SizedBox(height: 16),
-                            SaveAsFactButton(
-                              entry: e,
-                              store: FactLedgerStore.instance(),
-                              source: 'entry_detail',
-                            ),
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              key: const Key('entry_add_to_collection'),
-                              onPressed: () => showAddToCollectionSheet(
-                                context,
-                                store: ArchiveCollectionStore.instance(),
-                                entryId: e.id,
+                            if (!V1FeatureFlags.enableV1Only) ...[
+                              const SizedBox(height: 16),
+                              SaveAsFactButton(
+                                entry: e,
+                                store: FactLedgerStore.instance(),
                                 source: 'entry_detail',
                               ),
-                              icon: const Icon(
-                                Icons.bookmark_add_outlined,
-                                size: 18,
+                              const SizedBox(height: 12),
+                              OutlinedButton.icon(
+                                key: const Key('entry_add_to_collection'),
+                                onPressed: () => showAddToCollectionSheet(
+                                  context,
+                                  store: ArchiveCollectionStore.instance(),
+                                  entryId: e.id,
+                                  source: 'entry_detail',
+                                ),
+                                icon: const Icon(
+                                  Icons.bookmark_add_outlined,
+                                  size: 18,
+                                ),
+                                label: const Text(
+                                  ArchiveCollectionsCopy.addToCollection,
+                                ),
                               ),
-                              label: const Text(
-                                ArchiveCollectionsCopy.addToCollection,
-                              ),
-                            ),
+                            ],
                           ],
                         ),
                       ),

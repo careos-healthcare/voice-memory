@@ -3,25 +3,20 @@ import 'package:go_router/go_router.dart';
 
 import '../billing/revenuecat_configuration.dart';
 import '../config/app_config.dart';
+import '../core/config/v1_feature_flags.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../product/consumer_ui_copy.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../services/app_services.dart';
-import '../services/ai/ai_accuracy_feedback_store.dart';
-import '../features/ai_engines/models/ai_accuracy_feedback.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
-import '../features/curiosity_loop/presentation/widgets/weekly_growth_preview_card.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
 import '../widgets/account/pro_utility_expansion_section.dart';
-import '../features/beta_feedback/beta_feedback_copy.dart';
-import '../features/beta_feedback/beta_feedback_engine.dart';
-import '../widgets/account/beta_feedback_sheet.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -56,9 +51,7 @@ class _AccountScreenState extends State<AccountScreen> {
     if (ScreenshotMode.enabled || !AppServices.isInitialized) return;
     final entries = await AppServices.instance.journal.loadAll();
     if (!mounted) return;
-    setState(
-      () => _entryCount = const BetaFeedbackEngine().realEntryCount(entries),
-    );
+    setState(() => _entryCount = entries.length);
   }
 
   Future<void> _refresh() async {
@@ -153,16 +146,20 @@ class _AccountScreenState extends State<AccountScreen> {
                     compact: true,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  ProUtilityExpansionSection(
-                    entryCount: _entryCount,
-                    hasMeaningfulProof: _entryCount >= 3,
-                    compact: true,
-                  ),
+                  if (!V1FeatureFlags.enableV1Only)
+                    ProUtilityExpansionSection(
+                      entryCount: _entryCount,
+                      hasMeaningfulProof: _entryCount >= 3,
+                      compact: true,
+                    ),
+                  if (!V1FeatureFlags.enableV1Only)
+                    const SizedBox(height: AppSpacing.md),
+                ],
+                if (!V1FeatureFlags.enableV1Only &&
+                    widget.weeklyGrowthPreviewCard != null) ...[
+                  widget.weeklyGrowthPreviewCard!,
                   const SizedBox(height: AppSpacing.md),
                 ],
-                widget.weeklyGrowthPreviewCard ??
-                    const WeeklyGrowthPreviewCard(),
-                const SizedBox(height: AppSpacing.md),
                 if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
                   _sectionTile(
                     title: ProPackagingCopy.title,
@@ -179,15 +176,6 @@ class _AccountScreenState extends State<AccountScreen> {
                           child: const Text('Sync now'),
                         )
                       : null,
-                ),
-                _sectionTile(
-                  key: const Key('account_beta_feedback_tile'),
-                  title: BetaFeedbackCopy.sheetLinkLabel,
-                  onTap: () => BetaFeedbackSheet.show(
-                    context,
-                    source: 'account',
-                    entryCount: _entryCount,
-                  ),
                 ),
                 _sectionTile(
                   key: const Key('account_privacy_trust_centre_tile'),
@@ -262,33 +250,6 @@ class _AccountScreenState extends State<AccountScreen> {
                     stats: ScreenshotSampleData.beliefsSnapshot.stats,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                ],
-                if (AppServices.isInitialized) ...[
-                  FutureBuilder<AiAccuracyMetrics>(
-                    future: AiAccuracyFeedbackStore(
-                      AppServices.instance.prefs,
-                    ).metrics(),
-                    builder: (context, snapshot) {
-                      final metrics = snapshot.data;
-                      if (metrics == null || metrics.verified == 0) {
-                        return const SizedBox.shrink();
-                      }
-                      return Card(
-                        key: const Key('account_ai_accuracy_metrics'),
-                        child: ListTile(
-                          leading: const Icon(Icons.verified_outlined),
-                          title: Text(
-                            '${metrics.accuracyPercentage.toStringAsFixed(1)}% '
-                            'AI Accuracy',
-                          ),
-                          subtitle: Text(
-                            'Across ${metrics.verified} verified insights',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
                 ],
                 Text(
                   ConsumerUiCopy.accountPrivacyNote,

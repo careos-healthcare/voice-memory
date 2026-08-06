@@ -17,7 +17,8 @@ abstract final class PaywallValueSharpeningCopy {
       'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const proofConnectedLine =
-      'Pro keeps longer evidence history, weekly archive reviews, and timeline views.';
+      'Pro keeps a longer private archive — more moments, more continuity, '
+      'more evidence over time.';
 
   static const cta = 'Keep the longer trail';
 
@@ -25,9 +26,9 @@ abstract final class PaywallValueSharpeningCopy {
       'You stay in control. You can delete entries and correct what you saved.';
 
   static const benefitBullets = <String>[
-    'Longer evidence history',
-    'Weekly archive reviews',
-    'Timeline views over time',
+    'Longer evidence history on this device',
+    'More archived moments over weeks and months',
+    'Continuity when patterns return or change',
   ];
 
   static const corePaidReason = 'Keep the longer proof trail.';

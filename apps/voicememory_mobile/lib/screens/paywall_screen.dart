@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
+import '../core/config/v1_feature_flags.dart';
 import '../billing/v1/app_services_paywall_dependencies.dart';
 import '../billing/v1/paywall_controller.dart';
 import '../billing/v1/paywall_plan.dart' show PaywallPlan;
@@ -391,11 +392,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
       suggestionStage: SuggestionAttributionEventType.suggestionToPaywallSeen,
     );
     _loadObjectionFollowUp();
-    unawaited(
-      BetaFeedbackCaptureStore.ensureLoaded().then((_) {
-        if (mounted) setState(() {});
-      }),
-    );
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(
+        BetaFeedbackCaptureStore.ensureLoaded().then((_) {
+          if (mounted) setState(() {});
+        }),
+      );
+    }
     _load();
   }
 
@@ -408,18 +411,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
   BetaFeedbackCaptureResult _betaFeedbackCapturePaywallResult({
     required bool paywallNoCtaRequested,
     required bool paywallPurchaseAttempted,
-  }) => BetaFeedbackCaptureEngine.build(
-    context: BetaFeedbackCaptureEngine.buildContext(
-      surface: BetaFeedbackCaptureSurface.paywall,
-      source: _attributionSource.id,
-      entryCount: 0,
-      hasPaywallSeen: _paywallSeenTracked,
-      hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
-      isPro: _ps.entitlements?.isPro == true,
-      paywallNoCtaRequested: paywallNoCtaRequested,
-      paywallPurchaseAttempted: paywallPurchaseAttempted,
-    ),
-  );
+  }) {
+    if (V1FeatureFlags.enableV1Only) {
+      return BetaFeedbackCaptureResult.hidden;
+    }
+    return BetaFeedbackCaptureEngine.build(
+      context: BetaFeedbackCaptureEngine.buildContext(
+        surface: BetaFeedbackCaptureSurface.paywall,
+        source: _attributionSource.id,
+        entryCount: 0,
+        hasPaywallSeen: _paywallSeenTracked,
+        hasPurchaseCtaTapped: _purchaseAttemptedThisSession,
+        isPro: _ps.entitlements?.isPro == true,
+        paywallNoCtaRequested: paywallNoCtaRequested,
+        paywallPurchaseAttempted: paywallPurchaseAttempted,
+      ),
+    );
+  }
 
   void _handleBetaFeedbackCapturePaywallChanged({required bool dismissAfter}) {
     setState(() {
@@ -629,6 +637,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         _recordAttribution(PaywallAttributionEventType.restoreCompleted);
         await _load();
       }
+      if (!mounted) return;
       RestorePurchasesFeedback.showSnackBar(context, result);
     } finally {
       await _paywallController.endRestore();

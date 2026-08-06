@@ -100,17 +100,20 @@ final GoRouter appRouter = GoRouter(
 
     if (!_widgetLaunchRouteConsumed) {
       _widgetLaunchRouteConsumed = true;
-      final pending = await ObjectiveWidgetPendingRouteStore.instance()
-          .loadPendingRoute();
-      if (pending != null && pending.isNotEmpty && path != pending) {
-        await ObjectiveWidgetPendingRouteStore.instance().clear();
-        return pending;
+      if (!V1FeatureFlags.enableV1Only) {
+        final pending = await ObjectiveWidgetPendingRouteStore.instance()
+            .loadPendingRoute();
+        if (pending != null && pending.isNotEmpty && path != pending) {
+          await ObjectiveWidgetPendingRouteStore.instance().clear();
+          return pending;
+        }
       }
     }
 
     if (!_curiosityNotificationLaunchConsumed) {
       _curiosityNotificationLaunchConsumed = true;
-      if (CuriosityNotificationLaunchController.hasPendingHook &&
+      if (!V1FeatureFlags.enableV1Only &&
+          CuriosityNotificationLaunchController.hasPendingHook &&
           path != YesterdaysSnapshotCopy.route &&
           V1NavigationGuard.isAllowed(YesterdaysSnapshotCopy.route)) {
         return YesterdaysSnapshotCopy.route;
