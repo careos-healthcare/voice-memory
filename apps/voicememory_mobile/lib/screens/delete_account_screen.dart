@@ -134,7 +134,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     return PushedScreenShell(
       title: 'Delete account',
       doneLabel: 'Cancel',
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

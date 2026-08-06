@@ -206,8 +206,14 @@ void main() {
     ) async {
       final flutterErrors = <FlutterErrorDetails>[];
       final previousOnError = FlutterError.onError;
-      FlutterError.onError = flutterErrors.add;
+      FlutterError.onError = (details) {
+        flutterErrors.add(details);
+        previousOnError?.call(details);
+      };
       addTearDown(() => FlutterError.onError = previousOnError);
+
+      await tester.binding.setSurfaceSize(const Size(390, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -223,7 +229,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      await openConfirmDialog(tester);
+      await tester.ensureVisible(find.byKey(const Key('delete_account_button')));
+      await tester.tap(find.byKey(const Key('delete_account_button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // A RenderFlex overflow (the classic 200%-scale failure mode) reports
       // through FlutterError.onError rather than throwing synchronously, so
