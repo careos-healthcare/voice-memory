@@ -24,7 +24,7 @@ abstract class PrivacyScreenCopy {
       'memory controls, packs, pins, and collections are stored locally by default. '
       'Archive metadata and prefs remain on this device in plaintext JSON.';
 
-  static const String aiProcessingTitle = 'AI transcription and analysis';
+  static const String aiProcessingTitle = 'Cloud transcription and analysis';
   static const String aiProcessingBody =
       'When you record, ArchiveMe may send audio or transcript text to the app '
       'backend so it can transcribe and organize what you said. The result is '
