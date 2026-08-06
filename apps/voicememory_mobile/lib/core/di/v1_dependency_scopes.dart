@@ -36,6 +36,7 @@ abstract final class V1DependencyScopeRegistry {
     'RecordScreenViewModel',
     'PaywallController',
     'RecordingRecoveryController',
+    'ArchiveBeliefViewModel',
   };
 
   static V1DependencyScope scopeFor(String serviceName) {

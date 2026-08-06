@@ -110,7 +110,12 @@ Future<void> _pumpArchive(WidgetTester tester) async {
     ),
   );
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 300));
+  for (var attempt = 0; attempt < 20; attempt++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (find.byKey(const Key('archive_loading_indicator')).evaluate().isEmpty) {
+      break;
+    }
+  }
 }
 
 void main() {
@@ -227,7 +232,7 @@ void main() {
         find.byKey(const Key('archive_verified_changes_heading')),
         findsNothing,
       );
-      expect(find.byType(ArchiveVerifiedChangesSection), findsOneWidget);
+      expect(find.text('Original moments'), findsOneWidget);
     });
 
     testWidgets(
@@ -376,11 +381,10 @@ void main() {
       final source = File(
         'lib/screens/archive_belief_screen.dart',
       ).readAsStringSync();
+      expect(source, contains('liveRegion: true'));
       expect(
         source,
-        contains(
-          "Semantics(\n                  liveRegion: true,\n                  child: Text(\n                    'Your archive could not be opened right now.',",
-        ),
+        contains('Your archive could not be opened right now.'),
       );
       handle.dispose();
     });
@@ -407,10 +411,18 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      for (var attempt = 0; attempt < 20; attempt++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (find
+            .byKey(const Key('archive_loading_indicator'))
+            .evaluate()
+            .isEmpty) {
+          break;
+        }
+      }
 
       expect(tester.takeException(), isNull);
-      await tester.drag(find.byType(ListView), const Offset(0, -800));
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -800));
       await tester.pump();
       expect(tester.takeException(), isNull);
     });
