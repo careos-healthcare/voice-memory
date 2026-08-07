@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'helpers/test_billing_service.dart';
+import 'package:voicememory_mobile/billing/billing_async_guard.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_feedback.dart';
