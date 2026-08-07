@@ -12,10 +12,7 @@ void main() {
   });
 
   test('privacy copy policy aligns with journal encryption contract', () {
-    expect(
-      PrivacyCopyPolicy.journalEncryptedAtRest,
-      contains('encrypted'),
-    );
+    expect(PrivacyCopyPolicy.journalEncryptedAtRest, contains('encrypted'));
     expect(
       PrivacyContract.journalEncryptedAtRest.toLowerCase(),
       contains('encrypted'),

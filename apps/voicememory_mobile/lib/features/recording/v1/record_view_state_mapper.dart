@@ -13,15 +13,18 @@ abstract final class RecordViewStateMapper {
   }) {
     return switch (ui) {
       RecordUiState.idle => RecordViewPhase.idle,
-      RecordUiState.requestingPermission => RecordViewPhase.requestingPermission,
+      RecordUiState.requestingPermission =>
+        RecordViewPhase.requestingPermission,
       RecordUiState.permissionBlocked => RecordViewPhase.requestingPermission,
       RecordUiState.ready => RecordViewPhase.ready,
       RecordUiState.recording => RecordViewPhase.recording,
       RecordUiState.processing => RecordViewPhase.processing,
-      RecordUiState.done when hasVerifiedProof => RecordViewPhase.verifiedResultAvailable,
-      RecordUiState.done => savedEntryId != null
-          ? RecordViewPhase.locallySaved
-          : RecordViewPhase.localOnlyResult,
+      RecordUiState.done when hasVerifiedProof =>
+        RecordViewPhase.verifiedResultAvailable,
+      RecordUiState.done =>
+        savedEntryId != null
+            ? RecordViewPhase.locallySaved
+            : RecordViewPhase.localOnlyResult,
       RecordUiState.error => RecordViewPhase.recoverableError,
     };
   }

@@ -227,15 +227,11 @@ void main() {
   });
 
   group('Save metadata', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
 
     tearDown(() => sandbox.dispose());

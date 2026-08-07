@@ -72,7 +72,6 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-
   group('Moment quality engine', () {
     const engine = MomentQualityEngine();
 
@@ -162,14 +161,11 @@ void main() {
   });
 
   group('Moment quality UI', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
 
     tearDown(() => sandbox.dispose());

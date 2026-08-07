@@ -322,8 +322,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         '${ProPackagingCopy.offeringsUnavailableBody}';
   }
 
-  String? get _monthlyPriceString =>
-      _ps.priceStringFor(PaywallPlan.monthly);
+  String? get _monthlyPriceString => _ps.priceStringFor(PaywallPlan.monthly);
 
   String? get _yearlyPriceString => _ps.priceStringFor(PaywallPlan.yearly);
 
@@ -502,7 +501,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
         plan: _planIdFor(_ps.selectedPlan),
       ),
     );
-    final period = _ps.selectedPlan == PaywallPlan.monthly ? 'monthly' : 'yearly';
+    final period = _ps.selectedPlan == PaywallPlan.monthly
+        ? 'monthly'
+        : 'yearly';
     First25UserMetrics.trackPaywallStarted(
       surface: 'paywall_screen',
       period: period,

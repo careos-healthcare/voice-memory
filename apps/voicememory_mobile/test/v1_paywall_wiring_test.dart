@@ -9,6 +9,9 @@ void main() {
     expect(source, contains('loadOfferings'));
     expect(source, contains('purchaseSelectedPackage'));
     expect(source, contains('_ps.purchaseInFlight'));
-    expect(source, isNot(contains('RevenueCatOfferingsDebugLog.paywallLoadStarted')));
+    expect(
+      source,
+      isNot(contains('RevenueCatOfferingsDebugLog.paywallLoadStarted')),
+    );
   });
 }

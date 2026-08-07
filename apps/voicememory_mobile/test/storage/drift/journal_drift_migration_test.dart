@@ -22,7 +22,10 @@ void main() {
     expect(JournalRepositoryConfig.useDriftByDefault, isFalse);
 
     final dir = await Directory.systemTemp.createTemp('drift_mig_');
-    final jsonStore = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+    final jsonStore = await JournalStore.open(
+      '${dir.path}/journal.json',
+      encryptAtRest: false,
+    );
     final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
     final drift = InMemoryDriftJournalDatabase();
 

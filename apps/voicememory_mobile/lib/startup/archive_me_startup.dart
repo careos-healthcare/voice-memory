@@ -77,7 +77,9 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
 }
 
 /// Completes startup for hosts that defer local storage until after first frame.
-Future<void> completeArchiveMeStartup({bool awaitOptionalServices = false}) async {
+Future<void> completeArchiveMeStartup({
+  bool awaitOptionalServices = false,
+}) async {
   await V1StartupCoordinator.runEssentialPhases();
   if (awaitOptionalServices) {
     await V1StartupCoordinator.runOptionalPhases();

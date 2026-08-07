@@ -6,6 +6,9 @@ void main() {
     expect(V1FreePaidCapabilities.isFree(V1Capability.export), isTrue);
     expect(V1FreePaidCapabilities.isFree(V1Capability.accountDeletion), isTrue);
     expect(V1FreePaidCapabilities.isPaid(V1Capability.deeperHistory), isTrue);
-    expect(V1FreePaidCapabilities.requiresPro(V1Capability.deeperHistory), isTrue);
+    expect(
+      V1FreePaidCapabilities.requiresPro(V1Capability.deeperHistory),
+      isTrue,
+    );
   });
 }

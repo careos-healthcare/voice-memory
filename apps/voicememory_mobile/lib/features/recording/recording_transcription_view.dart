@@ -279,9 +279,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     );
     final inputQuality = assessReflectionQuality(latestReflectionText);
     unawaited(
-      InputQualityStore(
-        _accountDeps.prefs,
-      ).recordAssessment(inputQuality),
+      InputQualityStore(_accountDeps.prefs).recordAssessment(inputQuality),
     );
 
     if (!mounted) return;
@@ -574,9 +572,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
 
   void _onInputQualityUseAnyway() {
     _setRecordingState(() => _inputQualityResolved = true);
-    unawaited(
-      InputQualityStore(_accountDeps.prefs).recordAcceptedWeak(),
-    );
+    unawaited(InputQualityStore(_accountDeps.prefs).recordAcceptedWeak());
   }
 
   void _onLanguageSelected(String code) {
@@ -584,9 +580,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     _setRecordingState(() => _languageCode = code);
     if (AppServices.isInitialized) {
       unawaited(
-        ReflectionLanguageStore(
-          _accountDeps.prefs,
-        ).recordOverride(code),
+        ReflectionLanguageStore(_accountDeps.prefs).recordOverride(code),
       );
     }
   }

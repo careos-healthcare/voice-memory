@@ -52,7 +52,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('RecordCaptureModeCopy', () {
     test('spec copy is stable', () {

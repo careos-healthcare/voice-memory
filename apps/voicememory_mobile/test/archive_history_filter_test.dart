@@ -139,7 +139,6 @@ void main() {
     await HelpedTrackingStore.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ArchiveHistoryFilterEngine', () {
     test('all filter shows every row most recent first', () {

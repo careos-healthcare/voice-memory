@@ -49,10 +49,12 @@ void main() {
   test('deduplicates repeated entry ids across pages', () {
     final paginator = JournalPullPaginator();
     paginator.ingestPage(rawEntries: [_raw('dup')], nextCursor: 'c2');
-    final second = paginator.ingestPage(
-      rawEntries: [_raw('dup'), _raw('unique')],
-      currentCursor: 'c2',
-    ) as JournalPullPageAccepted;
+    final second =
+        paginator.ingestPage(
+              rawEntries: [_raw('dup'), _raw('unique')],
+              currentCursor: 'c2',
+            )
+            as JournalPullPageAccepted;
     expect(second.entries.map((e) => e.id), ['unique']);
   });
 }

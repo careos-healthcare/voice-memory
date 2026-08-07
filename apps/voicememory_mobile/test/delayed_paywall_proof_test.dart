@@ -60,7 +60,6 @@ void main() {
     await DelayedPaywallProofStore.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('DelayedPaywallProofStore', () {
     test('starts false until all proof milestones are recorded', () async {

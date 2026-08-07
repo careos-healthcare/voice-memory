@@ -53,7 +53,6 @@ void main() {
     await EntryImportanceStore.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('EntryImportanceStore', () {
     test('marks entry by id', () async {

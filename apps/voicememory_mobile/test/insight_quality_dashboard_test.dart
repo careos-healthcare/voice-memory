@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
@@ -54,7 +53,6 @@ void main() {
     );
     ArchiveInsightFeedbackStore.resetForTest();
   });
-
 
   tearDown(() => sandbox.dispose());
   group('InsightQualityDashboardEngine', () {

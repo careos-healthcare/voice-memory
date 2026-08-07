@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/moment_quality/moment_quality_copy.dart';
@@ -78,7 +77,6 @@ Future<void> _openSheet(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-
   group('PostSaveMomentDetailCopy', () {
     test('each detail type has correct prompt and helper', () {
       expect(
@@ -115,17 +113,14 @@ void main() {
   });
 
   group('CapturePipelineService.savePostSaveMomentDetail', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     late JournalStore journal;
     late CapturePipelineService pipeline;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       journal = AppServices.instance.journalStore;
       pipeline = AppServices.instance.pipeline;
     });

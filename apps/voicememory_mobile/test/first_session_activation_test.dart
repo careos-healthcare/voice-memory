@@ -110,7 +110,6 @@ Future<void> _pumpInsights(
 }
 
 void main() {
-
   group('First-session explanation card', () {
     test('shows only for a brand-new user', () {
       expect(FirstSessionExplanationCard.shouldShow(0), isTrue);
@@ -524,9 +523,7 @@ void main() {
   });
 
   group('Record screen first-session ladder', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     JournalEntry usableEntry({String id = 'e1'}) => JournalEntry(
       id: id,
@@ -563,9 +560,7 @@ void main() {
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(null);
     });
@@ -1130,15 +1125,11 @@ void main() {
   });
 
   group('Record screen return-path gates', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
@@ -1544,15 +1535,11 @@ void main() {
   });
 
   group('Invited user welcome on the record screen', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();
@@ -1957,15 +1944,11 @@ void main() {
   });
 
   group('Invited Day 2 return copy on the record screen', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();

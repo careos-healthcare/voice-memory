@@ -47,7 +47,9 @@ class JsonToDriftJournalMigration {
     required String dbPath,
     required List<int> encryptionKey,
   }) async {
-    final existing = await _prefs.readJsonMap(JournalDriftMigrationState.prefsKey);
+    final existing = await _prefs.readJsonMap(
+      JournalDriftMigrationState.prefsKey,
+    );
     if (existing?['status'] == 'completed') {
       return JournalDriftMigrationState(
         status: 'completed',
@@ -66,7 +68,8 @@ class JsonToDriftJournalMigration {
     }
 
     final completedAt = DateTime.now().toUtc().toIso8601String();
-    final checksum = '${jsonEntries.length}_${jsonEntries.map((e) => e.id).join('|').hashCode}';
+    final checksum =
+        '${jsonEntries.length}_${jsonEntries.map((e) => e.id).join('|').hashCode}';
     await _prefs.writeJsonMap(JournalDriftMigrationState.prefsKey, {
       'status': 'completed',
       'sourceChecksum': checksum,
@@ -97,7 +100,10 @@ class InMemoryDriftJournalDatabase implements DriftJournalDatabase {
       List<JournalEntry>.from(_rows);
 
   @override
-  Future<void> open({required String path, required List<int> encryptionKey}) async {}
+  Future<void> open({
+    required String path,
+    required List<int> encryptionKey,
+  }) async {}
 
   @override
   Future<void> upsertEntries(List<JournalEntry> entries) async {

@@ -119,7 +119,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ContextualPrivacyCopy', () {
     test('copy avoids encryption and cloud claims', () {

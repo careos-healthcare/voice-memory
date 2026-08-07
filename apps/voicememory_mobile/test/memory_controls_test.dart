@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -179,15 +178,11 @@ void main() {
   });
 
   group('Treat this as new', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
 
     tearDown(() => sandbox.dispose());

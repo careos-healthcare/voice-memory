@@ -382,10 +382,7 @@ void main() {
         'lib/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('liveRegion: true'));
-      expect(
-        source,
-        contains('Your archive could not be opened right now.'),
-      );
+      expect(source, contains('Your archive could not be opened right now.'));
       handle.dispose();
     });
 

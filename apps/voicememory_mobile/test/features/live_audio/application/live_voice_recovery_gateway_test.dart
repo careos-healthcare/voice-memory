@@ -116,23 +116,26 @@ void main() {
       expect(await store.listPending(), isEmpty);
     });
 
-    test('withheld consent keeps vault on disk until customer opts in', () async {
-      await RemoteProcessingConsentStore(prefs).withdraw();
+    test(
+      'withheld consent keeps vault on disk until customer opts in',
+      () async {
+        await RemoteProcessingConsentStore(prefs).withdraw();
 
-      await vault.initializeVault('session_no_consent');
-      vault.appendPcm16LeBytes([1, 2]);
-      final closed = await vault.closeVault();
-      expect(closed, isNotNull);
+        await vault.initializeVault('session_no_consent');
+        vault.appendPcm16LeBytes([1, 2]);
+        final closed = await vault.closeVault();
+        expect(closed, isNotNull);
 
-      await gateway.checkForPendingRecovery();
-      expect(await closed!.exists(), isTrue);
-      expect(api.uploadCount, 0);
+        await gateway.checkForPendingRecovery();
+        expect(await closed!.exists(), isTrue);
+        expect(api.uploadCount, 0);
 
-      await RemoteProcessingConsentStore(prefs).grant();
-      await gateway.checkForPendingRecovery();
-      expect(await closed.exists(), isFalse);
-      expect(api.uploadCount, 1);
-    });
+        await RemoteProcessingConsentStore(prefs).grant();
+        await gateway.checkForPendingRecovery();
+        expect(await closed.exists(), isFalse);
+        expect(api.uploadCount, 1);
+      },
+    );
   });
 }
 

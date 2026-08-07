@@ -103,7 +103,6 @@ void main() {
 
   tearDown(ActivationFunnelAnalytics.resetForTest);
 
-
   group('Copy guardrails', () {
     test('intro copy is exact', () {
       expect(First60Copy.introTitle, 'When it repeats, save it');
@@ -602,8 +601,7 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
@@ -713,8 +711,7 @@ void main() {
   });
 
   group('First archive view', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

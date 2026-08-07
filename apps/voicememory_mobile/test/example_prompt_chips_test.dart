@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -41,7 +40,6 @@ List<PressureCheckInRecord> _workThread3() => [
 ];
 
 void main() {
-
   group('ExamplePromptChips', () {
     testWidgets('renders section title and all prompts', (tester) async {
       await tester.pumpWidget(
@@ -142,9 +140,7 @@ void main() {
   });
 
   group('RecordScreen Start Here', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

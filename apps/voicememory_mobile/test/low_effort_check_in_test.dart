@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -61,7 +60,6 @@ List<PressureCheckInRecord> _wordThread2() => [
 
 void main() {
   const engine = LowEffortCheckInEngine();
-
 
   group('Low-effort check-in engine', () {
     test('"It returned" carries the tracked thread context', () {
@@ -244,9 +242,7 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

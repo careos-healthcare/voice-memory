@@ -38,10 +38,11 @@ void main() {
   test('blocked packages stay out of production lib imports', () {
     final libRoot = Directory('lib');
     for (final blocked in V1ProductionAllowlist.blockedProductionPackages) {
-      for (final file in libRoot
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'))) {
+      for (final file
+          in libRoot
+              .listSync(recursive: true)
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.dart'))) {
         final content = file.readAsStringSync();
         expect(
           content,

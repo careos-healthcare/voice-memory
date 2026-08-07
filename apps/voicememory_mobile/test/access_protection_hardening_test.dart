@@ -78,7 +78,6 @@ void main() {
     pinHashSource = File(_pinHashPath).readAsStringSync();
   });
 
-
   group('ACCESS_PROTECTION_AUDIT.md', () {
     test('exists and documents passwordless auth and anti-sharing limits', () {
       expect(File(_auditDocPath).existsSync(), isTrue);
@@ -230,8 +229,7 @@ void main() {
   });
 
   group('Settings / Security routing', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     late AppLockService appLock;
     late AuthService auth;

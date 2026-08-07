@@ -17,45 +17,57 @@ Reflection _reflection() => const Reflection(
 );
 
 void main() {
-  test('legacy assignment is idempotent and does not duplicate entries', () async {
-    final dir = await Directory.systemTemp.createTemp('legacy_owner_');
-    final recovery = await JournalStore.open('${dir.path}/recovery.json', encryptAtRest: false);
-    final accountA = await JournalStore.open('${dir.path}/account_a.json', encryptAtRest: false);
-    final accountB = await JournalStore.open('${dir.path}/account_b.json', encryptAtRest: false);
-    final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+  test(
+    'legacy assignment is idempotent and does not duplicate entries',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('legacy_owner_');
+      final recovery = await JournalStore.open(
+        '${dir.path}/recovery.json',
+        encryptAtRest: false,
+      );
+      final accountA = await JournalStore.open(
+        '${dir.path}/account_a.json',
+        encryptAtRest: false,
+      );
+      final accountB = await JournalStore.open(
+        '${dir.path}/account_b.json',
+        encryptAtRest: false,
+      );
+      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
 
-    await recovery.save(
-      JournalEntry(
-        id: 'legacy-1',
-        createdAt: DateTime.utc(2026, 1, 1),
-        transcript: 'unowned entry',
-        durationSeconds: 1,
-        reflection: _reflection(),
-      ),
-    );
+      await recovery.save(
+        JournalEntry(
+          id: 'legacy-1',
+          createdAt: DateTime.utc(2026, 1, 1),
+          transcript: 'unowned entry',
+          durationSeconds: 1,
+          reflection: _reflection(),
+        ),
+      );
 
-    final serviceA = LegacyOwnershipAssignmentService(
-      recoveryJournal: recovery,
-      activeJournal: accountA,
-      prefs: prefs,
-    );
-    expect(await serviceA.countAwaitingAssignment(), 1);
+      final serviceA = LegacyOwnershipAssignmentService(
+        recoveryJournal: recovery,
+        activeJournal: accountA,
+        prefs: prefs,
+      );
+      expect(await serviceA.countAwaitingAssignment(), 1);
 
-    final first = await serviceA.assignAllToAccount('user-a');
-    expect(first.importedCount, 1);
-    expect(await accountA.loadAll(), hasLength(1));
-    expect(await accountB.loadAll(), isEmpty);
+      final first = await serviceA.assignAllToAccount('user-a');
+      expect(first.importedCount, 1);
+      expect(await accountA.loadAll(), hasLength(1));
+      expect(await accountB.loadAll(), isEmpty);
 
-    final second = await serviceA.assignAllToAccount('user-a');
-    expect(second.importedCount, 0);
+      final second = await serviceA.assignAllToAccount('user-a');
+      expect(second.importedCount, 0);
 
-    final serviceB = LegacyOwnershipAssignmentService(
-      recoveryJournal: recovery,
-      activeJournal: accountB,
-      prefs: prefs,
-    );
-    final blocked = await serviceB.assignAllToAccount('user-b');
-    expect(blocked.importedCount, 0);
-    expect(await accountB.loadAll(), isEmpty);
-  });
+      final serviceB = LegacyOwnershipAssignmentService(
+        recoveryJournal: recovery,
+        activeJournal: accountB,
+        prefs: prefs,
+      );
+      final blocked = await serviceB.assignAllToAccount('user-b');
+      expect(blocked.importedCount, 0);
+      expect(await accountB.loadAll(), isEmpty);
+    },
+  );
 }

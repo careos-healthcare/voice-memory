@@ -11,10 +11,7 @@ void main() {
       expect(cap.id, isNotEmpty);
       expect(cap.routes, isNotEmpty);
     }
-    expect(
-      V1ProductionAllowlist.launchCapabilities,
-      contains('voice_capture'),
-    );
+    expect(V1ProductionAllowlist.launchCapabilities, contains('voice_capture'));
     expect(
       V1ProductionAllowlist.launchCapabilities,
       contains('optional_paid_deeper_history'),
@@ -59,12 +56,11 @@ void main() {
   });
 
   test('startup never shows raw exceptions to users', () {
-    final bootstrap = File('lib/startup/archive_me_startup.dart').readAsStringSync();
+    final bootstrap = File(
+      'lib/startup/archive_me_startup.dart',
+    ).readAsStringSync();
     expect(bootstrap, isNot(contains(r'$_startupError')));
-    expect(
-      bootstrap,
-      contains('ConsumerUiCopy.startupLocalStorageFailedBody'),
-    );
+    expect(bootstrap, contains('ConsumerUiCopy.startupLocalStorageFailedBody'));
   });
 
   test('blocked routes stay out of production router builders', () {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -76,7 +75,6 @@ void _expectNoBannedCopy(Iterable<String> visible, List<String> banned) {
 }
 
 void main() {
-
   group('DayTwoReturnLoopPayoffEngine', () {
     test('one entry uses calm return copy and optional reminder', () {
       final payoff = DayTwoReturnLoopPayoffEngine.build(
@@ -178,9 +176,7 @@ void main() {
   });
 
   group('RecordScreen return loop', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

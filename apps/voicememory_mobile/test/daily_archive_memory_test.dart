@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -18,7 +17,7 @@ import 'package:voicememory_mobile/features/low_evidence/low_evidence_engine.dar
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_engine.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_engine.dart'
-    as weeklyReviewSurface;
+    as weekly_review_surface;
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -597,7 +596,7 @@ void main() {
       await pumpRecord(tester, entryCount: 3);
 
       expect(
-        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+        weekly_review_surface.WeeklyArchiveReviewEngine.shouldShow(
           entries: _threeRelatedRepeatEntries(),
         ),
         isTrue,
@@ -714,7 +713,7 @@ void main() {
         isNotNull,
       );
       expect(
-        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+        weekly_review_surface.WeeklyArchiveReviewEngine.shouldShow(
           entries: _fourRelatedRepeatEntries(),
         ),
         isTrue,

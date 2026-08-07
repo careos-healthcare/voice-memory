@@ -26,22 +26,25 @@ void main() {
     expect(controller.state.canPurchase, isFalse);
   });
 
-  test('paywall controller purchase returns null without a selected package', () async {
-    final controller = PaywallController(
-      dependencies: FakePaywallDependencies(billingReady: true),
-    );
-    controller.replace(
-      controller.state.copyWith(
-        loadingOfferings: false,
-        billingConfigured: true,
-        unavailable: false,
-      ),
-    );
+  test(
+    'paywall controller purchase returns null without a selected package',
+    () async {
+      final controller = PaywallController(
+        dependencies: FakePaywallDependencies(billingReady: true),
+      );
+      controller.replace(
+        controller.state.copyWith(
+          loadingOfferings: false,
+          billingConfigured: true,
+          unavailable: false,
+        ),
+      );
 
-    final result = await controller.purchaseSelectedPackage();
-    expect(result, isNull);
-    expect(controller.state.purchaseInFlight, isFalse);
-  });
+      final result = await controller.purchaseSelectedPackage();
+      expect(result, isNull);
+      expect(controller.state.purchaseInFlight, isFalse);
+    },
+  );
 
   test('selectPlan updates immutable state', () {
     final controller = PaywallController(

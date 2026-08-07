@@ -49,13 +49,10 @@ void main() {
 
   test('decoder quarantines invalid record without aborting valid ones', () {
     final quarantined = <JournalDecodeQuarantined>[];
-    final accepted = JournalEntryDecoder.decodeList(
-      [
-        _entry('good').toJson(),
-        {'id': '', 'createdAt': 'not-a-date'},
-      ],
-      quarantineOut: quarantined,
-    );
+    final accepted = JournalEntryDecoder.decodeList([
+      _entry('good').toJson(),
+      {'id': '', 'createdAt': 'not-a-date'},
+    ], quarantineOut: quarantined);
     expect(accepted, hasLength(1));
     expect(accepted.single.id, 'good');
     expect(quarantined, isNotEmpty);

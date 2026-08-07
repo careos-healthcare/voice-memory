@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -78,7 +77,6 @@ String _allCopy(ArchiveProofCounter counter) => [
 
 void main() {
   const engine = ArchiveProofCounterEngine();
-
 
   group('Archive proof counter engine — eligibility', () {
     test('no proof counter before evidence', () {
@@ -324,15 +322,11 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );

@@ -116,7 +116,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ShareCardCopy', () {
     test('defines privacy-safe share card copy', () {

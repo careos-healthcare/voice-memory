@@ -4,11 +4,7 @@ import 'package:intl/intl.dart';
 import '../../models/journal_entry.dart';
 
 class ArchiveEntryCard extends StatelessWidget {
-  const ArchiveEntryCard({
-    super.key,
-    required this.entry,
-    required this.onTap,
-  });
+  const ArchiveEntryCard({super.key, required this.entry, required this.onTap});
 
   final JournalEntry entry;
   final VoidCallback onTap;

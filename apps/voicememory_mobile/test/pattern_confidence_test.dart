@@ -190,7 +190,6 @@ void main() {
 
   tearDown(PatternConfidenceAnalytics.resetForTest);
 
-
   tearDown(() => sandbox.dispose());
   group('PatternConfidenceEngine badge labels', () {
     test('two related moments show Early signal', () {

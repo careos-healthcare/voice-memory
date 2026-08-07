@@ -72,7 +72,6 @@ List<String> _stringLiteralViolations(String path, String source) {
 }
 
 void main() {
-
   group('FirstUserExperienceGates', () {
     test('empty first-run hides returning session survey', () {
       expect(
@@ -107,9 +106,7 @@ void main() {
   });
 
   group('empty first-run record screen', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

@@ -52,7 +52,6 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-
   group('Pro value preview copy', () {
     test('uses ArchiveMe branding and avoids banned language', () {
       _expectNoBannedCopy(ProValuePreviewCopy.allVisibleCopy());
@@ -171,9 +170,7 @@ void main() {
   });
 
   group('Pro value preview settings', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

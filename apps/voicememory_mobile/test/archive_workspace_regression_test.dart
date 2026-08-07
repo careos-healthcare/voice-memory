@@ -176,7 +176,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('Archive workspace entry-count ladder', () {
     test('zero-entry workspace is not noisy', () {

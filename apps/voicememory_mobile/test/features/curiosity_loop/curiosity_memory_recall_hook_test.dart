@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/infrastructure/interceptors/curiosity_loop_trigger_interceptor.dart';
@@ -141,7 +140,6 @@ void main() {
     CuriosityHookCoordinator.resetForTest();
     CuriosityNotificationScheduler.resetForTest();
   });
-
 
   tearDown(() => sandbox.dispose());
   group('CuriosityMemoryRecallHookEnricher', () {

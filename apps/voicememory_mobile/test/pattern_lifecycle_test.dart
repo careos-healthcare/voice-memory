@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
@@ -121,7 +120,6 @@ void main() {
       skipRevenueCat: true,
     );
   });
-
 
   tearDown(() => sandbox.dispose());
   group('PatternLifecycleEngine', () {

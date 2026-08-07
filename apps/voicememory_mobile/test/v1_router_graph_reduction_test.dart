@@ -25,6 +25,9 @@ void main() {
     expect(V1QuarantineRedirects.exactPaths, contains('/capacity-loop'));
     expect(V1QuarantineRedirects.exactPaths, contains('/beta-feedback'));
     expect(V1QuarantineRedirects.exactPaths, contains('/journal'));
-    expect(V1QuarantineRedirects.parameterizedPaths, contains('/archive-packs/:id'));
+    expect(
+      V1QuarantineRedirects.parameterizedPaths,
+      contains('/archive-packs/:id'),
+    );
   });
 }

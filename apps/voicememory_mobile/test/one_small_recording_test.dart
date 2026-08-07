@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -75,7 +74,6 @@ String _allCopy(OneSmallRecording recording) => [
 
 void main() {
   const engine = OneSmallRecordingEngine();
-
 
   group('One small recording engine', () {
     test('no card without enough evidence', () {
@@ -261,15 +259,11 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );

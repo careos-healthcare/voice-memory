@@ -10,9 +10,9 @@ class MicrophonePermissionController {
   bool sessionRequiresOpenSettings = false;
 
   RecordUiState get uiState => RecordMicrophonePermissionUi.uiForMicPhase(
-        phase: phase,
-        userDeniedThisSession: userDeniedThisSession,
-      );
+    phase: phase,
+    userDeniedThisSession: userDeniedThisSession,
+  );
 
   void applyPhase(RecordingPhase next, {bool userDenied = false}) {
     phase = next;

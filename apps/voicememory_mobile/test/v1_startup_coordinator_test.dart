@@ -12,16 +12,24 @@ void main() {
     final bootstrap = File(
       'lib/startup/archive_me_startup.dart',
     ).readAsStringSync();
-    final appServices = File('lib/services/app_services.dart').readAsStringSync();
+    final appServices = File(
+      'lib/services/app_services.dart',
+    ).readAsStringSync();
 
     expect(startup, contains('runEssentialPhases'));
     expect(startup, contains('runOptionalPhases'));
     expect(startup, contains('initializeEssential'));
     expect(startup, contains('initializeOptionalServices'));
     expect(bootstrap, isNot(contains('AppServices.initialize();')));
-    expect(bootstrap, contains('unawaited(V1StartupCoordinator.runOptionalPhases())'));
+    expect(
+      bootstrap,
+      contains('unawaited(V1StartupCoordinator.runOptionalPhases())'),
+    );
     expect(appServices, contains('static Future<void> initializeEssential()'));
-    expect(appServices, contains('static Future<void> initializeOptionalServices()'));
+    expect(
+      appServices,
+      contains('static Future<void> initializeOptionalServices()'),
+    );
   });
 
   test('bootstrap failure UI uses fixed copy not raw exceptions', () {
@@ -33,8 +41,7 @@ void main() {
   });
 
   test('startup phases match production allowlist contract', () {
-    final ids =
-        V1ProductionAllowlist.startupPhases.map((p) => p.id).toList();
+    final ids = V1ProductionAllowlist.startupPhases.map((p) => p.id).toList();
     expect(ids, [
       'privacy_safe_shell',
       'essential_local_archive',

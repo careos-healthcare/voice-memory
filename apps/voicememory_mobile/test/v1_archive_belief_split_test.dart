@@ -45,12 +45,8 @@ void main() {
     tearDown(() => sandbox.dispose());
 
     test('sorts entries newest first', () async {
-      await store.save(
-        _entry(id: 'old', createdAt: DateTime(2026, 1, 1)),
-      );
-      await store.save(
-        _entry(id: 'new', createdAt: DateTime(2026, 6, 1)),
-      );
+      await store.save(_entry(id: 'old', createdAt: DateTime(2026, 1, 1)));
+      await store.save(_entry(id: 'new', createdAt: DateTime(2026, 6, 1)));
 
       final result = await ArchiveBeliefRepository(
         journalStore: store,
@@ -99,9 +95,7 @@ void main() {
     tearDown(() => sandbox.dispose());
 
     test('reload moves from loading to loaded with entries', () async {
-      await store.save(
-        _entry(id: 'e1', createdAt: DateTime(2026, 3, 1)),
-      );
+      await store.save(_entry(id: 'e1', createdAt: DateTime(2026, 3, 1)));
       final viewModel = ArchiveBeliefViewModel(
         repository: ArchiveBeliefRepository(journalStore: store),
       );
@@ -114,18 +108,14 @@ void main() {
     });
 
     test('shows search field only when more than one entry exists', () async {
-      await store.save(
-        _entry(id: 'e1', createdAt: DateTime(2026, 3, 1)),
-      );
+      await store.save(_entry(id: 'e1', createdAt: DateTime(2026, 3, 1)));
       final viewModel = ArchiveBeliefViewModel(
         repository: ArchiveBeliefRepository(journalStore: store),
       );
       await viewModel.reload();
       expect(viewModel.showSearchField, isFalse);
 
-      await store.save(
-        _entry(id: 'e2', createdAt: DateTime(2026, 3, 2)),
-      );
+      await store.save(_entry(id: 'e2', createdAt: DateTime(2026, 3, 2)));
       await viewModel.reload();
       expect(viewModel.showSearchField, isTrue);
     });
@@ -157,19 +147,24 @@ void main() {
   });
 
   group('ArchiveBeliefViewModel large archive', () {
-    test('filters five hundred entries without materializing eager children', () {
-      final entries = List.generate(
-        500,
-        (index) => _entry(
-          id: 'e$index',
-          createdAt: DateTime(2026, 1, 1).add(Duration(minutes: index)),
-          transcript: index.isEven ? 'even moment $index' : 'odd moment $index',
-        ),
-      );
-      final search = ArchiveBeliefSearchState()..updateQuery('even');
-      final filtered = search.filter(entries);
-      expect(filtered.length, 250);
-      expect(filtered.first.transcript, contains('even'));
-    });
+    test(
+      'filters five hundred entries without materializing eager children',
+      () {
+        final entries = List.generate(
+          500,
+          (index) => _entry(
+            id: 'e$index',
+            createdAt: DateTime(2026, 1, 1).add(Duration(minutes: index)),
+            transcript: index.isEven
+                ? 'even moment $index'
+                : 'odd moment $index',
+          ),
+        );
+        final search = ArchiveBeliefSearchState()..updateQuery('even');
+        final filtered = search.filter(entries);
+        expect(filtered.length, 250);
+        expect(filtered.first.transcript, contains('even'));
+      },
+    );
   });
 }

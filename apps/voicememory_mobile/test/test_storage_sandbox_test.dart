@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'support/test_storage_sandbox.dart';
 
-
 void main() {
   test('rejects paths outside sandbox root', () {
     final sandbox = TestStorageSandbox.create();

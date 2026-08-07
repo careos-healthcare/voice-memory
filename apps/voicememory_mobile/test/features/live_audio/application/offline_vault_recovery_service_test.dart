@@ -94,36 +94,39 @@ void main() {
       },
     );
 
-    test('recoverVault without consent retains vault and does not upload', () async {
-      final noConsentPrefs = await MobilePrefsStore.open(
-        '${vaultDirectory.path}/no_consent_prefs.json',
-      );
-      final noConsentService = OfflineVaultRecoveryService(
-        store: store,
-        api: api,
-        attest: attest,
-        pipeline: pipeline,
-        consentGate: RemoteProcessingConsentGate.fromPrefs(noConsentPrefs),
-      );
+    test(
+      'recoverVault without consent retains vault and does not upload',
+      () async {
+        final noConsentPrefs = await MobilePrefsStore.open(
+          '${vaultDirectory.path}/no_consent_prefs.json',
+        );
+        final noConsentService = OfflineVaultRecoveryService(
+          store: store,
+          api: api,
+          attest: attest,
+          pipeline: pipeline,
+          consentGate: RemoteProcessingConsentGate.fromPrefs(noConsentPrefs),
+        );
 
-      final vaultFile = File(
-        '${vaultDirectory.path}/audio_vault_no_consent.vault.enc',
-      );
-      await vaultFile.writeAsBytes([1, 2, 3]);
-      final manifest = await store.registerVault(
-        sessionId: 'session_no_consent',
-        vaultFile: vaultFile,
-        frameCount: 3,
-        durationSeconds: 2,
-      );
+        final vaultFile = File(
+          '${vaultDirectory.path}/audio_vault_no_consent.vault.enc',
+        );
+        await vaultFile.writeAsBytes([1, 2, 3]);
+        final manifest = await store.registerVault(
+          sessionId: 'session_no_consent',
+          vaultFile: vaultFile,
+          frameCount: 3,
+          durationSeconds: 2,
+        );
 
-      await expectLater(
-        noConsentService.recoverVault(manifest),
-        throwsA(isA<RemoteProcessingConsentRequired>()),
-      );
-      expect(api.uploadCount, 0);
-      expect(await File(manifest.vaultPath).exists(), isTrue);
-    });
+        await expectLater(
+          noConsentService.recoverVault(manifest),
+          throwsA(isA<RemoteProcessingConsentRequired>()),
+        );
+        expect(api.uploadCount, 0);
+        expect(await File(manifest.vaultPath).exists(), isTrue);
+      },
+    );
 
     test('recoverVault sends recovery_secret for offline_* sessions', () async {
       final recoverySecret = List<int>.generate(32, (index) => index + 1);

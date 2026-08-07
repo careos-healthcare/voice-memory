@@ -116,7 +116,6 @@ void main() {
     await BetaTesterOutcomeStore.resetForTest(AppServices.instance.prefs);
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ProPackagingCopy', () {
     test('defines longer proof trail Pro positioning', () {

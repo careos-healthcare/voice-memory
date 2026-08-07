@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
@@ -116,7 +115,6 @@ void main() {
     await tester.tap(find.byKey(const Key('account_auth_primary_cta')));
     await tester.pump();
   }
-
 
   group('Email validation', () {
     test('accepts plausible emails, rejects malformed input', () {
@@ -352,9 +350,7 @@ void main() {
   });
 
   group('Restore purchases stays available', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

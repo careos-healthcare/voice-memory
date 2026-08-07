@@ -135,7 +135,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('BeliefChangeMomentEngine', () {
     test('hidden with no repeated pattern foundation', () {

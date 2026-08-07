@@ -114,7 +114,6 @@ void main() {
     HelpedTrackingAnalytics.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('HelpedTrackingEngine gates', () {
     test('prompt shows after first proof confirmed repeat', () {

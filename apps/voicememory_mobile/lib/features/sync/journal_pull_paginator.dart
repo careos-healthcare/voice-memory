@@ -3,10 +3,7 @@ import '../../storage/journal_entry_decoder.dart';
 
 /// Hardened journal pull pagination with cursor cycle detection.
 class JournalPullPaginator {
-  JournalPullPaginator({
-    this.maxPages = 50,
-    this.maxEntries = 10000,
-  });
+  JournalPullPaginator({this.maxPages = 50, this.maxEntries = 10000});
 
   final int maxPages;
   final int maxEntries;

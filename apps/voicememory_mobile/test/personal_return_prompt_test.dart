@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
@@ -90,7 +89,6 @@ final _edgeQuestion = RegExp(
 
 void main() {
   const engine = PersonalReturnPromptEngine();
-
 
   group('Personal return prompt engine', () {
     test('no evidence returns generic prompts with a fallback line', () {
@@ -340,15 +338,11 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );

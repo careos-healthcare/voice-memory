@@ -96,7 +96,6 @@ void main() {
     });
   }
 
-
   tearDown(() => sandbox.dispose());
   group('ArchiveExclusionEngine', () {
     test('exclude confirmation stores exclusion', () async {

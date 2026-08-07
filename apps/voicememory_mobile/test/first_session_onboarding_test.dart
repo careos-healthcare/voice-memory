@@ -66,7 +66,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('FirstSessionOnboardingCopy', () {
     test('spec copy is stable', () {

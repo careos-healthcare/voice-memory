@@ -88,7 +88,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('MomentQualityFeedbackCopy', () {
     test('spec copy is stable', () {

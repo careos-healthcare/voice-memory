@@ -77,7 +77,8 @@ class InMemorySyncMasterKeyStore implements SyncMasterKeyStore {
 
   @override
   Future<List<int>> ensureKey() async {
-    if (_keyBytes != null && _keyBytes!.length == SecureSyncMasterKeyStore.keyByteLength) {
+    if (_keyBytes != null &&
+        _keyBytes!.length == SecureSyncMasterKeyStore.keyByteLength) {
       return List<int>.from(_keyBytes!);
     }
     final algorithm = AesGcm.with256bits();

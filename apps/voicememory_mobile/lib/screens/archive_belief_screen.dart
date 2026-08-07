@@ -39,8 +39,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
   late final ArchiveBeliefViewModel _viewModel = ArchiveBeliefViewModel(
     repository: ArchiveBeliefRepository(
-      journalStore:
-          widget.journalStore ?? _accountDeps.journalStore,
+      journalStore: widget.journalStore ?? _accountDeps.journalStore,
     ),
   );
 
@@ -115,7 +114,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ]),
                 ),
               ),
-              if (loadState == ArchiveBeliefLoadState.loading && entries == null)
+              if (loadState == ArchiveBeliefLoadState.loading &&
+                  entries == null)
                 const SliverFillRemaining(
                   hasScrollBody: false,
                   child: Center(
@@ -177,16 +177,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final entry = visibleEntries[index];
-                          return ArchiveEntryCard(
-                            entry: entry,
-                            onTap: () => unawaited(_openEntry(entry.id)),
-                          );
-                        },
-                        childCount: visibleEntries.length,
-                      ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final entry = visibleEntries[index];
+                        return ArchiveEntryCard(
+                          entry: entry,
+                          onTap: () => unawaited(_openEntry(entry.id)),
+                        );
+                      }, childCount: visibleEntries.length),
                     ),
                   ),
               ],

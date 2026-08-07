@@ -27,7 +27,7 @@ class RemoteProcessingConsentGate {
   RemoteProcessingConsentGate(this._store);
 
   RemoteProcessingConsentGate.fromPrefs(MobilePrefsStore prefs)
-      : _store = RemoteProcessingConsentStore(prefs);
+    : _store = RemoteProcessingConsentStore(prefs);
 
   final RemoteProcessingConsentStore _store;
 

@@ -57,7 +57,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('FirstThreeSessionGates', () {
     test(

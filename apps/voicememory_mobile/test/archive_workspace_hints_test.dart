@@ -127,7 +127,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ArchiveWorkspaceHintsEngine', () {
     test('intro hint appears when workspace is visible', () {

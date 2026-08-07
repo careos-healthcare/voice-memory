@@ -89,9 +89,7 @@ abstract final class V1ProductionAllowlist {
   };
 
   /// Packages that must not appear in production `lib/` imports.
-  static const blockedProductionPackages = {
-    'archiveme_research',
-  };
+  static const blockedProductionPackages = {'archiveme_research'};
 
   /// Deep-link hosts/actions that must redirect safely in V1.
   static const deepLinkFallbacks = {
@@ -99,7 +97,8 @@ abstract final class V1ProductionAllowlist {
     'quick-capture': '/quick-capture',
   };
 
-  static int get allowlistedRouteCount => V1RouteInventory.v1AllowlistedRouteCount;
+  static int get allowlistedRouteCount =>
+      V1RouteInventory.v1AllowlistedRouteCount;
 
   static bool get v1OnlyEnabled => V1FeatureFlags.enableV1Only;
 

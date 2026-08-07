@@ -121,7 +121,6 @@ void main() {
     await WhatChangedV2Store.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('PatternDetailEngine gates', () {
     test('builds detail for grounded confirmed repeat', () {

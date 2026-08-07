@@ -36,8 +36,8 @@ class EncryptedPayload {
 /// Authenticated encryption for sync blobs using the account-scoped master key.
 class SyncCrypto {
   SyncCrypto(List<int> masterKeyBytes)
-      : _secretKey = SecretKey(masterKeyBytes),
-        _algorithm = AesGcm.with256bits();
+    : _secretKey = SecretKey(masterKeyBytes),
+      _algorithm = AesGcm.with256bits();
 
   final SecretKey _secretKey;
   final AesGcm _algorithm;

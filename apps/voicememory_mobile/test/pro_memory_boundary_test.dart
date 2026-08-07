@@ -164,7 +164,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ProMemoryBoundaryCopy', () {
     test('defines upgrade bridge and fallback copy', () {

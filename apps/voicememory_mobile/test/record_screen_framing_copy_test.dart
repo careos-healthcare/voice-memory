@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -194,7 +193,6 @@ void main() {
   setUpAll(installMockAudioplayers);
   tearDownAll(uninstallMockAudioplayers);
 
-
   group('RecordScreenFramingCopy', () {
     test('uses concrete first-recording guidance', () {
       expect(
@@ -287,9 +285,7 @@ void main() {
   });
 
   group('RecordScreen framing UI', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
@@ -792,15 +788,11 @@ void main() {
   });
 
   group('Record screen unified CTA policy', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(

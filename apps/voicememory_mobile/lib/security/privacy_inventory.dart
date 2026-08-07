@@ -26,7 +26,8 @@ abstract final class PrivacyInventory {
       'protocol': '/api/sync/manifest,/api/sync/pull,/api/sync/push',
       'journalTransport': 'encrypted_blob_only',
       'serverCanDecryptJournal': false,
-      'legacyPlaintextMigration': 'client_side_encrypt_then_mark_eligible_for_audit_deletion',
+      'legacyPlaintextMigration':
+          'client_side_encrypt_then_mark_eligible_for_audit_deletion',
     },
     'analytics': {
       'includesJournalBodyText': false,

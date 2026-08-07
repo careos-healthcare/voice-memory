@@ -76,7 +76,10 @@ class LegacyPlaintextMigrationService {
     final localIds = (await _journal.loadAllIncludingTombstones())
         .map((e) => e.id)
         .toSet();
-    final legacyIds = legacyRemote.map((e) => e.id).where((id) => id.isNotEmpty).toSet();
+    final legacyIds = legacyRemote
+        .map((e) => e.id)
+        .where((id) => id.isNotEmpty)
+        .toSet();
     final validatedIds = validated.map((e) => e.id).toSet();
     final unvalidatedLegacy = legacyIds.difference(validatedIds);
     final covered = legacyIds.difference(localIds);
@@ -101,6 +104,7 @@ class LegacyPlaintextMigrationService {
   }
 
   bool _isValidLegacyEntry(JournalEntry entry) {
-    return entry.id.isNotEmpty && entry.createdAt.isBefore(DateTime.now().add(const Duration(days: 1)));
+    return entry.id.isNotEmpty &&
+        entry.createdAt.isBefore(DateTime.now().add(const Duration(days: 1)));
   }
 }

@@ -83,7 +83,6 @@ List<JournalEntry> _relatedThree() => [
 ];
 
 void main() {
-
   group('TesterMissionCopy canonical onboarding', () {
     test('title mission steps and feedback question match brief', () {
       expect(TesterMissionCopy.title, 'Testing ArchiveMe?');
@@ -386,8 +385,7 @@ void main() {
   });
 
   group('TesterMissionStore', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     late _MemoryPrefs prefs;
 
@@ -476,9 +474,7 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

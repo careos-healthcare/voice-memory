@@ -253,8 +253,7 @@ void main() {
   });
 
   group('CoreValueFeedbackStore', () {
-
-  late TestStorageSandbox sandbox;
+    late TestStorageSandbox sandbox;
 
     late _MemoryPrefs prefs;
 

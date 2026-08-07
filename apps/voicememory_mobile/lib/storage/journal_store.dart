@@ -363,7 +363,9 @@ class JournalStore {
     }, enrichNonTombstones: true);
   }
 
-  Future<void> applyConflictWinnersBatch(Map<String, JournalEntry> winners) async {
+  Future<void> applyConflictWinnersBatch(
+    Map<String, JournalEntry> winners,
+  ) async {
     if (winners.isEmpty) return;
     await _mutateBatch((entries) {
       final byId = {for (final e in entries) e.id: e};

@@ -7,7 +7,10 @@ class RecordingSessionController {
 
   int get seconds => _seconds;
 
-  void bindDuration(Stream<int> duration, {required void Function(int) onTick}) {
+  void bindDuration(
+    Stream<int> duration, {
+    required void Function(int) onTick,
+  }) {
     unawaited(_durationSubscription?.cancel());
     _durationSubscription = duration.listen((value) {
       _seconds = value;

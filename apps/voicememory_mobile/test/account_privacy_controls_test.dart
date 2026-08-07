@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -79,7 +78,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
   }
-
 
   tearDown(() => sandbox.dispose());
   group('Account standard controls section', () {

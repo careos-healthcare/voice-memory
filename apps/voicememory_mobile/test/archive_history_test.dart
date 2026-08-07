@@ -75,7 +75,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ArchiveHistoryEngine', () {
     test('empty state when no entries', () {

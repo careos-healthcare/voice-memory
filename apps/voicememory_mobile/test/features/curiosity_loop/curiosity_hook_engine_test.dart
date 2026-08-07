@@ -85,7 +85,6 @@ void main() {
     await LocalCuriosityHookRepository.resetForTest(AppServices.instance.prefs);
   });
 
-
   tearDown(() => sandbox.dispose());
   group('CuriosityHookEngine', () {
     test('test_notification_payload_generation_excludes_forbidden_loops', () {

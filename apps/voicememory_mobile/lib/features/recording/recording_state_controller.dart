@@ -1075,9 +1075,7 @@ class _RecordScreenState extends State<RecordScreen>
   }
 
   Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
-    final store = ArchiveReturnChangesStore.fromAppPrefs(
-      _accountDeps.prefs,
-    );
+    final store = ArchiveReturnChangesStore.fromAppPrefs(_accountDeps.prefs);
     final resolved = await resolveArchiveReturnChanges(
       entries: entries,
       store: store,

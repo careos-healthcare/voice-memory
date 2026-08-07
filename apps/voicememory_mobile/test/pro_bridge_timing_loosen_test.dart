@@ -226,8 +226,7 @@ void main() {
                 whatChangedQuestionActive:
                     override['whatChangedQuestionActive'] ?? false,
                 patternReviewInboxHasActiveItems:
-                    override['patternReviewInboxHasActiveItems'] ??
-                    false,
+                    override['patternReviewInboxHasActiveItems'] ?? false,
               ),
             ),
           ).allowed,

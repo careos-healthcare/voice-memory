@@ -47,67 +47,94 @@ void main() {
       }
     });
 
-    test('is resumable and idempotent — completed migration is not re-run', () async {
-      api.legacyEntries = [
-        JournalEntry(
-          id: 'legacy-1',
-          createdAt: DateTime.utc(2026, 1, 1),
-          transcript: 'legacy plaintext',
-          durationSeconds: 2,
-          reflection: _reflection(),
-        ),
-      ];
+    test(
+      'is resumable and idempotent — completed migration is not re-run',
+      () async {
+        api.legacyEntries = [
+          JournalEntry(
+            id: 'legacy-1',
+            createdAt: DateTime.utc(2026, 1, 1),
+            transcript: 'legacy plaintext',
+            durationSeconds: 2,
+            reflection: _reflection(),
+          ),
+        ];
 
-      expect(await migration.isMigrationPending(), isTrue);
-      await migration.runMigrationIfNeeded();
+        expect(await migration.isMigrationPending(), isTrue);
+        await migration.runMigrationIfNeeded();
 
-      final state = await prefs.readJsonMap(LegacyPlaintextMigrationService.stateKey);
-      expect(state?['status'], 'completed');
-      expect(api.listJournalCalls, 1);
-      expect(api.syncPushCalls, greaterThanOrEqualTo(1));
-      expect(await prefs.readJsonMap(LegacyPlaintextMigrationService.eligibleDeletionKey), isNotNull);
+        final state = await prefs.readJsonMap(
+          LegacyPlaintextMigrationService.stateKey,
+        );
+        expect(state?['status'], 'completed');
+        expect(api.listJournalCalls, 1);
+        expect(api.syncPushCalls, greaterThanOrEqualTo(1));
+        expect(
+          await prefs.readJsonMap(
+            LegacyPlaintextMigrationService.eligibleDeletionKey,
+          ),
+          isNotNull,
+        );
 
-      await migration.runMigrationIfNeeded();
-      expect(api.listJournalCalls, 1, reason: 'must not re-read legacy plaintext');
-    });
+        await migration.runMigrationIfNeeded();
+        expect(
+          api.listJournalCalls,
+          1,
+          reason: 'must not re-read legacy plaintext',
+        );
+      },
+    );
 
-    test('does not delete server plaintext — only marks eligible for audit', () async {
-      api.legacyEntries = [
-        JournalEntry(
-          id: 'legacy-2',
-          createdAt: DateTime.utc(2026, 1, 2),
-          transcript: 'keep on server until audit',
-          durationSeconds: 1,
-          reflection: _reflection(),
-        ),
-      ];
+    test(
+      'does not delete server plaintext — only marks eligible for audit',
+      () async {
+        api.legacyEntries = [
+          JournalEntry(
+            id: 'legacy-2',
+            createdAt: DateTime.utc(2026, 1, 2),
+            transcript: 'keep on server until audit',
+            durationSeconds: 1,
+            reflection: _reflection(),
+          ),
+        ];
 
-      await migration.runMigrationIfNeeded();
+        await migration.runMigrationIfNeeded();
 
-      expect(api.deleteJournalCalls, 0);
-      final eligible = await prefs.readJsonMap(
-        LegacyPlaintextMigrationService.eligibleDeletionKey,
-      );
-      expect(eligible?['legacyRowCount'], 1);
-    });
+        expect(api.deleteJournalCalls, 0);
+        final eligible = await prefs.readJsonMap(
+          LegacyPlaintextMigrationService.eligibleDeletionKey,
+        );
+        expect(eligible?['legacyRowCount'], 1);
+      },
+    );
 
-    test('pending_retry when validated legacy rows cannot be merged locally', () async {
-      api.legacyEntries = [
-        JournalEntry(
-          id: 'future-entry',
-          createdAt: DateTime.now().add(const Duration(days: 400)),
-          transcript: 'future dated',
-          durationSeconds: 1,
-          reflection: _reflection(),
-        ),
-      ];
+    test(
+      'pending_retry when validated legacy rows cannot be merged locally',
+      () async {
+        api.legacyEntries = [
+          JournalEntry(
+            id: 'future-entry',
+            createdAt: DateTime.now().add(const Duration(days: 400)),
+            transcript: 'future dated',
+            durationSeconds: 1,
+            reflection: _reflection(),
+          ),
+        ];
 
-      await migration.runMigrationIfNeeded();
+        await migration.runMigrationIfNeeded();
 
-      final state = await prefs.readJsonMap(LegacyPlaintextMigrationService.stateKey);
-      expect(state?['status'], 'pending_retry');
-      expect(await prefs.readJsonMap(LegacyPlaintextMigrationService.eligibleDeletionKey), isNull);
-    });
+        final state = await prefs.readJsonMap(
+          LegacyPlaintextMigrationService.stateKey,
+        );
+        expect(state?['status'], 'pending_retry');
+        expect(
+          await prefs.readJsonMap(
+            LegacyPlaintextMigrationService.eligibleDeletionKey,
+          ),
+          isNull,
+        );
+      },
+    );
   });
 }
 
@@ -128,7 +155,10 @@ class _MigrationApi extends ApiClient {
   @override
   Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
     syncPushCalls++;
-    return {'ok': true, 'manifest': {'blobs': []}};
+    return {
+      'ok': true,
+      'manifest': {'blobs': []},
+    };
   }
 
   @override

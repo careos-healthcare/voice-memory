@@ -20,9 +20,9 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
 class _VoicePipelineFakeApi extends ApiClient {
-  _VoicePipelineFakeApi({
-    this.analyzeError,
-  }) : transcript = _spokenTranscript, super(baseUrl: 'http://test.invalid');
+  _VoicePipelineFakeApi({this.analyzeError})
+    : transcript = _spokenTranscript,
+      super(baseUrl: 'http://test.invalid');
 
   final String transcript;
   final Object? analyzeError;

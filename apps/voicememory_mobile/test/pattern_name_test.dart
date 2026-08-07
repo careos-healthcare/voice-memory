@@ -107,7 +107,6 @@ void main() {
     PatternNameAnalytics.resetForTest();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('PatternNameEngine gates', () {
     test('prompt shows only when grounded repeat exists', () {

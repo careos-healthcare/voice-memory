@@ -84,7 +84,6 @@ void main() {
 
   final saveButton = find.byKey(const Key('quick_text_capture_save_button'));
 
-
   tearDown(() => sandbox.dispose());
   group('QuickTextCaptureScreen prompt handling', () {
     testWidgets('opens with empty text field', (tester) async {

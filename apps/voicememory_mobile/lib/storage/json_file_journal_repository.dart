@@ -9,7 +9,9 @@ class JsonFileJournalRepository implements JournalRepository {
   final JournalStore _store;
 
   @override
-  Future<int> compactTombstonesBatch({Duration retention = const Duration(days: 30)}) {
+  Future<int> compactTombstonesBatch({
+    Duration retention = const Duration(days: 30),
+  }) {
     return _store.compactTombstonesBatch(retention: retention);
   }
 

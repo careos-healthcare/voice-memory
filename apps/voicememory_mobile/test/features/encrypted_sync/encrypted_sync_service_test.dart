@@ -50,56 +50,62 @@ void main() {
       }
     });
 
-    test('syncEncryptedJournal uploads ciphertext only, never plaintext transcript', () async {
-      await journal.save(
-        JournalEntry(
-          id: 'entry-1',
-          createdAt: DateTime.utc(2026, 1, 1),
-          transcript: 'secret transcript body',
-          durationSeconds: 3,
-          reflection: _reflection(),
-        ),
-      );
+    test(
+      'syncEncryptedJournal uploads ciphertext only, never plaintext transcript',
+      () async {
+        await journal.save(
+          JournalEntry(
+            id: 'entry-1',
+            createdAt: DateTime.utc(2026, 1, 1),
+            transcript: 'secret transcript body',
+            durationSeconds: 3,
+            reflection: _reflection(),
+          ),
+        );
 
-      await service.syncEncryptedJournal();
+        await service.syncEncryptedJournal();
 
-      expect(api.pushBodies, isNotEmpty);
-      final encoded = jsonEncode(api.pushBodies.last);
-      expect(encoded, isNot(contains('secret transcript body')));
-      expect(encoded, contains('ciphertext'));
-      expect(encoded, contains('iv'));
-    });
+        expect(api.pushBodies, isNotEmpty);
+        final encoded = jsonEncode(api.pushBodies.last);
+        expect(encoded, isNot(contains('secret transcript body')));
+        expect(encoded, contains('ciphertext'));
+        expect(encoded, contains('iv'));
+      },
+    );
 
-    test('syncEncryptedJournal pull decrypts remote archive-core blob', () async {
-      await journal.save(
-        JournalEntry(
-          id: 'local-only',
-          createdAt: DateTime.utc(2026, 1, 1),
-          transcript: 'local',
-          durationSeconds: 1,
-          reflection: _reflection(),
-        ),
-      );
+    test(
+      'syncEncryptedJournal pull decrypts remote archive-core blob',
+      () async {
+        await journal.save(
+          JournalEntry(
+            id: 'local-only',
+            createdAt: DateTime.utc(2026, 1, 1),
+            transcript: 'local',
+            durationSeconds: 1,
+            reflection: _reflection(),
+          ),
+        );
 
-      await service.syncEncryptedJournal();
-      final firstPush = api.pushBodies.last;
+        await service.syncEncryptedJournal();
+        final firstPush = api.pushBodies.last;
 
-      api.pullBlobs = firstPush['blobs'] as List<dynamic>;
+        api.pullBlobs = firstPush['blobs'] as List<dynamic>;
 
-      await journal.save(
-        JournalEntry(
-          id: 'remote-newer',
-          createdAt: DateTime.utc(2026, 2, 1),
-          transcript: 'from remote',
-          durationSeconds: 2,
-          reflection: _reflection(),
-        ),
-      );
-      await service.syncEncryptedJournal();
+        await journal.save(
+          JournalEntry(
+            id: 'remote-newer',
+            createdAt: DateTime.utc(2026, 2, 1),
+            transcript: 'from remote',
+            durationSeconds: 2,
+            reflection: _reflection(),
+          ),
+        );
+        await service.syncEncryptedJournal();
 
-      final merged = await journal.getById('local-only');
-      expect(merged, isNotNull);
-    });
+        final merged = await journal.getById('local-only');
+        expect(merged, isNotNull);
+      },
+    );
   });
 }
 
@@ -112,7 +118,10 @@ class _RecordingApi extends ApiClient {
   @override
   Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
     pushBodies.add(Map<String, dynamic>.from(body));
-    return {'ok': true, 'manifest': {'blobs': []}};
+    return {
+      'ok': true,
+      'manifest': {'blobs': []},
+    };
   }
 
   @override

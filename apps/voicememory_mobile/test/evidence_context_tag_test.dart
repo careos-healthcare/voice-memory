@@ -70,7 +70,6 @@ Future<void> _pumpCard(
 }
 
 void main() {
-
   group('Evidence context tag card', () {
     testWidgets('renders one optional question with the short tag list', (
       tester,
@@ -292,15 +291,11 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );

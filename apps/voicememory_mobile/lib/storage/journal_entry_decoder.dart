@@ -103,25 +103,19 @@ abstract final class JournalEntryDecoder {
     }
 
     if (issues.isNotEmpty) {
-      return JournalDecodeQuarantined(
-        issues,
-        rawId: id is String ? id : null,
-      );
+      return JournalDecodeQuarantined(issues, rawId: id is String ? id : null);
     }
 
     try {
       final entry = JournalEntry.fromJson(json);
       if (entry.id.trim().isEmpty) {
-        return const JournalDecodeQuarantined(
-          [JournalDecodeIssue.emptyId],
-        );
+        return const JournalDecodeQuarantined([JournalDecodeIssue.emptyId]);
       }
       return JournalDecodeAccepted(entry);
     } catch (_) {
-      return JournalDecodeQuarantined(
-        const [JournalDecodeIssue.parseException],
-        rawId: id is String ? id : null,
-      );
+      return JournalDecodeQuarantined(const [
+        JournalDecodeIssue.parseException,
+      ], rawId: id is String ? id : null);
     }
   }
 

@@ -25,7 +25,9 @@ void main() {
     }
   });
 
-  EncryptedJsonFileStore store({EncryptedJsonFileHooks hooks = EncryptedJsonFileHooks.none}) {
+  EncryptedJsonFileStore store({
+    EncryptedJsonFileHooks hooks = EncryptedJsonFileHooks.none,
+  }) {
     return EncryptedJsonFileStore(
       file: target,
       keyStore: keyStore,
@@ -35,7 +37,10 @@ void main() {
 
   test('write then read returns primary valid payload', () async {
     final s = store();
-    expect(await s.writeJsonOutcome(['entry-a']), isA<EncryptedJsonWriteSuccess>());
+    expect(
+      await s.writeJsonOutcome(['entry-a']),
+      isA<EncryptedJsonWriteSuccess>(),
+    );
     final outcome = await s.readJsonOutcome();
     expect(outcome, isA<EncryptedJsonReadPrimaryValid>());
     expect((outcome as EncryptedJsonReadPrimaryValid).value, ['entry-a']);
@@ -43,11 +48,12 @@ void main() {
 
   test('recovers from backup when primary is truncated', () async {
     final s = store();
-    await s.writeJson([{'id': '1', 'transcript': 'hello'}]);
-    await File('${target.path}.bak').writeAsString(
-      await target.readAsString(),
-      flush: true,
-    );
+    await s.writeJson([
+      {'id': '1', 'transcript': 'hello'},
+    ]);
+    await File(
+      '${target.path}.bak',
+    ).writeAsString(await target.readAsString(), flush: true);
     await target.writeAsString('truncated', flush: true);
 
     final outcome = await s.readJsonOutcome();
@@ -78,7 +84,9 @@ void main() {
   test('failAfterTempWrite preserves previous primary', () async {
     final s = store();
     await s.writeJson(['first']);
-    final failing = store(hooks: const EncryptedJsonFileHooks(failAfterTempWrite: true));
+    final failing = store(
+      hooks: const EncryptedJsonFileHooks(failAfterTempWrite: true),
+    );
     expect(
       await failing.writeJsonOutcome(['second']),
       isA<EncryptedJsonWriteDiskFailure>(),
@@ -88,31 +96,37 @@ void main() {
     expect((outcome as EncryptedJsonReadPrimaryValid).value, ['first']);
   });
 
-  test('corruptTempFile fails verification without clobbering primary', () async {
-    final s = store();
-    await s.writeJson(['stable']);
-    final failing = store(hooks: const EncryptedJsonFileHooks(corruptTempFile: true));
-    expect(
-      await failing.writeJsonOutcome(['lost']),
-      isA<EncryptedJsonWriteVerificationFailed>(),
-    );
-    final read = await s.readJson();
-    expect(read, ['stable']);
-  });
+  test(
+    'corruptTempFile fails verification without clobbering primary',
+    () async {
+      final s = store();
+      await s.writeJson(['stable']);
+      final failing = store(
+        hooks: const EncryptedJsonFileHooks(corruptTempFile: true),
+      );
+      expect(
+        await failing.writeJsonOutcome(['lost']),
+        isA<EncryptedJsonWriteVerificationFailed>(),
+      );
+      final read = await s.readJson();
+      expect(read, ['stable']);
+    },
+  );
 
   test('failBeforeRename leaves primary intact and temp cleaned', () async {
     final s = store();
     await s.writeJson(['before']);
-    final failing = store(hooks: const EncryptedJsonFileHooks(failBeforeRename: true));
+    final failing = store(
+      hooks: const EncryptedJsonFileHooks(failBeforeRename: true),
+    );
     expect(
       await failing.writeJsonOutcome(['after']),
       isA<EncryptedJsonWriteDiskFailure>(),
     );
     expect(await s.readJson(), ['before']);
-    final temps = tempDir
-        .listSync()
-        .whereType<File>()
-        .where((f) => f.path.contains('.tmp.'));
+    final temps = tempDir.listSync().whereType<File>().where(
+      (f) => f.path.contains('.tmp.'),
+    );
     expect(temps, isEmpty);
   });
 
@@ -127,7 +141,10 @@ void main() {
     await s.writeJson(['data']);
     await target.writeAsString('bad-primary');
     await File('${target.path}.bak').writeAsString('bad-backup');
-    expect(await s.readJsonOutcome(), isA<EncryptedJsonReadBothCopiesCorrupt>());
+    expect(
+      await s.readJsonOutcome(),
+      isA<EncryptedJsonReadBothCopiesCorrupt>(),
+    );
     expect(() => s.readJson(), throwsA(isA<FormatException>()));
   });
 }

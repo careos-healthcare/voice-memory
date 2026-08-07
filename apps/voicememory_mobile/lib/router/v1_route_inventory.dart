@@ -16,13 +16,21 @@ abstract final class V1RouteInventory {
   static const supporting = [
     _Route('/onboarding', V1RouteClass.v1Supporting, 'First launch consent'),
     _Route('/entry/:id', V1RouteClass.v1Supporting, 'Entry detail'),
-    _Route('/belief-evidence', V1RouteClass.v1Supporting, 'Exact supporting evidence'),
+    _Route(
+      '/belief-evidence',
+      V1RouteClass.v1Supporting,
+      'Exact supporting evidence',
+    ),
     _Route('/belief-detail', V1RouteClass.v1Supporting, 'Change detail'),
     _Route('/quick-capture', V1RouteClass.v1Supporting, 'Fast text capture'),
     _Route('/settings', V1RouteClass.v1Supporting, 'Settings'),
     _Route('/security', V1RouteClass.v1Supporting, 'Security'),
     _Route('/privacy', V1RouteClass.v1Supporting, 'Privacy'),
-    _Route('/privacy-trust-centre', V1RouteClass.v1Supporting, 'Privacy centre'),
+    _Route(
+      '/privacy-trust-centre',
+      V1RouteClass.v1Supporting,
+      'Privacy centre',
+    ),
     _Route('/terms', V1RouteClass.v1Supporting, 'Terms'),
     _Route('/about', V1RouteClass.v1Supporting, 'About'),
     _Route('/export', V1RouteClass.v1Supporting, 'Export'),
@@ -30,7 +38,11 @@ abstract final class V1RouteInventory {
     _Route('/support-feedback', V1RouteClass.v1Supporting, 'Required support'),
     _Route('/account/create', V1RouteClass.v1Supporting, 'Authentication'),
     _Route('/account/sign-in', V1RouteClass.v1Supporting, 'Authentication'),
-    _Route('/account/guest-data-migration', V1RouteClass.v1Supporting, 'Guest migration'),
+    _Route(
+      '/account/guest-data-migration',
+      V1RouteClass.v1Supporting,
+      'Guest migration',
+    ),
   ];
 
   static const paid = [
@@ -55,7 +67,8 @@ abstract final class V1RouteInventory {
   static int get v1ProductionBuilderRouteCount => 28;
 
   static int get v1QuarantineRedirectRouteCount =>
-      V1QuarantineRedirectRouteCount.exact + V1QuarantineRedirectRouteCount.parameterized;
+      V1QuarantineRedirectRouteCount.exact +
+      V1QuarantineRedirectRouteCount.parameterized;
 
   static int get v1AllowlistedRouteCount =>
       primaryShell.length + supporting.length + paid.length;
@@ -68,13 +81,7 @@ abstract final class V1QuarantineRedirectRouteCount {
   static const parameterized = 4;
 }
 
-enum V1RouteClass {
-  v1Core,
-  v1Supporting,
-  paidV1,
-  quarantine,
-  removeObsolete,
-}
+enum V1RouteClass { v1Core, v1Supporting, paidV1, quarantine, removeObsolete }
 
 class _Route {
   const _Route(this.path, this.v1Class, this.capability);

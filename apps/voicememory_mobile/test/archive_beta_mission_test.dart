@@ -42,7 +42,6 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 void main() {
-
   group('ArchiveBetaMissionCopy', () {
     test('copy matches beta tester onboarding brief', () {
       expect(ArchiveBetaMissionCopy.title, TesterMissionCopy.title);
@@ -233,9 +232,7 @@ void main() {
   });
 
   group('Record screen integration', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

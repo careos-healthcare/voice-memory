@@ -81,7 +81,6 @@ void main() {
     await BetaActivationSummaryTracker.clearExtension();
   });
 
-
   tearDown(() => sandbox.dispose());
   group('FirstProofActionLoopEngine', () {
     test('Yes answer shows watch this next and view pattern details', () {

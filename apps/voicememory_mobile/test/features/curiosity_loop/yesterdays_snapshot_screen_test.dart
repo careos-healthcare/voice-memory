@@ -58,7 +58,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('YesterdaysSnapshotScreen', () {
     testWidgets('shows hook prompt and three micro-review bullets', (

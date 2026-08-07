@@ -306,7 +306,9 @@ void main() {
         File(
           'lib/features/review_ritual/view_ritual_copy.dart',
         ).readAsStringSync(),
-        File('packages/archiveme_research/lib/screens/review_ritual_screen.dart').readAsStringSync(),
+        File(
+          'packages/archiveme_research/lib/screens/review_ritual_screen.dart',
+        ).readAsStringSync(),
         File('lib/widgets/review_ritual_card.dart').readAsStringSync(),
       ].join('\n').toLowerCase();
       expect(feature, isNot(contains('requestpermission')));

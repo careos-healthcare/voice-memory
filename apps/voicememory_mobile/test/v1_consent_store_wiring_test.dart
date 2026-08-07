@@ -12,20 +12,25 @@ void main() {
     expect(wiring, contains('consentStore: s.remoteProcessingConsentStore'));
     expect(
       wiring,
-      contains('RemoteProcessingConsentGate(\n      s.remoteProcessingConsentStore'),
+      contains(
+        'RemoteProcessingConsentGate(\n      s.remoteProcessingConsentStore',
+      ),
     );
   });
 
-  test('RemoteProcessingConsentGate.fromPrefs delegates to shared store type', () async {
-    final dir = await Directory.systemTemp.createTemp('consent_gate_');
-    final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
-    final store = RemoteProcessingConsentStore(prefs);
-    await store.grant();
+  test(
+    'RemoteProcessingConsentGate.fromPrefs delegates to shared store type',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('consent_gate_');
+      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+      final store = RemoteProcessingConsentStore(prefs);
+      await store.grant();
 
-    final gate = RemoteProcessingConsentGate(store);
-    expect(await gate.isPermittedNow(), isTrue);
+      final gate = RemoteProcessingConsentGate(store);
+      expect(await gate.isPermittedNow(), isTrue);
 
-    final gateFromPrefs = RemoteProcessingConsentGate.fromPrefs(prefs);
-    expect(await gateFromPrefs.isPermittedNow(), isTrue);
-  });
+      final gateFromPrefs = RemoteProcessingConsentGate.fromPrefs(prefs);
+      expect(await gateFromPrefs.isPermittedNow(), isTrue);
+    },
+  );
 }

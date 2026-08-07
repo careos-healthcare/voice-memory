@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
@@ -52,17 +51,12 @@ bool firstSavePayoffEligible({
     entryCount == 1 && !VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry);
 
 void main() {
-
   group('degraded voice first save recovery', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
 
     tearDown(() => sandbox.dispose());

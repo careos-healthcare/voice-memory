@@ -45,8 +45,7 @@ abstract final class V1StartupCoordinator {
     if (V1CapabilityRegistry.liveVoice) {
       await OfflineVaultRecoveryLaunchController.prepareScan();
       unawaited(
-        AppServices.instance.liveVoiceRecoveryGateway
-            .checkForPendingRecovery(),
+        AppServices.instance.liveVoiceRecoveryGateway.checkForPendingRecovery(),
       );
     }
     if (!V1FeatureFlags.enableV1Only) {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -119,7 +118,6 @@ void _expectNoBannedCopy(Iterable<String> visible, List<String> banned) {
 }
 
 void main() {
-
   group('ThirdEntryBeliefPayoffEngine', () {
     test('returns null unless exactly three eligible entries', () {
       expect(
@@ -308,9 +306,7 @@ void main() {
   });
 
   group('RecordScreen third-entry payoff', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

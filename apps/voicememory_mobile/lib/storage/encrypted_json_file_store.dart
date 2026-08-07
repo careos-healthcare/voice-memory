@@ -243,7 +243,10 @@ class EncryptedJsonFileStore {
     });
   }
 
-  Future<_DecryptResult> _tryDecryptFile(File target, List<int> keyBytes) async {
+  Future<_DecryptResult> _tryDecryptFile(
+    File target,
+    List<int> keyBytes,
+  ) async {
     try {
       if (!await target.exists()) return const _DecryptCorrupt();
       final raw = await target.readAsString();

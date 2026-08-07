@@ -10,7 +10,8 @@ final class EncryptedJsonReadPrimaryValid extends EncryptedJsonReadOutcome {
 }
 
 /// Primary was unreadable; last-known-good backup was used.
-final class EncryptedJsonReadRecoveredFromBackup extends EncryptedJsonReadOutcome {
+final class EncryptedJsonReadRecoveredFromBackup
+    extends EncryptedJsonReadOutcome {
   const EncryptedJsonReadRecoveredFromBackup(this.value);
   final dynamic value;
 }
@@ -21,19 +22,24 @@ final class EncryptedJsonReadKeyUnavailable extends EncryptedJsonReadOutcome {
 }
 
 /// Authentication tag verification failed on primary (and backup if tried).
-final class EncryptedJsonReadAuthenticationFailure extends EncryptedJsonReadOutcome {
-  const EncryptedJsonReadAuthenticationFailure({this.recoveredFromBackup = false});
+final class EncryptedJsonReadAuthenticationFailure
+    extends EncryptedJsonReadOutcome {
+  const EncryptedJsonReadAuthenticationFailure({
+    this.recoveredFromBackup = false,
+  });
   final bool recoveredFromBackup;
 }
 
 /// Primary corrupt; backup decrypts successfully.
-final class EncryptedJsonReadCorruptPrimaryValidBackup extends EncryptedJsonReadOutcome {
+final class EncryptedJsonReadCorruptPrimaryValidBackup
+    extends EncryptedJsonReadOutcome {
   const EncryptedJsonReadCorruptPrimaryValidBackup(this.value);
   final dynamic value;
 }
 
 /// Neither primary nor backup could be decrypted.
-final class EncryptedJsonReadBothCopiesCorrupt extends EncryptedJsonReadOutcome {
+final class EncryptedJsonReadBothCopiesCorrupt
+    extends EncryptedJsonReadOutcome {
   const EncryptedJsonReadBothCopiesCorrupt();
 }
 
@@ -60,7 +66,8 @@ final class EncryptedJsonWriteDiskFailure extends EncryptedJsonWriteOutcome {
   final String message;
 }
 
-final class EncryptedJsonWriteVerificationFailed extends EncryptedJsonWriteOutcome {
+final class EncryptedJsonWriteVerificationFailed
+    extends EncryptedJsonWriteOutcome {
   const EncryptedJsonWriteVerificationFailed(this.message);
   final String message;
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
@@ -36,7 +35,6 @@ JournalEntry _degradedVoiceEntry({
 );
 
 void main() {
-
   group('DegradedTranscriptPostSaveUiGates', () {
     test('focused surface only for degraded post-save', () {
       expect(
@@ -142,15 +140,11 @@ void main() {
   });
 
   group('Record screen degraded transcript post-save', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-      );
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );

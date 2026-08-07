@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -81,7 +80,6 @@ void _expectNoBannedCopy(Iterable<String> visible, List<String> banned) {
 }
 
 void main() {
-
   group('AnalysisFallbackPayoffEngine', () {
     test('returns null when analysis succeeded', () {
       final payoff = AnalysisFallbackPayoffEngine.build(
@@ -230,9 +228,7 @@ void main() {
   });
 
   group('RecordScreen analysis fallback UI', () {
-
-  late TestStorageSandbox sandbox;
-
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
       sandbox = TestStorageSandbox.create();

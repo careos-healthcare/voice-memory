@@ -137,7 +137,6 @@ void main() {
 
   tearDown(NotRelevantRecoveryAnalytics.resetForTest);
 
-
   tearDown(() => sandbox.dispose());
   group('NotRelevantRecoveryCopy', () {
     test('passes proof surface advice guard', () {

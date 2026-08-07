@@ -27,14 +27,18 @@ class LegacyOwnershipAssignmentService {
 
   Future<int> countAwaitingAssignment() async {
     final entries = await _recoveryJournal.loadAllIncludingTombstones();
-    return entries.where((e) => e.ownerKey == null || e.ownerKey!.isEmpty).length;
+    return entries
+        .where((e) => e.ownerKey == null || e.ownerKey!.isEmpty)
+        .length;
   }
 
   /// Idempotent import — each entry ID can move to [destinationOwnerKey] once.
   Future<LegacyOwnershipAssignmentResult> assignAllToAccount(
     String destinationOwnerKey,
   ) async {
-    final state = await _prefs.readJsonMap(LegacyOwnershipRecovery.assignmentStateKey) ?? {};
+    final state =
+        await _prefs.readJsonMap(LegacyOwnershipRecovery.assignmentStateKey) ??
+        {};
     final assignedIds = (state['assignedIds'] as List<dynamic>? ?? [])
         .whereType<String>()
         .toSet();
@@ -57,12 +61,16 @@ class LegacyOwnershipAssignmentService {
       state['completedAt'] = DateTime.now().toUtc().toIso8601String();
       await _prefs.writeJsonMap(LegacyOwnershipRecovery.quarantineCompleteKey, {
         'completedAt': state['completedAt'],
-        'note': 'Recovery journal eligible for secure removal after operator audit.',
+        'note':
+            'Recovery journal eligible for secure removal after operator audit.',
       });
     } else {
       state['status'] = 'in_progress';
     }
-    await _prefs.writeJsonMap(LegacyOwnershipRecovery.assignmentStateKey, state);
+    await _prefs.writeJsonMap(
+      LegacyOwnershipRecovery.assignmentStateKey,
+      state,
+    );
 
     return LegacyOwnershipAssignmentResult(
       importedCount: imported,

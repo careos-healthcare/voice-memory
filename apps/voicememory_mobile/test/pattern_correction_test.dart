@@ -141,7 +141,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('PatternCorrectionEngine', () {
     test('maps each reason to the specified actions', () {

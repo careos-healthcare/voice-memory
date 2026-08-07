@@ -105,7 +105,6 @@ void main() {
     );
   });
 
-
   tearDown(() => sandbox.dispose());
   group('ProConversionAuditCopy', () {
     test('core paid reason is defined', () {

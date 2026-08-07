@@ -57,10 +57,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 /// Root navigator for app-wide prompts (offline vault recovery, etc.).
 GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
 
-const instantCapturePaths = {
-  '/quick-capture',
-  '/quick-yes-capture',
-};
+const instantCapturePaths = {'/quick-capture', '/quick-yes-capture'};
 
 /// Converts custom-scheme widget and wearable launches into internal routes.
 String? resolveInstantCaptureDeepLink(Uri uri) {
