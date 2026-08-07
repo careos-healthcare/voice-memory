@@ -100,9 +100,7 @@ class HttpAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<ApiResult<void>> signOut({
-    NetworkCancelToken? cancelToken,
-  }) async {
+  Future<ApiResult<void>> signOut({NetworkCancelToken? cancelToken}) async {
     final responseResult = await _transport.post(
       '/api/auth/signout',
       cancelToken: cancelToken,

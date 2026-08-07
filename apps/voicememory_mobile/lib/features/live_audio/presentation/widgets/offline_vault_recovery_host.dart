@@ -17,7 +17,8 @@ class OfflineVaultRecoveryHost extends ConsumerStatefulWidget {
       _OfflineVaultRecoveryHostState();
 }
 
-class _OfflineVaultRecoveryHostState extends ConsumerState<OfflineVaultRecoveryHost>
+class _OfflineVaultRecoveryHostState
+    extends ConsumerState<OfflineVaultRecoveryHost>
     with WidgetsBindingObserver {
   @override
   void initState() {

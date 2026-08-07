@@ -11,7 +11,7 @@ class FakeSyncApiClient implements SyncApiClient {
   var syncPushCalls = 0;
 
   Future<ApiResult<Map<String, dynamic>>> Function(Map<String, dynamic> body)?
-      onSyncPush;
+  onSyncPush;
 
   @override
   Future<ApiResult<Map<String, dynamic>>> syncManifest() async {

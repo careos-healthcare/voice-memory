@@ -38,8 +38,6 @@ class AuthService {
 }
 
 /// Test helper — builds an [AuthService] backed by an overridden repository.
-AuthService createAuthServiceForTest({
-  required ProviderContainer container,
-}) {
+AuthService createAuthServiceForTest({required ProviderContainer container}) {
   return AuthService(container.read(authSessionProvider.notifier));
 }

@@ -18,11 +18,7 @@ class HttpPushApiClient implements PushApiClient {
   }) async {
     final responseResult = await _transport.post(
       '/api/push/register',
-      body: {
-        'deviceId': deviceId,
-        'platform': platform,
-        'fcmToken': fcmToken,
-      },
+      body: {'deviceId': deviceId, 'platform': platform, 'fcmToken': fcmToken},
       cancelToken: cancelToken,
     );
     return responseResult.when(

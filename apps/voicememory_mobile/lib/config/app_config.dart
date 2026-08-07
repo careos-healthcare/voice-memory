@@ -69,9 +69,7 @@ class AppConfig {
   /// Pins a stable test backend so [SyncRepository] and transport paths
   /// exercise real coordinator logic under `flutter test`.
   @visibleForTesting
-  static void configureForTest({
-    String apiBaseUrl = defaultDevBaseUrl,
-  }) {
+  static void configureForTest({String apiBaseUrl = defaultDevBaseUrl}) {
     _resolvedApiBase = apiBaseUrl;
     _backendConfigured = true;
     _apiResolutionInitialized = true;

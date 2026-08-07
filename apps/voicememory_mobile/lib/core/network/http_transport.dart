@@ -43,13 +43,10 @@ class HttpTransport {
     Map<String, String>? queryParameters,
     NetworkCancelToken? cancelToken,
   }) {
-    return _execute(
-      () {
-        final uri = _requireUri(path, queryParameters: queryParameters);
-        return _client.get(uri, headers: _mergeHeaders(headers));
-      },
-      cancelToken: cancelToken,
-    );
+    return _execute(() {
+      final uri = _requireUri(path, queryParameters: queryParameters);
+      return _client.get(uri, headers: _mergeHeaders(headers));
+    }, cancelToken: cancelToken);
   }
 
   Future<ApiResult<http.Response>> post(
@@ -58,22 +55,19 @@ class HttpTransport {
     Object? body,
     NetworkCancelToken? cancelToken,
   }) {
-    return _execute(
-      () {
-        final uri = _requireUri(path);
-        final encodedBody = switch (body) {
-          null => null,
-          String value => value,
-          _ => jsonEncode(body),
-        };
-        return _client.post(
-          uri,
-          headers: _mergeHeaders(headers),
-          body: encodedBody,
-        );
-      },
-      cancelToken: cancelToken,
-    );
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.post(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
   }
 
   Future<ApiResult<http.Response>> delete(
@@ -82,22 +76,19 @@ class HttpTransport {
     Object? body,
     NetworkCancelToken? cancelToken,
   }) {
-    return _execute(
-      () {
-        final uri = _requireUri(path);
-        final encodedBody = switch (body) {
-          null => null,
-          String value => value,
-          _ => jsonEncode(body),
-        };
-        return _client.delete(
-          uri,
-          headers: _mergeHeaders(headers),
-          body: encodedBody,
-        );
-      },
-      cancelToken: cancelToken,
-    );
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.delete(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
   }
 
   /// Multipart POST — supports path, bytes, or stream file parts with custom headers.
@@ -111,22 +102,19 @@ class HttpTransport {
     Map<String, String>? headers,
     NetworkCancelToken? cancelToken,
   }) {
-    return _execute(
-      () async {
-        final uri = _requireUri(path);
-        final request = http.MultipartRequest('POST', uri);
-        request.headers.addAll(_mergeMultipartHeaders(headers));
-        if (fields != null) {
-          request.fields.addAll(fields);
-        }
-        for (final part in files) {
-          request.files.add(await part.toMultipartFile());
-        }
-        final streamed = await _client.send(request);
-        return http.Response.fromStream(streamed);
-      },
-      cancelToken: cancelToken,
-    );
+    return _execute(() async {
+      final uri = _requireUri(path);
+      final request = http.MultipartRequest('POST', uri);
+      request.headers.addAll(_mergeMultipartHeaders(headers));
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+      for (final part in files) {
+        request.files.add(await part.toMultipartFile());
+      }
+      final streamed = await _client.send(request);
+      return http.Response.fromStream(streamed);
+    }, cancelToken: cancelToken);
   }
 
   ApiResult<T> decodeSuccess<T>(

@@ -114,9 +114,7 @@ Future<void> _initPipeline(_TranscriptionPipelineFakeApi api) async {
   final dir = Directory.systemTemp.createTempSync('vm_transcription_journal_');
   await AppServices.resetForTest(
     journalPath: '${dir.path}/journal.json',
-    networkOverrides: [
-      captureApiClientProvider.overrideWithValue(api),
-    ],
+    networkOverrides: [captureApiClientProvider.overrideWithValue(api)],
   );
   AppServices.instance.tokenCache.setToken(
     'test-capture-token',

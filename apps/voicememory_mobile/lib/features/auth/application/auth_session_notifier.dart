@@ -67,12 +67,16 @@ class AuthSessionNotifier extends Notifier<AuthSessionState> {
     result.when(
       success: (_) {
         state = state.copyWith(
-          phase: state.session == null ? AuthPhase.signedOut : AuthPhase.signedIn,
+          phase: state.session == null
+              ? AuthPhase.signedOut
+              : AuthPhase.signedIn,
         );
       },
       onFailure: (failure) {
         state = state.copyWith(
-          phase: state.session == null ? AuthPhase.signedOut : AuthPhase.signedIn,
+          phase: state.session == null
+              ? AuthPhase.signedOut
+              : AuthPhase.signedIn,
           lastFailure: failure,
         );
         throw failure.toApiException();

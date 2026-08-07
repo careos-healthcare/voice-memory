@@ -258,10 +258,10 @@ class AppServices {
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    s.recording = appProviderContainer.read(
-      recordingServiceProvider.notifier,
+    s.recording = appProviderContainer.read(recordingServiceProvider.notifier);
+    s.auth = AuthService(
+      appProviderContainer.read(authSessionProvider.notifier),
     );
-    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
 
     await s.auth.loadPersistedSession();
     final resumedSession = s.auth.currentSession;
@@ -435,7 +435,9 @@ class AppServices {
       tokenCache: s.tokenCache,
     );
     s.recording = RecordingService.create(testMode: true);
-    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
+    s.auth = AuthService(
+      appProviderContainer.read(authSessionProvider.notifier),
+    );
 
     const namespace = AccountNamespace.guest;
     await _openNamespacedStores(s, base, namespace);
@@ -835,9 +837,12 @@ class AppServices {
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    s.recording = recording ??
+    s.recording =
+        recording ??
         appProviderContainer.read(recordingServiceProvider.notifier);
-    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
+    s.auth = AuthService(
+      appProviderContainer.read(authSessionProvider.notifier),
+    );
     if (!skipRevenueCat) {
       await RevenueCatService.instance.initialize();
     }
@@ -969,10 +974,7 @@ class AppServices {
       keyStore: s.syncMasterKeyStore,
     );
     appProviderContainer.read(syncRepositoryHolderProvider).value =
-        SyncRepository(
-          coordinator: coordinator,
-          prefs: s.prefs,
-        );
+        SyncRepository(coordinator: coordinator, prefs: s.prefs);
   }
 
   static void _configureJournalSaveInterceptors(AppServices services) {

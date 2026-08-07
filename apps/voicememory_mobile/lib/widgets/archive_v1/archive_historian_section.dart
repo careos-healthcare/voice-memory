@@ -60,9 +60,7 @@ class _ArchiveHistorianSectionState extends State<ArchiveHistorianSection> {
 
     final service = ArchiveSynthesisService(
       store: ArchiveSynthesisStore(s.prefs),
-      repository: appProviderContainer.read(
-        archiveSynthesisRepositoryProvider,
-      ),
+      repository: appProviderContainer.read(archiveSynthesisRepositoryProvider),
       deviceIds: s.deviceIds,
     );
     final result = await service.loadHistorian(

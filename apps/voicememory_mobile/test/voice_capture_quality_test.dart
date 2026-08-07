@@ -27,8 +27,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
 class _VoicePipelineFakeApi implements CaptureApiClient {
-  _VoicePipelineFakeApi({this.analyzeError})
-    : transcript = _spokenTranscript;
+  _VoicePipelineFakeApi({this.analyzeError}) : transcript = _spokenTranscript;
 
   final String transcript;
   final Object? analyzeError;
@@ -123,9 +122,7 @@ void main() {
     await AppServices.resetForTest(
       journalPath:
           '${tempDir.path}/journal_${DateTime.now().microsecondsSinceEpoch}.json',
-      networkOverrides: [
-        captureApiClientProvider.overrideWithValue(api),
-      ],
+      networkOverrides: [captureApiClientProvider.overrideWithValue(api)],
     );
     AppServices.instance.tokenCache.setToken(
       'test-capture-token',

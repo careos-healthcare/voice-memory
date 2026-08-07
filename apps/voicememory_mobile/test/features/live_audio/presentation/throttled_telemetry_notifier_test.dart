@@ -70,10 +70,7 @@ void main() {
       'throttles rapid diagnostics to at most ten UI updates per second',
       () async {
         var notifyCount = 0;
-        container.listen(
-          throttledTelemetryProvider,
-          (_, _) => notifyCount++,
-        );
+        container.listen(throttledTelemetryProvider, (_, _) => notifyCount++);
 
         for (var i = 0; i < 50; i++) {
           diagnosticsController.add(snapshot(i));

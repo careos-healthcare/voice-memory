@@ -16,7 +16,9 @@ class AccountRepository {
   final SessionCookieSource _sessionCookies;
   final NetworkRequestScope _requestScope;
 
-  Future<ApiResult<void>> deleteAccount({NetworkCancelToken? cancelToken}) async {
+  Future<ApiResult<void>> deleteAccount({
+    NetworkCancelToken? cancelToken,
+  }) async {
     final token = cancelToken ?? _requestScope.register();
     final owned = cancelToken == null;
     try {

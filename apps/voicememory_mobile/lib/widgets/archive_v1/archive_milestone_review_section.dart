@@ -61,9 +61,7 @@ class _ArchiveMilestoneReviewSectionState
 
     final service = ArchiveSynthesisService(
       store: ArchiveSynthesisStore(s.prefs),
-      repository: appProviderContainer.read(
-        archiveSynthesisRepositoryProvider,
-      ),
+      repository: appProviderContainer.read(archiveSynthesisRepositoryProvider),
       deviceIds: s.deviceIds,
     );
     final reviews = await service.loadMilestoneReviews(

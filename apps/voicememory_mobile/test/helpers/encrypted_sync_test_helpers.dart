@@ -55,10 +55,9 @@ class RecordingSyncApiClient implements SyncApiClient {
     _pullEntries = List<JournalEntry>.from(entries);
   }
 
-  List<String> get lastPushedEntryIds =>
-      pushedSnapshots.isEmpty
-          ? const []
-          : pushedSnapshots.last.map((entry) => entry.id).toList();
+  List<String> get lastPushedEntryIds => pushedSnapshots.isEmpty
+      ? const []
+      : pushedSnapshots.last.map((entry) => entry.id).toList();
 
   @override
   Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
@@ -72,7 +71,10 @@ class RecordingSyncApiClient implements SyncApiClient {
       return const ApiSuccess({'blobs': []});
     }
     final blob = await _encryptedBlobFor(_pullEntries);
-    return ApiSuccess({'blobs': [blob], 'latestSequence': 1});
+    return ApiSuccess({
+      'blobs': [blob],
+      'latestSequence': 1,
+    });
   }
 
   @override

@@ -34,10 +34,7 @@ class HttpBillingApiClient implements BillingApiClient {
         if (response.statusCode < 200 || response.statusCode >= 300) {
           return ApiSuccess(PremiumEntitlements.free());
         }
-        return _transport.decodeSuccess(
-          response,
-          PremiumEntitlements.fromJson,
-        );
+        return _transport.decodeSuccess(response, PremiumEntitlements.fromJson);
       },
       onFailure: ApiFailureResult.new,
     );

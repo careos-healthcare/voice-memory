@@ -28,7 +28,8 @@ class _RecordingStatusCard extends ConsumerWidget {
     final secs = seconds % 60;
     final timer =
         '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-    final semanticsLabel = l10n?.recordingInProgressSeconds(seconds) ??
+    final semanticsLabel =
+        l10n?.recordingInProgressSeconds(seconds) ??
         _recordingInProgressSecondsFallback(seconds);
     final statusText = stageLabel.isEmpty
         ? (l10n?.recordingStatus ?? _recordingStatusFallback)
@@ -59,10 +60,7 @@ class _RecordingStatusCard extends ConsumerWidget {
           children: [
             Icon(Icons.mic, size: 44, color: VoiceMemoryColors.primaryIndigo),
             const SizedBox(height: 14),
-            RecordingTranscriptionView(
-              text: statusText,
-              isLive: true,
-            ),
+            RecordingTranscriptionView(text: statusText, isLive: true),
             const SizedBox(height: 8),
             Text(
               timer,

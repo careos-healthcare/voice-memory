@@ -31,7 +31,8 @@ class HttpArchiveSynthesisApiClient implements ArchiveSynthesisApiClient {
         'monthKey': monthKey,
         'userId': userId,
         'pack': pack,
-        if (milestoneThreshold != null) 'milestoneThreshold': milestoneThreshold,
+        if (milestoneThreshold != null)
+          'milestoneThreshold': milestoneThreshold,
       },
       cancelToken: cancelToken,
     );

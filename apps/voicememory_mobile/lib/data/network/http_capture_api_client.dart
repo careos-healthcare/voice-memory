@@ -40,9 +40,7 @@ class HttpCaptureApiClient implements CaptureApiClient {
     return responseResult.when(
       success: (response) {
         if (response.statusCode < 200 || response.statusCode >= 300) {
-          return ApiFailureResult(
-            ApiFailureMapper.fromResponse(response),
-          );
+          return ApiFailureResult(ApiFailureMapper.fromResponse(response));
         }
         return _transport.decodeSuccess(response, (body) {
           if (body['via'] == 'session') {
@@ -56,7 +54,8 @@ class HttpCaptureApiClient implements CaptureApiClient {
           }
           return AttestResult.capture(
             token: token,
-            expiresInSeconds: (body['expiresInSeconds'] as num?)?.toInt() ?? 3600,
+            expiresInSeconds:
+                (body['expiresInSeconds'] as num?)?.toInt() ?? 3600,
           );
         });
       },
@@ -89,10 +88,7 @@ class HttpCaptureApiClient implements CaptureApiClient {
     final responseResult = await _transport.post(
       '/api/analyze',
       headers: headers,
-      body: {
-        'transcript': prepared,
-        'priorEvidence': priorEvidence,
-      },
+      body: {'transcript': prepared, 'priorEvidence': priorEvidence},
       cancelToken: cancelToken,
     );
 
@@ -260,9 +256,7 @@ class HttpCaptureApiClient implements CaptureApiClient {
         try {
           final body = jsonDecode(response.body) as Map<String, dynamic>;
           if (body['ok'] != true) {
-            return ApiFailureResult(
-              ApiFailureMapper.fromResponse(response),
-            );
+            return ApiFailureResult(ApiFailureMapper.fromResponse(response));
           }
           return ApiSuccess(VaultRecoveryServerResult.fromJson(body));
         } on FormatException catch (error) {

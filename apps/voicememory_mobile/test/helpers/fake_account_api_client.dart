@@ -10,7 +10,9 @@ class FakeAccountApiClient implements AccountApiClient {
   ApiFailure? deleteAccountFailure;
 
   @override
-  Future<ApiResult<void>> deleteAccount({NetworkCancelToken? cancelToken}) async {
+  Future<ApiResult<void>> deleteAccount({
+    NetworkCancelToken? cancelToken,
+  }) async {
     deleteAccountCalls++;
     final failure = deleteAccountFailure;
     if (failure != null) {

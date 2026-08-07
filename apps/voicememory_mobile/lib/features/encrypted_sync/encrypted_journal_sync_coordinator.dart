@@ -43,7 +43,9 @@ class EncryptedJournalSyncCoordinator {
   final EncryptedSyncService _encrypted;
   final LegacyPlaintextMigrationService _legacyMigration;
 
-  Future<ApiResult<({int pushed, int pulled, int blocked, bool migratedLegacy})>>
+  Future<
+    ApiResult<({int pushed, int pulled, int blocked, bool migratedLegacy})>
+  >
   syncNow() async {
     var migratedLegacy = false;
     try {

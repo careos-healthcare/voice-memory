@@ -35,24 +35,25 @@ import '../../storage/secure_storage.dart';
 import '../../storage/session_cookie_store.dart';
 
 final secureStorageProvider = Provider<SecureStorageService>(
-  (ref) => throw UnimplementedError('Override secureStorageProvider at bootstrap'),
+  (ref) =>
+      throw UnimplementedError('Override secureStorageProvider at bootstrap'),
 );
 
 final sessionCookieStoreProvider = Provider<SessionCookieStore>(
-  (ref) => throw UnimplementedError('Override sessionCookieStoreProvider at bootstrap'),
+  (ref) => throw UnimplementedError(
+    'Override sessionCookieStoreProvider at bootstrap',
+  ),
 );
 
 final sessionCookieSourceProvider = Provider<SessionCookieSource>(
-  (ref) => throw UnimplementedError('Override sessionCookieSourceProvider at bootstrap'),
+  (ref) => throw UnimplementedError(
+    'Override sessionCookieSourceProvider at bootstrap',
+  ),
 );
 
-final httpClientProvider = Provider<http.Client>(
-  (ref) => http.Client(),
-);
+final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
-final apiBaseUrlProvider = Provider<String>(
-  (ref) => AppConfig.apiBaseUrl,
-);
+final apiBaseUrlProvider = Provider<String>((ref) => AppConfig.apiBaseUrl);
 
 final networkRequestScopeProvider = Provider<NetworkRequestScope>((ref) {
   final scope = NetworkRequestScope();
@@ -103,7 +104,8 @@ final liveAudioApiClientProvider = Provider<LiveAudioApiClient>(
 );
 
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => throw UnimplementedError('Override authRepositoryProvider at bootstrap'),
+  (ref) =>
+      throw UnimplementedError('Override authRepositoryProvider at bootstrap'),
 );
 
 final billingRepositoryProvider = Provider<BillingRepository>(
@@ -200,8 +202,7 @@ ProviderContainer createNetworkProviderContainer({
       authRepositoryProvider.overrideWithValue(authRepository),
       if (requestScope != null)
         networkRequestScopeProvider.overrideWithValue(requestScope),
-      if (httpClient != null)
-        httpClientProvider.overrideWithValue(httpClient),
+      if (httpClient != null) httpClientProvider.overrideWithValue(httpClient),
       if (apiBaseUrl != null) apiBaseUrlProvider.overrideWithValue(apiBaseUrl),
       if (storeBilling != null)
         storeBillingPortProvider.overrideWithValue(storeBilling),

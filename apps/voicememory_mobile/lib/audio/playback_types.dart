@@ -1,16 +1,6 @@
-enum PlaybackPhase {
-  idle,
-  preparing,
-  playing,
-  paused,
-  error,
-}
+enum PlaybackPhase { idle, preparing, playing, paused, error }
 
-enum PlaybackSourceKind {
-  none,
-  file,
-  livePcm,
-}
+enum PlaybackSourceKind { none, file, livePcm }
 
 /// Immutable playback session state — updated atomically by [PlaybackService].
 class PlaybackState {

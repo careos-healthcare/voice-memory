@@ -110,10 +110,7 @@ void main() {
       failingContainer.read(syncProvider).lastFailure,
       isA<ApiFailureAuthRequired>(),
     );
-    expect(
-      result.message,
-      'Sign in to sync your archive to the server.',
-    );
+    expect(result.message, 'Sign in to sync your archive to the server.');
   });
 }
 
@@ -163,9 +160,7 @@ class _AuthRequiredSyncApi implements SyncApiClient {
   Future<ApiResult<Map<String, dynamic>>> syncPush(
     Map<String, dynamic> body,
   ) async {
-    return const ApiFailureResult(
-      ApiFailureAuthRequired('Sign in required.'),
-    );
+    return const ApiFailureResult(ApiFailureAuthRequired('Sign in required.'));
   }
 
   @override

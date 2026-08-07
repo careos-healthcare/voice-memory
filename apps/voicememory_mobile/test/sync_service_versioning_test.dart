@@ -175,7 +175,10 @@ void main() {
       final result = await (await h.syncService()).syncNow();
 
       expect(h.syncApi.pushedSnapshots.single, hasLength(1));
-      expect(h.syncApi.pushedSnapshots.single.single.transcript, 'edited transcript');
+      expect(
+        h.syncApi.pushedSnapshots.single.single.transcript,
+        'edited transcript',
+      );
       expect(h.syncApi.pushedSnapshots.single.single.revision, 2);
       expect(result.pushed, 1);
       expect(result.rejected, 0);
@@ -245,11 +248,9 @@ void main() {
       final h = await _newHarness();
       final ts = DateTime.utc(2026, 3, 1);
       await h.journal.save(
-        _newEntry(id: 'a').copyWith(
-          updatedAt: ts,
-          revision: 5,
-          changeId: 'aaa000',
-        ),
+        _newEntry(
+          id: 'a',
+        ).copyWith(updatedAt: ts, revision: 5, changeId: 'aaa000'),
       );
       final local = (await h.journal.getById('a'))!;
 
@@ -385,7 +386,9 @@ void main() {
       await h.journal.save(_newEntry(id: 'old-acked'));
       await h.journal.delete('old-acked');
       await h.journal.markSynced('old-acked');
-      final oldAcked = (await h.journal.getByIdIncludingTombstones('old-acked'))!;
+      final oldAcked = (await h.journal.getByIdIncludingTombstones(
+        'old-acked',
+      ))!;
       await h.journal.save(
         oldAcked.copyWith(
           deletedAt: DateTime.now().toUtc().subtract(const Duration(days: 40)),

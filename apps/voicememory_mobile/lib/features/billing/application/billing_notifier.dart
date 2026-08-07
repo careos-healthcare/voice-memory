@@ -94,10 +94,7 @@ class BillingNotifier extends Notifier<BillingState> {
         store: storeEnt,
         revenueCatConfigured: _revenueCat.isConfigured,
       );
-      state = state.copyWith(
-        entitlements: merged,
-        phase: BillingPhase.ready,
-      );
+      state = state.copyWith(entitlements: merged, phase: BillingPhase.ready);
       await _persistEntitlements(merged);
       return merged;
     } catch (e, st) {
@@ -150,7 +147,9 @@ class BillingNotifier extends Notifier<BillingState> {
   }
 
   void _logFailure(String operation, ApiFailure failure) {
-    debugPrint('Billing: $operation failed — ${failure.code}: ${failure.message}');
+    debugPrint(
+      'Billing: $operation failed — ${failure.code}: ${failure.message}',
+    );
   }
 }
 

@@ -179,10 +179,7 @@ class PlaybackService extends Notifier<PlaybackState> {
       await _player!.play(DeviceFileSource(trimmed));
       state = state.copyWith(phase: PlaybackPhase.playing);
     } catch (error) {
-      state = state.copyWith(
-        phase: PlaybackPhase.error,
-        error: '$error',
-      );
+      state = state.copyWith(phase: PlaybackPhase.error, error: '$error');
       rethrow;
     }
   }
@@ -269,10 +266,7 @@ class PlaybackService extends Notifier<PlaybackState> {
       }
     } catch (error) {
       LiveAudioPipelineLog.failure('pcm24_playback', error);
-      state = state.copyWith(
-        phase: PlaybackPhase.error,
-        error: '$error',
-      );
+      state = state.copyWith(phase: PlaybackPhase.error, error: '$error');
     } finally {
       _pcmQueue.setPlaying(false);
       _pcmDrainInFlight = false;

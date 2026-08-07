@@ -364,7 +364,9 @@ class CapturePipelineService {
 
     final reason = CapturePipelineApiErrors.failureReason(error);
     TranscriptionLog.failed(reason: reason);
-    final invalidMessage = CapturePipelineApiErrors.invalidResponseMessage(error);
+    final invalidMessage = CapturePipelineApiErrors.invalidResponseMessage(
+      error,
+    );
     if (invalidMessage != null) {
       RecordPipelineLog.apiGuardBlocked(
         operation: 'response',

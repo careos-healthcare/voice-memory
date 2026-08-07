@@ -52,8 +52,7 @@ class LegacyPlaintextMigrationService {
     if (legacyResult case ApiFailureResult(:final failure)) {
       throw failure.toApiException();
     }
-    final legacyRemote =
-        (legacyResult as ApiSuccess<List<JournalEntry>>).value;
+    final legacyRemote = (legacyResult as ApiSuccess<List<JournalEntry>>).value;
     state['legacyRemoteCount'] = legacyRemote.length;
 
     // 2. Validate shape locally.

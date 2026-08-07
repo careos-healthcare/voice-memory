@@ -108,9 +108,7 @@ Future<_ConsentGateFakeApi> _initPipeline({
   final dir = Directory.systemTemp.createTempSync('vm_consent_gate_journal_');
   await AppServices.resetForTest(
     journalPath: '${dir.path}/journal.json',
-    networkOverrides: [
-      captureApiClientProvider.overrideWithValue(api),
-    ],
+    networkOverrides: [captureApiClientProvider.overrideWithValue(api)],
     grantRemoteProcessingConsentByDefault: grantConsentByDefault,
   );
   AppServices.instance.tokenCache.setToken(

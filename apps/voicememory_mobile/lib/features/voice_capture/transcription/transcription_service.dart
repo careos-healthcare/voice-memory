@@ -195,8 +195,9 @@ abstract class TranscriptionService {
     var token = await ensureCaptureToken();
     var result = await requestTranscript(token);
 
-    if (result case ApiFailureResult(:final failure)
-        when failure is ApiFailureAuthRequired) {
+    if (result case ApiFailureResult(
+      :final failure,
+    ) when failure is ApiFailureAuthRequired) {
       token = await ensureCaptureToken(forceRefresh: true);
       result = await requestTranscript(token);
     }

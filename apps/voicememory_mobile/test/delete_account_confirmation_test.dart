@@ -130,8 +130,9 @@ void main() {
       // `MaterialApp` doesn't provide. This test only asserts the
       // confirmation gate calls through to the API — not the post-success
       // navigation, which is exercised by the app's real router elsewhere.
-      fakeAccountApi.deleteAccountFailure =
-          const ApiFailureOffline('network unavailable');
+      fakeAccountApi.deleteAccountFailure = const ApiFailureOffline(
+        'network unavailable',
+      );
       await pumpScreen(tester);
       await openConfirmDialog(tester);
 
@@ -352,8 +353,9 @@ void main() {
     testWidgets('failed deletion stays explicit and allows retry', (
       tester,
     ) async {
-      fakeAccountApi.deleteAccountFailure =
-          const ApiFailureOffline('network unavailable');
+      fakeAccountApi.deleteAccountFailure = const ApiFailureOffline(
+        'network unavailable',
+      );
       await pumpScreen(tester);
       await openConfirmDialog(tester);
       await tester.tap(find.byKey(const Key('delete_account_confirm_accept')));

@@ -31,9 +31,7 @@ BillingService createBillingServiceForTest({
       billingRepositoryProvider.overrideWithValue(
         repository ??
             BillingRepository(
-              api: HttpBillingApiClient(
-                HttpTransport(client: client),
-              ),
+              api: HttpBillingApiClient(HttpTransport(client: client)),
               requestScope: scope,
             ),
       ),

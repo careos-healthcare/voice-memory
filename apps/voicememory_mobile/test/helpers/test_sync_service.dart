@@ -25,14 +25,10 @@ Future<SyncService> createTestSyncService({
     journal: journal,
     prefs: prefs,
     deviceIds: deviceIds ?? TestDeviceIdStore(),
-    keyStore:
-        keyStore ?? InMemorySyncMasterKeyStore(),
+    keyStore: keyStore ?? InMemorySyncMasterKeyStore(),
   );
   final holder = SyncRepositoryHolder()
-    ..value = SyncRepository(
-      coordinator: coordinator,
-      prefs: prefs,
-    );
+    ..value = SyncRepository(coordinator: coordinator, prefs: prefs);
   final container = ProviderContainer(
     overrides: [syncRepositoryHolderProvider.overrideWithValue(holder)],
   );

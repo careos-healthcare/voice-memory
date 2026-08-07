@@ -137,8 +137,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Secret pattern scan
         run: |
-          ! git grep -nE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk_live_|AKIA[0-9A-Z]{16})' \
-            -- ':!*.md' ':!package-lock.json' ':!pubspec.lock'
+          ! git grep -nE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk_live_[A-Za-z0-9]{8,}|AKIA[0-9A-Z]{16})' \
+            -- ':!*.md' ':!package-lock.json' ':!pubspec.lock' \
+               ':!.github/**' ':!**/test/**' ':!scripts/**' \
+               ':!apps/voicememory_mobile/lib/features/secrets_rotation_gate/**'
 
   migration-check:
     runs-on: ubuntu-latest

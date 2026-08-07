@@ -22,9 +22,11 @@ void main() {
 
     test('maps HTML responses to invalid response', () {
       final failure = ApiFailureMapper.fromResponse(
-        http.Response('<html><body>nginx</body></html>', 200, headers: {
-          'content-type': 'text/html',
-        }),
+        http.Response(
+          '<html><body>nginx</body></html>',
+          200,
+          headers: {'content-type': 'text/html'},
+        ),
       );
       expect(failure, isA<ApiFailureInvalidResponse>());
     });

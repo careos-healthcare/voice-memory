@@ -69,9 +69,7 @@ class _ArchiveMonthlyReviewSectionState
 
     final service = ArchiveSynthesisService(
       store: ArchiveSynthesisStore(s.prefs),
-      repository: appProviderContainer.read(
-        archiveSynthesisRepositoryProvider,
-      ),
+      repository: appProviderContainer.read(archiveSynthesisRepositoryProvider),
       deviceIds: s.deviceIds,
     );
     final userId = s.auth.currentSession?.userId;

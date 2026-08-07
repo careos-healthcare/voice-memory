@@ -59,13 +59,10 @@ class FakeAuthApiClient implements AuthApiClient {
   @override
   Future<ApiResult<UserSession?>> getSession({
     NetworkCancelToken? cancelToken,
-  }) async =>
-      ApiSuccess(session);
+  }) async => ApiSuccess(session);
 
   @override
-  Future<ApiResult<void>> signOut({
-    NetworkCancelToken? cancelToken,
-  }) async {
+  Future<ApiResult<void>> signOut({NetworkCancelToken? cancelToken}) async {
     signOutCalls++;
     session = null;
     if (signOutError != null) {
@@ -82,8 +79,7 @@ AuthService createTestAuthService({
 }) {
   final secureStorage = secure ?? _MemorySecureStorage();
   final cookies =
-      sessionCookies ??
-      SessionCookieSource(SessionCookieStore(secureStorage));
+      sessionCookies ?? SessionCookieSource(SessionCookieStore(secureStorage));
   final repository = AuthRepository(
     api: api ?? FakeAuthApiClient(),
     sessionCookies: cookies,

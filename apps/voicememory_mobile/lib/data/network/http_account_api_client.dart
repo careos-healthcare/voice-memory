@@ -11,7 +11,9 @@ class HttpAccountApiClient implements AccountApiClient {
   final HttpTransport _transport;
 
   @override
-  Future<ApiResult<void>> deleteAccount({NetworkCancelToken? cancelToken}) async {
+  Future<ApiResult<void>> deleteAccount({
+    NetworkCancelToken? cancelToken,
+  }) async {
     final responseResult = await _transport.post(
       '/api/account/delete',
       body: {'confirm': true},

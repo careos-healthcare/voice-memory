@@ -92,9 +92,7 @@ class ThrottledTelemetryNotifier extends Notifier<ThrottledTelemetryState> {
       _initTelemetryLoop();
       ref.onDispose(_tearDown);
     }
-    return ThrottledTelemetryState(
-      engineState: _captureService.captureState,
-    );
+    return ThrottledTelemetryState(engineState: _captureService.captureState);
   }
 
   void _initTelemetryLoop() {

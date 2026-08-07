@@ -60,7 +60,10 @@ void main() {
     );
     expect(session.userId, 'u1');
     expect(container.read(authSessionProvider).phase, AuthPhase.signedIn);
-    expect(container.read(authSessionProvider).session?.email, 'person@example.com');
+    expect(
+      container.read(authSessionProvider).session?.email,
+      'person@example.com',
+    );
   });
 
   test('signOut clears session and records server failure', () async {

@@ -16,13 +16,9 @@ abstract class AuthApiClient {
     NetworkCancelToken? cancelToken,
   });
 
-  Future<ApiResult<UserSession?>> getSession({
-    NetworkCancelToken? cancelToken,
-  });
+  Future<ApiResult<UserSession?>> getSession({NetworkCancelToken? cancelToken});
 
-  Future<ApiResult<void>> signOut({
-    NetworkCancelToken? cancelToken,
-  });
+  Future<ApiResult<void>> signOut({NetworkCancelToken? cancelToken});
 }
 
 class AuthVerifyPayload {

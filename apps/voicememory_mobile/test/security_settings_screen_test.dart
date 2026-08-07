@@ -194,7 +194,10 @@ void main() {
     });
 
     testWidgets('signed in: Signed in with sign-out only', (tester) async {
-      fakeAuth.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      fakeAuth.session = const UserSession(
+        userId: 'u1',
+        email: 'p@example.com',
+      );
       await auth.refreshSession();
       await pumpSecurity(tester);
 
@@ -207,7 +210,10 @@ void main() {
     });
 
     testWidgets('sign out flips the status to Not signed in', (tester) async {
-      fakeAuth.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      fakeAuth.session = const UserSession(
+        userId: 'u1',
+        email: 'p@example.com',
+      );
       await auth.refreshSession();
       await pumpSecurity(tester);
 

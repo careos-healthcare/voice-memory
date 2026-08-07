@@ -8921,9 +8921,7 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
                                 ),
                         ),
                         if (ui == RecordUiState.recording) ...[
-                          _RecordingStatusCard(
-                            stageLabel: stageLabel,
-                          ),
+                          _RecordingStatusCard(stageLabel: stageLabel),
                           if (_selectedPromptLine != null) ...[
                             const SizedBox(height: 12),
                             Text(

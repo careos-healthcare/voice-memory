@@ -30,8 +30,7 @@ final class ApiFailureOffline extends ApiFailure {
 
   @override
   String get message =>
-      detail ??
-      'You appear to be offline. Your reflection is saved locally.';
+      detail ?? 'You appear to be offline. Your reflection is saved locally.';
 
   @override
   ApiException toApiException() => NetworkOfflineException(message);
@@ -126,11 +125,8 @@ final class ApiFailureInvalidResponse extends ApiFailure {
   int? get statusCode => responseCode;
 
   @override
-  ApiException toApiException() => ApiException(
-    message,
-    statusCode: responseCode,
-    code: serverCode,
-  );
+  ApiException toApiException() =>
+      ApiException(message, statusCode: responseCode, code: serverCode);
 }
 
 final class ApiFailureServer extends ApiFailure {
@@ -152,11 +148,8 @@ final class ApiFailureServer extends ApiFailure {
   String get code => serverCode ?? 'HTTP_$statusCode';
 
   @override
-  ApiException toApiException() => ApiException(
-    message,
-    statusCode: statusCode,
-    code: serverCode,
-  );
+  ApiException toApiException() =>
+      ApiException(message, statusCode: statusCode, code: serverCode);
 }
 
 final class ApiFailureUnknown extends ApiFailure {
@@ -174,8 +167,7 @@ final class ApiFailureUnknown extends ApiFailure {
   String get message => cause.toString();
 
   @override
-  ApiException toApiException() =>
-      ApiException(message, code: code);
+  ApiException toApiException() => ApiException(message, code: code);
 }
 
 final class ApiFailureCancelled extends ApiFailure {
@@ -191,6 +183,5 @@ final class ApiFailureCancelled extends ApiFailure {
   String get message => 'Request was cancelled.';
 
   @override
-  ApiException toApiException() =>
-      ApiException(message, code: code);
+  ApiException toApiException() => ApiException(message, code: code);
 }

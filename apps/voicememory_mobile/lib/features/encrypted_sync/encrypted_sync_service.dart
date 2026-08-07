@@ -194,7 +194,10 @@ class EncryptedSyncService {
     }
     final blobs = pullBody['blobs'];
     if (blobs is! List) {
-      return ApiSuccess((blobs: <Map<String, dynamic>>[], latestSequence: null));
+      return ApiSuccess((
+        blobs: <Map<String, dynamic>>[],
+        latestSequence: null,
+      ));
     }
     return ApiSuccess((
       blobs: blobs
