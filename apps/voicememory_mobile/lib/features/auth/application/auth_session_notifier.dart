@@ -104,6 +104,7 @@ class AuthSessionNotifier extends Notifier<AuthSessionState> {
   }
 
   Future<void> signOut() async {
+    ref.read(networkRequestScopeProvider).cancelAll();
     state = state.copyWith(phase: AuthPhase.loading, clearLastFailure: true);
     final result = await _repository.signOut();
     final serverFailed = result.isFailure;

@@ -9,6 +9,7 @@ import '../../security/api_response_safety.dart';
 import 'api_failure.dart';
 import 'api_failure_mapper.dart';
 import 'api_result.dart';
+import 'network_cancel_token.dart';
 import 'session_cookie_source.dart';
 
 /// Low-level JSON HTTP transport — normalizes connectivity and response failures.
@@ -27,6 +28,9 @@ class HttpTransport {
   final SessionCookieSource? _sessionCookies;
   final Duration timeout;
 
+  /// Shared client for legacy [ApiClient] multipart routes during migration.
+  http.Client get client => _client;
+
   static const jsonHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
@@ -36,51 +40,63 @@ class HttpTransport {
     String path, {
     Map<String, String>? headers,
     Map<String, String>? queryParameters,
+    NetworkCancelToken? cancelToken,
   }) {
-    return _execute(() {
-      final uri = _requireUri(path, queryParameters: queryParameters);
-      return _client.get(uri, headers: _mergeHeaders(headers));
-    });
+    return _execute(
+      () {
+        final uri = _requireUri(path, queryParameters: queryParameters);
+        return _client.get(uri, headers: _mergeHeaders(headers));
+      },
+      cancelToken: cancelToken,
+    );
   }
 
   Future<ApiResult<http.Response>> post(
     String path, {
     Map<String, String>? headers,
     Object? body,
+    NetworkCancelToken? cancelToken,
   }) {
-    return _execute(() {
-      final uri = _requireUri(path);
-      final encodedBody = switch (body) {
-        null => null,
-        String value => value,
-        _ => jsonEncode(body),
-      };
-      return _client.post(
-        uri,
-        headers: _mergeHeaders(headers),
-        body: encodedBody,
-      );
-    });
+    return _execute(
+      () {
+        final uri = _requireUri(path);
+        final encodedBody = switch (body) {
+          null => null,
+          String value => value,
+          _ => jsonEncode(body),
+        };
+        return _client.post(
+          uri,
+          headers: _mergeHeaders(headers),
+          body: encodedBody,
+        );
+      },
+      cancelToken: cancelToken,
+    );
   }
 
   Future<ApiResult<http.Response>> delete(
     String path, {
     Map<String, String>? headers,
     Object? body,
+    NetworkCancelToken? cancelToken,
   }) {
-    return _execute(() {
-      final uri = _requireUri(path);
-      final encodedBody = switch (body) {
-        null => null,
-        String value => value,
-        _ => jsonEncode(body),
-      };
-      return _client.delete(
-        uri,
-        headers: _mergeHeaders(headers),
-        body: encodedBody,
-      );
-    });
+    return _execute(
+      () {
+        final uri = _requireUri(path);
+        final encodedBody = switch (body) {
+          null => null,
+          String value => value,
+          _ => jsonEncode(body),
+        };
+        return _client.delete(
+          uri,
+          headers: _mergeHeaders(headers),
+          body: encodedBody,
+        );
+      },
+      cancelToken: cancelToken,
+    );
   }
 
   ApiResult<T> decodeSuccess<T>(
@@ -143,10 +159,17 @@ class HttpTransport {
   }
 
   Future<ApiResult<http.Response>> _execute(
-    Future<http.Response> Function() request,
-  ) async {
+    Future<http.Response> Function() request, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    if (cancelToken?.isCancelled ?? false) {
+      return const ApiFailureResult(ApiFailureCancelled());
+    }
     try {
       final response = await request().timeout(timeout);
+      if (cancelToken?.isCancelled ?? false) {
+        return const ApiFailureResult(ApiFailureCancelled());
+      }
       return ApiSuccess(response);
     } on ApiFailure catch (failure) {
       return ApiFailureResult(failure);

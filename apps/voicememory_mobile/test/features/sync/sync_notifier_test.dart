@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure.dart';
 import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
 import 'package:voicememory_mobile/data/repositories/sync_repository.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
@@ -80,6 +82,39 @@ void main() {
     expect(container.read(syncProvider).phase, SyncPhase.completed);
     expect(container.read(syncProvider).lastResult?.pushed, 1);
   });
+
+  test('syncNow records typed failure in immutable sync state', () async {
+    final holder = SyncRepositoryHolder()
+      ..value = SyncRepository(
+        coordinator: EncryptedJournalSyncCoordinator(
+          syncApi: ApiClientSyncAdapter(_AuthRequiredSyncApi()),
+          api: _AuthRequiredSyncApi(),
+          journal: journal,
+          prefs: prefs,
+          deviceIds: _FakeDeviceIds(),
+          keyStore: InMemorySyncMasterKeyStore(),
+        ),
+        prefs: prefs,
+      );
+    final failingContainer = ProviderContainer(
+      overrides: [syncRepositoryHolderProvider.overrideWithValue(holder)],
+    );
+    addTearDown(failingContainer.dispose);
+
+    final notifier = failingContainer.read(syncProvider.notifier);
+    final result = await notifier.syncNow();
+
+    expect(result.cloudSyncSucceeded, isFalse);
+    expect(failingContainer.read(syncProvider).phase, SyncPhase.failed);
+    expect(
+      failingContainer.read(syncProvider).lastFailure,
+      isA<ApiFailureAuthRequired>(),
+    );
+    expect(
+      result.message,
+      'Sign in to sync your archive to the server.',
+    );
+  });
 }
 
 class _NoopSyncApi extends ApiClient {
@@ -95,6 +130,15 @@ class _NoopSyncApi extends ApiClient {
 
   @override
   Future<Map<String, dynamic>> syncPull() async => {'blobs': []};
+}
+
+class _AuthRequiredSyncApi extends ApiClient {
+  _AuthRequiredSyncApi() : super(baseUrl: 'http://test.invalid');
+
+  @override
+  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
+    throw AuthRequiredException('Sign in required.');
+  }
 }
 
 class _FakeDeviceIds extends DeviceIdStore {

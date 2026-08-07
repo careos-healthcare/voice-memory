@@ -58,7 +58,8 @@ void main() {
       ),
     );
 
-    await service.syncEncryptedJournal();
+    final result = await service.syncEncryptedJournal();
+    expect(result.isSuccess, isTrue);
 
     expect(api.syncChangesCalls, 1);
     expect(api.lastSince, 1);

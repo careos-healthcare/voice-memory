@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_unavailable_state.dart';
@@ -200,10 +200,9 @@ void main() {
       );
       store = _FakeStoreBilling(configured: true);
       restoreFlow = RestorePurchasesFlow(
-        billing: BillingService(
-          ApiClient(baseUrl: 'http://test.invalid'),
-          await EntitlementCache.open('${tempDir.path}/entitlements.json'),
-          store,
+        billing: createBillingServiceForTest(
+          cache: await EntitlementCache.open('${tempDir.path}/entitlements.json'),
+          revenueCat: store,
         ),
         isBillingConfigured: () => true,
       );

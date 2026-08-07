@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/billing/billing_async_guard.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_feedback.dart';
@@ -70,11 +69,7 @@ Future<({BillingService billing, EntitlementCache cache, Directory dir})>
 _openBillingHarness(_FakeStoreBilling store) async {
   final dir = await Directory.systemTemp.createTemp('restore_flow_test');
   final cache = await EntitlementCache.open('${dir.path}/entitlements.json');
-  final billing = BillingService(
-    ApiClient(baseUrl: 'http://test.invalid'),
-    cache,
-    store,
-  );
+  final billing = createBillingServiceForTest(cache: cache, revenueCat: store);
   return (billing: billing, cache: cache, dir: dir);
 }
 
@@ -248,11 +243,7 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('billing_restore_test');
       cache = await EntitlementCache.open('${tempDir.path}/entitlements.json');
       store = _FakeStoreBilling();
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
     });
 
     tearDown(() async {
@@ -266,11 +257,7 @@ void main() {
         restoreResult: _proEntitlements(),
         refreshResult: _proEntitlements(),
       );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 
@@ -286,11 +273,7 @@ void main() {
         restoreResult: PremiumEntitlements.free(),
         refreshResult: PremiumEntitlements.free(),
       );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 

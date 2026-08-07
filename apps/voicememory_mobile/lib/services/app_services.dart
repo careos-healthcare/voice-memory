@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 import '../api/api_client.dart';
 import '../audio/recording_service.dart';
@@ -10,6 +11,7 @@ import '../core/di/network_providers.dart';
 import '../core/network/http_transport.dart';
 import '../core/network/session_cookie_source.dart';
 import '../data/network/http_auth_api_client.dart';
+import '../features/billing/application/billing_notifier.dart';
 import '../features/auth/application/auth_session_notifier.dart';
 import '../data/network/http_sync_api_client.dart';
 import '../data/repositories/sync_repository.dart';
@@ -242,11 +244,10 @@ class AppServices {
     await s.sessionCookieSource.hydrateFromStore();
     _configureProviderContainer(s);
 
-    s.api = ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
     s.attest = CaptureAttestService(
-      api: s.api,
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
@@ -405,11 +406,10 @@ class AppServices {
     await s.sessionCookieSource.hydrateFromStore();
     _configureProviderContainer(s);
 
-    s.api = ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
     s.attest = CaptureAttestService(
-      api: s.api,
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
@@ -565,6 +565,7 @@ class AppServices {
   /// `entitlementCache` — called once at startup and again, on the freshly
   /// reopened stores, by [_switchToNamespace] on every account switch.
   static void _wireAccountScopedServices(AppServices s) {
+    _bindAccountScopedProviders(s);
     s.remoteProcessingConsentStore = RemoteProcessingConsentStore(s.prefs);
     s.remoteProcessingConsentGate = RemoteProcessingConsentGate(
       s.remoteProcessingConsentStore,
@@ -577,9 +578,7 @@ class AppServices {
     );
     s.journal = JournalService(s.journalStore);
     s.billing = BillingService(
-      s.api,
-      s.entitlementCache,
-      RevenueCatService.instance,
+      appProviderContainer.read(billingProvider.notifier),
     );
     s.offlineSyncJourney = OfflineSyncJourneyStore(s.prefs);
     s.memoryResurfacing = MemoryResurfacingService.fromPrefs(s.prefs);
@@ -612,6 +611,7 @@ class AppServices {
     String? ownerUserId,
   }) async {
     if (target == _activeNamespace) return;
+    appProviderContainer.read(networkRequestScopeProvider).cancelAll();
     final oldBilling = billing;
     final oldArchiveScope =
         AppServicesProofScopeProvider.archiveScopeForNamespace(
@@ -753,11 +753,6 @@ class AppServices {
     s.api = api ?? ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
-    s.attest = CaptureAttestService(
-      api: s.api,
-      deviceIds: s.deviceIds,
-      tokenCache: s.tokenCache,
-    );
 
     final file = File(resolvedJournalPath);
     s._documentsBasePath = file.parent.path;
@@ -804,7 +799,12 @@ class AppServices {
     _instance = s;
     _initialized = true;
 
-    _configureProviderContainer(s);
+    _configureProviderContainer(s, apiOverride: api);
+    s.attest = CaptureAttestService(
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
+      deviceIds: s.deviceIds,
+      tokenCache: s.tokenCache,
+    );
     s.recording =
         recording ??
         appProviderContainer.read(recordingServiceProvider.notifier);
@@ -879,29 +879,43 @@ class AppServices {
     _optionalServicesInitialized = !skipRevenueCat;
   }
 
-  static void _configureProviderContainer(AppServices s) {
+  static void _configureProviderContainer(AppServices s, {ApiClient? apiOverride}) {
+    final client = http.Client();
     final transport = HttpTransport(
+      client: client,
       baseUrl: AppConfig.apiBaseUrl,
       sessionCookies: s.sessionCookieSource,
     );
     s.httpTransport = transport;
+    s.api = apiOverride ??
+        ApiClient(
+          httpClient: client,
+          sessionCookies: s.sessionCookieSource,
+        );
+    if (apiOverride != null) {
+      // Legacy test clients may supply their own http.Client — keep transport
+      // on a dedicated client for typed domain API clients.
+    }
     final authRepository = createAuthRepository(
       api: HttpAuthApiClient(transport),
       sessionCookies: s.sessionCookieSource,
       secure: s.secureStorage,
     );
     bindAppProviderContainer(
-      ProviderContainer(
-        overrides: [
-          secureStorageProvider.overrideWithValue(s.secureStorage),
-          sessionCookieStoreProvider.overrideWithValue(s.sessionCookies),
-          sessionCookieSourceProvider.overrideWithValue(s.sessionCookieSource),
-          authRepositoryProvider.overrideWithValue(authRepository),
-          httpTransportProvider.overrideWithValue(transport),
-          apiBaseUrlProvider.overrideWithValue(AppConfig.apiBaseUrl),
-        ],
+      createNetworkProviderContainer(
+        secureStorage: s.secureStorage,
+        sessionCookieStore: s.sessionCookies,
+        sessionCookieSource: s.sessionCookieSource,
+        authRepository: authRepository,
+        httpClient: client,
+        apiBaseUrl: AppConfig.apiBaseUrl,
       ),
     );
+  }
+
+  static void _bindAccountScopedProviders(AppServices s) {
+    appProviderContainer.read(entitlementCacheHolderProvider).value =
+        s.entitlementCache;
   }
 
   static void _bindSyncRepository(AppServices s) {

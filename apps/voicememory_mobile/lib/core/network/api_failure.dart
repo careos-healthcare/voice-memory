@@ -177,3 +177,20 @@ final class ApiFailureUnknown extends ApiFailure {
   ApiException toApiException() =>
       ApiException(message, code: code);
 }
+
+final class ApiFailureCancelled extends ApiFailure {
+  const ApiFailureCancelled();
+
+  @override
+  String get code => 'CANCELLED';
+
+  @override
+  int? get statusCode => null;
+
+  @override
+  String get message => 'Request was cancelled.';
+
+  @override
+  ApiException toApiException() =>
+      ApiException(message, code: code);
+}

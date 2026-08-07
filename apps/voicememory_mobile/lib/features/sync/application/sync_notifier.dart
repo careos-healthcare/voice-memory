@@ -5,6 +5,7 @@ import '../../../core/di/network_providers.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../data/repositories/sync_repository.dart';
 import '../../../services/sync_service.dart';
+import 'sync_failure_result.dart';
 import 'sync_state.dart';
 
 /// Immutable sync boundary — mirrors [AuthSessionNotifier] Riverpod patterns.
@@ -34,12 +35,9 @@ class SyncNotifier extends Notifier<SyncState> {
       },
       onFailure: (failure) {
         _logFailure('syncNow', failure);
-        final syncResult = SyncResult(
-          cloudSyncSucceeded: false,
-          message: 'Sync did not complete.',
-          syncNote: failure.toUserMessage(),
-          pushed: state.partialPushed,
-          pulled: 0,
+        final syncResult = syncResultForFailure(
+          failure,
+          partialPushed: state.partialPushed,
         );
         state = SyncState(
           phase: SyncPhase.failed,

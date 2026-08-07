@@ -1,4 +1,5 @@
 import '../../api/api_client.dart';
+import '../../core/network/api_result.dart';
 import '../../data/network/sync_api_client.dart';
 import '../../models/journal_entry.dart';
 import '../../storage/device_id.dart';
@@ -74,7 +75,10 @@ class LegacyPlaintextMigrationService {
       deviceIds: _deviceIds,
       keyStore: _keyStore,
     );
-    await encryptedSync.syncEncryptedJournal();
+    final syncResult = await encryptedSync.syncEncryptedJournal();
+    if (syncResult case ApiFailureResult(:final failure)) {
+      throw failure.toApiException();
+    }
 
     // 5–6. Verify coverage against local merged state.
     final localIds = (await _journal.loadAllIncludingTombstones())

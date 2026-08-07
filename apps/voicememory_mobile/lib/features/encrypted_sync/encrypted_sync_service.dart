@@ -58,7 +58,8 @@ class EncryptedSyncService {
     return (eligible: eligible, blocked: blocked);
   }
 
-  Future<({int pushed, int pulled, int blocked})> syncEncryptedJournal() async {
+  Future<ApiResult<({int pushed, int pulled, int blocked})>>
+  syncEncryptedJournal() async {
     final session = AccountSessionGuard.capture();
     final accountNamespace =
         await _prefs.readString(JournalOwnershipGuard.ownerKeyPrefsKey) ??
@@ -89,27 +90,39 @@ class EncryptedSyncService {
     final updatedAt = DateTime.now().toUtc().toIso8601String();
 
     session.assertActive();
-    final pushBody = _unwrap(
-      await _syncApi.syncPush({
-        'blobs': [
-          {
-            'id': EncryptedSyncSchema.coreBlobId,
-            'type': EncryptedSyncSchema.coreBlobType,
-            'encrypted': encrypted.toJson(),
-            'updatedAt': updatedAt,
-            'byteLength': byteLength,
-            'binding': binding,
-          },
-        ],
-      }),
-    );
+    final pushResult = await _syncApi.syncPush({
+      'blobs': [
+        {
+          'id': EncryptedSyncSchema.coreBlobId,
+          'type': EncryptedSyncSchema.coreBlobType,
+          'encrypted': encrypted.toJson(),
+          'updatedAt': updatedAt,
+          'byteLength': byteLength,
+          'binding': binding,
+        },
+      ],
+    });
+    late final Map<String, dynamic> pushBody;
+    switch (pushResult) {
+      case ApiSuccess(:final value):
+        pushBody = value;
+      case ApiFailureResult(:final failure):
+        return ApiFailureResult(failure);
+    }
 
     session.assertActive();
     final pullResult = await _pullRemoteBlobs(session);
-    final remoteBlobs = pullResult.blobs;
+    late final List<Map<String, dynamic>> remoteBlobs;
+    late final int? pullLatestSequence;
+    switch (pullResult) {
+      case ApiSuccess(:final value):
+        remoteBlobs = value.blobs;
+        pullLatestSequence = value.latestSequence;
+      case ApiFailureResult(:final failure):
+        return ApiFailureResult(failure);
+    }
     var pulled = 0;
-    var latestSequence =
-        pullResult.latestSequence ?? _readLatestSequence(pushBody);
+    var latestSequence = pullLatestSequence ?? _readLatestSequence(pushBody);
     for (final raw in remoteBlobs) {
       if (raw['id'] != EncryptedSyncSchema.coreBlobId) continue;
       if (raw['type'] != EncryptedSyncSchema.coreBlobType) continue;
@@ -133,48 +146,63 @@ class EncryptedSyncService {
       partitioned.eligible.map((e) => e.id).toSet(),
     );
 
-    return (
+    return ApiSuccess((
       pushed: partitioned.eligible.length,
       pulled: pulled,
       blocked: partitioned.blocked,
-    );
+    ));
   }
 
-  Future<({List<Map<String, dynamic>> blobs, int? latestSequence})>
+  Future<ApiResult<({List<Map<String, dynamic>> blobs, int? latestSequence})>>
   _pullRemoteBlobs(AccountSessionGuard session) async {
     final since = await _prefs.lastSyncSequence ?? 0;
     if (since > 0) {
       session.assertActive();
-      final changesBody = _unwrap(
-        await _syncApi.syncChanges(since: since),
-      );
+      final changesResult = await _syncApi.syncChanges(since: since);
+      late final Map<String, dynamic> changesBody;
+      switch (changesResult) {
+        case ApiSuccess(:final value):
+          changesBody = value;
+        case ApiFailureResult(:final failure):
+          return ApiFailureResult(failure);
+      }
       final latestSequence = latestSequenceFromChanges(changesBody);
       final blobs = changesBody['blobs'];
       if (blobs is List) {
-        return (
+        return ApiSuccess((
           blobs: blobs
               .whereType<Map>()
               .map((blob) => Map<String, dynamic>.from(blob))
               .toList(),
           latestSequence: latestSequence,
-        );
+        ));
       }
-      return (blobs: <Map<String, dynamic>>[], latestSequence: latestSequence);
+      return ApiSuccess((
+        blobs: <Map<String, dynamic>>[],
+        latestSequence: latestSequence,
+      ));
     }
 
     session.assertActive();
-    final pullBody = _unwrap(await _syncApi.syncPull());
+    final pullResult = await _syncApi.syncPull();
+    late final Map<String, dynamic> pullBody;
+    switch (pullResult) {
+      case ApiSuccess(:final value):
+        pullBody = value;
+      case ApiFailureResult(:final failure):
+        return ApiFailureResult(failure);
+    }
     final blobs = pullBody['blobs'];
     if (blobs is! List) {
-      return (blobs: <Map<String, dynamic>>[], latestSequence: null);
+      return ApiSuccess((blobs: <Map<String, dynamic>>[], latestSequence: null));
     }
-    return (
+    return ApiSuccess((
       blobs: blobs
           .whereType<Map>()
           .map((blob) => Map<String, dynamic>.from(blob))
           .toList(),
       latestSequence: null,
-    );
+    ));
   }
 
   int? _readLatestSequence(Map<String, dynamic> pushBody) {
@@ -197,12 +225,5 @@ class EncryptedSyncService {
   DateTime? _parseLastSync(String? raw) {
     if (raw == null) return null;
     return DateTime.tryParse(raw)?.toUtc();
-  }
-
-  Map<String, dynamic> _unwrap(ApiResult<Map<String, dynamic>> result) {
-    return result.when(
-      success: (value) => value,
-      onFailure: (failure) => throw failure.toApiException(),
-    );
   }
 }

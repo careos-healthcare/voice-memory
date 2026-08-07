@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/store_billing_port.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
@@ -43,7 +43,10 @@ void main() {
         ),
       );
 
-      final billing = BillingService(ApiClient(), cache, _FreeStoreBilling());
+      final billing = createBillingServiceForTest(
+        cache: cache,
+        revenueCat: _FreeStoreBilling(),
+      );
 
       billing.startListening();
       final loaded = await billing.loadEntitlements(forceRefresh: true);

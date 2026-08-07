@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/billing/store_billing_port.dart';
@@ -57,10 +57,9 @@ void main() {
       final cache = await EntitlementCache.open(
         '${tempDir.path}/entitlements.json',
       );
-      final billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
+      final billing = createBillingServiceForTest(
+        cache: cache,
+        revenueCat: store,
       );
       restoreFlow = RestorePurchasesFlow(
         billing: billing,

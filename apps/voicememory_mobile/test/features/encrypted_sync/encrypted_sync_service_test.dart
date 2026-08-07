@@ -64,7 +64,8 @@ void main() {
           ),
         );
 
-        await service.syncEncryptedJournal();
+        final result = await service.syncEncryptedJournal();
+        expect(result.isSuccess, isTrue);
 
         expect(api.pushBodies, isNotEmpty);
         final encoded = jsonEncode(api.pushBodies.last);
@@ -87,7 +88,8 @@ void main() {
           ),
         );
 
-        await service.syncEncryptedJournal();
+        final firstResult = await service.syncEncryptedJournal();
+        expect(firstResult.isSuccess, isTrue);
         final firstPush = api.pushBodies.last;
 
         api.pullBlobs = firstPush['blobs'] as List<dynamic>;
@@ -101,7 +103,8 @@ void main() {
             reflection: _reflection(),
           ),
         );
-        await service.syncEncryptedJournal();
+        final secondResult = await service.syncEncryptedJournal();
+        expect(secondResult.isSuccess, isTrue);
 
         final merged = await journal.getById('local-only');
         expect(merged, isNotNull);

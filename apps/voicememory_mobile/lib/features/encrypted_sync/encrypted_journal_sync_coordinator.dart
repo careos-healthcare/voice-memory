@@ -1,5 +1,7 @@
-import '../../api/api_client.dart';
+import '../../core/network/api_failure_mapper.dart';
+import '../../core/network/api_result.dart';
 import '../../data/network/sync_api_client.dart';
+import '../../api/api_client.dart';
 import '../../storage/device_id.dart';
 import '../../storage/journal_store.dart';
 import '../../storage/mobile_prefs_store.dart';
@@ -44,19 +46,27 @@ class EncryptedJournalSyncCoordinator {
   final EncryptedSyncService _encrypted;
   final LegacyPlaintextMigrationService _legacyMigration;
 
-  Future<({int pushed, int pulled, int blocked, bool migratedLegacy})>
+  Future<ApiResult<({int pushed, int pulled, int blocked, bool migratedLegacy})>>
   syncNow() async {
     var migratedLegacy = false;
-    if (await _legacyMigration.isMigrationPending()) {
-      await _legacyMigration.runMigrationIfNeeded();
-      migratedLegacy = true;
+    try {
+      if (await _legacyMigration.isMigrationPending()) {
+        await _legacyMigration.runMigrationIfNeeded();
+        migratedLegacy = true;
+      }
+    } on Object catch (error) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
     }
-    final result = await _encrypted.syncEncryptedJournal();
-    return (
-      pushed: result.pushed,
-      pulled: result.pulled,
-      blocked: result.blocked,
-      migratedLegacy: migratedLegacy,
+
+    final encrypted = await _encrypted.syncEncryptedJournal();
+    return encrypted.when(
+      success: (result) => ApiSuccess((
+        pushed: result.pushed,
+        pulled: result.pulled,
+        blocked: result.blocked,
+        migratedLegacy: migratedLegacy,
+      )),
+      onFailure: (failure) => ApiFailureResult(failure),
     );
   }
 }
