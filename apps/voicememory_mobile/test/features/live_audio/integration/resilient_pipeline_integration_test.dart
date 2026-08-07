@@ -4,9 +4,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_voice_error_state.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_voice_session_fault.dart';
@@ -265,13 +271,11 @@ class _ResilientPipelineHarness {
         '${Directory.systemTemp.path}/resilient_pipeline_${DateTime.now().microsecondsSinceEpoch}.json';
     journalFile = File(journalPath);
     journalPipeline = _RecordingPipeline(
-      api: _FakeApiClientWithAttest(),
-      attest: CaptureAttestService(
-        api: _FakeApiClientWithAttest(),
-        deviceIds: _FakeDeviceIdStore(),
-        tokenCache: CaptureTokenCache()
-          ..setToken('capture-token', expiresInSeconds: 3600),
+      captureRepository: CaptureRepository(
+        api: _FakeCaptureApiClient(),
+        requestScope: NetworkRequestScope(),
       ),
+      attest: _attestForTest(),
       journalStore: JournalStore(file: journalFile),
       consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
     );
@@ -279,12 +283,7 @@ class _ResilientPipelineHarness {
       controller: LiveAudioSessionController(
         LiveAudioSessionCoordinator(
           sessionApi: sessionApi,
-          attest: CaptureAttestService(
-            api: _FakeApiClientWithAttest(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache()
-              ..setToken('capture-token', expiresInSeconds: 3600),
-          ),
+          attest: _attestForTest(),
           webSocketClient: _InstrumentedWebSocketClient(
             socketEvents: sinkController,
             onPcmSent: pcmSent.add,
@@ -365,7 +364,7 @@ class _CountingSessionApi implements LiveAudioSessionApiClient {
 
 class _RecordingPipeline extends CapturePipelineService {
   _RecordingPipeline({
-    required super.api,
+    required super.captureRepository,
     required super.attest,
     required super.journalStore,
     required super.consentStore,
@@ -455,13 +454,63 @@ class _FakeCapture implements LivePcm16CaptureSource {
   void dispose() {}
 }
 
-class _FakeApiClientWithAttest extends ApiClient {
-  _FakeApiClientWithAttest() : super(baseUrl: 'http://test.invalid');
+class _FakeCaptureApiClient implements CaptureApiClient {
+  @override
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
+  }
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
   }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
+  }
+}
+
+CaptureAttestService _attestForTest() {
+  return CaptureAttestService(
+    captureRepository: CaptureRepository(
+      api: _FakeCaptureApiClient(),
+      requestScope: NetworkRequestScope(),
+    ),
+    deviceIds: _FakeDeviceIdStore(),
+    tokenCache: CaptureTokenCache()
+      ..setToken('capture-token', expiresInSeconds: 3600),
+  );
 }
 
 class _FakeDeviceIdStore extends DeviceIdStore {

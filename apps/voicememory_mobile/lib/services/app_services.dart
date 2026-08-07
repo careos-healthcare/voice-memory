@@ -4,14 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import '../api/api_client.dart';
 import '../audio/recording_service.dart';
 import '../core/di/app_provider_container.dart';
 import '../core/di/network_providers.dart';
+import '../core/network/api_failure.dart';
 import '../core/network/http_transport.dart';
 import '../core/network/network_cancel_token.dart';
 import '../core/network/session_cookie_source.dart';
 import '../data/network/http_auth_api_client.dart';
+import '../data/repositories/account_repository.dart';
 import '../features/billing/application/billing_notifier.dart';
 import '../features/auth/application/auth_session_notifier.dart';
 import '../data/network/http_sync_api_client.dart';
@@ -36,6 +37,7 @@ import '../features/curiosity_loop/repositories/cognitive_baseline_store.dart';
 import '../features/curiosity_loop/repositories/curiosity_hook_repository.dart';
 import '../storage/encrypted_json_storage.dart';
 import '../storage/mobile_prefs_store.dart';
+import '../storage/in_memory_secure_storage.dart';
 import '../storage/secure_storage.dart';
 import '../storage/session_cookie_store.dart';
 import '../auth/guest_first_auth.dart';
@@ -106,7 +108,6 @@ class AppServices {
   static bool _initialized = false;
   static bool _optionalServicesInitialized = false;
 
-  late final ApiClient api;
   late final DeviceIdStore deviceIds;
   late final SecureStorageService secureStorage;
   late final SessionCookieStore sessionCookies;
@@ -178,13 +179,18 @@ class AppServices {
 
   String get nativePushPlatform => Platform.isIOS ? 'ios' : 'android';
 
+  AccountRepository get accountRepository =>
+      appProviderContainer.read(accountRepositoryProvider);
+
   LiveVoiceCaptureService get liveVoiceCapture {
     final existing = _liveVoiceCapture;
     if (existing != null) return existing;
     final created = LiveVoiceCaptureService(
       controller: LiveAudioSessionController(
         LiveAudioSessionCoordinator(
-          sessionApi: ApiLiveAudioSessionClient(api),
+          sessionApi: RepositoryLiveAudioSessionClient(
+            appProviderContainer.read(liveAudioRepositoryProvider),
+          ),
           attest: attest,
         ),
       ),
@@ -319,7 +325,7 @@ class AppServices {
     s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
     s.offlineVaultRecovery = OfflineVaultRecoveryService(
       store: s.offlineVaultRecoveryStore,
-      api: s.api,
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       attest: s.attest,
       pipeline: s.pipeline,
       consentGate: s.remoteProcessingConsentGate,
@@ -338,18 +344,32 @@ class AppServices {
       store: s.nativePushStore,
       getDeviceId: () => s.deviceIds.getOrCreate(),
       registerToken:
-          ({required deviceId, required platform, required fcmToken}) =>
-              s.api.registerPushDevice(
-                deviceId: deviceId,
-                platform: platform,
-                fcmToken: fcmToken,
-              ),
-      sendTestPush: ({required deviceId, required targetRoute}) =>
-          s.api.sendInternalTestPush(
-            deviceId: deviceId,
-            targetRoute: targetRoute,
-            debugToken: AppConfig.internalDebugToken,
-          ),
+          ({required deviceId, required platform, required fcmToken}) async {
+            final result = await appProviderContainer
+                .read(pushApiClientProvider)
+                .registerPushDevice(
+                  deviceId: deviceId,
+                  platform: platform,
+                  fcmToken: fcmToken,
+                );
+            result.when(
+              success: (_) {},
+              onFailure: (failure) => throw failure.toApiException(),
+            );
+          },
+      sendTestPush: ({required deviceId, required targetRoute}) async {
+        final result = await appProviderContainer
+            .read(pushApiClientProvider)
+            .sendInternalTestPush(
+              deviceId: deviceId,
+              targetRoute: targetRoute,
+              debugToken: AppConfig.internalDebugToken,
+            );
+        return result.when(
+          success: (body) => body,
+          onFailure: (failure) => throw failure.toApiException(),
+        );
+      },
     );
     s.nativePush = NativePushService(s.fcm);
     if (V1CapabilityRegistry.notifications) {
@@ -440,7 +460,7 @@ class AppServices {
     s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
     s.offlineVaultRecovery = OfflineVaultRecoveryService(
       store: s.offlineVaultRecoveryStore,
-      api: s.api,
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       attest: s.attest,
       pipeline: s.pipeline,
       consentGate: s.remoteProcessingConsentGate,
@@ -573,7 +593,6 @@ class AppServices {
     );
     s.pipeline = CapturePipelineService(
       captureRepository: appProviderContainer.read(captureRepositoryProvider),
-      api: s.api,
       attest: s.attest,
       journalStore: s.journalStore,
       consentStore: s.remoteProcessingConsentStore,
@@ -734,7 +753,8 @@ class AppServices {
   static Future<void> resetForTest({
     required String journalPath,
     String? prefsPath,
-    ApiClient? api,
+    List<Override>? networkOverrides,
+    SecureStorageService? secureStorage,
     bool skipRevenueCat = false,
     RecordingService? recording,
     AccountNamespace? namespace,
@@ -748,11 +768,10 @@ class AppServices {
     s._activeNamespace = activeNamespace;
     s._billingListeningEnabled = !skipRevenueCat;
 
-    s.secureStorage = SecureStorageService();
+    s.secureStorage = secureStorage ?? InMemorySecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
     s.sessionCookieSource = SessionCookieSource(s.sessionCookies);
     await s.sessionCookieSource.hydrateFromStore();
-    s.api = api ?? ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
 
@@ -801,14 +820,22 @@ class AppServices {
     _instance = s;
     _initialized = true;
 
-    _configureProviderContainer(s, apiOverride: api);
+    _configureProviderContainer(
+      s,
+      networkOverrides: [
+        if (recording == null)
+          recordingServiceConfigProvider.overrideWithValue(
+            const RecordingServiceConfig(testMode: true),
+          ),
+        ...?networkOverrides,
+      ],
+    );
     s.attest = CaptureAttestService(
       captureRepository: appProviderContainer.read(captureRepositoryProvider),
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    s.recording =
-        recording ??
+    s.recording = recording ??
         appProviderContainer.read(recordingServiceProvider.notifier);
     s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
     if (!skipRevenueCat) {
@@ -825,24 +852,38 @@ class AppServices {
       store: s.nativePushStore,
       getDeviceId: () => s.deviceIds.getOrCreate(),
       registerToken:
-          ({required deviceId, required platform, required fcmToken}) =>
-              s.api.registerPushDevice(
-                deviceId: deviceId,
-                platform: platform,
-                fcmToken: fcmToken,
-              ),
-      sendTestPush: ({required deviceId, required targetRoute}) =>
-          s.api.sendInternalTestPush(
-            deviceId: deviceId,
-            targetRoute: targetRoute,
-            debugToken: AppConfig.internalDebugToken,
-          ),
+          ({required deviceId, required platform, required fcmToken}) async {
+            final result = await appProviderContainer
+                .read(pushApiClientProvider)
+                .registerPushDevice(
+                  deviceId: deviceId,
+                  platform: platform,
+                  fcmToken: fcmToken,
+                );
+            result.when(
+              success: (_) {},
+              onFailure: (failure) => throw failure.toApiException(),
+            );
+          },
+      sendTestPush: ({required deviceId, required targetRoute}) async {
+        final result = await appProviderContainer
+            .read(pushApiClientProvider)
+            .sendInternalTestPush(
+              deviceId: deviceId,
+              targetRoute: targetRoute,
+              debugToken: AppConfig.internalDebugToken,
+            );
+        return result.when(
+          success: (body) => body,
+          onFailure: (failure) => throw failure.toApiException(),
+        );
+      },
     );
     s.nativePush = NativePushService(s.fcm);
     s.offlineVaultRecoveryStore = OfflineVaultRecoveryStore();
     s.offlineVaultRecovery = OfflineVaultRecoveryService(
       store: s.offlineVaultRecoveryStore,
-      api: s.api,
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       attest: s.attest,
       pipeline: s.pipeline,
       consentGate: s.remoteProcessingConsentGate,
@@ -881,7 +922,10 @@ class AppServices {
     _optionalServicesInitialized = !skipRevenueCat;
   }
 
-  static void _configureProviderContainer(AppServices s, {ApiClient? apiOverride}) {
+  static void _configureProviderContainer(
+    AppServices s, {
+    List<Override>? networkOverrides,
+  }) {
     final client = http.Client();
     final transport = HttpTransport(
       client: client,
@@ -889,15 +933,6 @@ class AppServices {
       sessionCookies: s.sessionCookieSource,
     );
     s.httpTransport = transport;
-    s.api = apiOverride ??
-        ApiClient(
-          httpClient: client,
-          sessionCookies: s.sessionCookieSource,
-        );
-    if (apiOverride != null) {
-      // Legacy test clients may supply their own http.Client — keep transport
-      // on a dedicated client for typed domain API clients.
-    }
     final requestScope = NetworkRequestScope();
     final authRepository = createAuthRepository(
       api: HttpAuthApiClient(transport),
@@ -914,6 +949,7 @@ class AppServices {
         requestScope: requestScope,
         httpClient: client,
         apiBaseUrl: AppConfig.apiBaseUrl,
+        networkOverrides: networkOverrides,
       ),
     );
   }
@@ -927,7 +963,6 @@ class AppServices {
     final syncApi = HttpSyncApiClient(s.httpTransport);
     final coordinator = EncryptedJournalSyncCoordinator(
       syncApi: syncApi,
-      api: s.api,
       journal: s.journalStore,
       prefs: s.prefs,
       deviceIds: s.deviceIds,

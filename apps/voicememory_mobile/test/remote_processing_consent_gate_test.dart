@@ -1,10 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -15,9 +22,8 @@ import 'package:voicememory_mobile/services/app_services.dart';
 /// saved locally throughout.
 const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
-class _ConsentGateFakeApi extends ApiClient {
-  _ConsentGateFakeApi({this.onAnalyzeCalled})
-    : super(baseUrl: 'http://test.invalid');
+class _ConsentGateFakeApi implements CaptureApiClient {
+  _ConsentGateFakeApi({this.onAnalyzeCalled});
 
   int postAnalyzeRawCallCount = 0;
 
@@ -29,40 +35,62 @@ class _ConsentGateFakeApi extends ApiClient {
   final Future<void> Function()? onAnalyzeCalled;
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<String> postTranscribe({
+  Future<ApiResult<String>> postTranscribe({
     required File audioFile,
     required int durationSeconds,
     required String captureToken,
     String? idempotencyKey,
-  }) async => _spokenTranscript;
+    NetworkCancelToken? cancelToken,
+  }) async => ApiSuccess(_spokenTranscript);
 
   @override
-  Future<RawModelResponse> postAnalyzeRaw({
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
     postAnalyzeRawCallCount += 1;
     await onAnalyzeCalled?.call();
-    return RawModelResponse(
-      payload: {
-        'reflection': {
-          'mood': 'neutral',
-          'emotionalIntensity': 1,
-          'recurringThemes': <String>[],
-          'exactLanguagePattern': transcript,
-          'concreteObservation': transcript,
-          'repeatedSignal': '',
+    return ApiSuccess(
+      RawModelResponse(
+        payload: {
+          'reflection': {
+            'mood': 'neutral',
+            'emotionalIntensity': 1,
+            'recurringThemes': <String>[],
+            'exactLanguagePattern': transcript,
+            'concreteObservation': transcript,
+            'repeatedSignal': '',
+          },
         },
-      },
-      receivedAt: DateTime.utc(2026, 8, 5),
+        receivedAt: DateTime.utc(2026, 8, 5),
+      ),
     );
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }
 
@@ -80,7 +108,9 @@ Future<_ConsentGateFakeApi> _initPipeline({
   final dir = Directory.systemTemp.createTempSync('vm_consent_gate_journal_');
   await AppServices.resetForTest(
     journalPath: '${dir.path}/journal.json',
-    api: api,
+    networkOverrides: [
+      captureApiClientProvider.overrideWithValue(api),
+    ],
     grantRemoteProcessingConsentByDefault: grantConsentByDefault,
   );
   AppServices.instance.tokenCache.setToken(

@@ -1,10 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/voice_capture/transcription/transcript_quality.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_post_save.dart';
@@ -19,49 +26,72 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 
 const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
-class _VoicePipelineFakeApi extends ApiClient {
+class _VoicePipelineFakeApi implements CaptureApiClient {
   _VoicePipelineFakeApi({this.analyzeError})
-    : transcript = _spokenTranscript,
-      super(baseUrl: 'http://test.invalid');
+    : transcript = _spokenTranscript;
 
   final String transcript;
   final Object? analyzeError;
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<String> postTranscribe({
+  Future<ApiResult<String>> postTranscribe({
     required File audioFile,
     required int durationSeconds,
     required String captureToken,
     String? idempotencyKey,
-  }) async => transcript;
+    NetworkCancelToken? cancelToken,
+  }) async => ApiSuccess(transcript);
 
   @override
-  Future<RawModelResponse> postAnalyzeRaw({
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
     final error = analyzeError;
-    if (error != null) throw error;
-    return RawModelResponse(
-      payload: {
-        'reflection': {
-          'mood': 'neutral',
-          'emotionalIntensity': 1,
-          'recurringThemes': <String>[],
-          'exactLanguagePattern': transcript,
-          'concreteObservation': transcript,
-          'repeatedSignal': '',
+    if (error != null) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+    return ApiSuccess(
+      RawModelResponse(
+        payload: {
+          'reflection': {
+            'mood': 'neutral',
+            'emotionalIntensity': 1,
+            'recurringThemes': <String>[],
+            'exactLanguagePattern': transcript,
+            'concreteObservation': transcript,
+            'repeatedSignal': '',
+          },
         },
-      },
-      receivedAt: DateTime.utc(2026, 8, 4),
+        receivedAt: DateTime.utc(2026, 8, 4),
+      ),
     );
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }
 
@@ -93,7 +123,9 @@ void main() {
     await AppServices.resetForTest(
       journalPath:
           '${tempDir.path}/journal_${DateTime.now().microsecondsSinceEpoch}.json',
-      api: api,
+      networkOverrides: [
+        captureApiClientProvider.overrideWithValue(api),
+      ],
     );
     AppServices.instance.tokenCache.setToken(
       'test-capture-token',

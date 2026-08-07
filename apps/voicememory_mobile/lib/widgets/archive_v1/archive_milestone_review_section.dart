@@ -7,6 +7,8 @@ import '../../features/archive_synthesis/archive_synthesis_pro_gate.dart';
 import '../../features/archive_synthesis/archive_synthesis_service.dart';
 import '../../features/archive_synthesis/archive_synthesis_store.dart';
 import '../../features/archive_v1/archive_v1_models.dart';
+import '../../core/di/app_provider_container.dart';
+import '../../core/di/network_providers.dart';
 import '../../services/app_services.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/voicememory_colors.dart';
@@ -59,7 +61,9 @@ class _ArchiveMilestoneReviewSectionState
 
     final service = ArchiveSynthesisService(
       store: ArchiveSynthesisStore(s.prefs),
-      api: s.api,
+      repository: appProviderContainer.read(
+        archiveSynthesisRepositoryProvider,
+      ),
       deviceIds: s.deviceIds,
     );
     final reviews = await service.loadMilestoneReviews(

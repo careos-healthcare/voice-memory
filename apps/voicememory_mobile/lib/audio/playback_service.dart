@@ -62,6 +62,7 @@ class PlaybackService extends Notifier<PlaybackState> {
     PcmChunkWrapper? wrapPcmChunk,
   }) {
     final container = ProviderContainer(
+      parent: boundAppProviderContainer,
       overrides: [
         playbackServiceConfigProvider.overrideWithValue(
           PlaybackServiceConfig(

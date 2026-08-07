@@ -1,4 +1,4 @@
-import '../../api/api_client.dart';
+import '../../models/checkout_session.dart';
 import '../../core/network/api_failure.dart';
 import '../../core/network/api_failure_mapper.dart';
 import '../../core/network/api_result.dart';

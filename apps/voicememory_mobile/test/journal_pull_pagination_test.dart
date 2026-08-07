@@ -1,4 +1,4 @@
-// Objective 2 (real synchronization model) — covers ApiClient.listJournal()'s
+// Objective 2 (real synchronization model) — covers SyncApiClient.listLegacyJournal()'s
 // consumption of the server's deterministic keyset pull-pagination
 // (`GET /api/journal?limit=&cursor=` / `nextCursor` in
 // app/api/journal/route.ts and lib/server/journal-store.ts). Pagination is a
@@ -10,8 +10,9 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/core/network/http_transport.dart';
+import 'package:voicememory_mobile/data/network/http_sync_api_client.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -38,15 +39,15 @@ void main() {
   });
 
   test(
-    'listJournal() follows nextCursor and assembles every entry across a server-chunked pull, without duplicates or gaps',
+    'listLegacyJournal() follows nextCursor and assembles every entry across a server-chunked pull, without duplicates or gaps',
     () async {
       const perPage = 2;
       final allIds = ['e0', 'e1', 'e2', 'e3', 'e4'];
       final requestedLimits = <String?>[];
       final requestedCursors = <String?>[];
 
-      final api = ApiClient(
-        httpClient: MockClient((request) async {
+      final transport = HttpTransport(
+        client: MockClient((request) async {
           expect(request.method, 'GET');
           expect(request.url.path, '/api/journal');
           requestedLimits.add(request.url.queryParameters['limit']);
@@ -66,11 +67,15 @@ void main() {
         }),
         baseUrl: 'https://voice-memory-iota.vercel.app',
       );
-      api.setSessionCookie('session=user-1');
+      final api = HttpSyncApiClient(transport);
 
-      final result = await api.listJournal();
+      final result = await api.listLegacyJournal();
+      final entries = result.when(
+        success: (value) => value,
+        onFailure: (failure) => throw failure.toApiException(),
+      );
 
-      expect(result.map((e) => e.id).toList(), allIds);
+      expect(entries.map((e) => e.id).toList(), allIds);
       // 5 entries at 2-per-page: pages [0,1] [2,3] [4] — 3 round trips.
       expect(requestedCursors, [null, '2', '4']);
       // Every request asks for the same server-side page size regardless of cursor.
@@ -80,11 +85,11 @@ void main() {
   );
 
   test(
-    'listJournal() makes exactly one request when the server omits nextCursor (legacy/unbounded response shape)',
+    'listLegacyJournal() makes exactly one request when the server omits nextCursor (legacy/unbounded response shape)',
     () async {
       var callCount = 0;
-      final api = ApiClient(
-        httpClient: MockClient((request) async {
+      final transport = HttpTransport(
+        client: MockClient((request) async {
           callCount++;
           return http.Response(
             jsonEncode({
@@ -95,32 +100,40 @@ void main() {
         }),
         baseUrl: 'https://voice-memory-iota.vercel.app',
       );
-      api.setSessionCookie('session=user-1');
+      final api = HttpSyncApiClient(transport);
 
-      final result = await api.listJournal();
+      final result = await api.listLegacyJournal();
+      final entries = result.when(
+        success: (value) => value,
+        onFailure: (failure) => throw failure.toApiException(),
+      );
 
       expect(callCount, 1);
-      expect(result.map((e) => e.id).toList(), ['solo']);
+      expect(entries.map((e) => e.id).toList(), ['solo']);
     },
   );
 
   test(
-    'listJournal() returns an empty list for an empty journal without looping',
+    'listLegacyJournal() returns an empty list for an empty journal without looping',
     () async {
       var callCount = 0;
-      final api = ApiClient(
-        httpClient: MockClient((request) async {
+      final transport = HttpTransport(
+        client: MockClient((request) async {
           callCount++;
           return http.Response(jsonEncode({'entries': []}), 200);
         }),
         baseUrl: 'https://voice-memory-iota.vercel.app',
       );
-      api.setSessionCookie('session=user-1');
+      final api = HttpSyncApiClient(transport);
 
-      final result = await api.listJournal();
+      final result = await api.listLegacyJournal();
+      final entries = result.when(
+        success: (value) => value,
+        onFailure: (failure) => throw failure.toApiException(),
+      );
 
       expect(callCount, 1);
-      expect(result, isEmpty);
+      expect(entries, isEmpty);
     },
   );
 }

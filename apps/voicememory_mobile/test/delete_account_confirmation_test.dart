@@ -1,30 +1,17 @@
 import 'dart:io';
 
+import 'package:voicememory_mobile/core/network/api_failure.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
 import 'package:voicememory_mobile/core/di/v1_account_dependencies.dart';
 import 'package:voicememory_mobile/screens/delete_account_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
+import 'helpers/fake_account_api_client.dart';
 import 'support/test_storage_sandbox.dart';
-
-/// Records calls; no HTTP, no real backend — mirrors the fake-API pattern
-/// used across the auth tests (see `account_auth_test.dart`).
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
-
-  int deleteAccountCalls = 0;
-  Object? deleteAccountError;
-
-  @override
-  Future<void> deleteAccount() async {
-    deleteAccountCalls++;
-    final error = deleteAccountError;
-    if (error != null) throw error;
-  }
-}
 
 /// Delete account is destructive and irreversible, so it must always require
 /// an explicit confirmation step before the network call fires — see the
@@ -36,17 +23,19 @@ class _FakeApi extends ApiClient {
 void main() {
   late Directory tempDir;
   late TestStorageSandbox sandbox;
-  late _FakeApi fakeApi;
+  late FakeAccountApiClient fakeAccountApi;
 
   setUp(() async {
     sandbox = TestStorageSandbox.create();
     tempDir = Directory(sandbox.path('legacy'));
-    fakeApi = _FakeApi();
+    fakeAccountApi = FakeAccountApiClient();
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
-      api: fakeApi,
+      networkOverrides: [
+        accountApiClientProvider.overrideWithValue(fakeAccountApi),
+      ],
     );
   });
 
@@ -108,7 +97,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Delete account permanently?'), findsOneWidget);
-      expect(fakeApi.deleteAccountCalls, 0);
+      expect(fakeAccountApi.deleteAccountCalls, 0);
     });
 
     testWidgets('cancelling the dialog does not start deletion', (
@@ -130,7 +119,7 @@ void main() {
         find.widgetWithText(FilledButton, 'Delete account'),
         findsOneWidget,
       );
-      expect(fakeApi.deleteAccountCalls, 0);
+      expect(fakeAccountApi.deleteAccountCalls, 0);
     });
 
     testWidgets('confirming dismisses the dialog and calls deleteAccount', (
@@ -141,7 +130,8 @@ void main() {
       // `MaterialApp` doesn't provide. This test only asserts the
       // confirmation gate calls through to the API — not the post-success
       // navigation, which is exercised by the app's real router elsewhere.
-      fakeApi.deleteAccountError = Exception('network unavailable');
+      fakeAccountApi.deleteAccountFailure =
+          const ApiFailureOffline('network unavailable');
       await pumpScreen(tester);
       await openConfirmDialog(tester);
 
@@ -150,13 +140,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(fakeApi.deleteAccountCalls, 1);
+      expect(fakeAccountApi.deleteAccountCalls, 1);
       expect(
         find.byKey(const Key('delete_account_confirm_dialog')),
         findsNothing,
       );
       expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.text('Account deletion failed. Try again.'), findsOneWidget);
+      expect(find.text('network unavailable'), findsOneWidget);
     });
 
     testWidgets(
@@ -174,7 +164,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 300));
 
-        expect(fakeApi.deleteAccountCalls, 1);
+        expect(fakeAccountApi.deleteAccountCalls, 1);
         expect(
           find.byKey(const Key('delete_account_local_wipe_offer_dialog')),
           findsOneWidget,
@@ -362,15 +352,16 @@ void main() {
     testWidgets('failed deletion stays explicit and allows retry', (
       tester,
     ) async {
-      fakeApi.deleteAccountError = Exception('network unavailable');
+      fakeAccountApi.deleteAccountFailure =
+          const ApiFailureOffline('network unavailable');
       await pumpScreen(tester);
       await openConfirmDialog(tester);
       await tester.tap(find.byKey(const Key('delete_account_confirm_accept')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(fakeApi.deleteAccountCalls, 1);
-      expect(find.text('Account deletion failed. Try again.'), findsOneWidget);
+      expect(fakeAccountApi.deleteAccountCalls, 1);
+      expect(find.text('network unavailable'), findsOneWidget);
       expect(
         find.textContaining('deletion requested'),
         findsNothing,
@@ -381,13 +372,13 @@ void main() {
         findsNothing,
       );
 
-      fakeApi.deleteAccountError = null;
+      fakeAccountApi.deleteAccountFailure = null;
       await openConfirmDialog(tester);
       await tester.tap(find.byKey(const Key('delete_account_confirm_accept')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(fakeApi.deleteAccountCalls, 2);
+      expect(fakeAccountApi.deleteAccountCalls, 2);
       expect(
         find.byKey(const Key('delete_account_local_wipe_offer_dialog')),
         findsOneWidget,
@@ -433,7 +424,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 300));
 
-        expect(fakeApi.deleteAccountCalls, 1);
+        expect(fakeAccountApi.deleteAccountCalls, 1);
       },
     );
   });

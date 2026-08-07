@@ -6,10 +6,16 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_focus_gateway.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm16_capture_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/native_audio_lifecycle_bridge.dart';
@@ -217,12 +223,7 @@ _buildCaptureService() {
 
   final coordinator = LiveAudioSessionCoordinator(
     sessionApi: _FakeSessionApi(),
-    attest: CaptureAttestService(
-      api: _FakeApi(),
-      deviceIds: _FakeDeviceIdStore(),
-      tokenCache: CaptureTokenCache()
-        ..setToken('capture-token', expiresInSeconds: 3600),
-    ),
+    attest: _attestForTest(),
     webSocketClient: LiveAudioWebSocketClient(
       connectionFactory: (_, {headers}) => _FakeSocket(sinkController),
     ),
@@ -321,24 +322,73 @@ class _FakeSocket implements LiveAudioSocketConnection {
 class _NoopPipeline extends CapturePipelineService {
   _NoopPipeline({required File journalFile})
     : super(
-        api: _FakeApi(),
-        attest: CaptureAttestService(
-          api: _FakeApi(),
-          deviceIds: _FakeDeviceIdStore(),
-          tokenCache: CaptureTokenCache(),
+        captureRepository: CaptureRepository(
+          api: _FakeCaptureApi(),
+          requestScope: NetworkRequestScope(),
         ),
+        attest: _attestForTest(),
         journalStore: JournalStore(file: journalFile),
         consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
       );
 }
 
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
+class _FakeCaptureApi implements CaptureApiClient {
+  @override
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
+  }
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
   }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
+  }
+}
+
+CaptureAttestService _attestForTest() {
+  return CaptureAttestService(
+    captureRepository: CaptureRepository(
+      api: _FakeCaptureApi(),
+      requestScope: NetworkRequestScope(),
+    ),
+    deviceIds: _FakeDeviceIdStore(),
+    tokenCache: CaptureTokenCache()
+      ..setToken('capture-token', expiresInSeconds: 3600),
+  );
 }
 
 class _FakeDeviceIdStore extends DeviceIdStore {

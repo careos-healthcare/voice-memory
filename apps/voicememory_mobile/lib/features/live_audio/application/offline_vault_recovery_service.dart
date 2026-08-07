@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import '../../../core/network/network_cancel_token.dart';
+import '../../../data/repositories/capture_repository.dart';
 import '../../../security/account_session_guard.dart';
 import '../../../security/account_session_scope.dart';
 import '../../../security/remote_processing_consent_gate.dart';
 import '../../../services/capture_attest_service.dart';
 import '../../../services/capture_pipeline_service.dart';
-import '../../../api/api_client.dart';
 import '../domain/models/offline_vault_manifest.dart';
 import '../infrastructure/local_audio_vault_reader.dart';
 import '../infrastructure/live_audio_pipeline_log.dart';
@@ -15,18 +16,18 @@ import '../infrastructure/offline_vault_recovery_store.dart';
 class OfflineVaultRecoveryService {
   OfflineVaultRecoveryService({
     required OfflineVaultRecoveryStore store,
-    required ApiClient api,
+    required CaptureRepository captureRepository,
     required CaptureAttestService attest,
     required CapturePipelineService pipeline,
     required RemoteProcessingConsentGate consentGate,
   }) : _store = store,
-       _api = api,
+       _captureRepository = captureRepository,
        _attest = attest,
        _pipeline = pipeline,
        _consentGate = consentGate;
 
   final OfflineVaultRecoveryStore _store;
-  final ApiClient _api;
+  final CaptureRepository _captureRepository;
   final CaptureAttestService _attest;
   final CapturePipelineService _pipeline;
   final RemoteProcessingConsentGate _consentGate;
@@ -45,6 +46,7 @@ class OfflineVaultRecoveryService {
   Future<CapturePipelineResult> recoverVault(
     OfflineVaultManifest manifest, {
     void Function(PipelineStage stage)? onStage,
+    NetworkCancelToken? cancelToken,
   }) async {
     final session = AccountSessionGuard.capture();
     if (!manifest.serverRecoverable) {
@@ -78,13 +80,19 @@ class OfflineVaultRecoveryService {
 
     try {
       final token = await _attest.ensureCaptureToken();
-      final serverResult = await _api.postVaultRecovery(
+      final uploadResult = await _captureRepository.postVaultRecovery(
         vaultFile: vaultFile,
         sessionId: manifest.sessionId,
         durationSeconds: manifest.durationSeconds,
         captureToken: token,
         idempotencyKey: manifest.idempotencyKey,
         recoverySecretKeyBytes: manifest.recoverySecretKeyBytes,
+        cancelToken: cancelToken,
+      );
+
+      final serverResult = uploadResult.when(
+        success: (value) => value,
+        onFailure: (failure) => throw failure.toApiException(),
       );
 
       session.assertActive();

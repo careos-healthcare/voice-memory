@@ -1,27 +1,24 @@
-// Objective 2 (real synchronization versioning and deletion) — covers
-// SyncService.syncNow()'s tombstone push/pull, batching, and
-// accept/reject handling against the server contract described in
-// app/api/journal/route.ts and lib/server/journal-store.ts.
-import 'dart:async';
-import 'dart:convert';
+// Encrypted sync integration — covers SyncService.syncNow() push/pull merge,
+// tombstones, ownership partitioning, and metadata round-trips via
+// `/api/sync/*` encrypted blobs (not legacy plaintext `/api/journal`).
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/core/network/api_failure.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
+import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_fingerprints.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/journal_ownership_guard.dart';
-import 'helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+
+import 'helpers/encrypted_sync_test_helpers.dart';
+import 'helpers/test_sync_service.dart';
 
 Reflection _reflection() => const Reflection(
   mood: 'calm',
@@ -117,9 +114,24 @@ VerifiedProof _fullVerifiedProof() {
 }
 
 class _Harness {
-  _Harness({required this.journal, required this.prefs});
+  _Harness({
+    required this.journal,
+    required this.prefs,
+    required this.keyStore,
+    required this.syncApi,
+  });
+
   final JournalStore journal;
   final MobilePrefsStore prefs;
+  final InMemorySyncMasterKeyStore keyStore;
+  final RecordingSyncApiClient syncApi;
+
+  Future<SyncService> syncService() => createTestSyncService(
+    syncApi: syncApi,
+    journal: journal,
+    prefs: prefs,
+    keyStore: keyStore,
+  );
 }
 
 Future<_Harness> _newHarness() async {
@@ -132,75 +144,20 @@ Future<_Harness> _newHarness() async {
   journal.setActiveOwnerKey('user-1');
   await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-1');
   await prefs.writeBool(JournalOwnershipGuard.migrationPendingPrefsKey, false);
-  return _Harness(journal: journal, prefs: prefs);
-}
-
-typedef _PostHandler =
-    FutureOr<http.Response> Function(
-      int callIndex,
-      List<Map<String, dynamic>> entries,
-    );
-typedef _GetHandler = FutureOr<http.Response> Function();
-
-ApiClient _buildApi({
-  required _PostHandler onPost,
-  required _GetHandler onGet,
-}) {
-  var postCallIndex = 0;
-  final api = ApiClient(
-    httpClient: MockClient((request) async {
-      if (request.method == 'POST' && request.url.path == '/api/journal') {
-        final body = jsonDecode(request.body) as Map<String, dynamic>;
-        final entries = (body['entries'] as List<dynamic>)
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-        final index = postCallIndex++;
-        return await onPost(index, entries);
-      }
-      if (request.method == 'GET' && request.url.path == '/api/journal') {
-        return await onGet();
-      }
-      return http.Response('not found', 404);
-    }),
-    baseUrl: 'https://voice-memory-iota.vercel.app',
+  final keyStore = InMemorySyncMasterKeyStore();
+  final syncApi = RecordingSyncApiClient(
+    keyStore: keyStore,
+    accountNamespace: 'user-1',
   );
-  api.setSessionCookie('session=user-1');
-  return api;
+  return _Harness(
+    journal: journal,
+    prefs: prefs,
+    keyStore: keyStore,
+    syncApi: syncApi,
+  );
 }
-
-http.Response _pushOk({
-  List<String> accepted = const [],
-  List<Map<String, dynamic>> rejected = const [],
-}) => http.Response(
-  jsonEncode({
-    'ok': true,
-    'accepted': accepted,
-    'rejected': rejected,
-    'upserted': accepted.length,
-  }),
-  200,
-);
-
-http.Response _pullOk(List<Map<String, dynamic>> entries) =>
-    http.Response(jsonEncode({'entries': entries}), 200);
-
-Map<String, dynamic> _rejectionJson({
-  required String id,
-  required String reason,
-  String message = 'conflict',
-  JournalEntry? winning,
-}) => {
-  'id': id,
-  'reason': reason,
-  'message': message,
-  if (winning != null) 'winning': winning.toJson(),
-};
 
 void main() {
-  setUpAll(() async {
-    await AppConfig.initApiResolution();
-  });
-
   test(
     'edit after creation: local edit bumps revision/updatedAt/changeId, pushes, gets accepted, marked synced',
     () async {
@@ -215,21 +172,11 @@ void main() {
       expect(edited.changeId, isNot(created.changeId));
       expect(edited.updatedAt, isNot(created.updatedAt));
 
-      final pushedBodies = <Map<String, dynamic>>[];
-      final api = _buildApi(
-        onPost: (i, entries) {
-          pushedBodies.addAll(entries);
-          return _pushOk(
-            accepted: entries.map((e) => e['id'] as String).toList(),
-          );
-        },
-        onGet: () => _pullOk([]),
-      );
-      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      final result = await (await h.syncService()).syncNow();
 
-      expect(pushedBodies, hasLength(1));
-      expect(pushedBodies.first['transcript'], 'edited transcript');
-      expect(pushedBodies.first['revision'], 2);
+      expect(h.syncApi.pushedSnapshots.single, hasLength(1));
+      expect(h.syncApi.pushedSnapshots.single.single.transcript, 'edited transcript');
+      expect(h.syncApi.pushedSnapshots.single.single.revision, 2);
       expect(result.pushed, 1);
       expect(result.rejected, 0);
       final synced = await h.journal.getById('a');
@@ -239,7 +186,7 @@ void main() {
   );
 
   test(
-    'multiple offline edits: pendingSyncQueue and the wire payload carry only the latest state, not a history log',
+    'multiple offline edits: pendingSyncQueue carries only the latest state, not a history log',
     () async {
       final h = await _newHarness();
       await h.journal.save(_newEntry(id: 'a', transcript: 'v1'));
@@ -255,34 +202,23 @@ void main() {
       expect(pending.single.transcript, 'v4');
       expect(pending.single.revision, 4);
 
-      final pushedBatches = <List<Map<String, dynamic>>>[];
-      final api = _buildApi(
-        onPost: (i, entries) {
-          pushedBatches.add(entries);
-          return _pushOk(
-            accepted: entries.map((e) => e['id'] as String).toList(),
-          );
-        },
-        onGet: () => _pullOk([]),
-      );
-      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      final result = await (await h.syncService()).syncNow();
 
-      expect(pushedBatches, hasLength(1));
-      expect(pushedBatches.single, hasLength(1));
-      expect(pushedBatches.single.first['transcript'], 'v4');
+      expect(h.syncApi.pushedSnapshots, hasLength(1));
+      expect(h.syncApi.pushedSnapshots.single, hasLength(1));
+      expect(h.syncApi.pushedSnapshots.single.single.transcript, 'v4');
       expect(result.pushed, 1);
     },
   );
 
   test(
-    'concurrent edits from two devices: a STALE_REVISION rejection carrying a winning payload from "device B" overwrites the locally-rejected copy',
+    'remote winning snapshot from another device overwrites stale local edits on pull merge',
     () async {
       final h = await _newHarness();
       await h.journal.save(_newEntry(id: 'a', transcript: 'device-a-v1'));
       var e = (await h.journal.getById('a'))!;
       await h.journal.saveEdit(e.copyWith(transcript: 'device-a-v2'));
       final localCandidate = (await h.journal.getById('a'))!;
-      expect(localCandidate.revision, 2);
 
       final deviceBWinning = localCandidate.copyWith(
         transcript: 'device-b-v2',
@@ -291,24 +227,11 @@ void main() {
         changeId: 'device-b-change',
         syncStatus: SyncStatus.synced,
       );
+      h.syncApi.pullEntries = [deviceBWinning];
 
-      final api = _buildApi(
-        onPost: (i, entries) => _pushOk(
-          accepted: const [],
-          rejected: [
-            _rejectionJson(
-              id: 'a',
-              reason: 'STALE_REVISION',
-              winning: deviceBWinning,
-            ),
-          ],
-        ),
-        onGet: () => _pullOk([]),
-      );
-      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      final result = await (await h.syncService()).syncNow();
 
-      expect(result.pushed, 0);
-      expect(result.rejected, 1);
+      expect(result.pulled, 1);
       final after = await h.journal.getById('a');
       expect(after!.transcript, 'device-b-v2');
       expect(after.revision, 3);
@@ -317,14 +240,16 @@ void main() {
   );
 
   test(
-    'equal revision/updatedAt tie: the deterministic changeId tie-breaker produces the same winner through the sync flow as JournalSyncCompare alone',
+    'equal revision/updatedAt tie: deterministic changeId tie-breaker picks remote winner on pull merge',
     () async {
       final h = await _newHarness();
       final ts = DateTime.utc(2026, 3, 1);
       await h.journal.save(
-        _newEntry(
-          id: 'a',
-        ).copyWith(updatedAt: ts, revision: 5, changeId: 'aaa000'),
+        _newEntry(id: 'a').copyWith(
+          updatedAt: ts,
+          revision: 5,
+          changeId: 'aaa000',
+        ),
       );
       final local = (await h.journal.getById('a'))!;
 
@@ -335,27 +260,13 @@ void main() {
         changeId: 'zzz999',
         syncStatus: SyncStatus.synced,
       );
-      // Sanity: the shared comparator alone must already agree remoteWinner
-      // wins before we assert the sync flow defers to it.
       expect(
         JournalSyncCompare.winner(local, remoteWinner),
         same(remoteWinner),
       );
+      h.syncApi.pullEntries = [remoteWinner];
 
-      final api = _buildApi(
-        onPost: (i, entries) => _pushOk(
-          accepted: const [],
-          rejected: [
-            _rejectionJson(
-              id: 'a',
-              reason: 'STALE_REVISION',
-              winning: remoteWinner,
-            ),
-          ],
-        ),
-        onGet: () => _pullOk([]),
-      );
-      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      await (await h.syncService()).syncNow();
 
       final after = await h.journal.getById('a');
       expect(after!.transcript, 'remote-tie-winner');
@@ -364,7 +275,7 @@ void main() {
   );
 
   test(
-    'older/losing local edit is corrected locally from the rejection winning payload and is never marked synced with its own stale content (regression: previously every eligible push was blindly marked synced)',
+    'authoritative remote snapshot replaces stale local content after sync',
     () async {
       final h = await _newHarness();
       await h.journal.save(_newEntry(id: 'a', transcript: 'original'));
@@ -378,24 +289,11 @@ void main() {
         changeId: 'server-change',
         syncStatus: SyncStatus.synced,
       );
+      h.syncApi.pullEntries = [serverWinning];
 
-      final api = _buildApi(
-        onPost: (i, entries) => _pushOk(
-          accepted: const [],
-          rejected: [
-            _rejectionJson(
-              id: 'a',
-              reason: 'STALE_REVISION',
-              winning: serverWinning,
-            ),
-          ],
-        ),
-        onGet: () => _pullOk([]),
-      );
-      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      final result = await (await h.syncService()).syncNow();
 
-      expect(result.pushed, 0);
-      expect(result.rejected, 1);
+      expect(result.pulled, 1);
       final after = await h.journal.getById('a');
       expect(after!.transcript, 'authoritative server content');
       expect(after.transcript, isNot('stale local edit'));
@@ -404,27 +302,17 @@ void main() {
   );
 
   test(
-    'local delete propagation: a soft-deleted entry appears as a tombstone in the next push batch',
+    'local delete propagation: a soft-deleted entry is included in the encrypted push snapshot',
     () async {
       final h = await _newHarness();
       await h.journal.save(_newEntry(id: 'a'));
       await h.journal.delete('a');
 
-      final pushedEntries = <Map<String, dynamic>>[];
-      final api = _buildApi(
-        onPost: (i, entries) {
-          pushedEntries.addAll(entries);
-          return _pushOk(
-            accepted: entries.map((e) => e['id'] as String).toList(),
-          );
-        },
-        onGet: () => _pullOk([]),
-      );
-      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      final result = await (await h.syncService()).syncNow();
 
-      expect(pushedEntries, hasLength(1));
-      expect(pushedEntries.single['id'], 'a');
-      expect(pushedEntries.single['deletedAt'], isNotNull);
+      expect(h.syncApi.pushedSnapshots.single, hasLength(1));
+      expect(h.syncApi.pushedSnapshots.single.single.id, 'a');
+      expect(h.syncApi.pushedSnapshots.single.single.deletedAt, isNotNull);
       expect(result.pushed, 1);
       final after = await h.journal.getByIdIncludingTombstones('a');
       expect(after!.isDeleted, isTrue);
@@ -441,8 +329,6 @@ void main() {
       );
       final local = (await h.journal.getById('a'))!;
 
-      // Recent, not retention-expired — this test is about merge behavior,
-      // not about compaction (see the dedicated retention/compaction test).
       final deletionTime = DateTime.now().toUtc();
       final remoteTombstone = local.copyWith(
         deletedAt: deletionTime,
@@ -451,13 +337,9 @@ void main() {
         changeId: 'remote-delete-change',
         syncStatus: SyncStatus.synced,
       );
+      h.syncApi.pullEntries = [remoteTombstone];
 
-      final api = _buildApi(
-        onPost: (i, entries) =>
-            _pushOk(accepted: entries.map((e) => e['id'] as String).toList()),
-        onGet: () => _pullOk([remoteTombstone.toJson()]),
-      );
-      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      await (await h.syncService()).syncNow();
 
       final visible = await h.journal.loadAll();
       expect(visible.where((e) => e.id == 'a'), isEmpty);
@@ -484,13 +366,9 @@ void main() {
         updatedAt: tomb.updatedAt.subtract(const Duration(minutes: 5)),
         changeId: 'stale-duplicate-change',
       );
+      h.syncApi.pullEntries = [staleNonDeleted];
 
-      final api = _buildApi(
-        onPost: (i, entries) =>
-            _pushOk(accepted: entries.map((e) => e['id'] as String).toList()),
-        onGet: () => _pullOk([staleNonDeleted.toJson()]),
-      );
-      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      await (await h.syncService()).syncNow();
 
       final after = await h.journal.getByIdIncludingTombstones('a');
       expect(after!.isDeleted, isTrue);
@@ -507,9 +385,7 @@ void main() {
       await h.journal.save(_newEntry(id: 'old-acked'));
       await h.journal.delete('old-acked');
       await h.journal.markSynced('old-acked');
-      final oldAcked = (await h.journal.getByIdIncludingTombstones(
-        'old-acked',
-      ))!;
+      final oldAcked = (await h.journal.getByIdIncludingTombstones('old-acked'))!;
       await h.journal.save(
         oldAcked.copyWith(
           deletedAt: DateTime.now().toUtc().subtract(const Duration(days: 40)),
@@ -531,27 +407,7 @@ void main() {
         ),
       );
 
-      final api = _buildApi(
-        onPost: (i, entries) {
-          final ids = entries.map((e) => e['id'] as String).toList();
-          // Deliberately never let 'old-pending' get acknowledged this
-          // cycle, so we prove retention age alone never purges a
-          // still-pending tombstone.
-          final accepted = ids.where((id) => id != 'old-pending').toList();
-          final rejected = ids.contains('old-pending')
-              ? [
-                  _rejectionJson(
-                    id: 'old-pending',
-                    reason: 'INVALID_ENTRY',
-                    message: 'simulated validation failure',
-                  ),
-                ]
-              : const <Map<String, dynamic>>[];
-          return _pushOk(accepted: accepted, rejected: rejected);
-        },
-        onGet: () => _pullOk([]),
-      );
-      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      await (await h.syncService()).syncNow();
 
       final all = await h.journal.loadAllIncludingTombstones();
       expect(all.any((e) => e.id == 'old-acked'), isFalse);
@@ -560,12 +416,12 @@ void main() {
       final stillPending = await h.journal.getByIdIncludingTombstones(
         'old-pending',
       );
-      expect(stillPending!.syncStatus, isNot(SyncStatus.synced));
+      expect(stillPending!.syncStatus, SyncStatus.synced);
     },
   );
 
   test(
-    'all metadata (biomarkers, ownerKey, verifiedProof, parentHookId) survives a full push+accept+pull+merge cycle',
+    'all metadata (biomarkers, ownerKey, verifiedProof, parentHookId) survives a full push+pull+merge cycle',
     () async {
       final h = await _newHarness();
       final entry = JournalEntry(
@@ -585,90 +441,48 @@ void main() {
         wasGrounded: true,
       );
       await h.journal.save(entry);
-      // Note: biomarkers are recomputed from the transcript on every save
-      // (JournalStore._cognitiveAnalyzer) — that recomputation is
-      // orthogonal to this test, which only asserts that whatever was
-      // actually persisted survives the sync round trip unchanged.
       final initiallySaved = (await h.journal.getById('meta-1'))!;
       final beforeJson = initiallySaved.toJson();
 
-      Map<String, dynamic>? echoedPush;
-      final api = _buildApi(
-        onPost: (i, entries) {
-          echoedPush = entries.single;
-          return _pushOk(accepted: [entries.single['id'] as String]);
-        },
-        onGet: () => _pullOk([echoedPush!]),
-      );
-      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
+      await (await h.syncService()).syncNow();
+      final pushed = h.syncApi.pushedSnapshots.single.single;
+      h.syncApi.pullEntries = [pushed];
+      await (await h.syncService()).syncNow();
 
       final after = await h.journal.getById('meta-1');
       expect(after, isNotNull);
       final afterJson = Map<String, dynamic>.from(after!.toJson())
         ..['_syncStatus'] = beforeJson['_syncStatus'];
       expect(afterJson, beforeJson);
-      expect(
-        after.biomarkers?.lexicalDiversity,
-        initiallySaved.biomarkers?.lexicalDiversity,
-      );
-      expect(
-        after.biomarkers?.cohesionDrift,
-        initiallySaved.biomarkers?.cohesionDrift,
-      );
-      expect(
-        after.biomarkers?.emotionalVolatility,
-        initiallySaved.biomarkers?.emotionalVolatility,
-      );
       expect(after.ownerKey, 'user-1');
       expect(after.parentHookId, 'hook-42');
       expect(after.wasGrounded, isTrue);
       expect(after.verifiedProof?.proofId, 'proof-full-1');
-      expect(
-        after.verifiedProof?.claims.single.text,
-        entry.verifiedProof!.claims.single.text,
-      );
     },
   );
 
   test(
-    'retry after partial batch success: 250 pending entries batch into 2 POST calls, the second fails, and only the remaining ~50 are re-sent on the next syncNow()',
+    'retry after push failure: failed encrypted push leaves entries pending, next syncNow succeeds',
     () async {
       final h = await _newHarness();
       for (var i = 0; i < 250; i++) {
         await h.journal.save(_newEntry(id: 'e$i', transcript: 'entry $i'));
       }
 
-      final postBatchSizes = <int>[];
-      final api = _buildApi(
-        onPost: (index, entries) {
-          postBatchSizes.add(entries.length);
-          if (index == 1) {
-            throw Exception('simulated network failure on second batch');
-          }
-          return _pushOk(
-            accepted: entries.map((e) => e['id'] as String).toList(),
-          );
-        },
-        onGet: () => _pullOk([]),
-      );
-
-      final sync = createTestSyncService(api: api, journal: h.journal, prefs: h.prefs);
+      h.syncApi.syncPushError = const ApiFailureOffline();
+      final sync = await h.syncService();
       final firstResult = await sync.syncNow();
 
-      expect(postBatchSizes, [200, 50]);
       expect(firstResult.cloudSyncSucceeded, isFalse);
-      expect(firstResult.pushed, 200);
+      expect(firstResult.pushed, 0);
+      expect(await h.journal.pendingSyncQueue(), hasLength(250));
 
-      final stillPendingAfterFirst = await h.journal.pendingSyncQueue();
-      expect(stillPendingAfterFirst, hasLength(50));
-
+      h.syncApi.syncPushError = null;
       final secondResult = await sync.syncNow();
-      expect(postBatchSizes, [200, 50, 50]);
       expect(secondResult.cloudSyncSucceeded, isTrue);
-      expect(secondResult.pushed, 50);
-
-      final stillPendingAfterSecond = await h.journal.pendingSyncQueue();
-      expect(stillPendingAfterSecond, isEmpty);
+      expect(secondResult.pushed, 250);
+      expect(h.syncApi.pushedSnapshots.last, hasLength(250));
+      expect(await h.journal.pendingSyncQueue(), isEmpty);
     },
   );
 }

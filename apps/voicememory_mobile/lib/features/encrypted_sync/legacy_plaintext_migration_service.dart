@@ -1,4 +1,3 @@
-import '../../api/api_client.dart';
 import '../../core/network/api_result.dart';
 import '../../data/network/sync_api_client.dart';
 import '../../models/journal_entry.dart';
@@ -13,14 +12,12 @@ import 'sync_master_key_store.dart';
 /// encrypted `/api/sync/*` blobs. Never deletes server plaintext automatically.
 class LegacyPlaintextMigrationService {
   LegacyPlaintextMigrationService({
-    required ApiClient api,
     required SyncApiClient syncApi,
     required JournalStore journal,
     required MobilePrefsStore prefs,
     required DeviceIdStore deviceIds,
     required SyncMasterKeyStore keyStore,
-  }) : _api = api,
-       _syncApi = syncApi,
+  }) : _syncApi = syncApi,
        _journal = journal,
        _prefs = prefs,
        _deviceIds = deviceIds,
@@ -29,7 +26,6 @@ class LegacyPlaintextMigrationService {
   static const stateKey = 'legacy_plaintext_migration_v1';
   static const eligibleDeletionKey = 'legacy_plaintext_deletion_eligible_v1';
 
-  final ApiClient _api;
   final SyncApiClient _syncApi;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
@@ -52,7 +48,12 @@ class LegacyPlaintextMigrationService {
     await _prefs.writeJsonMap(stateKey, state);
 
     // 1. Authenticated read of legacy plaintext (migration-only path).
-    final legacyRemote = await _api.listJournal();
+    final legacyResult = await _syncApi.listLegacyJournal();
+    if (legacyResult case ApiFailureResult(:final failure)) {
+      throw failure.toApiException();
+    }
+    final legacyRemote =
+        (legacyResult as ApiSuccess<List<JournalEntry>>).value;
     state['legacyRemoteCount'] = legacyRemote.length;
 
     // 2. Validate shape locally.

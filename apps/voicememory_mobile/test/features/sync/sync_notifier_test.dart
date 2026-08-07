@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/core/di/network_providers.dart';
 import 'package:voicememory_mobile/core/network/api_failure.dart';
-import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/sync_api_client.dart';
 import 'package:voicememory_mobile/data/repositories/sync_repository.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
@@ -15,9 +15,10 @@ import 'package:voicememory_mobile/features/sync/application/sync_state.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/journal_ownership_guard.dart';
-import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+
+import '../../helpers/encrypted_sync_test_helpers.dart';
 
 Reflection _reflection() => const Reflection(
   mood: 'calm',
@@ -39,15 +40,15 @@ void main() {
     journal = await JournalStore.open('${tempDir.path}/journal.json');
     prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
     await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-a');
-    final api = _NoopSyncApi();
+    await markLegacyMigrationComplete(prefs);
+    final syncApi = _NoopSyncApi();
     final holder = SyncRepositoryHolder()
       ..value = SyncRepository(
         coordinator: EncryptedJournalSyncCoordinator(
-          syncApi: ApiClientSyncAdapter(api),
-          api: api,
+          syncApi: syncApi,
           journal: journal,
           prefs: prefs,
-          deviceIds: _FakeDeviceIds(),
+          deviceIds: TestDeviceIdStore(),
           keyStore: InMemorySyncMasterKeyStore(),
         ),
         prefs: prefs,
@@ -87,11 +88,10 @@ void main() {
     final holder = SyncRepositoryHolder()
       ..value = SyncRepository(
         coordinator: EncryptedJournalSyncCoordinator(
-          syncApi: ApiClientSyncAdapter(_AuthRequiredSyncApi()),
-          api: _AuthRequiredSyncApi(),
+          syncApi: _AuthRequiredSyncApi(),
           journal: journal,
           prefs: prefs,
-          deviceIds: _FakeDeviceIds(),
+          deviceIds: TestDeviceIdStore(),
           keyStore: InMemorySyncMasterKeyStore(),
         ),
         prefs: prefs,
@@ -117,31 +117,73 @@ void main() {
   });
 }
 
-class _NoopSyncApi extends ApiClient {
-  _NoopSyncApi() : super(baseUrl: 'http://test.invalid');
+class _NoopSyncApi implements SyncApiClient {
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
+    return const ApiSuccess({'blobs': []});
+  }
 
   @override
-  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
-    return {
+  Future<ApiResult<Map<String, dynamic>>> syncPush(
+    Map<String, dynamic> body,
+  ) async {
+    return const ApiSuccess({
       'ok': true,
       'manifest': {'latestSequence': 1, 'blobs': []},
-    };
+    });
   }
 
   @override
-  Future<Map<String, dynamic>> syncPull() async => {'blobs': []};
-}
-
-class _AuthRequiredSyncApi extends ApiClient {
-  _AuthRequiredSyncApi() : super(baseUrl: 'http://test.invalid');
+  Future<ApiResult<Map<String, dynamic>>> syncPull() async {
+    return const ApiSuccess({'blobs': []});
+  }
 
   @override
-  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
-    throw AuthRequiredException('Sign in required.');
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
+    return const ApiSuccess({'changes': []});
+  }
+
+  @override
+  Future<ApiResult<List<JournalEntry>>> listLegacyJournal({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return const ApiSuccess([]);
   }
 }
 
-class _FakeDeviceIds extends DeviceIdStore {
+class _AuthRequiredSyncApi implements SyncApiClient {
   @override
-  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
+  Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
+    return const ApiSuccess({'blobs': []});
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncPush(
+    Map<String, dynamic> body,
+  ) async {
+    return const ApiFailureResult(
+      ApiFailureAuthRequired('Sign in required.'),
+    );
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncPull() async {
+    return const ApiSuccess({'blobs': []});
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
+    return const ApiSuccess({'changes': []});
+  }
+
+  @override
+  Future<ApiResult<List<JournalEntry>>> listLegacyJournal({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return const ApiSuccess([]);
+  }
 }

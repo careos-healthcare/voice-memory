@@ -1,16 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
 
-import '../../api/api_client.dart';
-import '../../core/network/api_failure.dart';
+import 'package:http_parser/http_parser.dart';
+
+import '../../models/attest_result.dart';
+import '../../core/network/api_headers.dart';
+import '../../features/voice_capture/audio/audio_capture_diagnostics.dart';
 import '../../core/network/api_failure_mapper.dart';
 import '../../core/network/api_result.dart';
 import '../../core/network/http_transport.dart';
+import '../../core/network/multipart_file_part.dart';
 import '../../core/network/network_cancel_token.dart';
+import '../../features/live_audio/domain/models/offline_vault_manifest.dart';
 import '../../features/proof_admission/proof_admission_models.dart';
 import '../../features/voice_capture/analysis/analysis_log.dart';
+import '../../features/voice_capture/audio/audio_diag_log.dart';
+import '../../features/voice_capture/transcription/transcription_log.dart';
 import '../../models/reflection.dart';
 import '../../security/ai_prompt_boundary.dart';
 import '../../security/private_log.dart';
+import '../../security/user_content_safety.dart';
 import 'capture_api_client.dart';
 
 class HttpCaptureApiClient implements CaptureApiClient {
@@ -71,9 +80,9 @@ class HttpCaptureApiClient implements CaptureApiClient {
     );
 
     final headers = <String, String>{
-      ApiClient.captureTokenHeader: captureToken,
+      ApiHeaders.captureToken: captureToken,
       if (idempotencyKey != null && idempotencyKey.isNotEmpty)
-        ApiClient.idempotencyHeader: idempotencyKey,
+        ApiHeaders.idempotencyKey: idempotencyKey,
     };
 
     AnalysisLog.request(url: '/api/analyze');
@@ -135,5 +144,138 @@ class HttpCaptureApiClient implements CaptureApiClient {
         return ApiFailureResult(failure);
       },
     );
+  }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    TranscriptionLog.request(url: '/api/transcribe');
+    final fileName = _audioFilename(audioFile.path);
+    final uploadBytes = audioFile.existsSync() ? audioFile.lengthSync() : 0;
+    final contentTypeString = AudioCaptureDiagnostics.uploadContentTypeForPath(
+      audioFile.path,
+    );
+    final contentType = MediaType.parse(contentTypeString);
+    AudioDiagLog.upload(
+      fileName: fileName,
+      contentType: contentTypeString,
+      bytes: uploadBytes,
+    );
+
+    final headers = <String, String>{
+      ApiHeaders.captureToken: captureToken,
+      if (idempotencyKey != null && idempotencyKey.isNotEmpty)
+        ApiHeaders.idempotencyKey: idempotencyKey,
+    };
+
+    final responseResult = await _transport.postMultipart(
+      '/api/transcribe',
+      fields: {'durationSeconds': durationSeconds.toString()},
+      files: [
+        MultipartFilePart.fromPath(
+          field: 'audio',
+          path: audioFile.path,
+          filename: fileName,
+          contentType: contentType,
+        ),
+      ],
+      headers: headers,
+      cancelToken: cancelToken,
+    );
+
+    return responseResult.when(
+      success: (response) {
+        TranscriptionLog.response(
+          status: response.statusCode,
+          contentType: response.headers['content-type'] ?? 'unknown',
+        );
+        return _transport.decodeSuccess(response, (body) {
+          final transcript = body['transcript'] as String?;
+          if (transcript == null || transcript.trim().isEmpty) {
+            throw FormatException(
+              body['error'] as String? ?? 'No transcript returned',
+            );
+          }
+          final sanitized = UserContentSafety.sanitizePlainText(
+            transcript.trim(),
+          );
+          PrivateLog.userTextField(
+            tag: 'HttpCaptureApiClient:',
+            field: 'transcribe',
+            text: sanitized,
+          );
+          return sanitized;
+        });
+      },
+      onFailure: ApiFailureResult.new,
+    );
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    final fields = <String, String>{'session_id': sessionId};
+    if (recoverySecretKeyBytes != null && recoverySecretKeyBytes.length == 32) {
+      fields['recovery_secret'] = base64Url.encode(recoverySecretKeyBytes);
+    }
+
+    final headers = <String, String>{
+      'Authorization': 'Bearer $captureToken',
+      ApiHeaders.captureToken: captureToken,
+      ApiHeaders.idempotencyKey: idempotencyKey,
+    };
+
+    final responseResult = await _transport.postMultipart(
+      '/api/live-audio/recover',
+      fields: fields,
+      files: [
+        MultipartFilePart.fromPath(
+          field: 'vault',
+          path: vaultFile.path,
+          filename: vaultFile.uri.pathSegments.last,
+          contentType: MediaType('application', 'octet-stream'),
+        ),
+      ],
+      headers: headers,
+      cancelToken: cancelToken,
+    );
+
+    return responseResult.when(
+      success: (response) {
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+        }
+        try {
+          final body = jsonDecode(response.body) as Map<String, dynamic>;
+          if (body['ok'] != true) {
+            return ApiFailureResult(
+              ApiFailureMapper.fromResponse(response),
+            );
+          }
+          return ApiSuccess(VaultRecoveryServerResult.fromJson(body));
+        } on FormatException catch (error) {
+          return ApiFailureResult(ApiFailureMapper.fromException(error));
+        }
+      },
+      onFailure: ApiFailureResult.new,
+    );
+  }
+
+  static String _audioFilename(String path) {
+    final parts = path.split('.');
+    final ext = parts.length > 1 ? parts.last : 'm4a';
+    return 'recording.$ext';
   }
 }

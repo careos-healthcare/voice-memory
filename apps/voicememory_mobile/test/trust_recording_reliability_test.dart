@@ -1,9 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
@@ -13,6 +19,7 @@ import 'package:voicememory_mobile/features/trust/capture_recovery_copy.dart';
 import 'package:voicememory_mobile/features/trust/capture_recovery_gates.dart';
 import 'package:voicememory_mobile/features/trust/trust_reliability_copy.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
@@ -28,22 +35,54 @@ import 'package:voicememory_mobile/widgets/record/capture_recovery_hint_strip.da
 import 'package:voicememory_mobile/widgets/record/microphone_permission_blocked_panel.dart';
 import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 
-class _RecoveryFailingAnalyzeApi extends ApiClient {
-  _RecoveryFailingAnalyzeApi() : super(baseUrl: 'http://test.invalid');
-
+class _RecoveryFailingAnalyzeApi implements CaptureApiClient {
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<RawModelResponse> postAnalyzeRaw({
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
-    throw const SocketException('Network unavailable');
+    return ApiFailureResult(
+      ApiFailureMapper.fromException(
+        const SocketException('Network unavailable'),
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }
 
@@ -212,7 +251,11 @@ void main() {
       await AppServices.resetForTest(
         journalPath: journalPath,
         skipRevenueCat: true,
-        api: _RecoveryFailingAnalyzeApi(),
+        networkOverrides: [
+          captureApiClientProvider.overrideWithValue(
+            _RecoveryFailingAnalyzeApi(),
+          ),
+        ],
       );
       Process.runSync('chmod', ['444', journalPath]);
 

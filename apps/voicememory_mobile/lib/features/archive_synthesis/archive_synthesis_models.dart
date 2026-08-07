@@ -413,3 +413,21 @@ class ArchiveHistorianReport {
     );
   }
 }
+
+class ArchiveSynthesisApiResponse {
+  const ArchiveSynthesisApiResponse({
+    required this.synthesisType,
+    required this.cached,
+    this.monthlyReview,
+    this.milestoneReview,
+    this.deepDiveNarrative,
+    this.historianReport,
+  });
+
+  final String synthesisType;
+  final bool cached;
+  final ArchiveMonthlyReview? monthlyReview;
+  final ArchiveMilestoneReview? milestoneReview;
+  final ArchiveDeepDiveNarrative? deepDiveNarrative;
+  final ArchiveHistorianReport? historianReport;
+}

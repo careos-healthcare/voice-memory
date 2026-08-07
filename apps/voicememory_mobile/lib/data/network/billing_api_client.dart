@@ -1,4 +1,4 @@
-import '../../api/api_client.dart' show CheckoutSession;
+import '../../models/checkout_session.dart';
 import '../../core/network/api_result.dart';
 import '../../core/network/network_cancel_token.dart';
 import '../../models/entitlement.dart';

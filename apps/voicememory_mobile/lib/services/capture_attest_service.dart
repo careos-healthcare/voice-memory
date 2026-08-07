@@ -1,28 +1,14 @@
 import '../core/network/api_failure.dart';
-import '../data/network/api_client_capture_adapter.dart';
 import '../data/repositories/capture_repository.dart';
 import '../storage/capture_token_cache.dart';
 import '../storage/device_id.dart';
-import '../api/api_client.dart';
-import '../core/network/network_cancel_token.dart';
 
 class CaptureAttestService {
   CaptureAttestService({
-    CaptureRepository? captureRepository,
-    ApiClient? api,
+    required CaptureRepository captureRepository,
     required DeviceIdStore deviceIds,
     required CaptureTokenCache tokenCache,
-    NetworkRequestScope? requestScope,
-  }) : assert(
-         captureRepository != null || api != null,
-         'Provide captureRepository or legacy api',
-       ),
-       _captureRepository =
-           captureRepository ??
-           CaptureRepository(
-             api: ApiClientCaptureAdapter(api!),
-             requestScope: requestScope ?? NetworkRequestScope(),
-           ),
+  }) : _captureRepository = captureRepository,
        _deviceIds = deviceIds,
        _tokenCache = tokenCache;
 

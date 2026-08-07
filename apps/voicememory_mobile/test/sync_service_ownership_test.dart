@@ -1,19 +1,16 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/journal_ownership_guard.dart';
-import '../helpers/test_sync_service.dart';
-import 'package:voicememory_mobile/services/sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+
+import 'helpers/encrypted_sync_test_helpers.dart';
+import 'helpers/test_sync_service.dart';
 
 Reflection _reflection() => const Reflection(
   mood: 'calm',
@@ -35,10 +32,6 @@ JournalEntry _entry({required String id, String? ownerKey}) => JournalEntry(
 );
 
 void main() {
-  setUpAll(() async {
-    await AppConfig.initApiResolution();
-  });
-
   test(
     'syncNow never uploads entries owned by a different account after an '
     'account switch is detected (P0 — cross-account archive leakage)',
@@ -50,12 +43,9 @@ void main() {
       );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
 
-      // user-a's entry was created and left pending before the device
-      // switched accounts.
       await journal.save(_entry(id: 'a', ownerKey: 'user-a'));
       journal.setActiveOwnerKey('user-b');
-      // user-b creates a new entry after signing in.
-      await journal.save(_entry(id: 'b'));
+      await journal.save(_entry(id: 'b', ownerKey: 'user-b'));
 
       await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-b');
       await prefs.writeBool(
@@ -63,42 +53,22 @@ void main() {
         true,
       );
 
-      final uploadedIds = <String>[];
-      final api = ApiClient(
-        httpClient: MockClient((request) async {
-          if (request.method == 'POST' && request.url.path == '/api/journal') {
-            final body = jsonDecode(request.body) as Map<String, dynamic>;
-            final entries = body['entries'] as List<dynamic>;
-            final ids = entries.map((e) => (e as Map)['id'] as String).toList();
-            uploadedIds.addAll(ids);
-            return http.Response(
-              jsonEncode({
-                'ok': true,
-                'accepted': ids,
-                'rejected': [],
-                'upserted': ids.length,
-              }),
-              200,
-            );
-          }
-          if (request.method == 'GET' && request.url.path == '/api/journal') {
-            return http.Response(jsonEncode({'entries': []}), 200);
-          }
-          return http.Response('not found', 404);
-        }),
-        baseUrl: 'https://voice-memory-iota.vercel.app',
+      final keyStore = InMemorySyncMasterKeyStore();
+      final syncApi = RecordingSyncApiClient(
+        keyStore: keyStore,
+        accountNamespace: 'user-b',
       );
-      api.setSessionCookie('session=user-b');
 
-      final sync = createTestSyncService(
-        api: api,
+      final sync = await createTestSyncService(
+        syncApi: syncApi,
         journal: journal,
         prefs: prefs,
+        keyStore: keyStore,
       );
       final result = await sync.syncNow();
 
-      expect(uploadedIds, ['b']);
-      expect(uploadedIds, isNot(contains('a')));
+      expect(syncApi.lastPushedEntryIds, ['b']);
+      expect(syncApi.lastPushedEntryIds, isNot(contains('a')));
       expect(result.pushed, 1);
       expect(result.syncNote, contains('1 entry'));
 
@@ -118,7 +88,6 @@ void main() {
     );
     final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
 
-    // Entry created before owner tagging existed — no ownerKey at all.
     await journal.save(_entry(id: 'legacy'));
 
     await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-a');
@@ -127,41 +96,21 @@ void main() {
       false,
     );
 
-    final uploadedIds = <String>[];
-    final api = ApiClient(
-      httpClient: MockClient((request) async {
-        if (request.method == 'POST' && request.url.path == '/api/journal') {
-          final body = jsonDecode(request.body) as Map<String, dynamic>;
-          final entries = body['entries'] as List<dynamic>;
-          final ids = entries.map((e) => (e as Map)['id'] as String).toList();
-          uploadedIds.addAll(ids);
-          return http.Response(
-            jsonEncode({
-              'ok': true,
-              'accepted': ids,
-              'rejected': [],
-              'upserted': ids.length,
-            }),
-            200,
-          );
-        }
-        if (request.method == 'GET' && request.url.path == '/api/journal') {
-          return http.Response(jsonEncode({'entries': []}), 200);
-        }
-        return http.Response('not found', 404);
-      }),
-      baseUrl: 'https://voice-memory-iota.vercel.app',
+    final keyStore = InMemorySyncMasterKeyStore();
+    final syncApi = RecordingSyncApiClient(
+      keyStore: keyStore,
+      accountNamespace: 'user-a',
     );
-    api.setSessionCookie('session=user-a');
 
-    final sync = createTestSyncService(
-      api: api,
+    final sync = await createTestSyncService(
+      syncApi: syncApi,
       journal: journal,
       prefs: prefs,
+      keyStore: keyStore,
     );
     final result = await sync.syncNow();
 
-    expect(uploadedIds, ['legacy']);
+    expect(syncApi.lastPushedEntryIds, ['legacy']);
     expect(result.syncNote, isNull);
   });
 }

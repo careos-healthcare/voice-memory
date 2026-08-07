@@ -1,6 +1,6 @@
-import '../../api/api_client.dart';
 import '../../audio/recording_service.dart';
 import '../../billing/billing_service.dart';
+import '../../data/repositories/account_repository.dart';
 import '../../features/live_audio/application/live_voice_capture_service.dart';
 import '../../services/app_services.dart';
 import '../../services/auth_service.dart';
@@ -22,7 +22,7 @@ class V1AccountDependencies {
     required this.prefs,
     required this.pipeline,
     required this.recording,
-    required this.api,
+    required this.accountRepository,
     required this.auth,
     required this.billing,
     this.liveVoiceCapture,
@@ -33,7 +33,7 @@ class V1AccountDependencies {
   final MobilePrefsStore prefs;
   final CapturePipelineService pipeline;
   final RecordingService recording;
-  final ApiClient api;
+  final AccountRepository accountRepository;
   final AuthService auth;
   final BillingService billing;
   final LiveVoiceCaptureService? liveVoiceCapture;
@@ -46,7 +46,7 @@ class V1AccountDependencies {
       prefs: services.prefs,
       pipeline: services.pipeline,
       recording: services.recording,
-      api: services.api,
+      accountRepository: services.accountRepository,
       auth: services.auth,
       billing: services.billing,
       liveVoiceCapture: services.liveVoiceCapture,

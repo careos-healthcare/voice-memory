@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api/api_error_message.dart';
 import '../core/di/v1_account_dependencies.dart';
+import '../core/network/api_failure.dart';
 import '../theme/app_colors.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/security/wipe_local_archive_dialog.dart';
@@ -12,7 +13,7 @@ class DeleteAccountScreen extends StatefulWidget {
 
   final V1AccountDependencies? accountDependencies;
 
-  /// Shown only after [ApiClient.deleteAccount] succeeds on the server.
+  /// Shown only after server account deletion succeeds.
   static const String deletionCompletedMessage =
       'Account deleted. Your server account and synced data have '
       'been permanently removed.';
@@ -105,7 +106,11 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   Future<void> _delete() async {
     setState(() => _busy = true);
     try {
-      await _accountDeps.api.deleteAccount();
+      final result = await _accountDeps.accountRepository.deleteAccount();
+      result.when(
+        success: (_) {},
+        onFailure: (failure) => throw failure.toApiException(),
+      );
       // Server deletion and local-device deletion are two separate steps —
       // offer the second one explicitly, and do it *before* signOut()
       // below switches the active namespace to guest, so the wipe dialog

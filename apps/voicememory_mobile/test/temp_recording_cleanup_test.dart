@@ -1,12 +1,19 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:voicememory_mobile/features/proof_admission/proof_fingerprints.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
@@ -310,7 +317,9 @@ void main() {
       final dir = Directory.systemTemp.createTempSync('vm_pipeline_draft_');
       await AppServices.resetForTest(
         journalPath: '${dir.path}/journal.json',
-        api: _FailingTranscribeApi(),
+        networkOverrides: [
+          captureApiClientProvider.overrideWithValue(_FailingTranscribeApi()),
+        ],
       );
       final audioDir = Directory.systemTemp.createTempSync(
         'vm_pipeline_audio_',
@@ -334,21 +343,53 @@ void main() {
   });
 }
 
-class _FailingTranscribeApi extends ApiClient {
-  _FailingTranscribeApi() : super(baseUrl: 'http://test.invalid');
-
+class _FailingTranscribeApi implements CaptureApiClient {
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<String> postTranscribe({
+  Future<ApiResult<String>> postTranscribe({
     required File audioFile,
     required int durationSeconds,
     required String captureToken,
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
-    throw ApiException('Service unavailable', statusCode: 503);
+    return ApiFailureResult(
+      ApiFailureMapper.fromException(
+        ApiException('Service unavailable', statusCode: 503),
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }

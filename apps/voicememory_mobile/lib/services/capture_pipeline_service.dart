@@ -31,7 +31,6 @@ import '../storage/journal_store.dart';
 import 'capture_attest_service.dart';
 import 'capture_save_messages.dart';
 import '../data/repositories/capture_repository.dart';
-import '../api/api_client.dart';
 import 'product_analytics.dart';
 import 'record_pipeline_log.dart';
 
@@ -71,20 +70,17 @@ class CapturePipelineResult {
 class CapturePipelineService {
   CapturePipelineService({
     required CaptureRepository captureRepository,
-    required ApiClient api,
     required CaptureAttestService attest,
     required JournalStore journalStore,
     this._scopeProvider = const AppServicesProofScopeProvider(),
     required this.consentStore,
     ApiUsageGuard? usageGuard,
   }) : _captureRepository = captureRepository,
-       _api = api,
        _attest = attest,
        _journalStore = journalStore,
        _usageGuard = usageGuard ?? ApiUsageGuard.shared;
 
   final CaptureRepository _captureRepository;
-  final ApiClient _api;
   final CaptureAttestService _attest;
   final JournalStore _journalStore;
   final ApiUsageGuard _usageGuard;
@@ -153,7 +149,7 @@ class CapturePipelineService {
       final transcription = await TranscriptionService.transcribeRecording(
         audioFile: audioFile,
         durationSeconds: durationSeconds,
-        api: _api,
+        captureRepository: _captureRepository,
         ensureCaptureToken: _attest.ensureCaptureToken,
         scopeKey: scopeKey,
         usageGuard: _usageGuard,

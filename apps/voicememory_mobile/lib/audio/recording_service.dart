@@ -76,6 +76,7 @@ class RecordingService extends Notifier<RecordingState> {
     @visibleForTesting bool? useNativeRecorderOverride,
   }) {
     final container = ProviderContainer(
+      parent: boundAppProviderContainer,
       overrides: [
         recordingServiceConfigProvider.overrideWithValue(
           RecordingServiceConfig(

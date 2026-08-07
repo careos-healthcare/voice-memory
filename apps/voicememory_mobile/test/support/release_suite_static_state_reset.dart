@@ -1,3 +1,4 @@
+import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_store.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
@@ -27,6 +28,7 @@ abstract final class ReleaseSuiteStaticStateReset {
 
   /// Safe before each test even when [AppServices] is not initialized.
   static Future<void> resetCachedState() async {
+    AppConfig.configureForTest();
     await ComeBackTomorrowV2Store.resetForTest(null);
     FirstProofTruthStore.invalidateCache();
     WhatChangedV2Store.invalidateCache();

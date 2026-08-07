@@ -7,17 +7,28 @@ import '../../config/app_config.dart';
 import '../../core/network/http_transport.dart';
 import '../../core/network/network_cancel_token.dart';
 import '../../core/network/session_cookie_source.dart';
+import '../../data/network/account_api_client.dart';
+import '../../data/network/archive_synthesis_api_client.dart';
 import '../../data/network/auth_api_client.dart';
 import '../../data/network/billing_api_client.dart';
 import '../../data/network/capture_api_client.dart';
+import '../../data/network/http_account_api_client.dart';
+import '../../data/network/http_archive_synthesis_api_client.dart';
 import '../../data/network/http_auth_api_client.dart';
 import '../../data/network/http_billing_api_client.dart';
 import '../../data/network/http_capture_api_client.dart';
+import '../../data/network/http_live_audio_api_client.dart';
+import '../../data/network/http_push_api_client.dart';
 import '../../data/network/http_sync_api_client.dart';
+import '../../data/network/live_audio_api_client.dart';
+import '../../data/network/push_api_client.dart';
 import '../../data/network/sync_api_client.dart';
+import '../../data/repositories/account_repository.dart';
+import '../../data/repositories/archive_synthesis_repository.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/billing_repository.dart';
 import '../../data/repositories/capture_repository.dart';
+import '../../data/repositories/live_audio_repository.dart';
 import '../../data/repositories/sync_repository.dart';
 import '../../storage/entitlement_cache.dart';
 import '../../storage/secure_storage.dart';
@@ -75,6 +86,22 @@ final captureApiClientProvider = Provider<CaptureApiClient>(
   (ref) => HttpCaptureApiClient(ref.watch(httpTransportProvider)),
 );
 
+final archiveSynthesisApiClientProvider = Provider<ArchiveSynthesisApiClient>(
+  (ref) => HttpArchiveSynthesisApiClient(ref.watch(httpTransportProvider)),
+);
+
+final accountApiClientProvider = Provider<AccountApiClient>(
+  (ref) => HttpAccountApiClient(ref.watch(httpTransportProvider)),
+);
+
+final pushApiClientProvider = Provider<PushApiClient>(
+  (ref) => HttpPushApiClient(ref.watch(httpTransportProvider)),
+);
+
+final liveAudioApiClientProvider = Provider<LiveAudioApiClient>(
+  (ref) => HttpLiveAudioApiClient(ref.watch(httpTransportProvider)),
+);
+
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => throw UnimplementedError('Override authRepositoryProvider at bootstrap'),
 );
@@ -89,6 +116,28 @@ final billingRepositoryProvider = Provider<BillingRepository>(
 final captureRepositoryProvider = Provider<CaptureRepository>(
   (ref) => CaptureRepository(
     api: ref.watch(captureApiClientProvider),
+    requestScope: ref.watch(networkRequestScopeProvider),
+  ),
+);
+
+final archiveSynthesisRepositoryProvider = Provider<ArchiveSynthesisRepository>(
+  (ref) => ArchiveSynthesisRepository(
+    api: ref.watch(archiveSynthesisApiClientProvider),
+    requestScope: ref.watch(networkRequestScopeProvider),
+  ),
+);
+
+final accountRepositoryProvider = Provider<AccountRepository>(
+  (ref) => AccountRepository(
+    api: ref.watch(accountApiClientProvider),
+    sessionCookies: ref.watch(sessionCookieSourceProvider),
+    requestScope: ref.watch(networkRequestScopeProvider),
+  ),
+);
+
+final liveAudioRepositoryProvider = Provider<LiveAudioRepository>(
+  (ref) => LiveAudioRepository(
+    api: ref.watch(liveAudioApiClientProvider),
     requestScope: ref.watch(networkRequestScopeProvider),
   ),
 );
@@ -141,6 +190,7 @@ ProviderContainer createNetworkProviderContainer({
   http.Client? httpClient,
   String? apiBaseUrl,
   StoreBillingPort? storeBilling,
+  List<Override>? networkOverrides,
 }) {
   return ProviderContainer(
     overrides: [
@@ -155,6 +205,7 @@ ProviderContainer createNetworkProviderContainer({
       if (apiBaseUrl != null) apiBaseUrlProvider.overrideWithValue(apiBaseUrl),
       if (storeBilling != null)
         storeBillingPortProvider.overrideWithValue(storeBilling),
+      ...?networkOverrides,
     ],
   );
 }

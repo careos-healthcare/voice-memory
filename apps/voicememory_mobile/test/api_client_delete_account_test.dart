@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/core/network/http_transport.dart';
+import 'package:voicememory_mobile/data/network/http_account_api_client.dart';
 
 void main() {
   setUpAll(() async {
@@ -15,14 +16,11 @@ void main() {
   test('deleteAccount sends the server-required confirm:true body', () async {
     var sawConfirmedBody = false;
 
-    final client = ApiClient(
-      httpClient: MockClient((request) async {
+    final transport = HttpTransport(
+      client: MockClient((request) async {
         expect(request.method, 'POST');
         expect(request.url.path, '/api/account/delete');
 
-        // The server contract (app/api/account/delete/route.ts) rejects the
-        // request with CONFIRM_REQUIRED unless the JSON body contains
-        // {"confirm": true}. A regression here silently breaks deletion.
         final decoded = jsonDecode(request.body) as Map<String, dynamic>;
         sawConfirmedBody = decoded['confirm'] == true;
 
@@ -45,8 +43,13 @@ void main() {
       }),
       baseUrl: 'https://voice-memory-iota.vercel.app',
     );
+    final client = HttpAccountApiClient(transport);
 
-    await client.deleteAccount();
+    final result = await client.deleteAccount();
+    result.when(
+      success: (_) {},
+      onFailure: (failure) => throw failure.toApiException(),
+    );
 
     expect(sawConfirmedBody, isTrue);
   });
@@ -54,8 +57,8 @@ void main() {
   test(
     'deleteAccount surfaces CONFIRM_REQUIRED as a mapped API error, not a silent success',
     () async {
-      final client = ApiClient(
-        httpClient: MockClient((request) async {
+      final transport = HttpTransport(
+        client: MockClient((request) async {
           return http.Response(
             jsonEncode({
               'error': 'Confirmation required.',
@@ -67,8 +70,16 @@ void main() {
         }),
         baseUrl: 'https://voice-memory-iota.vercel.app',
       );
+      final client = HttpAccountApiClient(transport);
 
-      await expectLater(client.deleteAccount(), throwsA(isA<ApiException>()));
+      final result = await client.deleteAccount();
+      expect(
+        result.when(
+          success: (_) => null,
+          onFailure: (failure) => failure.toApiException(),
+        ),
+        isA<ApiException>(),
+      );
     },
   );
 }

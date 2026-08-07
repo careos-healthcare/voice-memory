@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/sync_api_client.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/encrypted_sync_service.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -37,7 +38,7 @@ void main() {
       await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, 'user-a');
       api = _RecordingApi();
       service = EncryptedSyncService(
-        syncApi: ApiClientSyncAdapter(api),
+        syncApi: api,
         journal: journal,
         prefs: prefs,
         deviceIds: _FakeDeviceIds(),
@@ -113,24 +114,43 @@ void main() {
   });
 }
 
-class _RecordingApi extends ApiClient {
-  _RecordingApi() : super(baseUrl: 'http://test.invalid');
-
+class _RecordingApi implements SyncApiClient {
   final List<Map<String, dynamic>> pushBodies = [];
   List<dynamic>? pullBlobs;
 
   @override
-  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
-    pushBodies.add(Map<String, dynamic>.from(body));
-    return {
-      'ok': true,
-      'manifest': {'blobs': []},
-    };
+  Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
+    return const ApiSuccess({'blobs': []});
   }
 
   @override
-  Future<Map<String, dynamic>> syncPull() async {
-    return {'blobs': pullBlobs ?? []};
+  Future<ApiResult<Map<String, dynamic>>> syncPush(
+    Map<String, dynamic> body,
+  ) async {
+    pushBodies.add(Map<String, dynamic>.from(body));
+    return const ApiSuccess({
+      'ok': true,
+      'manifest': {'blobs': []},
+    });
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncPull() async {
+    return ApiSuccess({'blobs': pullBlobs ?? []});
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
+    return const ApiSuccess({'changes': []});
+  }
+
+  @override
+  Future<ApiResult<List<JournalEntry>>> listLegacyJournal({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return const ApiSuccess([]);
   }
 }
 

@@ -1,7 +1,6 @@
 import '../../core/network/api_failure_mapper.dart';
 import '../../core/network/api_result.dart';
 import '../../data/network/sync_api_client.dart';
-import '../../api/api_client.dart';
 import '../../storage/device_id.dart';
 import '../../storage/journal_store.dart';
 import '../../storage/mobile_prefs_store.dart';
@@ -22,7 +21,6 @@ export 'sync_master_key_store.dart';
 class EncryptedJournalSyncCoordinator {
   EncryptedJournalSyncCoordinator({
     required SyncApiClient syncApi,
-    required ApiClient api,
     required JournalStore journal,
     required MobilePrefsStore prefs,
     required DeviceIdStore deviceIds,
@@ -35,7 +33,6 @@ class EncryptedJournalSyncCoordinator {
          keyStore: keyStore,
        ),
        _legacyMigration = LegacyPlaintextMigrationService(
-         api: api,
          syncApi: syncApi,
          journal: journal,
          prefs: prefs,

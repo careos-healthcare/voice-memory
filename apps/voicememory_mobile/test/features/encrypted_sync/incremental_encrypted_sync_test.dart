@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/sync_api_client.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/encrypted_sync_service.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -41,7 +42,7 @@ void main() {
     await prefs.setLastSyncSequence(1);
     final api = _IncrementalApi();
     final service = EncryptedSyncService(
-      syncApi: ApiClientSyncAdapter(api),
+      syncApi: api,
       journal: journal,
       prefs: prefs,
       deviceIds: _FakeDeviceIds(),
@@ -74,7 +75,7 @@ void main() {
       userId: 'user-a',
     );
     final service = EncryptedSyncService(
-      syncApi: ApiClientSyncAdapter(_StaleMidFlightApi()),
+      syncApi: _StaleMidFlightApi(),
       journal: journal,
       prefs: prefs,
       deviceIds: _FakeDeviceIds(),
@@ -98,25 +99,32 @@ void main() {
   });
 }
 
-class _IncrementalApi extends ApiClient {
-  _IncrementalApi() : super(baseUrl: 'http://test.invalid');
-
+class _IncrementalApi implements SyncApiClient {
   var syncChangesCalls = 0;
   var syncPullCalls = 0;
   int? lastSince;
 
   @override
-  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
-    return {
-      'manifest': {'latestSequence': 2, 'blobs': []},
-    };
+  Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
+    return const ApiSuccess({'blobs': []});
   }
 
   @override
-  Future<Map<String, dynamic>> syncChanges({required int since}) async {
+  Future<ApiResult<Map<String, dynamic>>> syncPush(
+    Map<String, dynamic> body,
+  ) async {
+    return const ApiSuccess({
+      'manifest': {'latestSequence': 2, 'blobs': []},
+    });
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
     syncChangesCalls++;
     lastSince = since;
-    return {
+    return const ApiSuccess({
       'latestSequence': 2,
       'changes': [
         {
@@ -129,32 +137,60 @@ class _IncrementalApi extends ApiClient {
         },
       ],
       'blobs': [],
-    };
+    });
   }
 
   @override
-  Future<Map<String, dynamic>> syncPull() async {
+  Future<ApiResult<Map<String, dynamic>>> syncPull() async {
     syncPullCalls++;
-    return {'blobs': []};
+    return const ApiSuccess({'blobs': []});
+  }
+
+  @override
+  Future<ApiResult<List<JournalEntry>>> listLegacyJournal({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return const ApiSuccess([]);
   }
 }
 
-class _StaleMidFlightApi extends ApiClient {
-  _StaleMidFlightApi() : super(baseUrl: 'http://test.invalid');
+class _StaleMidFlightApi implements SyncApiClient {
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
+    return const ApiSuccess({'blobs': []});
+  }
 
   @override
-  Future<Map<String, dynamic>> syncPush(Map<String, dynamic> body) async {
+  Future<ApiResult<Map<String, dynamic>>> syncPush(
+    Map<String, dynamic> body,
+  ) async {
     AccountSessionRegistry.instance.activate(
       namespace: AccountNamespace.forUserId('user-b'),
       userId: 'user-b',
     );
-    return {
+    return const ApiSuccess({
       'manifest': {'latestSequence': 1, 'blobs': []},
-    };
+    });
   }
 
   @override
-  Future<Map<String, dynamic>> syncPull() async => {'blobs': []};
+  Future<ApiResult<Map<String, dynamic>>> syncPull() async {
+    return const ApiSuccess({'blobs': []});
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
+    return const ApiSuccess({'changes': []});
+  }
+
+  @override
+  Future<ApiResult<List<JournalEntry>>> listLegacyJournal({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return const ApiSuccess([]);
+  }
 }
 
 class _FakeDeviceIds extends DeviceIdStore {

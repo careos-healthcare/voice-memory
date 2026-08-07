@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_recovery_gateway.dart';
 import 'package:voicememory_mobile/features/live_audio/application/offline_vault_recovery_service.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/local_audio_vault.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/network_connectivity_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/offline_vault_recovery_store.dart';
-import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
-import 'package:voicememory_mobile/data/network/api_client_capture_adapter.dart';
-import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -27,7 +29,8 @@ void main() {
     late Directory vaultDirectory;
     late File manifestFile;
     late OfflineVaultRecoveryStore store;
-    late _FakeApiClient api;
+    late _FakeCaptureApiClient captureApi;
+    late CaptureRepository captureRepository;
     late OfflineVaultRecoveryService recoveryService;
     late LocalAudioVault vault;
     late _TestConnectivity connectivity;
@@ -45,31 +48,27 @@ void main() {
         manifestFile: manifestFile,
         resolveVaultDirectory: () async => vaultDirectory,
       );
-      api = _FakeApiClient();
+      captureApi = _FakeCaptureApiClient();
+      captureRepository = CaptureRepository(
+        api: captureApi,
+        requestScope: NetworkRequestScope(),
+      );
       prefs = await MobilePrefsStore.open('${vaultDirectory.path}/prefs.json');
       consentGate = RemoteProcessingConsentGate.fromPrefs(prefs);
       await RemoteProcessingConsentStore(prefs).grant();
+      final attest = CaptureAttestService(
+        captureRepository: captureRepository,
+        deviceIds: _FakeDeviceIdStore(),
+        tokenCache: CaptureTokenCache()
+          ..setToken('capture-token', expiresInSeconds: 3600),
+      );
       recoveryService = OfflineVaultRecoveryService(
         store: store,
-        api: api,
-        attest: CaptureAttestService(
-          api: api,
-          deviceIds: _FakeDeviceIdStore(),
-          tokenCache: CaptureTokenCache()
-            ..setToken('capture-token', expiresInSeconds: 3600),
-        ),
+        captureRepository: captureRepository,
+        attest: attest,
         pipeline: CapturePipelineService(
-          captureRepository: CaptureRepository(
-            api: ApiClientCaptureAdapter(api),
-            requestScope: NetworkRequestScope(),
-          ),
-          api: api,
-          attest: CaptureAttestService(
-            api: api,
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache()
-              ..setToken('capture-token', expiresInSeconds: 3600),
-          ),
+          captureRepository: captureRepository,
+          attest: attest,
           journalStore: JournalStore(
             file: File('${vaultDirectory.path}/journal.json'),
           ),
@@ -135,12 +134,12 @@ void main() {
 
         await gateway.checkForPendingRecovery();
         expect(await closed!.exists(), isTrue);
-        expect(api.uploadCount, 0);
+        expect(captureApi.uploadCount, 0);
 
         await RemoteProcessingConsentStore(prefs).grant();
         await gateway.checkForPendingRecovery();
         expect(await closed.exists(), isFalse);
-        expect(api.uploadCount, 1);
+        expect(captureApi.uploadCount, 1);
       },
     );
   });
@@ -158,41 +157,69 @@ class _TestConnectivity implements NetworkConnectivitySource {
   void dispose() => _controller.close();
 }
 
-class _FakeApiClient extends ApiClient {
-  _FakeApiClient() : super(baseUrl: 'http://test.invalid');
-
+class _FakeCaptureApiClient implements CaptureApiClient {
   var uploadCount = 0;
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<VaultRecoveryServerResult> postVaultRecovery({
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
     required File vaultFile,
     required String sessionId,
     required int durationSeconds,
     required String captureToken,
     required String idempotencyKey,
     List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
   }) async {
     uploadCount++;
-    return VaultRecoveryServerResult(
-      recoveryAckId: 'ack_$sessionId',
-      transcript: 'recovered transcript',
-      reflectionJson: const {
-        'mood': 'neutral',
-        'emotionalIntensity': 1,
-        'recurringThemes': <String>[],
-        'exactLanguagePattern': 'recovered',
-        'concreteObservation': 'transcript',
-        'repeatedSignal': 'recovered',
-      },
-      durationSeconds: durationSeconds,
-      duplicate: false,
-      frameCount: 1,
+    return ApiSuccess(
+      VaultRecoveryServerResult(
+        recoveryAckId: 'ack_$sessionId',
+        transcript: 'recovered transcript',
+        reflectionJson: const {
+          'mood': 'neutral',
+          'emotionalIntensity': 1,
+          'recurringThemes': <String>[],
+          'exactLanguagePattern': 'recovered',
+          'concreteObservation': 'transcript',
+          'repeatedSignal': 'recovered',
+        },
+        durationSeconds: durationSeconds,
+        duplicate: false,
+        frameCount: 1,
+      ),
     );
+  }
+
+  @override
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
+  }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
   }
 }
 

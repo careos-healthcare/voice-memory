@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/config/archive_me_demo_state.dart';
 import 'package:voicememory_mobile/config/screenshot_mode.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
@@ -12,6 +11,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/product_analytics.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
+import 'helpers/fake_sync_api_client.dart';
 import 'helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -141,8 +141,8 @@ void main() {
         file: File('${dir.path}/journal.json')..writeAsStringSync('broken'),
       );
       final prefs = MobilePrefsStore(file: File('${dir.path}/prefs.json'));
-      final sync = createTestSyncService(
-        api: ApiClient(baseUrl: ''),
+      final sync = await createTestSyncService(
+        syncApi: FakeSyncApiClient(),
         journal: journal,
         prefs: prefs,
       );
