@@ -185,7 +185,7 @@ export function pickSlowRealizationNote(
   const report = buildSlowRealizationReport(entries);
   if (!report.hasData) return null;
 
-  let state = bumpSession(readState());
+  const state = bumpSession(readState());
   writeState(state);
 
   const notes = report.candidates.map(toMemoryNote);

@@ -29,7 +29,7 @@ export function ProofWall({ className = "" }: ProofWallProps) {
             {item.label ? (
               <p className="text-[10px] uppercase tracking-wider text-zinc-600">{item.label}</p>
             ) : null}
-            <p className="text-sm italic leading-relaxed text-zinc-400">"{item.text}"</p>
+            <p className="text-sm italic leading-relaxed text-zinc-400">&ldquo;{item.text}&rdquo;</p>
           </li>
         ))}
       </ul>

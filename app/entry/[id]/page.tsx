@@ -243,7 +243,7 @@ export default function EntryPage() {
       return;
     }
 
-    let cancelled = false;
+    const cancelled = false;
     const limitsPayload = {
       changeMoments: limits.changeMoments,
       familiarityResurfacing: limits.familiarityResurfacing,

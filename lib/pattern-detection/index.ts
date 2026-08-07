@@ -100,7 +100,7 @@ export function scorePatternSpecificity(
   let exactPhraseReferences = 0;
   let recurrenceCount = 0;
   let crossEntryGrounding = 0;
-  let contradictionEvidence = contradictions.length;
+  const contradictionEvidence = contradictions.length;
 
   const transcript = entry.transcript.toLowerCase();
 

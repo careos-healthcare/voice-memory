@@ -188,8 +188,7 @@ export async function POST(request: Request) {
       );
     }
 
-    let reflection: Reflection;
-    reflection = parseReflectionResponse(content, transcript);
+    const reflection: Reflection = parseReflectionResponse(content, transcript);
 
     logAnalyzeStep(
       `success observationLength=${reflection.concreteObservation?.trim().length ?? 0}`,

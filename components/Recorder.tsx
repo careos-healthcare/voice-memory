@@ -1129,7 +1129,7 @@ export function Recorder({
             ) : activeReturn ? (
               <div className="max-w-sm text-center">
                 <p className="text-xs tracking-wide text-zinc-600">
-                  You're returning to this:
+                  You&apos;re returning to this:
                 </p>
                 <p className="mt-2 text-sm leading-[1.75] text-zinc-400/95">
                   {activeReturn.anchorQuote}

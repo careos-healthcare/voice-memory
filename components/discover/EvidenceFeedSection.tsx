@@ -62,7 +62,7 @@ function EvidenceMovementCard({ movement }: { movement: EvidenceMovement }) {
                   className="border-l-2 border-violet-400/30 pl-3 text-sm text-zinc-400"
                 >
                   <span className="text-[10px] text-zinc-600">{q.dateLabel}</span>
-                  <p className="mt-0.5">"{q.quote}"</p>
+                  <p className="mt-0.5">&ldquo;{q.quote}&rdquo;</p>
                 </blockquote>
               ))}
             </div>

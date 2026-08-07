@@ -193,8 +193,8 @@ export async function buildSyncHealthReport(): Promise<SyncHealthReport> {
   const audioPlan = buildEncryptedAudioBackupPlan();
   const recentFailures = readRecentAudioBackupFailures();
 
-  let remoteEntryCount: number | null = null;
-  let corruptedRemoteBlob = false;
+  const remoteEntryCount: number | null = null;
+  const corruptedRemoteBlob = false;
   let remoteBackedUp = 0;
 
   if (lastSyncError) {

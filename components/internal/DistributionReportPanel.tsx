@@ -67,7 +67,7 @@ export function DistributionReportPanel({ report }: DistributionReportPanelProps
           <CardContent>
             <ul className="space-y-2 text-sm italic text-zinc-400">
               {report.testimonialSamples.map((text, index) => (
-                <li key={index}>"{text}"</li>
+                <li key={index}>&ldquo;{text}&rdquo;</li>
               ))}
             </ul>
           </CardContent>
